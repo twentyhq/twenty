@@ -41,7 +41,9 @@ export class CreateTwentyStandardApplicationCommand extends ActiveOrSuspendedWor
     const existingApplications = await this.applicationRepository.find({
       where: {
         workspaceId,
-        universalIdentifier: In([TWENTY_STANDARD_APPLICATION]),
+        universalIdentifier: In([
+          TWENTY_STANDARD_APPLICATION.universalIdentifier,
+        ]),
       },
     });
 

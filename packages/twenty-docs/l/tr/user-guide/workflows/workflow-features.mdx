@@ -1,0 +1,320 @@
+---
+title: İş Akışı Özellikleri
+info: Tüm kullanılabilir iş akışı tetikleyicileri, eylemleri ve yönetim özelliklerine dair eksiksiz bir referans.
+image: /images/user-guide/workflows/robot.png
+sectionInfo: Süreçleri otomatikleştirin ve harici araçlarla entegre edin
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/robot.png" alt="Header" />
+</Frame>
+
+## İş Akışı Tetikleyicileri
+
+İş akışları, otomasyonun ne zaman çalıştırılacağını tanımlayan tek bir tetikleyici ile başlar.
+
+### Kayıt Oluşturuldu
+
+Seçilen bir nesneye (Kişiler, Şirketler, Fırsatlar veya herhangi bir özel nesne) yeni bir kayıt oluşturulduğunda iş akışını başlatır.
+
+**Yapılandırma**: Yeni kayıtları izlemek için nesne türünü seçin.
+
+### Kayıt Güncellendi
+
+Mevcut bir kayıtta değişiklik yapıldığında iş akışını başlatır.
+
+**Yapılandırma**:
+
+- Nesne türünü seçin
+- Değişiklikleri izlenecek alanları isteğe bağlı olarak belirtin
+
+### Kayıt Güncellendi veya Oluşturuldu
+
+Bir kaydın seçili bir nesnede oluşturulması veya güncellenmesi durumunda iş akışını başlatır.
+
+**Neden Bu Önemli**: Bu tetikleyici özellikle faydalıdır çünkü farklı yöntemlerle oluşturulan kayıtlar farklı davranır:
+
+- **API/CSV ithalatları**: Kayıtlar hemen tüm alanlar doldurularak oluşturulur
+- **Manuel oluşturma**: Önce kayıtlar oluşturulur, ardından alanlar sonraki güncellemelerde eklenir
+
+**Yapılandırma**:
+
+- İzlenecek nesne türünü seçin
+- Değişiklikleri izlenecek alanları isteğe bağlı olarak belirtin
+- İş akışı, hem ilk oluşturma sırasında hem de sonraki güncellemelerde tetiklenecektir
+
+### Kayıt Silindi
+
+Bir nesneden kayıt kaldırıldığında iş akışını başlatır.
+
+**Yapılandırma**: Silme işlemlerini izlemek için nesne türünü seçin.
+
+### Manuel Olarak Başlat
+
+Bir kullanıcı eylemi tarafından tetiklendiğinde iş akışını başlatır. Bu tetikleyici Cmd+K menüsünden veya üst gezinme çubuğundaki özel bir düğme aracılığıyla erişilebilir.
+
+**Kullanılabilirlik Yapılandırması**:
+Kayıt seçimi ile iş akışının nasıl işleneceğini seçin:
+
+- **Global**: No record is required to trigger this workflow. İş akışı herhangi bir yerden (herhangi bir nesneden) tetiklenir ve kayıt(lar)ı giriş olarak kullanmaz.
+
+- **Single**: The selected record(s) will be passed to your workflow. Bu, belirli bir nesne için yapılandırılmıştır. İş akışını tetiklemeden önce birkaç kayıt seçilebilir. İş akışı, seçilen kayıt sayısı kadar çalışacaktır.
+
+  <Warning>
+  You cannot run more than 100 workflows in parallel at any given time.
+  </Warning>
+
+- **Bulk**: The selected record(s) will be passed to your workflow. Bu, belirli bir nesne için yapılandırılmıştır. İş akışını başlatmadan önce birkaç kayıt seçilebilir. İş akışı bir kere çalışacak, tüm kayıt listesini girdi olarak sağlayacak. Bu, iş akışının bir Yineleyici aksiyonu içermesi gerektiği anlamına gelir. Bu, iş akışı çalıştırmalarının sayısını optimize etmek/sınırlandırmak isteyenler için en iyisidir.
+
+**Ek Yapılandırma**:
+
+- Hedef nesneyi seçin (Tek ve Toplu kullanılabilirlik için)
+- İş akışı tetikleyicisi için bir komut simgesi seçin
+- Gezinme çubuğu yerleşimini yapılandırın (Sabit veya Sabit Değil)
+
+**Erişim Yöntemleri**:
+
+- Cmd+K menu to find and launch manual workflows
+- Üst gezinme çubuğunda (yapılandırılmışsa) özel bir düğme
+
+### On a Schedule
+
+Bu, belirlediğiniz zamanlarda iş akışını başlatır.
+
+**Yapılandırma**:
+
+- Zaman birimini seçin (dakika, saat, gün)
+- İleri düzey zamanlama için bir değer girin veya özel cron ifadeleri kullanın.
+
+### Webhook
+
+İş akışı, bir GET veya POST talebi harici bir servis tarafından alındığında başlar.
+
+**Yapılandırma**:
+
+- Benzersiz bir webhook URL'si alın
+- POST talepleri için beklenen gövde yapısını tanımlayın
+- Gerekirse kimlik doğrulamasını yapılandırın
+
+## İş Akışı Aksiyonları
+
+Aksiyonlar, bir tetikleyici devreye girdiğinde neler olacağını tanımlar. Birden fazla aksiyonu zincirleme bağlayabilirsiniz.
+
+### Kayıt Oluştur
+
+Seçilen bir nesneye yeni bir kayıt ekler.
+
+**Yapılandırma**:
+
+- Hedef nesneyi seçin
+- Gerekli ve isteğe bağlı alanları doldurun
+- Alanları doldurmak için önceki adımlardan gelen verileri kullanın
+
+**Çıktı**: Yeni oluşturulan kayıt verileri, sonraki adımlarda kullanılmak üzere mevcuttur.
+
+### Kayıt Güncelle
+
+Seçilen bir nesnedeki mevcut bir kaydı değiştirir.
+
+**Yapılandırma**:
+
+- Hedef nesneyi seçin
+- Güncellenecek belirli kaydı seçin
+- Değiştirilecek alanları seçin ve yeni değerler girin
+
+**Çıktı**: Güncellenmiş kayıt verileri, sonraki adımlarda kullanılmak üzere mevcuttur.
+
+### Kayıt Sil
+
+Seçilen bir nesneden bir kaydı kaldırır.
+
+**Yapılandırma**:
+
+- Hedef nesneyi seçin
+- Silinecek belirli kaydı seçin
+
+**Çıktı**: Silinen kayıt verileri, sonraki adımlarda kullanılmak üzere mevcut kalır.
+
+### Kayıt Ara
+
+Seçilen bir nesnede filtreleme koşulları kullanarak kayıt bulur.
+
+**Yapılandırma**:
+
+- Aranacak nesneyi seçin
+- Sonuçları daraltmak için filtre kriterlerini ayarlayın
+- Sıralama ve sınırları yapılandırın
+
+**Çıktı**: Belirlenen filtre koşullarına uyan kayıtlar, sonraki adımlarda kullanılmak üzere döner.
+
+**En İyi Uygulama**: Bulunan ve bulunmayan senaryoları yönetmek için Kayıt Ara sonrasında dallar kullanın.
+
+### Yineleyici
+
+Daha önceki bir adımla dönen kayıt dizilerini döngüsel olarak geçirerek, her kayıt üzerinde ayrı ayrı işlemler yapmanızı sağlar.
+
+**Yapılandırma**:
+
+- Önceki bir adımla (örn. Kayıt Ara sonuçları) dönen kayıt dizisini seçin
+- Döngüde her kayıt üzerinde gerçekleştireceğiniz işlemleri tanımlayın
+- Yinelemede her kaydı referans alacak değişken adını yapılandırın
+
+**Örnek**: Kayıt Ara 5 kişiyi döndürür, ardından Döngüleyici ile her kişiye bir e-posta gönderin ya da her kaydı tek tek güncelleyin.
+
+**Not**: Döngüleyici şu anda beta aşamasındadır. Ayarlardan → Sürümler → Lab bölümüne giderek aktif hale getirin.
+
+### Filtre
+
+Belirtilen koşullara göre bir kayıt dizisini filtreleyerek, yalnızca kriterleri karşılayan kayıtların geçmesine izin verir.
+
+**Yapılandırma**:
+
+- Filtrelenecek kayıt dizisini seçin
+- Filtre koşullarını ve kriterlerini tanımlayın
+- Sonraki adımlara geçmesi gereken kayıtları yapılandırın
+
+**Çıktı**: Belirtilen filtre koşullarına uyan yalnızca kayıtlar döner.
+
+### E-posta Gönder
+
+İş akışınızdan bir e-posta gönderir.
+
+**Ön Koşullar**: Ayarlar > Hesaplar'a bir e-posta hesabı ekleyin
+
+**Yapılandırma**:
+
+- Alıcı e-posta adresini girin
+- Konu satırını ayarlayın
+- Mesaj gövdesini yazın
+- Kişiselleştirme için önceki adımlardan gelen değişkenleri kullanın
+
+**Not**: E-posta ekleri, 2026'nın ilk çeyreğinde kullanılabilir olacaktır.
+
+### Kod
+
+İş akışınızda özel JavaScript çalıştırır.
+
+**Yapılandırma**:
+
+- Düzenleyicide JavaScript kodu yazın
+- Önceki adımlardan gelen değişkenlere erişin
+- Sonraki adımlarda kullanılmak üzere değişkenler döndürün
+- Kodu doğrudan adımda test edin
+
+**Erişim**: Ayarlar → API ve Webhooklar'da API anahtarlarını yönetin
+
+### Form
+
+İş akışı gerçekleştirilirken kullanıcı girdisi toplamak için bir form açar.
+
+**Yapılandırma**:
+
+- Türler, etiketler ve yer tutucular ile giriş alanlarını tanımlayın
+- Doğrulama kurallarını yapılandırın
+- Form başlığını ve açıklamasını ayarlayın
+
+**Çıktı**: Form yanıtları, sonraki adımlarda kullanılmak üzere mevcuttur.
+
+<Warning>
+Formlar şu anda yalnızca manuel tetikleyiciler için tasarlanmıştır. Diğer tetikleyicilerle (Kayıt Oluşturuldu, Güncellendi, vb.) iş akışlarında, formlar yalnızca iş akışı çalıştırma arayüzü üzerinden erişilebilir olup, bu beklenen kullanıcı deneyimi değildir. 2026'da formların otomatik iş akışlarını doğru bir şekilde desteklemesi için bir bildirim merkezi yayınlanacaktır.
+</Warning>
+
+### HTTP İsteği
+
+İş akışınızın bir parçası olarak harici bir API'ye istek gönderir.
+
+**Yapılandırma**:
+
+- API endpoint URL'sini girin
+- HTTP yöntemini seçin (GET, POST, PUT, PATCH, DELETE)
+- Gerekli başlıkları ve değerleri ekleyin
+- POST/PUT/PATCH talepleri için istek gövdesi ekleyin
+- Yapı önizlemesi için örnek yanıt sağlayın
+
+## İş Akışı Yönetimi
+
+### İş Akışlarını Oluşturma
+
+1. Başlamak için "+ İş Akışı Ekle"ye tıklayın
+2. İş akışınızı adlandırmak için "İsimsiz"e tıklayın
+3. İş akışı tetikleyicinizi seçin ve yapılandırın
+4. İş akışınıza aksiyonlar ekleyin
+5. Test edin ve yineleyin
+6. Düzenlemeyi bitirdiğinizde, iş akışınızı (şu anda taslak modunda) aktif hale getirin
+
+**Not**: İş Akışları bölümünü göremiyorsanız, bu bir yetki sorunudur. İş akışlarına erişim sağlamak için çalışma alanı yöneticinizle iletişime geçin.
+
+### İş Akışı Durumları
+
+- **Taslak**: Düzenleniyor, henüz yayınlanmadı
+- **Aktif**: Tetikleyicilere yanıt veren canlı sürüm
+- **Deaktive Edildi**: Daha önce aktif olan ancak manuel olarak durdurulan
+- **Arşivlendi**: Geçmiş için saklanan önceki sürümler
+
+### İş Akışlarını Aktif Etme
+
+Taslağınızı yeni bir sürüm olarak yayınlamak için **Aktif Et**'e tıklayın. Bu, iş akışının tetiklendiğinde çalışmasını uygun hâle getirir fakat hemen çalıştırmaz.
+
+### İş Akışlarını Test Etme
+
+İş akışlarını aktif etmeden önce test etmek için:
+
+- Manuel tetikleyiciler (altında kayıt seçilmediğinde)
+- Bireysel aksiyon testi (özellikle Kod aksiyonları)
+- İş akışını aktif etmeyen taslak mod testi
+
+### İş Akışı Çalıştırmaları
+
+Bir **Çalıştırma**, iş akışı çalışmasının kaydını içerir:
+
+- Durum (başarılı, başarısız, çalışıyor)
+- Her adımdan gelen çıktı verileri
+- Yazar ve zaman damgaları
+- Uygunsa hata mesajları
+
+**Çalıştırmaları Görüntüleme**:
+
+- İş akışı düzenleyicisindeki **Çalıştırmalar** panelini kontrol edin
+- Tüm iş akışlarını izlemek için **İş Akışı Çalıştırmaları** görünümünü açın
+
+**Performans İpucu**: "Tüm iş akışları" sayfasından ve diğer iş akışı sayfalarından iş akışı çalıştırmalarını gizleyin, çünkü çok sayıda çalıştırma sayfanın yüklenmesini yavaşlatabilir.
+
+### Versiyon Tarihçesi
+
+- Tüm versiyonları **Versiyonlar** alanında görüntüleyin
+- Herhangi bir versiyonu görüntülemek için üzerine tıklayın
+- Önceki sürümleri geri yüklemek için **Taslak olarak kullan**'ı kullanın
+- Taslak çakışmalarını geçersiz kılma veya geri dön seçenekleri ile yönetin
+
+## En İyi Uygulamalar
+
+### İş Akışı Organizasyonu
+
+- **Açıklayıcı İsimler**: Açık, belirli iş akışı isimleri kullanın
+- **Adım İsimlendirme**: Adımların işlevlerini açıklayacak şekilde yeniden adlandırın
+- **Dokümantasyon**: Kod aksiyonlarında yorum ekleyin
+- **Kategorilendirme**: İlgili iş akışlarını mantıksal olarak gruplandırın
+- **Özel Alanlar**: Veri modelinizde iş akışı nesnesine (diğer nesnelere benzer şekilde) alanlar ekleyerek iş akışlarını özel özelliklerle organize edin ve kategorize edin
+
+### Performans Optimizasyonu
+
+- **API Çağrılarını Azaltma**: Mümkün olduğunda toplu işlemler yapın
+- **Verimli Aramalar**: Belirli filtre kriterleri kullanın
+- **Hata Yönetimi**: Başarısızlık senaryolarını planlayın
+- **Oran Sınırlaması**: Harici API limitlerine uyun
+
+### Veri Akışı Yönetimi
+
+- **Dal Mantığı**: Kayıt Ara sonrası dallar kullanın
+- **Değişken Kullanımı**: Önceki adımlardan gelen verileri değerlendirin
+- **Veri Doğrulama**: Kod aksiyonlarında girdileri doğrulayın
+- **Alan Haritalama**: Veri dönüşümlerini dikkatlice planlayın
+
+### Takip ve Bakım
+
+- **Düzenli Takip**: İş akışı çalıştırmalarını hata için kontrol edin
+- **Performans İncelemesi**: Yürütme sürelerini ve başarı oranlarını analiz edin
+- **Güncelleme Yönetimi**: Aktif hale getirmeden önce değişiklikleri taslakta test edin
+- **Ekip Koordinasyonu**: İş akışlarını ekip üyeleri için belgelerle destekleyin
+
+Örnekler için [Dahili Otomasyonlar](/l/tr/user-guide/workflows/internal-automations) ve [Harici Araç Entegrasyonu](/l/tr/user-guide/workflows/external-tool-integration) bölümlerini inceleyin

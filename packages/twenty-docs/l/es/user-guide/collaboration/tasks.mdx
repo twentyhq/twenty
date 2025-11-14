@@ -1,0 +1,118 @@
+---
+title: Tareas
+info: Entender cómo gestionar eficazmente las tareas en Twenty.
+image: /images/user-guide/tasks/tasks_header.png
+sectionInfo: Descubre cómo aprovechar Notas y Tareas para colaborar mejor con tu equipo.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Gestiona todas las tareas en tu espacio de trabajo utilizando la función de **Tareas**. Esta guía te mostrará cómo crear y gestionar tareas, alternar entre tareas próximas y completadas, editar detalles de tareas, y mucho más.
+
+## Casos de Uso Comunes
+
+### Seguimientos de Ventas
+
+- **Siguientes Pasos de la Reunión**: Crea tareas para los elementos de acción discutidos durante las llamadas con clientes
+- **Seguimientos de Propuestas**: Establece recordatorios para verificar propuestas pendientes
+- **Revisiones de Contratos**: Programa tareas para negociaciones y aprobaciones de contratos
+
+### Éxito del Cliente
+
+- **Tareas de Incorporación**: Crea listas de verificación de incorporación automáticamente cuando se cierran negociaciones
+- **Recordatorios de Control**: Programa llamadas regulares de verificación de salud del cliente
+- **Preparación de Renovación**: Establece tareas para prepararte para renovaciones de contrato 90 días antes
+
+### Gestión de Proyectos Internos
+
+Más allá de ventas y éxito del cliente, las Tareas apoyan necesidades organizativas más amplias:
+
+- **Product Development**: Track feature releases, bug fixes, and development milestones
+- **Campañas de Marketing**: Gestiona lanzamientos de campañas, creación de contenido y actividades promocionales
+- **Operaciones de RRHH**: Maneja procesos de reclutamiento, incorporación de empleados y evaluaciones de desempeño
+- **Tareas Financieras**: Programa revisiones presupuestarias, procesamiento de facturas y reportes financieros
+- **Operaciones**: Coordina gestión de instalaciones, relaciones con proveedores y mejoras de procesos
+
+### Creación Automática de Tareas
+
+Utiliza [Flujos de Trabajo](/l/es/user-guide/workflows/getting-started-workflows) para crear tareas automáticamente:
+
+- **Disparadores de Negocio Ganado**: Crea automáticamente tareas de incorporación asignadas al equipo de éxito del cliente cuando se cierran oportunidades
+- **Recordatorios por Correo Electrónico**: Configura recordatorios semanales por correo electrónico para las tareas que vencen esta semana (enviados todos los lunes)
+- **Automatización del Pipeline**: Crea tareas de seguimiento cuando las negociaciones se estancan en etapas específicas
+- **Integración de Reuniones**: Genera automáticamente tareas a partir de grabaciones de reuniones o eventos de calendario
+
+## Características de las Tareas
+
+### Campo de Relaciones
+
+Las tareas incluyen un campo de `Relaciones` que te permite adjuntar una sola tarea a múltiples registros a través de diferentes objetos. Por ejemplo, puedes vincular una tarea de seguimiento a:
+
+- La Persona a quien necesitas contactar
+- La empresa a la que representan
+- La Oportunidad que se persigue
+- Cualquier Nota relevante u otros registros
+
+This morph many relationship ensures tasks are accessible from all relevant record pages and provides complete context.
+
+### Etiquetado de Usuarios
+
+**Nota**: El etiquetado de usuarios dentro de tareas no está disponible actualmente. Esta función está planificada para 2026, lo que te permitirá mencionar a miembros del equipo y activar notificaciones al asignar o actualizar tareas.
+
+## Creación de Tareas
+
+La creación de tareas en Twenty es fluida. Puedes hacerlo de las siguientes maneras:
+
+- Ve a la pestaña `Tareas` y presiona el botón `+` en la parte superior derecha de la página.
+- Utiliza la función de búsqueda presionando `cmd/ctrl + k`, luego selecciona 'Crear tarea' de la lista de acciones rápidas.
+- Ve a una `Página de Registro` y presiona `+` en la parte superior derecha de la página, o ve a la pestaña de Tareas y presiona el botón `Agregar Tarea`.
+
+<VimeoEmbed videoId="928786754" title="Creating tasks" />
+
+### Agregando Contenido a las Tareas
+
+Una vez que has creado una tarea puedes enriquecerla con contenido enriquecido, como Títulos, Viñetas o incluso imágenes. Para hacerlo, presiona `/` y escribe el comando deseado.
+
+## Visualizando Tareas
+
+La página de **Tareas** muestra todas tus tareas a través de tu espacio de trabajo. Aquí puedes:
+
+- Filtrar tareas asignadas a un usuario específico haciendo clic en el botón con tu nombre en la parte superior derecha de la pantalla.
+- Alternar entre tareas próximas (`Por hacer`) y completadas (`Hecho`) para ver qué necesita atención y qué has logrado.
+
+You can also see tasks for a given Record on its `Record page`.
+
+<VimeoEmbed videoId="927908280" title="Viewing tasks" />
+
+## Editando Tareas
+
+Para editar una tarea, debes hacer clic en su tarjeta. Esto abrirá un panel lateral que ofrece las siguientes funciones:
+
+- **Asignado y Fecha de vencimiento**: Actualiza al asignado o edita la fecha de vencimiento.
+- **Comentarios**: Trabaja junto a tus compañeros de equipo agregando comentarios en las tareas para dar actualizaciones o comentarios.
+- **Automations**: Thanks to the API and Webhooks, you can also automate task creation triggered by specific activities in your workspace.
+
+## Marcar Tareas como Completadas
+
+Para marcar una tarea como completada:
+
+1. Localiza la tarea en tu página de `Tareas` o dentro de una `Página de Registro`.
+2. Click on the circle at the left of the task card, it will change to signify completion.
+3. El estado de la tarea se actualizará automáticamente a `Hecho`.
+
+Este procedimiento ayudará a mantener un registro actualizado de tus logros.
+
+<VimeoEmbed videoId="927910083" title="Marking tasks as complete" />
+
+## Eliminar una tarea
+
+Para eliminar una tarea permanentemente:
+
+1. Abre la tarea que deseas eliminar haciendo clic en su tarjeta, ya sea desde la página de `Tareas` o dentro de una `Página de Registro`.
+2. Haz clic en el ícono de basura ubicado en la esquina superior derecha del panel de detalles de la tarea.
+
+Ten en cuenta que la eliminación de una tarea es permanente y no se puede deshacer. Consider marking tasks as `Done` if there is a chance you will need to refer to them again.

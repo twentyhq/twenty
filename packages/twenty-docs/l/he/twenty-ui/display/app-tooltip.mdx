@@ -1,0 +1,88 @@
+---
+title: App Tooltip
+image: /images/user-guide/tips/light-bulb.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
+</Frame>
+
+הודעה קצרה שמציגה מידע נוסף כאשר המשתמש מתקשר עם אלמנט מסוים.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
+
+export const MyComponent = () => {
+  return (
+    <>
+      <p id="hoverText" style={{ display: "inline-block" }}>
+        Customer Insights
+      </p>
+      <AppTooltip
+        className
+        anchorSelect="#hoverText"
+        content="Explore customer behavior and preferences"
+        delayHide={0}
+        offset={6}
+        noArrow={false}
+        isOpen={true}
+        place="bottom"
+        positionStrategy="absolute"
+      />
+    </>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| תכונות          | סוג                                         | תיאור                                                                                                                                                                                                     |
+| --------------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className       | string                                      | מחלקת CSS אופציונלית לסגנון נוסף                                                                                                                                                                          |
+| anchorSelect    | בורר CSS                                    | בורר העוגן של התצוגה המהירה (האלמנט המפעיל את התצוגה המהירה)                                                                                                                           |
+| תוכן            | string                                      | The content you want to display within the tooltip                                                                                                                                                        |
+| delayHide       | מספר                                        | השהות בשניות לפני הסתרת התצוגה המהירה לאחר שהעכבר עוזב את העוגן                                                                                                                                           |
+| תזוזה           | מספר                                        | הזזה בפיקסלים למיקום התצוגה המהירה                                                                                                                                                                        |
+| noArrow         | בוליאני                                     | אם `true`, מחביא את החץ על התצוגה המהירה                                                                                                                                                                  |
+| isOpen          | בוליאני                                     | אם `true`, התצוגה המהירה נפתחת במקום                                                                                                                                                                      |
+| מיקום           | מחרוזת `PlacesType` מ-`react-tooltip`       | מציין את מיקום התצוגה המהירה. ערכים כוללים `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start`, ו-`left-end` |
+| אסטרטגיית מיקום | מחרוזת `PositionStrategy` מ-`react-tooltip` | אסטרטגיית מיקום עבור התצוגה המהירה. שתי ערכים ישנם: `absolute` ו-`fixed`                                                                                                  |
+
+</Tab>
+
+</Tabs>
+
+## טקסט חורג עם תצוגה מהירה
+
+מטפל בטקסט חורג ומציג תצוגה מהירה כאשר הטקסט חורג.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  const crmTaskDescription =
+    'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
+
+  return <OverflowingTextWithTooltip text={crmTaskDescription} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| תכונות | סוג    | תיאור                                 |
+| ------ | ------ | ------------------------------------- |
+| טקסט   | string | התוכן שברצונך להציג באזור הטקסט השופע |
+
+</Tab>
+
+</Tabs>

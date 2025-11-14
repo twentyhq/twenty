@@ -1,0 +1,93 @@
+---
+title: İş Akışı Kredileri
+info: Otomasyonlarınız için iş akışı kredi tüketimini, izlemeyi ve maliyet yönetimini anlayın.
+image: /images/user-guide/workflows/workflow-credits.png
+sectionInfo: Süreçleri otomatikleştirin ve harici araçlarla entegre edin
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow-credits.png" alt="Header" />
+</Frame>
+
+İş akışı kredileri, Twenty'deki otomasyonlarınızın gücüdür. Nasıl çalıştıklarını anlamak, maliyetleri optimize etmenize ve otomasyon bütçenizi etkili bir şekilde yönetmenize yardımcı olur.
+
+## Plan Bazında Kredi Tahsisi
+
+Workflow credits are allocated per workspace based on your subscription plan:
+
+- **Deneme**: 5 milyon kredi
+- **Pro Planı**: Aylık 10 milyon kredi
+- **Kuruluş Planı**: Aylık 20 milyon kredi
+
+## Kredi Tüketiminin Çalışma Prensibi
+
+Krediler, iş akışları çalıştığında tüketilir, oluşturulduğunda değil. Her iş akışı eylemi, karmaşıklığına göre kredi tüketir:
+
+### Eylem Türüne Göre Kredi Tüketimi
+
+- **Temel dahili işlemler**: Çok düşük kredi tüketimi
+  - Kayıt Ara
+  - Kayıt Oluştur
+  - Kayıt Güncelle
+  - Kayıt Sil
+  - Form işlemleri
+
+- **Karmaşık işlemler**: Daha yüksek kredi tüketimi
+  - Kod eylemleri (JavaScript yürütme)
+  - Harici hizmetlere HTTP İstekleri
+
+- **AI features**: Significant credit consumption (coming soon)
+  - Yapay zeka istemleri ve işleme, kullanımına göre kredileri tüketecek
+
+### Gerçek Zamanlı Düşüm
+
+Krediler, iş akışları çalışırken gerçek zamanlı olarak düşülür. Bu şu anlama gelir:
+
+- Taslak iş akışları kredi tüketmez
+- Sadece aktif, çalışan iş akışları kredi tahsisatınızı kullanır
+- Başarısız iş akışları, tamamlanan adımlarda yine de kredi tüketir
+
+## Kredilerin Yönetimi
+
+### Kredi Kullanımını Kontrol Et
+
+1. **Ayarlar → Faturalama** bölümüne gidin
+2. Güncel kredi tüketiminizi ve kalan bakiyenizi görüntüleyin
+3. İş akışlarınızı optimize etmek için kullanım desenlerini izleyin
+
+### Ek Kredi Satın Alma
+
+Plan tahsisinizin ötesinde daha fazla krediye ihtiyacınız varsa:
+
+1. **Ayarlar → Faturalama** bölümüne gidin
+2. Ek kredi satın alma seçeneğine tıklayın. Farklı boyutlarda paketler mevcuttur.
+3. Krediler mevcut bakiyenize eklenir
+
+## En İyi Uygulamalar
+
+### Verimli İş Akışı Tasarımı
+
+- **Basit Başlayın**: Temel eylemlerle başlayın ve karmaşıklığı kademeli olarak artırın
+- **Test in Draft**: Thoroughly test workflows before activation to avoid wasting credits on errors
+- **HTTP İsteklerini Minimize Edin**: Mümkün olduğunda verimli arama kriterleri kullanın ve işlemleri birleştirin
+- **Toplu İşleme**: Toplu işlemler ve Iterator eylemlerini verimli bir şekilde kullanın
+- **Hata Yönetimi**: Gereksiz tekrar denemeleri önlemek için uygun hata yönetimi uygulayın
+- **Manuel Tetikleme Optimizasyonu**: Manuel tetikleyiciler için `Toplu` kullanılabilirliğini seçerek tek bir iş akışı çalıştırmasında birden fazla kaydı işleyin (detaylar için [İş Akışı Özellikleri](/l/tr/user-guide/workflows/workflow-features) bölümüne bakın)
+
+### Eylem Optimizasyonu
+
+- Mümkün olduğunda temel dahili işlemleri kullanın (daha düşük kredi tüketimi)
+- Verimlilik için Kod eylemlerini optimize edin
+- Acil olmayan işlemler için manuel tetikleyicileri değerlendirin
+- Bireysel eylem çağrılarını azaltmak için toplu işlemler yapın
+
+### Kredi Yönetimi
+
+- **Düzenli İzleme**: Kredi kullanımınızı haftalık olarak Ayarlar → Faturalama bölümünden kontrol edin
+- **Kullanım İzleme**: Beklenmedik aşırımaları önlemek için tüketim desenlerini takip edin
+- **Uygun Şekilde Planlayın**: Sürekli daha fazla krediye ihtiyaç duyuyorsanız planınızı yükseltmeyi düşünün
+- **İş Akışı İncelemesi**: Yüksek tüketimli iş akışlarını düzenli olarak gözden geçirin ve kullanılmayanları devre dışı bırakın
+- **Stratejik Planlama**: Kredi kullanılabilirliğine göre iş akışı dağıtımını planlayın
+
+Detaylı faturalama bilgileri ve kredi yönetimi için, Twenty çalışma alanınızdaki **Ayarlar → Faturalama** bölümünü ziyaret edin.
+

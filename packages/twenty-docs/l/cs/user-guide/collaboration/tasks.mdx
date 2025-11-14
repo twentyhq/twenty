@@ -1,0 +1,118 @@
+---
+title: Úkoly
+info: Pochopte, jak efektivně řídit úkoly v Twenty.
+image: /images/user-guide/tasks/tasks_header.png
+sectionInfo: Objevte, jak využít Poznámky a Úkoly k lepší spolupráci s vaším týmem.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Spravujte všechny úkoly ve svém pracovním prostoru pomocí funkce **Úkoly**. Tato příručka vám ukáže, jak vytvářet a řídit úkoly, přepínat mezi nadcházejícími a dokončenými úkoly, upravovat podrobnosti úkolu a mnohem více.
+
+## Běžné scénáře použití
+
+### Návazné akce u prodeje
+
+- **Další kroky na schůzce**: Vytvořte úkoly pro akční body projednané během setkání s klienty
+- **Návazné akce u návrhů**: Nastavte připomínky k prověrce čekajících návrhů
+- **Revize smluv**: Naplánujte úkoly pro jednání a schvalování smluv
+
+### Customer Success
+
+- **Úkoly při adaptaci**: Automaticky vytvářejte kontrolní seznamy při uzavření obchodů
+- **Check-in Reminders**: Schedule regular customer health check calls
+- **Renewal Preparation**: Set tasks to prepare for contract renewals 90 days in advance
+
+### Interní projektový management
+
+Mimo prodej a úspěch zákazníků podporují úkoly širší organizační potřeby:
+
+- **Vývoj produktů**: Sledování vydání funkcí, oprav chyb a vývojových milníků
+- **Marketingové kampaně**: Řízení spuštění kampaní, tvorby obsahu a propagačních aktivit
+- **HR operace**: Zpracování náborových procesů, adaptace zaměstnanců a hodnocení výkonnosti
+- **Finanční úkoly**: Plánování prověrek rozpočtu, zpracování faktur a finančního reportingu
+- **Provozy**: Koordinace správy zařízení, vztahů s dodavateli a zlepšování procesů
+
+### Automatizovaná tvorba úkolů
+
+Use [Workflows](/l/cs/user-guide/workflows/getting-started-workflows) to automatically create tasks:
+
+- **Deal Won Triggers**: Auto-create onboarding tasks assigned to CS team when opportunities close
+- **Připomínky e-mailem**: Nastavte týdenní připomínky úkolů, které mají být dokončeny během tohoto týdne (odesláno každé pondělí)
+- **Automatizace pipeline**: Vytvářejte navazující úkoly, když obchody uvíznou v konkrétních fázích
+- **Integrace schůzek**: Automatické generování úkolů ze záznamů schůzek nebo událostí v kalendáři
+
+## Vlastnosti úkolů
+
+### Pole vztahů
+
+Úkoly obsahují pole `Relací`, které umožňuje připojit jeden úkol k více záznamům napříč různými objekty. Například můžete propojit jeden následující úkol s:
+
+- Osobou, kterou potřebujete kontaktovat
+- Společností, kterou zastupují
+- Příležitostí, kterou sledujete
+- Jakýmikoli relevantními poznámkami nebo dalšími záznamy
+
+This morph many relationship ensures tasks are accessible from all relevant record pages and provides complete context.
+
+### Označování uživatelů
+
+**Poznámka**: Označování uživatelů v rámci úkolů není momentálně dostupné. Tato funkce je plánována na rok 2026 a umožní vám zmiňovat členy týmu a spouštět notifikace při přidělování či aktualizaci úkolů.
+
+## Tvorba úkolů
+
+Vytváření úkolů v Twenty je bezproblémové. Můžete buď:
+
+- Přejít na kartu `Úkoly` a stisknout tlačítko `+` v pravém horním rohu stránky.
+- Použijte funkci hledání stisknutím `cmd/ctrl + k`, poté vyberte „Vytvořit úkol“ ze seznamu rychlých akcí.
+- Přejděte na stránku `Záznamu` a stiskněte `+` v pravém horním rohu stránky, nebo přejděte na kartu Úkoly a stiskněte tlačítko `Přidat úkol`.
+
+<VimeoEmbed videoId="928786754" title="Creating tasks" />
+
+### Přidávání obsahu úkolu
+
+Jakmile vytvoříte úkol, můžete jej obohatit o bohatý obsah, jako například názvy, odrážky nebo dokonce obrázky. Provedete to stisknutím `/` a zadáním požadovaného příkazu.
+
+## Prohlížení úkolů
+
+Stránka **Úkolů** zobrazuje všechny vaše úkoly v celém pracovním prostoru. Zde můžete:
+
+- Filtrovat úkoly přiřazené konkrétnímu uživateli kliknutím na tlačítko se svým jménem v pravém horním rohu obrazovky.
+- Přepínejte mezi nadcházejícími (`K vykonání`) a dokončenými (`Hotovo`) úkoly, abyste viděli, co potřebuje vaši pozornost a co jste dokončili.
+
+Můžete také vidět úkoly pro daný záznam na jeho stránce `Záznamu`.
+
+<VimeoEmbed videoId="927908280" title="Viewing tasks" />
+
+## Úprava úkolů
+
+Chcete-li upravit úkol, klikněte na jeho kartu. Tím se otevře postranní panel s následujícími funkcemi:
+
+- **Přiřazení a termín dokončení**: Aktualizujte přiřazení nebo upravte termín dokončení.
+- **Komentáře**: Spolupracujte se členy svého týmu přidáváním komentářů k úkolům pro poskytnutí aktualizací nebo zpětné vazby.
+- **Automatizace**: Díky API a Webhookům můžete automatizovat tvorbu úkolů spuštěnou specifickými aktivitami ve vašem pracovním prostoru.
+
+## Označování úkolů jako dokončené
+
+Chcete-li označit úkol jako dokončený:
+
+1. Najděte úkol na své stránce `Úkoly` nebo na stránce `Záznamu`.
+2. Klikněte na kruh vlevo od karty úkolu, aby se změnila a označila dokončení.
+3. Stav úkolu se automaticky aktualizuje na `Hotovo`.
+
+Tento postup pomůže udržovat aktuální záznam o vašich úspěších.
+
+<VimeoEmbed videoId="927910083" title="Marking tasks as complete" />
+
+## Mazání úkolu
+
+Chcete-li úkol trvale smazat:
+
+1. Otevřete úkol, který chcete smazat, kliknutím na jeho kartu, a to buď z stránky `Úkoly` nebo na stránce `Záznamu`.
+2. Klikněte na ikonu koše v pravém horním rohu panelu podrobností úkolu.
+
+Upozorňujeme, že odstranění úkolu je trvalé a nelze jej vrátit zpět. Zvažte označení úkolů jako `Hotovo`, pokud se k nim budete chtít znovu odkazovat.

@@ -1,0 +1,27 @@
+---
+title: Beste praksis
+image: /images/user-guide/tips/light-bulb.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
+</Frame>
+
+Dette dokumentet beskriver de beste praksisene du bør følge når du arbeider med backend.
+
+## Følg en modulær tilnærming
+
+Backend følger en modulær tilnærming, som er et grunnleggende prinsipp når du arbeider med NestJS. Sørg for å dele opp koden din i gjenbrukbare moduler for å opprettholde en ren og organisert kodebase.
+Hver modul skal kapsle inn en bestemt funksjon eller funksjonalitet og ha et klart definert omfang. Denne modulære tilnærmingen muliggjør klar separasjon av bekymringer og fjerner unødvendige kompleksiteter.
+
+## Eksponer tjenester for å bruke i moduler
+
+Opprett alltid tjenester som har et klart og enkelt ansvar, noe som forbedrer lesbarheten og vedlikeholdbarheten til koden. Navngi tjenestene beskrivende og konsekvent.
+
+Du bør også eksponere tjenester som du vil bruke i andre moduler. Å eksponere tjenester for andre moduler er mulig gjennom NestJS's kraftige avhengighetsinjeksjonssystem, og fremmer løs kobling mellom komponenter.
+
+## Unngå å bruke `any` type
+
+Når du erklærer en variabel som `any`, utfører TypeScripts typekontroll ikke noen typekontroll, noe som gjør det mulig å tildele alle typer verdier til variabelen. TypeScript bruker typeinferens for å bestemme typen variabel basert på verdien. Ved å erklære det som `any`, kan TypeScript ikke lenger utlede typen. Dette gjør det vanskelig å fange type-relaterte feil under utvikling, noe som fører til kjøretidsfeil og gjør koden mindre vedlikeholdbar, mindre pålitelig og vanskeligere å forstå for andre.
+
+Det er derfor alt bør ha en type. Så hvis du oppretter et nytt objekt med et fornavn og etternavn, bør du opprette et grensesnitt eller en type som inneholder et fornavn og etternavn som definerer formen på objektet du manipulerer.

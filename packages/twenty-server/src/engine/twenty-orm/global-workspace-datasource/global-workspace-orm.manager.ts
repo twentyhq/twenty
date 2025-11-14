@@ -2,13 +2,15 @@ import { Injectable, type Type } from '@nestjs/common';
 
 import { type ObjectLiteral } from 'typeorm';
 
+import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
+
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import {
-  type WorkspaceContextForStorage,
+  type WorkspaceContext,
   withWorkspaceContext,
 } from 'src/engine/twenty-orm/storage/workspace-context.storage';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
@@ -64,21 +66,21 @@ export class GlobalWorkspaceOrmManager {
   }
 
   async executeInWorkspaceContext<T>(
-    workspaceId: string,
+    authContext: WorkspaceAuthContext,
     fn: () => T | Promise<T>,
   ): Promise<T> {
-    const context = await this.loadWorkspaceContext(workspaceId);
+    const context = await this.loadWorkspaceContext(authContext);
     const globalDataSource =
       this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSource();
 
     if (
       !globalDataSource.hasWorkspaceEntityMetadataCacheForVersion(
-        workspaceId,
+        authContext.workspace.id,
         context.metadataVersion,
       )
     ) {
       await globalDataSource.buildWorkspaceMetadata(
-        workspaceId,
+        authContext.workspace.id,
         context.metadataVersion,
         context.objectMetadataMaps,
       );
@@ -88,8 +90,9 @@ export class GlobalWorkspaceOrmManager {
   }
 
   private async loadWorkspaceContext(
-    workspaceId: string,
-  ): Promise<WorkspaceContextForStorage> {
+    authContext: WorkspaceAuthContext,
+  ): Promise<WorkspaceContext> {
+    const workspaceId = authContext.workspace.id;
     const { objectMetadataMaps, metadataVersion } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
         {
@@ -108,7 +111,7 @@ export class GlobalWorkspaceOrmManager {
       });
 
     return {
-      workspaceId,
+      authContext,
       objectMetadataMaps,
       metadataVersion,
       featureFlagsMap,

@@ -52,10 +52,9 @@ git config --global user.email "youremail@domain.com"
 ```
 
 3. Installez nvm, node.js et yarn <Warning>
-   <Warning>
 
+<Warning>
 Utilisez `nvm` pour installer la version correcte de `node`. Le fichier `.nvmrc` garantit que tous les contributeurs utilisent la même version.
-
 </Warning>
 
 ```bash
@@ -112,12 +111,12 @@ Vous devez exécuter toutes les commandes des étapes suivantes depuis la racine
 
 <Tabs>
   <Tab title="Linux">
-    **Option 1 (préférée) :** Pour créer votre base de données localement :
-    Utilisez le lien suivant pour installer PostgreSQL sur votre machine Linux : [Installation de PostgreSQL](https://www.postgresql.org/download/linux/)
+    **Option 1 (preferred):** To provision your database locally:
+    Use the following link to install Postgresql on your Linux machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
-    Note : Vous pourriez avoir besoin d'ajouter `sudo -u postgres` à la commande avant `psql` pour éviter des erreurs de permission.
+    Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
 
 ````
 **Option 2:** If you have docker installed:
@@ -128,7 +127,7 @@ Vous devez exécuter toutes les commandes des étapes suivantes depuis la racine
 
   </Tab>
   <Tab title="Mac OS">
-    **Option 1 (préférée) :** Pour créer votre base de données localement avec `brew` :
+    **Option 1 (preferred):** To provision your database locally with `brew`:
 
 ````
 ```bash
@@ -181,7 +180,7 @@ This creates a superuser role named `postgres` with login access.
 
   </Tab>
   <Tab title="Windows (WSL)">
-    Toutes les étapes suivantes doivent être exécutées dans le terminal WSL (dans votre machine virtuelle)
+    All the following steps are to be run in the WSL terminal (within your virtual machine)
 
 ````
 **Option 1:** To provision your Postgresql locally:
@@ -210,8 +209,8 @@ Twenty nécessite un cache Redis pour offrir la meilleure performance
 
 <Tabs>
   <Tab title="Linux">
-    **Option 1 :** Pour configurer votre Redis localement :
-    Utilisez le lien suivant pour installer Redis sur votre machine Linux : [Installation de Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+    **Option 1:** To provision your Redis locally:
+    Use the following link to install Redis on your Linux machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
 
 ````
 **Option 2:** If you have docker installed:
@@ -222,11 +221,11 @@ Twenty nécessite un cache Redis pour offrir la meilleure performance
 
   </Tab>
   <Tab title="Mac OS">
-    **Option 1 (préférée) :** Pour configurer votre Redis localement avec `brew` :
+    **Option 1 (preferred):** To provision your Redis locally with `brew`:
     ```bash
     brew install redis
     ```
-    Démarrez votre serveur redis :
+    Start your redis server:
     ```brew services start redis```
 
 ````
@@ -238,8 +237,8 @@ Twenty nécessite un cache Redis pour offrir la meilleure performance
 
   </Tab>
   <Tab title="Windows (WSL)">
-    **Option 1 :** Pour configurer votre Redis localement :
-    Utilisez le lien suivant pour installer Redis sur votre machine virtuelle Linux : [Installation de Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+    **Option 1:** To provision your Redis locally:
+    Use the following link to install Redis on your Linux virtual machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
 
 ````
 **Option 2:** If you have docker installed:
@@ -282,7 +281,7 @@ Notez que `npm` ou `pnpm` ne fonctionneront pas
     Sinon, vérifiez le [guide d'installation de Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) pour votre distribution.
   </Tab>
   <Tab title="Mac OS">
-  Redis devrait déjà être en cours d'exécution. Si ce n'est pas le cas, exécutez :
+  Redis devrait déjà être en cours d'exécution. If not, run:
     ```bash
     brew services start redis
     ```  

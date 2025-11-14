@@ -1,0 +1,44 @@
+---
+title: Sivupolku
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+Renderöi sivupolkunavigointipalkin.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter } from "react-router-dom";
+import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+
+export const MyComponent = () => {
+  const breadcrumbLinks = [
+    { children: "Home", href: "/" },
+    { children: "Category", href: "/category" },
+    { children: "Subcategory", href: "/category/subcategory" },
+    { children: "Current Page" },
+  ];
+
+  return (
+    <BrowserRouter>
+      <Breadcrumb className links={breadcrumbLinks} />
+    </BrowserRouter>
+    )
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Ominaisuudet | Tyyppi     | Kuvaus                                                                                                                                                                                                                                                                 |
+| ------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className    | merkkijono | Valinnainen luokan nimi lisämuotoilua varten                                                                                                                                                                                                                           |
+| linkit       | taulukko   | An array of objects, each representing a breadcrumb link. Jokaisessa esineessä on `children`-ominaisuus (linkin tekstisisältö) ja valinnainen `href`-ominaisuus (URL, johon navigoidaan linkkiä napsautettaessa) |
+
+</Tab>
+</Tabs>

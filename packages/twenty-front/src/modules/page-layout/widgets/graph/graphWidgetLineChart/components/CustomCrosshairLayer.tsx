@@ -5,6 +5,8 @@ import { LINE_CHART_CROSSHAIR_TRANSITION_DAMPING } from '@/page-layout/widgets/g
 import { LINE_CHART_CROSSHAIR_TRANSITION_STIFFNESS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartCrosshairTransitionStiffness';
 import { LINE_CHART_MARGIN_LEFT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginLeft';
 import { LINE_CHART_MARGIN_TOP } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginTop';
+import { graphWidgetLineCrosshairXComponentState } from '@/page-layout/widgets/graph/graphWidgetLineChart/states/graphWidgetLineCrosshairXComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import { type LineSeries, type Point } from '@nivo/line';
 import { motion } from 'framer-motion';
@@ -28,7 +30,6 @@ type CustomCrosshairLayerProps = {
   innerHeight: number;
   innerWidth: number;
   onSliceHover: (data: SliceHoverData) => void;
-  crosshairX: number | null;
   onRectLeave: (relatedTarget: EventTarget | null) => void;
 };
 
@@ -37,10 +38,12 @@ export const CustomCrosshairLayer = ({
   innerHeight,
   innerWidth,
   onSliceHover,
-  crosshairX,
   onRectLeave,
 }: CustomCrosshairLayerProps) => {
   const theme = useTheme();
+  const crosshairX = useRecoilComponentValue(
+    graphWidgetLineCrosshairXComponentState,
+  );
 
   const slices = useMemo(() => {
     const sliceMap = new Map<string, Point<LineSeries>[]>();

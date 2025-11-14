@@ -1,0 +1,44 @@
+---
+title: Breadcrumb
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+Renders a breadcrumb navigation bar.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter } from "react-router-dom";
+import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+
+export const MyComponent = () => {
+  const breadcrumbLinks = [
+    { children: "Home", href: "/" },
+    { children: "Category", href: "/category" },
+    { children: "Subcategory", href: "/category/subcategory" },
+    { children: "Current Page" },
+  ];
+
+  return (
+    <BrowserRouter>
+      <Breadcrumb className links={breadcrumbLinks} />
+    </BrowserRouter>
+    )
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性  | 類型 | 描述                                                                                                                                                                                |
+| --- | -- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 類名稱 | 字串 | 附加樣式的可選類名                                                                                                                                                                         |
+| 連結  | 數組 | An array of objects, each representing a breadcrumb link. 每個對象有一個 `children` 屬性 (連結的文本內容) 和一個可選的 `href` 屬性 (點擊連結時要導航到的 URL) |
+
+</Tab>
+</Tabs>

@@ -1,0 +1,42 @@
+---
+title: Kép bevitel
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import imageInputCode from '!!raw-loader!@site/src/ui/input/components/imageInputCode.js'
+
+Lehetővé teszi a felhasználóknak, hogy képeket töltsenek fel és távolítsanak el.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ImageInput } from "@/ui/input/components/ImageInput";
+
+export const MyComponent = () => {
+  return <ImageInput/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Tulajdonságok | Típus    | Leírás                                                                                                                                    |
+| ------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| kép           | string   | A kép forrásának URL-je                                                                                                                   |
+| onUpload      | függvény | A függvény, amelyik akkor hívódik meg, amikor a felhasználó új képet tölt fel. Paraméterként megkapja a `File` objektumot |
+| onRemove      | funkció  | A függvény, amely akkor hívódik meg, amikor a felhasználó rákattint az eltávolítás gombra                                                 |
+| onAbort       | függvény | A függvény, amely akkor hívódik meg, amikor a felhasználó rákattint a megszakítás gombra kép feltöltése közben                            |
+| isUploading   | boolean  | Jelzi, hogy egy képet éppen feltöltenek-e                                                                                                 |
+| hibaüzenet    | string   | Egy opcionális hibaüzenet, amely a képbeviteli mező alatt jelenik meg                                                                     |
+| letiltva      | boolean  | Ha `true`, az egész bemenet le van tiltva, és a gombok nem kattinthatók                                                                   |
+
+</Tab>
+</Tabs>

@@ -1,0 +1,170 @@
+---
+title: Belső automatizálások
+info: "Automatizálja az ismétlődő feladatokat, hogy csökkentse a kézi munkát, és pontos adatokat tartson fenn."
+image: /images/user-guide/workflows/internal-automations.png
+sectionInfo: Automatizálja a folyamatokat és integrálja külső eszközökkel
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/internal-automations.png" alt="Header" />
+</Frame>
+
+Az alábbiakban olyan munkafolyamat-példákat talál, amelyeket bevezethet az ismétlődő feladatok automatizálására, hogy csökkentse a kézi munkát és naprakészen tartsa adatait.
+
+## Adatkezelési automatizálások
+
+### Személyes e-mailek automatikus jelölése
+
+**Probléma**: Csapatának azonosítania kell a személyes és üzleti e-mail címeket a jobb célzás és megfelelőség érdekében.
+
+**Megoldás**: Hozzon létre egy munkafolyamatot, amely automatikusan frissíti az "ez személyes e-mail" mezőt, amikor egy e-mail cím hozzáadásra vagy frissítésre kerül.
+
+**Indítóesemény**: Rekord frissítve (személyek objektum, e-mail mező)
+
+**Műveletek**:
+
+- Kódművelet az e-mail domain ellenőrzésére, hogy egyezik-e a gyakori személyes szolgáltatókkal (gmail.com, yahoo.com stb.)
+- Rekord frissítése a "személyes e-mail" jelzés beállításához
+
+### Lead Assignment - Round Robin
+
+**Probléma**: Az új lead-eket egyenlően kell elosztani az értékesítési csapat között, hogy kiegyensúlyozott legyen a munkaterhelés.
+
+**Solution**: Automatically assign new leads to sales reps using a round-robin system.
+
+**Indítóesemény**: Rekord létrehozva (személyek objektum)
+
+**Műveletek**:
+
+- Rekord keresése az utoljára hozzárendelt képviselő megtalálásához
+- Kódművelet a következő képviselő meghatározására a körforgásban
+- Update Record to assign the lead to the selected rep
+- Send Email to notify the assigned rep
+
+### Lead kiosztás - Területi alapú
+
+**Probléma**: A lead-eket földrajzi területek vagy vállalati jellemzők alapján kell kiosztani.
+
+**Megoldás**: Irányítsa a lead-eket megfelelő értékesítési képviselőhöz helyszín, vállalatméret vagy iparág alapján.
+
+**Indítóesemény**: Rekord létrehozva (személyek vagy vállalatok objektum)
+
+**Műveletek**:
+
+- Kódművelet terület meghatározására a helyszín/iparági szabályok alapján
+- Rekord keresése a terület tulajdonosának megtalálásához
+- Rekord frissítése a lead kiosztásához
+- Rekord létrehozása követési feladathoz
+
+## Értékesítési folyamat automatizálások
+
+### Lehetőség szakasz kezelése - Zárva megnyert
+
+**Probléma**: Amikor az üzletek lezárulnak, sok manuális frissítés szükséges különböző rekordok és csapattagok között.
+
+**Megoldás**: Kezelje automatikusan az összes győzelem utáni tevékenységet, amikor egy lehetőség állapota "Zárva megnyert".
+
+**Indítóesemény**: Rekord frissítve (Lehetőségek objektum, szakasz mező = "Zárva megnyert")
+
+**Műveletek**:
+
+- Rekord frissítése a vállalat típusának megváltoztatására "Kilátásból" "Ügyfélre"
+- Rekord létrehozása az onboarding feladatokhoz a számlavezetőhöz rendelve
+- Email értesítés küldése az ügyfél siker csapatnak
+- HTTP kérés küldése a külső számlázási rendszer frissítéséhez
+
+### Lehetőség szakasz kezelése - Zárva elvesztett megújítás
+
+**Probléma**: Amikor a megújító lehetőségek elvesznek, frissíteni kell az ügyfél státuszát a megfelelő fiókkezelés érdekében.
+
+**Megoldás**: Automatikusan frissítse az ügyfél státuszát, amikor a megújítási üzletek elvesznek.
+
+**Indítóesemény**: Rekord frissítve (Lehetőségek objektum, szakasz = "Zárva elveszített" ÉS típus = "Megújítás")
+
+**Műveletek**:
+
+- Rekord frissítése a vállalat típusának megváltoztatására "Ügyfélből" "Vesztett ügyfélre"
+- Rekord létrehozása a lemorzsolódás elemzési feladathoz
+- Email figyelmeztetés küldése az ügyfél siker menedzsernek
+- Rekord frissítése a lemorzsolódási dátum és ok hozzáadásához
+
+### Állott lehetőségek figyelmeztetései
+
+**Probléma**: A lehetőségek frissítés nélkül maradnak, ami miatt az üzletek elhidegülnek és az előrejelzések megbízhatatlanná válnak.
+
+**Megoldás**: Küldjön automatikus figyelmeztetéseket, ha a lehetőségek nem frissültek nemrégiben.
+
+**Indítóesemény**: Menetrend szerint (naponta)
+
+**Műveletek**:
+
+- Search Records for opportunities not updated in X days
+- Kódművelet a figyelmeztető üzenet formázására lehetőség részleteivel
+- Email küldése a lehetőség tulajdonosának és menedzsernek
+- Rekord létrehozása követési feladathoz, ha nincs válasz
+
+## Productivity Automations
+
+### Heti feladat összefoglaló
+
+**Probléma**: A csapattagok elveszítik a nyomon követést a közelgő feladataikról és határidejükről.
+
+**Megoldás**: Küldjön automatikus heti email emlékeztetőket a feladat összefoglalókkal.
+
+**Indítóesemény**: Menetrend szerint (minden hétfőn 8 órakor)
+
+**Műveletek**:
+
+- Rekord keresése a héten esedékes feladatok megtalálásához felelőse által
+- Kódművelet feladat lista formázásához személyenként
+- Send Email to each team member with their task recap
+- Send Email to managers with team overview
+
+### Találkozó utókövető automatizálás
+
+**Probléma**: Fontos intézkedések a találkozókról elfelejtődnek vagy késnek.
+
+**Megoldás**: Automatikusan hozzon létre követési feladatokat, amikor találkozók ütemeződnek vagy befejeződnek.
+
+**Indítóesemény**: Rekord létrehozva (Tevékenységek objektum, típus = "Találkozó")
+
+**Műveletek**:
+
+- Rekord létrehozása elő-meeting előkészítési feladathoz
+- Rekord létrehozása utó-meeting követési feladathoz
+- Email emlékeztető küldése a résztvevőknek
+- Rekord frissítése a feladatok összekapcsolására a találkozóval
+
+### Objektumközi mező szinkronizálása
+
+**Probléma**: Szüksége van információra kapcsolódó rekordokból, amelyek könnyen elérhetőek (pl.: fő kapcsolat e-mail cím az lehetőségek rekordján).
+
+**Megoldás**: Automatikusan szinkronizálja a mezőket a kapcsolódó objektumok között, amíg a beágyazott mezők elérhetők lesznek.
+
+**Indítóesemény**: Rekord frissítve (Lehetőségek objektum, Kapcsolattartó mező)
+
+**Műveletek**:
+
+- Rekord keresése a kapcsolt személy adatainak megtalálásához
+- Rekord frissítése az e-mail cím lehetőségre másolására
+- Rekord frissítése a telefonszám lehetőségre másolására
+- Rekord frissítése a vállalati információ másolásához
+
+## Adat ellenőrzés és tisztítás
+
+### Telefonszám-szabványosítás
+
+**Probléma**: A telefonszámokat különböző formátumokban adják meg, ami megnehezíti a hívásra vagy üzenetküldésre való használatukat.
+
+**Solution**: Automatically format phone numbers to a standard format when they're entered.
+
+**Indítóesemény**: Rekord frissítve (Személyek objektum, telefonszám mező)
+
+**Műveletek**:
+
+- Kódművelet a telefonszám elemzésére és formázására
+- Rekord frissítése szabványosított telefon formátummal
+- Rekord frissítése az országkód hozzáadására, ha hiányzik
+
+For more complex automation needs, consider our [Professional Services](/l/hu/user-guide/workflows/professional-services) or explore [External Tool Integration](/l/hu/user-guide/workflows/external-tool-integration).
+

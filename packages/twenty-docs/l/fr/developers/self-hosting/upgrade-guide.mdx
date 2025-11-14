@@ -156,7 +156,7 @@ Si vous souhaitez migrer votre base de données vers la nouvelle image postgres:
 1. Exportez votre base de données depuis l'ancien conteneur postgres-spilo
 
 ```
-docker exec -it twenty-db-1 sh 
+docker exec -it twenty-db-1 sh
 pg_dump -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} > databases_backup.sql
 exit
 docker cp twenty-db-1:/home/postgres/databases_backup.sql .

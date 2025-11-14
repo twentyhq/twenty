@@ -1,0 +1,183 @@
+---
+title: crwdns60516:0crwdne60516:0
+image: crwdns60518:0crwdne60518:0
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+## crwdns60520:0crwdne60520:0
+
+crwdns60522:0crwdne60522:0
+
+crwdns60524:0crwdne60524:0
+
+crwdns60526:0crwdne60526:0
+
+## crwdns60528:0crwdne60528:0
+
+crwdns60530:0crwdne60530:0
+
+crwdns60532:0crwdne60532:0
+
+## crwdns60534:0crwdne60534:0
+
+crwdns60536:0crwdne60536:0
+
+1. crwdns60538:0#what-is-a-hotkey-scope-crwdne60538:0
+2. crwdns60540:0crwdne60540:0
+
+crwdns60542:0crwdne60542:0
+
+## crwdns60544:0crwdne60544:0
+
+crwdns60546:0crwdne60546:0
+
+1. crwdns60548:0crwdne60548:0
+2. crwdns60550:0crwdne60550:0
+
+crwdns60552:0crwdne60552:0
+
+### crwdns60554:0crwdne60554:0
+
+crwdns60556:0crwdne60556:0
+
+```tsx
+const PageListeningEnter = () => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  // 1. Set the hotkey scope in a useEffect
+  useEffect(() => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleEnterPage,
+    );
+
+    // Revert to the previous hotkey scope when the component is unmounted
+    return () => {
+      goBackToPreviousHotkeyScope();
+    };
+  }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
+
+  // 2. Use the useScopedHotkeys hook
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      // Some logic executed on this page when the user presses Enter
+      // ...
+    },
+    ExampleHotkeyScopes.ExampleEnterPage,
+  );
+
+  return <div>My page that listens for Enter</div>;
+};
+```
+
+### crwdns60558:0crwdne60558:0
+
+crwdns60560:0crwdne60560:0
+
+crwdns60562:0crwdne60562:0
+
+```tsx
+const ExamplePageWithModal = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  const handleOpenModalClick = () => {
+    // 1. Set the hotkey scope when user opens the modal
+    setShowModal(true);
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleModal,
+    );
+  };
+
+  const handleModalClose = () => {
+    // 1. Revert to the previous hotkey scope when the modal is closed
+    setShowModal(false);
+    goBackToPreviousHotkeyScope();
+  };
+
+  return <div>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
+    {showModal && <MyModalComponent onClose={handleModalClose} />}
+  </div>;
+};
+```
+
+crwdns60564:0crwdne60564:0
+
+```tsx
+const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onClose()
+    },
+    ExampleHotkeyScopes.ExampleModal,
+  );
+
+  return <div>My modal component</div>;
+};
+```
+
+crwdns60566:0crwdne60566:0
+
+crwdns60568:0crwdne60568:0
+
+## crwdns60570:0crwdne60570:0
+
+crwdns60572:0crwdne60572:0 crwdns60574:0crwdne60574:0
+
+crwdns60576:0crwdne60576:0
+
+crwdns60578:0crwdne60578:0
+
+crwdns60580:0crwdne60580:0
+
+```tsx
+export enum PageHotkeyScope {
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
+}
+```
+
+crwdns60582:0crwdne60582:0
+
+```tsx
+export const currentHotkeyScopeState = createState<HotkeyScope>({
+  key: 'currentHotkeyScopeState',
+  defaultValue: INITIAL_HOTKEYS_SCOPE,
+});
+```
+
+crwdns60584:0crwdne60584:0 crwdns60586:0crwdne60586:0
+
+## crwdns60588:0crwdne60588:0
+
+crwdns60590:0https://react-hotkeys-hook.vercel.app/docs/introcrwdne60590:0
+
+crwdns60592:0crwdne60592:0

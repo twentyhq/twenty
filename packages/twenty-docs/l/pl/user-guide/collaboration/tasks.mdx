@@ -1,0 +1,118 @@
+---
+title: Zadania
+info: Zrozum, jak skutecznie zarządzać zadaniami w Twenty.
+image: /images/user-guide/tasks/tasks_header.png
+sectionInfo: Dowiedz się, jak wykorzystać notatki i zadania do lepszej współpracy z zespołem.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Zarządzaj wszystkimi zadaniami w swoim środowisku pracy, używając funkcji **Zadania**. Ten przewodnik pokaże, jak tworzyć i zarządzać zadaniami, przełączać się między nadchodzącymi a ukończonymi zadaniami, edytować szczegóły zadań i wiele więcej.
+
+## Typowe przypadki użycia
+
+### Sales Follow-ups
+
+- **Następne kroki spotkania**: Twórz zadania dla elementów akcji omówionych podczas rozmów z klientami
+- **Proposal Follow-ups**: Set reminders to check on pending proposals
+- **Przeglądy umów**: Zaplanuj zadania na negocjacje i zatwierdzenia umów
+
+### Sukces klienta
+
+- **Zadania wdrożeniowe**: Automatycznie twórz listy kontrolne wdrożeń po zakończeniu transakcji
+- **Przypomnienia o kontrolach**: Zaplanuj regularne rozmowy kontrolne ze zdrowiem klientów
+- **Przygotowanie do odnowienia**: Ustaw zadania na przygotowanie się do odnowienia umów na 90 dni przed
+
+### Zarządzanie projektami wewnętrznymi
+
+Poza sprzedażą i sukcesem klientów, Zadania wspierają szersze potrzeby organizacyjne:
+
+- **Rozwój produktu**: Śledź wydania funkcji, naprawy błędów i kamienie milowe rozwoju
+- **Kampanie marketingowe**: Zarządzaj rozpoczęciem kampanii, tworzeniem treści i działaniami promocyjnymi
+- **Operacje HR**: Obsługuj procesy rekrutacji, wdrażanie pracowników i oceny wydajności
+- **Zadania finansowe**: Planowanie przeglądów budżetowych, przetwarzanie faktur i raportowanie finansowe
+- **Operacje**: Koordynacja zarządzania obiektami, relacji z dostawcami i usprawnień procesów
+
+### Automatyczne tworzenie zadań
+
+Use [Workflows](/l/pl/user-guide/workflows/getting-started-workflows) to automatically create tasks:
+
+- **Wyzwalacze zdobytych transakcji**: Automatycznie twórz zadania wdrożeniowe przypisane do zespołu CS, gdy możliwości się zamykają
+- **Przypomnienia e-mailowe**: Ustaw cotygodniowe przypomnienia e-mailowe dla zadań planowanych na ten tydzień (wysyłane w każdy poniedziałek)
+- **Automatyzacja pipeline**: Utwórz zadania follow-up, gdy transakcje staną na konkretnym etapie
+- **Integracja spotkań**: Automatycznie generuj zadania z nagrań spotkań lub wydarzeń w kalendarzu
+
+## Funkcje zadań
+
+### Pole powiązań
+
+Zadania zawierają pole `Powiązania`, które pozwala dołączyć pojedyncze zadanie do wielu rekordów w różnych obiektach. Na przykład, możesz powiązać jedno zadanie follow-up z:
+
+- Osobą, którą musisz skontaktować
+- Firmą, którą reprezentują
+- Szansą, którą realizujesz
+- Wszystkimi istotnymi notatkami lub innymi zapisami
+
+Ta zmienna relacja zapewnia, że zadania są dostępne ze wszystkich istotnych stron rekordów i dają pełen kontekst.
+
+### Tagowanie użytkowników
+
+**Uwaga**: Tagowanie użytkowników w zadaniach nie jest obecnie dostępne. Planowane jest to na rok 2026, co pozwoli na wspomnienie członków zespołu i wyzwalanie powiadomień przy przypisywaniu lub aktualizacji zadań.
+
+## Tworzenie zadań
+
+Tworzenie zadań w Twenty jest płynne. Możesz albo:
+
+- Przejdź do karty `Zadania` i naciśnij przycisk `+` w prawym górnym rogu strony.
+- Użyj funkcji wyszukiwania, naciskając `cmd/ctrl + k`, a następnie wybierz 'Utwórz zadanie' z listy szybkich akcji.
+- Przejdź do strony `Rekordu` i naciśnij `+` w prawym górnym rogu strony lub przejdź do karty Zadania i naciśnij przycisk `Dodaj zadanie`.
+
+<VimeoEmbed videoId="928786754" title="Creating tasks" />
+
+### Dodawanie zawartości zadania
+
+Po utworzeniu zadania możesz wzbogacić jego treść, dodając tytuły, wypunktowania, a nawet obrazy. Aby to zrobić, naciśnij `/` i wprowadź żądaną komendę.
+
+## Viewing Tasks
+
+Strona **Zadania** wyświetla wszystkie twoje zadania w całym środowisku pracy. Tutaj możesz:
+
+- Filtruj zadania przypisane do konkretnego użytkownika, klikając przycisk z twoim imieniem w prawym górnym rogu ekranu.
+- Przełączaj się między nadchodzącymi (`Do zrobienia`) a ukończonymi (`Zrobione`) zadaniami, aby zobaczyć, co wymaga uwagi i co zostało ukończone.
+
+Możesz także zobaczyć zadania dla danego rekordu na jego stronie `Rekordu`.
+
+<VimeoEmbed videoId="927908280" title="Viewing tasks" />
+
+## Edycja zadań
+
+Aby edytować zadanie, kliknij jego kartę. To otworzy panel boczny oferujący następujące funkcje:
+
+- **Przypisanie i termin**: Zaktualizuj przypisanie lub edytuj termin.
+- **Komentarze**: Współpracuj z członkami zespołu, dodając komentarze do zadań, aby przekazać aktualizacje lub opinie.
+- **Automatyzacje**: Dzięki API i webhookom możesz także automatyzować tworzenie zadań wyzwalanych przez specyficzne działania w twoim środowisku pracy.
+
+## Oznaczanie zadań jako ukończone
+
+Aby oznaczyć zadanie jako ukończone:
+
+1. Znajdź zadanie na swojej stronie `Zadania` lub w ramach strony `Rekordu`.
+2. Kliknij koło po lewej stronie karty zadania, aby zmieniło się na oznaczenie ukończenia.
+3. Status zadania automatycznie zmieni się na `Zrobione`.
+
+Ta procedura pomoże utrzymać aktualny zapis twoich dokonań.
+
+<VimeoEmbed videoId="927910083" title="Marking tasks as complete" />
+
+## Usunięcie zadania
+
+Aby trwale usunąć zadanie:
+
+1. Otwórz zadanie, które chcesz usunąć, klikając na jego kartę, z poziomu strony `Zadania` lub w ramach strony `Rekordu`.
+2. Kliknij ikonę kosza znajdującą się w prawym górnym rogu panelu szczegółów zadania.
+
+Należy pamiętać, że usunięcie zadania jest trwałe i nieodwracalne. Rozważ oznaczanie zadań jako `Zrobione`, jeśli istnieje szansa, że będziesz musiał do nich wrócić.

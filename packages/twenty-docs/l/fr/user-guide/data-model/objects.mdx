@@ -5,6 +5,8 @@ image: /images/user-guide/objects/objects_orange.png
 sectionInfo: Modèle de données flexible conçu pour soutenir vos processus métier uniques
 ---
 
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
 <Frame>
   <img src="/images/user-guide/objects/objects_orange.png" alt="Header" />
 </Frame>
@@ -40,24 +42,7 @@ Pour créer un nouvel objet personnalisé :
 1. Accédez à Paramètres dans la barre latérale à gauche.
 2. Sous Espace de travail, allez au Modèle de données. Ici, vous pourrez voir un aperçu de tous vos objets Standard et Personnalisés (actifs et désactivés).
 
-<div style={{padding:'71.24% 0 0 0', position:'relative', margin: '32px 0px 0px'}}>
-  <iframe
-    src="https://player.vimeo.com/video/926288174?autoplay=1&loop=1&autopause=0&background=1&amp;app_id=58479"
-    frameBorder="0"
-    allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
-    style={{
-      position:'absolute',
-      top:0,
-      left:0,
-      width:'100%',
-      height:'100%',
-      borderRadius: '16px',
-      border:'2px solid black'
-    }}
-    title="Export data"
-  ></iframe>
-</div>
-<script src="https://player.vimeo.com/api/player.js"></script>
+<VimeoEmbed videoId="926288174" title="Video demonstration" />
 
 3. Cliquez sur `+ Nouvel objet` en haut. Entrez le nom (à la fois singulier et pluriel), choisissez une icône, ajoutez une description pour votre objet personnalisé et cliquez sur Enregistrer (en haut à droite). En utilisant Listing comme exemple d'objet personnalisé, le singulier serait "listing" et le pluriel serait "listings" avec une description comme "Les annonces que les hôtes ont créées pour présenter leur propriété."
 
@@ -65,24 +50,7 @@ Pour créer un nouvel objet personnalisé :
 Les noms au singulier et au pluriel doivent être différents. Ceci est nécessaire pour que notre API GraphQL fonctionne correctement.
 </Warning>
 
-<div style={{padding:'71.24% 0 0 0', position:'relative', margin: '32px 0px 0px'}}>
-  <iframe
-    src="https://player.vimeo.com/video/926293493?autoplay=1&loop=1&autopause=0&background=1&amp;app_id=58479"
-    frameBorder="0"
-    allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
-    style={{
-      position:'absolute',
-      top:0,
-      left:0,
-      width:'100%',
-      height:'100%',
-      borderRadius: '16px',
-      border:'2px solid black'
-    }}
-    title="Export data"
-  ></iframe>
-</div>
-<script src="https://player.vimeo.com/api/player.js"></script>
+<VimeoEmbed videoId="926293493" title="Video demonstration" />
 
 4. Une fois que vous avez créé votre objet personnalisé, vous pourrez le gérer. Vous pouvez éditer le nom, l'icône et la description, consulter les différents champs et ajouter d'autres champs.
 

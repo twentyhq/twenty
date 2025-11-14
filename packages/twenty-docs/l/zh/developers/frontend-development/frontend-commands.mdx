@@ -1,0 +1,96 @@
+---
+title: 前端命令
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
+</Frame>
+
+## 有用的命令
+
+### 啟動應用
+
+```bash
+npx nx start twenty-front
+```
+
+### Regenerate graphql schema based on API graphql schema
+
+```bash
+npx nx run twenty-front:graphql:generate --configuration=metadata
+```
+
+或
+
+```bash
+npx nx run twenty-front:graphql:generate
+```
+
+### 語法檢查
+
+```bash
+npx nx run twenty-front:lint # pass --fix to fix lint errors
+```
+
+## 翻譯
+
+```bash
+npx nx run twenty-front:lingui:extract
+npx nx run twenty-front:lingui:compile
+```
+
+### 測試
+
+```bash
+npx nx run twenty-front:test # run jest tests
+npx nx run twenty-front:storybook:serve:dev # run storybook
+npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve:dev to be running)
+npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
+```
+
+## 技術棧
+
+The project has a clean and simple stack, with minimal boilerplate code.
+
+**應用**
+
+- [React](https://react.dev/)
+- [Apollo](https://www.apollographql.com/docs/)
+- [GraphQL Codegen](https://the-guild.dev/graphql/codegen)
+- [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
+- [TypeScript](https://www.typescriptlang.org/)
+
+**測試**
+
+- [Jest](https://jestjs.io/)
+- [Storybook](https://storybook.js.org/)
+
+**工具**
+
+- [Yarn](https://yarnpkg.com/)
+- [Craco](https://craco.js.org/docs/)
+- [ESLint](https://eslint.org/)
+
+## 架構
+
+### 路由
+
+[React Router](https://reactrouter.com/) 負責路由操作。
+
+為了避免不必要的[重新渲染](/l/zh/developers/frontend-development/best-practices-front#managing-re-renders)，所有路由邏輯位於 `PageChangeEffect` 的 `useEffect` 中。
+
+### 狀態管理
+
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) 負責狀態管理。
+
+查看[最佳實踐](/l/zh/developers/frontend-development/best-practices-front#state-management)，了解有關狀態管理的更多信息。
+
+## 測試
+
+[Jest](https://jestjs.io/) 用作單元測試工具，而 [Storybook](https://storybook.js.org/) 用於元件測試。
+
+Jest 主要用於測試實用函數，而不是元件本身。
+
+Storybook 用於測試隔離元件的行為同時展示設計系統。
+

@@ -1,0 +1,458 @@
+---
+title: פריט תפריט
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+פריט תפריט רב תכליתי המיועד לשימוש בתפריט או ברשימת ניווט.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItem } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
+
+  const handleButtonClick = (event) => {
+    console.log("Icon button clicked!", event);
+  };
+
+  return (
+    <MenuItem
+      LeftIcon={IconBell}
+      accent="default"
+      text="Menu item text"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={true}
+      testId="menu-item-1"
+      onClick={handleMenuItemClick}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| תכונות          | סוג        | תיאור                                                                                                                     |
+| --------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------- |
+| LeftIcon        | רכיב איקון | איקון שמאלי אופציונלי שמוצג לפני הטקסט בפריט התפריט                                                                       |
+| accent          | string     | מגדיר את צבע המבטא של פריט התפריט. אפשרויות כוללות: `default`, `danger`, ו- `placeholder` |
+| טקסט            | string     | התוכן של פריט התפריט                                                                                                      |
+| כפתורי אייקונים | מַעֲרָךְ   | מערך של אובייקטים המייצגים כפתורי אייקונים נוספים המשויכים לפריט התפריט                                                   |
+| isTooltipOpen   | בוליאני    | שולט על הראות של הטיפ המשויך לפריט התפריט                                                                                 |
+| testId          | string     | המאפיין data-testid לצורכי בדיקה                                                                                          |
+| onClick         | פונקציה    | פונקציית קריאה חזרה המופעלת כאשר לוחצים על פריט התפריט                                                                    |
+| className       | string     | שם אופציונלי למטרת עיצוב נוסף                                                                                             |
+
+</Tab>
+</Tabs>
+
+## וריאציות
+
+וריאציות שונות של רכיב פריט התפריט כוללות את הבאות:
+
+### פקודה
+
+פריט תפריט בסגנון פקודה בתוך תפריט להראות קיצורי מקלדת.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemCommand } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleCommandClick = () => {
+    console.log("Command clicked!");
+  };
+
+  return (
+    <MenuItemCommand
+      LeftIcon={IconBell}
+      text="First Option"
+      firstHotKey="⌘"
+      secondHotKey="1"
+      isSelected={true}
+      onClick={handleCommandClick}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| תכונות       | סוג         | תיאור                                                  |
+| ------------ | ----------- | ------------------------------------------------------ |
+| LeftIcon     | רכיב אייקון | איקון שמאלי אופציונלי שמוצג לפני הטקסט בפריט התפריט    |
+| טקסט         | string      | התוכן של פריט התפריט                                   |
+| firstHotKey  | string      | קיצור המקלדת הראשון המשויך לפקודה                      |
+| secondHotKey | string      | קיצור המקלדת השני המשויך לפקודה                        |
+| isSelected   | בוליאני     | מציין האם הפריט בתפריט נבחר או מודגש                   |
+| onClick      | פונקציה     | פונקציית קריאה חזרה המופעלת כאשר לוחצים על פריט התפריט |
+| className    | string      | שם אופציונלי למטרת עיצוב נוסף                          |
+
+</Tab>
+</Tabs>
+
+### ניתן לגרור
+
+רכיב תפריט שניתן לגרור והמיועד לשימוש בתפריט או ברשימה שבהם ניתן לגרור פריטים ולבצע פעולות נוספות באמצעות כפתורי אייקונים.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItemDraggable } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
+
+  return (
+    <MenuItemDraggable
+      LeftIcon={IconBell}
+      accent="default"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={false}
+      onClick={handleMenuItemClick}
+      text="Menu item draggable"
+      isDragDisabled={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| תכונות          | סוג         | תיאור                                                                                       |
+| --------------- | ----------- | ------------------------------------------------------------------------------------------- |
+| LeftIcon        | רכיב אייקון | איקון שמאלי אופציונלי שמוצג לפני הטקסט בפריט התפריט                                         |
+| accent          | string      | צבע הדגשים של פריט התפריט. יכול להיות `default`, `placeholder`, ו- `danger` |
+| כפתורי אייקונים | מַעֲרָךְ    | מערך של אובייקטים המייצגים כפתורי אייקונים נוספים המשויכים לפריט התפריט                     |
+| isTooltipOpen   | בוליאני     | שולט על הראות של הטיפ המשויך לפריט התפריט                                                   |
+| onClick         | פונקציה     | פונקציית קריאה חוזרת שתופעל כאשר נלחץ על הקישור                                             |
+| טקסט            | string      | התוכן של פריט התפריט                                                                        |
+| isDragDisabled  | בוליאני     | מציין האם הגרירה מושבתת                                                                     |
+| className       | string      | שם אופציונלי לעיצוב נוסף                                                                    |
+
+</Tab>
+</Tabs>
+
+### בחירה מרובה
+
+מספק דרך למימוש פונקציונליות בחירה מרובה עם תיבת סימון נלווית.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemMultiSelect } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  return (
+    <MenuItemMultiSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| תכונות         | סוג         | תיאור                                                 |
+| -------------- | ----------- | ----------------------------------------------------- |
+| LeftIcon       | רכיב אייקון | איקון שמאלי אופציונלי שמוצג לפני הטקסט בפריט התפריט   |
+| טקסט           | string      | התוכן של פריט התפריט                                  |
+| selected       | בוליאני     | מציין האם פריט התפריט נבחר (מסומן) |
+| onSelectChange | פונקציה     | פונקציית קריאה חזרה מופעלת כאשר מצב תיבת הבחירה משתנה |
+| className      | string      | שם אופציונלי לעיצוב נוסף                              |
+
+</Tab>
+</Tabs>
+
+### בחירה מרובה עם אווטאר
+
+פריט תפריט בחירה מרובה עם אווטאר, תיבת סימון לבחירה ותוכן טקסטואלי.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+  return (
+    <MenuItemMultiSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| תכונות         | סוג         | תיאור                                                 |
+| -------------- | ----------- | ----------------------------------------------------- |
+| אווטאר         | `ReactNode` | האווטאר או האייקון שיוצגו בצד השמאלי של פריט התפריט   |
+| טקסט           | string      | התוכן של פריט התפריט                                  |
+| selected       | בוליאני     | מציין האם פריט התפריט נבחר (מסומן) |
+| onSelectChange | פונקציה     | פונקציית קריאה חזרה מופעלת כאשר מצב תיבת הבחירה משתנה |
+| className      | מחרוזת      | שם אופציונלי למטרת עיצוב נוסף                         |
+
+</Tab>
+</Tabs>
+
+### ניווט
+
+פריט תפריט הכולל אייקון שמאלי אופציונלי, תוכן טקסטואלי ואייקון חץ ימני.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemNavigate } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleNavigation = () => {
+    console.log("Navigate to another page");
+  };
+
+  return (
+    <MenuItemNavigate
+      LeftIcon={IconBell}
+      text="First Option"
+      onClick={handleNavigation}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| תכונות    | סוג         | תיאור                                               |
+| --------- | ----------- | --------------------------------------------------- |
+| LeftIcon  | רכיב אייקון | איקון שמאלי אופציונלי שמוצג לפני הטקסט בפריט התפריט |
+| טקסט      | string      | התוכן של פריט התפריט                                |
+| onClick   | פונקציה     | פונקציית קריאה מופעלת כאשר נלחץ פריט התפריט         |
+| className | string      | שם אופציונלי לעיצוב נוסף                            |
+
+</Tab>
+</Tabs>
+
+### בחר.
+
+פריט תפריט שניתן לבחור בו, הכולל תוכן שמאלי אופציונלי (אייקון וטקסט) וסמל מדד (סמל צ'ק) למצב בחירה.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemSelect } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| תכונות    | סוג        | תיאור                                                 |
+| --------- | ---------- | ----------------------------------------------------- |
+| LeftIcon  | רכיב איקון | איקון שמאלי אופציונלי שמוצג לפני הטקסט בפריט התפריט   |
+| טקסט      | מחרוזת     | התוכן של פריט התפריט                                  |
+| selected  | בוליאני    | מציין האם פריט התפריט נבחר (מסומן) |
+| לא פעיל   | בוליאני    | מציין האם פריט התפריט מנוטרל                          |
+| מרחף      | בוליאני    | מציין האם פריט התפריט נמצא במצב ריחוף                 |
+| onClick   | function   | פונקציית קריאה מופעלת כאשר נלחץ פריט התפריט           |
+| className | string     | שם אופציונלי למטרת עיצוב נוסף                         |
+
+</Tab>
+</Tabs>
+
+### בחירה עם אווטאר
+
+פריט תפריט שניתן לבחור בו עם אווטאר, הכולל תוכן שמאלי אופציונלי (אווטאר וטקסט) ופריט מסמל למדד מצב הבחירה (סמל צ'ק).
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemSelectAvatar } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      testId="menu-item-test"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| תכונות    | סוג         | תיאור                                                 |
+| --------- | ----------- | ----------------------------------------------------- |
+| אווטאר    | `ReactNode` | האווטאר או האייקון שיוצגו בצד השמאלי של פריט התפריט   |
+| טקסט      | string      | התוכן של פריט התפריט                                  |
+| selected  | בוליאני     | מציין האם פריט התפריט נבחר (מסומן) |
+| לא פעיל   | בוליאני     | מציין האם פריט התפריט מנוטרל                          |
+| מרחף      | בוליאני     | מציין האם פריט התפריט נמצא במצב ריחוף                 |
+| testId    | string      | המאפיין data-testid לצורכי בדיקה                      |
+| onClick   | function    | פונקציית קריאה מופעלת כאשר נלחץ פריט התפריט           |
+| className | string      | שם אופציונלי לעיצוב נוסף                              |
+
+</Tab>
+</Tabs>
+
+### בחר צבע
+
+פריט תפריט שניתן לבחור עם דוגמת צבע למצבים בהם רוצים שמשתמשים יבחרו צבע מתוך תפריט.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemSelectColor } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelectColor
+      color="green"
+      selected={true}
+      disabled={false}
+      hovered={true}
+      variant="default"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| תכונות    | סוג      | תיאור                                                                                                                                                                    |
+| --------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| צבע       | string   | צבע התמה שמוצג כדוגמה בפריט התפריט. אפשרויות כוללות: `ירוק`, `טורקיז`, `שמים`, `כחול`, `סגול`, `ורוד`, `אדום`, `כתום`, `צהוב`, ו- `אפור` |
+| selected  | בוליאני  | מציין האם פריט התפריט נבחר (מסומן)                                                                                                                    |
+| לא פעיל   | בוליאני  | מציין האם פריט התפריט מנוטרל                                                                                                                                             |
+| מרחף      | בוליאני  | מציין האם פריט התפריט נמצא במצב ריחוף                                                                                                                                    |
+| גרסה      | מחרוזת   | גרסה של דוגמת הצבע. יכול להיות או `ברירת מחדל` או `צינור`                                                                                                |
+| onClick   | function | פונקציית קריאה מופעלת כאשר נלחץ פריט התפריט                                                                                                                              |
+| className | string   | שם אופציונלי לעיצוב נוסף                                                                                                                                                 |
+
+</Tab>
+</Tabs>
+
+### מתג
+
+פריט תפריט עם מתג לשימוש לבחירה או ביטול של תכונה מסוימת
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from '@tabler/icons-react';
+
+import { MenuItemToggle } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+
+  return (
+    <MenuItemToggle
+      LeftIcon={IconBell}
+      text="First Option"
+      toggled={true}
+      toggleSize="small"
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| תכונות         | סוג         | תיאור                                                             |
+| -------------- | ----------- | ----------------------------------------------------------------- |
+| LeftIcon       | רכיב אייקון | איקון שמאלי אופציונלי שמוצג לפני הטקסט בפריט התפריט               |
+| טקסט           | string      | התוכן של פריט התפריט                                              |
+| toggled        | בוליאני     | Indicates whether the toggle switch is in the "on" or "off" state |
+| onToggleChange | פונקציה     | פונקציית קריאה מופעלת כאשר מתרחש שינוי במצב המתג                  |
+| toggleSize     | string      | גודל מתג ההחלפה. It can be either \              |
+| className      | string      | שם אופציונלי למטרת עיצוב נוסף                                     |
+
+</Tab>
+</Tabs>

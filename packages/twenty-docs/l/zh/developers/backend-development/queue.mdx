@@ -1,0 +1,47 @@
+---
+title: Message Queue
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+佇列促進異步操作的執行。 它們可用於執行背景任務，例如在註冊時發送歡迎電子郵件。
+每個用例都有其自己的佇列類，以 `MessageQueueServiceBase` 為基礎進行擴展。
+
+目前，我們僅支持 `bull-mq`[bull-mq](https://bullmq.io/) 作為佇列驅動。
+
+## 創建和使用新佇列的步驟
+
+1. 在 enum `MESSAGE_QUEUES` 下為您的新佇列添加佇列名稱。
+2. 提供佇列的工廠實現，佇列名稱作為依賴注入標記。
+3. 在需要的模塊/服務中注入您創建的佇列，佇列名稱作為依賴注入標記。
+4. 添加與生產者類似的基於標記注入的工作類。
+
+### 使用範例
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```
+

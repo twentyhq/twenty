@@ -1,0 +1,45 @@
+---
+title: Obiekty niestandardowe
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+Obiekty to struktury, które umożliwiają przechowywanie danych (rekordów, atrybutów i wartości) specyficznych dla organizacji. Twenty udostępnia zarówno obiekty standardowe, jak i niestandardowe.
+
+Obiekty standardowe to wbudowane obiekty z zestawem atrybutów dostępnych dla wszystkich użytkowników. Przykłady obiektów standardowych w Twenty to Firma i Osoba. Obiekty standardowe mają standardowe pola, które są dostępne dla wszystkich użytkowników Twenty, takie jak Company.displayName.
+
+Obiekty niestandardowe to obiekty, które można utworzyć, aby przechowywać informacje unikalne dla organizacji. Nie są one wbudowane; członkowie Twojego środowiska pracy mogą tworzyć i dostosowywać obiekty niestandardowe, aby przechowywać informacje, dla których obiekty standardowe nie są odpowiednie.
+
+## Schemat na wysokim poziomie
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/custom-object-schema.png" alt="High level schema" />
+</div>
+
+<br/>
+
+## Jak to działa
+
+Obiekty niestandardowe pochodzą z tabel metadanych, które określają kształt, nazwę i typ obiektów. Wszystkie te informacje są obecne w bazie schematów metadanych, składającej się z tabel:
+
+- **DataSource**: Szczegóły miejsca przechowywania danych.
+- **Obiekt**: Opisuje obiekt i powiązuje go z DataSource.
+- **Pole**: Opisuje pola obiektu i łączy się z obiektem.
+
+Aby dodać obiekt niestandardowy, członek środowiska pracy wyśle zapytanie do /metadata API. To aktualizuje metadane zgodnie z potrzebami i oblicza schemat GraphQL na podstawie metadanych, przechowując go w pamięci podręcznej GQL do późniejszego użycia.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/add-custom-objects.jpeg" alt="Query the /metadata API to add custom objects" />
+</div>
+
+<br/>
+
+Aby pobrać dane, proces obejmuje wysyłanie zapytań przez punkt końcowy /graphql i przetwarzanie ich przez Query Resolver.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/custom-object-schema.png" alt="Query the /graphql endpoint to fetch data" />
+</div>
+

@@ -1,0 +1,44 @@
+---
+title: Tag
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+Komponent do wizualnej kategoryzacji lub oznaczania treści.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { Tag } from "@/ui/display/tag/components/Tag";
+
+export const MyComponent = () => {
+  return (
+    <Tag
+      className
+      color="red"
+      text="Urgent"
+      onClick={() => console.log("click")}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Właściwości (Props) | Typ         | Opis                                                                                                                                                                              |
+| -------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| nazwaKlasy                             | ciąg znaków | Opcjonalna nazwa dla dodatkowego stylowania                                                                                                                                       |
+| kolor                                  | ciąg znaków | Kolor etykiety. Opcje obejmują: `zielony`, `turkusowy`, `niebo`, `niebieski`, `purpurowy`, `różowy`, `czerwony`, `pomarańczowy`, `żółty`, `szary` |
+| tekst                                  | ciąg znaków | The content of the tag                                                                                                                                                            |
+| naKliknięciu                           | funkcja     | Opcjonalna funkcja wywoływana, gdy użytkownik kliknie etykietę                                                                                                                    |
+
+</Tab>
+
+</Tabs>

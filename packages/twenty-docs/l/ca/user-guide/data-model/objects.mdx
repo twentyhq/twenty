@@ -1,0 +1,60 @@
+---
+title: Objectes
+info: "Aprèn sobre objectes estàndard i com crear-ne de personalitzats per a les necessitats del teu negoci."
+image: /images/user-guide/objects/objects_orange.png
+sectionInfo: Model de dades flexible dissenyat per donar suport als teus processos empresarials únics
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/objects/objects_orange.png" alt="Header" />
+</Frame>
+
+## Standard Objects
+
+Els objectes estàndard són entitats predefinides en el teu espai de treball per ajudar-te a començar. Formen part d'un model de dades compartit accessible per a tots els usuaris de Twenty. Pots utilitzar-los tal com són, personalitzar-los o desactivar-los.
+
+<img src="/images/user-guide/objects/standard-objects.png"style={{width:'100%'}}/>
+
+### Persones
+
+L'objecte 'Persones' emmagatzema els teus contactes. Inclou detalls de contacte i historial d’interaccions, perquè puguis veure totes les interaccions amb clients en un sol lloc.
+
+### Empresa
+
+L'objecte 'Empreses' emmagatzema els teus comptes comercials. Inclou detalls com la indústria, la mida i la ubicació. Les empreses es connecten amb els objectes 'Persones' i 'Oportunitats'.
+
+### Oportunitats
+
+L'objecte 'Oportunitats' emmagatzema dades relatives a les ofertes. Segueix la progressió de les vendes potencials, des del prospecte fins al tancament, enregistrant fases, mides de l'oferta, compte associat i data de tancament prevista. Pots veure la teva cartera de vendes en un disseny kanban.
+
+## Objectes personalitzats
+
+Els objectes personalitzats et permeten emmagatzemar informació que és única per a la teva organització i que els objectes estàndard no poden gestionar. Per exemple, si ets SpaceX, potser voldràs crear un objecte personalitzat per a Coets i Llançaments.
+
+<img src="/images/user-guide/objects/custom-objects.png"style={{width:'100%'}}/>
+
+### Creació d'un nou objecte personalitzat
+
+Per crear un nou objecte personalitzat:
+
+1. Ves a Configuració a la barra lateral de l'esquerra.
+2. A sota de Espai de Treball, ves a Model de dades. Aquí podràs veure una visió general de tots els teus objectes Estàndard i Personalitzats (tant actius com desactivats).
+
+<VimeoEmbed videoId="926288174" title="Video demonstration" />
+
+3. Fes clic a `+ Nou objecte` a la part superior. Introdueix el nom (tant en singular com en plural), tria una icona i afegeix una descripció per al teu objecte personalitzat i prem Desa (a la part superior dreta). Utilitzant 'Llistat' com a exemple d'objecte personalitzat, el singular seria "llistat" i el plural seria "llistats" juntament amb una descripció com "Llistats que els amfitrions han creat per mostrar la seva propietat."
+
+<Warning>
+The singular and plural names must be different. Aquest és un requisit perquè la nostra API GraphQL funcioni correctament.
+</Warning>
+
+<VimeoEmbed videoId="926293493" title="Video demonstration" />
+
+4. Un cop creïs el teu objecte personalitzat, podràs gestionar-lo. Pots editar el nom, la icona i la descripció, veure els diversos camps i afegir-ne més.
+
+<img src="/images/user-guide/objects/customize-fields.png"style={{width:'100%'}}/>
+
+**Nota:** Si no estàs segur de si necessites un nou objecte o camp, consulta [aquest article](/l/ca/user-guide/data-model/customize-your-data-model) per obtenir orientació sobre el disseny del teu model de dades.
+

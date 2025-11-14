@@ -12,10 +12,14 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import {
+  MessageChannelPendingGroupEmailsAction,
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import {
+  MessageFolderPendingSyncAction,
+  MessageFolderWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
@@ -51,6 +55,19 @@ export class MessagingMessageListFetchService {
     workspaceId: string,
   ) {
     try {
+      if (
+        messageChannel.pendingGroupEmailsAction ===
+          MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_DELETION ||
+        messageChannel.pendingGroupEmailsAction ===
+          MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_IMPORT
+      ) {
+        this.logger.log(
+          `messageChannelId: ${messageChannel.id} Skipping message list fetch due to pending group emails action: ${messageChannel.pendingGroupEmailsAction}`,
+        );
+
+        return;
+      }
+
       await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
         [messageChannel.id],
       );
@@ -81,8 +98,7 @@ export class MessagingMessageListFetchService {
 
       await this.syncMessageFoldersService.syncMessageFolders({
         workspaceId,
-        messageChannelId: messageChannelWithFreshTokens.id,
-        connectedAccount: messageChannelWithFreshTokens.connectedAccount,
+        messageChannel: messageChannelWithFreshTokens,
         manager: datasource.manager,
       });
 
@@ -94,6 +110,7 @@ export class MessagingMessageListFetchService {
       const messageFolders = await messageFolderRepository.find({
         where: {
           messageChannelId: messageChannel.id,
+          pendingSyncAction: MessageFolderPendingSyncAction.NONE,
         },
       });
 

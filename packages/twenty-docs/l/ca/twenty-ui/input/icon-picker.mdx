@@ -1,0 +1,56 @@
+---
+title: Selector d'icones
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+Un selector d'icones basat en desplegables que permet als usuaris seleccionar una icona d'una llista.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import React, { useState } from "react";
+import { IconPicker } from "@/ui/input/components/IconPicker";
+
+export const MyComponent = () => {
+
+   const [selectedIcon, setSelectedIcon] = useState("");
+   const handleIconChange = ({ iconKey, Icon }) => {
+     console.log("Selected Icon:", iconKey);
+     setSelectedIcon(iconKey);
+   };
+
+  return (
+    <RecoilRoot>
+      <IconPicker
+        disabled={false}
+        onChange={handleIconChange}
+        selectedIconKey={selectedIcon}
+        variant="primary"
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Propietats            | Tipus   | Descripció                                                                                                                                     |
+| --------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| desactivat            | boolean | Desactiva el selector d'icones si està definit com a `true`                                                                                    |
+| onChange              | funció  | La funció de devolució que es desencadena quan l'usuari selecciona una icona. Rep un objecte amb propietats `iconKey` i `Icon` |
+| clauIconaSeleccionada | cadena  | La clau de la icona inicialment seleccionada                                                                                                   |
+| onClicFora            | funció  | Funció de devolució de crida desencadenada quan l'usuari fa clic fora del desplegable                                                          |
+| enTancar              | funció  | Funció de devolució de crida desencadenada quan es tanca el desplegable                                                                        |
+| enObrir               | funció  | Funció de devolució de crida desencadenada quan s'obre el desplegable                                                                          |
+| variant               | cadena  | L'estil visual de la icona clicable. Les opcions inclouen: `primari`, `secundari` i `terciari`                 |
+
+</Tab>
+</Tabs>

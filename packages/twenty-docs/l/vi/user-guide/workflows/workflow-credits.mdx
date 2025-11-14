@@ -1,0 +1,93 @@
+---
+title: Tín chỉ Quy trình công việc
+info: Hiểu cách tiêu thụ tín chỉ quy trình công việc, theo dõi và quản lý chi phí cho các tự động hóa của bạn.
+image: /images/user-guide/workflows/workflow-credits.png
+sectionInfo: Tự động hóa quy trình và tích hợp với các công cụ bên ngoài
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow-credits.png" alt="Header" />
+</Frame>
+
+Tín chỉ quy trình công việc cung cấp năng lượng cho các tự động hóa của bạn trong Twenty. Hiểu cách chúng hoạt động sẽ giúp bạn tối ưu hóa chi phí và quản lý ngân sách tự động hóa hiệu quả.
+
+## Phân bổ tín chỉ theo kế hoạch
+
+Tín chỉ quy trình công việc được phân bổ cho mỗi không gian làm việc dựa trên kế hoạch đăng ký của bạn:
+
+- **Dùng thử**: 5 triệu tín chỉ
+- **Kế hoạch Pro**: 10 triệu tín chỉ mỗi tháng
+- **Kế hoạch Tổ chức**: 20 triệu tín chỉ mỗi tháng
+
+## Cách Tiêu thụ Tín chỉ Hoạt động
+
+Tín chỉ được tiêu thụ khi quy trình công việc thực thi, không phải khi bạn tạo chúng. Mỗi hành động quy trình công việc tiêu thụ tín chỉ dựa trên độ phức tạp của nó:
+
+### Tiêu thụ Tín chỉ theo Loại Hành động
+
+- **Các hoạt động nội bộ cơ bản**: Tiêu thụ tín chỉ rất thấp
+  - Tìm kiếm Bản ghi
+  - Tạo Bản ghi
+  - Cập nhật Bản ghi
+  - Xóa Bản ghi
+  - Hành động biểu mẫu
+
+- **Các hoạt động phức tạp**: Tiêu thụ tín chỉ cao hơn
+  - Hành động mã (thực thi JavaScript)
+  - Yêu cầu HTTP đến các dịch vụ bên ngoài
+
+- **Các tính năng AI**: Tiêu thụ tín chỉ đáng kể (sắp ra mắt)
+  - Các gợi ý và xử lý AI sẽ tiêu thụ tín chỉ dựa trên mức sử dụng
+
+### Real-Time Deduction
+
+Tín chỉ được khấu trừ theo thời gian thực khi quy trình công việc thực thi. Có nghĩa là:
+
+- Quy trình công việc nháp không tiêu thụ tín chỉ
+- Only active, running workflows use your credit allocation
+- Quy trình công việc thất bại vẫn tiêu thụ tín chỉ cho các bước đã hoàn thành
+
+## Quản lý Tín chỉ
+
+### Kiểm tra Sử dụng Tín chỉ
+
+1. Đi tới **Cài đặt → Thanh toán**
+2. Xem sự tiêu thụ tín chỉ hiện tại và số dư còn lại của bạn
+3. Theo dõi các mô hình sử dụng để tối ưu hóa quy trình công việc của bạn
+
+### Mua Tín chỉ Bổ sung
+
+Nếu bạn cần thêm tín chỉ ngoài phân bổ kế hoạch của bạn:
+
+1. Đi tới **Cài đặt → Thanh toán**
+2. Nhấp vào tùy chọn để mua thêm tín chỉ. Các gói với kích cỡ khác nhau có sẵn.
+3. Tín chỉ được thêm vào số dư hiện tại của bạn
+
+## Thực Hành Tốt Nhất
+
+### Thiết kế Quy trình công việc Hiệu quả
+
+- **Bắt đầu Đơn giản**: Bắt đầu với các hành động cơ bản và thêm độ phức tạp dần dần
+- **Kiểm tra trong Bản nháp**: Thử nghiệm kỹ lưỡng quy trình công việc trước khi kích hoạt để tránh lãng phí tín chỉ cho lỗi
+- **Giảm thiểu Yêu cầu HTTP**: Sử dụng tiêu chí tìm kiếm hiệu quả và kết hợp các hoạt động nơi có thể
+- **Batch Processing**: Use bulk operations and Iterator actions efficiently
+- **Xử lý Lỗi**: Triển khai xử lý lỗi thích hợp để ngăn chặn các lần thử lại không cần thiết
+- **Tối ưu hóa Khởi động Thủ công**: Đối với các trình kích hoạt thủ công, chọn tính khả dụng `Hàng loạt` để xử lý nhiều bản ghi trong một lần chạy quy trình công việc duy nhất (xem [Tính năng Quy trình công việc](/l/vi/user-guide/workflows/workflow-features) để biết chi tiết)
+
+### Tối ưu hóa Hành động
+
+- Sử dụng các hoạt động nội bộ cơ bản khi có thể (tiêu thụ tín chỉ thấp hơn)
+- Tối ưu hóa hành động mã cho hiệu quả
+- Cân nhắc khởi động thủ công cho các quy trình không khẩn cấp
+- Xử lý hàng loạt để giảm lượng cuộc gọi hành động riêng lẻ
+
+### Quản lý Tín chỉ
+
+- **Giám sát Thường xuyên**: Kiểm tra việc sử dụng tín chỉ hàng tuần trong Cài đặt → Thanh toán
+- **Theo dõi sử dụng**: Theo dõi các mô hình tiêu dùng để tránh các chi phí phát sinh không mong đợi
+- **Lập Kế hoạch Tương ứng**: Xem xét nâng cấp kế hoạch của bạn nếu bạn thường xuyên cần thêm tín chỉ
+- **Xem xét Quy trình công việc**: Thường xuyên xem xét các quy trình công việc tiêu thụ cao và hủy kích hoạt những cái không sử dụng
+- **Lập Kế hoạch Chiến lược**: Lập kế hoạch triển khai quy trình công việc dựa trên sự sẵn có của tín chỉ
+
+Để biết thông tin chi tiết về thanh toán và quản lý tín chỉ, hãy truy cập **Cài đặt → Thanh toán** trong không gian làm việc của Twenty của bạn.
+

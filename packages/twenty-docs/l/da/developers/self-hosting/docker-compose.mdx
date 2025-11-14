@@ -1,0 +1,214 @@
+---
+title: 1-Click w/ Docker Compose
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+<Warning>
+Docker containers are for production hosting or self-hosting, for the contribution please check the [Local Setup](https://docs.twenty.com/l/da/developers/local-setup).
+</Warning>
+
+## Oversigt
+
+Denne vejledning giver trin-for-trin instruktioner til at installere og konfigurere Twenty-applikationen ved hjælp af Docker Compose. Målet er at gøre processen ligetil og forhindre almindelige faldgruber, der kan bryde din opsætning.
+
+**Important:** Only modify settings explicitly mentioned in this guide. Ændringer i andre konfigurationer kan føre til problemer.
+
+Se docs [Opsæt miljøvariabler](https://docs.twenty.com/l/da/developers/self-hosting/setup) for avanceret konfiguration. Alle miljøvariabler skal erklæres i docker-compose.yml-filen på server- og/eller arbejderniveau afhængigt af variablen.
+
+## Systemkrav
+
+- RAM: Ensure your environment has at least 2GB of RAM. Utilstrækkelig hukommelse kan få processer til at gå ned.
+- Docker & Docker Compose: Sørg for at begge er installeret og opdateret.
+
+## Option 1: One-line script
+
+Installer den nyeste stabile version af Twenty med en enkelt kommando:
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+For at installere en bestemt version eller branch:
+
+```bash
+VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+- Udskift x.y.z med det ønskede versionsnummer.
+- Replace branch-name with the name of the branch you want to install.
+
+## Valgmulighed 2: Manuelle trin
+
+Følg disse trin for manuel opsætning.
+
+### Trin 1: Opsæt miljøfilen
+
+1. **Opret .env-fil**
+
+   Copy the example environment file to a new .env file in your working directory:
+
+   ```bash
+   curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
+   ```
+
+2. **Generér hemmelige nøgler**
+
+   Run the following command to generate a unique random string:
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   **Vigtigt:** Hold denne værdi hemmelig / del den ikke.
+
+3. **Opdatér `.env`**
+
+   Erstat pladsholderværdien i din .env-fil med den genererede token:
+
+   ```ini
+   APP_SECRET=first_random_string
+   ```
+
+4. **Indstil Postgres adgangskode**
+
+   Opdatér `PG_DATABASE_PASSWORD` i .env-filen med en stærk adgangskode uden specialtegn.
+
+   ```ini
+   PG_DATABASE_PASSWORD=my_strong_password
+   ```
+
+### Trin 2: Hent Docker Compose-filen
+
+Download the `docker-compose.yml` file to your working directory:
+
+```bash
+curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/docker-compose.yml
+```
+
+### Trin 3: Start applikationen
+
+Start the Docker containers:
+
+```bash
+docker compose up -d
+```
+
+### Trin 4: Få adgang til applikationen
+
+If you host twentyCRM on your own computer, open your browser and navigate to [http://localhost:3000](http://localhost:3000).
+
+Hvis du hoster den på en server, kontrollér at serveren kører, og at alt er ok med
+
+```bash
+curl http://localhost:3000
+```
+
+## Konfiguration
+
+### Eksponer Twenty for ekstern adgang
+
+Som standard kører Twenty på `localhost` ved port `3000`. For at tilgå det via et eksternt domæne eller IP-adresse, skal du konfigurere `SERVER_URL` i din `.env`-fil.
+
+#### Forstå `SERVER_URL`
+
+- **Protokol:** Brug `http` eller `https` afhængigt af din opsætning.
+  - Brug `http` hvis du ikke har opsat SSL.
+  - Brug `https` hvis du har SSL konfigureret.
+- **Domæne/IP:** Dette er domænenavnet eller IP-adressen, hvor din applikation er tilgængelig.
+- **Port:** Inkluder portnummeret, hvis du ikke bruger standardportene (`80` for `http`, `443` for `https`).
+
+### SSL-krav
+
+SSL (HTTPS) kræves for at visse browserfunktioner fungerer korrekt. Mens disse funktioner kan fungere under lokal udvikling (da browsere behandler localhost anderledes), er en korrekt SSL opsætning nødvendig, når man hoster Twenty på et almindeligt domæne.
+
+For eksempel kan klippebordets API kræve en sikker kontekst - nogle funktioner som kopiknapper i hele applikationen virker muligvis ikke uden HTTPS aktiveret.
+
+Vi anbefaler stærkt at opsætte Twenty bag en reverse proxy med SSL-terminering for optimal sikkerhed og funktionalitet.
+
+#### Konfigurering af `SERVER_URL`
+
+1. **Bestem dit adgangs-URL**
+   - **Uden reverse proxy (Direkte adgang):**
+
+     Hvis du tilgår applikationen direkte uden en reverse proxy:
+
+     ```ini
+     SERVER_URL=http://your-domain-or-ip:3000
+     ```
+
+   - **Med reverse proxy (Standard porte):**
+
+     Hvis du bruger en reverse proxy som Nginx eller Traefik og har SSL konfigureret:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip
+     ```
+
+   - **Med reverse proxy (Brugerdefinerede porte):**
+
+     Hvis du bruger ikke-standardporte:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip:custom-port
+     ```
+
+2. **Opdatér `.env`-filen**
+
+   Åbn din `.env`-fil og opdatér `SERVER_URL`:
+
+   ```ini
+   SERVER_URL=http(s)://your-domain-or-ip:your-port
+   ```
+
+   **Eksempler:**
+
+   - Direkte adgang uden SSL:
+     ```ini
+     SERVER_URL=http://123.45.67.89:3000
+     ```
+   - Adgang via domæne med SSL:
+     ```ini
+     SERVER_URL=https://mytwentyapp.com
+     ```
+
+3. **Genstart applikationen**
+
+   For at ændringerne kan træde i kraft, genstart Docker-containere:
+
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+#### Overvejelser
+
+- **Reverse Proxy Konfiguration:**
+
+  Sørg for, at din reverse proxy videresender forespørgsler til den korrekte interne port (`3000` som standard). Konfigurer SSL-afslutning og eventuelle nødvendige headers.
+
+- **Firewall Indstillinger:**
+
+  Åbn nødvendige porte i din firewall for at tillade ekstern adgang.
+
+- **Konsistens:**
+
+  `SERVER_URL` skal matche, hvordan brugerne tilgår din applikation i deres browsere.
+
+#### Persistens
+
+- **Datavolumener:**
+
+  Docker Compose-konfigurationen bruger volumener til at holde data for databasen og serverlagring.
+
+- **Stateless Miljøer:**
+
+  Hvis du implementerer til et stateless miljø (f.eks. visse cloud-tjenester), skal du konfigurere ekstern lagring til at bevare data.
+
+## Fejlfinding
+
+Hvis du støder på et problem, tjek [Fejlfinding](https://docs.twenty.com/l/da/developers/self-hosting/troubleshooting) for løsninger.
+

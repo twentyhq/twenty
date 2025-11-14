@@ -1,0 +1,168 @@
+---
+title: 連結
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## 聯絡連結
+
+A stylized link component for displaying contact information.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+
+import { ContactLink } from 'twenty-ui/navigation';
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log('Contact link clicked!', event);
+  };
+
+  return (
+    <Router>
+      <ContactLink
+        className
+        href="mailto:example@example.com"
+        onClick={handleLinkClick}
+      >
+        example@example.com
+      </ContactLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性   | 類型                | 描述            |
+| ---- | ----------------- | ------------- |
+| 類名稱  | 字串                | 附加樣式的可選名稱     |
+| href | 字串                | 連結的目標URL或路徑   |
+| 點擊   | function          | 當點擊連結時觸發的回調函數 |
+| 子元素  | `React.ReactNode` | 要顯示在連結內的內容    |
+
+</Tab>
+
+</Tabs>
+
+## 原生連結
+
+用于顯示連結的樣式化連結組件。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RawLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RawLink className href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RawLink>
+    </Router>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性   | 類型                | 描述            |
+| ---- | ----------------- | ------------- |
+| 類名稱  | 字串                | 附加樣式的可選名稱     |
+| href | 字串                | 連結的目標URL或路徑   |
+| 點擊   | function          | 當點擊連結時觸發的回調函數 |
+| 子元素  | `React.ReactNode` | 要顯示在連結內的內容    |
+
+</Tab>
+</Tabs>
+
+## 圓角連結
+
+帶有Chip元件的圓角樣式連結。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RoundedLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RoundedLink href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RoundedLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| 屬性   | 類型                | 描述            |
+| ---- | ----------------- | ------------- |
+| href | 字串                | 連結的目標URL或路徑   |
+| 子元素  | `React.ReactNode` | 要顯示在連結內的內容    |
+| 點擊   | function          | 當點擊連結時觸發的回調函數 |
+
+</Tab>
+</Tabs>
+
+## 社交連結
+
+樣式化的社交連結，支持各種社交連結類型，例如URL、LinkedIn和X（或Twitter）。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { SocialLink } from "twenty-ui/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <SocialLink
+        type="twitter"
+        href="https://twitter.com/twentycrm"
+      ></SocialLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性   | 類型                | 描述                                       |
+| ---- | ----------------- | ---------------------------------------- |
+| href | 字串                | 連結的目標URL或路徑                              |
+| 子元素  | `React.ReactNode` | 要顯示在連結內的內容                               |
+| 類型   | 字串                | 社交連結的類型。 選項包括：`url`、`LinkedIn`和`Twitter` |
+| 點擊   | function          | 當點擊連結時觸發的回調函數                            |
+
+</Tab>
+</Tabs>
