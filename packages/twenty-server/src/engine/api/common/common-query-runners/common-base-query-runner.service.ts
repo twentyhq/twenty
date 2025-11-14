@@ -6,8 +6,7 @@ import { Omit } from 'zod/v4/core/util.cjs';
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 
-import { DataArgProcessor } from 'src/engine/api/common/common-args-processors/data-arg-processor/data-arg.processor';
-import { QueryRunnerArgsFactory } from 'src/engine/api/common/common-args-processors/query-runner-args.factory';
+import { CommonSelectedFieldsHandler } from 'src/engine/api/common/common-args-handlers/common-query-selected-fields/common-selected-fields.handler';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -26,6 +25,8 @@ import { isWorkspaceAuthContext } from 'src/engine/api/common/utils/is-workspace
 import { OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/graphql/graphql-query-runner/constants/objects-with-settings-permissions-requirements';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
+import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/query-result-getters.factory';
+import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
@@ -61,7 +62,7 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly queryRunnerArgsFactory: QueryRunnerArgsFactory;
   @Inject()
-  protected readonly dataArgProcessor: DataArgProcessor;
+  protected readonly queryResultGettersFactory: QueryResultGettersFactory;
   @Inject()
   protected readonly twentyORMGlobalManager: TwentyORMGlobalManager;
   @Inject()
@@ -74,6 +75,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly userRoleService: UserRoleService;
   @Inject()
   protected readonly apiKeyRoleService: ApiKeyRoleService;
+  @Inject()
+  protected readonly selectedFieldsHandler: CommonSelectedFieldsHandler;
   @Inject()
   protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService;
   @Inject()
@@ -134,7 +137,7 @@ export abstract class CommonBaseQueryRunnerService<
 
     if (isGlobalDatasourceEnabled) {
       return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext.workspace.id,
+        authContext,
         async () =>
           this.executeQueryAndEnrichResults(
             processedArgs,
@@ -188,19 +191,18 @@ export abstract class CommonBaseQueryRunnerService<
     );
 
     const { authContext, objectMetadataItemWithFieldMaps } = queryRunnerContext;
-
-    const computedArgs = await this.computeArgs(args, queryRunnerContext);
-
     const hookedArgs =
       (await this.workspaceQueryHookService.executePreQueryHooks(
         authContext,
         objectMetadataItemWithFieldMaps.nameSingular,
         operationName,
-        computedArgs as WorkspacePreQueryHookPayload<CommonQueryNames>,
+        args as WorkspacePreQueryHookPayload<CommonQueryNames>,
       )) as CommonInput<Args>;
 
+    const computedArgs = await this.computeArgs(hookedArgs, queryRunnerContext);
+
     return {
-      ...hookedArgs,
+      ...computedArgs,
       selectedFieldsResult,
     };
   }

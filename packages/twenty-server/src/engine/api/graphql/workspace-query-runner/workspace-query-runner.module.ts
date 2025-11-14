@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceQueryBuilderModule } from 'src/engine/api/graphql/workspace-query-builder/workspace-query-builder.module';
+import { workspaceQueryRunnerFactories } from 'src/engine/api/graphql/workspace-query-runner/factories';
 import { TelemetryListener } from 'src/engine/api/graphql/workspace-query-runner/listeners/telemetry.listener';
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
@@ -28,6 +29,11 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     RecordPositionModule,
     SubscriptionsModule,
   ],
-  providers: [EntityEventsToDbListener, TelemetryListener],
+  providers: [
+    ...workspaceQueryRunnerFactories,
+    EntityEventsToDbListener,
+    TelemetryListener,
+  ],
+  exports: [...workspaceQueryRunnerFactories],
 })
 export class WorkspaceQueryRunnerModule {}
