@@ -61,7 +61,7 @@ export class ViewResolver {
     private readonly featureFlagService: FeatureFlagService,
     private readonly viewV2Service: ViewV2Service,
 
-    private readonly viewFieldV2Service: ViewFieldV2Service
+    private readonly viewFieldV2Service: ViewFieldV2Service,
   ) {}
 
   @ResolveField(() => String)

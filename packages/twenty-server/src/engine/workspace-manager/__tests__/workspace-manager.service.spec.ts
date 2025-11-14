@@ -27,8 +27,6 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
 
 describe('WorkspaceManagerService', () => {
   let service: WorkspaceManagerService;
-  let objectMetadataServiceV2: ObjectMetadataServiceV2;
-  let objectMetadataService: ObjectMetadataServiceV2;
   let workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>;
   let dataSourceRepository: Repository<DataSourceEntity>;
   let workspaceDataSourceService: WorkspaceDataSourceService;
@@ -150,9 +148,6 @@ describe('WorkspaceManagerService', () => {
     }).compile();
 
     service = module.get<WorkspaceManagerService>(WorkspaceManagerService);
-    objectMetadataServiceV2 = module.get<ObjectMetadataServiceV2>(
-      ObjectMetadataServiceV2,
-    );
     workspaceMigrationRepository = module.get<
       Repository<WorkspaceMigrationEntity>
     >(getRepositoryToken(WorkspaceMigrationEntity));
@@ -178,7 +173,7 @@ describe('WorkspaceManagerService', () => {
     it('should delete all the workspace metadata tables and workspace schema', async () => {
       await service.delete('workspace-id');
       expect(
-        objectMetadataServiceV2.deleteWorkspaceAllObjectMetadata,
+        objectMetadataService.deleteWorkspaceAllObjectMetadata,
       ).toHaveBeenCalled();
       expect(workspaceMigrationRepository.delete).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',

@@ -22,9 +22,7 @@ import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/
 @UseFilters(ViewGraphqlApiExceptionFilter)
 @UseGuards(WorkspaceAuthGuard)
 export class ViewFieldResolver {
-  constructor(
-    private readonly viewFieldV2Service: ViewFieldV2Service,
-  ) {}
+  constructor(private readonly viewFieldV2Service: ViewFieldV2Service) {}
 
   @Query(() => [ViewFieldDTO])
   @UseGuards(NoPermissionGuard)

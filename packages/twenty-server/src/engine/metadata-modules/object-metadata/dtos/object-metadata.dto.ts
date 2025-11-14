@@ -5,7 +5,7 @@ import {
   CursorConnection,
   FilterableField,
   IDField,
-  QueryOptions
+  QueryOptions,
 } from '@ptc-org/nestjs-query-graphql';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';

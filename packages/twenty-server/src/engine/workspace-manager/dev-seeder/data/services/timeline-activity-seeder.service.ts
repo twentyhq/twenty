@@ -107,7 +107,9 @@ export class TimelineActivitySeederService {
     'message',
   ]);
 
-  constructor(private readonly objectMetadataService: ObjectMetadataServiceV2) {}
+  constructor(
+    private readonly objectMetadataService: ObjectMetadataServiceV2,
+  ) {}
 
   private getLinkedActivityName(activityType: string): string {
     // Notes and tasks use the legacy format: linked-{type}.created

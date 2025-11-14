@@ -10,34 +10,34 @@ import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-meta
 import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import {
-    RemoteServerEntity,
-    type RemoteServerType,
+  RemoteServerEntity,
+  type RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { DistantTableService } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.service';
 import { sortDistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/utils/sort-distant-tables.util';
 import { type RemoteTableInput } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table-input';
 import {
-    DistantTableUpdate,
-    RemoteTableStatus,
+  DistantTableUpdate,
+  RemoteTableStatus,
 } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
 import { ForeignTableService } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.service';
 import { RemoteTableSchemaUpdateService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-schema-update/remote-table-schema-update.service';
 import { RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.entity';
 import {
-    RemoteTableException,
-    RemoteTableExceptionCode,
+  RemoteTableException,
+  RemoteTableExceptionCode,
 } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.exception';
 import { fetchTableColumns } from 'src/engine/metadata-modules/remote-server/remote-table/utils/fetch-table-columns.util';
 import { getRemoteTableLocalName } from 'src/engine/metadata-modules/remote-server/remote-table/utils/get-remote-table-local-name.util';
 import {
-    mapUdtNameToFieldSettings,
-    mapUdtNameToFieldType,
+  mapUdtNameToFieldSettings,
+  mapUdtNameToFieldType,
 } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
 import { type PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import {
-    type WorkspaceMigrationColumnAction,
-    WorkspaceMigrationColumnActionType,
+  type WorkspaceMigrationColumnAction,
+  WorkspaceMigrationColumnActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { camelCase } from 'src/utils/camel-case';
