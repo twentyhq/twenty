@@ -1,15 +1,16 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-
-import { actorCompositeType } from 'twenty-shared/src/types/composite-types/actor.composite-type';
-import { addressCompositeType } from 'twenty-shared/src/types/composite-types/address.composite-type';
-import { currencyCompositeType } from 'twenty-shared/src/types/composite-types/currency.composite-type';
-import { emailsCompositeType } from 'twenty-shared/src/types/composite-types/emails.composite-type';
-import { fullNameCompositeType } from 'twenty-shared/src/types/composite-types/full-name.composite-type';
-import { imageCompositeType } from 'twenty-shared/src/types/composite-types/image.composite-type';
-import { linksCompositeType } from 'twenty-shared/src/types/composite-types/links.composite-type';
-import { pdfCompositeType } from 'twenty-shared/src/types/composite-types/pdf.composite-type';
-import { phonesCompositeType } from 'twenty-shared/src/types/composite-types/phones.composite-type';
-import { richTextV2CompositeType } from 'twenty-shared/src/types/composite-types/rich-text-v2.composite-type';
+import {
+  FieldMetadataType,
+  actorCompositeType,
+  addressCompositeType,
+  currencyCompositeType,
+  emailsCompositeType,
+  fullNameCompositeType,
+  imageCompositeType,
+  linksCompositeType,
+  pdfCompositeType,
+  phonesCompositeType,
+  richTextV2CompositeType,
+} from 'twenty-shared/types';
 
 import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
