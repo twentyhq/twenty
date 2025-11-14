@@ -89,7 +89,7 @@ export class DevSeederMetadataService {
   }: {
     dataSourceMetadata: DataSourceEntity;
     workspaceId: string;
-   twentyStandardFlatApplication: FlatApplication;
+    twentyStandardFlatApplication: FlatApplication;
     featureFlags?: Record<string, boolean>;
   }) {
     const config = this.workspaceConfigs[workspaceId];
@@ -190,7 +190,7 @@ export class DevSeederMetadataService {
     workspaceId: string;
     dataSourceMetadata: DataSourceEntity;
     featureFlags?: Record<string, boolean>;
-   twentyStandardFlatApplication: FlatApplication;
+    twentyStandardFlatApplication: FlatApplication;
   }): Promise<void> {
     const createdObjectMetadata =
       await this.objectMetadataServiceV2.findManyWithinWorkspace(workspaceId);

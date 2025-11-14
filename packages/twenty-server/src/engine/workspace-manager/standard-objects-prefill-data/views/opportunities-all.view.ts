@@ -2,7 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { v4 } from 'uuid';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
@@ -15,7 +15,7 @@ export const opportunitiesAllView = ({
 }: {
   objectMetadataItems: ObjectMetadataEntity[];
   useCoreNaming?: boolean;
- twentyStandardFlatApplication: FlatApplication;
+  twentyStandardFlatApplication: FlatApplication;
 }): ViewDefinition => {
   const opportunityObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.opportunity,

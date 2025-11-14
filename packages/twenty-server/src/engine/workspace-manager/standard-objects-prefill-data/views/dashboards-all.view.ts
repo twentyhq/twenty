@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { v4 } from 'uuid';
 
-import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewOpenRecordInType } from 'src/engine/metadata-modules/view/types/view-open-record-in-type.type';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
@@ -18,7 +18,7 @@ export const dashboardsAllView = ({
 }: {
   objectMetadataItems: ObjectMetadataEntity[];
   useCoreNaming?: boolean;
- twentyStandardFlatApplication: FlatApplication;
+  twentyStandardFlatApplication: FlatApplication;
 }): ViewDefinition => {
   const dashboardObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.dashboard,
