@@ -267,6 +267,10 @@ export const main = async (params: {
   }
   try {
     const { properties, recordId, userId } = params;
+    if (!userId) {
+      console.log("Exited as last update was done via API");
+      return {};
+    }
 
     if (
       properties.updatedFields?.length === 1 &&

@@ -5,14 +5,6 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"Updated by@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "Updated by@workspace:."
-  dependencies:
-    axios: "npm:^1.13.1"
-  languageName: unknown
-  linkType: soft
-
 "async-function@npm:^1.0.0":
   version: 1.0.0
   resolution: "async-function@npm:1.0.0"
@@ -244,5 +236,21 @@ __metadata:
   version: 1.1.0
   resolution: "proxy-from-env@npm:1.1.0"
   checksum: 10c0/fe7dd8b1bdbbbea18d1459107729c3e4a2243ca870d26d34c2c1bcd3e4425b7bcc5112362df2d93cc7fb9746f6142b5e272fd1cc5c86ddf8580175186f6ad42b
+  languageName: node
+  linkType: hard
+
+"root-workspace-0b6124@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "root-workspace-0b6124@workspace:."
+  dependencies:
+    axios: "npm:^1.13.1"
+    twenty-sdk: "npm:^0.0.4"
+  languageName: unknown
+  linkType: soft
+
+"twenty-sdk@npm:^0.0.4":
+  version: 0.0.4
+  resolution: "twenty-sdk@npm:0.0.4"
+  checksum: 10c0/550f1d85bf0701396c9dd2d4c6bc55ba1b067fce13636f8540eec60ab6a4257c6d7cd86cb3f62e0974bf99467bc31270d92b17b9681a1b7a6281b7ef97224080
   languageName: node
   linkType: hard
