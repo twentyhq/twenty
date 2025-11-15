@@ -28,7 +28,7 @@
       },
       {
         "include": "**/database/clickHouse/migrations/*.sql",
-        "outDir": "dist/src"
+        "outDir": "dist"
       },
       {
         "include": "**/dev-seeder/data/sample-files/**",
