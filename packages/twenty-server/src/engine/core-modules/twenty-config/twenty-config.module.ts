@@ -25,11 +25,8 @@ export class TwentyConfigModule extends ConfigurableModuleClass {
         validate,
         envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
       }),
+      ...(isConfigVariablesInDbEnabled ? [DatabaseConfigModule.forRoot()] : []),
     ];
-
-    if (isConfigVariablesInDbEnabled) {
-      imports.push(DatabaseConfigModule.forRoot());
-    }
 
     return {
       module: TwentyConfigModule,
