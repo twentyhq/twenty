@@ -89,14 +89,17 @@ export const useMergeManyRecords = <
             dryRun: preview,
           },
           // Prevent cache updates during dry run to avoid overwriting original record data
-          ...(preview && {
-            fetchPolicy: 'no-cache',
-            errorPolicy: 'ignore',
-          }),
-          refetchQueries: [
-            getOperationName(findOneRecordQuery) ?? '',
-            getOperationName(findDuplicateRecordsQuery) ?? '',
-          ].filter(Boolean),
+          ...(preview
+            ? {
+                fetchPolicy: 'no-cache',
+                errorPolicy: 'ignore',
+              }
+            : {
+                refetchQueries: [
+                  getOperationName(findOneRecordQuery) ?? '',
+                  getOperationName(findDuplicateRecordsQuery) ?? '',
+                ].filter(Boolean),
+              }),
         });
 
         setLoading(false);
