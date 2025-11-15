@@ -1,6 +1,6 @@
 ---
-title: 資料夾架構
-info: 深入了解我們的資料夾架構
+title: 文件夹架构
+info: 深入了解我们的文件夹架构
 image: /images/user-guide/fields/field.png
 ---
 
@@ -8,9 +8,9 @@ image: /images/user-guide/fields/field.png
   <img src="/images/user-guide/fields/field.png" alt="Header" />
 </Frame>
 
-In this guide, you will explore the details of the project directory structure and how it contributes to the organization and maintainability of Twenty.
+在本指南中，您将探索项目目录结构的详细信息，以及它如何促进 Twenty 的组织和可维护性。
 
-通過遵循這種資料夾架構慣例，更容易找到與特定功能相關的文件，確保應用程序具有可擴展性和可維護性。
+遵循此文件夹架构约定，可以更轻松地找到与特定功能相关的文件，并确保应用程序的可扩展性和可维护性。
 
 ```
 front
@@ -27,14 +27,14 @@ front
 └───...
 ```
 
-## Pages
+## 页面
 
-包含應用程序路由所定義的頂層組件。 它們從模組資料夾中導入更多低級別的組件（詳情如下）。
+包含由应用程序路由定义的顶级组件。 它们从模块文件夹中导入更多低级组件（详细信息见下文）。
 
-## 模組
+## 模块
 
-每個模組代表一個功能或一組功能，包括其專屬的組件、狀態和運行邏輯。
-它們應遵循以下結構。 您可以在模組內嵌套模組（稱為子模組），同樣的規則適用。
+每个模块代表一个功能或一组功能，包括其特定组件、状态和操作逻辑。
+它们都应遵循以下结构。 您可以在模块中嵌套模块（称为子模块），同样的规则将适用。
 
 ```
 module1
@@ -57,58 +57,58 @@ module1
 
 ### 上下文
 
-上下文是一種通過組件樹傳遞數據的方法，不必在每個層次手動向下傳遞 props。
+上下文是一种通过组件树传递数据的方法，不必在每个级别手动传 props。
 
-詳情請參閱 [React 上下文](https://react.dev/reference/react#context-hooks)。
+详情请参阅 [React Context](https://react.dev/reference/react#context-hooks)。
 
 ### GraphQL
 
-包括片段、查詢和變更。
+包含片段、查询和变更。
 
-更多詳情參閱 [GraphQL](https://graphql.org/learn/)。
+详情请参阅 [GraphQL](https://graphql.org/learn/)。
 
 - 片段
 
-片段是可重用的查詢部分，您可以在不同的地方使用。 通過使用片段，可以更容易避免重複代碼。
+片段是查询的可重用部分，可以在不同地方使用。 使用片段可以更容易地避免代码重复。
 
-更多詳情請參閱 [GraphQL 片段](https://graphql.org/learn/queries/#fragments)。
+详情请参阅 [GraphQL Fragments](https://graphql.org/learn/queries/#fragments)。
 
-- 查詢
+- 查询
 
-更多詳情請參閱 [GraphQL 查詢](https://graphql.org/learn/queries/)。
+详情请参阅 [GraphQL Queries](https://graphql.org/learn/queries/)。
 
-- Mutations
+- 变更
 
-更多詳情請參閱 [GraphQL 變更](https://graphql.org/learn/queries/#mutations)。
+详情请参阅 [GraphQL Mutations](https://graphql.org/learn/queries/#mutations)。
 
-### 鉤子
+### 钩子
 
-詳情請參閱 [鉤子](https://react.dev/learn/reusing-logic-with-custom-hooks)。
+详情请参阅 [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks)。
 
-### 狀態
+### 状态
 
-包含狀態管理邏輯。 [RecoilJS](https://recoiljs.org) 負責。
+包含状态管理逻辑。 [RecoilJS](https://recoiljs.org) 处理这部分。
 
-- 選擇器: 更多詳情請參閱 [RecoilJS 選擇器](https://recoiljs.org/docs/basic-tutorial/selectors)。
+- 选择器：详情请参阅 [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors)。
 
-React 的內建狀態管理仍然在組件內部處理狀態。
+React 内置状态管理仍然在组件内处理状态。
 
-### 實用工具
+### 工具
 
-應只包含可重用的純函數。 否則，請在 `hooks` 資料夾中創建自定義鉤子。
+应仅包含可重用的纯函数。 否则，请在 `hooks` 文件夹中创建自定义钩子。
 
 ## UI
 
-包含應用程序中使用的所有可重用用戶介面組件。
+包含应用程序中使用的所有可重用的 UI 组件。
 
-此資料夾可以包含子資料夾，例如 `data`、`display`、`feedback` 和 `input` 針對特定組件類型。 每個組件應該是自成一體且可重用的，以便在應用程序的不同部分重複使用。
+这个文件夹可以包含子文件夹，像 `data`、`display`、`feedback` 和 `input`，用于特定类型的组件。 每个组件都应是自包含和可重用的，以便您可以在应用程序的不同部分使用它。
 
-透過將用戶介面組件與模組資料夾中的其他組件分開，可以更容易維持一致的設計，且在不影響代碼庫其他部分（業務邏輯）的情況下進行用戶介面變更。
+通过将 UI 组件与 `modules` 文件夹中的其他组件分开，可以更轻松地保持一致的设计，并在更改 UI 时不影响其他部分（业务逻辑）的代码库。
 
-## 介面和相依
+## 界面和依赖关系
 
-您可以從任何模組導入其他模組代碼，但 `ui` 資料夾除外。 這將使其代碼易於測試。
+您可以从任何模块中导入其他模块代码，但 `ui` 文件夹除外。 这将使代码易于测试。
 
-### 內部
+### 内部
 
-每個部分（鉤子、狀態等） 模組可以有一個 `internal` 資料夾，其中包含僅在模組內使用的部分。
+模块的每个部分（钩子、状态等） 都可以有一个 `internal` 文件夹，其中包含仅在模块内使用的部分。

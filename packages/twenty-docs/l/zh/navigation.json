@@ -1,0 +1,91 @@
+{
+  "tabs": {
+    "userGuide": {
+      "label": "用户指南",
+      "groups": {
+        "gettingStarted": {
+          "label": "正在开始"
+        },
+        "dataModel": {
+          "label": "数据模型"
+        },
+        "crmEssentials": {
+          "label": "CRM要点"
+        },
+        "views": {
+          "label": "视图"
+        },
+        "workflows": {
+          "label": "工作流"
+        },
+        "collaboration": {
+          "label": "协作"
+        },
+        "integrationsApi": {
+          "label": "集成和 API"
+        },
+        "reporting": {
+          "label": "报告"
+        },
+        "settings": {
+          "label": "设置"
+        },
+        "pricing": {
+          "label": "定价"
+        },
+        "resources": {
+          "label": "资源"
+        }
+      }
+    },
+    "developers": {
+      "label": "开发者",
+      "groups": {
+        "developersGroup": {
+          "label": "开发者"
+        },
+        "devGettingStarted": {
+          "label": "正在开始",
+          "groups": {
+            "selfHosting": {
+              "label": "自我主机"
+            },
+            "apiAndWebhooks": {
+              "label": "API 和 Webhooks"
+            }
+          }
+        },
+        "contributing": {
+          "label": "贡献中",
+          "groups": {
+            "frontendDevelopment": {
+              "label": "前端开发",
+              "groups": {
+                "twentyUi": {
+                  "label": "Twenty UI",
+                  "groups": {
+                    "display": {
+                      "label": "显示"
+                    },
+                    "feedback": {
+                      "label": "反馈"
+                    },
+                    "input": {
+                      "label": "Input"
+                    },
+                    "navigation": {
+                      "label": "Navigation"
+                    }
+                  }
+                }
+              }
+            },
+            "backendDevelopment": {
+              "label": "后端开发"
+            }
+          }
+        }
+      }
+    }
+  }
+}
