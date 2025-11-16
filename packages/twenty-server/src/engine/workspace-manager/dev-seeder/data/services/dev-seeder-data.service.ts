@@ -379,7 +379,7 @@ export class DevSeederDataService {
     const sampleFilesDir = IS_BUILT
       ? join(
           __dirname,
-          '../../../../../../assets/engine/workspace-manager/dev-seeder/data/sample-files',
+          '../../../../../assets/engine/workspace-manager/dev-seeder/data/sample-files',
         )
       : join(__dirname, '../sample-files');
 

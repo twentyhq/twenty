@@ -19,7 +19,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
-@Controller('rest/metadata/*')
+@Controller('rest/metadata/*path')
 @UseGuards(
   JwtAuthGuard,
   WorkspaceAuthGuard,
