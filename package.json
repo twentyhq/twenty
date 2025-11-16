@@ -149,7 +149,6 @@
     "@yarnpkg/types": "^4.0.0",
     "chromatic": "^6.18.0",
     "concurrently": "^8.2.2",
-    "cross-var": "^1.1.0",
     "danger": "^13.0.4",
     "dotenv-cli": "^7.4.4",
     "esbuild": "^0.25.10",
@@ -196,7 +195,8 @@
     "vite-plugin-checker": "^0.10.2",
     "vite-plugin-cjs-interop": "^2.2.0",
     "vite-plugin-dts": "3.8.1",
-    "vite-plugin-svgr": "^4.2.0"
+    "vite-plugin-svgr": "^4.2.0",
+    "x-var": "^3.0.1"
   },
   "engines": {
     "node": "^24.5.0",
