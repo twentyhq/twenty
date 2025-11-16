@@ -5,7 +5,6 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { DevtoolsModule } from '@nestjs/devtools-integration';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ServeStaticModule } from '@nestjs/serve-static';
 
@@ -35,7 +34,6 @@ import { ModulesModule } from 'src/modules/modules.module';
 import { ClickHouseModule } from './database/clickHouse/clickHouse.module';
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
 import { I18nModule } from './engine/core-modules/i18n/i18n.module';
-import { NodeEnvironment } from './engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 // TODO: Remove this middleware when all the rest endpoints are migrated to TwentyORM
 const MIGRATED_REST_METHODS = [
@@ -85,13 +83,14 @@ export class AppModule {
     const modules: DynamicModule[] = [];
     const frontPath = join(__dirname, '..', 'front');
 
-    if (process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT) {
+    // NestJS DevTools - can be useful for debugging and profiling
+    /* if (process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT) {
       modules.push(
         DevtoolsModule.register({
           http: true,
         }),
       );
-    }
+    } */
 
     if (existsSync(frontPath)) {
       modules.push(
