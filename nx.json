@@ -234,7 +234,7 @@
             "command": "nx storybook:build {projectName}",
             "forwardAllArgs": false
           },
-          "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --storybook-build-dir=storybook-static {args.ci}"
+          "chromatic --storybook-build-dir=storybook-static {args.ci}"
         ],
         "parallel": false
       },
