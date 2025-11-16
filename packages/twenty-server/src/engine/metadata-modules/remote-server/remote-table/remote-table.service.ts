@@ -6,8 +6,8 @@ import { plural } from 'pluralize';
 import { DataSource, Repository } from 'typeorm';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import {
   RemoteServerEntity,
@@ -595,7 +595,7 @@ export class RemoteTableService {
         );
       }
 
-      await this.fieldMetadataService.deleteOneObject({
+      await this.fieldMetadataService.deleteOneField({
         deleteOneFieldInput: { id: fieldMetadataToDelete.id },
         workspaceId,
       });
@@ -607,8 +607,8 @@ export class RemoteTableService {
     columnName: string,
     columnType: string,
     objectMetadataId: string,
-  ): Promise<FieldMetadataEntity> {
-    return this.fieldMetadataService.createOneObject({
+  ): Promise<FlatFieldMetadata> {
+    return this.fieldMetadataService.createOneField({
       createFieldInput: {
         name: columnName,
         label: camelToTitleCase(columnName),
