@@ -9,6 +9,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -32,6 +33,7 @@ export class WorkspaceManagerService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly objectMetadataService: ObjectMetadataService,
+    private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
     @InjectRepository(UserWorkspaceEntity)
@@ -136,32 +138,23 @@ export class WorkspaceManagerService {
     });
   }
 
+  // TODO investigate why some entities are not on cascade delete
+  // Are foreign keys correctly applied ?
   public async delete(workspaceId: string): Promise<void> {
-    //TODO: delete all logs when #611 closed
-    this.logger.log(`Deleting workspace ${workspaceId} ...`);
-
     await this.roleTargetsRepository.delete({
       workspaceId,
     });
-    this.logger.log(`workspace ${workspaceId} role targets deleted`);
-
     await this.roleRepository.delete({
       workspaceId,
     });
-    this.logger.log(`workspace ${workspaceId} role deleted`);
 
-    await this.objectMetadataService.deleteObjectsMetadata(workspaceId);
-    this.logger.log(`workspace ${workspaceId} object metadata deleted`);
+    await this.objectMetadataServiceV2.deleteWorkspaceAllObjectMetadata({
+      workspaceId,
+    });
 
     await this.workspaceMigrationService.deleteAllWithinWorkspace(workspaceId);
-    this.logger.log(`workspace ${workspaceId} migration deleted`);
-
     await this.dataSourceService.delete(workspaceId);
-    this.logger.log(`workspace ${workspaceId} data source deleted`);
-    // Delete schema
     await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspaceId);
-
-    this.logger.log(`workspace ${workspaceId} schema deleted`);
   }
 
   private async setupDefaultRoles(

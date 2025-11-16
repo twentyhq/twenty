@@ -11,6 +11,7 @@ import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -27,7 +28,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
 
 describe('WorkspaceManagerService', () => {
   let service: WorkspaceManagerService;
-  let objectMetadataService: ObjectMetadataService;
+  let objectMetadataServiceV2: ObjectMetadataServiceV2;
   let workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>;
   let dataSourceRepository: Repository<DataSourceEntity>;
   let workspaceDataSourceService: WorkspaceDataSourceService;
@@ -102,6 +103,10 @@ describe('WorkspaceManagerService', () => {
           useValue: {},
         },
         {
+          provide: ObjectMetadataService,
+          useValue: {},
+        },
+        {
           provide: RoleService,
           useValue: {},
         },
@@ -123,11 +128,10 @@ describe('WorkspaceManagerService', () => {
           provide: WorkspaceSyncMetadataService,
           useValue: {},
         },
-
         {
-          provide: ObjectMetadataService,
+          provide: ObjectMetadataServiceV2,
           useValue: {
-            deleteObjectsMetadata: jest.fn(),
+            deleteWorkspaceAllObjectMetadata: jest.fn(),
           },
         },
         {
@@ -150,8 +154,8 @@ describe('WorkspaceManagerService', () => {
     }).compile();
 
     service = module.get<WorkspaceManagerService>(WorkspaceManagerService);
-    objectMetadataService = module.get<ObjectMetadataService>(
-      ObjectMetadataService,
+    objectMetadataServiceV2 = module.get<ObjectMetadataServiceV2>(
+      ObjectMetadataServiceV2,
     );
     workspaceMigrationRepository = module.get<
       Repository<WorkspaceMigrationEntity>
@@ -177,7 +181,9 @@ describe('WorkspaceManagerService', () => {
   describe('delete', () => {
     it('should delete all the workspace metadata tables and workspace schema', async () => {
       await service.delete('workspace-id');
-      expect(objectMetadataService.deleteObjectsMetadata).toHaveBeenCalled();
+      expect(
+        objectMetadataServiceV2.deleteWorkspaceAllObjectMetadata,
+      ).toHaveBeenCalled();
       expect(workspaceMigrationRepository.delete).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
       });
