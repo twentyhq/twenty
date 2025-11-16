@@ -1,11 +1,11 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  ResolveField,
-  Resolver,
+    Args,
+    Context,
+    Mutation,
+    Parent,
+    ResolveField,
+    Resolver,
 } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -51,7 +51,7 @@ export class FieldMetadataResolver {
     @Context() context: I18nContext,
   ) {
     try {
-      return await this.fieldMetadataServiceV2.createOne({
+      return await this.fieldMetadataServiceV2.createOneObject({
         createFieldInput: input.field,
         workspaceId,
       });
@@ -71,7 +71,7 @@ export class FieldMetadataResolver {
     @Context() context: I18nContext,
   ) {
     try {
-      return await this.fieldMetadataServiceV2.updateOne({
+      return await this.fieldMetadataServiceV2.updateOneObject({
         updateFieldInput: { ...input.update, id: input.id },
         workspaceId,
       });
@@ -95,7 +95,7 @@ export class FieldMetadataResolver {
     }
 
     try {
-      return await this.fieldMetadataServiceV2.deleteOne({
+      return await this.fieldMetadataServiceV2.deleteOneObject({
         deleteOneFieldInput,
         workspaceId,
       });

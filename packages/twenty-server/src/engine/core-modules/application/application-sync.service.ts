@@ -6,16 +6,16 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
-  ApplicationException,
-  ApplicationExceptionCode,
+    ApplicationException,
+    ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import {
-  FieldManifest,
-  ObjectManifest,
-  ServerlessFunctionManifest,
-  ServerlessFunctionTriggerManifest,
+    FieldManifest,
+    ObjectManifest,
+    ServerlessFunctionManifest,
+    ServerlessFunctionTriggerManifest,
 } from 'src/engine/core-modules/application/types/application.types';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
 import { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
@@ -219,14 +219,14 @@ export class ApplicationSyncService {
     );
 
     for (const fieldToDelete of fieldsToDelete) {
-      await this.fieldMetadataServiceV2.updateOne({
+      await this.fieldMetadataServiceV2.updateOneObject({
         updateFieldInput: {
           id: fieldToDelete.id,
           isActive: false,
         },
         workspaceId,
       });
-      await this.fieldMetadataServiceV2.deleteOne({
+      await this.fieldMetadataServiceV2.deleteOneObject({
         deleteOneFieldInput: { id: fieldToDelete.id },
         workspaceId,
       });
@@ -256,7 +256,7 @@ export class ApplicationSyncService {
         isNullable: fieldToSync.isNullable ?? true,
       };
 
-      await this.fieldMetadataServiceV2.updateOne({
+      await this.fieldMetadataServiceV2.updateOneObject({
         updateFieldInput,
         workspaceId,
       });
@@ -281,7 +281,7 @@ export class ApplicationSyncService {
         workspaceId,
       };
 
-      await this.fieldMetadataServiceV2.createOne({
+      await this.fieldMetadataServiceV2.createOneObject({
         createFieldInput,
         workspaceId,
       });
@@ -341,7 +341,7 @@ export class ApplicationSyncService {
     );
 
     for (const objectToDelete of objectsToDelete) {
-      await this.objectMetadataServiceV2.deleteOne({
+      await this.objectMetadataServiceV2.deleteOneObject({
         deleteObjectInput: { id: objectToDelete.id },
         workspaceId,
         isSystemBuild: true,
@@ -372,7 +372,7 @@ export class ApplicationSyncService {
         },
       };
 
-      await this.objectMetadataServiceV2.updateOne({
+      await this.objectMetadataServiceV2.updateOneObject({
         updateObjectInput,
         workspaceId,
       });
@@ -404,7 +404,7 @@ export class ApplicationSyncService {
         applicationId,
       };
 
-      const createdObject = await this.objectMetadataServiceV2.createOne({
+      const createdObject = await this.objectMetadataServiceV2.createOneObject({
         createObjectInput,
         workspaceId,
       });

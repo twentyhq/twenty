@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOneOptions, In, Repository } from 'typeorm';
-import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
@@ -11,8 +11,8 @@ import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dto
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
-  FieldMetadataException,
-  FieldMetadataExceptionCode,
+    FieldMetadataException,
+    FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
@@ -35,7 +35,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     super(fieldMetadataRepository);
   }
 
-  async createOne({
+  async createOneObject({
     createFieldInput,
     workspaceId,
   }: {
@@ -57,7 +57,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     return createdFieldMetadata;
   }
 
-  async deleteOne({
+  async deleteOneObject({
     deleteOneFieldInput,
     workspaceId,
     isSystemBuild = false,
@@ -135,7 +135,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     );
   }
 
-  async updateOne({
+  async updateOneObject({
     updateFieldInput,
     workspaceId,
   }: {

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
@@ -49,7 +49,7 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
     super(objectMetadataRepository);
   }
 
-  async updateOne({
+  async updateOneObject({
     updateObjectInput,
     workspaceId,
   }: {
@@ -165,7 +165,7 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
     return fromFlatObjectMetadataToObjectMetadataDto(updatedFlatObjectMetadata);
   }
 
-  async deleteOne({
+  async deleteOneObject({
     deleteObjectInput,
     workspaceId,
     isSystemBuild = false,
@@ -324,7 +324,7 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
     );
   }
 
-  async createOne({
+  async createOneObject({
     createObjectInput,
     workspaceId,
   }: {
@@ -555,6 +555,45 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
       deleteObjectInputs,
       workspaceId,
       isSystemBuild: true,
+    });
+  }
+
+  public async findOneWithinWorkspace(
+    workspaceId: string,
+    options: FindOneOptions<ObjectMetadataEntity>,
+  ): Promise<ObjectMetadataEntity | null> {
+    return this.objectMetadataRepository.findOne({
+      relations: [
+        'fields',
+        'indexMetadatas',
+        'indexMetadatas.indexFieldMetadatas',
+      ],
+      ...options,
+      where: {
+        ...options.where,
+        workspaceId,
+      },
+    });
+  }
+
+  public async findManyWithinWorkspace(
+    workspaceId: string,
+    options?: FindManyOptions<ObjectMetadataEntity>,
+  ) {
+    return this.objectMetadataRepository.find({
+      relations: [
+        'fields.object',
+        'fields',
+        'fields.relationTargetObjectMetadata',
+      ],
+      ...options,
+      where: {
+        ...options?.where,
+        workspaceId,
+      },
+      order: {
+        ...options?.order,
+      },
     });
   }
 }
