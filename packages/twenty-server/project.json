@@ -44,17 +44,18 @@
     "typecheck": {},
     "start": {
       "executor": "nx:run-commands",
-      "dependsOn": ["typecheck", "build"],
+      "cache": false,
+      "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "NODE_ENV=development && nest start --watch"
+        "command": "NODE_ENV=development nest start --watch"
       }
     },
     "start:ci": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "NODE_ENV=development && nest start"
+        "command": "NODE_ENV=development nest start"
       }
     },
     "start:ci-if-needed": {
