@@ -195,8 +195,7 @@
     "vite-plugin-checker": "^0.10.2",
     "vite-plugin-cjs-interop": "^2.2.0",
     "vite-plugin-dts": "3.8.1",
-    "vite-plugin-svgr": "^4.2.0",
-    "x-var": "^3.0.1"
+    "vite-plugin-svgr": "^4.2.0"
   },
   "engines": {
     "node": "^24.5.0",

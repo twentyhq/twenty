@@ -55500,7 +55500,6 @@ __metadata:
     vite-plugin-dts: "npm:3.8.1"
     vite-plugin-svgr: "npm:^4.2.0"
     vite-tsconfig-paths: "npm:^4.2.1"
-    x-var: "npm:^3.0.1"
     xlsx-ugnis: "npm:^0.19.3"
     zod: "npm:^4.1.11"
   languageName: unknown
@@ -58092,19 +58091,6 @@ __metadata:
   dependencies:
     path-extra: "npm:^1.0.2"
   checksum: 10c0/0e068e75c1bde6dab03e60147d228178098fee8c7ab99ce37df290ddc547c42f468ba9aca07fc16ba292d5e2869b32990b3db720104a556e8128c744f1a5009f
-  languageName: node
-  linkType: hard
-
-"x-var@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "x-var@npm:3.0.1"
-  dependencies:
-    dotenv: "npm:^16.4.5"
-    shelljs: "npm:^0.8.5"
-  bin:
-    x-env: dist/x-env.js
-    x-var: dist/x-var.js
-  checksum: 10c0/2335eb632a68b16ebf60c3953134f366ea67f08113b3fb916d0be86e00eb8591ddbee8a93c8ebb0533c693bde20c35933d5d1e20258a308122450b84570cd5f8
   languageName: node
   linkType: hard
 
