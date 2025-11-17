@@ -30,6 +30,8 @@ import {
   isStringLiteralLike,
   isTemplateExpression,
   isVariableStatement,
+  isImportDeclaration,
+  NamedImports,
 } from 'typescript';
 import {
   AppManifest,
@@ -44,6 +46,7 @@ import { findPathFile } from '../utils/find-path-file';
 import { parseJsoncFile, parseTextFile } from '../utils/jsonc-parser';
 import { formatAndWarnTsDiagnostics } from './format-and-warn-ts-diagnostics';
 import { getTsProgramAndDiagnostics } from '../utils/get-ts-program-and-diagnostics';
+import { GENERATED_FOLDER_NAME } from '../services/generate.service';
 
 type JSONValue =
   | string
@@ -445,12 +448,66 @@ export const extractTwentyAppConfig = (program: Program): Application => {
   throw new Error('Could not find default exported ApplicationConfig');
 };
 
+const isTwentyClientUsedInProgram = (program: Program): boolean => {
+  for (const sf of program.getSourceFiles()) {
+    if (sf.isDeclarationFile) continue;
+
+    let found = false;
+
+    const visit = (node: Node): void => {
+      if (found) return;
+
+      if (isImportDeclaration(node)) {
+        const moduleSpecifier = node.moduleSpecifier;
+
+        if (isStringLiteralLike(moduleSpecifier)) {
+          const moduleText = moduleSpecifier.text;
+
+          // Match ../../generated, ../generated, ./foo/generated, etc.
+          const isGeneratedModule =
+            moduleText === GENERATED_FOLDER_NAME ||
+            moduleText.endsWith(`/${GENERATED_FOLDER_NAME}`);
+
+          if (
+            isGeneratedModule &&
+            node.importClause &&
+            node.importClause.namedBindings &&
+            node.importClause.namedBindings.kind === SyntaxKind.NamedImports
+          ) {
+            const namedImports = node.importClause
+              .namedBindings as NamedImports;
+
+            for (const element of namedImports.elements) {
+              const importedName =
+                element.propertyName?.text ?? element.name.text;
+
+              if (importedName === 'createClient') {
+                found = true;
+                return;
+              }
+            }
+          }
+        }
+      }
+
+      forEachChild(node, visit);
+    };
+
+    visit(sf);
+
+    if (found) return true;
+  }
+
+  return false;
+};
+
 export const loadManifest = async (
   appPath: string,
 ): Promise<{
   packageJson: PackageJson;
   yarnLock: string;
   manifest: AppManifest;
+  isTwentyClientUsed: boolean;
 }> => {
   const packageJson = await parseJsoncFile(
     await findPathFile(appPath, 'package.json'),
@@ -475,6 +532,8 @@ export const loadManifest = async (
     await loadFolderContentIntoJson(program, appPath),
   ];
 
+  const isTwentyClientUsed = isTwentyClientUsedInProgram(program);
+
   return {
     packageJson,
     yarnLock,
@@ -484,5 +543,6 @@ export const loadManifest = async (
       serverlessFunctions,
       sources,
     },
+    isTwentyClientUsed,
   };
 };

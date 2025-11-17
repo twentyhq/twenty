@@ -17,10 +17,6 @@ export class AppSyncCommand {
       console.log(chalk.gray(`📁 App Path: ${appPath}`));
       console.log('');
 
-      await this.synchronize({ appPath });
-
-      await this.generateService.generateClient(appPath);
-
       return await this.synchronize({ appPath });
     } catch (error) {
       console.error(
@@ -32,13 +28,26 @@ export class AppSyncCommand {
   }
 
   private async synchronize({ appPath }: { appPath: string }) {
-    const { manifest, packageJson, yarnLock } = await loadManifest(appPath);
+    const { manifest, packageJson, yarnLock, isTwentyClientUsed } =
+      await loadManifest(appPath);
 
-    const serverlessSyncResult = await this.apiService.syncApplication({
+    let serverlessSyncResult = await this.apiService.syncApplication({
       manifest,
       packageJson,
       yarnLock,
     });
+
+    if (isTwentyClientUsed) {
+      await this.generateService.generateClient(appPath);
+
+      const { manifest: manifestWithClient } = await loadManifest(appPath);
+
+      serverlessSyncResult = await this.apiService.syncApplication({
+        manifest: manifestWithClient,
+        packageJson,
+        yarnLock,
+      });
+    }
 
     if (!serverlessSyncResult.success) {
       console.error(

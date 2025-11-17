@@ -3,7 +3,8 @@ import { generate } from '@genql/cli';
 import { join, resolve } from 'path';
 import { ConfigService } from './config.service';
 import { ApiService } from './api.service';
-const GENERATED_FOLDER_NAME = 'generated';
+
+export const GENERATED_FOLDER_NAME = 'generated';
 
 export class GenerateService {
   private configService: ConfigService;
