@@ -14,4 +14,5 @@ export type PageLayoutTab = Omit<PageLayoutTabGenerated, 'widgets'> & {
    * Only available behind IS_RECORD_PAGE_LAYOUT_ENABLED for now.
    */
   layoutMode?: PageLayoutTabLayoutMode;
+  icon?: string;
 };
