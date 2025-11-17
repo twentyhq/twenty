@@ -11,9 +11,7 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      WorkspaceEntity,
-    ]),
+    TypeOrmModule.forFeature([WorkspaceEntity]),
     WorkspaceSchemaManagerModule,
     ApplicationModule,
   ],
