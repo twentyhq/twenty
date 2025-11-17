@@ -5,7 +5,7 @@ import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { mergePreviewRecordFamilyState } from '@/object-record/record-merge/states/mergePreviewRecordFamilyState';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isMergeInProgressState } from '../states/mergeInProgressState';
 import { mergeSettingsState } from '../states/mergeSettingsState';
@@ -20,6 +20,9 @@ export const useMergePreview = ({
   const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
   const [mergePreviewRecord, setMergePreviewRecord] =
     useState<ObjectRecord | null>(null);
+  const [lastPreviewId, setLastPreviewId] = useState<string>('');
+  const [lastPreviewSignature, setLastPreviewSignature] = useState<string>('');
+  const [currentRunId, setCurrentRunId] = useState(0);
 
   const mergeSettings = useRecoilValue(mergeSettingsState);
   const isMergeInProgress = useRecoilValue(isMergeInProgressState);
@@ -32,13 +35,12 @@ export const useMergePreview = ({
     commandMenuNavigationMorphItemsByPageState,
   );
 
-  const selectedRecordIds =
-    commandMenuNavigationMorphItemsByPage
-      .get(CommandMenuPages.MergeRecords)
-      ?.map((morphItem) => morphItem.recordId) ?? [];
-  const idsSig = useMemo(
-    () => selectedRecordIds.join(','),
-    [selectedRecordIds],
+  const selectedRecordIds = useMemo(
+    () =>
+      commandMenuNavigationMorphItemsByPage
+        .get(CommandMenuPages.MergeRecords)
+        ?.map((morphItem) => morphItem.recordId) ?? [],
+    [commandMenuNavigationMorphItemsByPage],
   );
   const selectedRecords = useRecoilValue(
     recordStoreRecordsSelector({
@@ -46,42 +48,41 @@ export const useMergePreview = ({
     }),
   );
 
-  const lastPreviewIdRef = useRef<string>('');
   const setPreviewRecordById = useRecoilCallback(
     ({ set }) =>
-      (record: ObjectRecord | null) => {
-        if (lastPreviewIdRef.current) {
-          set(mergePreviewRecordFamilyState(lastPreviewIdRef.current), null);
+      (record: ObjectRecord | null, previousId: string) => {
+        if (previousId !== '') {
+          set(mergePreviewRecordFamilyState(previousId), null);
         }
-        if (record) {
+        if (record !== null) {
           set(mergePreviewRecordFamilyState(record.id), record);
-          lastPreviewIdRef.current = record.id;
-        } else {
-          lastPreviewIdRef.current = '';
         }
       },
     [],
   );
 
-  const prioritySig = String(mergeSettings.conflictPriorityIndex);
-  const fetchSig = `${idsSig}|${prioritySig}`;
-  const lastSigRef = useRef<string>('');
-  const runIdRef = useRef(0);
+  const previewSignature = useMemo(
+    () =>
+      `${selectedRecordIds.join(',')}|${mergeSettings.conflictPriorityIndex}`,
+    [selectedRecordIds, mergeSettings.conflictPriorityIndex],
+  );
 
   useEffect(() => {
     const fetchPreview = async () => {
       if (selectedRecordIds.length < 2 || isMergeInProgress) {
         setMergePreviewRecord(null);
-        setPreviewRecordById(null);
+        setPreviewRecordById(null, lastPreviewId);
+        setLastPreviewId('');
         return;
       }
 
-      if (lastSigRef.current === fetchSig) {
+      if (lastPreviewSignature === previewSignature) {
         return;
       }
-      lastSigRef.current = fetchSig;
+      setLastPreviewSignature(previewSignature);
 
-      const currentRunId = ++runIdRef.current;
+      const runId = currentRunId + 1;
+      setCurrentRunId(runId);
 
       setIsGeneratingPreview(true);
       try {
@@ -91,9 +92,10 @@ export const useMergePreview = ({
           preview: true,
         });
         if (!previewRecord) {
-          if (currentRunId === runIdRef.current) {
+          if (runId === currentRunId + 1) {
             setMergePreviewRecord(null);
-            setPreviewRecordById(null);
+            setPreviewRecordById(null, lastPreviewId);
+            setLastPreviewId('');
           }
           return;
         }
@@ -102,17 +104,19 @@ export const useMergePreview = ({
           recordNode: previewRecord,
         });
 
-        if (currentRunId === runIdRef.current) {
+        if (runId === currentRunId + 1) {
           setMergePreviewRecord(transformPreviewRecord);
-          setPreviewRecordById(transformPreviewRecord);
+          setPreviewRecordById(transformPreviewRecord, lastPreviewId);
+          setLastPreviewId(transformPreviewRecord.id);
         }
       } catch {
-        if (currentRunId === runIdRef.current) {
+        if (runId === currentRunId + 1) {
           setMergePreviewRecord(null);
-          setPreviewRecordById(null);
+          setPreviewRecordById(null, lastPreviewId);
+          setLastPreviewId('');
         }
       } finally {
-        if (currentRunId === runIdRef.current) {
+        if (runId === currentRunId + 1) {
           setIsGeneratingPreview(false);
         }
       }
@@ -122,12 +126,15 @@ export const useMergePreview = ({
       fetchPreview();
     }
   }, [
-    fetchSig,
+    previewSignature,
     selectedRecordIds,
     isMergeInProgress,
     mergeManyRecords,
     mergeSettings,
     setPreviewRecordById,
+    lastPreviewId,
+    lastPreviewSignature,
+    currentRunId,
   ]);
 
   return {
