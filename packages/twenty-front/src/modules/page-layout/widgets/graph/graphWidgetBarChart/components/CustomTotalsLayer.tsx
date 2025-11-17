@@ -46,9 +46,9 @@ export const CustomTotalsLayer = ({
       ? computeBarChartStackedLabels(bars)
       : computeBarChartGroupedLabels(bars);
 
-  const labelsToRender = barChartLabels.filter((label) =>
-    omitNullValues ? label.value !== 0 : true,
-  );
+  const labelsToRender = omitNullValues
+    ? barChartLabels.filter((label) => label.value !== 0)
+    : barChartLabels;
 
   return (
     <>

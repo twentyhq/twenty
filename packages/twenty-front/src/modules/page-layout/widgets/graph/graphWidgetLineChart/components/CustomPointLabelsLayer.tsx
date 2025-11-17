@@ -25,9 +25,9 @@ export const CustomPointLabelsLayer = ({
       ? computeLineChartStackedLabels(points)
       : computeLineChartGroupedLabels(points);
 
-  const labelsToRender = labels.filter((label) =>
-    omitNullValues ? label.value !== 0 : true,
-  );
+  const labelsToRender = omitNullValues
+    ? labels.filter((label) => label.value !== 0)
+    : labels;
 
   return (
     <>
