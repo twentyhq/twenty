@@ -10,6 +10,7 @@ import { AppDevCommand } from './app-dev.command';
 import { AppInitCommand } from './app-init.command';
 import { AppSyncCommand } from './app-sync.command';
 import { formatPath } from '../utils/format-path';
+import { AppGenerateCommand } from './app-generate.command';
 
 export class AppCommand {
   private devCommand = new AppDevCommand();
@@ -17,6 +18,7 @@ export class AppCommand {
   private deleteCommand = new AppDeleteCommand();
   private initCommand = new AppInitCommand();
   private addCommand = new AppAddCommand();
+  private generateCommand = new AppGenerateCommand();
 
   getCommand(): Command {
     const appCommand = new Command('app');
@@ -94,6 +96,13 @@ export class AppCommand {
           process.exit(1);
         }
         await this.addCommand.execute(entityType as SyncableEntity);
+      });
+
+    appCommand
+      .command('generate [outputPath]')
+      .description('Generate Twenty client')
+      .action(async (appPath?: string) => {
+        await this.generateCommand.execute(formatPath(appPath));
       });
 
     return appCommand;
