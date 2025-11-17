@@ -20,7 +20,19 @@ const StyledOuterContainer = styled.div<{ isMobile: boolean }>`
 const StyledInnerContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex-direction: column;
-  width: ${({ isMobile }) => (isMobile ? `100%` : '348px')};
+
+  ${({ isMobile }) =>
+    isMobile
+      ? `
+        width: 100%;
+      `
+      : `
+        width: 348px;      /* starting width */
+        min-width: 250px;  /* don't let it get too small */
+        max-width: 600px;  /* don't let it get too big */
+        resize: horizontal;
+        overflow: auto;
+      `}
 `;
 
 const StyledIntermediateContainer = styled.div`
