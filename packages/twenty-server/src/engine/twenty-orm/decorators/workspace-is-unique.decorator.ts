@@ -3,7 +3,11 @@ import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
-export function WorkspaceIsUnique(): PropertyDecorator {
+export function WorkspaceIsUnique({
+  universalIdentifier,
+}: {
+  universalIdentifier: string;
+}): PropertyDecorator {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (target: any, propertyKey: string | symbol) => {
     if (propertyKey === undefined) {
@@ -28,6 +32,7 @@ export function WorkspaceIsUnique(): PropertyDecorator {
       gate,
       isUnique: true,
       whereClause: null,
+      universalIdentifier,
     });
 
     return TypedReflect.defineMetadata(
