@@ -22,7 +22,8 @@ const StyledLayout = styled.div<{
   paddingRight: number;
 }>`
   display: flex;
-  overflow: hidden;
+  flex: 1;
+  min-height: 0;
   padding-bottom: ${({ paddingBottom }) => `${paddingBottom}px`};
   padding-right: ${({ theme }) => theme.spacing(3)};
 `;
