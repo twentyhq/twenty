@@ -179,7 +179,6 @@ export const GraphWidgetLineChart = ({
       {enablePointLabel && (
         <CustomPointLabelsLayer
           points={layerProps.points}
-          yScale={layerProps.yScale}
           formatValue={(value) => formatGraphValue(value, formatOptions)}
           offset={theme.spacingMultiplicator * 2}
           groupMode={groupMode}

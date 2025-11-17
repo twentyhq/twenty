@@ -5,7 +5,7 @@ import { type LineCustomSvgLayerProps, type LineSeries } from '@nivo/line';
 
 type CustomPointLabelsLayerProps = Pick<
   LineCustomSvgLayerProps<LineSeries>,
-  'points' | 'yScale'
+  'points'
 > & {
   formatValue?: (value: number) => string;
   offset?: number;
@@ -15,7 +15,6 @@ type CustomPointLabelsLayerProps = Pick<
 
 export const CustomPointLabelsLayer = ({
   points,
-  yScale,
   formatValue,
   offset = 0,
   groupMode,
@@ -23,7 +22,7 @@ export const CustomPointLabelsLayer = ({
 }: CustomPointLabelsLayerProps) => {
   const labels =
     groupMode === 'stacked'
-      ? computeLineChartStackedLabels(points, yScale)
+      ? computeLineChartStackedLabels(points)
       : computeLineChartGroupedLabels(points);
 
   const labelsToRender = labels.filter((label) =>
