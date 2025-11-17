@@ -3,9 +3,11 @@ import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-dire
 import { ApiService } from '../services/api.service';
 import { ApiResponse } from '../types/config.types';
 import { loadManifest } from '../utils/load-manifest';
+import { GenerateService } from '../services/generate.service';
 
 export class AppSyncCommand {
   private apiService = new ApiService();
+  private generateService = new GenerateService();
 
   async execute(
     appPath: string = CURRENT_EXECUTION_DIRECTORY,
@@ -14,6 +16,10 @@ export class AppSyncCommand {
       console.log(chalk.blue('🚀 Syncing Twenty Application'));
       console.log(chalk.gray(`📁 App Path: ${appPath}`));
       console.log('');
+
+      await this.synchronize({ appPath });
+
+      await this.generateService.generateClient(appPath);
 
       return await this.synchronize({ appPath });
     } catch (error) {
