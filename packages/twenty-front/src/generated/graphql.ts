@@ -800,9 +800,28 @@ export type CreateFieldInput = {
   type: FieldMetadataType;
 };
 
+export type CreateObjectInput = {
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
+  isRemote?: InputMaybe<Scalars['Boolean']>;
+  labelPlural: Scalars['String'];
+  labelSingular: Scalars['String'];
+  namePlural: Scalars['String'];
+  nameSingular: Scalars['String'];
+  primaryKeyColumnType?: InputMaybe<Scalars['String']>;
+  primaryKeyFieldMetadataSettings?: InputMaybe<Scalars['JSON']>;
+  shortcut?: InputMaybe<Scalars['String']>;
+};
+
 export type CreateOneFieldMetadataInput = {
   /** The record to create */
   field: CreateFieldInput;
+};
+
+export type CreateOneObjectInput = {
+  /** The object to create */
+  object: CreateObjectInput;
 };
 
 export type CreatePageLayoutInput = {
@@ -1996,6 +2015,11 @@ export type MutationCreateOneDatabaseEventTriggerArgs = {
 
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
+};
+
+
+export type MutationCreateOneObjectArgs = {
+  input: CreateOneObjectInput;
 };
 
 
