@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { google } from 'googleapis';
+
 import {
   MessageFolder,
   MessageFolderDriver,
@@ -39,7 +41,10 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
           connectedAccount,
         );
 
-      const gmailClient = oAuth2Client.gmail({ version: 'v1' });
+      const gmailClient = google.gmail({
+        version: 'v1',
+        auth: oAuth2Client,
+      });
 
       const response = await gmailClient.users.labels
         .list({ userId: 'me' })

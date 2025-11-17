@@ -1,5 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { google } from 'googleapis';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
@@ -27,7 +28,7 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
       },
       getProfile: jest
         .fn()
-        .mockResolvedValue({ data: { emailAdress: 'test@example.com' } }),
+        .mockResolvedValue({ data: { emailAddress: 'test@example.com' } }),
     },
   };
 
@@ -45,12 +46,12 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
     },
   };
 
-  const mockOAuth2Client = {
-    gmail: jest.fn().mockReturnValue(mockGmailClient),
-    people: jest.fn().mockReturnValue(mockPeopleClient),
-  };
+  const mockOAuth2Client = {};
 
   beforeEach(async () => {
+    jest.spyOn(google, 'gmail').mockReturnValue(mockGmailClient as never);
+    jest.spyOn(google, 'people').mockReturnValue(mockPeopleClient as never);
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MessagingSendMessageService,
@@ -79,7 +80,8 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    mockSend.mockClear();
+    jest.restoreAllMocks();
   });
 
   it('should send multipart/alternative email with both text and HTML parts via Gmail', async () => {
