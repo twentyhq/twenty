@@ -4,7 +4,7 @@ import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIndex } from 'src/engine/twenty-orm/decorators/workspace-index.decorator';
@@ -38,10 +38,15 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
   isUnique: true,
   indexWhereClause: '"deletedAt" IS NULL',
 })
-export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspaceEntity {
+export class MessageChannelMessageAssociationWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.id,
+  createdAt: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
-    standardId: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageExternalId,
-    universalIdentifier: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageExternalId,
+    universalIdentifier:
+      MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageExternalId,
     type: FieldMetadataType.TEXT,
     label: msg`Message External Id`,
     description: msg`Message id from the messaging provider`,
@@ -51,8 +56,8 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
   messageExternalId: string | null;
 
   @WorkspaceField({
-    standardId: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageThreadExternalId,
-    universalIdentifier: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageThreadExternalId,
+    universalIdentifier:
+      MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageThreadExternalId,
     type: FieldMetadataType.TEXT,
     label: msg`Thread External Id`,
     description: msg`Thread id from the messaging provider`,
@@ -62,7 +67,6 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
   messageThreadExternalId: string | null;
 
   @WorkspaceField({
-    standardId: MESSAGE_STANDARD_FIELD_IDS.direction,
     universalIdentifier: MESSAGE_STANDARD_FIELD_IDS.direction,
     type: FieldMetadataType.SELECT,
     label: msg`Direction`,
@@ -104,7 +108,6 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
   messageChannelId: string;
 
   @WorkspaceRelation({
-    standardId: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.message,
     type: RelationType.MANY_TO_ONE,
     label: msg`Message Id`,
     description: msg`Message Id`,

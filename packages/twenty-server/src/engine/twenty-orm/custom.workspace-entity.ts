@@ -10,7 +10,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata.constants';
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceCustomEntity } from 'src/engine/twenty-orm/decorators/workspace-custom-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -36,9 +36,13 @@ export const SEARCH_FIELDS_FOR_CUSTOM_OBJECT: FieldTypeAndNameMetadata[] = [
   },
 ];
 @WorkspaceCustomEntity()
-export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
+export class CustomWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: CUSTOM_OBJECT_STANDARD_FIELD_IDS.id,
+  createdAt: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: CUSTOM_OBJECT_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: CUSTOM_OBJECT_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
-    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
     universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
     label: msg`Name`,
     description: msg`Name`,
@@ -48,7 +52,6 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   name: string;
 
   @WorkspaceField({
-    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.position,
     universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.position,
     label: msg`Position`,
     description: msg`Position`,
@@ -61,7 +64,6 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
 
   @WorkspaceField({
-    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
     universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
@@ -155,7 +157,6 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   timelineActivities: TimelineActivityWorkspaceEntity[];
 
   @WorkspaceField({
-    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,
     universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,

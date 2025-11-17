@@ -4,7 +4,7 @@ import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -39,9 +39,13 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
-export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
+export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.id,
+  createdAt: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.happensAt,
     universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.happensAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Creation date`,
@@ -52,7 +56,6 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   happensAt: Date;
 
   @WorkspaceField({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.name,
     universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Event name`,
@@ -62,7 +65,6 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   name: string;
 
   @WorkspaceField({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.properties,
     universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.properties,
     type: FieldMetadataType.RAW_JSON,
     label: msg`Event details`,
@@ -74,7 +76,6 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   // Special objects that don't have their own timeline and are 'link' to the main object
   @WorkspaceField({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedRecordCachedName,
     universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedRecordCachedName,
     type: FieldMetadataType.TEXT,
     label: msg`Linked Record cached name`,
@@ -84,7 +85,6 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   linkedRecordCachedName: string;
 
   @WorkspaceField({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedRecordId,
     universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedRecordId,
     type: FieldMetadataType.UUID,
     label: msg`Linked Record id`,
@@ -95,7 +95,6 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   linkedRecordId: string | null;
 
   @WorkspaceField({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedObjectMetadataId,
     universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedObjectMetadataId,
     type: FieldMetadataType.UUID,
     label: msg`Linked Object Metadata Id`,

@@ -81,18 +81,16 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   deletedAt: PERSON_STANDARD_FIELD_IDS.deletedAt,
 }) {
   @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.name,
     universalIdentifier: PERSON_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.FULL_NAME,
     label: msg`Name`,
-    description: msg`Contact’s name`,
+    description: msg`Contact's name`,
     icon: 'IconUser',
   })
   @WorkspaceIsNullable()
   name: FullNameMetadata | null;
 
   @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.emails,
     universalIdentifier: PERSON_STANDARD_FIELD_IDS.emails,
     type: FieldMetadataType.EMAILS,
     label: msg`Emails`,
@@ -106,7 +104,6 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   emails: EmailsMetadata;
 
   @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.linkedinLink,
     universalIdentifier: PERSON_STANDARD_FIELD_IDS.linkedinLink,
     type: FieldMetadataType.LINKS,
     label: msg`Linkedin`,
@@ -117,7 +114,6 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   linkedinLink: LinksMetadata | null;
 
   @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.xLink,
     universalIdentifier: PERSON_STANDARD_FIELD_IDS.xLink,
     type: FieldMetadataType.LINKS,
     label: msg`X`,
@@ -128,7 +124,6 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   xLink: LinksMetadata | null;
 
   @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.jobTitle,
     universalIdentifier: PERSON_STANDARD_FIELD_IDS.jobTitle,
     type: FieldMetadataType.TEXT,
     label: msg`Job Title`,
@@ -138,7 +133,6 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   jobTitle: string;
 
   @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.phone,
     universalIdentifier: PERSON_STANDARD_FIELD_IDS.phone,
     type: FieldMetadataType.TEXT,
     label: msg`Phone`,
@@ -149,7 +143,6 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   phone: string;
 
   @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.phones,
     universalIdentifier: PERSON_STANDARD_FIELD_IDS.phones,
     type: FieldMetadataType.PHONES,
     label: msg`Phones`,
@@ -162,7 +155,6 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   phones: PhonesMetadata;
 
   @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.city,
     universalIdentifier: PERSON_STANDARD_FIELD_IDS.city,
     type: FieldMetadataType.TEXT,
     label: msg`City`,
@@ -172,7 +164,6 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   city: string;
 
   @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.avatarUrl,
     universalIdentifier: PERSON_STANDARD_FIELD_IDS.avatarUrl,
     type: FieldMetadataType.TEXT,
     label: msg`Avatar`,
@@ -183,7 +174,6 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   avatarUrl: string;
 
   @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.position,
     universalIdentifier: PERSON_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
@@ -195,7 +185,6 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   position: number;
 
   @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.createdBy,
     universalIdentifier: PERSON_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
@@ -323,7 +312,6 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.searchVector,
     universalIdentifier: PERSON_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,

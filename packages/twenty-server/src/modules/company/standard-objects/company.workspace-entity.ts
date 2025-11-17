@@ -70,7 +70,6 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   deletedAt: COMPANY_STANDARD_FIELD_IDS.deletedAt,
 }) {
   @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.name,
     universalIdentifier: COMPANY_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
@@ -80,7 +79,6 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   name: string;
 
   @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.domainName,
     universalIdentifier: COMPANY_STANDARD_FIELD_IDS.domainName,
     type: FieldMetadataType.LINKS,
     label: msg`Domain Name`,
@@ -94,7 +92,6 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   domainName: LinksMetadata;
 
   @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.employees,
     universalIdentifier: COMPANY_STANDARD_FIELD_IDS.employees,
     type: FieldMetadataType.NUMBER,
     label: msg`Employees`,
@@ -105,7 +102,6 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   employees: number | null;
 
   @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.linkedinLink,
     universalIdentifier: COMPANY_STANDARD_FIELD_IDS.linkedinLink,
     type: FieldMetadataType.LINKS,
     label: msg`Linkedin`,
@@ -116,7 +112,6 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   linkedinLink: LinksMetadata | null;
 
   @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.xLink,
     universalIdentifier: COMPANY_STANDARD_FIELD_IDS.xLink,
     type: FieldMetadataType.LINKS,
     label: msg`X`,
@@ -127,7 +122,6 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   xLink: LinksMetadata | null;
 
   @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.annualRecurringRevenue,
     universalIdentifier: COMPANY_STANDARD_FIELD_IDS.annualRecurringRevenue,
     type: FieldMetadataType.CURRENCY,
     label: msg`ARR`,
@@ -138,7 +132,6 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   annualRecurringRevenue: CurrencyMetadata | null;
 
   @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.address,
     universalIdentifier: COMPANY_STANDARD_FIELD_IDS.address,
     type: FieldMetadataType.ADDRESS,
     label: msg`Address`,
@@ -149,7 +142,6 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   address: AddressMetadata;
 
   @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.idealCustomerProfile,
     universalIdentifier: COMPANY_STANDARD_FIELD_IDS.idealCustomerProfile,
     type: FieldMetadataType.BOOLEAN,
     label: msg`ICP`,
@@ -160,7 +152,6 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   idealCustomerProfile: boolean;
 
   @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.position,
     universalIdentifier: COMPANY_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
@@ -172,7 +163,6 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   position: number;
 
   @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.createdBy,
     universalIdentifier: COMPANY_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
@@ -287,7 +277,6 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.address_deprecated,
     universalIdentifier: COMPANY_STANDARD_FIELD_IDS.address_deprecated,
     type: FieldMetadataType.TEXT,
     label: msg`Address (deprecated) `,
@@ -299,7 +288,6 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   addressOld: string;
 
   @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.searchVector,
     universalIdentifier: COMPANY_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,

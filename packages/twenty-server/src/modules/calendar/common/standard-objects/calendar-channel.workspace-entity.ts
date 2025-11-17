@@ -6,7 +6,7 @@ import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
@@ -79,9 +79,13 @@ registerEnumType(CalendarChannelContactAutoCreationPolicy, {
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
-export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
+export class CalendarChannelWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.id,
+  createdAt: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
-    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.handle,
     universalIdentifier: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: msg`Handle`,
@@ -91,7 +95,6 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   handle: string;
 
   @WorkspaceField({
-    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
     universalIdentifier: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
     type: FieldMetadataType.SELECT,
     label: msg`Sync status`,
@@ -134,7 +137,6 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   syncStatus: CalendarChannelSyncStatus | null;
 
   @WorkspaceField({
-    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStage,
     universalIdentifier: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStage,
     type: FieldMetadataType.SELECT,
     label: msg`Sync stage`,
@@ -195,7 +197,6 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   syncStage: CalendarChannelSyncStage;
 
   @WorkspaceField({
-    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.visibility,
     universalIdentifier: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.visibility,
     type: FieldMetadataType.SELECT,
     label: msg`Visibility`,
@@ -220,8 +221,8 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   visibility: string;
 
   @WorkspaceField({
-    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.isContactAutoCreationEnabled,
-    universalIdentifier: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.isContactAutoCreationEnabled,
+    universalIdentifier:
+      CALENDAR_CHANNEL_STANDARD_FIELD_IDS.isContactAutoCreationEnabled,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Is Contact Auto Creation Enabled`,
     description: msg`Is Contact Auto Creation Enabled`,
@@ -231,8 +232,8 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   isContactAutoCreationEnabled: boolean;
 
   @WorkspaceField({
-    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.contactAutoCreationPolicy,
-    universalIdentifier: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.contactAutoCreationPolicy,
+    universalIdentifier:
+      CALENDAR_CHANNEL_STANDARD_FIELD_IDS.contactAutoCreationPolicy,
     type: FieldMetadataType.SELECT,
     label: msg`Contact auto creation policy`,
     description: msg`Automatically create records for people you participated with in an event.`,
@@ -269,7 +270,6 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy;
 
   @WorkspaceField({
-    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.isSyncEnabled,
     universalIdentifier: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.isSyncEnabled,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Is Sync Enabled`,
@@ -280,7 +280,6 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   isSyncEnabled: boolean;
 
   @WorkspaceField({
-    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncCursor,
     universalIdentifier: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncCursor,
     type: FieldMetadataType.TEXT,
     label: msg`Sync Cursor`,
@@ -290,7 +289,6 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   syncCursor: string;
 
   @WorkspaceField({
-    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncedAt,
     universalIdentifier: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Last sync date`,
@@ -301,7 +299,6 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   syncedAt: string | null;
 
   @WorkspaceField({
-    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStageStartedAt,
     universalIdentifier: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStageStartedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Sync stage started at`,
@@ -312,8 +309,8 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   syncStageStartedAt: string | null;
 
   @WorkspaceField({
-    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.throttleFailureCount,
-    universalIdentifier: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.throttleFailureCount,
+    universalIdentifier:
+      CALENDAR_CHANNEL_STANDARD_FIELD_IDS.throttleFailureCount,
     type: FieldMetadataType.NUMBER,
     label: msg`Throttle Failure Count`,
     description: msg`Throttle Failure Count`,
@@ -323,7 +320,6 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   throttleFailureCount: number;
 
   @WorkspaceRelation({
-    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.connectedAccount,
     type: RelationType.MANY_TO_ONE,
     label: msg`Connected Account`,
     description: msg`Connected Account`,

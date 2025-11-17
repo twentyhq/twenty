@@ -48,7 +48,6 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   deletedAt: ATTACHMENT_STANDARD_FIELD_IDS.deletedAt,
 }) {
   @WorkspaceField({
-    standardId: ATTACHMENT_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
     description: msg`Attachment name`,
@@ -58,7 +57,6 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   name: string;
 
   @WorkspaceField({
-    standardId: ATTACHMENT_STANDARD_FIELD_IDS.fullPath,
     universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.fullPath,
     type: FieldMetadataType.TEXT,
     label: msg`Full path`,
@@ -69,7 +67,6 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
 
   // Deprecated: Use fileCategory instead
   @WorkspaceField({
-    standardId: ATTACHMENT_STANDARD_FIELD_IDS.type,
     universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.TEXT,
     label: msg`Type (deprecated)`,
@@ -79,7 +76,6 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   type: string;
 
   @WorkspaceField({
-    standardId: ATTACHMENT_STANDARD_FIELD_IDS.fileCategory,
     universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.fileCategory,
     type: FieldMetadataType.SELECT,
     label: msg`File category`,
@@ -140,7 +136,6 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   fileCategory: string;
 
   @WorkspaceField({
-    standardId: ATTACHMENT_STANDARD_FIELD_IDS.createdBy,
     universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,

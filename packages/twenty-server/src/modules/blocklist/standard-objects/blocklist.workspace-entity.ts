@@ -4,7 +4,7 @@ import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -26,9 +26,13 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   labelIdentifierStandardId: BLOCKLIST_STANDARD_FIELD_IDS.handle,
 })
 @WorkspaceIsSystem()
-export class BlocklistWorkspaceEntity extends BaseWorkspaceEntity {
+export class BlocklistWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: BLOCKLIST_STANDARD_FIELD_IDS.id,
+  createdAt: BLOCKLIST_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: BLOCKLIST_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: BLOCKLIST_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
-    standardId: BLOCKLIST_STANDARD_FIELD_IDS.handle,
     universalIdentifier: BLOCKLIST_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: msg`Handle`,

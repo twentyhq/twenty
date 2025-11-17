@@ -4,7 +4,7 @@ import { RelationOnDeleteAction } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -30,7 +30,12 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
   icon: STANDARD_OBJECT_ICONS.noteTarget,
 })
 @WorkspaceIsSystem()
-export class NoteTargetWorkspaceEntity extends BaseWorkspaceEntity {
+export class NoteTargetWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: NOTE_TARGET_STANDARD_FIELD_IDS.id,
+  createdAt: NOTE_TARGET_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: NOTE_TARGET_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: NOTE_TARGET_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceRelation({
     standardId: NOTE_TARGET_STANDARD_FIELD_IDS.note,
     type: RelationType.MANY_TO_ONE,

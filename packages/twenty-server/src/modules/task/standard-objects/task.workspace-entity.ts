@@ -62,7 +62,6 @@ export class TaskWorkspaceEntity extends createBaseWorkspaceEntity({
   deletedAt: TASK_STANDARD_FIELD_IDS.deletedAt,
 }) {
   @WorkspaceField({
-    standardId: TASK_STANDARD_FIELD_IDS.position,
     universalIdentifier: TASK_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
@@ -74,7 +73,6 @@ export class TaskWorkspaceEntity extends createBaseWorkspaceEntity({
   position: number;
 
   @WorkspaceField({
-    standardId: TASK_STANDARD_FIELD_IDS.title,
     universalIdentifier: TASK_STANDARD_FIELD_IDS.title,
     type: FieldMetadataType.TEXT,
     label: msg`Title`,
@@ -84,7 +82,6 @@ export class TaskWorkspaceEntity extends createBaseWorkspaceEntity({
   title: string;
 
   @WorkspaceField({
-    standardId: TASK_STANDARD_FIELD_IDS.bodyV2,
     universalIdentifier: TASK_STANDARD_FIELD_IDS.bodyV2,
     type: FieldMetadataType.RICH_TEXT_V2,
     label: msg`Body`,
@@ -95,7 +92,6 @@ export class TaskWorkspaceEntity extends createBaseWorkspaceEntity({
   bodyV2: RichTextV2Metadata | null;
 
   @WorkspaceField({
-    standardId: TASK_STANDARD_FIELD_IDS.dueAt,
     universalIdentifier: TASK_STANDARD_FIELD_IDS.dueAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Due Date`,
@@ -106,7 +102,6 @@ export class TaskWorkspaceEntity extends createBaseWorkspaceEntity({
   dueAt: Date | null;
 
   @WorkspaceField({
-    standardId: TASK_STANDARD_FIELD_IDS.status,
     universalIdentifier: TASK_STANDARD_FIELD_IDS.status,
     type: FieldMetadataType.SELECT,
     label: msg`Status`,
@@ -133,7 +128,6 @@ export class TaskWorkspaceEntity extends createBaseWorkspaceEntity({
   status: string | null;
 
   @WorkspaceField({
-    standardId: TASK_STANDARD_FIELD_IDS.createdBy,
     universalIdentifier: TASK_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
@@ -211,7 +205,6 @@ export class TaskWorkspaceEntity extends createBaseWorkspaceEntity({
   favorites: Relation<FavoriteWorkspaceEntity[]>;
 
   @WorkspaceField({
-    standardId: TASK_STANDARD_FIELD_IDS.searchVector,
     universalIdentifier: TASK_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,

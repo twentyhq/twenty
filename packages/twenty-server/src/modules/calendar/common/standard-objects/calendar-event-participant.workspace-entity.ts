@@ -4,7 +4,7 @@ import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
@@ -39,9 +39,13 @@ export enum CalendarEventParticipantResponseStatus {
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
-export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity {
+export class CalendarEventParticipantWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.id,
+  createdAt: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.handle,
     universalIdentifier: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: msg`Handle`,
@@ -51,8 +55,8 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
   handle: string;
 
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
-    universalIdentifier: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
+    universalIdentifier:
+      CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
     type: FieldMetadataType.TEXT,
     label: msg`Display Name`,
     description: msg`Display Name`,
@@ -61,8 +65,8 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
   displayName: string;
 
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.isOrganizer,
-    universalIdentifier: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.isOrganizer,
+    universalIdentifier:
+      CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.isOrganizer,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Is Organizer`,
     description: msg`Is Organizer`,
@@ -72,8 +76,8 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
   isOrganizer: boolean;
 
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.responseStatus,
-    universalIdentifier: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.responseStatus,
+    universalIdentifier:
+      CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.responseStatus,
     type: FieldMetadataType.SELECT,
     label: msg`Response Status`,
     description: msg`Response Status`,
@@ -109,7 +113,6 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
   responseStatus: string;
 
   @WorkspaceRelation({
-    standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.calendarEvent,
     type: RelationType.MANY_TO_ONE,
     label: msg`Event ID`,
     description: msg`Event ID`,
@@ -124,7 +127,6 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
   calendarEventId: string;
 
   @WorkspaceRelation({
-    standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.person,
     type: RelationType.MANY_TO_ONE,
     label: msg`Person`,
     description: msg`Person`,
@@ -140,7 +142,6 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
   personId: string | null;
 
   @WorkspaceRelation({
-    standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workspace Member`,
     description: msg`Workspace Member`,

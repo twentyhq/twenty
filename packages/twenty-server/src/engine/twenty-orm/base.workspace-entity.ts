@@ -19,7 +19,6 @@ export function createBaseWorkspaceEntity(
 ) {
   abstract class BaseWorkspaceEntity {
     @WorkspaceField({
-      standardId: fieldIds.id,
       universalIdentifier: fieldIds.id,
       type: FieldMetadataType.UUID,
       label: msg`Id`,
@@ -33,7 +32,6 @@ export function createBaseWorkspaceEntity(
     id: string;
 
     @WorkspaceField({
-      standardId: fieldIds.createdAt,
       universalIdentifier: fieldIds.createdAt,
       type: FieldMetadataType.DATE_TIME,
       label: msg`Creation date`,
@@ -48,7 +46,6 @@ export function createBaseWorkspaceEntity(
     createdAt: string;
 
     @WorkspaceField({
-      standardId: fieldIds.updatedAt,
       universalIdentifier: fieldIds.updatedAt,
       type: FieldMetadataType.DATE_TIME,
       label: msg`Last update`,
@@ -63,7 +60,6 @@ export function createBaseWorkspaceEntity(
     updatedAt: string;
 
     @WorkspaceField({
-      standardId: fieldIds.deletedAt,
       universalIdentifier: fieldIds.deletedAt,
       type: FieldMetadataType.DATE_TIME,
       label: msg`Deleted at`,

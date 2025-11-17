@@ -13,7 +13,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -95,9 +95,13 @@ export const SEARCH_FIELDS_FOR_WORKFLOW_RUNS: FieldTypeAndNameMetadata[] = [
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsObjectUIReadOnly()
-export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
+export class WorkflowRunWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: WORKFLOW_RUN_STANDARD_FIELD_IDS.id,
+  createdAt: WORKFLOW_RUN_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: WORKFLOW_RUN_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: WORKFLOW_RUN_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.name,
     universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
@@ -107,7 +111,6 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   name: string;
 
   @WorkspaceField({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.enqueuedAt,
     universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.enqueuedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Workflow run enqueued at`,
@@ -118,7 +121,6 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   enqueuedAt: Date | null;
 
   @WorkspaceField({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.startedAt,
     universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.startedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Workflow run started at`,
@@ -129,7 +131,6 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   startedAt: string | null;
 
   @WorkspaceField({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.endedAt,
     universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.endedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Workflow run ended at`,
@@ -140,7 +141,6 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   endedAt: string | null;
 
   @WorkspaceField({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.status,
     universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.status,
     type: FieldMetadataType.SELECT,
     label: msg`Workflow run status`,
@@ -195,7 +195,6 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   status: WorkflowRunStatus;
 
   @WorkspaceField({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.createdBy,
     universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Executed by`,
@@ -205,7 +204,6 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   createdBy: ActorMetadata;
 
   @WorkspaceField({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.state,
     universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.state,
     type: FieldMetadataType.RAW_JSON,
     label: msg`State`,
@@ -215,7 +213,6 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   state: WorkflowRunState;
 
   @WorkspaceField({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.position,
     universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
@@ -227,7 +224,6 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
 
   @WorkspaceField({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.searchVector,
     universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
@@ -245,7 +241,6 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
 
   // Relations
   @WorkspaceRelation({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.workflowVersion,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workflow version`,
     description: msg`Workflow version linked to the run.`,
@@ -260,7 +255,6 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   workflowVersionId: string;
 
   @WorkspaceRelation({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.workflow,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workflow`,
     description: msg`Workflow linked to the run.`,
@@ -275,7 +269,6 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   workflowId: string;
 
   @WorkspaceRelation({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.favorites,
     type: RelationType.ONE_TO_MANY,
     label: msg`Favorites`,
     description: msg`Favorites linked to the workflow run`,
@@ -287,7 +280,6 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   favorites: Relation<FavoriteWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Timeline Activities`,
     description: msg`Timeline activities linked to the run`,

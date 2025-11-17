@@ -4,7 +4,7 @@ import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -23,9 +23,13 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
   icon: 'IconFolder',
 })
 @WorkspaceIsSystem()
-export class FavoriteFolderWorkspaceEntity extends BaseWorkspaceEntity {
+export class FavoriteFolderWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: FAVORITE_FOLDER_STANDARD_FIELD_IDS.id,
+  createdAt: FAVORITE_FOLDER_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: FAVORITE_FOLDER_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: FAVORITE_FOLDER_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
-    standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.position,
     universalIdentifier: FAVORITE_FOLDER_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.NUMBER,
     label: msg`Position`,
@@ -37,7 +41,6 @@ export class FavoriteFolderWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
 
   @WorkspaceField({
-    standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.name,
     universalIdentifier: FAVORITE_FOLDER_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,

@@ -4,7 +4,7 @@ import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
@@ -31,9 +31,13 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
-export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
+export class MessageParticipantWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.id,
+  createdAt: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
-    standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.role,
     universalIdentifier: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.role,
     type: FieldMetadataType.SELECT,
     label: msg`Role`,
@@ -50,7 +54,6 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   role: string;
 
   @WorkspaceField({
-    standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.handle,
     universalIdentifier: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: msg`Handle`,
@@ -60,7 +63,6 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   handle: string;
 
   @WorkspaceField({
-    standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
     universalIdentifier: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
     type: FieldMetadataType.TEXT,
     label: msg`Display Name`,
@@ -70,7 +72,6 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   displayName: string;
 
   @WorkspaceRelation({
-    standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.message,
     type: RelationType.MANY_TO_ONE,
     label: msg`Message`,
     description: msg`Message`,
@@ -85,7 +86,6 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   messageId: string;
 
   @WorkspaceRelation({
-    standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.person,
     type: RelationType.MANY_TO_ONE,
     label: msg`Person`,
     description: msg`Person`,
@@ -101,7 +101,6 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   personId: string | null;
 
   @WorkspaceRelation({
-    standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workspace Member`,
     description: msg`Workspace member`,

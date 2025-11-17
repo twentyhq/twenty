@@ -19,7 +19,7 @@ export interface WorkspaceFieldOptions<
     FieldMetadataType.RELATION
   >,
 > {
-  standardId: string;
+  standardId?: string; // Deprecated: use universalIdentifier instead
   type: T;
   label: MessageDescriptor;
   description?: MessageDescriptor;
@@ -87,7 +87,7 @@ export function WorkspaceField<T extends FieldMetadataType>(
 
     metadataArgsStorage.addFields({
       target: object.constructor,
-      standardId: options.standardId,
+      standardId: options.standardId ?? options.universalIdentifier,
       name,
       label,
       type: options.type,

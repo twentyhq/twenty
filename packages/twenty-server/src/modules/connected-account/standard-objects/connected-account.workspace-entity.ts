@@ -9,7 +9,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
@@ -34,9 +34,13 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   labelIdentifierStandardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handle,
 })
 @WorkspaceIsSystem()
-export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
+export class ConnectedAccountWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.id,
+  createdAt: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
-    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handle,
     universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: msg`handle`,
@@ -46,7 +50,6 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   handle: string;
 
   @WorkspaceField({
-    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.provider,
     universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.provider,
     type: FieldMetadataType.TEXT,
     label: msg`provider`,
@@ -56,7 +59,6 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   provider: ConnectedAccountProvider; // field metadata should be a SELECT
 
   @WorkspaceField({
-    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accessToken,
     universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accessToken,
     type: FieldMetadataType.TEXT,
     label: msg`Access Token`,
@@ -66,7 +68,6 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   accessToken: string;
 
   @WorkspaceField({
-    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.refreshToken,
     universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.refreshToken,
     type: FieldMetadataType.TEXT,
     label: msg`Refresh Token`,
@@ -76,7 +77,6 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   refreshToken: string;
 
   @WorkspaceField({
-    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastCredentialsRefreshedAt,
     universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastCredentialsRefreshedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Last credentials refreshed at`,
@@ -87,7 +87,6 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   lastCredentialsRefreshedAt: Date | null;
 
   @WorkspaceField({
-    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastSyncHistoryId,
     universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastSyncHistoryId,
     type: FieldMetadataType.TEXT,
     label: msg`Last sync history ID`,
@@ -97,7 +96,6 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   lastSyncHistoryId: string;
 
   @WorkspaceField({
-    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.authFailedAt,
     universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.authFailedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Auth failed at`,
@@ -108,7 +106,6 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   authFailedAt: Date | null;
 
   @WorkspaceField({
-    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handleAliases,
     universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handleAliases,
     type: FieldMetadataType.TEXT,
     label: msg`Handle Aliases`,
@@ -118,7 +115,6 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   handleAliases: string;
 
   @WorkspaceField({
-    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.scopes,
     universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.scopes,
     type: FieldMetadataType.ARRAY,
     label: msg`Scopes`,
@@ -129,7 +125,6 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   scopes: string[] | null;
 
   @WorkspaceField({
-    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.connectionParameters,
     universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.connectionParameters,
     type: FieldMetadataType.RAW_JSON,
     label: msg`Custom Connection Parameters`,

@@ -59,7 +59,6 @@ export class NoteWorkspaceEntity extends createBaseWorkspaceEntity({
   deletedAt: NOTE_STANDARD_FIELD_IDS.deletedAt,
 }) {
   @WorkspaceField({
-    standardId: NOTE_STANDARD_FIELD_IDS.position,
     universalIdentifier: NOTE_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
@@ -71,7 +70,6 @@ export class NoteWorkspaceEntity extends createBaseWorkspaceEntity({
   position: number;
 
   @WorkspaceField({
-    standardId: NOTE_STANDARD_FIELD_IDS.title,
     universalIdentifier: NOTE_STANDARD_FIELD_IDS.title,
     type: FieldMetadataType.TEXT,
     label: msg`Title`,
@@ -81,7 +79,6 @@ export class NoteWorkspaceEntity extends createBaseWorkspaceEntity({
   title: string;
 
   @WorkspaceField({
-    standardId: NOTE_STANDARD_FIELD_IDS.bodyV2,
     universalIdentifier: NOTE_STANDARD_FIELD_IDS.bodyV2,
     type: FieldMetadataType.RICH_TEXT_V2,
     label: msg`Body`,
@@ -92,7 +89,6 @@ export class NoteWorkspaceEntity extends createBaseWorkspaceEntity({
   bodyV2: RichTextV2Metadata | null;
 
   @WorkspaceField({
-    standardId: NOTE_STANDARD_FIELD_IDS.createdBy,
     universalIdentifier: NOTE_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
@@ -154,7 +150,6 @@ export class NoteWorkspaceEntity extends createBaseWorkspaceEntity({
   favorites: Relation<FavoriteWorkspaceEntity[]>;
 
   @WorkspaceField({
-    standardId: NOTE_STANDARD_FIELD_IDS.searchVector,
     universalIdentifier: NOTE_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,

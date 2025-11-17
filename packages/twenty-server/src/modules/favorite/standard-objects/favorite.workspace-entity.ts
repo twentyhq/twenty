@@ -4,7 +4,7 @@ import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -38,9 +38,13 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   icon: STANDARD_OBJECT_ICONS.favorite,
 })
 @WorkspaceIsSystem()
-export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
+export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: FAVORITE_STANDARD_FIELD_IDS.id,
+  createdAt: FAVORITE_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: FAVORITE_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: FAVORITE_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.position,
     universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.NUMBER,
     label: msg`Position`,
@@ -229,7 +233,6 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   dashboardId: string;
 
   @WorkspaceField({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.view,
     universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.view,
     type: FieldMetadataType.UUID,
     label: msg`ViewId`,

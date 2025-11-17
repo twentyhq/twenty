@@ -6,7 +6,7 @@ import { Relation } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
@@ -39,9 +39,13 @@ registerEnumType(MessageFolderPendingSyncAction, {
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
-export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
+export class MessageFolderWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: MESSAGE_FOLDER_STANDARD_FIELD_IDS.id,
+  createdAt: MESSAGE_FOLDER_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: MESSAGE_FOLDER_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: MESSAGE_FOLDER_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
-    standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.name,
     universalIdentifier: MESSAGE_FOLDER_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
@@ -51,7 +55,6 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
   name: string;
 
   @WorkspaceRelation({
-    standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.messageChannel,
     type: RelationType.MANY_TO_ONE,
     label: msg`Message Channel`,
     description: msg`Message Channel`,
@@ -63,7 +66,6 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
   messageChannel: Relation<MessageChannelWorkspaceEntity>;
 
   @WorkspaceField({
-    standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.syncCursor,
     universalIdentifier: MESSAGE_FOLDER_STANDARD_FIELD_IDS.syncCursor,
     type: FieldMetadataType.TEXT,
     label: msg`Sync Cursor`,
@@ -73,7 +75,6 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
   syncCursor: string;
 
   @WorkspaceField({
-    standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.isSentFolder,
     universalIdentifier: MESSAGE_FOLDER_STANDARD_FIELD_IDS.isSentFolder,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Is Sent Folder`,
@@ -84,7 +85,6 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
   isSentFolder: boolean;
 
   @WorkspaceField({
-    standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.isSynced,
     universalIdentifier: MESSAGE_FOLDER_STANDARD_FIELD_IDS.isSynced,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Is Synced`,
@@ -95,7 +95,6 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
   isSynced: boolean;
 
   @WorkspaceField({
-    standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.parentFolderId,
     universalIdentifier: MESSAGE_FOLDER_STANDARD_FIELD_IDS.parentFolderId,
     type: FieldMetadataType.TEXT,
     label: msg`Parent Folder ID`,
@@ -107,7 +106,6 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
   parentFolderId: string | null;
 
   @WorkspaceField({
-    standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.externalId,
     universalIdentifier: MESSAGE_FOLDER_STANDARD_FIELD_IDS.externalId,
     type: FieldMetadataType.TEXT,
     label: msg`External ID`,
@@ -119,7 +117,6 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
   externalId: string | null;
 
   @WorkspaceField({
-    standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.pendingSyncAction,
     universalIdentifier: MESSAGE_FOLDER_STANDARD_FIELD_IDS.pendingSyncAction,
     type: FieldMetadataType.SELECT,
     label: msg`Pending Sync Action`,

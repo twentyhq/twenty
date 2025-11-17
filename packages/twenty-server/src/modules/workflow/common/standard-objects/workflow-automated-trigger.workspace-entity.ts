@@ -4,7 +4,7 @@ import { Relation } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -32,9 +32,13 @@ export enum AutomatedTriggerType {
   icon: STANDARD_OBJECT_ICONS.workflowAutomatedTrigger,
 })
 @WorkspaceIsSystem()
-export class WorkflowAutomatedTriggerWorkspaceEntity extends BaseWorkspaceEntity {
+export class WorkflowAutomatedTriggerWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.id,
+  createdAt: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
-    standardId: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.type,
     universalIdentifier: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.SELECT,
     label: msg`Automated Trigger Type`,
@@ -57,7 +61,6 @@ export class WorkflowAutomatedTriggerWorkspaceEntity extends BaseWorkspaceEntity
   type: AutomatedTriggerType;
 
   @WorkspaceField({
-    standardId: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.settings,
     universalIdentifier: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.settings,
     type: FieldMetadataType.RAW_JSON,
     label: msg`Settings`,
@@ -66,7 +69,6 @@ export class WorkflowAutomatedTriggerWorkspaceEntity extends BaseWorkspaceEntity
   settings: AutomatedTriggerSettings;
 
   @WorkspaceRelation({
-    standardId: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.workflow,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workflow`,
     description: msg`WorkflowAutomatedTrigger workflow`,

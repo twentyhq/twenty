@@ -14,7 +14,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -98,9 +98,13 @@ export const SEARCH_FIELDS_FOR_WORKSPACE_MEMBER: FieldTypeAndNameMetadata[] = [
 })
 @WorkspaceIsSystem()
 @WorkspaceIsSearchable()
-export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
+export class WorkspaceMemberWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.id,
+  createdAt: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.position,
     universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
@@ -112,7 +116,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.name,
     universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.FULL_NAME,
     label: msg`Name`,
@@ -122,7 +125,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   name: FullNameMetadata;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.colorScheme,
     universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.colorScheme,
     type: FieldMetadataType.TEXT,
     label: msg`Color Scheme`,
@@ -134,7 +136,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   colorScheme: string;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.locale,
     universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.locale,
     type: FieldMetadataType.TEXT,
     label: msg`Language`,
@@ -146,7 +147,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   locale: keyof typeof APP_LOCALES;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.avatarUrl,
     universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.avatarUrl,
     type: FieldMetadataType.TEXT,
     label: msg`Avatar Url`,
@@ -158,7 +158,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceIsUnique()
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userEmail,
     universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userEmail,
     type: FieldMetadataType.TEXT,
     label: msg`User Email`,
@@ -169,7 +168,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   userEmail: string;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.calendarStartDay,
     universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.calendarStartDay,
     type: FieldMetadataType.NUMBER,
     label: msg`Start of the week`,
@@ -183,7 +181,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   calendarStartDay: number;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userId,
     universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userId,
     type: FieldMetadataType.UUID,
     label: msg`User Id`,
@@ -194,7 +191,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   userId: string;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeZone,
     universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeZone,
     type: FieldMetadataType.TEXT,
     label: msg`Time zone`,
@@ -206,7 +202,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   timeZone: string;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.dateFormat,
     universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.dateFormat,
     type: FieldMetadataType.SELECT,
     label: msg`Date format`,
@@ -244,7 +239,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   dateFormat: string;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeFormat,
     universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeFormat,
     type: FieldMetadataType.SELECT,
     label: msg`Time format`,
@@ -389,7 +383,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.searchVector,
     universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
@@ -406,7 +399,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   searchVector: string;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.numberFormat,
     universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.numberFormat,
     type: FieldMetadataType.SELECT,
     label: msg`Number format`,

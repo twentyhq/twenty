@@ -4,7 +4,7 @@ import { RelationOnDeleteAction } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -30,7 +30,12 @@ import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.work
   icon: STANDARD_OBJECT_ICONS.taskTarget,
 })
 @WorkspaceIsSystem()
-export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
+export class TaskTargetWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: TASK_TARGET_STANDARD_FIELD_IDS.id,
+  createdAt: TASK_TARGET_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: TASK_TARGET_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: TASK_TARGET_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceRelation({
     standardId: TASK_TARGET_STANDARD_FIELD_IDS.task,
     type: RelationType.MANY_TO_ONE,

@@ -11,7 +11,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { type FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -77,9 +77,13 @@ export const SEARCH_FIELDS_FOR_WORKFLOWS: FieldTypeAndNameMetadata[] = [
   shortcut: 'W',
   labelIdentifierStandardId: WORKFLOW_STANDARD_FIELD_IDS.name,
 })
-export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
+export class WorkflowWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: WORKFLOW_STANDARD_FIELD_IDS.id,
+  createdAt: WORKFLOW_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: WORKFLOW_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: WORKFLOW_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.name,
     universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
@@ -89,7 +93,6 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   name: string;
 
   @WorkspaceField({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.lastPublishedVersionId,
     universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.lastPublishedVersionId,
     type: FieldMetadataType.TEXT,
     label: msg`Last published Version Id`,
@@ -101,7 +104,6 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   lastPublishedVersionId: string | null;
 
   @WorkspaceField({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.statuses,
     universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.statuses,
     type: FieldMetadataType.MULTI_SELECT,
     label: msg`Statuses`,
@@ -114,7 +116,6 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   statuses: WorkflowStatus[] | null;
 
   @WorkspaceField({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.position,
     universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
@@ -126,7 +127,6 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
 
   @WorkspaceField({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.searchVector,
     universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
@@ -144,7 +144,6 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
 
   // Relations
   @WorkspaceRelation({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.versions,
     type: RelationType.ONE_TO_MANY,
     label: msg`Versions`,
     description: msg`Workflow versions linked to the workflow.`,
@@ -156,7 +155,6 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   versions: Relation<WorkflowVersionWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.runs,
     type: RelationType.ONE_TO_MANY,
     label: msg`Runs`,
     description: msg`Workflow runs linked to the workflow.`,
@@ -168,7 +166,6 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   runs: Relation<WorkflowRunWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.automatedTriggers,
     type: RelationType.ONE_TO_MANY,
     label: msg`Automated Triggers`,
     description: msg`Workflow automated triggers linked to the workflow.`,
@@ -180,7 +177,6 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   automatedTriggers: Relation<WorkflowAutomatedTriggerWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.favorites,
     type: RelationType.ONE_TO_MANY,
     label: msg`Favorites`,
     description: msg`Favorites linked to the workflow`,
@@ -192,7 +188,6 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   favorites: Relation<FavoriteWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Timeline Activities`,
     description: msg`Timeline activities linked to the workflow`,
@@ -203,7 +198,6 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.attachments,
     type: RelationType.ONE_TO_MANY,
     label: msg`Attachments`,
     description: msg`Attachments linked to the workflow`,
@@ -215,7 +209,6 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceField({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.createdBy,
     universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,

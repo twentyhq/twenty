@@ -62,7 +62,6 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
   deletedAt: OPPORTUNITY_STANDARD_FIELD_IDS.deletedAt,
 }) {
   @WorkspaceField({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.name,
     universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
@@ -72,7 +71,6 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
   name: string;
 
   @WorkspaceField({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.amount,
     universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.amount,
     type: FieldMetadataType.CURRENCY,
     label: msg`Amount`,
@@ -83,7 +81,6 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
   amount: CurrencyMetadata | null;
 
   @WorkspaceField({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.closeDate,
     universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.closeDate,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Close date`,
@@ -94,7 +91,6 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
   closeDate: Date | null;
 
   @WorkspaceField({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.stage,
     universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.stage,
     type: FieldMetadataType.SELECT,
     label: msg`Stage`,
@@ -118,7 +114,6 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
   stage: string;
 
   @WorkspaceField({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.position,
     universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
@@ -130,7 +125,6 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
   position: number;
 
   @WorkspaceField({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.createdBy,
     universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
@@ -236,7 +230,6 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceField({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.probabilityDeprecated,
     universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.probabilityDeprecated,
     type: FieldMetadataType.TEXT,
     label: msg`Probability`,
@@ -248,7 +241,6 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
   probability: string;
 
   @WorkspaceField({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.searchVector,
     universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,

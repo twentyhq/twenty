@@ -10,7 +10,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -48,9 +48,13 @@ export const SEARCH_FIELDS_FOR_DASHBOARD: FieldTypeAndNameMetadata[] = [
   labelIdentifierStandardId: DASHBOARD_STANDARD_FIELD_IDS.title,
 })
 @WorkspaceIsSearchable()
-export class DashboardWorkspaceEntity extends BaseWorkspaceEntity {
+export class DashboardWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: DASHBOARD_STANDARD_FIELD_IDS.id,
+  createdAt: DASHBOARD_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: DASHBOARD_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: DASHBOARD_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
-    standardId: DASHBOARD_STANDARD_FIELD_IDS.title,
     universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.title,
     type: FieldMetadataType.TEXT,
     label: msg`Title`,
@@ -60,7 +64,6 @@ export class DashboardWorkspaceEntity extends BaseWorkspaceEntity {
   title: string;
 
   @WorkspaceField({
-    standardId: DASHBOARD_STANDARD_FIELD_IDS.pageLayoutId,
     universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.pageLayoutId,
     type: FieldMetadataType.UUID,
     label: msg`Page Layout ID`,
@@ -72,7 +75,6 @@ export class DashboardWorkspaceEntity extends BaseWorkspaceEntity {
   pageLayoutId: string | null;
 
   @WorkspaceField({
-    standardId: DASHBOARD_STANDARD_FIELD_IDS.position,
     universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
@@ -84,7 +86,6 @@ export class DashboardWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
 
   @WorkspaceField({
-    standardId: DASHBOARD_STANDARD_FIELD_IDS.createdBy,
     universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
@@ -130,7 +131,6 @@ export class DashboardWorkspaceEntity extends BaseWorkspaceEntity {
   attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceField({
-    standardId: DASHBOARD_STANDARD_FIELD_IDS.searchVector,
     universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,

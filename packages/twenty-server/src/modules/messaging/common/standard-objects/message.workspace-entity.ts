@@ -4,7 +4,7 @@ import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
@@ -31,9 +31,13 @@ import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/stand
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
-export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
+export class MessageWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: MESSAGE_STANDARD_FIELD_IDS.id,
+  createdAt: MESSAGE_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: MESSAGE_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: MESSAGE_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
-    standardId: MESSAGE_STANDARD_FIELD_IDS.headerMessageId,
     universalIdentifier: MESSAGE_STANDARD_FIELD_IDS.headerMessageId,
     type: FieldMetadataType.TEXT,
     label: msg`Header message Id`,
@@ -43,7 +47,6 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   headerMessageId: string;
 
   @WorkspaceField({
-    standardId: MESSAGE_STANDARD_FIELD_IDS.subject,
     universalIdentifier: MESSAGE_STANDARD_FIELD_IDS.subject,
     type: FieldMetadataType.TEXT,
     label: msg`Subject`,
@@ -53,7 +56,6 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   subject: string;
 
   @WorkspaceField({
-    standardId: MESSAGE_STANDARD_FIELD_IDS.text,
     universalIdentifier: MESSAGE_STANDARD_FIELD_IDS.text,
     type: FieldMetadataType.TEXT,
     label: msg`Text`,
@@ -63,7 +65,6 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   text: string;
 
   @WorkspaceField({
-    standardId: MESSAGE_STANDARD_FIELD_IDS.receivedAt,
     universalIdentifier: MESSAGE_STANDARD_FIELD_IDS.receivedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Received At`,
@@ -74,7 +75,6 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   receivedAt: Date | null;
 
   @WorkspaceRelation({
-    standardId: MESSAGE_STANDARD_FIELD_IDS.messageThread,
     type: RelationType.MANY_TO_ONE,
     label: msg`Message Thread Id`,
     description: msg`Message Thread Id`,
@@ -90,7 +90,6 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   messageThreadId: string | null;
 
   @WorkspaceRelation({
-    standardId: MESSAGE_STANDARD_FIELD_IDS.messageParticipants,
     type: RelationType.ONE_TO_MANY,
     label: msg`Message Participants`,
     description: msg`Message Participants`,
@@ -102,7 +101,6 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   messageParticipants: Relation<MessageParticipantWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: MESSAGE_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
     type: RelationType.ONE_TO_MANY,
     label: msg`Message Channel Association`,
     description: msg`Messages from the channel.`,

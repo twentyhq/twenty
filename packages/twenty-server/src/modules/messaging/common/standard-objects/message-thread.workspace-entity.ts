@@ -4,7 +4,7 @@ import { RelationOnDeleteAction } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
@@ -26,9 +26,13 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
-export class MessageThreadWorkspaceEntity extends BaseWorkspaceEntity {
+export class MessageThreadWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: MESSAGE_THREAD_STANDARD_FIELD_IDS.id,
+  createdAt: MESSAGE_THREAD_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: MESSAGE_THREAD_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: MESSAGE_THREAD_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceRelation({
-    standardId: MESSAGE_THREAD_STANDARD_FIELD_IDS.messages,
     type: RelationType.ONE_TO_MANY,
     label: msg`Messages`,
     description: msg`Messages from the thread.`,

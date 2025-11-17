@@ -8,7 +8,7 @@ import {
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
@@ -35,9 +35,13 @@ import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/co
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsObjectUIReadOnly()
-export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
+export class CalendarEventWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: CALENDAR_EVENT_STANDARD_FIELD_IDS.id,
+  createdAt: CALENDAR_EVENT_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: CALENDAR_EVENT_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: CALENDAR_EVENT_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.title,
     universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.title,
     type: FieldMetadataType.TEXT,
     label: msg`Title`,
@@ -47,7 +51,6 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   title: string;
 
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.isCanceled,
     universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.isCanceled,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Is canceled`,
@@ -58,7 +61,6 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   isCanceled: boolean;
 
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.isFullDay,
     universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.isFullDay,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Is Full Day`,
@@ -69,7 +71,6 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   isFullDay: boolean;
 
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.startsAt,
     universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.startsAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Start Date`,
@@ -80,7 +81,6 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   startsAt: string | null;
 
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.endsAt,
     universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.endsAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`End Date`,
@@ -91,7 +91,6 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   endsAt: string | null;
 
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.externalCreatedAt,
     universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.externalCreatedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Creation DateTime`,
@@ -102,7 +101,6 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   externalCreatedAt: string | null;
 
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.externalUpdatedAt,
     universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.externalUpdatedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Update DateTime`,
@@ -113,7 +111,6 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   externalUpdatedAt: string | null;
 
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.description,
     universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.description,
     type: FieldMetadataType.TEXT,
     label: msg`Description`,
@@ -123,7 +120,6 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   description: string;
 
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.location,
     universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.location,
     type: FieldMetadataType.TEXT,
     label: msg`Location`,
@@ -133,7 +129,6 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   location: string;
 
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUID,
     universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUID,
     type: FieldMetadataType.TEXT,
     label: msg`iCal UID`,
@@ -143,7 +138,6 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   iCalUID: string;
 
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.conferenceSolution,
     universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.conferenceSolution,
     type: FieldMetadataType.TEXT,
     label: msg`Conference Solution`,
@@ -153,7 +147,6 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   conferenceSolution: string;
 
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.conferenceLink,
     universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.conferenceLink,
     type: FieldMetadataType.LINKS,
     label: msg`Meet Link`,
@@ -178,7 +171,6 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   >;
 
   @WorkspaceRelation({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.calendarEventParticipants,
     type: RelationType.ONE_TO_MANY,
     label: msg`Event Participants`,
     description: msg`Event Participants`,

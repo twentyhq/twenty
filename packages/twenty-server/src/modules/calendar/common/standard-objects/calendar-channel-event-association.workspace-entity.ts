@@ -4,7 +4,7 @@ import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
@@ -28,15 +28,20 @@ import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standa
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
-export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspaceEntity {
+export class CalendarChannelEventAssociationWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.id,
+  createdAt: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.deletedAt,
+}) {
   /**
    * External ID of the calendar event. Comes from the provider's API, is unique per connected account.
    * Used by the provider to identify the event in their system.
    * So two External ID can be related to the same event sharing the same iCalUID.
    */
   @WorkspaceField({
-    standardId: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.eventExternalId,
-    universalIdentifier: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.eventExternalId,
+    universalIdentifier:
+      CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.eventExternalId,
     type: FieldMetadataType.TEXT,
     label: msg`Event external ID`,
     description: msg`Event external ID`,
@@ -45,8 +50,8 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
   eventExternalId: string;
 
   @WorkspaceField({
-    standardId: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.recurringEventExternalId,
-    universalIdentifier: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.recurringEventExternalId,
+    universalIdentifier:
+      CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.recurringEventExternalId,
     type: FieldMetadataType.TEXT,
     label: msg`Recurring Event ID`,
     description: msg`Recurring Event ID`,
