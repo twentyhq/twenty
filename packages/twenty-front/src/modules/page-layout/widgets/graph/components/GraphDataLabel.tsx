@@ -1,8 +1,5 @@
 import { type GraphLabelData } from '@/page-layout/widgets/graph/types/GraphLabelData';
-import {
-  calculateGraphLabelStyles,
-  type GraphLabelStyles,
-} from '@/page-layout/widgets/graph/utils/calculateGraphLabelStyles';
+import { calculateGraphLabelStyles } from '@/page-layout/widgets/graph/utils/calculateGraphLabelStyles';
 import { useTheme } from '@emotion/react';
 import { animated } from '@react-spring/web';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,11 +18,7 @@ export const GraphDataLabel = ({
   isVerticalLayout,
 }: GraphDataLabelProps) => {
   const theme = useTheme();
-  const styles: GraphLabelStyles = calculateGraphLabelStyles(
-    label,
-    offset,
-    isVerticalLayout,
-  );
+  const styles = calculateGraphLabelStyles(label, offset, isVerticalLayout);
 
   return (
     <animated.text

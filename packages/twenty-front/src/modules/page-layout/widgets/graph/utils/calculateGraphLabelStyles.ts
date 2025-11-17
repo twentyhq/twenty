@@ -1,6 +1,6 @@
 import { type GraphLabelData } from '@/page-layout/widgets/graph/types/GraphLabelData';
 
-export type GraphLabelStyles = {
+type GraphLabelStyle = {
   x: number;
   y: number;
   textAnchor: 'start' | 'middle' | 'end';
@@ -12,7 +12,7 @@ export const calculateGraphLabelStyles = (
   label: GraphLabelData,
   offset: number,
   isVerticalLayout: boolean,
-): GraphLabelStyles => {
+): GraphLabelStyle => {
   const offsetSign = isVerticalLayout
     ? label.shouldRenderBelow
       ? 1
