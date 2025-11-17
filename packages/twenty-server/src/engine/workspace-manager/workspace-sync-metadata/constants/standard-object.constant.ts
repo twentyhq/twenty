@@ -152,7 +152,9 @@ export const STANDARD_OBJECTS = {
         universalIdentifier:
           CALENDAR_CHANNEL_STANDARD_FIELD_IDS.connectedAccount,
       },
-      handle: { universalIdentifier: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.handle },
+      handle: {
+        universalIdentifier: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.handle,
+      },
       visibility: {
         universalIdentifier: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.visibility,
       },
@@ -470,7 +472,9 @@ export const STANDARD_OBJECTS = {
       timelineActivities: {
         universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.timelineActivities,
       },
-      favorites: { universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.favorites },
+      favorites: {
+        universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.favorites,
+      },
       attachments: {
         universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.attachments,
       },
@@ -739,7 +743,9 @@ export const STANDARD_OBJECTS = {
       message: {
         universalIdentifier: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.message,
       },
-      role: { universalIdentifier: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.role },
+      role: {
+        universalIdentifier: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.role,
+      },
       handle: {
         universalIdentifier: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.handle,
       },
@@ -907,7 +913,9 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.closeDate,
       },
       stage: { universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.stage },
-      position: { universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.position },
+      position: {
+        universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.position,
+      },
       createdBy: {
         universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.createdBy,
       },
@@ -1040,7 +1048,8 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: PERSON_STANDARD_FIELD_IDS.messageParticipants,
       },
       calendarEventParticipants: {
-        universalIdentifier: PERSON_STANDARD_FIELD_IDS.calendarEventParticipants,
+        universalIdentifier:
+          PERSON_STANDARD_FIELD_IDS.calendarEventParticipants,
       },
       timelineActivities: {
         universalIdentifier: PERSON_STANDARD_FIELD_IDS.timelineActivities,
@@ -1555,7 +1564,9 @@ export const STANDARD_OBJECTS = {
       workflowVersion: {
         universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.workflowVersion,
       },
-      workflow: { universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.workflow },
+      workflow: {
+        universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.workflow,
+      },
       enqueuedAt: {
         universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.enqueuedAt,
       },
@@ -1564,7 +1575,9 @@ export const STANDARD_OBJECTS = {
       },
       endedAt: { universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.endedAt },
       status: { universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.status },
-      position: { universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.position },
+      position: {
+        universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.position,
+      },
       createdBy: {
         universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.createdBy,
       },
@@ -1627,7 +1640,9 @@ export const STANDARD_OBJECTS = {
       trigger: {
         universalIdentifier: WORKFLOW_VERSION_STANDARD_FIELD_IDS.trigger,
       },
-      status: { universalIdentifier: WORKFLOW_VERSION_STANDARD_FIELD_IDS.status },
+      status: {
+        universalIdentifier: WORKFLOW_VERSION_STANDARD_FIELD_IDS.status,
+      },
       position: {
         universalIdentifier: WORKFLOW_VERSION_STANDARD_FIELD_IDS.position,
       },
@@ -1687,14 +1702,18 @@ export const STANDARD_OBJECTS = {
       colorScheme: {
         universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.colorScheme,
       },
-      locale: { universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.locale },
+      locale: {
+        universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.locale,
+      },
       avatarUrl: {
         universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.avatarUrl,
       },
       userEmail: {
         universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userEmail,
       },
-      userId: { universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userId },
+      userId: {
+        universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userId,
+      },
       authoredActivities: {
         universalIdentifier:
           WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredActivities,
@@ -1718,7 +1737,8 @@ export const STANDARD_OBJECTS = {
           WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredAttachments,
       },
       authoredComments: {
-        universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredComments,
+        universalIdentifier:
+          WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredComments,
       },
       connectedAccounts: {
         universalIdentifier:

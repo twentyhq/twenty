@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { v4 } from 'uuid';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -10,7 +11,6 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
-import { v4 } from 'uuid';
 
 export const peopleAllView = ({
   objectMetadataItems,
