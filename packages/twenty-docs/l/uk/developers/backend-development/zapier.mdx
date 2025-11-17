@@ -1,0 +1,91 @@
+---
+title: Zapier App
+image: /images/user-guide/integrations/plug.png
+---
+
+<Frame>
+  <img src="/images/user-guide/integrations/plug.png" alt="Header" />
+</Frame>
+
+Легко синхронізуйте Twenty з 3000+ додатками за допомогою [Zapier](https://zapier.com/). Автоматизуйте завдання, підвищуйте продуктивність і зміцнюйте відносини з клієнтами!
+
+## Про Zapier
+
+Zapier is a tool that allows you to automate workflows by connecting the apps that your team uses every day. The fundamental concept of Zapier is automation workflows, called Zaps, and include triggers and actions.
+
+Ви можете дізнатися більше про те, як працює Zapier, [тут](https://zapier.com/how-it-works).
+
+## Налаштування
+
+### Крок 1: Встановіть пакунки Zapier
+
+```bash
+cd packages/twenty-zapier
+
+yarn
+```
+
+### Крок 2: Увійдіть за допомогою CLI
+
+Використовуйте свої облікові дані Zapier, щоб увійти за допомогою CLI:
+
+```bash
+zapier login
+```
+
+### Крок 3: Встановіть змінні середовища
+
+З папки `packages/twenty-zapier` виконайте команду:
+
+```bash
+cp .env.example .env
+```
+
+Запустіть додаток локально, перейдіть на [http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks) і згенеруйте ключ API.
+
+Замініть значення **YOUR_API_KEY** у файлі `.env` на щойно згенерований API-ключ.
+
+## Розробка
+
+<Warning>
+
+Переконайтеся, що запустили `yarn build` перед будь-якою командою `zapier`.
+
+</Warning>
+
+### Тест
+
+```bash
+yarn test
+```
+
+### Лінт
+
+```bash
+yarn format
+```
+
+### Спостерігайте і компілюйте під час редагування коду
+
+```bash
+yarn watch
+```
+
+### Validate your Zapier app
+
+```bash
+yarn validate
+```
+
+### Deploy your Zapier app
+
+```bash
+yarn deploy
+```
+
+### Перелік усіх команд Zapier CLI
+
+```bash
+zapier
+```
+

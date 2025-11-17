@@ -1,0 +1,333 @@
+---
+title: Најбоље праксе
+image: /images/user-guide/tips/light-bulb.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
+</Frame>
+
+This document outlines the best practices you should follow when working on the frontend.
+
+## Управљање Стањем
+
+React и Recoil рукују управљањем стањем у коду.
+
+### Користите `useRecoilState` за складиштење стања
+
+Добра је пракса да направите онолико атома колико вам је потребно да сачувате своје стање.
+
+<Warning>
+
+Боље је користити додатне атоме него покушавати да будете превише концизни у преношењу својстава.
+
+</Warning>
+
+```tsx
+export const myAtomState = atom({
+  key: 'myAtomState',
+  default: 'default value',
+});
+
+export const MyComponent = () => {
+  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+
+  return (
+    <div>
+      <input
+        value={myAtom}
+        onChange={(e) => setMyAtom(e.target.value)}
+      />
+    </div>
+  );
+}
+```
+
+### Не користите `useRef` за складиштење стања
+
+Избегавајте употребу `useRef` за складиштење стања.
+
+Ако желите да складиштите стање, требало би да користите `useState` или `useRecoilState`.
+
+Погледајте [како управљати поновним рендеровањем](#managing-re-renders) ако мислите да вам је потребан `useRef` да спречите неко поновно рендеровање.
+
+## Управљање поновним цртањима
+
+Поновна цртања могу бити тешка за управљање у React-у.
+
+Ево неких правила које треба следити да бисте избегли непотребна поновна цртања.
+
+Имајте на уму да увек можете да избегнете поновна цртања разумевањем њиховог узрока.
+
+### Радите на основном нивоу
+
+Избегавање поновних цртања у новим карактеристикама је сада лако елиминацијом на основном нивоу.
+
+`PageChangeEffect` помоћни компонент садржи само један `useEffect` који држи сву логику за извршење при промени странице.
+
+На тај начин знате да постоји само једно место које може изазвати поновно цртање.
+
+### Увек размислите двапут пре него што додате `useEffect` у ваш код
+
+Поновна цртања често проузрокује непотребан `useEffect`.
+
+Треба да размислите да ли вам треба `useEffect`, или да ли можете логику преместити у функцију за руковање догађајима.
+
+Уопштено ћете лако преместити логику у `handleClick` или `handleChange` функцију.
+
+Такође их можете наћи у библиотекама као што је Apollo: `onCompleted`, `onError`, итд.
+
+### Користите суседни компонент да изолујете `useEffect` или логику за преузимање података
+
+Ако осетите потребу да додате `useEffect` у вашем коренском компоненту, требало би да размотрите да га изолујете у помоћни компонент.
+
+Исто можете применити на логику преузимања података, уз помоћ Apollo куке.
+
+```tsx
+// ❌ Bad, will cause re-renders even if data is not changing, 
+//    because useEffect needs to be re-evaluated
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <div>{data}</div>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+```tsx
+// ✅ Good, will not cause re-renders if data is not changing, 
+//   because useEffect is re-evaluated in another sibling component
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+
+  return <div>{data}</div>;
+};
+
+export const PageData = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <></>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageData />
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+### Use recoil family states and recoil family selectors
+
+Рикол породичне стање и избори су одличан начин да избегнете поновна цртања.
+
+Корисно је кад треба да складиштите листу елемената.
+
+### Не треба да користите `React.memo(MyComponent)`
+
+Избегавајте употребу `React.memo()` јер не решава узрок поновних цртања, већ прекида ланац, што може довести до нежељеног понашања и отежати рефакторисање кода.
+
+### Ограничите коришћење `useCallback` или `useMemo`
+
+Често нису неопходни и учиниће код тежим за читање и одржавање у односу на перформансе које су неприметне.
+
+## Console.logs
+
+`console.log` изјаве су вредне током развоја, пружајући увид у реалном времену у промењиве вредности и ток кода. Међутим, њихово остављање у продукцијском коду може узроковати неколико проблема:
+
+1. **Перформансе**: Прекомерно логовање може утицати на перформансе у току извршавања, нарочито на апликацијама са пријемне стране.
+
+2. **Безбедност**: Логовање осетљивих података може изложити критичне информације било коме ко прегледа прегледач конзоле.
+
+3. **Чистоћа**: Попуњавање конзоле белешкама може затамнити важна упозорења или грешке које програмери или алати треба да виде.
+
+4. **Професионализам**: Крајњи корисници или клијенти који проверавају конзолу и виде мноштво лог изјава могу довести у питање квалитет и полирање кода.
+
+Уверите се да сте уклонили све `console.logs` пре него што учитате код у производњу.
+
+## Именовање
+
+### Именовање Променљивих
+
+Имена променљивих треба прецизно приказати сврху или функцију променљиве.
+
+#### Проблем са генеричким именима
+
+Генеричка имена у програмирању нису идеална јер недостаје специфичност, што доводи до недоумице и смањења читљивости кода. Таква имена не успевају да пренесу сврху променљиве или функције, чиме се отежава девелоперима да схвате намеру кода без дубље истраге. Ово може резултирати повећаним временом за отклањање грешака, већом подложношћу грешкама и отежаним одржавањем и сарадњом. У међувремену, описно именовање чини код самообјашњивим и лакшим за навигацију, повећавајући квалитет кода и продуктивност девелопера.
+
+```tsx
+// ❌ Bad, uses a generic name that doesn't communicate its
+//    purpose or content clearly
+const [value, setValue] = useState('');
+```
+
+```tsx
+// ✅ Good, uses a descriptive name
+const [email, setEmail] = useState('');
+```
+
+#### Неке речи које треба избећи у именима променљивих
+
+- лажан
+
+### Руковаоци догађаја
+
+Имена за руковање догађајима треба да почињу са `handle`, док је `on` префикс који се користи за именовање догађаја у својствима компоненти.
+
+```tsx
+// ❌ Bad
+const onEmailChange = (val: string) => {
+  // ...
+};
+```
+
+```tsx
+// ✅ Good
+const handleEmailChange = (val: string) => {
+  // ...
+};
+```
+
+## Опциони атрибути
+
+Избегавајте прослеђивање подразумеване вредности за опциони атрибут.
+
+**ПРИМЕР**
+
+Узмите `EmailField` компоненту дефинисану испод:
+
+```tsx
+type EmailFieldProps = {
+  value: string;
+  disabled?: boolean;
+};
+
+const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
+  <TextInput value={value} disabled={disabled} fullWidth />
+);
+```
+
+**Употреба**
+
+```tsx
+// ❌ Bad, passing in the same value as the default value adds no value
+const Form = () => <EmailField value="username@email.com" disabled={false} />;
+```
+
+```tsx
+// ✅ Good, assumes the default value
+const Form = () => <EmailField value="username@email.com" />;
+```
+
+## Компонента као својство
+
+Покушајте што је више могуће да прослеђујете неиницијализоване компоненте као пропсе, тако да потомци могу сами да одлуче које пропсе треба да проследе.
+
+Најчешћи пример за то су компоненте икона:
+
+```tsx
+const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
+
+// In MyComponent
+const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
+  const theme = useTheme();
+
+  return (
+    <div>
+      <MyIcon size={theme.icon.size.md}>
+    </div>
+  )
+};
+```
+
+За React да би разумео да је компонент компонент, морате користити PascalCase, да би је касније инстанцирали уз `<MyIcon>`
+
+## Прослеђивање својстава: Нека буде минимално
+
+Прослеђивање својстава, у контексту React-а, односи се на праксу прослеђивања стања променљивих и њихових сетера кроз многе слојеве компоненти, чак и ако их посредничке компоненте не користе. Док је понекад неопходно, прекомерно прослеђивање својстава може довести до:
+
+1. **Смањена читљивост**: Праћење одакле потиче пропс или где се користи може постати сложено у дубоко угнежденој структури компоненте.
+
+2. **Изазови у одржавању**: Промене у структури својства једне компоненте могу захтевати прилагођавања у више компоненти, чак и ако га не користе директно.
+
+3. **Смањена поновна употребљивост компоненти**: Компонента која прима много пропса само да би их проследила губи на универзалности и теже се поново користи у различитим контекстима.
+
+Ако осетите да користите прекомерно прослеђивање својстава, видите [најбоље праксе у управљању стањем](#state-management).
+
+## Увоз
+
+Приликом увоза, изаберите одређене алијасе уместо навођења комплетних или релативних путева.
+
+**Алијаси**
+
+```js
+{
+  alias: {
+    "~": path.resolve(__dirname, "src"),
+    "@": path.resolve(__dirname, "src/modules"),
+    "@testing": path.resolve(__dirname, "src/testing"),
+  },
+}
+```
+
+**Употреба**
+
+```tsx
+// ❌ Bad, specifies the entire relative path
+import {
+  CatalogDecorator
+} from '../../../../../testing/decorators/CatalogDecorator';
+import {
+  ComponentDecorator
+} from '../../../../../testing/decorators/ComponentDecorator';
+```
+
+```tsx
+// ✅ Good, utilises the designated aliases
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'twenty-ui/testing';
+```
+
+## Валидација шеме
+
+[Zod](https://github.com/colinhacks/zod) је валидација шема за нетипизиране објекте:
+
+```js
+const validationSchema = z
+  .object({
+    exist: z.boolean(),
+    email: z
+      .string()
+      .email('Email must be a valid email'),
+    password: z
+      .string()
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+  })
+  .required();
+
+type Form = z.infer<typeof validationSchema>;
+```
+
+## Промене које прекидају функционалност
+
+Увек извршите темељно ручно тестирање пре наставка како би се осигурало да промене нису изазвале поремећаје на другим местима, с обзиром на то да тестови још нису обимно интегрисани.
+

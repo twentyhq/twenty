@@ -8,7 +8,7 @@ import ms from 'ms';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -19,6 +19,7 @@ import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/toke
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
+import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import {
   EmailVerificationException,
   EmailVerificationExceptionCode,
@@ -26,29 +27,38 @@ import {
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
 export class EmailVerificationService {
   constructor(
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly domainsServerConfigService: DomainServerConfigService,
     private readonly emailService: EmailService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly userService: UserService,
     private readonly emailVerificationTokenService: EmailVerificationTokenService,
     private readonly i18nService: I18nService,
   ) {}
 
-  async sendVerificationEmail(
-    userId: string,
-    email: string,
-    workspace: WorkspaceDomainConfig | undefined,
-    locale: keyof typeof APP_LOCALES,
-    verifyEmailRedirectPath?: string,
-  ) {
+  async sendVerificationEmail({
+    userId,
+    email,
+    workspace,
+    locale,
+    verifyEmailRedirectPath,
+    verificationTrigger = EmailVerificationTrigger.SIGN_UP,
+  }: {
+    userId: string;
+    email: string;
+    workspace: WorkspaceDomainConfig | undefined;
+    locale: keyof typeof APP_LOCALES;
+    verifyEmailRedirectPath?: string;
+    verificationTrigger?: EmailVerificationTrigger;
+  }) {
     if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       return { success: false };
     }
@@ -78,6 +88,8 @@ export class EmailVerificationService {
     const emailData = {
       link: verificationLink.toString(),
       locale,
+      isEmailUpdate:
+        verificationTrigger === EmailVerificationTrigger.EMAIL_UPDATE,
     };
 
     const emailTemplate = SendEmailVerificationLinkEmail(emailData);
@@ -87,7 +99,10 @@ export class EmailVerificationService {
       plainText: true,
     });
 
-    const emailVerificationMsg = msg`Welcome to Twenty: Please Confirm Your Email`;
+    const emailVerificationMsg =
+      verificationTrigger === EmailVerificationTrigger.EMAIL_UPDATE
+        ? msg`Please confirm your updated email`
+        : msg`Welcome to Twenty: Please Confirm Your Email`;
     const i18n = this.i18nService.getI18nInstance(locale);
     const subject = i18n._(emailVerificationMsg);
 
@@ -116,7 +131,14 @@ export class EmailVerificationService {
       );
     }
 
-    const user = await this.userService.findUserByEmailOrThrow(email);
+    // TODO: Remove the dependency on querying user altogether when the endpoint is authenticated.
+    const user = await this.userRepository.findOne({
+      where: {
+        email,
+      },
+    });
+
+    assertIsDefinedOrThrow(user);
 
     if (user.isEmailVerified) {
       throw new EmailVerificationException(
@@ -149,7 +171,13 @@ export class EmailVerificationService {
       await this.appTokenRepository.delete(existingToken.id);
     }
 
-    await this.sendVerificationEmail(user.id, email, workspace, locale);
+    await this.sendVerificationEmail({
+      userId: user.id,
+      email,
+      workspace,
+      locale,
+      verificationTrigger: EmailVerificationTrigger.SIGN_UP,
+    });
 
     return { success: true };
   }

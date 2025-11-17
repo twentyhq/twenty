@@ -1,0 +1,220 @@
+---
+title: Ulkoinen työkalujen integrointi
+info: Nämä työnkulut keskittyvät datan tuomiseen ja viemiseen Twenty-alustalle API-kutsujen ja webhooksien kautta.
+image: /images/user-guide/integrations/plug.png
+sectionInfo: Automatisoi prosessit ja integroi ulkoisten työkalujen kanssa
+---
+
+<Frame>
+  <img src="/images/user-guide/integrations/plug.png" alt="Header" />
+</Frame>
+
+Alla on esimerkkejä työnkuluista, joilla voit yhdistää Twentyn muihin järjestelmiin.
+
+## Datan saannin käyttötapaukset
+
+### Weblomakelähetykset
+
+**Ongelma**: Sinun on saatava liidit verkkosivustosi lomakkeista, laskeutumissivuilta tai yhteydenottolomakkeilta suoraan Twenty-järjestelmään.
+
+**Ratkaisu**: Käytä webhook-laukaisimia luodaksesi automaattisesti tietueita lomakelähetyksistä.
+
+**Asetukset**:
+
+- Luo työnkulku Webhook-laukaisimen kanssa
+- Määritä webhook niin, että se vastaanottaa lomaketietoja (nimi, sähköposti, yritys jne.)
+- Aseta webhookin menetelmäksi POST
+- Määritä odotettu tietorakenne laukaisimessa
+
+**Laukaisin**: Webhook (POST-pyyntö lomakkeeltasi)
+
+**Toiminnot**:
+
+- Etsi tietueita varmistaaksesi, onko henkilö/yritys jo olemassa
+- Haarauta: Jos löytyy → Päivitä tietue, Jos ei → Luo tietue
+- Luo tietue jatkotehtävälle, joka on osoitettu myyntiedustajalle
+- Lähetä sähköpostiviesti myyntitiimille
+
+### Tuotedatan synkronointi
+
+**Ongelma**: Myyntitiimisi tarvitsee näkyvyyttä tuotteiden käyttöön, laskutukseen tai ominaisuuksien käyttöön liittyviin tietoihin, jotka ovat tietovarastossasi.
+
+**Ratkaisu**: Synkronoi tuotedata säännöllisesti Twentyyn antaaksesi myyjille kontekstin tileistään.
+
+**Laukaisin**: Aikataulun mukainen (päivittäin tai viikoittain)
+
+**Toiminnot**:
+
+- HTTP-pyyntö tietovarastosi API:iin
+- Suorita koodiaineisto datan käsittelyyn ja muotoiluun
+- Käytä Iteraattori-funktiota seuraavissa vaiheissa
+- Etsi tietueita vastaavien yritystietojen löytämiseksi
+- Päivitä tietue lisätäksesi tuotteen käyttötilastoja
+- Luo tietue tehtäville, kun käyttö laskee alarajan alle
+
+### Meeting Notes from Call Recorders
+
+**Ongelma**: Tärkeitä oivalluksia myyntipuheluista jää kadoksiin tai niitä ei dokumentoida kunnolla CRM:ään.
+
+**Ratkaisu**: Luo automaattisesti muistiinpanoja ja toimenpidelistoja puhelutallennusjärjestelmistä.
+
+**Laukaisin**: Webhook (puhelutallennusalustalta)
+
+**Toiminnot**:
+
+- Code action to extract meeting summary and action items
+- Etsi tietueita löytääksesi liittyvän mahdollisuuden tai yhteyshenkilön
+- Luo tietue kokouksen yhteenvedon sisältävälle muistiinpanolle
+- Luo tietue jatkavien tehtävien perusteella toimenpidelistoista
+- Lähetä sähköposti osallistujille yhteenvedon ja seuraavien askelten kanssa
+
+### Data Enrichment
+
+**Ongelma**: Asiakas- ja yritystietueista puuttuu tärkeitä demografisia ja firmografisia tietoja.
+
+**Ratkaisu**: Rikasta tietueet automaattisesti ulkoisten datapalveluntarjoajien avulla.
+
+**Laukaisin**: Tietue luotu (Henkilöt tai Yritykset objekti)
+
+**Toiminnot**:
+
+- HTTP-pyyntö rikastus API:in
+- Suorita koodiaineisto rikastusvastauksen käsittelemiseksi
+- Käytä Iteraattori-funktiota seuraavissa vaiheissa
+- Päivitä tietue lisäämällä yritys/yhteyshenkilötietoja
+- Luo tietue myyntitehtävälle, jos tunnistetaan korkean arvon prospekti
+- Lähetä sähköposti-ilmoitus, jos rikastus paljastaa keskeisiä osto-oireita
+
+## Datan jakelun käyttötapaukset
+
+### Uutiskirjeen tilaajan hallinta
+
+**Problem**: You want to send marketing emails to specific segments of your CRM data using specialized email tools.
+
+**Ratkaisu**: Vie tilaajalistat sähköpostimarkkinointialustalle tarvittaessa.
+
+**Setup**: Create a view in Twenty with all newsletter recipients
+
+**Trigger**: Launch Manually (when no record is selected)
+
+**Toiminnot**:
+
+- Hae tietueita käyttäen uutiskirjeen näkymän kriteereitä
+- Kooditoiminto sähköpostiosoitteiden muotoiluun sähköpostialustallesi
+- HTTP-pyyntö tilaajien lisäämiseksi sähköpostimarkkinointityökaluusi
+- Luo Kampanjatietue seurantaa varten
+- Lähetä sähköpostivahvistus markkinointitiimille
+
+### Email Sequence Triggers
+
+**Problem**: You want to trigger sophisticated email sequences based on CRM events using dedicated email automation tools.
+
+**Solution**: Send new leads or customers to your email automation platform when specific events occur.
+
+**Laukaisin**: Tietue on luotu (Henkilöobjekti tietyillä kriteereillä)
+
+**Toiminnot**:
+
+- Kooditoiminto määrittämään sopiva sähköpostisarja
+- HTTP-pyyntö lisätäksesi yhteyden automatisointialustaasi
+- Päivitä tietue seuranta-merkinnän rekisteröimiseksi
+- Luo tietue seurantatehtävälle sitoutumisen valvomiseksi
+
+### Lead Scoring Integration
+
+**Ongelma**: Tarvitset kehittynyttä liidipisteytystä, joka yhdistää CRM-tietoja ulkoisiin signaaleihin.
+
+**Ratkaisu**: Lähetä liiditiedot ulkopuolisille pisteytystyökaluille tai toteuta pisteytyslogiikka työnkuluissa.
+
+**Vaihtoehto 1 - Ulkoinen Työkalu**:
+
+**Trigger**: Record is Updated (People object)
+
+**Toiminnot**:
+
+- HTTP-pyyntö liiditietojen lähettämiseksi pisteytystaulukkoon
+- Kooditoiminto pisteen vastausten käsittelyyn
+- Päivitä tietue liidin pistemäärällä
+- Create Record for sales task if score exceeds threshold
+
+**Vaihtoehto 2 - Sisäinen Logiikka**:
+
+**Trigger**: Record is Updated (People object)
+
+**Toiminnot**:
+
+- Kooditoiminto pisteytysalgoritmilla (yrityksen koko, toimiala, käyttäytyminen)
+- Update Record with calculated score
+- Send Email alert to sales rep for high-scoring leads
+
+### Laskuluonti
+
+**Ongelma**: Kun kauppoja suljetaan, laskutusjärjestelmän on päivitettävä asiakas- ja kauppatiedot.
+
+**Ratkaisu**: Lähetä automaattisesti kauppatiedot laskutusjärjestelmään, kun mahdollisuudet voitetaan.
+
+**Trigger**: Record is Updated (Opportunities object, Stage = "Closed Won")
+
+**Toiminnot**:
+
+- Hae tietueet saadaksesi täydelliset asiakastiedot
+- Kooditoiminto tietojen muotoilemiseksi laskutusjärjestelmää varten
+- HTTP-pyyntö asiakkaan luomiseksi laskutusalustalle
+- HTTP-pyyntö laskun luomiseksi
+- Päivitä tietue laskuviite tallettamiseksi
+- Lähetä sähköposti taloustiimille laskutietojen kera
+
+## Kehittyneet Integraatiomallit
+
+### Kaksisuuntainen Synkronointi
+
+**Ongelma**: Sinun on pidettävä tiedot synkronoituna Twentyssä ja toisessa järjestelmässä molempiin suuntiin.
+
+**Solution**: Combine scheduled workflows with webhook triggers for real-time sync.
+
+**Twenty:stä Ulkoiseen Järjestelmään**:
+
+**Trigger**: Record is Updated (any relevant object)
+
+**Toiminnot**:
+
+- HTTP-pyyntö ulkoisen järjestelmän päivittämiseksi
+- Päivitä tietue synkronoinnin tilan ja aikaleiman seuraamiseen
+
+**From External System to Twenty**:
+
+**Laukaisin**: Webhook (ulkoiselta järjestelmältä)
+
+**Toiminnot**:
+
+- Hae tietueita löytääksesi vastaavan tietueen
+- Päivitä tietue uudella ulkoiselta järjestelmältä saadulla tiedolla
+- Luo tietue ristiriitojen ratkaisutehtävälle, jos tarpeen
+
+### Monivaiheinen Tiedonkäsittely
+
+**Ongelma**: Ulkoisten lähteiden tiedot tarvitsevat monimutkaista käsittelyä ennen niiden käyttöä Twentyssä.
+
+**Ratkaisu**: Käytä kooditoimintoja tietojen muokkaukseen ja validointiin.
+
+**Laukaisin**: Webhook tai Aikataulun mukaan
+
+**Toiminnot**:
+
+- Kooditoiminto saapuvan datamuodon validointiin
+- Kooditoiminto tietorakenteen muuntamiseen
+- Kooditoiminto liiketoimintasääntöjen ja laskelmien soveltamiseen
+- Hae tietueet tarkistaaksesi päällekkäisyydet
+- Luo tai päivitä tietue käsitellyillä tiedoilla
+- Lähetä sähköposti-ilmoitus, jos tiedonlaatuongelmia havaitaan
+
+## Toteutusvinkit
+
+- Tallenna API-avaimet turvallisesti Asetuksiin → API & Webhooks
+- Käytä HTTPS:ää kaikille ulkoisille API-pyynnöille
+- Huomioi API-nopeusrajoitukset - käytä aikataulutettuja työnkulkuja mahdollisuuksien mukaan
+- Harkitse eräpäivityksiä "Aikataulun mukaan" kun reaaliaikainen käsittely ei ole tarpeen
+- Muista 100 samanaikaisen työnkulun rajoitus per työtila - käytä "Bulk"-mahdollisuutta manuaalisille laukaisimille usean tietueen käsittelyssä (ks. [Työnkulkuominaisuudet](/l/fi/user-guide/workflows/workflow-features) saadaksesi lisätietoja)
+- Testaa näytetiedoilla ennen työnkulkujen aktivointia
+
+Katso integrointiongelmien ratkaisuohjeet [Työnkulun vianetsintä](/l/fi/user-guide/workflows/workflow-troubleshooting). Jos tarvitset apua monimutkaisten integraatioiden toteutuksessa, harkitse [Ammattipalvelut](/l/fi/user-guide/workflows/professional-services).

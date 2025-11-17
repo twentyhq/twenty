@@ -1,0 +1,170 @@
+---
+title: Interne Automatiseringen
+info: "Automatiseer repetitieve taken om handmatig werk te verminderen en uw gegevens nauwkeurig te houden."
+image: /images/user-guide/workflows/internal-automations.png
+sectionInfo: Processen automatiseren en integreren met externe tools
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/internal-automations.png" alt="Header" />
+</Frame>
+
+Hieronder staan voorbeelden van werkstromen die u kunt implementeren om repetitieve taken te automatiseren, handmatig werk te verminderen en uw gegevens up-to-date te houden.
+
+## Gegevensbeheer Automatiseringen
+
+### Automatisch Persoonlijke E-mails Markeren
+
+**Probleem**: Uw team moet persoonlijke e-mailadressen van zakelijke onderscheiden voor betere targeting en naleving.
+
+**Oplossing**: Creëer een workflow die automatisch een veld "is persoonlijke e-mail" bijwerkt zodra een e-mailadres wordt toegevoegd of aangepast.
+
+**Trigger**: Record is Bijgewerkt (Persoon object, E-mailveld)
+
+**Acties**:
+
+- Code-actie om te controleren of het e-maildomein overeenkomt met algemene persoonlijke providers (gmail.com, yahoo.com, enz.)
+- Record bijwerken om de "is persoonlijke e-mail" vlag in te stellen
+
+### Lead Toewijzing - Rondgang Systeem
+
+**Probleem**: Nieuwe leads moeten eerlijk worden verdeeld over uw verkoopteam om een gebalanceerde werklast te garanderen.
+
+**Oplossing**: Automatiseer het toewijzen van nieuwe leads aan verkoopmedewerkers met een rondgang systeem.
+
+**Trigger**: Record is Aangemaakt (Persoon object)
+
+**Acties**:
+
+- Search Records to find the last assigned rep
+- Code-actie om de volgende vertegenwoordiger in de rotatie te bepalen
+- Record bijwerken om de lead aan de geselecteerde vertegenwoordiger toe te wijzen
+- Stuur E-mail om de toegewezen vertegenwoordiger op de hoogte te stellen
+
+### Lead Toewijzing - Gebieds Gebaseerd
+
+**Probleem**: Leads moeten worden toegewezen op basis van geografische gebieden of bedrijfskenmerken.
+
+**Oplossing**: Leid leads naar de juiste verkoopvertegenwoordiger op basis van locatie, bedrijfsgrootte of industrie.
+
+**Trigger**: Record is Aangemaakt (Mensen- of Bedrijvenobject)
+
+**Acties**:
+
+- Code-actie om gebied te bepalen op basis van locatie/bedrijfstakregels
+- Search Records to find the territory owner
+- Record bijwerken om de lead toe te wijzen
+- Record maken voor een vervolgtaak
+
+## Verkoopproces Automatiseringen
+
+### Opportunity Stage Management - Closed Won
+
+**Probleem**: Wanneer deals sluiten, zijn er meerdere handmatige updates nodig over verschillende records en teamleden.
+
+**Oplossing**: Automatiseer alle activiteiten na overwinning wanneer een kans naar "Gesloten Gewonnen" gaat.
+
+**Trigger**: Record is Bijgewerkt (Kansen object, Fase veld = "Gesloten Gewonnen")
+
+**Acties**:
+
+- Record bijwerken om het bedrijfstype van "Prospect" naar "Klant" te veranderen
+- Record maken voor onboarding-taken toegewezen aan accountmanager
+- Stuur e-mail notificatie naar het klantensuccesteam
+- HTTP-verzoek om extern facturatiesysteem bij te werken
+
+### Beheer van Investeringsstadia - Gesloten Verloren Verlenging
+
+**Probleem**: Wanneer verlengingskansen verloren gaan, moet de klantstatus worden bijgewerkt voor goed accountbeheer.
+
+**Oplossing**: Werk de klantstatus automatisch bij wanneer verlengingsdeals verloren gaan.
+
+**Trigger**: Record is Bijgewerkt (Kansen object, Fase = "Gesloten Verloren" EN Type = "Verlenging")
+
+**Acties**:
+
+- Record bijwerken om het bedrijfstype van "Klant" naar "Klantenverlies" te veranderen
+- Record maken voor analyse van klantverliezen
+- Stuur e-mail alert naar de klantenservicemanager
+- Record bijwerken om verliesdatum en reden toe te voegen
+
+### Waarschuwingen voor Stilstaande Kansen
+
+**Probleem**: Kansen blijven zonder updates zitten, waardoor deals afkoelen en voorspellingen onbetrouwbaar worden.
+
+**Oplossing**: Verstuur automatische waarschuwingen wanneer kansen onlangs niet zijn bijgewerkt.
+
+**Trigger**: Op een Schema (dagelijks)
+
+**Acties**:
+
+- Search Records for opportunities not updated in X days
+- Code-actie om waarschuwingsbericht te formatteren met details over kansen
+- E-mail versturen naar de kans eigenaar en manager
+- Record maken voor een vervolgtaak indien geen reactie
+
+## Productiviteitsautomatiseringen
+
+### Wekelijkse Taken Samenvatting
+
+**Probleem**: Teamleden verliezen het overzicht van hun aankomende taken en deadlines.
+
+**Oplossing**: Verstuur geautomatiseerde wekelijkse e-mail herinneringen met taakoverzichten.
+
+**Trigger**: Op een Schema (elke maandag om 8 uur)
+
+**Acties**:
+
+- Search Records for tasks due this week by assignee
+- Code-actie om takenlijst per persoon te formatteren
+- E-mail versturen naar elk teamlid met hun taken samenvatting
+- E-mail versturen naar managers met teamoverzicht
+
+### Automatiseringen voor Vergader Follow-ups
+
+**Probleem**: Belangrijke actiepunten uit vergaderingen worden vergeten of vertraagd.
+
+**Oplossing**: Automatisch vervolgacties aanmaken wanneer vergaderingen zijn gepland of afgerond.
+
+**Trigger**: Record is Aangemaakt (Activiteitenobject, Type = "Vergadering")
+
+**Acties**:
+
+- Record maken voor voorbereidingstaken voorafgaand aan de vergadering
+- Record maken voor vervolgtaak na de vergadering
+- E-mailherinnering sturen naar deelnemers
+- Record bijwerken om taken aan de vergadering te koppelen
+
+### Kruis-Object Velden Synchronisatie
+
+**Probleem**: U hebt informatie nodig van gerelateerde records die gemakkelijk toegankelijk zijn (bijv. e-mail van de hoofdcontactpersoon op het kansenrecord).
+
+**Oplossing**: Synchroniseer automatisch velden tussen gekoppelde objecten totdat geneste velden beschikbaar zijn.
+
+**Trigger**: Record is Bijgewerkt (Kansen object, Contactpersoon-veld)
+
+**Acties**:
+
+- Zoekrecords om de gegevens van de verbonden persoon te vinden
+- Record bijwerken om e-mailadres naar kanskopie te kopiëren
+- Update Record to copy phone number to opportunity
+- Record bijwerken om bedrijfsinformatie te kopiëren
+
+## Gegevensvalidatie en -schoning
+
+### Standaardisatie van Telefoonnummer
+
+**Probleem**: Telefoonnummers worden in verschillende formaten ingevoerd, waardoor ze moeilijk te gebruiken zijn voor bellen of berichten.
+
+**Oplossing**: Formatteer telefoonnummers automatisch naar een standaardindeling zodra ze ingevoerd worden.
+
+**Trigger**: Record is Bijgewerkt (Persoon object, Telefoonveld)
+
+**Acties**:
+
+- Code-actie om telefoonnummer te parseren en te formatteren
+- Record bijwerken met gestandaardiseerde telefoonindeling
+- Record bijwerken om landcode toe te voegen indien ontbrekend
+
+Voor meer complexe automatiseringsbehoeften, overweeg onze [Professional Services](/l/nl/user-guide/workflows/professional-services) of verken [Externe Tool Integratie](/l/nl/user-guide/workflows/external-tool-integration).
+

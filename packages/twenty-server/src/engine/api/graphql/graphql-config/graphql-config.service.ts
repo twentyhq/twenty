@@ -19,6 +19,17 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import {
+  ApiConfig,
+  Billing,
+  Captcha,
+  ClientAIModelConfig,
+  NativeModelCapabilities,
+  PublicFeatureFlag,
+  PublicFeatureFlagMetadata,
+  Sentry as SentryConfig,
+  Support,
+} from 'src/engine/core-modules/client-config/client-config.entity';
 import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useSentryTracing } from 'src/engine/core-modules/exception-handler/hooks/use-sentry-tracing';
@@ -69,6 +80,19 @@ export class GraphQLConfigService
     const config: YogaDriverConfig = {
       autoSchemaFile: true,
       include: [CoreEngineModule],
+      buildSchemaOptions: {
+        orphanedTypes: [
+          ApiConfig,
+          Billing,
+          Captcha,
+          ClientAIModelConfig,
+          NativeModelCapabilities,
+          PublicFeatureFlag,
+          PublicFeatureFlagMetadata,
+          SentryConfig,
+          Support,
+        ],
+      },
       conditionalSchema: async (context) => {
         let user: UserEntity | null | undefined;
         let workspace: WorkspaceEntity | undefined;

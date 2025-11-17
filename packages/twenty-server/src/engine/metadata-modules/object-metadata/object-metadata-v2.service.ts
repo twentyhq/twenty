@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
@@ -165,50 +166,127 @@ export class ObjectMetadataServiceV2 {
     workspaceId: string;
     isSystemBuild?: boolean;
   }): Promise<ObjectMetadataDTO> {
+    const deletedObjectMetadataDtos = await this.deleteManyObjectMetadatas({
+      deleteObjectInputs: [deleteObjectInput],
+      workspaceId,
+      isSystemBuild,
+    });
+
+    if (deletedObjectMetadataDtos.length !== 1) {
+      throw new ObjectMetadataException(
+        'Could not retrieve deleted object metadata dto',
+        ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    const [deletedObjectMetadataDto] = deletedObjectMetadataDtos;
+
+    return deletedObjectMetadataDto;
+  }
+
+  private async deleteManyObjectMetadatas({
+    workspaceId,
+    deleteObjectInputs,
+    isSystemBuild = false,
+  }: {
+    deleteObjectInputs: DeleteOneObjectInput[];
+    workspaceId: string;
+    isSystemBuild?: boolean;
+  }): Promise<ObjectMetadataDTO[]> {
+    if (deleteObjectInputs.length === 0) {
+      return [];
+    }
+
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatObjectMetadataMaps',
+            'flatIndexMaps',
+            'flatFieldMetadataMaps',
+          ],
+        },
+      );
+
+    const initialAccumulator: {
+      flatFieldMetadatasToDeleteById: Record<string, FlatFieldMetadata>;
+      flatObjectMetadatasToDeleteById: Record<string, FlatObjectMetadata>;
+      flatIndexToDeleteById: Record<string, FlatIndexMetadata>;
+    } = {
+      flatFieldMetadatasToDeleteById: {},
+      flatIndexToDeleteById: {},
+      flatObjectMetadatasToDeleteById: {},
+    };
+
     const {
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      flatIndexMaps: existingFlatIndexMaps,
-      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatObjectMetadataMaps',
-          'flatIndexMaps',
-          'flatFieldMetadataMaps',
-        ],
-      },
-    );
+      flatFieldMetadatasToDeleteById,
+      flatIndexToDeleteById,
+      flatObjectMetadatasToDeleteById,
+    } = deleteObjectInputs.reduce((accumulator, deleteObjectInput) => {
+      const {
+        flatFieldMetadatasToDelete,
+        flatObjectMetadataToDelete,
+        flatIndexToDelete,
+      } = fromDeleteObjectInputToFlatFieldMetadatasToDelete({
+        flatObjectMetadataMaps,
+        flatIndexMaps,
+        flatFieldMetadataMaps,
+        deleteObjectInput,
+      });
+
+      return {
+        flatFieldMetadatasToDeleteById: {
+          ...accumulator.flatFieldMetadatasToDeleteById,
+          ...fromArrayToUniqueKeyRecord({
+            array: flatFieldMetadatasToDelete,
+            uniqueKey: 'id',
+          }),
+        },
+        flatIndexToDeleteById: {
+          ...accumulator.flatIndexToDeleteById,
+          ...fromArrayToUniqueKeyRecord({
+            array: flatIndexToDelete,
+            uniqueKey: 'id',
+          }),
+        },
+        flatObjectMetadatasToDeleteById: {
+          ...accumulator.flatObjectMetadatasToDeleteById,
+          [flatObjectMetadataToDelete.id]: flatObjectMetadataToDelete,
+        },
+      };
+    }, initialAccumulator);
 
     const {
       flatFieldMetadatasToDelete,
-      flatObjectMetadataToDelete,
+      flatObjectMetadatasToDelete,
       flatIndexToDelete,
-    } = fromDeleteObjectInputToFlatFieldMetadatasToDelete({
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      flatIndexMaps: existingFlatIndexMaps,
-      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-      deleteObjectInput,
-    });
+    } = {
+      flatFieldMetadatasToDelete: Object.values(flatFieldMetadatasToDeleteById),
+      flatObjectMetadatasToDelete: Object.values(
+        flatObjectMetadatasToDeleteById,
+      ),
+      flatIndexToDelete: Object.values(flatIndexToDeleteById),
+    };
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
             flatObjectMetadataMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatObjectMetadataMaps,
+              flatEntityMaps: flatObjectMetadataMaps,
               flatEntityToCreate: [],
-              flatEntityToDelete: [flatObjectMetadataToDelete],
+              flatEntityToDelete: flatObjectMetadatasToDelete,
               flatEntityToUpdate: [],
             }),
             flatIndexMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatIndexMaps,
+              flatEntityMaps: flatIndexMaps,
               flatEntityToCreate: [],
               flatEntityToDelete: flatIndexToDelete,
               flatEntityToUpdate: [],
             }),
             flatFieldMetadataMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatFieldMetadataMaps,
+              flatEntityMaps: flatFieldMetadataMaps,
               flatEntityToCreate: [],
               flatEntityToDelete: flatFieldMetadatasToDelete,
               flatEntityToUpdate: [],
@@ -229,12 +307,12 @@ export class ObjectMetadataServiceV2 {
     if (isDefined(validateAndBuildResult)) {
       throw new WorkspaceMigrationBuilderExceptionV2(
         validateAndBuildResult,
-        'Multiple validation errors occurred while deleting object',
+        `Multiple validation errors occurred while deleting object${deleteObjectInputs.length > 1 ? 's' : ''}`,
       );
     }
 
-    return fromFlatObjectMetadataToObjectMetadataDto(
-      flatObjectMetadataToDelete,
+    return flatObjectMetadatasToDelete.map(
+      fromFlatObjectMetadataToObjectMetadataDto,
     );
   }
 
@@ -443,6 +521,32 @@ export class ObjectMetadataServiceV2 {
     await favoriteRepository.insert({
       viewId: view.id,
       position: favoriteCount,
+    });
+  }
+
+  public async deleteWorkspaceAllObjectMetadata({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }) {
+    const { flatObjectMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
+
+    const deleteObjectInputs = Object.values(flatObjectMetadataMaps.byId)
+      .filter(isDefined)
+      .map<DeleteOneObjectInput>((flatObjectMetadata) => ({
+        id: flatObjectMetadata.id,
+      }));
+
+    await this.deleteManyObjectMetadatas({
+      deleteObjectInputs,
+      workspaceId,
+      isSystemBuild: true,
     });
   }
 }

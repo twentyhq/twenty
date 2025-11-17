@@ -1,0 +1,130 @@
+---
+title: API-översikt
+info: Förstå de fyra olika API:erna och när du ska använda var och en.
+image: /images/user-guide/api/api-overview.png
+sectionInfo: Lär dig hur du ansluter Twenty till dina andra verktyg.
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api-overview.png" alt="Header" />
+</Frame>
+
+Twenty är utformat för att vara utvecklarevänligt, erbjuder kraftfulla API:er som anpassar sig till din anpassade datamodell. Vi erbjuder fyra distinkta API-typer för att möta olika integrationsbehov.
+
+## Developer-First Approach
+
+Twenty genererar API:er specifikt för din datamodell, vilket innebär:
+
+- **Inga långa ID:n krävs**: Använd dina objekt- och fältnamn direkt i ändpunkterna
+- **Standard- och anpassade objekt behandlas lika**: Dina anpassade objekt får samma API-behandling som inbyggda
+- **Dedikerade ändpunkter**: Varje objekt och fält får sin egen API-ändpunkt
+- **Custom documentation**: Generated specifically for your workspace's data model
+
+<Warning>
+Ditt anpassade API genererar personlig dokumentation tillgänglig via Inställningar → API & Webhooks efter att ha skapat en API-nyckel. Denna dokumentation återspeglar din exakta datamodell och fältkonfigurationer.
+</Warning>
+
+## De fyra API-typerna
+
+Twenty offers APIs in both **REST** and **GraphQL** formats:
+
+### REST API:er
+
+#### 1. REST Metadata API
+
+- **Syfte**: Hantera din arbetsyta och datamodellstruktur
+- **Use cases**:
+  - Skapa, ändra eller ta bort objekt och fält
+  - Konfigurera arbetsytans inställningar
+  - Hantera datamodellsrelationer
+- **Tillgång**: Tillgänglig via REST-ändpunkter
+
+#### 2. REST Core API
+
+- **Syfte**: Hantera dina faktiska datainspelningar
+- **Use cases**:
+  - Skapa, läs, uppdatera, ta bort poster
+  - Fråga specifika data
+  - Hantera postrelationer
+- **Tillgång**: Tillgänglig via REST-ändpunkter
+
+### GraphQL API:er
+
+#### 3. GraphQL Metadata API
+
+- **Syfte**: Samma som REST Metadata API men med GraphQL fördelar
+- **Användningsområden**: Samma arbetsyte- och datamodellshantering
+- **Ytterligare fördelar**:
+  - Fråga flera metadatatyper i en förfrågan
+  - Exakt fältval
+  - Bättre prestanda för komplexa förfrågningar
+
+#### 4. GraphQL Core API
+
+- **Syfte**: Samma som REST Core API men med GraphQL fördelar
+- **Use cases**: Same data record management
+- **Ytterligare fördelar**:
+  - **Batch-operationer**: Tillgängliga för alla operationer
+  - **Upsert-operationer**: Skapa eller uppdatera poster med ett anrop
+  - Fråga relationer i enskilda förfrågningar
+  - Precist datahämtande
+
+## Batch-Operationer
+
+### REST och GraphQL Batch Support
+
+Både REST och GraphQL API:er stödjer batch-operationer för de flesta åtgärder:
+
+- **Batchstorlek**: Upp till 60 poster per förfrågan
+- **Tillgängliga operationer**: Skapa, uppdatera, ta bort flera poster
+- **Prestanda**: Betydligt snabbare än enskilda API-anrop
+
+### Enbart GraphQL-funktioner
+
+- **Batch Upsert**: Endast tillgängligt i GraphQL API:er
+- **Användning**: Använd plural former av objektnamn (t.ex. `CreateCompanies` istället för `CreateCompany`)
+- **Krav**: Det är därför singular och plural objektnamn måste vara distinkta
+
+## Åtkomst till API-dokumentation
+
+1. Gå till **Inställningar → API & Webhooks**
+2. Skapa en API-nyckel (krävs för åtkomst till dokumentation)
+3. Åtkomst till din anpassade dokumentation och lekplats
+4. Testa API:er med din faktiska datamodell
+
+Din dokumentation är unik för din arbetsyta eftersom den återspeglar dina anpassade objekt, fält och relationer.
+
+## När ska man använda varje API
+
+### Använd Metadata API:er när:
+
+- Ställa in din datamodell
+- Skapa anpassade objekt eller fält
+- Konfigurera arbetsytans inställningar
+
+### Använd Core API:er när:
+
+- Hantera vardagliga data (Personer, Företag, Möjligheter)
+- Integrera med externa system
+- Bygga anpassade applikationer
+- Automating data workflows
+
+### Välj GraphQL när:
+
+- Du behöver batch-operationer
+- Du vill minimera API-anrop
+- Du behöver upsert-funktionalitet
+- Du bygger komplexa integrationer
+
+### Välj REST när:
+
+- Du föredrar en enklare API-struktur
+- Du bygger grundläggande integrationer
+- Ditt team är mer bekant med REST
+- Du behöver enkla CRUD-operationer
+
+## Nästa steg
+
+- **[API & Webhooks-Inställning](/l/sv/user-guide/integrations-api/api-webhooks)**: Lär dig hur du skapar API-nycklar och webhooks
+- **Anpassad dokumentation**: Åtkomst till dina personliga API-dokument genom Inställningar → API & Webhooks
+

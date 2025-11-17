@@ -1,0 +1,93 @@
+---
+title: Kredity pracovních postupů
+info: Pochopte spotřebu kreditů, sledování a správu nákladů pro vaše automatizace.
+image: /images/user-guide/workflows/workflow-credits.png
+sectionInfo: Automatizujte procesy a integrujte se s externími nástroji
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow-credits.png" alt="Header" />
+</Frame>
+
+Kredity pracovních postupů pohánějí vaše automatizace v Twenty. Pochopení, jak fungují, vám pomůže optimalizovat náklady a efektivně spravovat svůj rozpočet na automatizaci.
+
+## Přidělení kreditu podle plánu
+
+Kredity pracovních postupů jsou přiděleny na pracovní prostor podle vašeho předplatného:
+
+- **Zkušební**: 5 milionů kreditů
+- **Pro plán**: 10 milionů kreditů za měsíc
+- **Plán organizace**: 20 milionů kreditů za měsíc
+
+## Jak funguje spotřeba kreditů
+
+Kredity se spotřebovávají při provádění pracovních postupů, nikoli při jejich vytváření. Každá akce v pracovním postupu spotřebovává kredity podle své složitosti:
+
+### Spotřeba kreditů podle typu akce
+
+- **Základní interní operace**: Velmi nízká spotřeba kreditů
+  - Hledání záznamů
+  - Vytvořit záznam
+  - Aktualizovat záznam
+  - Smazat záznam
+  - Akce formuláře
+
+- **Složitější operace**: Vyšší spotřeba kreditů
+  - Akce kódování (provádění JavaScriptu)
+  - HTTP požadavky na externí služby
+
+- **Funkce AI**: Významná spotřeba kreditů (brzy dostupné)
+  - AI dotazy a zpracování budou spotřebovávat kredity podle použití
+
+### Okamžité stržení
+
+Kredity jsou strhávány v reálném čase při provádění pracovních postupů. Toto znamená:
+
+- Návrhy pracovních postupů nespotřebovávají kredity
+- Pouze aktivní, běžící pracovní postupy používají vaše přidělené kredity
+- Nezdařené pracovní postupy stále vyčerpávají kredity za dokončené kroky
+
+## Správa kreditů
+
+### Zkontrolujte využití kreditů
+
+1. Přejděte na **Nastavení → Fakturace**
+2. Zobrazte svoji aktuální spotřebu kreditů a zbývající zůstatek
+3. Sledujte vzory používání pro optimalizaci svých pracovních postupů
+
+### Nákup dalších kreditů
+
+Pokud potřebujete více kreditů než přidělení vašeho plánu:
+
+1. Přejděte na **Nastavení → Fakturace**
+2. Klikněte na možnost koupit další kredity. Balíčky různých velikostí jsou k dispozici.
+3. Kredity jsou přidány k vašemu aktuálnímu zůstatku
+
+## Osvedčené postupy
+
+### Efektivní návrh pracovních postupů
+
+- **Začněte jednoduše**: Začněte základními akcemi a postupně přidávejte složitost
+- **Testujte v návrhu**: Důkladně otestujte pracovní postupy před aktivací, abyste se vyhnuli plýtvání kredity na chyby
+- **Minimalizujte HTTP požadavky**: Používejte efektivní kritéria hledání a kombinujte operace, kde je to možné
+- **Zpracování dávek**: Efektivně používejte hromadné operace a iterátory akcí
+- **Řešení chyb**: Implementujte správné řešení chyb, abyste zabránili zbytečným opakováním
+- **Optimalizace manuálních spouštěčů**: Pro manuální spouštěče zvolte `Hromadná` dostupnost pro zpracování více záznamů při jednom spuštění pracovního postupu (viz [Funkce pracovního postupu](/l/cs/user-guide/workflows/workflow-features) pro detaily)
+
+### Optimalizace akcí
+
+- Používejte základní interní operace, kde je to možné (nižší spotřeba kreditů)
+- Optimalizujte akce kódu pro efektivitu
+- Zvažte manuální spouštěče pro neurgentní procesy
+- Hromadné operace pro snížení individuálních volání akcí
+
+### Správa kreditů
+
+- **Pravidelné monitorování**: Každý týden kontrolujte své využití kreditů v Nastavení → Fakturace
+- **Sledování použití**: Sledujte vzory spotřeby, abyste předešli neočekávaným přečerpaním
+- **Plánování podle situace**: Uvažujte o upgradu plánu, pokud konzistentně potřebujete více kreditů
+- **Revize pracovních postupů**: Pravidelně přehodnoťte pracovní postupy s vysokou spotřebou a deaktivujte nepoužívané
+- **Strategické plánování**: Plánujte nasazení pracovních postupů na základě dostupnosti kreditů
+
+Pro podrobné informace o fakturaci a správě kreditů navštivte **Nastavení → Fakturace** ve vaší pracovní oblasti Twenty.
+

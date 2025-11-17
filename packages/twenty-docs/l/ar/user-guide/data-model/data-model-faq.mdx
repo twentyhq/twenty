@@ -1,0 +1,90 @@
+---
+title: الأسئلة المتكررة حول نموذج البيانات
+info: "الأسئلة المتكررة حول تكوين نموذج البيانات والقيود والميزات القادمة."
+image: /images/user-guide/what-is-twenty/faq.png
+sectionInfo: نموذج البيانات المرن المصمم لدعم عملياتك التجارية الفريدة
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/faq.png" alt="Header" />
+</Frame>
+
+## إدارة الكائنات
+
+<AccordionGroup>
+<Accordion title="Can I reorder objects in the left navigation bar?">
+ليس بعد. ترتيب الكائنات في التنقل ثابت حاليًا، ولكن هذه الميزة مخطط لها لإصدارات قادمة.
+</Accordion>
+
+<Accordion title="Can I hide objects from the left navigation bar?">
+تظهر كل الكائنات النشطة في التنقل. يمكنك إلغاء تفعيل الكائنات التي لا تحتاجها تحت **الإعدادات → نموذج البيانات**.
+</Accordion>
+
+<Accordion title="Can I delete standard objects (People, Companies, etc.)?">
+You can deactivate any standard objects but you cannot hard delete them.
+</Accordion>
+</AccordionGroup>
+
+## قدرات الحقول
+
+<AccordionGroup>
+<Accordion title="Can I create formula fields?">
+حقول الصيغ قادمة في **الربع الأول من عام 2026**. في الوقت الحالي، يمكنك استخدام سير العمل لحساب وتحديث قيم الحقول تلقائيًا.
+</Accordion>
+
+<Accordion title="Can I have nested fields in my objects?">
+الحقول المتداخلة قادمة في **الربع الأول من عام 2026**. حاليًا، يمكنك استخدام سير العمل لإحضار قيم الحقول من الكائنات ذات الصلة. مثلاً، لعرض صناعة شركة على سجل شخص، قم بإنشاء حقل مخصص للأشخاص واستخدم سير العمل لمزامنة القيمة.
+</Accordion>
+
+<Accordion title="Why can't I update relation field names?">
+أسماء حقول العلاقات تؤثر على هيكلية API ولا يمكن تغييرها بعد الإنشاء. إذا كنت بحاجة لإعادة تسمية حقل العلاقة، ستحتاج إلى إنشاء واحد جديد وحذف القديم.
+</Accordion>
+
+<Accordion title="Why do I need different singular and plural names?">
+Our GraphQL API uses both forms for different operations:
+- `createPerson` (singular) for single record actions
+- `createPeople` (plural) for bulk operations
+
+هذا يخلق قيودًا عندما تكون الأشكال المفردة والجمع متشابهة، ولكنه يحسن تجربة المطور. </Accordion>
+
+<Accordion title="Why are some field names protected?">
+بعض أسماء الحقول مثل `Type` أو `Application` محجوزة لاستخدام النظام. اختر أسماء بديلة مثل `Category` أو `Classification` بدلاً من ذلك.
+</Accordion>
+</AccordionGroup>
+
+## الميزات المتقدمة
+
+<AccordionGroup>
+<Accordion title="Can I create many-to-many relationships?">
+العلاقات عديدة-إلى-عدة قادمة في **الربع الأول من عام 2026**. حاليًا، أنشئ كائن وسيط مع علاقتين 1-إلى-عديد كحل بديل.
+</Accordion>
+
+<Accordion title="What are Morph Many relationships?">
+علاقات Morph Many (القادمة في **الربع الرابع من عام 2025**) تسمح لكائن واحد بأن يتصل بأنواع كائنات متعددة. على سبيل المثال، يمكن للفرصة أن تتعلق إما بشخص أو بشركة.
+</Accordion>
+
+<Accordion title="Can I reorder fields in objects?">
+سيكون إعادة ترتيب الحقول متاحًا مع التخطيطات المخصصة في **الربع الرابع من عام 2025**. حاليًا، تظهر الحقول بترتيب أبجدي.
+</Accordion>
+</AccordionGroup>
+
+## الوصول والصلاحيات
+
+<AccordionGroup>
+<Accordion title="Where can I see and edit my data model?">
+You can access your Data Model under **Settings → Data Model**.
+</Accordion>
+
+<Accordion title="Why can't I see the Data Model under Settings?">
+اتصل بمسؤول المساحة لديك. يكون الوصول إلى نموذج البيانات عادة محظورًا على المسؤولين فقط.
+</Accordion>
+
+<Accordion title="How many custom objects or fields can I create?">
+You can create as many custom objects and fields as you need - the price won't change.
+</Accordion>
+</AccordionGroup>
+
+## هل تحتاج إلى المزيد من المساعدة؟
+
+تحقق من [خدمات التنفيذ](/l/ar/user-guide/getting-started/implementation-services) للحصول على المساعدة في تصميم نموذج البيانات المعقد.
+

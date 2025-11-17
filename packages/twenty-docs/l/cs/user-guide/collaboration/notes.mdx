@@ -1,0 +1,99 @@
+---
+title: Poznámky
+info: Prozkoumejte, jak efektivně spravovat poznámky na stránkách záznamů v Twenty.
+image: /images/user-guide/notes/notes_header.png
+sectionInfo: Objevte, jak využít Poznámky a Úkoly k lepší spolupráci s vaším týmem.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+Efektivně spravujte své záznamově propojené poznámky pomocí výkonné funkce **Poznámky**. Tento průvodce vás provede, jak bezproblémově vytvářet, formátovat, komentovat a mazat poznámky na stránkách záznamů.
+
+## Běžné scénáře použití
+
+### Dokumentace z jednání
+
+- **Zápisy z jednání**: Zaznamenejte klíčové body diskuse, rozhodnutí a úkoly z klientských hovorů
+- **Shrnutí hovorů**: Zaznamenejte důležité údaje z prodejních rozhovorů nebo podpůrných hovorů
+- **Následné poznámky**: Dokumentujte další kroky a závazky učiněné během schůzek
+
+### Interakce se zákazníky
+
+- **Historie podpory**: Sledujte problémy zákazníků, poskytnutá řešení a stav vyřešení
+- **Kontext prodeje**: Zaznamenejte preference zákazníků, bolestivé body a nákupní signály
+- **Budování vztahů**: Poznamenejte osobní detaily o kontaktech, abyste posílili vztahy
+
+### Projektové řízení
+
+- **Aktualizace stavu**: Dokumentujte pokrok v projektu a dosažení milníků
+- **Sledování problémů**: Zaznamenejte vzniklé problémy a implementovaná řešení
+- **Předání mezi týmy**: Popište kontext při převodu účtů mezi členy týmu
+
+### Automatizované vytváření poznámek
+
+Use [Workflows](/l/cs/user-guide/workflows/getting-started-workflows) to automatically create notes:
+
+- **Integrace záznamníku hovorů**: Automaticky generujte souhrny schůzek z nahraných hovorů
+- **Poznámky k předání obchodu**: Automaticky vytvářejte souhrny prodejního cyklu při předávání nových zákazníků implementačním týmům
+
+## Vlastnosti poznámek
+
+### Pole relací
+
+Notes include a **Relations** field that allows you to attach a single note to multiple records across different objects. Například, můžete propojit jednu poznámku ze schůzky s:
+
+- Osobou, se kterou jste se setkali
+- Firmou, kterou zastupují
+- The Opportunity being discussed
+- Jakýmkoliv relevantním úkolem nebo jinými záznamy
+
+This morph many relationship ensures important information is accessible from all relevant record pages.
+
+### Označování uživatelů
+
+**Poznámka**: Označování uživatelů uvnitř poznámek momentálně není dostupné. Tato funkce je plánována na rok 2026, což vám umožní zmínit členy týmu a spouštět oznámení.
+
+## Vytváření poznámek
+
+Vytváření poznámek v systému je intuitivní a dynamické. Můžete buď:
+
+- Přejděte na zobrazení poznámek a vytvořte nový záznam.
+- Jděte na stránku `Záznamu` a vyberte kartu Poznámky, pak stiskněte tlačítko `Nová poznámka`.
+
+<img src="/images/user-guide/notes/add-note.png"style={{width:'100%'}}/>
+
+### Přidávání obsahu
+
+Začněte rovnou psát nebo stiskněte `/`, abyste okamžitě přidali prvky, jako jsou nadpisy, soubory nebo obrázky.
+
+### Formátování obsahu
+
+Můžete formátovat vaše poznámky přímo z editoru. Použijte Markdown syntaxi, stiskněte `/` klávesu nebo klikněte na ikonu `+` na editoru a podívejte se na různé možnosti bloku, jako nadpisy, tabulky a seznamy. Můžete také připojit obrázky ke své poznámce.
+
+Zvýrazněte text pro více možností formátování, jako je tučné, kurzíva a možnosti zarovnání.
+
+Můžete také změnit barvu pozadí a textu každého bloku, abyste v poznámce zvýraznili důležité věci. K tomu, najeďte myší na blok, který chcete formátovat a klikněte na ikonu `⋮` vedle ikony `+`. Klikněte na `Barvy`, abyste otevřeli všechny barevné možnosti pro text i pozadí.
+
+<VimeoEmbed videoId="927896302" title="Format note content" />
+
+## Zobrazení poznámek
+
+Systém zobrazuje všechny vaše poznámky propojené s konkrétním záznamem pod částí Poznámky na odpovídající stránce `Záznamu`.
+
+## Ukládání a mazání
+
+All edits and additions to the note are automatically saved.
+
+Pro odstranění poznámky:
+
+1. Otevřete poznámku, kterou chcete odebrat, kliknutím na ni na stránce `Záznamu`.
+2. Vyberte poznámku, kterou chcete smazat v záložce poznámek.
+3. Použijte tlačítko `Možnost` v pravém dolním rohu pro další akce včetně odstranění.
+4. Dokončete své smazání po vyzvání ve potvrzovacím modulu.
+
+Dalším způsobem, jak smazat poznámku, je prostřednictvím zobrazení poznámek jako u běžného záznamu. Please be aware that deleting a note is permanent and can't be undone.
+

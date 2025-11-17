@@ -1,0 +1,148 @@
+---
+title: Chip
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+A visual element that you can use as a clickable or non-clickable container with a label, optional left and right components, and various styling options to display labels and tags.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+    <Chip
+      size="large"
+      label="Clickable Chip"
+      clickable={true}
+      variant="highlighted"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+    />
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Tulajdonságok | Típus                        | Leírás                                                                                                                                |
+| ------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| linkToEntity  | string                       | A link az entitáshoz                                                                                                                  |
+| entityId      | string                       | Az entitás egyedi azonosítója                                                                                                         |
+| név           | string                       | Az entitás neve                                                                                                                       |
+| képUrl        | string                       | s picture",                                                                                                                           |
+| avatarTípus   | Avatar Típus                 | Az avatar típusa, amelyet meg kíván jeleníteni. Has two options: `rounded` and `squared`              |
+| változat      | \"EntityChipVariant\" enum | Az entitás chip változata, amelyet meg kíván jeleníteni. Has two options: `regular` and `transparent` |
+| BalIkon       | IkonKomponens                | Egy React komponens, amely egy ikont reprezentál. A chip bal oldalán jelenik meg                                      |
+
+</Tab>
+</Tabs>
+
+## Példák
+
+### Átlátszó Letiltott Chip
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Transparent Disabled Chip"
+      clickable={false}
+      variant="rounded"
+      accent="text-secondary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+
+```
+
+<br/>
+
+### Letiltott Chip Tooltip-pel
+
+```jsx
+import { Chip } from "twenty-ui/components";
+  
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Disabled chip that triggers a tooltip when overflowing."
+      clickable={false}
+      variant="regular"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+```
+
+## Entitás Chip
+
+Egy Chip-szerű elem az entitással kapcsolatos információk megjelenítésére.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+import { IconTwentyStar } from 'twenty-ui/display';
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <Chip
+        linkToEntity="/entity-link"
+        entityId="entityTest"
+        name="Entity name"
+        pictureUrl=""
+        avatarType="rounded"
+        variant="regular"
+        LeftIcon={IconTwentyStar}
+      />
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Tulajdonságok | Típus                        | Leírás                                                                                                                                |
+| ------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| linkToEntity  | string                       | A link az entitáshoz                                                                                                                  |
+| entityId      | string                       | Az entitás egyedi azonosítója                                                                                                         |
+| név           | string                       | Az entitás neve                                                                                                                       |
+| képUrl        | string                       | s picture",                                                                                                                           |
+| avatarTípus   | Avatar Típus                 | Az avatar típusa, amelyet meg kíván jeleníteni. Has two options: `rounded` and `squared`              |
+| változat      | \"EntityChipVariant\" enum | Az entitás chip változata, amelyet meg kíván jeleníteni. Has two options: `regular` and `transparent` |
+| BalIkon       | IkonKomponens                | Egy React komponens, amely egy ikont reprezentál. A chip bal oldalán jelenik meg                                      |
+
+</Tab>
+</Tabs>

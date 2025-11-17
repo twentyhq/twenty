@@ -1,0 +1,118 @@
+---
+title: Feladatok
+info: Értse meg, hogyan kezelheti hatékonyan a feladatokat a Twenty rendszerében.
+image: /images/user-guide/tasks/tasks_header.png
+sectionInfo: Fedezze fel, hogyan használhatja ki a Jegyzetek és Feladatok funkciókat, hogy jobban együttműködjön csapatával.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Kezelje az összes feladatát a munkaterében a **Feladatok** funkcióval. Ez az útmutató bemutatja, hogyan hozhat létre és kezelhet feladatokat, válthat a közelgő és a befejezett feladatok között, szerkesztheti a feladat részleteit, és még sok mást.
+
+## Gyakori felhasználási esetek
+
+### Értékesítési Utánkövetések
+
+- **Találkozó Következő Lépései**: Hozzon létre feladatokat a klienshívások során megvitatott teendőkre
+- **Ajánlatok Utánkövetése**: Állítson be emlékeztetőket a függőben lévő ajánlatok ellenőrzésére
+- **Szerződés Ellenőrzések**: Ütemezzen feladatokat a szerződéses tárgyalásokra és jóváhagyásokra
+
+### Ügyfél Siker
+
+- **Bevezetési Feladatok**: Automatikusan hozzon létre bevezetési ellenőrzőlistákat a megállapodások lezárása után
+- **Ellenőrző Emlékeztetők**: Ütemezzen rendszeres ügyfél-egészségügyi ellenőrző hívásokat
+- **Megújulási Előkészítés**: Állítson be feladatokat a szerződés megújításának előkészítésére 90 nappal korábban
+
+### Belső Projektmenedzsment
+
+Az értékesítésen és ügyfélsikerén túl a Feladatok támogatják a szélesebb körű szervezeti igényeket:
+
+- **Termékfejlesztés**: Kövesse nyomon a funkciókiadásokat, hibajavításokat és fejlesztési mérföldköveket
+- **Marketingkampányok**: Kezelje a kampányok indítását, a tartalomkészítést és a promóciós tevékenységeket
+- **HR Műveletek**: Kezelje a toborzási folyamatokat, munkavállalói bevezetést és teljesítményértékeléseket
+- **Pénzügyi Feladatok**: Ütemezzen költségvetési ellenőrzéseket, számlafeldolgozást és pénzügyi jelentéstételt
+- **Műveletek**: Koordinálja a létesítménygazdálkodást, az eladókkal való kapcsolatokat és a folyamatjavításokat
+
+### Automatikus Feladat Létrehozás
+
+Használja a [Munkafolyamatokat](/l/hu/user-guide/workflows/getting-started-workflows) automatikus feladatok létrehozásához:
+
+- **Megnyert Megállapodás Indítók**: Automatikusan hozzon létre bevezetési feladatokat, melyek a CS csapatnak vannak kiosztva, amikor lehetőségek lezárulnak
+- **Email Emlékeztetők**: Heti email emlékeztetők beállítása a héten esedékes feladatokhoz (minden hétfőn elküldve)
+- **Pipeline Automatizálás**: Lépjen tovább a feladatokra, amikor a megállapodások megtorpannak egyes szakaszokban
+- **Találkozó Integráció**: Automatikusan generáljon feladatokat találkozórögzítésekből vagy naptár eseményekből
+
+## Feladat Funkciók
+
+### Kapcsolatmező
+
+A feladatok tartalmaznak egy `Kapcsolat` mezőt, amely lehetővé teszi, hogy egyetlen feladatot több rekordhoz kapcsoljon különböző objektumok között. Például, egy utánkövetési feladatot összekötheti:
+
+- A személlyel, akit fel kell keresnie
+- Az általuk képviselt vállalattal
+- A követett lehetőséggel
+- Bármilyen releváns jegyzetekkel vagy egyéb rekordokkal
+
+Ez a sokkal kiterjedtebb kapcsolat biztosítja, hogy a feladatok minden releváns rekord oldalról elérhetők legyenek, és teljes kontextust nyújtsanak.
+
+### Felhasználói címkézés
+
+**Megjegyzés**: A feladatokon belüli felhasználói címkézés jelenleg nem elérhető. Ez a funkció 2026-ra van tervezve, amely lehetővé teszi a csapattagok megjelölését és értesítések küldését a feladatok hozzárendelésekor vagy frissítésekor.
+
+## Feladatok Létrehozása
+
+A feladatok létrehozása a Twenty rendszerében zökkenőmentes. Ön megteheti, hogy:
+
+- Lépjen a `Feladatok` fülre és nyomja meg a `+` gombot az oldal jobb felső sarkában.
+- Használja a keresési funkciót `cmd/ctrl + k` lenyomásával, majd válassza ki a 'Feladat létrehozása' lehetőséget a gyorsműveletek listájából.
+- Lépjen egy `Rekord oldalra`, és nyomja meg a `+` gombot az oldal jobb felső sarkában, vagy lépjen a Feladatok fülre, és kattintson a `Feladat hozzáadása` gombra.
+
+<VimeoEmbed videoId="928786754" title="Creating tasks" />
+
+### Feladat Tartalom Hozzáadása
+
+Miután létrehozott egy feladatot, gazdag tartalommal bővítheti, mint például Címek, Felsorolásjelek vagy akár képek. Ehhez nyomja meg a `/` billentyűt, és írja be a kívánt parancsot.
+
+## Feladatok Megtekintése
+
+A **Feladatok** oldal az összes feladatot megjeleníti munkaterén. Itt tudja:
+
+- Szűrje a felhasználóra kiosztott feladatokat, kattintson a nevével jelölt gombra az oldal jobb felső sarkában.
+- Váltson a közelgő (`Teendő`) és a befejezett (`Kész`) feladatok között, hogy láthassa, mi igényel figyelmet és mit végzett el már.
+
+A megadott Rekord oldalon is láthatja a feladatokat.
+
+<VimeoEmbed videoId="927908280" title="Viewing tasks" />
+
+## Feladatok Szerkesztése
+
+Egy feladat szerkesztéséhez kattintson a kártyájára. Ez megnyit egy oldalsó panelt, amely a következő funkciókat kínálja:
+
+- **Kiosztott személy és határidő**: Frissítse a kiosztott személyt, vagy szerkessze a határidőt.
+- **Megjegyzések**: Dolgozzon együtt csapattagjaival a feladatok megjegyzésekkel való frissítésével vagy visszajelzés adásával.
+- **Automatizálások**: Az API és a Webhooks segítségével automatikusan létrehozhat feladatokat, amelyeket speciális tevékenységek indítanak el a munkaterén.
+
+## Feladatok Jelölése Teljesítettnek
+
+Egy feladat teljesítésének jelöléséhez:
+
+1. Keresse meg a feladatot a `Feladatok` oldalon vagy a `Rekord oldalon`.
+2. Kattintson a feladat kártya bal oldalán található körre, így az a teljesítést jelzi.
+3. A feladat állapota automatikusan `Kész`-re frissül.
+
+Ez az eljárás segít naprakészen tartani az eredményeinek nyilvántartását.
+
+<VimeoEmbed videoId="927910083" title="Marking tasks as complete" />
+
+## Delete a task
+
+To permanently remove a task:
+
+1. Open the task you want to delete by clicking on its card, either from the `Tasks` page or within a `Record page`.
+2. Kattintson a szemetes ikonra a feladat részletezési panel jobb felső sarkában.
+
+Kérjük, vegye figyelembe, hogy egy feladat törlése végleges és nem vonható vissza. Fontolja meg a feladatok `Kész`-re jelölését, ha úgy érzi, hogy később még szüksége lehet rájuk.

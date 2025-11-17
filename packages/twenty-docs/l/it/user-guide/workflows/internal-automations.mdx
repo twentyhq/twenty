@@ -1,0 +1,170 @@
+---
+title: Automazioni interne
+info: "Automatizza attività ripetitive per ridurre il lavoro manuale e mantenere i dati accurati."
+image: /images/user-guide/workflows/internal-automations.png
+sectionInfo: Automatizza processi e integra con strumenti esterni
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/internal-automations.png" alt="Header" />
+</Frame>
+
+Di seguito sono riportati esempi di flussi di lavoro che potresti implementare per automatizzare attività ripetitive e ridurre il lavoro manuale mantenendo i dati aggiornati.
+
+## Automazioni di gestione dati
+
+### Auto-Flag Email Personali
+
+**Problema**: Il tuo team deve identificare le email personali rispetto a quelle aziendali per migliorare il targeting e la conformità.
+
+**Solution**: Create a workflow that automatically updates an "is personal email" field whenever an email address is added or updated.
+
+**Trigger**: Il record è aggiornato (oggetto Persone, campo Email)
+
+**Azioni**:
+
+- Azione di codice per verificare se il dominio dell'email corrisponde a provider comuni personali (gmail.com, yahoo.com, ecc.)
+- Aggiornare il record per impostare il flag "è email personale"
+
+### Assegnazione Lead - Round Robin
+
+**Problema**: I nuovi leads devono essere distribuiti equamente tra il tuo team di vendita per garantire un carico di lavoro equilibrato.
+
+**Soluzione**: Assegna automaticamente i nuovi leads ai venditori utilizzando un sistema round-robin.
+
+**Trigger**: Il record è creato (oggetto Persone)
+
+**Azioni**:
+
+- Cerca i record per trovare l'ultimo venditore assegnato
+- Azione di codice per determinare il prossimo venditore nella rotazione
+- Aggiornare il record per assegnare il lead al venditore selezionato
+- Invia email per notificare il venditore assegnato
+
+### Assegnazione Lead - Basata su Territorio
+
+**Problema**: I leads dovrebbero essere assegnati in base a territori geografici o caratteristiche aziendali.
+
+**Soluzione**: Instrada i leads al venditore appropriato in base alla posizione, dimensione dell'azienda o settore.
+
+**Trigger**: Il record è creato (oggetto Persone o Aziende)
+
+**Azioni**:
+
+- Azione di codice per determinare il territorio in base alle regole di posizione/settore
+- Cerca i record per trovare il proprietario del territorio
+- Aggiornare il record per assegnare il lead
+- Crea un record per un compito di follow-up
+
+## Automazioni del Processo di Vendita
+
+### Gestione dello Stadio delle Opportunità - Chiuso Vinto
+
+**Problema**: Quando le trattative si chiudono, sono necessari aggiornamenti manuali in più record e tra i membri del team.
+
+**Soluzione**: Gestisci automaticamente tutte le attività post-vittoria quando un'opportunità passa a "Chiuso Vinto".
+
+**Trigger**: Il record è aggiornato (oggetto Opportunità, campo Stadio = "Chiuso Vinto")
+
+**Azioni**:
+
+- Aggiornare il record per cambiare il tipo di azienda da "Prospetto" a "Cliente"
+- Crea un record per i compiti di inserimento assegnati al manager del conto
+- Invia notifica via email al team di successo del cliente
+- Richiesta HTTP per aggiornare il sistema di fatturazione esterno
+
+### Gestione dello Stadio delle Opportunità - Chiuso Perso Rinnovo
+
+**Problema**: Quando le opportunità di rinnovo vengono perse, lo stato del cliente deve essere aggiornato per una corretta gestione dell'account.
+
+**Soluzione**: Aggiorna automaticamente lo stato del cliente quando i rinnovi vengono persi.
+
+**Trigger**: Il record è aggiornato (oggetto Opportunità, Stadio = "Chiuso Perso" E Tipo = "Rinnovo")
+
+**Azioni**:
+
+- Aggiornare il record per cambiare il tipo di azienda da "Cliente" a "Cliente Perso"
+- Crea un record per l'analisi delle perdite
+- Invia email di avviso al responsabile del successo del cliente
+- Aggiorna il record per aggiungere data e motivo della perdita
+
+### Avvisi di Opportunità Stagnanti
+
+**Problema**: Le opportunità rimangono senza aggiornamenti, causando il raffreddamento delle trattative e diventando inaffidabili per le previsioni.
+
+**Soluzione**: Invia avvisi automatici quando le opportunità non vengono aggiornate di recente.
+
+**Trigger**: In base a un programma (giornaliero)
+
+**Azioni**:
+
+- Cerca i record per le opportunità non aggiornate in X giorni
+- Azione di codice per formattare il messaggio di avviso con i dettagli delle opportunità
+- Invia email al proprietario dell'opportunità e al manager
+- Crea un record per un compito di follow-up se non si riceve risposta
+
+## Automazioni di Produttività
+
+### Riepilogo delle Attività Settimanali
+
+**Problema**: I membri del team perdono di vista i loro compiti e le scadenze imminenti.
+
+**Soluzione**: Invia promemoria settimanali automatici via email con i riepiloghi delle attività.
+
+**Trigger**: In base a un programma (ogni lunedì alle 8 AM)
+
+**Azioni**:
+
+- Cerca i record per i compiti in scadenza questa settimana per assegnatario
+- Azione di codice per formattare l'elenco dei compiti per persona
+- Invia email a ciascun membro del team con il loro riepilogo dei compiti
+- Invia email ai manager con una panoramica del team
+
+### Automazione di Follow-up delle Riunioni
+
+**Problema**: I compiti importanti derivanti dalle riunioni vengono dimenticati o ritardati.
+
+**Soluzione**: Crea automaticamente compiti di follow-up quando le riunioni vengono programmate o completate.
+
+**Trigger**: Il record è creato (oggetto Attività, Tipo = "Riunione")
+
+**Azioni**:
+
+- Crea un record per il compito di preparazione pre-riunione
+- Crea un record per il compito di follow-up post-riunione
+- Invia un promemoria via email ai partecipanti
+- Aggiorna il record per collegare i compiti alla riunione
+
+### Sincronizzazione dei Campi tra Oggetti
+
+**Problema**: È necessario avere informazioni da record correlati facilmente accessibili (ad es., email del contatto principale sul record dell'opportunità).
+
+**Soluzione**: Sincronizza automaticamente i campi tra oggetti correlati finché non siano disponibili campi annidati.
+
+**Trigger**: Il record è aggiornato (oggetto Opportunità, campo Punto di Contatto)
+
+**Azioni**:
+
+- Cerca i record per trovare i dettagli della persona collegata
+- Aggiorna il record per copiare l'indirizzo email sull'opportunità
+- Aggiorna il record per copiare il numero di telefono sull'opportunità
+- Aggiorna il record per copiare le informazioni sull'azienda
+
+## Convalida e Pulizia dei Dati
+
+### Standardizzazione del Numero di Telefono
+
+**Problema**: I numeri di telefono sono inseriti in formati diversi, rendendoli difficili da usare per telefonare o inviare messaggi.
+
+**Soluzione**: Formatta automaticamente i numeri di telefono a un formato standard quando vengono inseriti.
+
+**Trigger**: Il record è aggiornato (oggetto Persone, campo Telefono)
+
+**Azioni**:
+
+- Azione di codice per analizzare e formattare il numero di telefono
+- Aggiorna il record con il formato telefonico standardizzato
+- Aggiorna il record per aggiungere il prefisso internazionale se mancante
+
+For more complex automation needs, consider our [Professional Services](/l/it/user-guide/workflows/professional-services) or explore [External Tool Integration](/l/it/user-guide/workflows/external-tool-integration).
+

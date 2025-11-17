@@ -1,0 +1,83 @@
+---
+title: Claves API y Webhooks
+info: "Crea y gestiona claves de API para la autenticación y configura webhooks para notificaciones en tiempo real."
+image: /images/user-guide/api/api.png
+sectionInfo: Aprenda a conectar Twenty con sus otras herramientas.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+## Claves API
+
+Las claves de API permiten el acceso automatizado a tus datos de CRM, sincronizan datos con otros sistemas y crean integraciones o soluciones personalizadas.
+
+### Crear una Clave de API
+
+1. Ve a **Configuración → APIs y Webhooks**
+2. Haz clic en **+ Crear clave** en la esquina superior derecha
+3. Configura tu clave de API:
+   - **Nombre**: Dale un nombre descriptivo a tu clave de API
+   - **Fecha de Vencimiento**: Establece cuándo debería expirar la clave
+4. Haz clic en **Guardar** para generar tu clave de API
+5. **Importante**: Copia y almacena tu clave de API inmediatamente, solo se muestra una vez
+
+Una vez creada, tu clave de API proporciona acceso a tu documentación API personalizada y a un entorno de pruebas donde puedes probar endpoints con tu modelo de datos real.
+
+<Warning>
+Dado que tu clave de API ofrece acceso a información sensible, no deberías compartirla con servicios en los que no confíes plenamente. Si se filtra, alguien puede usarla de manera malintencionada. Si la seguridad de tu clave de API se ve comprometida, desactívala inmediatamente y genera una nueva.
+</Warning>
+<VimeoEmbed videoId="928786722" title="Creating API key" />
+
+### Gestionar Claves de API
+
+**Regenerar una Clave de API:**
+
+1. Ve a **Configuración → APIs y Webhooks**
+2. Haz clic en la clave de API que deseas regenerar
+3. Haz clic en el botón **Regenerar**
+4. Copie y almacene la nueva clave de API inmediatamente
+
+**Eliminar una Clave de API:**
+
+1. Encuentre la clave de API en su lista
+2. Haga clic en la clave para abrir sus detalles
+3. Haga clic en **Eliminar** para quitarlo permanentemente
+
+## Webhooks
+
+Webhooks allow for immediate updates to your specified URL about changes or events related to your customer data.
+
+Por ejemplo, cuando una oportunidad pasa a "Cerrada Ganada", un webhook puede activar automáticamente la creación de facturas en su sistema de contabilidad. Tenga en cuenta que este tipo de automatización también puede lograrse mediante la función [Workflows](/l/es/user-guide/workflows/getting-started-workflows) de Twenty, que ofrece desencadenantes basados en actualizaciones de campo para la automatización interna.
+
+Los webhooks son ideales para integrarse con sistemas externos, mientras que los Workflows apoyan tanto la automatización interna como las conexiones con herramientas externas a través de desencadenantes de webhook, nodos de código y nodos HTTP.
+
+### Crear un Webhook
+
+1. Ve a **Configuración → APIs y Webhooks → Webhooks**
+2. Haga clic en **+ Crear webhook**
+3. Enter your webhook URL (where you want to receive notifications)
+4. Haga clic en **Guardar**
+
+Su webhook comenzará a recibir inmediatamente notificaciones en tiempo real sobre cambios en los datos de su CRM.
+
+<VimeoEmbed videoId="928786708" title="Video demonstration" />
+
+### Gestionar Webhooks
+
+**Eliminar un Webhook:**
+
+1. Ve a **Configuración → APIs y Webhooks → Webhooks**
+2. Find the webhook you want to remove
+3. Haga clic en el webhook
+4. Haga clic en **Eliminar** y confirme en la ventana emergente
+
+**Editar un Webhook:**
+
+1. Haga clic en el webhook que desea modificar
+2. Update the URL or other settings
+3. Haga clic en **Guardar** para aplicar cambios
+

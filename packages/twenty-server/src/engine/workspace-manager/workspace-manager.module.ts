@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -18,7 +19,6 @@ import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-see
 import { WorkspaceHealthModule } from 'src/engine/workspace-manager/workspace-health/workspace-health.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 
 import { WorkspaceManagerService } from './workspace-manager.service';
 

@@ -6,6 +6,7 @@ import {
 import {
   type AggregateChartConfiguration,
   type BarChartConfiguration,
+  type LineChartConfiguration,
 } from '~/generated/graphql';
 
 export const useGraphWidgetQueryCommon = ({
@@ -13,7 +14,10 @@ export const useGraphWidgetQueryCommon = ({
   configuration,
 }: {
   objectMetadataItemId: string;
-  configuration: BarChartConfiguration | AggregateChartConfiguration;
+  configuration:
+    | BarChartConfiguration
+    | AggregateChartConfiguration
+    | LineChartConfiguration;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,

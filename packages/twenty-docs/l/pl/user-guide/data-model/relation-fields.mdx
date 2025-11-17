@@ -1,0 +1,62 @@
+---
+title: Pola relacji
+info: Dowiedz się, jak tworzyć powiązania między obiektami, korzystając z pól relacji, i konfigurować relacje 1-do-wielu.
+image: /images/user-guide/fields/relations_field.png
+sectionInfo: Elastyczny model danych zaprojektowany tak, aby wspierać unikalne procesy biznesowe
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/relations_field.png" alt="Header" />
+</Frame>
+
+## Czym są Pola Relacji?
+
+Pola relacji łączą rekordy jednego obiektu z rekordami innego obiektu. Na przykład:
+
+- **Ludzie** → **Firmy** (każda osoba pracuje dla firmy)
+- **Okazje** → **Ludzie** (każda transakcja ma osobę kontaktową)
+- **Zadania** → **Okazje** (każde zadanie odnosi się do konkretnej okazji)
+
+## Tworzenie Pól Relacji
+
+### 1. Dodaj pole
+
+Przejdź do **Ustawienia → Model Danych → [Twój Obiekt]** i kliknij **Dodaj Pole**.
+
+### 2. Wybierz Typ Relacji
+
+- **Typ Pola**: Wybierz "Relacja"
+- **Obiekt docelowy**: Wybierz, z którym obiektem połączyć
+- **Relacja**: Aktualnie obsługiwane relacje to wyłącznie **1-do-wielu**. Upewnij się, że tworzysz relację we właściwym kierunku.
+
+### 3. Konfiguracja Nazw Pól
+
+Musisz ustawić nazwy dla obu stron relacji:
+
+- **Nazwa pola źródłowego**: Jak pole będzie wyglądało w obecnym obiekcie
+- **Nazwa pola docelowego**: Jak odwrotne pole będzie wyglądało w obiekcie docelowym
+
+<Warning>
+Nazwy pól nie mogą być edytowane po zapisaniu relacji, ponieważ wpływa to na strukturę plików API. Wybierz starannie.
+</Warning>
+
+## Powiązanie z członkami zespołu
+
+Możesz tworzyć relacje z dowolnym obiektem, w tym z **Członkami Przestrzeni Roboczej** (użytkownikami twojego zespołu Twenty). Jest to przydatne do tworzenia pól własności:
+
+- **Właściciel Konta**: Przypisz firmę do członka zespołu, który ją zarządza
+- **Właściciel Transakcji**: Przydziel okazję określonemu sprzedawcy
+
+Kiedy tworzysz relację do`Członków Przestrzeni Roboczej`, zobaczysz nazwy członków zespołu w rozwijanych opcjach, co ułatwia przypisywanie własności i odpowiedzialności.
+
+## Najlepsze praktyki
+
+- **Zaplanuj swoje relacje** przed ich utworzeniem
+- **Używaj jasnych, opisowych nazw** dla obu nazw pól
+- **Testuj relacje** na danych próbnych przed pełną implementacją
+
+## Nadchodzące funkcje
+
+- **Zmienne relacje wielu** (Wprowadzenie Q4 2025)
+- **Relacje wiele-do-wielu** (Wprowadzenie Q1 2026)
+

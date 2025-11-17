@@ -1,3 +1,4 @@
+import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { isDefined } from 'twenty-shared/utils';
 
 const BAR_CHART_MARGINS = {
@@ -35,20 +36,20 @@ export const getBarChartMargins = ({
 }: {
   xAxisLabel?: string;
   yAxisLabel?: string;
-  layout: 'vertical' | 'horizontal';
+  layout: BarChartLayout;
 }) => {
   if (isDefined(xAxisLabel) && isDefined(yAxisLabel)) {
     return BAR_CHART_MARGINS_WITH_BOTH_LABELS;
   }
 
   if (isDefined(xAxisLabel)) {
-    return layout === 'horizontal'
+    return layout === BarChartLayout.HORIZONTAL
       ? BAR_CHART_MARGINS_WITH_Y_LABEL
       : BAR_CHART_MARGINS_WITH_X_LABEL;
   }
 
   if (isDefined(yAxisLabel)) {
-    return layout === 'horizontal'
+    return layout === BarChartLayout.HORIZONTAL
       ? BAR_CHART_MARGINS_WITH_X_LABEL
       : BAR_CHART_MARGINS_WITH_Y_LABEL;
   }

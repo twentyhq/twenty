@@ -1,0 +1,56 @@
+---
+title: Вибір іконок
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+Випадаючий список вибору іконок, що дозволяє користувачам вибрати іконку зі списку.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import React, { useState } from "react";
+import { IconPicker } from "@/ui/input/components/IconPicker";
+
+export const MyComponent = () => {
+
+   const [selectedIcon, setSelectedIcon] = useState("");
+   const handleIconChange = ({ iconKey, Icon }) => {
+     console.log("Selected Icon:", iconKey);
+     setSelectedIcon(iconKey);
+   };
+
+  return (
+    <RecoilRoot>
+      <IconPicker
+        disabled={false}
+        onChange={handleIconChange}
+        selectedIconKey={selectedIcon}
+        variant="primary"
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Властивості          | Тип         | Опис                                                                                                                                                 |
+| -------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| відключено           | булевий тип | Вимикає вибір іконок, якщо задано `true`                                                                                                             |
+| onChange             | функція     | Функція зворотного виклику, яка активується, коли користувач вибирає іконку. Вона отримує об'єкт з властивостями `iconKey` та `Icon` |
+| ключ вибраної іконки | рядок       | Ключ початково вибраної іконки                                                                                                                       |
+| onClickOutside       | функція     | Функція зворотного виклику, активується, коли користувач клацає поза списком                                                                         |
+| onClose              | функція     | Функція зворотного виклику, активується, коли список закривається                                                                                    |
+| onOpen               | функція     | Функція зворотного виклику, активується, коли список відкривається                                                                                   |
+| variant              | рядок       | Візуальний стиль варіанту клікабельної іконки. Варіанти включають: `primary`, `secondary` і `tertiary`               |
+
+</Tab>
+</Tabs>

@@ -1,0 +1,60 @@
+---
+title: Objekty
+info: "Zjistěte více o standardních objektech a jak vytvořit vlastní, které budou vyhovovat potřebám vašeho podnikání."
+image: /images/user-guide/objects/objects_orange.png
+sectionInfo: Flexibilní datový model navržený tak, aby podporoval vaše jedinečné obchodní procesy
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/objects/objects_orange.png" alt="Header" />
+</Frame>
+
+## Standardní objekty
+
+Standardní objekty jsou předdefinované entity ve vašem pracovním prostoru, které vám pomáhají začít. Jsou součástí sdíleného datového modelu přístupného všem uživatelům Twenty. Můžete je používat tak, jak jsou, přizpůsobit je nebo je deaktivovat.
+
+<img src="/images/user-guide/objects/standard-objects.png"style={{width:'100%'}}/>
+
+### Osoby
+
+Objekt `People` ukládá vaše kontakty. Obsahuje kontaktní údaje a historii interakcí, takže vidíte všechny zákaznické interakce na jednom místě.
+
+### Společnost
+
+The `Companies` object stores your business accounts. It includes details like industry, size and location. Společnosti jsou propojené s objekty `People` a `Opportunities`.
+
+### Příležitosti
+
+Objekt `Opportunities` ukládá údaje související s nabídkami. Sleduje průběh potenciálních prodejů, od prospectingu po uzavření, zaznamenává fáze, velikosti nabídek, související účty a očekávané datum uzavření. Můžete si prohlédnout svůj prodejní kanál v rozložení kanban.
+
+## Vlastní objekty
+
+Vlastní objekty vám umožňují ukládat informace, které jsou jedinečné pro vaši organizaci a které standardní objekty nezvládnou. For example, if you're SpaceX, you may want to create a custom object for Rockets and Launches.
+
+<img src="/images/user-guide/objects/custom-objects.png"style={{width:'100%'}}/>
+
+### Vytváření nového vlastního objektu
+
+Chcete-li vytvořit nový vlastní objekt:
+
+1. Přejděte do Nastavení na postranním panelu vlevo.
+2. Pod pracovní prostorem přejděte na Datový model. Tady budete moci vidět přehled všech vašich stávajících Standardních a Vlastních objektů (jak aktivních, tak neaktivních).
+
+<VimeoEmbed videoId="926288174" title="Video demonstration" />
+
+3. Klikněte na `+ Nový objekt` v horní části. Enter the name (both singular and plural), choose an icon, and add a description for your custom object and hit Save (at the top right). Using Listing as an example of custom object, the singular would be "listing" and the plural would be "listings" along with a description like "Listings that hosts created to showcase their property."
+
+<Warning>
+The singular and plural names must be different. To je nutné, aby naše GraphQL API fungovalo správně.
+</Warning>
+
+<VimeoEmbed videoId="926293493" title="Video demonstration" />
+
+4. Jakmile vytvoříte svůj vlastní objekt, budete jej moci spravovat. Můžete upravit název, ikonu a popis, zobrazit různá pole a přidat další pole.
+
+<img src="/images/user-guide/objects/customize-fields.png"style={{width:'100%'}}/>
+
+**Poznámka:** Pokud si nejste jisti, zda je potřeba nový objekt nebo pole, přečtěte si [tento článek](/l/cs/user-guide/data-model/customize-your-data-model) pro další pomoc při návrhu vašeho datového modelu.
+

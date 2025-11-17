@@ -1,0 +1,104 @@
+---
+title: Radio
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
+</Frame>
+
+Bruges når brugerne kun kan vælge én mulighed fra flere.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Radio } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const handleRadioChange = (event) => {
+    console.log("Radio button changed:", event.target.checked);
+  };
+
+  const handleCheckedChange = (checked) => {
+    console.log("Checked state changed:", checked);
+  };
+
+
+  return (
+    <Radio
+      checked={true}
+      value="Option 1"
+      onChange={handleRadioChange}
+      onCheckedChange={handleCheckedChange}
+      size="large"
+      disabled={false}
+      labelPosition="right"
+    />
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaber      | Type                   | Beskrivelse                                                                                                                         |
+| --------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| stil            | `React.CSS` egenskaber | Ekstra inline-stilarter til komponenten                                                                                             |
+| className       | streng                 | Valgfri CSS-klasse for yderligere styling                                                                                           |
+| markeret        | boolean                | Indikerer om radioknappen er markeret                                                                                               |
+| værdi           | streng                 | Tekst eller etiket forbundet med radioknappen                                                                                       |
+| onChange        | funktion               | Funktionen der kaldes, når den valgte radioknap ændres                                                                              |
+| onCheckedChange | funktion               | Funktionen der kaldes, når `checked`-tilstanden af radioknappen ændres                                                              |
+| størrelse       | streng                 | Størrelsen på radioknappen. Muligheder inkluderer: `stor` og `lille`                                |
+| deaktiveret     | boolean                | Hvis `true`, er radioknappen deaktiveret og ikke klikbar                                                                            |
+| labelPosition   | streng                 | Placeringen af etikettens tekst i forhold til radioknappen. Har to muligheder: `venstre` og `højre` |
+
+</Tab>
+</Tabs>
+
+## Radio Gruppe
+
+Grupperer relaterede radioknapper sammen.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import React, { useState } from "react";
+import { Radio, RadioGroup } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const [selectedValue, setSelectedValue] = useState("Option 1");
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+  
+  return (
+    <RadioGroup value={selectedValue} onChange={handleChange}>
+      <Radio value="Option 1" />
+      <Radio value="Option 2" />
+      <Radio value="Option 3" />
+    </RadioGroup>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaber    | Type              | Beskrivelse                                                                                              |
+| ------------- | ----------------- | -------------------------------------------------------------------------------------------------------- |
+| værdi         | streng            | Værdien af den aktuelt valgte radioknap                                                                  |
+| onChange      | funktion          | Tilbagekaldsfunktionen der udløses, når radioknappen ændres                                              |
+| onValueChange | funktion          | Tilbagekaldsfunktionen der udløses, når den valgte værdi i gruppen ændres.               |
+| children      | `React.ReactNode` | Giver mulighed for at indsætte React-komponenter (som Radio) som børn i Radio Gruppen |
+
+</Tab>
+
+</Tabs>

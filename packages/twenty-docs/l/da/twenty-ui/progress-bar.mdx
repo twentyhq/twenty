@@ -1,0 +1,77 @@
+---
+title: Feedback
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+Angiver fremskridt eller nedtælling og bevæger sig fra højre mod venstre.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { ProgressBar } from "twenty-ui/feedback";
+
+export const MyComponent = () => {
+  return (
+    <ProgressBar
+      duration={6000}
+      delay={0}
+      easing="easeInOut"
+      barHeight={10}
+      barColor="#4bb543"
+      autoStart={true}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Egenskaber | Type    | Beskrivelse                                                                              | Standard  |
+| ---------- | ------- | ---------------------------------------------------------------------------------------- | --------- |
+| varighed   | tal     | Den samlede varighed af fremgangsbarkens animation i millisekunder                       | 3         |
+| delay      | tal     | The delay in starting the progress bar animation in milliseconds                         | 0         |
+| easing     | streng  | Udjævningsfunktion for fremgangsbarkens animation                                        | easeInOut |
+| barHeight  | tal     | The height of the bar in pixels                                                          | 24        |
+| barColor   | streng  | The color of the bar                                                                     | gray80    |
+| autoStart  | boolean | Hvis `true`, starter fremgangsbarkens animation automatisk, når komponenten er aktiveret | `sand`    |
+
+</Tab>
+</Tabs>
+
+## Cirkulær fremgangsbar
+
+Viser fremskridtene i en opgave, ofte brugt i indlæsning af skærme eller områder, hvor du ønsker at kommunikere igangværende processer til brugeren.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
+
+export const MyComponent = () => {
+  return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Egenskaber | Type   | Beskrivelse                              | Standard     |
+| ---------- | ------ | ---------------------------------------- | ------------ |
+| størrelse  | tal    | Størrelsen på den cirkulære fremgangsbar | 50           |
+| barWidth   | tal    | The width of the progress bar line       | 5            |
+| barColor   | string | Farven på fremgangsbjælken               | currentColor |
+
+</Tab>
+
+</Tabs>
