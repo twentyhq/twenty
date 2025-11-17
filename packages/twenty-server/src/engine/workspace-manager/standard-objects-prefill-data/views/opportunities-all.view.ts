@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { v4 } from 'uuid';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -7,6 +6,8 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
+import { v4 } from 'uuid';
 
 export const opportunitiesAllView = ({
   objectMetadataItems,
@@ -25,11 +26,12 @@ export const opportunitiesAllView = ({
     throw new Error('Opportunity object metadata not found');
   }
 
-  const id = v4();
+  const viewUniversalIdentifier =
+    STANDARD_OBJECTS.opportunity.views.allOpportunities.universalIdentifier;
 
   return {
-    id,
-    universalIdentifier: id,
+    id: v4(),
+    universalIdentifier: viewUniversalIdentifier,
     applicationId: twentyStandardFlatApplication.id,
     name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All Opportunities',
     objectMetadataId: opportunityObjectMetadata.id,
@@ -48,6 +50,9 @@ export const opportunitiesAllView = ({
         position: 0,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunity.views.allOpportunities.viewFields.name
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -59,6 +64,9 @@ export const opportunitiesAllView = ({
         isVisible: true,
         size: 150,
         aggregateOperation: AggregateOperations.AVG,
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunity.views.allOpportunities.viewFields.amount
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -69,6 +77,9 @@ export const opportunitiesAllView = ({
         position: 2,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunity.views.allOpportunities.viewFields
+            .createdBy.universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -80,6 +91,9 @@ export const opportunitiesAllView = ({
         isVisible: true,
         size: 150,
         aggregateOperation: AggregateOperations.MIN,
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunity.views.allOpportunities.viewFields
+            .closeDate.universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -90,6 +104,9 @@ export const opportunitiesAllView = ({
         position: 4,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunity.views.allOpportunities.viewFields.company
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -101,6 +118,9 @@ export const opportunitiesAllView = ({
         position: 5,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunity.views.allOpportunities.viewFields
+            .pointOfContact.universalIdentifier,
       },
     ],
   };

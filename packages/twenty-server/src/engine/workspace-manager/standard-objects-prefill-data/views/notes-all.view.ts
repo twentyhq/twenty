@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -9,6 +8,8 @@ import {
   NOTE_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
+import { v4 } from 'uuid';
 
 export const notesAllView = ({
   objectMetadataItems,
@@ -27,11 +28,12 @@ export const notesAllView = ({
     throw new Error('Note object metadata not found');
   }
 
-  const id = v4();
+  const viewUniversalIdentifier =
+    STANDARD_OBJECTS.note.views.allNotes.universalIdentifier;
 
   return {
-    id,
-    universalIdentifier: id,
+    id: v4(),
+    universalIdentifier: viewUniversalIdentifier,
     applicationId: twentyStandardFlatApplication.id,
     name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All Notes',
     objectMetadataId: noteObjectMetadata.id,
@@ -50,6 +52,9 @@ export const notesAllView = ({
         position: 0,
         isVisible: true,
         size: 210,
+        universalIdentifier:
+          STANDARD_OBJECTS.note.views.allNotes.viewFields.title
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -59,6 +64,9 @@ export const notesAllView = ({
         position: 1,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.note.views.allNotes.viewFields.noteTargets
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -68,6 +76,9 @@ export const notesAllView = ({
         position: 2,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.note.views.allNotes.viewFields.bodyV2
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -77,6 +88,9 @@ export const notesAllView = ({
         position: 3,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.note.views.allNotes.viewFields.createdBy
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -87,6 +101,9 @@ export const notesAllView = ({
         position: 4,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.note.views.allNotes.viewFields.createdAt
+            .universalIdentifier,
       },
       /*
       TODO: Add later, since we don't have real-time it probably doesn't work well?

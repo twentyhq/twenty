@@ -20,6 +20,7 @@ export interface ViewDefinition {
   kanbanAggregateOperation?: AggregateOperations;
   kanbanAggregateOperationFieldMetadataId?: string;
   fields?: {
+    universalIdentifier: string;
     fieldMetadataId: string;
     position: number;
     isVisible: boolean;
@@ -27,12 +28,14 @@ export interface ViewDefinition {
     aggregateOperation?: AggregateOperations;
   }[];
   filters?: {
+    universalIdentifier: string;
     fieldMetadataId: string;
     displayValue: string;
     operand: ViewFilterOperand;
     value: string;
   }[];
   groups?: {
+    universalIdentifier: string;
     fieldMetadataId: string;
     isVisible: boolean;
     fieldValue: string;

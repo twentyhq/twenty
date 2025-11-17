@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { v4 } from 'uuid';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -11,6 +10,8 @@ import {
   COMPANY_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
+import { v4 } from 'uuid';
 
 export const companiesAllView = ({
   objectMetadataItems,
@@ -29,11 +30,12 @@ export const companiesAllView = ({
     throw new Error('Company object metadata not found');
   }
 
-  const id = v4();
+  const viewUniversalIdentifier =
+    STANDARD_OBJECTS.company.views.allCompanies.universalIdentifier;
 
   return {
-    id,
-    universalIdentifier: id,
+    id: v4(),
+    universalIdentifier: viewUniversalIdentifier,
     applicationId: twentyStandardFlatApplication.id,
     name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All Companies',
     objectMetadataId: companyObjectMetadata.id ?? '',
@@ -52,6 +54,9 @@ export const companiesAllView = ({
         position: 0,
         isVisible: true,
         size: DEFAULT_VIEW_FIELD_SIZE,
+        universalIdentifier:
+          STANDARD_OBJECTS.company.views.allCompanies.viewFields.name
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -63,6 +68,9 @@ export const companiesAllView = ({
         isVisible: true,
         size: 100,
         aggregateOperation: AggregateOperations.COUNT,
+        universalIdentifier:
+          STANDARD_OBJECTS.company.views.allCompanies.viewFields.domainName
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -73,6 +81,9 @@ export const companiesAllView = ({
         position: 2,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.company.views.allCompanies.viewFields.createdBy
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -83,6 +94,9 @@ export const companiesAllView = ({
         position: 3,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.company.views.allCompanies.viewFields.accountOwner
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -93,6 +107,9 @@ export const companiesAllView = ({
         position: 4,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.company.views.allCompanies.viewFields.createdAt
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -104,6 +121,9 @@ export const companiesAllView = ({
         isVisible: true,
         size: 150,
         aggregateOperation: AggregateOperations.MAX,
+        universalIdentifier:
+          STANDARD_OBJECTS.company.views.allCompanies.viewFields.employees
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -115,6 +135,9 @@ export const companiesAllView = ({
         isVisible: true,
         size: 170,
         aggregateOperation: AggregateOperations.PERCENTAGE_EMPTY,
+        universalIdentifier:
+          STANDARD_OBJECTS.company.views.allCompanies.viewFields.linkedinLink
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -125,6 +148,9 @@ export const companiesAllView = ({
         isVisible: true,
         size: 170,
         aggregateOperation: AggregateOperations.COUNT_NOT_EMPTY,
+        universalIdentifier:
+          STANDARD_OBJECTS.company.views.allCompanies.viewFields.address
+            .universalIdentifier,
       },
     ],
   };

@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { v4 } from 'uuid';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -10,6 +9,8 @@ import {
   PERSON_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
+import { v4 } from 'uuid';
 
 export const peopleAllView = ({
   objectMetadataItems,
@@ -28,11 +29,12 @@ export const peopleAllView = ({
     throw new Error('Person object metadata not found');
   }
 
-  const id = v4();
+  const viewUniversalIdentifier =
+    STANDARD_OBJECTS.person.views.allPeople.universalIdentifier;
 
   return {
-    id,
-    universalIdentifier: id,
+    id: v4(),
+    universalIdentifier: viewUniversalIdentifier,
     applicationId: twentyStandardFlatApplication.id,
     name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All People',
     objectMetadataId: personObjectMetadata.id,
@@ -51,6 +53,9 @@ export const peopleAllView = ({
         position: 0,
         isVisible: true,
         size: 210,
+        universalIdentifier:
+          STANDARD_OBJECTS.person.views.allPeople.viewFields.name
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -61,6 +66,9 @@ export const peopleAllView = ({
         isVisible: true,
         size: 150,
         aggregateOperation: AggregateOperations.COUNT_UNIQUE_VALUES,
+        universalIdentifier:
+          STANDARD_OBJECTS.person.views.allPeople.viewFields.emails
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -70,6 +78,9 @@ export const peopleAllView = ({
         position: 2,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.person.views.allPeople.viewFields.createdBy
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -79,6 +90,9 @@ export const peopleAllView = ({
         position: 3,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.person.views.allPeople.viewFields.company
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -89,6 +103,9 @@ export const peopleAllView = ({
         isVisible: true,
         size: 150,
         aggregateOperation: AggregateOperations.PERCENTAGE_EMPTY,
+        universalIdentifier:
+          STANDARD_OBJECTS.person.views.allPeople.viewFields.phones
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -100,6 +117,9 @@ export const peopleAllView = ({
         isVisible: true,
         size: 150,
         aggregateOperation: AggregateOperations.MIN,
+        universalIdentifier:
+          STANDARD_OBJECTS.person.views.allPeople.viewFields.createdAt
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -109,6 +129,9 @@ export const peopleAllView = ({
         position: 6,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.person.views.allPeople.viewFields.city
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -118,6 +141,9 @@ export const peopleAllView = ({
         position: 7,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.person.views.allPeople.viewFields.jobTitle
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -128,6 +154,9 @@ export const peopleAllView = ({
         position: 8,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.person.views.allPeople.viewFields.linkedinLink
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -137,6 +166,9 @@ export const peopleAllView = ({
         position: 9,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.person.views.allPeople.viewFields.xLink
+            .universalIdentifier,
       },
     ],
   };

@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -9,6 +8,8 @@ import {
   TASK_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
+import { v4 } from 'uuid';
 
 export const tasksByStatusView = ({
   objectMetadataItems,
@@ -27,11 +28,12 @@ export const tasksByStatusView = ({
     throw new Error('Task object metadata not found');
   }
 
-  const id = v4();
+  const viewUniversalIdentifier =
+    STANDARD_OBJECTS.task.views.byStatus.universalIdentifier;
 
   return {
-    id,
-    universalIdentifier: id,
+    id: v4(),
+    universalIdentifier: viewUniversalIdentifier,
     applicationId: twentyStandardFlatApplication.id,
     name: useCoreNaming ? msg`By Status` : 'By Status',
     objectMetadataId: taskObjectMetadata.id,
@@ -63,6 +65,9 @@ export const tasksByStatusView = ({
         position: 0,
         isVisible: true,
         size: 210,
+        universalIdentifier:
+          STANDARD_OBJECTS.task.views.byStatus.viewFields.title
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -72,6 +77,9 @@ export const tasksByStatusView = ({
         position: 2,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.task.views.byStatus.viewFields.status
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -81,6 +89,9 @@ export const tasksByStatusView = ({
         position: 3,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.task.views.byStatus.viewFields.dueAt
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -90,6 +101,9 @@ export const tasksByStatusView = ({
         position: 4,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.task.views.byStatus.viewFields.assignee
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -100,6 +114,9 @@ export const tasksByStatusView = ({
         position: 6,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.task.views.byStatus.viewFields.createdAt
+            .universalIdentifier,
       },
       /*
       TODO: Add later, since we don't have real-time it probably doesn't work well?
@@ -123,6 +140,9 @@ export const tasksByStatusView = ({
         isVisible: true,
         fieldValue: 'TODO',
         position: 0,
+        universalIdentifier:
+          STANDARD_OBJECTS.task.views.byStatus.viewGroups!.todo
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -132,6 +152,9 @@ export const tasksByStatusView = ({
         isVisible: true,
         fieldValue: 'IN_PROGRESS',
         position: 1,
+        universalIdentifier:
+          STANDARD_OBJECTS.task.views.byStatus.viewGroups!.inProgress
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -141,6 +164,9 @@ export const tasksByStatusView = ({
         isVisible: true,
         fieldValue: 'DONE',
         position: 2,
+        universalIdentifier:
+          STANDARD_OBJECTS.task.views.byStatus.viewGroups!.done
+            .universalIdentifier,
       },
     ],
   };

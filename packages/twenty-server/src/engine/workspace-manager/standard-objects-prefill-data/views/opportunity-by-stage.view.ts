@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { v4 } from 'uuid';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -7,6 +6,8 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
+import { v4 } from 'uuid';
 
 export const opportunitiesByStageView = ({
   objectMetadataItems,
@@ -25,11 +26,12 @@ export const opportunitiesByStageView = ({
     throw new Error('Opportunity object metadata not found');
   }
 
-  const id = v4();
+  const viewUniversalIdentifier =
+    STANDARD_OBJECTS.opportunity.views.byStage.universalIdentifier;
 
   return {
-    id,
-    universalIdentifier: id,
+    id: v4(),
+    universalIdentifier: viewUniversalIdentifier,
     applicationId: twentyStandardFlatApplication.id,
     name: useCoreNaming ? msg`By Stage` : 'By Stage',
     objectMetadataId: opportunityObjectMetadata.id,
@@ -56,6 +58,9 @@ export const opportunitiesByStageView = ({
         position: 0,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunity.views.byStage.viewFields.name
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -66,6 +71,9 @@ export const opportunitiesByStageView = ({
         position: 1,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunity.views.byStage.viewFields.amount
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -76,6 +84,9 @@ export const opportunitiesByStageView = ({
         position: 2,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunity.views.byStage.viewFields.createdBy
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -86,6 +97,9 @@ export const opportunitiesByStageView = ({
         position: 3,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunity.views.byStage.viewFields.closeDate
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -96,6 +110,9 @@ export const opportunitiesByStageView = ({
         position: 4,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunity.views.byStage.viewFields.company
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -107,6 +124,9 @@ export const opportunitiesByStageView = ({
         position: 5,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunity.views.byStage.viewFields.pointOfContact
+            .universalIdentifier,
       },
     ],
     groups: [
@@ -119,6 +139,9 @@ export const opportunitiesByStageView = ({
         isVisible: true,
         fieldValue: 'NEW',
         position: 0,
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunity.views.byStage.viewGroups!.new
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -129,6 +152,9 @@ export const opportunitiesByStageView = ({
         isVisible: true,
         fieldValue: 'SCREENING',
         position: 1,
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunity.views.byStage.viewGroups!.screening
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -139,6 +165,9 @@ export const opportunitiesByStageView = ({
         isVisible: true,
         fieldValue: 'MEETING',
         position: 2,
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunity.views.byStage.viewGroups!.meeting
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -149,6 +178,9 @@ export const opportunitiesByStageView = ({
         isVisible: true,
         fieldValue: 'PROPOSAL',
         position: 3,
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunity.views.byStage.viewGroups!.proposal
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -159,6 +191,9 @@ export const opportunitiesByStageView = ({
         isVisible: true,
         fieldValue: 'CUSTOMER',
         position: 4,
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunity.views.byStage.viewGroups!.customer
+            .universalIdentifier,
       },
     ],
   };

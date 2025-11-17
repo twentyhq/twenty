@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -10,6 +9,8 @@ import {
   WORKFLOW_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
+import { v4 } from 'uuid';
 
 export const workflowsAllView = ({
   objectMetadataItems,
@@ -28,11 +29,12 @@ export const workflowsAllView = ({
     throw new Error('Workflow object metadata not found');
   }
 
-  const id = v4();
+  const viewUniversalIdentifier =
+    STANDARD_OBJECTS.workflow.views.allWorkflows.universalIdentifier;
 
   return {
-    id,
-    universalIdentifier: id,
+    id: v4(),
+    universalIdentifier: viewUniversalIdentifier,
     applicationId: twentyStandardFlatApplication.id,
     name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All Workflows',
     objectMetadataId: workflowObjectMetadata.id,
@@ -52,6 +54,9 @@ export const workflowsAllView = ({
         position: 0,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.workflow.views.allWorkflows.viewFields.name
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -62,6 +67,9 @@ export const workflowsAllView = ({
         position: 1,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.workflow.views.allWorkflows.viewFields.statuses
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -72,6 +80,9 @@ export const workflowsAllView = ({
         position: 2,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.workflow.views.allWorkflows.viewFields.updatedAt
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -82,6 +93,9 @@ export const workflowsAllView = ({
         position: 3,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.workflow.views.allWorkflows.viewFields.createdBy
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -92,6 +106,9 @@ export const workflowsAllView = ({
         position: 4,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.workflow.views.allWorkflows.viewFields.versions
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -101,6 +118,9 @@ export const workflowsAllView = ({
         position: 5,
         isVisible: false,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.workflow.views.allWorkflows.viewFields.runs
+            .universalIdentifier,
       },
     ],
   };

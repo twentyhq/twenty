@@ -1,6 +1,5 @@
 import { isString } from '@sniptt/guards';
 import { type DataSource, type QueryRunner } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -223,7 +222,7 @@ export const createCoreViews = async (
           viewId: viewDefinition.id,
           workspaceId,
           applicationId: twentyStandardFlatApplication.id,
-          universalIdentifier: v4(),
+          universalIdentifier: field.universalIdentifier,
         }));
 
       const viewFieldRepository =
@@ -241,7 +240,7 @@ export const createCoreViews = async (
           value: filter.value,
           workspaceId,
           applicationId: twentyStandardFlatApplication.id,
-          universalIdentifier: v4(),
+          universalIdentifier: filter.universalIdentifier,
         }));
 
       const viewFilterRepository =
@@ -264,7 +263,7 @@ export const createCoreViews = async (
           viewId: viewDefinition.id,
           workspaceId,
           applicationId: twentyStandardFlatApplication.id,
-          universalIdentifier: v4(),
+          universalIdentifier: group.universalIdentifier,
         }));
 
       const viewGroupRepository =
