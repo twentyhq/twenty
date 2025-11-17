@@ -4,8 +4,8 @@ import styled from '@emotion/styled';
 import { CalendarEventParticipantsResponseStatus } from '@/activities/calendar/components/CalendarEventParticipantsResponseStatus';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
@@ -81,14 +81,12 @@ export const CalendarEventDetails = ({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
   });
 
-  // Get all inline fields dynamically
   const { inlineFieldMetadataItems } = useFieldListFieldMetadataItems({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
     showRelationSections: false,
     excludeCreatedAtAndUpdatedAt: true,
   });
 
-  // Define standard fields in display order
   const standardFieldOrder = [
     'startsAt',
     'endsAt',
@@ -97,7 +95,6 @@ export const CalendarEventDetails = ({
     'description',
   ];
 
-  // Split fields: standard (in order) and custom
   const standardFields = standardFieldOrder
     .map((fieldName) =>
       inlineFieldMetadataItems.find((f) => f.name === fieldName),
