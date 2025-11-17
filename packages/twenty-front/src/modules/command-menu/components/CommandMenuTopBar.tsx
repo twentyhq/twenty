@@ -32,6 +32,7 @@ const StyledInputContainer = styled.div`
   border: none;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: 0;
+  box-sizing: border-box;
 
   display: flex;
   justify-content: space-between;
