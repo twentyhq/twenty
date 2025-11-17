@@ -253,6 +253,9 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
+  @WorkspaceFieldIndex({
+    indexType: IndexType.GIN,
+    universalIdentifier: '20202020-3137-4bd0-b63f-c0c2bb557391',
+  })
   searchVector: string;
 }

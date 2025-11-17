@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { v4 } from 'uuid';
-
 import { type PartialIndexMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-index-metadata.interface';
 import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
@@ -91,7 +89,7 @@ export class StandardIndexFactory {
           indexWhereClause: workspaceIndexMetadataArgs.whereClause,
           indexType: workspaceIndexMetadataArgs.type ?? IndexType.BTREE,
           applicationId: context.twentyStandardFlatApplication.id,
-          universalIdentifier: v4(),
+          universalIdentifier: workspaceIndexMetadataArgs.universalIdentifier,
         };
 
         return indexMetadata;
@@ -135,7 +133,8 @@ export class StandardIndexFactory {
               indexType: workspaceIndexMetadataArgs.type ?? IndexType.BTREE,
               indexWhereClause: workspaceIndexMetadataArgs.whereClause,
               applicationId: context.twentyStandardFlatApplication.id,
-              universalIdentifier: v4(),
+              universalIdentifier:
+                workspaceIndexMetadataArgs.universalIdentifier,
             };
 
             return indexMetadata;

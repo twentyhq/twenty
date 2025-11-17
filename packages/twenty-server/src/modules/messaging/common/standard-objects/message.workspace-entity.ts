@@ -103,7 +103,8 @@ export class MessageWorkspaceEntity extends createBaseWorkspaceEntity({
   messageParticipants: Relation<MessageParticipantWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    universalIdentifier: MESSAGE_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
+    universalIdentifier:
+      MESSAGE_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
     type: RelationType.ONE_TO_MANY,
     label: msg`Message Channel Association`,
     description: msg`Messages from the channel.`,

@@ -88,7 +88,9 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
       maxNumberOfValues: 1,
     },
   })
-  @WorkspaceIsUnique()
+  @WorkspaceIsUnique({
+    universalIdentifier: '20202020-059a-4d5d-bacd-62064a562f30',
+  })
   domainName: LinksMetadata;
 
   @WorkspaceField({
@@ -300,6 +302,9 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
+  @WorkspaceFieldIndex({
+    indexType: IndexType.GIN,
+    universalIdentifier: '20202020-f6db-4d17-a89e-5b6b2f5ca779',
+  })
   searchVector: string;
 }

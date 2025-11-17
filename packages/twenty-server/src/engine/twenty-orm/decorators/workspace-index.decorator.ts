@@ -8,6 +8,7 @@ export type WorkspaceIndexOptions = {
   isUnique?: boolean;
   indexWhereClause?: string;
   indexType?: IndexType;
+  universalIdentifier: string;
 };
 
 export function WorkspaceIndex(
@@ -38,6 +39,7 @@ export function WorkspaceIndex(
       isUnique: options?.isUnique ?? false,
       whereClause: options?.indexWhereClause ?? null,
       type: options?.indexType,
+      universalIdentifier: options.universalIdentifier,
     });
   };
 }

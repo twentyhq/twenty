@@ -169,6 +169,9 @@ export class CustomWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceIsFieldUIReadOnly()
-  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
+  @WorkspaceFieldIndex({
+    indexType: IndexType.GIN,
+    universalIdentifier: '20202020-8af9-4365-a11e-a039cfd82cf6',
+  })
   searchVector: string;
 }

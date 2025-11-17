@@ -69,7 +69,7 @@ export function WorkspaceEntity(
       gate,
       duplicateCriteria,
       isSearchable,
-      universalId: options.universalIdentifier,
+      universalIdentifier: options.universalIdentifier,
     });
   };
 }

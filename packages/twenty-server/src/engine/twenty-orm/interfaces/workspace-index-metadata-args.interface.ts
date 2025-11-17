@@ -9,6 +9,8 @@ export interface WorkspaceIndexMetadataArgs {
 
   readonly target: Function;
 
+  readonly universalIdentifier: string;
+
   /*
    * Index name.
    */

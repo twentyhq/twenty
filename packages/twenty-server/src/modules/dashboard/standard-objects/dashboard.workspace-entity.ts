@@ -143,6 +143,9 @@ export class DashboardWorkspaceEntity extends createBaseWorkspaceEntity({
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
+  @WorkspaceFieldIndex({
+    indexType: IndexType.GIN,
+    universalIdentifier: '20202020-2cee-4944-9297-b99705c27ccb',
+  })
   searchVector: string;
 }

@@ -37,6 +37,7 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 @WorkspaceIndex(['messageChannelId', 'messageId'], {
   isUnique: true,
   indexWhereClause: '"deletedAt" IS NULL',
+  universalIdentifier: '202020-0c30-47c2-a229-0af114b1565e',
 })
 export class MessageChannelMessageAssociationWorkspaceEntity extends createBaseWorkspaceEntity(
   {
@@ -110,7 +111,8 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends createBaseW
   messageChannelId: string;
 
   @WorkspaceRelation({
-    universalIdentifier: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.message,
+    universalIdentifier:
+      MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.message,
     type: RelationType.MANY_TO_ONE,
     label: msg`Message Id`,
     description: msg`Message Id`,

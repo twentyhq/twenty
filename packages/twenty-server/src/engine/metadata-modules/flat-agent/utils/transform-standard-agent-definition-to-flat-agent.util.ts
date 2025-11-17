@@ -35,7 +35,7 @@ export const transformStandardAgentDefinitionToFlatAgent = ({
   prompt,
   responseFormat,
   standardId,
-  universalIdentifier: standardId ?? agentId,
+  universalIdentifier: standardId,
   id: agentId,
   applicationId,
   workspaceId,

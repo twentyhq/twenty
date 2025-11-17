@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
-import { v4 } from 'uuid';
 
 import { type WorkspaceDynamicRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-dynamic-relation-metadata-args.interface';
 import { type WorkspaceEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-entity-metadata-args.interface';
@@ -214,7 +213,7 @@ export class StandardFieldFactory {
       standardOverrides: null,
       morphId: null,
       applicationId: context.twentyStandardFlatApplication.id,
-      universalIdentifier: v4(),
+      universalIdentifier: workspaceRelationMetadataArgs.universalIdentifier,
     });
 
     return fieldMetadataCollection;

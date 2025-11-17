@@ -156,7 +156,9 @@ export class WorkspaceMemberWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsSystem()
   avatarUrl: string;
 
-  @WorkspaceIsUnique()
+  @WorkspaceIsUnique({
+    universalIdentifier: '20202020-800a-41f9-96ba-13b996431978',
+  })
   @WorkspaceField({
     universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userEmail,
     type: FieldMetadataType.TEXT,
@@ -295,7 +297,8 @@ export class WorkspaceMemberWorkspaceEntity extends createBaseWorkspaceEntity({
   favorites: Relation<FavoriteWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.accountOwnerForCompanies,
+    universalIdentifier:
+      WORKSPACE_MEMBER_STANDARD_FIELD_IDS.accountOwnerForCompanies,
     type: RelationType.ONE_TO_MANY,
     label: msg`Account Owner For Companies`,
     description: msg`Account owner for companies`,
@@ -307,7 +310,8 @@ export class WorkspaceMemberWorkspaceEntity extends createBaseWorkspaceEntity({
   accountOwnerForCompanies: Relation<CompanyWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredAttachments,
+    universalIdentifier:
+      WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredAttachments,
     type: RelationType.ONE_TO_MANY,
     label: msg`Authored attachments`,
     description: msg`Attachments created by the workspace member`,
@@ -332,7 +336,8 @@ export class WorkspaceMemberWorkspaceEntity extends createBaseWorkspaceEntity({
   connectedAccounts: Relation<ConnectedAccountWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.messageParticipants,
+    universalIdentifier:
+      WORKSPACE_MEMBER_STANDARD_FIELD_IDS.messageParticipants,
     type: RelationType.ONE_TO_MANY,
     label: msg`Message Participants`,
     description: msg`Message Participants`,
@@ -356,7 +361,8 @@ export class WorkspaceMemberWorkspaceEntity extends createBaseWorkspaceEntity({
   blocklist: Relation<BlocklistWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.calendarEventParticipants,
+    universalIdentifier:
+      WORKSPACE_MEMBER_STANDARD_FIELD_IDS.calendarEventParticipants,
     type: RelationType.ONE_TO_MANY,
     label: msg`Calendar Event Participants`,
     description: msg`Calendar Event Participants`,
@@ -395,7 +401,10 @@ export class WorkspaceMemberWorkspaceEntity extends createBaseWorkspaceEntity({
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
+  @WorkspaceFieldIndex({
+    indexType: IndexType.GIN,
+    universalIdentifier: '20202020-661f-4682-9402-1015c1181669',
+  })
   searchVector: string;
 
   @WorkspaceField({

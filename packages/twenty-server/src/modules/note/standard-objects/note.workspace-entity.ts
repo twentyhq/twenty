@@ -162,6 +162,9 @@ export class NoteWorkspaceEntity extends createBaseWorkspaceEntity({
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
+  @WorkspaceFieldIndex({
+    indexType: IndexType.GIN,
+    universalIdentifier: '20202020-7c89-4710-a220-8e5e03f41fd3',
+  })
   searchVector: string;
 }

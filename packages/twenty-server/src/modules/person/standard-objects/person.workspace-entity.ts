@@ -100,7 +100,9 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
       maxNumberOfValues: 1,
     },
   })
-  @WorkspaceIsUnique()
+  @WorkspaceIsUnique({
+    universalIdentifier: '20202020-2a02-4eaf-b784-2f532cc32bbb',
+  })
   emails: EmailsMetadata;
 
   @WorkspaceField({
@@ -212,7 +214,8 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   companyId: string | null;
 
   @WorkspaceRelation({
-    universalIdentifier: PERSON_STANDARD_FIELD_IDS.pointOfContactForOpportunities,
+    universalIdentifier:
+      PERSON_STANDARD_FIELD_IDS.pointOfContactForOpportunities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Opportunities`,
     description: msg`List of opportunities for which that person is the point of contact`,
@@ -324,6 +327,9 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
+  @WorkspaceFieldIndex({
+    indexType: IndexType.GIN,
+    universalIdentifier: '20202020-a834-4a2d-80db-9a601afe2ac9',
+  })
   searchVector: string;
 }

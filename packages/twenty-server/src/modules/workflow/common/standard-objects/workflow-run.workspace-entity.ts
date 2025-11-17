@@ -236,7 +236,10 @@ export class WorkflowRunWorkspaceEntity extends createBaseWorkspaceEntity({
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
+  @WorkspaceFieldIndex({
+    indexType: IndexType.GIN,
+    universalIdentifier: '20202020-dfa1-4413-bb4a-af7a58baa999',
+  })
   searchVector: string;
 
   // Relations

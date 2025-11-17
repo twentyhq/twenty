@@ -217,6 +217,9 @@ export class TaskWorkspaceEntity extends createBaseWorkspaceEntity({
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
+  @WorkspaceFieldIndex({
+    indexType: IndexType.GIN,
+    universalIdentifier: '20202020-3eb3-4eff-ab89-d60a94ad3daa',
+  })
   searchVector: string;
 }
