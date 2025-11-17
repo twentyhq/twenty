@@ -1,9 +1,9 @@
+import { CommandMenuLastContextChip } from '@/command-menu/components/CommandMenuLastContextChip';
 import { COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/command-menu/constants/CommandMenuContextChipGroupsDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/navigation';
 import {
   CommandMenuContextChip,
@@ -21,25 +21,27 @@ export const CommandMenuContextChipGroups = ({
     return null;
   }
 
+  const lastChip = contextChips.at(-1);
+  const firstChips = contextChips.slice(0, -1);
+
   if (contextChips.length < 3) {
     return (
       <>
-        {contextChips.map((chip, index) => (
+        {firstChips.map((chip, index) => (
           <CommandMenuContextChip
             key={index}
-            maxWidth="180px"
             Icons={chip.Icons}
-            text={chip.text}
+            maxWidth="180px"
             onClick={chip.onClick}
+            text={chip.text}
           />
         ))}
+        <CommandMenuLastContextChip lastChip={lastChip} />
       </>
     );
   }
 
-  const firstChips = contextChips.slice(0, -1);
   const firstThreeChips = firstChips.slice(0, 3);
-  const lastChip = contextChips.at(-1);
 
   return (
     <>
@@ -59,13 +61,13 @@ export const CommandMenuContextChipGroups = ({
                   <MenuItem
                     key={index}
                     LeftComponent={chip.Icons}
-                    text={chip.text}
                     onClick={() => {
                       closeDropdown(
                         COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID,
                       );
                       chip.onClick?.();
                     }}
+                    text={chip.text}
                   />
                 ))}
               </DropdownMenuItemsContainer>
@@ -73,17 +75,9 @@ export const CommandMenuContextChipGroups = ({
           }
           dropdownId={COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID}
           dropdownPlacement="bottom-start"
-        ></Dropdown>
-      )}
-
-      {isDefined(lastChip) && (
-        <CommandMenuContextChip
-          Icons={lastChip.Icons}
-          text={lastChip.text}
-          onClick={lastChip.onClick}
-          maxWidth="180px"
         />
       )}
+      <CommandMenuLastContextChip lastChip={lastChip} />
     </>
   );
 };

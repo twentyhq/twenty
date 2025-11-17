@@ -20,6 +20,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import React from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledShowPageRightContainer = styled.div`
   display: flex;
@@ -109,6 +110,8 @@ export const ShowPageSubContainer = ({
 
   const visibleTabs = tabs.filter((tab) => !tab.hide);
 
+  const isInCommandMenu = isDefined(commandMenuPageComponentInstance);
+
   const displaySummaryAndFields =
     layout && !layout.hideSummaryAndFields && !isMobile && !isInRightDrawer;
 
@@ -132,7 +135,7 @@ export const ShowPageSubContainer = ({
             componentInstanceId={tabListComponentId}
           />
         </StyledTabListContainer>
-        {(isMobile || isInRightDrawer) && summaryCard}
+        {(isMobile || isInRightDrawer) && !isInCommandMenu && summaryCard}
         <StyledContentContainer isInRightDrawer={isInRightDrawer}>
           {renderActiveTabContent()}
         </StyledContentContainer>
