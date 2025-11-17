@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { resolveInput } from 'twenty-shared/utils';
-import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -14,9 +13,9 @@ import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/s
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
-import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { type WorkflowCreateRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
+import { buildCreatedByActor } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/build-create-by-actor.util';
 
 @Injectable()
 export class CreateRecordWorkflowAction implements WorkflowAction {
@@ -54,7 +53,7 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-    const createdBy = this.buildCreatedByActor(executionContext);
+    const createdBy = buildCreatedByActor(executionContext);
 
     const toolOutput = await this.createRecordService.execute({
       objectName: workflowActionInput.objectName,
@@ -74,21 +73,6 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
 
     return {
       result: toolOutput.result,
-    };
-  }
-
-  private buildCreatedByActor(
-    executionContext: WorkflowExecutionContext,
-  ): ActorMetadata {
-    if (executionContext.isActingOnBehalfOfUser) {
-      return executionContext.initiator;
-    }
-
-    return {
-      source: FieldActorSource.WORKFLOW,
-      name: 'Workflow',
-      workspaceMemberId: null,
-      context: {},
     };
   }
 }

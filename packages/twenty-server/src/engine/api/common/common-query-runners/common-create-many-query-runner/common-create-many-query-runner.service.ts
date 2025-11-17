@@ -355,7 +355,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const savedRecords = await repository.updateMany(
       partialRecordsToUpdateWithoutCreatedByUpdate.map((record) => ({
         criteria: record.id,
-        partialEntity: { ...record, deletedAt: null },
+        partialEntity: { ...record, deletedAt: null, createdBy: undefined },
       })),
       undefined,
       columnsToReturn,

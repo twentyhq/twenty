@@ -15,7 +15,6 @@ import { RestToCommonSelectedFieldsHandler } from 'src/engine/api/rest/core/rest
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
-import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -61,8 +60,6 @@ export abstract class RestApiBaseHandler {
   protected readonly twentyORMManager: TwentyORMManager;
   @Inject()
   protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService;
-  @Inject()
-  protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
   @Inject()
   protected readonly workspaceCacheStorageService: WorkspaceCacheStorageService;
   @Inject()

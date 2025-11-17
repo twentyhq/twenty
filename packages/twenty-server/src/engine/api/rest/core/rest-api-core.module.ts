@@ -21,7 +21,6 @@ import { RestApiUpdateOneHandler } from 'src/engine/api/rest/core/handlers/rest-
 import { restToCommonArgsHandlers } from 'src/engine/api/rest/core/rest-to-common-args-handlers/rest-to-common-args-handlers';
 import { RestApiCoreService } from 'src/engine/api/rest/core/services/rest-api-core.service';
 import { RestApiService } from 'src/engine/api/rest/rest-api.service';
-import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
@@ -63,7 +62,6 @@ const restApiCoreResolvers = [
     RecordTransformerModule,
     WorkspacePermissionsCacheModule,
     WorkspaceMetadataCacheModule,
-    ActorModule,
     FeatureFlagModule,
     CoreCommonApiModule,
     WorkspaceDomainsModule,

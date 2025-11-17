@@ -8,7 +8,6 @@ import {
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -62,7 +61,6 @@ import { FieldMetadataService } from './services/field-metadata.service';
         ObjectMetadataModule,
         DataSourceModule,
         TypeORMModule,
-        ActorModule,
         FeatureFlagModule,
         ViewModule,
         ViewFieldModule,

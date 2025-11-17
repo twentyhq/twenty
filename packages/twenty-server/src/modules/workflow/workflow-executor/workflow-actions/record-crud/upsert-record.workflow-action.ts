@@ -20,6 +20,7 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowUpsertRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-upsert-record-action.guard';
 import { WorkflowUpsertRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
+import { buildCreatedByActor } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/build-create-by-actor.util';
 
 @Injectable()
 export class UpsertRecordWorkflowAction implements WorkflowAction {
@@ -77,7 +78,7 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
       workspaceId,
       rolePermissionConfig: executionContext.rolePermissionConfig,
       userWorkspaceId: executionContext.userWorkspaceId,
-      createdBy: executionContext.initiator,
+      createdBy: buildCreatedByActor(executionContext),
     });
 
     if (!toolOutput.success) {

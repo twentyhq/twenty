@@ -39,7 +39,11 @@ export class UpsertRecordService {
       // Use Common API's built-in upsert functionality
       // This handles finding existing records by unique fields and updating or inserting
       const result = await this.commonCreateOneRunner.execute(
-        { data: objectRecord, selectedFields, upsert: true },
+        {
+          data: objectRecord,
+          selectedFields,
+          upsert: true,
+        },
         queryRunnerContext,
       );
 
