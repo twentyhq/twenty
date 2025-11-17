@@ -1,4 +1,5 @@
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
+import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { useTheme } from '@emotion/react';
@@ -75,6 +76,8 @@ export const RecordPageSidePanelLayout = ({
       setShouldRenderContent(false);
     }
   };
+
+  useCommandMenuHotKeys();
 
   return (
     <StyledLayout

@@ -1,7 +1,6 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
-import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
@@ -38,8 +37,6 @@ export const CommandMenuContainer = ({
     objectMetadataItem?.namePlural ?? '',
     currentViewId ?? '',
   );
-
-  useCommandMenuHotKeys();
 
   return (
     <RecordComponentInstanceContextsWrapper componentInstanceId={recordIndexId}>
