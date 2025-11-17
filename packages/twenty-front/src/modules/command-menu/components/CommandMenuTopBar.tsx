@@ -1,4 +1,3 @@
-import { CommandMenuContextChip } from '@/command-menu/components/CommandMenuContextChip';
 import { CommandMenuContextChipGroups } from '@/command-menu/components/CommandMenuContextChipGroups';
 import { CommandMenuContextChipGroupsWithRecordSelection } from '@/command-menu/components/CommandMenuContextChipGroupsWithRecordSelection';
 import { CommandMenuTopBarInputFocusEffect } from '@/command-menu/components/CommandMenuTopBarInputFocusEffect';
@@ -77,9 +76,12 @@ const StyledCloseButtonWrapper = styled.div<{ isVisible: boolean }>`
 `;
 
 const StyledBackIcon = styled(IconChevronLeft)`
+  align-items: center;
   color: ${({ theme }) => theme.font.color.secondary};
-  margin-right: ${({ theme }) => theme.spacing(1)};
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const CommandMenuTopBar = () => {
@@ -123,21 +125,17 @@ export const CommandMenuTopBar = () => {
     <StyledInputContainer>
       <StyledContentContainer>
         <AnimatePresence>
-          {commandMenuPage !== CommandMenuPages.Root && (
-            <motion.div
-              exit={{ opacity: 0, width: 0 }}
-              transition={{
-                duration: backButtonAnimationDuration,
-              }}
-            >
-              <CommandMenuContextChip
-                Icons={[<IconChevronLeft size={theme.icon.size.sm} />]}
-                onClick={goBackFromCommandMenu}
-                testId="command-menu-go-back-button"
-                forceEmptyText={true}
-              />
-            </motion.div>
-          )}
+          <motion.div
+            exit={{ opacity: 0, width: 0 }}
+            transition={{
+              duration: backButtonAnimationDuration,
+            }}
+          >
+            <StyledBackIcon
+              onClick={goBackFromCommandMenu}
+              size={theme.icon.size.md}
+            />
+          </motion.div>
         </AnimatePresence>
         {isDefined(contextStoreCurrentObjectMetadataItemId) &&
         commandMenuPage !== CommandMenuPages.SearchRecords ? (
@@ -151,10 +149,6 @@ export const CommandMenuTopBar = () => {
         {(commandMenuPage === CommandMenuPages.Root ||
           commandMenuPage === CommandMenuPages.SearchRecords) && (
           <>
-            <StyledBackIcon
-              onClick={goBackFromCommandMenu}
-              size={theme.icon.size.md}
-            />
             <StyledInput
               ref={inputRef}
               value={commandMenuSearch}
