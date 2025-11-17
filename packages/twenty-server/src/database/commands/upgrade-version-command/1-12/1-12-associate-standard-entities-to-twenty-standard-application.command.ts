@@ -76,6 +76,8 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
           switch (metadataName) {
             case 'agent':
             case 'role':
+            case 'fieldMetadata':
+            case 'index':
             case 'objectMetadata': {
               const currentMetadataEntity =
                 ALL_METADATA_ENTITY_BY_METADATA_NAME[metadataName];
@@ -111,9 +113,7 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
               }
               break;
             }
-            case 'view':
-            case 'fieldMetadata':
-            case 'index': {
+            case 'view': {
               const currentMetadataEntity =
                 ALL_METADATA_ENTITY_BY_METADATA_NAME[metadataName];
 

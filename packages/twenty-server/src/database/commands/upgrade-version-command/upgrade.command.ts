@@ -142,11 +142,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     const commands_1120: VersionCommands = {
       beforeSyncMetadata: [
-        this.associateStandardEntitiesToTwentyStandardApplicationCommand, // Also partially done in sync metadata
         this.createWorkspaceCustomApplicationCommand,
         this.associateCustomEntitiesToWorkspaceCustomApplicationCommand,
       ],
       afterSyncMetadata: [
+        // this.associateStandardEntitiesToTwentyStandardApplicationCommand, // Also partially done in sync metadata
         this
           .makeSyncableEntitiesUniversalIdentifierAndApplicationIdNonNullableMigration,
       ],
