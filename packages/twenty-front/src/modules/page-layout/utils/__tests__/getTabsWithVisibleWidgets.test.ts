@@ -43,7 +43,7 @@ describe('getTabsWithVisibleWidgets', () => {
   });
 
   describe('in read mode', () => {
-    it('should keep all tabs even if they have no visible widgets', () => {
+    it('should filter out tabs with no visible widgets', () => {
       const tabs = [
         createMockTab('tab-1', [createMockWidget('widget-1')]),
         createMockTab('tab-2', [
@@ -61,13 +61,11 @@ describe('getTabsWithVisibleWidgets', () => {
         isEditMode: false,
       });
 
-      expect(result).toHaveLength(3);
+      expect(result).toHaveLength(2);
       expect(result[0].id).toBe('tab-1');
       expect(result[0].widgets).toHaveLength(1);
-      expect(result[1].id).toBe('tab-2');
-      expect(result[1].widgets).toHaveLength(0); // widgets filtered out but tab remains
-      expect(result[2].id).toBe('tab-3');
-      expect(result[2].widgets).toHaveLength(1);
+      expect(result[1].id).toBe('tab-3');
+      expect(result[1].widgets).toHaveLength(1);
     });
 
     it('should keep tabs with at least one visible widget', () => {
@@ -92,7 +90,7 @@ describe('getTabsWithVisibleWidgets', () => {
       expect(result[0].widgets[0].id).toBe('widget-1');
     });
 
-    it('should keep all tabs even when all widgets are hidden', () => {
+    it('should return first tab when all tabs have no visible widgets', () => {
       const tabs = [
         createMockTab('tab-1', [
           createMockWidget('widget-1', {
@@ -113,12 +111,12 @@ describe('getTabsWithVisibleWidgets', () => {
         isEditMode: false,
       });
 
-      expect(result).toHaveLength(2);
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('tab-1');
       expect(result[0].widgets).toHaveLength(0);
-      expect(result[1].widgets).toHaveLength(0);
     });
 
-    it('should keep tabs with no widgets', () => {
+    it('should filter out tabs with no widgets when other tabs have widgets', () => {
       const tabs = [
         createMockTab('tab-1', []),
         createMockTab('tab-2', [createMockWidget('widget-2')]),
@@ -131,11 +129,24 @@ describe('getTabsWithVisibleWidgets', () => {
         isEditMode: false,
       });
 
-      expect(result).toHaveLength(2);
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('tab-2');
+      expect(result[0].widgets).toHaveLength(1);
+    });
+
+    it('should return first tab when all tabs have no widgets', () => {
+      const tabs = [createMockTab('tab-1', []), createMockTab('tab-2', [])];
+
+      const result = getTabsWithVisibleWidgets({
+        tabs,
+        isMobile: false,
+        isInRightDrawer: false,
+        isEditMode: false,
+      });
+
+      expect(result).toHaveLength(1);
       expect(result[0].id).toBe('tab-1');
       expect(result[0].widgets).toHaveLength(0);
-      expect(result[1].id).toBe('tab-2');
-      expect(result[1].widgets).toHaveLength(1);
     });
   });
 
@@ -291,13 +302,11 @@ describe('getTabsWithVisibleWidgets', () => {
         isEditMode: false,
       });
 
-      expect(result).toHaveLength(3);
+      expect(result).toHaveLength(2);
       expect(result[0].id).toBe('tab-1');
       expect(result[0].widgets).toHaveLength(2);
-      expect(result[1].id).toBe('tab-2');
-      expect(result[1].widgets).toHaveLength(0); // No visible widgets but tab remains
-      expect(result[2].id).toBe('tab-3');
-      expect(result[2].widgets).toHaveLength(2);
+      expect(result[1].id).toBe('tab-3');
+      expect(result[1].widgets).toHaveLength(2);
     });
   });
 });
