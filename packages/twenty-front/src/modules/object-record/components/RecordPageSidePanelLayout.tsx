@@ -4,7 +4,7 @@ import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { type ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 type RecordPageSidePanelLayoutProps = {
@@ -61,6 +61,22 @@ export const RecordPageSidePanelLayout = ({
   const resolvedIsSidePanelOpen =
     isSidePanelOpen ?? isCommandMenuOpened ?? false;
 
+  const [shouldRenderContent, setShouldRenderContent] = useState(
+    resolvedIsSidePanelOpen,
+  );
+
+  const shouldShowContent = resolvedIsSidePanelOpen || shouldRenderContent;
+
+  if (resolvedIsSidePanelOpen && !shouldRenderContent) {
+    setShouldRenderContent(true);
+  }
+
+  const handleAnimationComplete = () => {
+    if (!resolvedIsSidePanelOpen) {
+      setShouldRenderContent(false);
+    }
+  };
+
   return (
     <StyledLayout
       paddingBottom={DEFAULT_LAYOUT_PADDING_BOTTOM}
@@ -82,8 +98,9 @@ export const RecordPageSidePanelLayout = ({
         transition={{
           duration: theme.animation.duration.normal,
         }}
+        onAnimationComplete={handleAnimationComplete}
       >
-        <CommandMenuRouter />
+        {shouldShowContent && <CommandMenuRouter />}
       </StyledSidePanel>
     </StyledLayout>
   );

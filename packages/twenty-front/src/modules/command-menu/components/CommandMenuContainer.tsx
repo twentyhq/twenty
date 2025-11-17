@@ -1,9 +1,7 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
-import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
@@ -20,11 +18,6 @@ type CommandMenuContainerProps = {
 export const CommandMenuContainer = ({
   children,
 }: CommandMenuContainerProps) => {
-  const { commandMenuCloseAnimationCompleteCleanup } =
-    useCommandMenuCloseAnimationCompleteCleanup();
-
-  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
-
   const objectMetadataItemId = useRecoilComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
@@ -56,9 +49,7 @@ export const CommandMenuContainer = ({
         <ActionMenuComponentInstanceContext.Provider
           value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
         >
-          <AgentChatProvider>
-            {isCommandMenuOpened ? children : null}
-          </AgentChatProvider>
+          <AgentChatProvider>{children}</AgentChatProvider>
         </ActionMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
     </RecordComponentInstanceContextsWrapper>
