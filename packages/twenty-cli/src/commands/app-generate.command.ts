@@ -1,13 +1,15 @@
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
 import chalk from 'chalk';
 import { ConfigService } from '../services/config.service';
-import { generateClient } from '../utils/generate-client';
-import { join } from 'path';
+import { join, resolve } from 'path';
+import { ApiService } from '../services/api.service';
+import { generate } from '@genql/cli';
 
 const GENERATED_FOLDER_NAME = 'generated';
 
 export class AppGenerateCommand {
   private configService = new ConfigService();
+  private apiService = new ApiService();
 
   async execute(
     outputPath: string = join(
@@ -20,7 +22,7 @@ export class AppGenerateCommand {
       console.log(chalk.gray(`📁 Output Path: ${outputPath}`));
       console.log('');
 
-      await this.generateSdkAfterSync(outputPath);
+      await this.generateClient(outputPath);
     } catch (error) {
       console.error(
         chalk.red('Generate Twenty client failed:'),
@@ -30,7 +32,7 @@ export class AppGenerateCommand {
     }
   }
 
-  private async generateSdkAfterSync(outputPath: string): Promise<void> {
+  private async generateClient(outputPath: string): Promise<void> {
     const config = await this.configService.getConfig();
 
     const url = config.apiUrl;
@@ -48,11 +50,17 @@ export class AppGenerateCommand {
     console.log(chalk.gray(`API URL: ${url}`));
     console.log(chalk.gray(`Output: ${outputPath}`));
 
-    await generateClient({
-      url: `${url}/graphql`,
-      token,
-      graphqlEndpoint: 'core',
-      outputPath,
+    const { data: schema } = await this.apiService.getSchema();
+
+    await generate({
+      schema,
+      output: resolve(outputPath),
+      scalarTypes: {
+        DateTime: 'string',
+        JSON: 'Record<string, unknown>',
+        UUID: 'string',
+      },
+      verbose: true,
     });
 
     console.log(chalk.green('✓ Client generated successfully!'));
