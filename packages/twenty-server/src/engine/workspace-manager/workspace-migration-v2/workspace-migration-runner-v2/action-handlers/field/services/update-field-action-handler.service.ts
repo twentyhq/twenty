@@ -211,21 +211,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         });
         optimisticFlatFieldMetadata.options = update.to ?? [];
       }
-      if (
-        isMorphOrRelationFlatFieldMetadata(optimisticFlatFieldMetadata) &&
-        update.property === 'settings'
-      ) {
-        await this.handleMorphOrRelationSettingsUpdate({
-          flatFieldMetadata: optimisticFlatFieldMetadata,
-          queryRunner,
-          schemaName,
-          tableName,
-          update: update as PropertyUpdate<
-            FlatFieldMetadata<MorphOrRelationFieldMetadataType>,
-            'settings'
-          >,
-        });
-      }
     }
   }
 
@@ -453,8 +438,8 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     }
 
     await this.workspaceSchemaManagerService.columnManager.renameColumn({
-      newColumnName: fromJoinColumnName,
-      oldColumnName: toJoinColumnName,
+      oldColumnName: fromJoinColumnName,
+      newColumnName: toJoinColumnName,
       queryRunner,
       schemaName,
       tableName,
