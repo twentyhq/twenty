@@ -31,7 +31,7 @@ export class ImapSmtpCaldavService {
       port: params.port,
       secure: params.secure ?? true,
       auth: {
-        user: handle,
+        user: params.username ?? handle,
         pass: params.password,
       },
       logger: false,

@@ -88,7 +88,7 @@ export class ImapClientProvider {
         port: connectionParameters.IMAP?.port || 993,
         secure: connectionParameters.IMAP?.secure,
         auth: {
-          user: connectedAccount.handle,
+          user: connectionParameters.IMAP?.username ?? connectedAccount.handle,
           pass: connectionParameters.IMAP?.password || '',
         },
         logger: false,
