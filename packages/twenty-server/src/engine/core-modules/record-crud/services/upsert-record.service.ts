@@ -36,11 +36,15 @@ export class UpsertRecordService {
           actorContext: createdBy,
         });
 
+      const dataWithActor = createdBy
+        ? { ...objectRecord, createdBy }
+        : objectRecord;
+
       // Use Common API's built-in upsert functionality
       // This handles finding existing records by unique fields and updating or inserting
       const result = await this.commonCreateOneRunner.execute(
         {
-          data: objectRecord,
+          data: dataWithActor,
           selectedFields,
           upsert: true,
         },
