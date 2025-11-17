@@ -16,6 +16,7 @@ import {
 import { aggregateOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/utils/aggregate-orchestrator-actions-report.util';
 import { WorkspaceMigrationV2CronTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/workspace-migration-v2-cron-trigger-action-builder.service';
 import { WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/workspace-migration-v2-database-event-trigger-actions-builder.service';
+import { WorkspaceMigrationV2FeatureFlagActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/feature-flag/workspace-migration-v2-feature-flag-actions-builder.service';
 import { WorkspaceMigrationV2FieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/workspace-migration-v2-field-actions-builder.service';
 import { WorkspaceMigrationV2IndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service';
 import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/workspace-migration-v2-object-actions-builder.service';
@@ -40,6 +41,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationV2CronTriggerActionsBuilderService: WorkspaceMigrationV2CronTriggerActionsBuilderService,
     private readonly workspaceMigrationV2RouteTriggerActionsBuilderService: WorkspaceMigrationV2RouteTriggerActionsBuilderService,
     private readonly workspaceMigrationV2FieldActionsBuilderService: WorkspaceMigrationV2FieldActionsBuilderService,
+    private readonly workspaceMigrationV2FeatureFlagActionsBuilderService: WorkspaceMigrationV2FeatureFlagActionsBuilderService,
   ) {}
 
   private setupOptimisticCache({
@@ -125,7 +127,30 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatFieldMetadataMaps,
       flatViewFilterMaps,
       flatViewGroupMaps,
+      flatFeatureFlagMaps,
     } = fromToAllFlatEntityMaps;
+
+    if (isDefined(flatFeatureFlagMaps)) {
+      const { from: fromFlatFeatureFlagMaps, to: toFlatFeatureFlagMaps } =
+        flatFeatureFlagMaps;
+
+      const featureFlagResult =
+        await this.workspaceMigrationV2FeatureFlagActionsBuilderService.validateAndBuild(
+          {
+            from: fromFlatFeatureFlagMaps,
+            to: toFlatFeatureFlagMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: undefined,
+            workspaceId,
+          },
+        );
+
+      if (featureFlagResult.status === 'fail') {
+        orchestratorFailureReport.featureFlag.push(...featureFlagResult.errors);
+      } else {
+        orchestratorActionsReport.featureFlag = featureFlagResult.actions;
+      }
+    }
 
     if (isDefined(flatObjectMetadataMaps)) {
       const { from: fromFlatObjectMetadataMaps, to: toFlatObjectMetadataMaps } =
@@ -547,6 +572,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
       workspaceMigration: {
         relatedFlatEntityMapsKeys,
         actions: [
+          // Feature flags
+          ...aggregatedOrchestratorActionsReport.featureFlag.deleted,
+          ...aggregatedOrchestratorActionsReport.featureFlag.created,
+          ...aggregatedOrchestratorActionsReport.featureFlag.updated,
+          ///
+
           // Object and fields and indexes
           ...aggregatedOrchestratorActionsReport.index.deleted,
           ...aggregatedOrchestratorActionsReport.fieldMetadata.deleted,

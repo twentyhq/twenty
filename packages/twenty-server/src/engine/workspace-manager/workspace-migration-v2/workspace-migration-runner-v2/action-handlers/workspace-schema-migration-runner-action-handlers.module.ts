@@ -7,6 +7,9 @@ import { UpdateCronTriggerActionHandlerService } from 'src/engine/workspace-mana
 import { CreateDatabaseEventTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/database-event-trigger/services/create-database-event-trigger-action-handler.service';
 import { DeleteDatabaseEventTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/database-event-trigger/services/delete-database-event-trigger-action-handler.service';
 import { UpdateDatabaseEventTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/database-event-trigger/services/update-database-event-trigger-action-handler.service';
+import { CreateFeatureFlagActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/feature-flag/services/create-feature-flag-action-handler.service';
+import { DeleteFeatureFlagActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/feature-flag/services/delete-feature-flag-action-handler.service';
+import { UpdateFeatureFlagActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/feature-flag/services/update-feature-flag-action-handler.service';
 import { CreateFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/field/services/create-field-action-handler.service';
 import { DeleteFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/field/services/delete-field-action-handler.service';
 import { UpdateFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/field/services/update-field-action-handler.service';
@@ -79,6 +82,10 @@ import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/wor
     CreateRouteTriggerActionHandlerService,
     DeleteRouteTriggerActionHandlerService,
     UpdateRouteTriggerActionHandlerService,
+
+    CreateFeatureFlagActionHandlerService,
+    DeleteFeatureFlagActionHandlerService,
+    UpdateFeatureFlagActionHandlerService,
   ],
 })
 export class WorkspaceSchemaMigrationRunnerActionHandlersModule {}

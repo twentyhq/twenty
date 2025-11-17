@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
@@ -15,7 +14,6 @@ import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/
 
 @Module({
   imports: [
-    FeatureFlagModule,
     TypeORMModule,
     DataSourceModule,
     WorkspaceMetadataVersionModule,

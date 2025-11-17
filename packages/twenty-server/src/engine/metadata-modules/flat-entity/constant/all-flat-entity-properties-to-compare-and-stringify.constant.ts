@@ -87,6 +87,10 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
     ],
     propertiesToStringify: ['value'],
   },
+  featureFlag: {
+    propertiesToCompare: ['key', 'value'],
+    propertiesToStringify: [],
+  },
 } as const satisfies {
   [P in AllMetadataName]: OneFlatEntityConfiguration<P>;
 };

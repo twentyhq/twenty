@@ -1,3 +1,5 @@
+import { type FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { type FlatFeatureFlag } from 'src/engine/core-modules/feature-flag/types/flat-feature-flag.type';
 import { type CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { type FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { type DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
@@ -30,6 +32,11 @@ import {
   type DeleteDatabaseEventTriggerAction,
   type UpdateDatabaseEventTriggerAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/types/workspace-migration-database-event-trigger-action-v2.type';
+import {
+  type CreateFeatureFlagAction,
+  type DeleteFeatureFlagAction,
+  type UpdateFeatureFlagAction,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/feature-flag/types/workspace-migration-feature-flag-action-v2.type';
 import {
   type CreateFieldAction,
   type DeleteFieldAction,
@@ -174,5 +181,14 @@ export type AllFlatEntityTypesByMetadataName = {
     };
     flatEntity: FlatViewFilter;
     entity: ViewFilterEntity;
+  };
+  featureFlag: {
+    actions: {
+      created: CreateFeatureFlagAction;
+      updated: UpdateFeatureFlagAction;
+      deleted: DeleteFeatureFlagAction;
+    };
+    flatEntity: FlatFeatureFlag;
+    entity: FeatureFlagEntity;
   };
 };
