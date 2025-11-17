@@ -4,13 +4,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const computeLineChartStackedLabels = (
   points: readonly Point<LineSeries>[],
-  yScale: (value: number) => number,
+  _yScale: (value: number) => number,
 ): GraphLabelData[] => {
   const groupTotals = new Map<
     string,
     {
       total: number;
       minimumYPosition: number;
+      maximumYPosition: number;
       xPosition: number;
     }
   >();
@@ -25,22 +26,27 @@ export const computeLineChartStackedLabels = (
         existingGroup.minimumYPosition,
         point.y,
       );
+      existingGroup.maximumYPosition = Math.max(
+        existingGroup.maximumYPosition,
+        point.y,
+      );
     } else {
       groupTotals.set(groupKey, {
         total: Number(point.data.y),
         minimumYPosition: point.y,
+        maximumYPosition: point.y,
         xPosition: point.x,
       });
     }
   }
 
-  const zeroAxisYPosition = yScale(0);
+  const groupedEntries = Array.from(groupTotals.entries());
 
-  return Array.from(groupTotals.entries()).map(
-    ([groupKey, { total, minimumYPosition, xPosition }]) => {
+  const labels: GraphLabelData[] = groupedEntries.map(
+    ([groupKey, { total, minimumYPosition, maximumYPosition, xPosition }]) => {
       const isNegativeTotal = total < 0;
       const labelYPosition = isNegativeTotal
-        ? zeroAxisYPosition
+        ? maximumYPosition
         : minimumYPosition;
 
       return {
@@ -48,8 +54,10 @@ export const computeLineChartStackedLabels = (
         value: total,
         x: xPosition,
         y: labelYPosition,
-        shouldRenderBelow: false,
+        shouldRenderBelow: isNegativeTotal,
       };
     },
   );
+
+  return labels;
 };

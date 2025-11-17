@@ -10,33 +10,61 @@ export const computeBarChartStackedLabels = (
     string,
     {
       total: number;
-      maxY: number;
-      maxX: number;
+      minimumYPosition: number;
+      maximumBottomYPosition: number;
+      maximumXPosition: number;
       bars: ComputedBarDatum<BarChartDataItem>[];
     }
   >();
 
   for (const bar of bars) {
     const groupKey = String(bar.data.indexValue);
+    const value = Number(bar.data.value);
+    const barTopY = bar.y;
+    const barBottomY = bar.y + bar.height;
+    const barRightX = bar.x + bar.width;
     const existingGroup = groupTotals.get(groupKey);
 
     if (isDefined(existingGroup)) {
-      existingGroup.total += Number(bar.data.value);
-      existingGroup.maxY = Math.min(existingGroup.maxY, bar.y);
-      existingGroup.maxX = Math.max(existingGroup.maxX, bar.x + bar.width);
+      existingGroup.total += value;
+      existingGroup.minimumYPosition = Math.min(
+        existingGroup.minimumYPosition,
+        barTopY,
+      );
+      existingGroup.maximumBottomYPosition = Math.max(
+        existingGroup.maximumBottomYPosition,
+        barBottomY,
+      );
+      existingGroup.maximumXPosition = Math.max(
+        existingGroup.maximumXPosition,
+        barRightX,
+      );
       existingGroup.bars.push(bar);
     } else {
       groupTotals.set(groupKey, {
-        total: Number(bar.data.value),
-        maxY: bar.y,
-        maxX: bar.x + bar.width,
+        total: value,
+        minimumYPosition: barTopY,
+        maximumBottomYPosition: barBottomY,
+        maximumXPosition: barRightX,
         bars: [bar],
       });
     }
   }
 
-  return Array.from(groupTotals.entries()).map(
-    ([groupKey, { total, maxY, maxX, bars: groupBars }]) => {
+  const groupedEntries = Array.from(groupTotals.entries());
+
+  const labels: BarChartLabelData[] = groupedEntries.map(
+    ([
+      groupKey,
+      {
+        total,
+        minimumYPosition,
+        maximumBottomYPosition,
+        maximumXPosition,
+        bars: groupBars,
+      },
+    ]) => {
+      const isNegativeTotal = total < 0;
       const centerX =
         groupBars.reduce((acc, bar) => acc + bar.x + bar.width / 2, 0) /
         groupBars.length;
@@ -48,11 +76,13 @@ export const computeBarChartStackedLabels = (
         key: `total-${groupKey}`,
         value: total,
         verticalX: centerX,
-        verticalY: maxY,
-        horizontalX: maxX,
+        verticalY: isNegativeTotal ? maximumBottomYPosition : minimumYPosition,
+        horizontalX: maximumXPosition,
         horizontalY: centerY,
-        shouldRenderBelow: false,
+        shouldRenderBelow: isNegativeTotal,
       };
     },
   );
+
+  return labels;
 };
