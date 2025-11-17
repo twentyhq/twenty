@@ -1,5 +1,4 @@
 import { AuthModal } from '@/auth/components/AuthModal';
-import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFallback';
@@ -92,12 +91,7 @@ export const DefaultLayout = () => {
               duration: theme.animation.duration.normal,
             }}
           >
-            {!showAuthModal && (
-              <>
-                <CommandMenuRouter />
-                <KeyboardShortcutMenu />
-              </>
-            )}
+            {!showAuthModal && <KeyboardShortcutMenu />}
             {showAuthModal ? (
               <StyledAppNavigationDrawerMock />
             ) : useShowFullScreen ? null : (

@@ -1,6 +1,5 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
-import { CommandMenuOpenContainer } from '@/command-menu/components/CommandMenuOpenContainer';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
@@ -12,14 +11,15 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { AnimatePresence } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
+
+type CommandMenuContainerProps = {
+  children: React.ReactNode;
+};
 
 export const CommandMenuContainer = ({
   children,
-}: {
-  children: React.ReactNode;
-}) => {
+}: CommandMenuContainerProps) => {
   const { commandMenuCloseAnimationCompleteCleanup } =
     useCommandMenuCloseAnimationCompleteCleanup();
 
@@ -57,14 +57,7 @@ export const CommandMenuContainer = ({
           value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
         >
           <AgentChatProvider>
-            <AnimatePresence
-              mode="wait"
-              onExitComplete={commandMenuCloseAnimationCompleteCleanup}
-            >
-              {isCommandMenuOpened && (
-                <CommandMenuOpenContainer>{children}</CommandMenuOpenContainer>
-              )}
-            </AnimatePresence>
+            {isCommandMenuOpened ? children : null}
           </AgentChatProvider>
         </ActionMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
