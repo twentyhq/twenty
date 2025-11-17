@@ -5,7 +5,7 @@ import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { mergePreviewRecordFamilyState } from '@/object-record/record-merge/states/mergePreviewRecordFamilyState';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isMergeInProgressState } from '../states/mergeInProgressState';
 import { mergeSettingsState } from '../states/mergeSettingsState';
@@ -22,7 +22,8 @@ export const useMergePreview = ({
     useState<ObjectRecord | null>(null);
   const [lastPreviewId, setLastPreviewId] = useState<string>('');
   const [lastPreviewSignature, setLastPreviewSignature] = useState<string>('');
-  const [currentRunId, setCurrentRunId] = useState(0);
+  // eslint-disable-next-line @nx/workspace-no-state-useref
+  const currentRunIdRef = useRef(0);
 
   const mergeSettings = useRecoilValue(mergeSettingsState);
   const isMergeInProgress = useRecoilValue(isMergeInProgressState);
@@ -81,8 +82,8 @@ export const useMergePreview = ({
       }
       setLastPreviewSignature(previewSignature);
 
-      const runId = currentRunId + 1;
-      setCurrentRunId(runId);
+      currentRunIdRef.current += 1;
+      const runId = currentRunIdRef.current;
 
       setIsGeneratingPreview(true);
       try {
@@ -92,7 +93,7 @@ export const useMergePreview = ({
           preview: true,
         });
         if (!previewRecord) {
-          if (runId === currentRunId + 1) {
+          if (runId === currentRunIdRef.current) {
             setMergePreviewRecord(null);
             setPreviewRecordById(null, lastPreviewId);
             setLastPreviewId('');
@@ -104,19 +105,19 @@ export const useMergePreview = ({
           recordNode: previewRecord,
         });
 
-        if (runId === currentRunId + 1) {
+        if (runId === currentRunIdRef.current) {
           setMergePreviewRecord(transformPreviewRecord);
           setPreviewRecordById(transformPreviewRecord, lastPreviewId);
           setLastPreviewId(transformPreviewRecord.id);
         }
       } catch {
-        if (runId === currentRunId + 1) {
+        if (runId === currentRunIdRef.current) {
           setMergePreviewRecord(null);
           setPreviewRecordById(null, lastPreviewId);
           setLastPreviewId('');
         }
       } finally {
-        if (runId === currentRunId + 1) {
+        if (runId === currentRunIdRef.current) {
           setIsGeneratingPreview(false);
         }
       }
@@ -134,7 +135,6 @@ export const useMergePreview = ({
     setPreviewRecordById,
     lastPreviewId,
     lastPreviewSignature,
-    currentRunId,
   ]);
 
   return {

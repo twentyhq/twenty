@@ -1,5 +1,5 @@
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
@@ -38,10 +38,14 @@ export const RecordTitleCellSingleTextDisplayMode = ({
 }) => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
-  const recordValue = useRecoilValue(recordStoreFamilyState(recordId));
+  const fieldValue = useRecoilValue(
+    recordStoreFamilySelector({
+      recordId,
+      fieldName: fieldDefinition.metadata.fieldName,
+    }),
+  );
 
-  const isEmpty =
-    recordValue?.[fieldDefinition.metadata.fieldName]?.trim() === '';
+  const isEmpty = fieldValue?.toString().trim() === '';
 
   const { openRecordTitleCell } = useRecordTitleCell();
 
@@ -63,10 +67,7 @@ export const RecordTitleCellSingleTextDisplayMode = ({
         <StyledEmptyText>Untitled</StyledEmptyText>
       ) : (
         <OverflowingTextWithTooltip
-          text={
-            recordValue?.[fieldDefinition.metadata.fieldName] ||
-            fieldDefinition.label
-          }
+          text={fieldValue?.toString() || fieldDefinition.label}
         />
       )}
     </StyledDiv>
