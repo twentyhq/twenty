@@ -76,6 +76,12 @@ const StyledCloseButtonWrapper = styled.div<{ isVisible: boolean }>`
   visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
 `;
 
+const StyledBackIcon = styled(IconChevronLeft)`
+  color: ${({ theme }) => theme.font.color.secondary};
+  margin-right: ${({ theme }) => theme.spacing(1)};
+  cursor: pointer;
+`;
+
 export const CommandMenuTopBar = () => {
   const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
     commandMenuSearchState,
@@ -145,10 +151,14 @@ export const CommandMenuTopBar = () => {
         {(commandMenuPage === CommandMenuPages.Root ||
           commandMenuPage === CommandMenuPages.SearchRecords) && (
           <>
+            <StyledBackIcon
+              onClick={goBackFromCommandMenu}
+              size={theme.icon.size.md}
+            />
             <StyledInput
               ref={inputRef}
               value={commandMenuSearch}
-              placeholder={t`Type anything`}
+              placeholder={t`Type anything...`}
               onChange={handleSearchChange}
             />
             <CommandMenuTopBarInputFocusEffect inputRef={inputRef} />
