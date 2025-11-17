@@ -73,7 +73,7 @@
     "@sentry/profiling-node": "^10.0.0",
     "@sniptt/guards": "0.2.0",
     "addressparser": "1.0.1",
-    "ai": "^5.0.44",
+    "ai": "5.0.52",
     "apollo-server-core": "3.13.0",
     "archiver": "7.0.1",
     "axios": "1.12.2",
