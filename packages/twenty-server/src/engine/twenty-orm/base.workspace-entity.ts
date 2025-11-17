@@ -14,6 +14,8 @@ export type BaseWorkspaceEntityFieldIds = {
   deletedAt: string;
 };
 
+export type BaseWorkspaceEntity = ReturnType<typeof createBaseWorkspaceEntity>;
+
 export function createBaseWorkspaceEntity(
   fieldIds: BaseWorkspaceEntityFieldIds,
 ) {

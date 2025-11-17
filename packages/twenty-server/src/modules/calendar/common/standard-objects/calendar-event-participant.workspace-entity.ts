@@ -115,6 +115,7 @@ export class CalendarEventParticipantWorkspaceEntity extends createBaseWorkspace
   responseStatus: string;
 
   @WorkspaceRelation({
+    standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.calendarEvent,
     type: RelationType.MANY_TO_ONE,
     label: msg`Event ID`,
     description: msg`Event ID`,
@@ -129,6 +130,7 @@ export class CalendarEventParticipantWorkspaceEntity extends createBaseWorkspace
   calendarEventId: string;
 
   @WorkspaceRelation({
+    standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.person,
     type: RelationType.MANY_TO_ONE,
     label: msg`Person`,
     description: msg`Person`,
@@ -144,6 +146,7 @@ export class CalendarEventParticipantWorkspaceEntity extends createBaseWorkspace
   personId: string | null;
 
   @WorkspaceRelation({
+    standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workspace Member`,
     description: msg`Workspace Member`,

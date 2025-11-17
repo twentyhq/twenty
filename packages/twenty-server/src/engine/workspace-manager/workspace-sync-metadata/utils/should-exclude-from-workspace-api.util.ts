@@ -4,7 +4,7 @@ import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-syn
 
 export const shouldExcludeFromWorkspaceApi = (
   objectMetadataItem: { standardId?: string | null | undefined },
-  standardObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[],
+  standardObjectMetadataDefinitions: BaseWorkspaceEntity[],
   workspaceFeatureFlagsMap: Record<string, boolean>,
 ): boolean => {
   const entityMetadata = standardObjectMetadataDefinitions

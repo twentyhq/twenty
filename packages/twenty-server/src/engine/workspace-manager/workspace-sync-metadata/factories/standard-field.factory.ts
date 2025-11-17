@@ -20,19 +20,17 @@ import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-syn
 @Injectable()
 export class StandardFieldFactory {
   create(
-    target: typeof BaseWorkspaceEntity,
+    target: BaseWorkspaceEntity,
     context: WorkspaceSyncContext,
   ): (PartialFieldMetadata | PartialComputedFieldMetadata)[];
 
   create(
-    targets: (typeof BaseWorkspaceEntity)[],
+    targets: BaseWorkspaceEntity[],
     context: WorkspaceSyncContext,
   ): Map<string, (PartialFieldMetadata | PartialComputedFieldMetadata)[]>;
 
   create(
-    targetOrTargets:
-      | typeof BaseWorkspaceEntity
-      | (typeof BaseWorkspaceEntity)[],
+    targetOrTargets: BaseWorkspaceEntity | BaseWorkspaceEntity[],
     context: WorkspaceSyncContext,
   ):
     | (PartialFieldMetadata | PartialComputedFieldMetadata)[]
@@ -91,7 +89,7 @@ export class StandardFieldFactory {
     ];
   }
 
-  private collectMetadata(target: typeof BaseWorkspaceEntity) {
+  private collectMetadata(target: BaseWorkspaceEntity) {
     return {
       fields: metadataArgsStorage.filterFields(target),
       relations: metadataArgsStorage.filterRelations(target),

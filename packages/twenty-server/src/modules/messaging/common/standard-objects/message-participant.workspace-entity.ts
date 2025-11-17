@@ -74,6 +74,7 @@ export class MessageParticipantWorkspaceEntity extends createBaseWorkspaceEntity
   displayName: string;
 
   @WorkspaceRelation({
+    standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.message,
     type: RelationType.MANY_TO_ONE,
     label: msg`Message`,
     description: msg`Message`,
@@ -88,6 +89,7 @@ export class MessageParticipantWorkspaceEntity extends createBaseWorkspaceEntity
   messageId: string;
 
   @WorkspaceRelation({
+    standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.person,
     type: RelationType.MANY_TO_ONE,
     label: msg`Person`,
     description: msg`Person`,
@@ -103,6 +105,7 @@ export class MessageParticipantWorkspaceEntity extends createBaseWorkspaceEntity
   personId: string | null;
 
   @WorkspaceRelation({
+    standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workspace Member`,
     description: msg`Workspace member`,

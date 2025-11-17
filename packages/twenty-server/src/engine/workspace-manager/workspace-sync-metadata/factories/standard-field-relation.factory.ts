@@ -110,7 +110,7 @@ export class StandardFieldRelationFactory {
   }
 
   computeRelationFieldsForStandardObject(
-    standardObjectMetadataWorkspaceEntity: typeof BaseWorkspaceEntity,
+    standardObjectMetadataWorkspaceEntity: BaseWorkspaceEntity,
     context: WorkspaceSyncContext,
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
   ): FieldMetadataEntity<

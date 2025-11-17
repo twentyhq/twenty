@@ -33,6 +33,7 @@ export class MessageThreadWorkspaceEntity extends createBaseWorkspaceEntity({
   deletedAt: MESSAGE_THREAD_STANDARD_FIELD_IDS.deletedAt,
 }) {
   @WorkspaceRelation({
+    standardId: MESSAGE_THREAD_STANDARD_FIELD_IDS.messages,
     type: RelationType.ONE_TO_MANY,
     label: msg`Messages`,
     description: msg`Messages from the thread.`,

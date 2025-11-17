@@ -171,6 +171,7 @@ export class CalendarEventWorkspaceEntity extends createBaseWorkspaceEntity({
   >;
 
   @WorkspaceRelation({
+    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.calendarEventParticipants,
     type: RelationType.ONE_TO_MANY,
     label: msg`Event Participants`,
     description: msg`Event Participants`,

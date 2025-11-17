@@ -144,6 +144,7 @@ export class WorkflowWorkspaceEntity extends createBaseWorkspaceEntity({
 
   // Relations
   @WorkspaceRelation({
+    standardId: WORKFLOW_STANDARD_FIELD_IDS.versions,
     type: RelationType.ONE_TO_MANY,
     label: msg`Versions`,
     description: msg`Workflow versions linked to the workflow.`,
@@ -155,6 +156,7 @@ export class WorkflowWorkspaceEntity extends createBaseWorkspaceEntity({
   versions: Relation<WorkflowVersionWorkspaceEntity[]>;
 
   @WorkspaceRelation({
+    standardId: WORKFLOW_STANDARD_FIELD_IDS.runs,
     type: RelationType.ONE_TO_MANY,
     label: msg`Runs`,
     description: msg`Workflow runs linked to the workflow.`,
@@ -166,6 +168,7 @@ export class WorkflowWorkspaceEntity extends createBaseWorkspaceEntity({
   runs: Relation<WorkflowRunWorkspaceEntity[]>;
 
   @WorkspaceRelation({
+    standardId: WORKFLOW_STANDARD_FIELD_IDS.automatedTriggers,
     type: RelationType.ONE_TO_MANY,
     label: msg`Automated Triggers`,
     description: msg`Workflow automated triggers linked to the workflow.`,
@@ -177,6 +180,7 @@ export class WorkflowWorkspaceEntity extends createBaseWorkspaceEntity({
   automatedTriggers: Relation<WorkflowAutomatedTriggerWorkspaceEntity[]>;
 
   @WorkspaceRelation({
+    standardId: WORKFLOW_STANDARD_FIELD_IDS.favorites,
     type: RelationType.ONE_TO_MANY,
     label: msg`Favorites`,
     description: msg`Favorites linked to the workflow`,
@@ -188,6 +192,7 @@ export class WorkflowWorkspaceEntity extends createBaseWorkspaceEntity({
   favorites: Relation<FavoriteWorkspaceEntity[]>;
 
   @WorkspaceRelation({
+    standardId: WORKFLOW_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Timeline Activities`,
     description: msg`Timeline activities linked to the workflow`,
@@ -198,6 +203,7 @@ export class WorkflowWorkspaceEntity extends createBaseWorkspaceEntity({
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceRelation({
+    standardId: WORKFLOW_STANDARD_FIELD_IDS.attachments,
     type: RelationType.ONE_TO_MANY,
     label: msg`Attachments`,
     description: msg`Attachments linked to the workflow`,

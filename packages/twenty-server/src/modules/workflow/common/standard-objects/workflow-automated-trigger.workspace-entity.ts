@@ -71,6 +71,7 @@ export class WorkflowAutomatedTriggerWorkspaceEntity extends createBaseWorkspace
   settings: AutomatedTriggerSettings;
 
   @WorkspaceRelation({
+    standardId: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.workflow,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workflow`,
     description: msg`WorkflowAutomatedTrigger workflow`,

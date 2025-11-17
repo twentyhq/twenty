@@ -157,6 +157,7 @@ export class WorkflowVersionWorkspaceEntity extends createBaseWorkspaceEntity({
 
   // Relations
   @WorkspaceRelation({
+    standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.workflow,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workflow`,
     description: msg`WorkflowVersion workflow`,
@@ -172,6 +173,7 @@ export class WorkflowVersionWorkspaceEntity extends createBaseWorkspaceEntity({
   workflowId: string;
 
   @WorkspaceRelation({
+    standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.runs,
     type: RelationType.ONE_TO_MANY,
     label: msg`Runs`,
     description: msg`Workflow runs linked to the version.`,
@@ -183,6 +185,7 @@ export class WorkflowVersionWorkspaceEntity extends createBaseWorkspaceEntity({
   runs: Relation<WorkflowRunWorkspaceEntity>;
 
   @WorkspaceRelation({
+    standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.favorites,
     type: RelationType.ONE_TO_MANY,
     label: msg`Favorites`,
     description: msg`Favorites linked to the workflow version`,
@@ -194,6 +197,7 @@ export class WorkflowVersionWorkspaceEntity extends createBaseWorkspaceEntity({
   favorites: Relation<FavoriteWorkspaceEntity[]>;
 
   @WorkspaceRelation({
+    standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Timeline Activities`,
     description: msg`Timeline activities linked to the version`,

@@ -450,6 +450,7 @@ export class MessageChannelWorkspaceEntity extends createBaseWorkspaceEntity({
   throttleFailureCount: number;
 
   @WorkspaceRelation({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.connectedAccount,
     type: RelationType.MANY_TO_ONE,
     label: msg`Connected Account`,
     description: msg`Connected Account`,
@@ -479,6 +480,7 @@ export class MessageChannelWorkspaceEntity extends createBaseWorkspaceEntity({
   >;
 
   @WorkspaceRelation({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.messageFolders,
     type: RelationType.ONE_TO_MANY,
     label: msg`Message Folders`,
     description: msg`Message Folders`,

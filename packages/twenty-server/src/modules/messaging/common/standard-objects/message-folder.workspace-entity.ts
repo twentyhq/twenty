@@ -55,6 +55,7 @@ export class MessageFolderWorkspaceEntity extends createBaseWorkspaceEntity({
   name: string;
 
   @WorkspaceRelation({
+    standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.messageChannel,
     type: RelationType.MANY_TO_ONE,
     label: msg`Message Channel`,
     description: msg`Message Channel`,

@@ -10,7 +10,7 @@ import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-syn
 @Injectable()
 export class StandardObjectFactory {
   create(
-    standardObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[],
+    standardObjectMetadataDefinitions: BaseWorkspaceEntity[],
     context: WorkspaceSyncContext,
   ): Omit<PartialWorkspaceEntity, 'fields' | 'indexMetadatas'>[] {
     return standardObjectMetadataDefinitions
@@ -19,7 +19,7 @@ export class StandardObjectFactory {
   }
 
   private createObjectMetadata(
-    target: typeof BaseWorkspaceEntity,
+    target: BaseWorkspaceEntity,
     context: WorkspaceSyncContext,
   ):
     | Omit<PartialWorkspaceEntity, 'fields' | 'indexMetadatas' | 'icon'>

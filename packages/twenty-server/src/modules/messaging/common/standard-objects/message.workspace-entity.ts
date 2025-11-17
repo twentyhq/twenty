@@ -75,6 +75,7 @@ export class MessageWorkspaceEntity extends createBaseWorkspaceEntity({
   receivedAt: Date | null;
 
   @WorkspaceRelation({
+    standardId: MESSAGE_STANDARD_FIELD_IDS.messageThread,
     type: RelationType.MANY_TO_ONE,
     label: msg`Message Thread Id`,
     description: msg`Message Thread Id`,
@@ -90,6 +91,7 @@ export class MessageWorkspaceEntity extends createBaseWorkspaceEntity({
   messageThreadId: string | null;
 
   @WorkspaceRelation({
+    standardId: MESSAGE_STANDARD_FIELD_IDS.messageParticipants,
     type: RelationType.ONE_TO_MANY,
     label: msg`Message Participants`,
     description: msg`Message Participants`,
@@ -101,6 +103,7 @@ export class MessageWorkspaceEntity extends createBaseWorkspaceEntity({
   messageParticipants: Relation<MessageParticipantWorkspaceEntity[]>;
 
   @WorkspaceRelation({
+    standardId: MESSAGE_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
     type: RelationType.ONE_TO_MANY,
     label: msg`Message Channel Association`,
     description: msg`Messages from the channel.`,
