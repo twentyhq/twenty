@@ -66,7 +66,8 @@ export const SettingsApplicationDetailContentTab = ({
             description={t`Objects created by application`}
           />
           <SettingsObjectTable
-            objectMetadataItems={applicationObjectMetadataItems}
+            activeObjects={applicationObjectMetadataItems}
+            inactiveObjects={[]}
             withSearchBar={false}
           />
         </Section>

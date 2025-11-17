@@ -33,10 +33,10 @@ export type SettingsDataModelFieldTypeFormValues = z.infer<
 export const SettingsObjectNewFieldSelect = () => {
   const navigate = useNavigateApp();
   const { objectNamePlural = '' } = useParams();
-  const { findObjectMetadataItemByNamePlural } =
+  const { findActiveObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
   const activeObjectMetadataItem =
-    findObjectMetadataItemByNamePlural(objectNamePlural);
+    findActiveObjectMetadataItemByNamePlural(objectNamePlural);
   const formMethods = useForm({
     resolver: zodResolver(settingsDataModelFieldTypeFormSchema),
     defaultValues: {

@@ -49,10 +49,10 @@ export const SettingsObjectNewFieldConfigure = () => {
     FieldMetadataType.TEXT;
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const { findObjectMetadataItemByNamePlural } =
+  const { findActiveObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
   const activeObjectMetadataItem =
-    findObjectMetadataItemByNamePlural(objectNamePlural);
+    findActiveObjectMetadataItemByNamePlural(objectNamePlural);
   const { createMetadataField } = useFieldMetadataItem();
 
   const formConfig = useForm<SettingsDataModelNewFieldFormValues>({

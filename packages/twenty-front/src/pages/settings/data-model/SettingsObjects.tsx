@@ -15,7 +15,10 @@ import { SettingsObjectTable } from '~/pages/settings/data-model/SettingsObjectT
 export const SettingsObjects = () => {
   const { t } = useLingui();
 
-  const { objectMetadataItems } = useFilteredObjectMetadataItems();
+  const {
+    activeNonSystemObjectMetadataItems,
+    inactiveNonSystemObjectMetadataItems,
+  } = useFilteredObjectMetadataItems();
 
   return (
     <SubMenuTopBarContainer
@@ -44,7 +47,10 @@ export const SettingsObjects = () => {
           <Section>
             <H2Title title={t`Existing objects`} />
 
-            <SettingsObjectTable objectMetadataItems={objectMetadataItems} />
+            <SettingsObjectTable
+              activeObjects={activeNonSystemObjectMetadataItems}
+              inactiveObjects={inactiveNonSystemObjectMetadataItems}
+            />
           </Section>
         </>
       </SettingsPageContainer>
