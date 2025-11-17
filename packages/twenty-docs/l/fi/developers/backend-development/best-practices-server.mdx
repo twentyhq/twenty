@@ -1,0 +1,27 @@
+---
+title: Parhaat käytännöt
+image: /images/user-guide/tips/light-bulb.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
+</Frame>
+
+Tämä asiakirja hahmottelee parhaat käytännöt, joita sinun tulisi noudattaa työskennellessäsi back-endissä.
+
+## Noudata modulaarista lähestymistapaa
+
+Back-end noudattaa modulaarista lähestymistapaa, mikä on olennainen periaate työskenneltäessä NestJS:n kanssa. Varmista, että jaat koodisi uudelleenkäytettäviin moduuleihin, jotta ylläpidät siistin ja järjestelmällisen koodipohjan.
+Jokaisen moduulin tulisi kapseloida tietty ominaisuus tai toiminta ja sillä tulisi olla selkeä rajaus. Tämä modulaarinen lähestymistapa mahdollistaa selkeän vastuiden jaon ja poistaa tarpeettomia monimutkaisuuksia.
+
+## Expose services to use in modules
+
+Luo aina palveluita, joilla on selkeä ja yksittäinen vastuualue, mikä parantaa koodin luettavuutta ja ylläpidettävyyttä. Nimeä palvelut kuvailevasti ja johdonmukaisesti.
+
+Sinun tulisi myös julkaista palvelut, joita haluat käyttää muissa moduuleissa. Palveluiden julkaisu muille moduuleille on mahdollista NestJS:n tehokkaan riippuvuusinjektiojärjestelmän kautta, ja se edistää komponenttien löyhää liittämistä.
+
+## Vältä `any`-tyypin käyttöä
+
+When you declare a variable as `any`, TypeScript's type checker doesn't perform any type checking, making it possible to assign any type of values to the variable. TypeScript käyttää tyyppi-inferenssiä määrittämään muuttujan tyypin arvon perusteella. Määrittämällä sen `any`-tyypiksi, TypeScript ei enää osaa päätellä tyyppiä. Tämä vaikeuttaa tyyppivirheiden havaitsemista kehityksen aikana, mikä johtaa ajon aikaisiin virheisiin ja tekee koodista vähemmän ylläpidettävän, vähemmän luotettavan ja vaikeammin ymmärrettävän muille.
+
+Siksi kaikella tulisi olla tyyppi. Jos luot uuden objektin, jossa on etunimi ja sukunimi, sinun tulisi luoda rajapinta tai tyyppi, joka sisältää etunimen ja sukunimen ja määrittelee käsittelemäsi objektin muodon.

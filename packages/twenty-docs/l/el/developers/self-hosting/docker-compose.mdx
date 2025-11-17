@@ -1,0 +1,214 @@
+---
+title: 1-Click w/ Docker Compose
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+<Warning>
+Docker containers are for production hosting or self-hosting, for the contribution please check the [Local Setup](https://docs.twenty.com/l/el/developers/local-setup).
+</Warning>
+
+## Επισκόπηση
+
+Αυτός ο οδηγός παρέχει βήμα προς βήμα οδηγίες για την εγκατάσταση και παραμετροποίηση της εφαρμογής Twenty χρησιμοποιώντας Docker Compose. Ο στόχος είναι να γίνει η διαδικασία απλή και να αποφευχθούν κοινές παγίδες που θα μπορούσαν να διακόψουν τη ρύθμιση.
+
+**Important:** Only modify settings explicitly mentioned in this guide. Altering other configurations may lead to issues.
+
+Δείτε τα έγγραφα [Ρύθμιση Μεταβλητών Περιβάλλοντος](https://docs.twenty.com/l/el/developers/self-hosting/setup) για προχωρημένες ρυθμίσεις. Όλες οι μεταβλητές περιβάλλοντος πρέπει να δηλωθούν στο αρχείο docker-compose.yml στο επίπεδο του server και/ή worker ανάλογα με τη μεταβλητή.
+
+## Απαιτήσεις Συστήματος
+
+- RAM: Βεβαιωθείτε ότι το περιβάλλον σας έχει τουλάχιστον 2GB RAM. Η ανεπαρκής μνήμη μπορεί να προκαλέσει τη διακοπή διαδικασιών.
+- Docker & Docker Compose: Βεβαιωθείτε ότι είναι εγκατεστημένα και ενημερωμένα.
+
+## Option 1: One-line script
+
+Εγκαταστήστε την τελευταία σταθερή έκδοση του Twenty με μια μόνο εντολή:
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+Για εγκατάσταση συγκεκριμένης έκδοσης ή παρακλάδι:
+
+```bash
+VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+- Αντικαταστήστε x.y.z με τον επιθυμητό αριθμό έκδοσης.
+- Αντικαταστήστε το branch-name με το όνομα του παρακλαδιού που θέλετε να εγκαταστήσετε.
+
+## Επιλογή 2: Χειροκίνητα βήματα
+
+Ακολουθήστε αυτά τα βήματα για χειροκίνητη ρύθμιση.
+
+### Βήμα 1: Ρυθμίστε το αρχείο Περιβάλλοντος
+
+1. **Δημιουργία αρχείου .env**
+
+   Αντιγράψτε το παράδειγμα αρχείου περιβάλλοντος σε ένα νέο αρχείο .env στο χώρο εργασίας σας:
+
+   ```bash
+   curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
+   ```
+
+2. **Δημιουργία Μυστικών Κωδικών**
+
+   Run the following command to generate a unique random string:
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   **Important:** Keep this value secret / do not share it.
+
+3. **Update the `.env`**
+
+   Αντικαταστήστε την τιμή κρατήσεως στον .env αρχείο με τον δημιουργημένο κωδικό:
+
+   ```ini
+   APP_SECRET=first_random_string
+   ```
+
+4. **Ορισμός Κωδικού Πρόσβασης Postgres**
+
+   Update the `PG_DATABASE_PASSWORD` value in the .env file with a strong password without special characters.
+
+   ```ini
+   PG_DATABASE_PASSWORD=my_strong_password
+   ```
+
+### Βήμα 2: Αποκτήστε το Αρχείο Docker Compose
+
+Κατεβάστε το αρχείο `docker-compose.yml` στο χώρο εργασίας σας:
+
+```bash
+curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/docker-compose.yml
+```
+
+### Βήμα 3: Εκκίνηση της Εφαρμογής
+
+Start the Docker containers:
+
+```bash
+docker compose up -d
+```
+
+### Βήμα 4: Πρόσβαση στην Εφαρμογή
+
+Αν φιλοξενείτε το twentyCRM στον υπολογιστή σας, ανοίξτε το πρόγραμμα περιήγησης και πλοηγηθείτε στο [http://localhost:3000](http://localhost:3000).
+
+If you host it on a server, check that the server is running and that everything is ok with
+
+```bash
+curl http://localhost:3000
+```
+
+## Διαμόρφωση
+
+### Έκθεση του Twenty σε Εξωτερική Πρόσβαση
+
+Κατά προεπιλογή, το Twenty τρέχει στο `localhost` στη θύρα `3000`. Για πρόσβαση μέσω εξωτερικής διεύθυνσης ή διεύθυνσης IP, πρέπει να ρυθμίσετε το `SERVER_URL` στο αρχείο σας `.env`.
+
+#### Κατανόηση του `SERVER_URL`
+
+- **Πρωτόκολλο:** Χρησιμοποιήστε `http` ή `https` ανάλογα με τη ρύθμισή σας.
+  - Χρησιμοποιήστε `http` αν δεν έχετε ρυθμίσει SSL.
+  - Χρησιμοποιήστε `https` αν έχετε ρυθμίσει το SSL.
+- **Διεύθυνση/IP:** Αυτό είναι το όνομα του τομέα ή η IP διεύθυνση όπου είναι προσβάσιμη η εφαρμογή σας.
+- **Θύρα:** Περιλάβετε τον αριθμό θύρας αν δεν χρησιμοποιείτε τις προεπιλεγμένες θύρες (`80` για `http`, `443` για `https`).
+
+### Απαιτήσεις SSL
+
+Το SSL (HTTPS) απαιτείται για να λειτουργούν ορισμένες δυνατότητες του προγράμματος περιήγησης σωστά. Αν και αυτές οι δυνατότητες μπορεί να λειτουργούν κατά την τοπική ανάπτυξη (καθώς τα προγράμματα περιήγησης αντιμετωπίζουν το localhost διαφορετικά), είναι απαραίτητη η κατάλληλη ρύθμιση SSL όταν φιλοξενείτε το Twenty σε κανονικό τομέα.
+
+Για παράδειγμα, το API πρόχειρης αποκομιδής μπορεί να απαιτεί ασφαλές περιβάλλον - ορισμένα χαρακτηριστικά όπως τα κουμπιά αντιγραφής σε όλη την εφαρμογή μπορεί να μη λειτουργούν χωρίς ενεργοποιημένο το HTTPS.
+
+Σας συνιστούμε έντονα να ρυθμίσετε το Twenty πίσω από έναν αντίστροφο διακομιστή με λήξη SSL για βέλτιστη ασφάλεια και λειτουργικότητα.
+
+#### Ρύθμιση του `SERVER_URL`
+
+1. **Προσδιορίστε το URL Πρόσβασής σας**
+   - **Χωρίς αντίστροφο διακομιστή (Άμεση Πρόσβαση):**
+
+     Αν αποκτάτε πρόσβαση στην εφαρμογή άμεσα χωρίς αντίστροφο διακομιστή:
+
+     ```ini
+     SERVER_URL=http://your-domain-or-ip:3000
+     ```
+
+   - **Με αντίστροφο διακομιστή (Κανονικές Θύρες):**
+
+     Αν χρησιμοποιείτε έναν αντίστροφο διακομιστή όπως το Nginx ή το Traefik και έχετε ρυθμίσει το SSL:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip
+     ```
+
+   - **Με αντίστροφο διακομιστή (Προσαρμοσμένες Θύρες):**
+
+     Αν χρησιμοποιείτε μη τυποποιημένες θύρες:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip:custom-port
+     ```
+
+2. **Αναβάθμιση του `.env` Αρχείου**
+
+   Ανοίξτε το αρχείο σας `.env` και ενημερώστε το `SERVER_URL`:
+
+   ```ini
+   SERVER_URL=http(s)://your-domain-or-ip:your-port
+   ```
+
+   **Παραδείγματα:**
+
+   - Άμεση πρόσβαση χωρίς SSL:
+     ```ini
+     SERVER_URL=http://123.45.67.89:3000
+     ```
+   - Πρόσβαση μέσω τομέα με SSL:
+     ```ini
+     SERVER_URL=https://mytwentyapp.com
+     ```
+
+3. **Επανεκκίνηση της Εφαρμογής**
+
+   Για να επιδράσουν οι αλλαγές, επανεκκινήστε τα κοντέινερ Docker:
+
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+#### Σκέψεις
+
+- **Ρύθμιση Αντίστροφου Πληρεξούσιου:**
+
+  Βεβαιωθείτε ότι ο αντίστροφος πληρεξούσιος προωθεί τα αιτήματα στη σωστή εσωτερική θύρα (`3000` από προεπιλογή). Configure SSL termination and any necessary headers.
+
+- **Ρυθμίσεις Τείχους Προστασίας:**
+
+  Ανοίξτε τις απαραίτητες θύρες στο τείχος προστασίας σας για να επιτρέψετε εξωτερική πρόσβαση.
+
+- **Συνέπεια:**
+
+  Η `SERVER_URL` πρέπει να ταιριάζει με τον τρόπο που οι χρήστες αποκτούν πρόσβαση στην εφαρμογή σας μέσω των προγραμμάτων περιήγησής τους.
+
+#### Persistence
+
+- **Όγκοι Δεδομένων:**
+
+  Η διαμόρφωση Docker Compose χρησιμοποιεί όγκους για τη διατήρηση δεδομένων για τη βάση δεδομένων και την αποθήκευση του διακομιστή.
+
+- **Stateless Environments:**
+
+  Εάν αναπτύσσετε σε ένα περιβάλλον χωρίς κατάσταση (π.χ. συγκεκριμένες υπηρεσίες cloud), διαμορφώστε εξωτερική αποθήκευση για να διατηρήσετε δεδομένα.
+
+## Αντιμετώπιση Προβλημάτων
+
+Εάν συναντήσετε κάποιο πρόβλημα, ελέγξτε την [Αντιμετώπιση Προβλημάτων](https://docs.twenty.com/l/el/developers/self-hosting/troubleshooting) για λύσεις.
+

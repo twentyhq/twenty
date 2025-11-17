@@ -1,0 +1,42 @@
+---
+title: Image Input
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import imageInputCode from '!!raw-loader!@site/src/ui/input/components/imageInputCode.js'
+
+Ermöglicht Benutzern das Hochladen und Entfernen eines Bildes.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ImageInput } from "@/ui/input/components/ImageInput";
+
+export const MyComponent = () => {
+  return <ImageInput/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props         | Typ          | Beschreibung                                                                                                                   |
+| ------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| bild          | Zeichenkette | Die Bildquellen-URL                                                                                                            |
+| onUpload      | Funktion     | The function called when a user uploads a new image. Es erhält das `Datei` Objekt als Parameter                |
+| onRemove      | Funktion     | Die Funktion wird aufgerufen, wenn der Benutzer auf die Entfernen-Schaltfläche klickt.                         |
+| onAbort       | function     | Die Funktion wird aufgerufen, wenn der Benutzer während des Bilduploads auf die Abbrechen-Schaltfläche klickt. |
+| isUploading   | boolesch     | Gibt an, ob ein Bild derzeit hochgeladen wird                                                                                  |
+| Fehlermeldung | Zeichenkette | Eine optionale Fehlermeldung, die unterhalb des Bildeingangs angezeigt wird.                                   |
+| deaktiviert   | boolesch     | If `true`, the entire input is disabled, and the buttons are not clickable                                                     |
+
+</Tab>
+</Tabs>

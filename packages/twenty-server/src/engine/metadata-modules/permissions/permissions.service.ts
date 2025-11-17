@@ -114,6 +114,7 @@ export class PermissionsService {
         [PermissionFlagType.CONNECTED_ACCOUNTS]: false,
         [PermissionFlagType.IMPERSONATE]: false,
         [PermissionFlagType.SSO_BYPASS]: false,
+        [PermissionFlagType.PROFILE_INFORMATION]: false,
       },
       objectsPermissions: {},
     }) as const satisfies UserWorkspacePermissions;

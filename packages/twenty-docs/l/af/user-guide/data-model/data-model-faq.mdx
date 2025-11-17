@@ -1,0 +1,90 @@
+---
+title: Data Model Vrae En Antwoorde
+info: "Gereelde vrae oor datamodelkonfigurasie, beperkings, en opkomende funksies."
+image: /images/user-guide/what-is-twenty/faq.png
+sectionInfo: Buigsame datamodel ontwerp om jou unieke sakeprosesse te ondersteun
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/faq.png" alt="Header" />
+</Frame>
+
+## Voorwerpbestuur
+
+<AccordionGroup>
+<Accordion title="Can I reorder objects in the left navigation bar?">
+Nog nie. Voorwerporde in die navigasie is tans vas, maar hierdie funksie word vir 'n toekomstige vrystelling beplan.
+</Accordion>
+
+<Accordion title="Can I hide objects from the left navigation bar?">
+Alle aktiewe voorwerpe verskyn in die navigasie. Jy kan voorwerpe deaktiveer wat jy nie nodig het onder **Instellings → Datamodel**.
+</Accordion>
+
+<Accordion title="Can I delete standard objects (People, Companies, etc.)?">
+You can deactivate any standard objects but you cannot hard delete them.
+</Accordion>
+</AccordionGroup>
+
+## Veldvermoëns
+
+<AccordionGroup>
+<Accordion title="Can I create formula fields?">
+Formulevelde kom in **K1 2026**. Intussen kan jy werkvloeie gebruik om veldwaardes outomaties te bereken en op te dateer.
+</Accordion>
+
+<Accordion title="Can I have nested fields in my objects?">
+Geneste velde kom in **K1 2026**. Tans kan jy werkvloeie gebruik om veldwaardes van verwante voorwerpe te bring. For example, to display a company's industry on a Person record, create a custom field on People and use a workflow to synchronize the value.
+</Accordion>
+
+<Accordion title="Why can't I update relation field names?">
+Verwantskapsveldname beïnvloed die API-struktuur en kan nie verander word na skepping nie. As jy 'n verwantskapsveld moet hernoem, sal jy 'n nuwe een moet skep en die ou een moet verwyder.
+</Accordion>
+
+<Accordion title="Why do I need different singular and plural names?">
+Our GraphQL API uses both forms for different operations:
+- `createPerson` (singular) for single record actions
+- `createPeople` (plural) for bulk operations
+
+Dit skep beperkings wanneer enkelvoudige en meervoudige vorme dieselfde is, maar dit verbeter die ontwikkelaar-ervaring. </Accordion>
+
+<Accordion title="Why are some field names protected?">
+Sekere veldname soos `Type` of `Application` is gereserveer vir stelselgebruik. Kies alternatiewe name soos `Category` of `Classification` in plaas daarvan.
+</Accordion>
+</AccordionGroup>
+
+## Gevorderde Kenmerke
+
+<AccordionGroup>
+<Accordion title="Can I create many-to-many relationships?">
+Baie-tot-baie verhoudings kom in **K1 2026**. Currently, create an intermediate object with two 1-to-many relationships as a workaround.
+</Accordion>
+
+<Accordion title="What are Morph Many relationships?">
+Morf Baie verhoudings (kom in **K4 2025**) maak dit moontlik vir een voorwerp om met verskeie verskillende voorwerptipes te verbind. Byvoorbeeld, 'n Geleentheid kan aan óf 'n Persoon óf 'n Maatskappy gekoppel word.
+</Accordion>
+
+<Accordion title="Can I reorder fields in objects?">
+Veldreëling sal beskikbaar wees met pasgemaakte uitlegte in **K4 2025**. Tans verskyn velde in alfabetiese volgorde.
+</Accordion>
+</AccordionGroup>
+
+## Toegang en Magtiging
+
+<AccordionGroup>
+<Accordion title="Where can I see and edit my data model?">
+You can access your Data Model under **Settings → Data Model**.
+</Accordion>
+
+<Accordion title="Why can't I see the Data Model under Settings?">
+Neem kontak met jou werkspase-administrateur. Datamodeltoegang is gewoonlik beperk tot slegs administrateurs.
+</Accordion>
+
+<Accordion title="How many custom objects or fields can I create?">
+You can create as many custom objects and fields as you need - the price won't change.
+</Accordion>
+</AccordionGroup>
+
+## Meer Hulp Nodig?
+
+Kyk na ons [implementeringsdienste](/l/af/user-guide/getting-started/implementation-services) vir hulp met komplekse datamodelontwerp.
+

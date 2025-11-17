@@ -27,6 +27,12 @@ import {
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { AiRouterService } from 'src/engine/metadata-modules/ai-router/ai-router.service';
 
+export type TokenUsage = {
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+};
+
 export type StreamAgentChatOptions = {
   threadId: string;
   userWorkspaceId: string;
@@ -87,17 +93,18 @@ export class AgentStreamingService {
           });
 
           const routingStart = Date.now();
+          const includeDebugInfo = true;
           const routeResult = await this.aiRouterService.routeMessage(
             {
               messages,
               workspaceId: workspace.id,
               routerModel: workspace.routerModel,
             },
-            true,
+            includeDebugInfo,
           );
 
           const routingTime = Date.now() - routingStart;
-          const { agent, debugInfo } = routeResult;
+          const { agent, debugInfo, toolHints } = routeResult;
 
           if (!agent) {
             writer.write({
@@ -154,6 +161,7 @@ export class AgentStreamingService {
             userWorkspaceId,
             messages,
             recordIdsByObjectMetadataNameSingular,
+            toolHints,
           });
 
           const routedStatusPart = {
@@ -164,6 +172,7 @@ export class AgentStreamingService {
               state: 'routed',
               debug: {
                 routingTimeMs: routingTime,
+                contextBuildTimeMs: timings.contextBuildTimeMs,
                 agentExecutionStartTimeMs: Date.now() - startTime,
                 selectedAgentId: agent.id,
                 selectedAgentLabel: agent.label,
@@ -198,41 +207,7 @@ export class AgentStreamingService {
                   part.type.startsWith('tool-'),
                 ).length;
 
-                let tokenUsage: {
-                  promptTokens: number;
-                  completionTokens: number;
-                  totalTokens: number;
-                } | null = null;
-
-                try {
-                  const usage = await result.usage;
-
-                  const usageWithTokens = usage as {
-                    inputTokens?: number;
-                    outputTokens?: number;
-                    promptTokens?: number;
-                    completionTokens?: number;
-                    totalTokens?: number;
-                  };
-
-                  tokenUsage = {
-                    promptTokens:
-                      usageWithTokens.inputTokens ??
-                      usageWithTokens.promptTokens ??
-                      0,
-                    completionTokens:
-                      usageWithTokens.outputTokens ??
-                      usageWithTokens.completionTokens ??
-                      0,
-                    totalTokens: usageWithTokens.totalTokens ?? 0,
-                  };
-
-                  this.logger.log(
-                    `Agent execution usage: ${tokenUsage.promptTokens} prompt + ${tokenUsage.completionTokens} completion = ${tokenUsage.totalTokens} total tokens`,
-                  );
-                } catch (error) {
-                  this.logger.warn('Failed to get token usage:', error);
-                }
+                const tokenUsage = await this.extractTokenUsage(result.usage);
 
                 const agentExecutionTime = Date.now() - agentExecutionStart;
 
@@ -324,8 +299,45 @@ export class AgentStreamingService {
 
       pipeUIMessageStreamToResponse({ stream, response });
     } catch (error) {
-      this.logger.error(error.message);
+      this.logger.error(
+        'Failed to stream agent chat:',
+        error instanceof Error ? error.message : String(error),
+      );
       response.end();
+    }
+  }
+
+  private async extractTokenUsage(
+    usagePromise: Promise<unknown>,
+  ): Promise<TokenUsage | null> {
+    try {
+      const usage = await usagePromise;
+
+      const usageWithTokens = usage as {
+        inputTokens?: number;
+        outputTokens?: number;
+        promptTokens?: number;
+        completionTokens?: number;
+        totalTokens?: number;
+      };
+
+      const tokenUsage = {
+        promptTokens:
+          usageWithTokens.inputTokens ?? usageWithTokens.promptTokens ?? 0,
+        completionTokens:
+          usageWithTokens.outputTokens ?? usageWithTokens.completionTokens ?? 0,
+        totalTokens: usageWithTokens.totalTokens ?? 0,
+      };
+
+      this.logger.log(
+        `Agent execution usage: ${tokenUsage.promptTokens} prompt + ${tokenUsage.completionTokens} completion = ${tokenUsage.totalTokens} total tokens`,
+      );
+
+      return tokenUsage;
+    } catch (error) {
+      this.logger.warn('Failed to get token usage:', error);
+
+      return null;
     }
   }
 }

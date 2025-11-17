@@ -1,0 +1,129 @@
+---
+title: Řešení problémů s workflow
+info: Ladění a optimalizace vašich workflow pomocí technik řešení problémů a tipů na optimalizaci výkonu.
+image: /images/user-guide/what-is-twenty/20.png
+sectionInfo: Automatizujte procesy a integrujte se s externími nástroji
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Ladění s běhy workflow
+
+Použijte rozhraní **Běhy Workflow** k ladění problémů:
+
+- Přístup přes panel **Běhy** v editoru workflow
+- Klikněte na jednotlivé běhy a zobrazte si vstupní/výstupní data pro každý krok
+- Zkontrolujte stav provádění, chybová hlášení a toky dat mezi kroky
+
+## Běžné problémy a řešení
+
+### Workflow se nespouští
+
+**Problém**: Workflow se nespustí, když je očekáváno.
+
+**Řešení**:
+
+- Zkontrolujte, zda je workflow **Aktivní** (ne v režimu koncept)
+- Ujistěte se, že konfigurace spuštění odpovídá struktuře vašich dat
+- Pro spuštění na základě záznamu ujistěte se, že jsou vybrány správné objekty a pole
+- Pro spuštění na základě webhooku ověřte URL a očekávaný formát dat
+- Pro spuštění na základě plánu zkontrolujte časovou konfiguraci
+
+### Formuláře nejsou přístupné
+
+**Problém**: Akce formulářů je těžké najít nebo přistupovat k nim v automatizovaných pracovních postupech.
+
+<Warning>
+Formuláře jsou aktuálně navrženy pouze pro ruční spuštění. U workflow s jinými spouštěči (vytvoření záznamu, aktualizace atd.) jsou formuláře přístupné pouze přes rozhraní běžů workflow, což neodpovídá očekávané uživatelské zkušenosti. V roce 2026 bude uvedeno centrum oznámení pro správnou podporu formulářů v automatizovaných pracovních postupech.
+</Warning>
+
+**Dočasné řešení**: Použijte ruční spouštěče, pokud jsou formuláře vyžadovány, nebo přepracujte workflow, aby se formuláře v automatizovaných tocích vyhnuly.
+
+### Vysoká spotřeba kreditů
+
+**Problém**: Workflow spotřebovávají více kreditů, než se očekávalo.
+
+**Běžné příčiny a řešení**:
+
+- **Neefektivní API volání**: Sdružujte API volání, kdy je to možné, místo jednotlivých požadavků
+- **Špatná konfigurace ručního spouštění**: Použijte dostupnost `Hromadné` místo `Jednotlivé`, abyste mohli zpracovat více záznamů v jednom běhu workflow
+- **Chybějící filtry**: Přidejte podmíněnou logiku, aby se workflow zastavilo, když kritéria nejsou splněna
+- **Zbytečné kroky**: Odstraňte přebytečné akce a optimalizujte logiku workflow
+- **Skutečný čas vs. Plánovaný**: Použijte plánované pracovní postupy pro méně urgentní procesy
+
+### Limity souběžných workflow
+
+**Problém**: Narážíte na limit 100 souběžných workflow na workspace.
+
+<Warning>Nemůžete spustit více než 100 pracovních postupů paralelně v jakémkoli daném čase na workspace.</Warning>
+
+**Řešení**:
+
+- Použijte `Hromadné` k dispozici pro ruční spouštění ke zpracování více záznamů v jednom běhu
+- Implementujte zpoždění mezi spuštěním workflow pomocí plánovaných spouštění
+- Optimalizujte workflow, aby běžela rychleji a zkrátila dobu souběžného provádění
+- Zvažte dávkové zpracování mimo špičku
+
+### Omezení rychlosti API
+
+**Problém**: Externí API volání selhává z důvodu omezení rychlosti.
+
+**Řešení**:
+
+- Používejte plánovaná workflow místo spouštěčů v reálném čase, kdy je to možné
+- Implementujte zpoždění mezi API voláními v kódových akcích
+- Pokud to externí služba umožňuje, sdružujte API požadavky
+- Sledujte běhy workflow pro chyby omezení rychlosti a upravte časování
+
+### Problémy s iterátorem
+
+**Problém**: Akce iterátoru nefungují, jak se očekávalo.
+
+**Řešení**:
+
+- **Poznámka**: Iterátor je aktuálně v beta verzi. Aktivujte ho v Nastavení → Vydání → Laboratoř
+- Ověřte, že vstup je pole záznamů z předchozího kroku
+- Zkontrolujte, zda jsou akce v rámci iterátoru správně konfigurovány
+- Použijte Iterátor s `Hromadné` ruční spouštěče pro optimální výkon
+
+### Chybějící oprávnění
+
+**Problém**: Nelze získat přístup k sekci workflow.
+
+<Warning>
+Pokud nevidíte sekci Workflows, je to kvůli problému s oprávněními. Kontaktujte svého správce pracovního prostoru, aby vám udělil přístup k pracovním postupům.
+</Warning>
+
+## Tipy na optimalizaci
+
+### Nejlepší postupy pro výkon
+
+- **Začněte jednoduše** a postupně přidávejte složitost
+- **Použijte `Hromadnou` dostupnost** pro ruční spouštěče ke zpracování více záznamů efektivně
+- **Přidejte filtry brzy**, aby se workflow zastavilo, když nejsou splněna kritéria
+- **Sdružujte API volání** a použijte plánované pracovní postupy pro méně urgentní procesy
+- **Skryjte běhy workflow** z stránek zobrazujících všechna workflow pro zlepšení výkonu načítání
+- **Pravidelně sledujte spotřebu kreditů** v Nastavení → Účtování
+
+### Prevence chyb
+
+- **Testujte v režimu konceptu** před aktivací workflow
+- **Validujte odpovědi API** a implementujte opatření pro neúspěšné akce
+- **Používejte popisná jména kroků** pro snazší údržbu
+- **Dokumentujte složitou logiku** pro členy týmu
+
+## Získání pomoci
+
+### Zdroje pro vlastní potřebu
+
+- Prohlédněte si [Vlastnosti workflow](/l/cs/user-guide/workflows/workflow-features) pro technické podrobnosti
+- Zkontrolujte [Kredity workflow](/l/cs/user-guide/workflows/workflow-credits) pro tipy na optimalizaci
+- Prozkoumejte [Interní automatizace](/l/cs/user-guide/workflows/internal-automations) a [Integrace externích nástrojů](/l/cs/user-guide/workflows/external-tool-integration) pro příklady
+
+### Profesionální podpora
+
+- Kontaktujte naše [Profesionální služby](/l/cs/user-guide/workflows/professional-services) pro složité řešení problémů
+- Obraťte se na podporu prostřednictvím contact@twenty.com pro technickou pomoc
+

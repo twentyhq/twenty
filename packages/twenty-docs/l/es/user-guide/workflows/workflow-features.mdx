@@ -1,0 +1,320 @@
+---
+title: Características del Flujo de Trabajo
+info: Referencia completa para todos los disparadores, acciones y características de gestión de flujos de trabajo disponibles.
+image: /images/user-guide/workflows/robot.png
+sectionInfo: Automatiza procesos e integra con herramientas externas
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/robot.png" alt="Header" />
+</Frame>
+
+## Disparadores de Flujos de Trabajo
+
+Los flujos de trabajo siempre comienzan con un solo disparador que define cuándo debe ejecutarse la automatización.
+
+### El Registro es Creado
+
+Inicia el flujo de trabajo cuando se crea un nuevo registro en un objeto seleccionado (Personas, Empresas, Oportunidades o cualquier objeto personalizado).
+
+**Configuración**: Selecciona el tipo de objeto para monitorear nuevos registros.
+
+### El Registro es Actualizado
+
+Inicia el flujo de trabajo cuando se realizan cambios en un registro existente.
+
+**Configuración**:
+
+- Selecciona el tipo de objeto
+- Opcionalmente especifica qué campos monitorear para cambios
+
+### El Registro es Actualizado o Creado
+
+Inicia el flujo de trabajo cuando un registro es creado o actualizado en un objeto seleccionado.
+
+**¿Por qué Esto es Importante?**: Este disparador es particularmente útil porque los registros creados por diferentes métodos se comportan de manera diferente:
+
+- **Importaciones API/CSV**: Los registros se crean con todos los campos poblados inmediatamente
+- **Creación manual**: Los registros se crean primero, luego los campos se agregan en actualizaciones posteriores
+
+**Configuración**:
+
+- Selecciona el tipo de objeto para monitorear
+- Opcionalmente especifica qué campos monitorear para cambios
+- El flujo de trabajo se activará tanto en la creación inicial como en cualquier actualización posterior
+
+### El Registro es Eliminado
+
+Inicia el flujo de trabajo cuando un registro es eliminado de un objeto.
+
+**Configuración**: Selecciona el tipo de objeto para monitorear eliminaciones.
+
+### Lanzar Manualmente
+
+Inicia el flujo de trabajo cuando es desencadenado por una acción del usuario. Este disparador puede ser accedido a través del menú Cmd+K o mediante un botón personalizado en la barra de navegación superior.
+
+**Configuración de Disponibilidad**:
+Elige cómo debe manejar el flujo de trabajo la selección de registros:
+
+- **Global**: No record is required to trigger this workflow. El flujo de trabajo se activa desde cualquier lugar (desde cualquier objeto) y no utiliza registro(s) como entrada.
+
+- **Simple**: El/los registro(s) seleccionado(s) se pasará(n) a tu flujo de trabajo. Esto está configurado para un objeto dado. Se pueden seleccionar varios registros antes de activar el flujo de trabajo. El flujo de trabajo se ejecutará tantas veces como haya registros seleccionados.
+
+  <Warning>
+  You cannot run more than 100 workflows in parallel at any given time.
+  </Warning>
+
+- **En masa**: El(los) registro(s) seleccionado(s) se pasará(n) a su flujo de trabajo. Esto está configurado para un objeto dado. Se pueden seleccionar varios registros antes de iniciar el flujo de trabajo. El flujo de trabajo se ejecutará una vez, proporcionando como entrada toda la lista de registros. Esto significa que el flujo de trabajo necesita contener una acción de Iterador. Esto es mejor para personas que desean optimizar/limitar el número de ejecuciones del flujo de trabajo.
+
+**Configuración Adicional**:
+
+- Seleccione el objeto de destino (para disponibilidad Individual y En masa)
+- Elija un ícono de comando para activar el flujo de trabajo
+- Configure la colocación en la barra de navegación (Fijado o No Fijado)
+
+**Métodos de Acceso**:
+
+- Menú Cmd+K para encontrar e iniciar flujos de trabajo manuales
+- Botón personalizado en la barra de navegación superior (si está configurado)
+
+### En un Horario
+
+Inicia el flujo de trabajo de forma recurrente según lo defina.
+
+**Configuración**:
+
+- Seleccione unidad de tiempo (minutos, horas, días)
+- Ingrese un valor o use expresiones cron personalizadas para programación avanzada
+
+### Webhook
+
+Inicia el flujo de trabajo cuando se recibe una solicitud GET o POST de un servicio externo.
+
+**Configuración**:
+
+- Recibir una URL de webhook única
+- Para solicitudes POST, defina la estructura esperada del cuerpo
+- Configure la autenticación si es necesario
+
+## Acciones del Flujo de Trabajo
+
+Las acciones definen lo que ocurre después de que se dispara un activador. Puede encadenar múltiples acciones juntas.
+
+### Crear un Registro
+
+Agrega un nuevo registro a un objeto seleccionado.
+
+**Configuración**:
+
+- Seleccione el objeto de destino
+- Complete los campos obligatorios y opcionales
+- Utilice datos de pasos anteriores para completar los campos
+
+**Salida**: Los datos del registro recién creado están disponibles para su uso en pasos posteriores.
+
+### Actualizar Registro
+
+Modifica un registro existente en un objeto seleccionado.
+
+**Configuración**:
+
+- Seleccione el objeto de destino
+- Elija el registro específico a actualizar
+- Seleccione campos a modificar e ingrese nuevos valores
+
+**Salida**: Los datos del registro actualizado están disponibles para su uso en pasos posteriores.
+
+### Eliminar Registro
+
+Elimina un registro de un objeto seleccionado.
+
+**Configuración**:
+
+- Seleccione el objeto de destino
+- Elija el registro específico a eliminar
+
+**Salida**: Los datos del registro eliminado permanecen disponibles para su uso en pasos posteriores.
+
+### Buscar Registros
+
+Encuentra registros dentro de un objeto seleccionado usando condiciones de filtro.
+
+**Configuración**:
+
+- Seleccione el objeto a buscar
+- Establezca criterios de filtro para restringir resultados
+- Configure la clasificación y los límites
+
+**Salida**: Devuelve registros coincidentes que se pueden usar en pasos posteriores.
+
+**Mejor práctica**: Utilice ramas después de Buscar Registros para manejar escenarios de "encontrado" vs "no encontrado".
+
+### Iterador
+
+Repite un array de registros devueltos de un paso anterior, permitiéndole realizar acciones sobre cada registro individualmente.
+
+**Configuración**:
+
+- Seleccione el array de registros de un paso anterior (por ejemplo, resultados de Buscar Registros)
+- Defina las acciones a realizar en cada registro en el bucle
+- Configure el nombre de la variable para referenciar cada registro en la iteración
+
+**Ejemplo**: Buscar Registros devuelve 5 personas, luego usa Iterador para enviar un correo electrónico a cada persona o actualizar cada registro individualmente.
+
+**Nota**: El Iterator está actualmente en beta. Actívalo en Configuración > Lanzamientos > Lab.
+
+### Filtro
+
+Filtra un array de registros basado en condiciones especificadas, permitiendo pasar solo los registros que cumplen los criterios.
+
+**Configuración**:
+
+- Select the array of records to filter
+- Defina condiciones y criterios de filtro
+- Configure qué registros deben pasar a pasos posteriores
+
+**Salida**: Devuelve solo los registros que coinciden con las condiciones de filtro especificadas.
+
+### Enviar correo electrónico
+
+Envía un correo electrónico desde su flujo de trabajo.
+
+**Prerrequisitos**: Agregue una cuenta de correo electrónico en Configuración > Cuentas
+
+**Configuración**:
+
+- Ingrese la dirección de correo electrónico del destinatario
+- Establezca la línea de asunto
+- Redacte el cuerpo del mensaje
+- Haga referencia a variables de pasos anteriores para personalización
+
+**Nota**: Los archivos adjuntos de correo electrónico estarán disponibles en el primer trimestre de 2026.
+
+### Código
+
+Ejecuta JavaScript personalizado dentro de su flujo de trabajo.
+
+**Configuración**:
+
+- Escriba el código JavaScript en el editor
+- Acceda a variables de pasos anteriores
+- Devuelva variables para su uso en pasos posteriores
+- Pruebe el código directamente en el paso
+
+**Acceso**: Gestione claves API en Configuración → API y Webhooks
+
+### Formulario
+
+Solicita un formulario durante la ejecución del flujo de trabajo para recopilar la entrada del usuario.
+
+**Configuración**:
+
+- Defina campos de entrada con tipos, etiquetas y marcadores de posición
+- Configure reglas de validación
+- Establezca el título y la descripción del formulario
+
+**Salida**: Las respuestas del formulario están disponibles para su uso en pasos posteriores.
+
+<Warning>
+Los formularios están diseñados actualmente solo para disparadores manuales. Para flujos de trabajo con otros disparadores (Registro Creado, Actualizado, etc.), los formularios solo son accesibles a través de la interfaz de ejecución de flujos de trabajo, lo cual no es la experiencia de usuario esperada. Un centro de notificaciones se lanzará en 2026 para soportar adecuadamente los formularios en flujos de trabajo automatizados.
+</Warning>
+
+### Solicitud HTTP
+
+Envía una solicitud a un API externo como parte de su flujo de trabajo.
+
+**Configuración**:
+
+- Ingrese la URL del extremo de la API
+- Seleccione el método HTTP (GET, POST, PUT, PATCH, DELETE)
+- Agregue encabezados y valores necesarios
+- Incluya el cuerpo de la solicitud para solicitudes POST/PUT/PATCH
+- Proporcione una respuesta de muestra para vista previa de estructura
+
+## Workflow Management
+
+### Creating Workflows
+
+1. Click "+ Add a Workflow" to begin
+2. Click "Untitled" to name your workflow
+3. Choose and configure your workflow trigger
+4. Add actions to your workflow
+5. Test and iterate
+6. Activate your workflow (currently in draft mode) once you're done editing it
+
+**Nota**: Si no ves la sección de Flujos de Trabajo, esto se debe a un problema de permisos. Contacta a tu administrador de espacio de trabajo para que te otorgue acceso a los flujos de trabajo.
+
+### Workflow Statuses
+
+- **Borrador**: En edición, aún no publicado
+- **Activo**: Versión en vivo respondiendo a activadores
+- **Desactivado**: Anteriormente activo pero detenido manualmente
+- **Archivado**: Versiones pasadas guardadas para historial
+
+### Activating Workflows
+
+Haga clic en **Activar** para publicar su borrador como una nueva versión. Esto hace que el flujo de trabajo sea elegible para ejecutarse cuando se activa, pero no lo ejecuta inmediatamente.
+
+### Testing Workflows
+
+Test workflows before activation using:
+
+- Manual triggers (when no record selected)
+- Individual action testing (especially Code actions)
+- Draft mode testing that doesn't activate the workflow
+
+### Ejecuciones de Workflow
+
+Una **Ejecución** es un registro de ejecución de flujo de trabajo que contiene:
+
+- Estado (exitoso, fallido, en curso)
+- Datos de salida de cada paso
+- Autor y marcas de tiempo
+- Mensajes de error si corresponde
+
+**Viewing Runs**:
+
+- Verifique el panel **Ejecuciones** en el editor de flujo de trabajo
+- Abra la vista **Ejecución de Flujos de Trabajo** para monitorear todos los flujos de trabajo
+
+**Consejo de Rendimiento**: Oculte ejecuciones de flujo de trabajo de la página de "Todos los flujos de trabajo" y otras páginas de flujo de trabajo para mejorar el rendimiento de carga, ya que un gran número de ejecuciones puede ralentizar la carga de la página.
+
+### Historial de Versión
+
+- Vea todas las versiones en el campo **Versiones**
+- Haga clic en cualquier versión para ver detalles
+- Use **Usar como borrador** para restaurar versiones anteriores
+- Maneje los conflictos de borrador con opciones de sobrescribir o retornar
+
+## Mejores prácticas
+
+### Organización del Flujo de Trabajo
+
+- **Nombres Descriptivos**: Use nombres de flujos de trabajo claros y específicos
+- **Cambio de Nombre de Etapas**: Renombre etapas para describir su función
+- **Documentación**: Agregue comentarios en acciones de Código
+- **Categorización**: Agrupe lógicamente flujos de trabajo relacionados
+- **Campos Personalizados**: Agregue campos al objeto de Flujo de trabajo en su modelo de datos (similar a otros objetos) para organizar y categorizar flujos de trabajo con propiedades personalizadas
+
+### Optimización del Rendimiento
+
+- **Minimizar Llamadas API**: Agrupe operaciones cuando sea posible
+- **Búsquedas Eficientes**: Use criterios de filtro específicos
+- **Manejo de Errores**: Planifique escenarios de fallo
+- **Límite de Velocidad**: Respete límites de API externas
+
+### Gestión del Flujo de Datos
+
+- **Lógica de Ramas**: Use ramas después de Buscar Registros
+- **Uso de Variables**: Aproveche datos de pasos anteriores
+- **Validación de Datos**: Valide entradas en acciones de Código
+- **Mapeo de Campos**: Planifique transformaciones de datos cuidadosamente
+
+### Monitoreo y Mantenimiento
+
+- **Monitoreo Regular**: Verifique ejecuciones de flujo de trabajo para errores
+- **Revisión de Rendimiento**: Analice tiempos de ejecución y tasas de éxito
+- **Gestión de Actualizaciones**: Pruebe cambios en borrador antes de la activación
+- **Coordinación del Equipo**: Documente flujos de trabajo para los miembros del equipo
+
+Para ejemplos prácticos de estas características en acción, consulte nuestras guías de [Automatizaciones Internas](/l/es/user-guide/workflows/internal-automations) e [Integración con Herramientas Externas](/l/es/user-guide/workflows/external-tool-integration).

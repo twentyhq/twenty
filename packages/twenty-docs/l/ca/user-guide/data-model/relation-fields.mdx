@@ -1,0 +1,62 @@
+---
+title: Camps de Relació
+info: Aprèn com crear relacions entre objectes utilitzant camps de relació i configurar relacions 1-a-molts.
+image: /images/user-guide/fields/relations_field.png
+sectionInfo: Model de dades flexible dissenyat per donar suport als teus processos empresarials únics
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/relations_field.png" alt="Header" />
+</Frame>
+
+## Què són els Camps de Relació?
+
+Els camps de relació enllacen registres d'un objecte amb registres en un altre objecte. Per exemple:
+
+- **Persones** → **Empreses** (cada persona treballa per una empresa)
+- **Oportunitats** → **Persones** (cada oferta té un contacte personal)
+- **Tasks** → **Opportunities** (each task relates to a specific deal)
+
+## Creant Camps de Relació
+
+### 1. Afegeix el Camp
+
+Ves a **Configuració → Model de Dades → [El Teu Objecte]** i fes clic a **Afegir Camp**.
+
+### 2. Tria Tipus de Relació
+
+- **Tipus de Camp**: Selecciona "Relació"
+- **Objectiu de Connexió**: Tria quin objecte connectar
+- **Relació**: Actualment només suporta relacions **1-a-molts**. Assegura't de crear la relació en la direcció correcta.
+
+### 3. Configura Noms de Camps
+
+Hauràs d'establir noms per a ambdues bandes de la relació:
+
+- **Nom del camp d'origen**: Com apareix el camp en el teu objecte actual
+- **Nom del camp de destinació**: Com apareix el camp invers en l'objecte de destinació
+
+<Warning>
+Els noms dels camps no es poden editar un cop la relació està guardada, ja que afecta l'estructura de l'API. Tria amb cura.
+</Warning>
+
+## Relació amb Membres de l'Equip
+
+Pots crear relacions amb qualsevol objecte, incloent-hi **Membres de l'Espai de Treball** (els usuaris del teu equip Twenty). Això és útil per crear camps de propietat:
+
+- **Propietari del Compte**: Enllaça una Empresa a un membre de l'equip que la gestiona
+- **Propietari de l'Oportunitat**: Assigna una Oportunitat a un venedor específic
+
+Quan crees una relació amb `Membres de l'Espai de Treball`, veuràs els noms dels teus membres de l'equip a les seleccions desplegables, fent més fàcil assignar propietat i responsabilitats.
+
+## Millors pràctiques
+
+- **Planifica les teves relacions** abans de crear-les
+- **Utilitza noms clars i descriptius** per a ambdós noms de camps
+- **Prova les relacions** amb dades de mostra abans de la implementació completa
+
+## Funcionalitats Futures
+
+- **Relacions Morph Many** (Arribaran al Q4 2025)
+- **Relacions molts-a-molts** (Arribaran al Q1 2026)
+

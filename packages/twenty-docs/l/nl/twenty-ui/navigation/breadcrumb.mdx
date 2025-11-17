@@ -1,0 +1,44 @@
+---
+title: Breadcrumb
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+Renders een navigatiebalk met broodkruimels.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter } from "react-router-dom";
+import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+
+export const MyComponent = () => {
+  const breadcrumbLinks = [
+    { children: "Home", href: "/" },
+    { children: "Category", href: "/category" },
+    { children: "Subcategory", href: "/category/subcategory" },
+    { children: "Current Page" },
+  ];
+
+  return (
+    <BrowserRouter>
+      <Breadcrumb className links={breadcrumbLinks} />
+    </BrowserRouter>
+    )
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props     | Soort      | Beschrijving                                                                                                                                                                                                                                                                              |
+| --------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className | tekenreeks | Optionele klassennaam voor extra styling                                                                                                                                                                                                                                                  |
+| links     | lijst      | An array of objects, each representing a breadcrumb link. Elk object heeft een `children` eigenschap (de tekstinhoud van de link) en een optionele `href` eigenschap (de URL om naar te navigeren wanneer op de link wordt geklikt) |
+
+</Tab>
+</Tabs>

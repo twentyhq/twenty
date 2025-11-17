@@ -994,10 +994,20 @@ msgstr "Ngày đến hạn"
 msgid "Duplicated option {field}"
 msgstr "Tùy chọn bị trùng lặp {field}"
 
+#. js-lingui-id: AcnTuz
+#: src/engine/core-modules/user/services/user.service.ts
+msgid "Email already in use"
+msgstr ""
+
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Email already verified."
 msgstr "Email đã được xác minh."
+
+#. js-lingui-id: LT5dFi
+#: src/engine/core-modules/user/services/user.service.ts
+msgid "Email can only be updated when you belong to a single workspace."
+msgstr ""
 
 #. js-lingui-id: xw6iqb
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
@@ -2112,11 +2122,6 @@ msgstr "Các tải trọng tạo quan hệ Morph chỉ được phép chứa th�
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
 msgstr "Payloads tạo mối quan hệ dạng lỗi chỉ được chứa liên kết đến cùng một siêu dữ liệu đối tượng"
 
-#. js-lingui-id: DsdcRG
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
-msgid "Morph relation fields are disabled for your workspace"
-msgstr "Trường quan hệ Morph bị vô hiệu trong không gian làm việc của bạn"
-
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
@@ -2208,6 +2213,11 @@ msgstr "Tên cần phải có dạng camelCase"
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Names are not synced with labels"
 msgstr "Tên không đồng bộ với nhãn"
+
+#. js-lingui-id: TYhxR+
+#: src/engine/core-modules/user/services/user.service.ts
+msgid "New email must be different from current email"
+msgstr ""
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2650,6 +2660,11 @@ msgstr "Điện thoại"
 msgid "Please check your connection settings. Make sure the server host, port, and password are correct."
 msgstr "Vui lòng kiểm tra cài đặt kết nối của bạn. Đảm bảo rằng máy chủ, cổng và mật khẩu đều chính xác."
 
+#. js-lingui-id: mqzu5F
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Please confirm your updated email"
+msgstr ""
+
 #. js-lingui-id: v0iiWr
 #: src/engine/core-modules/webhook/webhook.service.ts
 #: src/engine/core-modules/webhook/webhook.service.ts
@@ -2995,16 +3010,6 @@ msgstr "Chủ đề"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Sunday"
 msgstr "Chủ Nhật"
-
-#. js-lingui-id: VuvnTL
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Sync all folders"
-msgstr "Đồng bộ tất cả thư mục"
-
-#. js-lingui-id: 9PsZjo
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Sync all folders including new ones"
-msgstr "Đồng bộ tất cả thư mục, bao gồm những thư mục mới"
 
 #. js-lingui-id: oyJYg7
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts

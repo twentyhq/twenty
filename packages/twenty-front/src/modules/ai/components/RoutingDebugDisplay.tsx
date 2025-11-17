@@ -98,14 +98,15 @@ const StyledTimingValue = styled.span`
 
 type TabType = 'timing' | 'details' | 'context';
 
-const TimingRow = ({
-  label,
-  value,
-}: {
+type TimingRowProps = {
   label: string;
   value: string | number | undefined;
-}) => {
-  if (value === undefined) return null;
+};
+
+const TimingRow = ({ label, value }: TimingRowProps) => {
+  if (value === undefined) {
+    return null;
+  }
 
   return (
     <StyledTimingRow>
@@ -131,22 +132,26 @@ const formatTokenBreakdown = (
   completion?: number,
 ) => {
   const formattedTotal = formatNumber(total);
-  if (
+  const hasValidBreakdown =
     prompt !== undefined &&
     completion !== undefined &&
     prompt > 0 &&
-    completion > 0
-  ) {
+    completion > 0;
+
+  if (hasValidBreakdown) {
     return `${formattedTotal} (${formatNumber(prompt)} → ${formatNumber(completion)})`;
   }
+
   return formattedTotal;
 };
 
-const TimingTab = ({
-  debug,
-}: {
-  debug: NonNullable<DataMessagePart['routing-status']['debug']>;
-}) => {
+type DebugInfo = NonNullable<DataMessagePart['routing-status']['debug']>;
+
+type TimingTabProps = {
+  debug: DebugInfo;
+};
+
+const TimingTab = ({ debug }: TimingTabProps) => {
   const totalTime =
     debug.agentExecutionStartTimeMs !== undefined
       ? `${debug.agentExecutionStartTimeMs + (debug.agentExecutionTimeMs || 0)}ms`
@@ -228,13 +233,12 @@ const TimingTab = ({
   );
 };
 
-const DetailsTab = ({
-  debug,
-  copyToClipboard,
-}: {
-  debug: NonNullable<DataMessagePart['routing-status']['debug']>;
+type DetailsTabProps = {
+  debug: DebugInfo;
   copyToClipboard: (value: string) => void;
-}) => {
+};
+
+const DetailsTab = ({ debug, copyToClipboard }: DetailsTabProps) => {
   const { t } = useLingui();
 
   const detailsData = {
@@ -263,13 +267,12 @@ const DetailsTab = ({
   );
 };
 
-const ContextTab = ({
-  debug,
-  copyToClipboard,
-}: {
-  debug: NonNullable<DataMessagePart['routing-status']['debug']>;
+type ContextTabProps = {
+  debug: DebugInfo;
   copyToClipboard: (value: string) => void;
-}) => {
+};
+
+const ContextTab = ({ debug, copyToClipboard }: ContextTabProps) => {
   const { t } = useLingui();
 
   if (!debug.context) {
@@ -298,15 +301,19 @@ const ContextTab = ({
       </StyledJsonTreeContainer>
     );
   } catch {
-    return <StyledTimingLabel>{debug.context}</StyledTimingLabel>;
+    return (
+      <StyledTimingLabel>
+        Failed to parse context: {debug.context}
+      </StyledTimingLabel>
+    );
   }
 };
 
-export const RoutingDebugDisplay = ({
-  debug,
-}: {
-  debug: NonNullable<DataMessagePart['routing-status']['debug']>;
-}) => {
+type RoutingDebugDisplayProps = {
+  debug: DebugInfo;
+};
+
+export const RoutingDebugDisplay = ({ debug }: RoutingDebugDisplayProps) => {
   const theme = useTheme();
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);

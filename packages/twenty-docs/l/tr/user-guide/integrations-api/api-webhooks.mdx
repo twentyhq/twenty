@@ -1,0 +1,83 @@
+---
+title: API & Webhook'lar
+info: "Create and manage API keys for authentication and set up webhooks for real-time notifications."
+image: /images/user-guide/api/api.png
+sectionInfo: Twenty'yi diğer araçlarınıza nasıl bağlayacağınızı öğrenin.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+## API Anahtarları
+
+API anahtarları, CRM verilerinize otomatik erişim sağlar, verileri diğer sistemlerle senkronize eder ve özel entegrasyonlar veya çözümler oluşturur.
+
+### Bir API Anahtarı Oluştur
+
+1. Go to **Settings → APIs & Webhooks**
+2. Sağ üst köşedeki **+ Anahtar Oluştur** seçeneğine tıklayın
+3. API anahtarınızı yapılandırın:
+   - **Adı**: API anahtarınıza açıklayıcı bir ad verin
+   - **Son Kullanma Tarihi**: Anahtarın ne zaman sona ereceğini ayarlayın
+4. API anahtarınızı oluşturmak için **Kaydet**'e tıklayın
+5. **Önemli**: API anahtarınızı hemen kopyalayın ve saklayın, yalnızca bir kez gösterilir
+
+Oluşturulduktan sonra, API anahtarınız size özel API belgelerine ve gerçek veri modelinizle uç noktaları test edebileceğiniz oyun alanına erişim sağlar.
+
+<Warning>
+API anahtarınız hassas bilgilere erişim sağladığından, güvenmediğiniz hizmetlerle paylaşmamalısınız. If leaked, someone can use it maliciously. API anahtarınızın güvenliği ihlal edilirse, hemen devre dışı bırakın ve yeni bir anahtar oluşturun.
+</Warning>
+<VimeoEmbed videoId="928786722" title="Creating API key" />
+
+### API Anahtarlarını Yönet
+
+**Bir API Anahtarını Yeniden Oluşturma:**
+
+1. Go to **Settings → APIs & Webhooks**
+2. Yeniden oluşturmak istediğiniz API anahtarına tıklayın
+3. **Yeniden Oluştur** düğmesine tıklayın
+4. Yeni API anahtarını hemen kopyalayın ve kaydedin
+
+**API anahtarını sil:**
+
+1. API anahtarını listenizde bulun
+2. Detaylarını açmak için anahtara tıklayın
+3. Kalıcı olarak kaldırmak için **Sil**'e tıklayın
+
+## Webhooklar
+
+Webhooks allow for immediate updates to your specified URL about changes or events related to your customer data.
+
+For example, when an Opportunity moves to "Closed Won", a webhook can automatically trigger invoice creation in your accounting system. Note that this type of automation can also be achieved using Twenty's in-app [Workflows feature](/l/tr/user-guide/workflows/getting-started-workflows), which offers triggers based on field updates for internal automation.
+
+Webhooks are ideal for integrating with external systems, while Workflows support both internal automation and external tool connections via webhook triggers, code nodes, and HTTP nodes.
+
+### Webhook oluştur
+
+1. **Ayarlar → API'ler ve Webhook'lar → Webhook'lar**'a gidin
+2. **+ Webhook oluştur**'a tıklayın
+3. Webhook URL'nizi (bildirimleri almak istediğiniz yer) girin
+4. **Kaydet**'e tıklayın
+
+Webhook'unuz CRM verilerinizdeki değişiklikler hakkında gerçek zamanlı bildirimler almaya hemen başlayacaktır.
+
+<VimeoEmbed videoId="928786708" title="Video demonstration" />
+
+### Manage Webhooks
+
+**Webhook'u Sil:**
+
+1. **Ayarlar → API'ler ve Webhook'lar → Webhook'lar**'a gidin
+2. Kaldırmak istediğiniz webhook'u bulun
+3. Webhook'a tıklayın
+4. **Sil**'e ve açılır pencerede onaylayın
+
+**Edit a Webhook:**
+
+1. Düzenlemek istediğiniz webhook'a tıklayın
+2. URL'yi veya diğer ayarları güncelleyin
+3. Değişiklikleri uygulamak için **Kaydet**'e tıklayın
+

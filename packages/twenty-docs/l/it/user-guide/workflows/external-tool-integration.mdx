@@ -1,0 +1,220 @@
+---
+title: Integrazione degli Strumenti Esterni
+info: Questi flussi di lavoro si concentrano sull'importazione e l'esportazione di dati in e fuori da Twenty attraverso chiamate API e webhooks.
+image: /images/user-guide/integrations/plug.png
+sectionInfo: Automatizza processi e integra con strumenti esterni
+---
+
+<Frame>
+  <img src="/images/user-guide/integrations/plug.png" alt="Header" />
+</Frame>
+
+Di seguito sono riportati esempi di flussi di lavoro che potresti implementare per collegare Twenty con il resto del tuo stack.
+
+## Casi d'Uso per l'Ingestione di Dati
+
+### Invii di Moduli Web
+
+**Problema**: È necessario acquisire lead da moduli del sito web, pagine di destinazione o moduli di contatto direttamente in Twenty.
+
+**Soluzione**: Utilizza trigger webhook per creare automaticamente record dagli invii di moduli.
+
+**Impostazione**:
+
+- Crea un flusso di lavoro con un trigger webhook
+- Configura il webhook per aspettarsi dati del modulo (nome, email, azienda, ecc.)
+- Imposta il metodo del webhook su POST
+- Definisci la struttura del corpo attesa nel trigger
+
+**Trigger**: Webhook (richiesta POST dal tuo modulo)
+
+**Azioni**:
+
+- Cerca Record per verificare se la persona/azienda esiste già
+- Diramazione: Se esiste → Aggiorna Record, Se no → Crea Record
+- Crea Record per attività di follow-up assegnata al rappresentante commerciale
+- Invia notifica via Email al team di vendita
+
+### Sincronizzazione Dati di Prodotto
+
+**Problema**: Il tuo team di vendita ha bisogno di visibilità sui dati di utilizzo del prodotto, fatturazione o adozione delle funzionalità memorizzati nel tuo magazzino dati.
+
+**Soluzione**: Sincronizza regolarmente i dati del prodotto in Twenty per fornire ai venditori contesto sui loro account.
+
+**Trigger**: Su un programma (giornaliero o settimanale)
+
+**Azioni**:
+
+- Richiesta HTTP al tuo API del magazzino dati
+- Azione di codifica per elaborare e formattare i dati
+- Usa la funzione Iteratore per i seguenti passi
+- Cerca Record per trovare record aziendali corrispondenti
+- Aggiorna Record per aggiungere metriche di utilizzo del prodotto
+- Crea Record per attività quando l'uso scende al di sotto della soglia
+
+### Note di Riunione da Registratori di Chiamate
+
+**Problema**: Gli insight importanti dalle chiamate di vendita si perdono o non vengono documentati correttamente nel CRM.
+
+**Soluzione**: Crea automaticamente note e azioni dai sistemi di registrazione delle chiamate.
+
+**Trigger**: Webhook (dal piattaforma di registrazione chiamate)
+
+**Azioni**:
+
+- Azione di codifica per estrarre il riepilogo dell'incontro e azioni
+- Cerca Record per trovare l'opportunità o il contatto correlato
+- Crea Record per una nota con il riepilogo dell'incontro
+- Crea Record per attività di follow-up basate sulle azioni
+- Invia Email ai partecipanti con il riepilogo e i prossimi passi
+
+### Arricchimento Dati
+
+**Problema**: I tuoi record di contatti e aziende mancano di informazioni demografiche e firmografiche importanti.
+
+**Soluzione**: Arricchisci automaticamente i record utilizzando fornitori di dati esterni.
+
+**Trigger**: Il Record è Creato (oggetto Persone o Aziende)
+
+**Azioni**:
+
+- Richiesta HTTP all'API di arricchimento
+- Azione di codifica per elaborare la risposta di arricchimento
+- Usa la funzione Iteratore per i seguenti passi
+- Aggiorna Record con ulteriori informazioni sull'azienda/contatto
+- Crea Record per attività di vendita se identificato un prospect di alto valore
+- Invia avviso Email se l'arricchimento rivela segnali chiave d'acquisto
+
+## Casi d'Uso per la Distribuzione dei Dati
+
+### Gestione degli Abbonati alla Newsletter
+
+**Problema**: vuoi inviare email di marketing a segmenti specifici dei tuoi dati CRM utilizzando strumenti specializzati per email.
+
+**Soluzione**: esporta le liste degli iscritti sulla tua piattaforma di email marketing quando necessario.
+
+**Impostazione**: crea una vista in Twenty con tutti i destinatari della newsletter
+
+**Trigger**: Launch Manually (when no record is selected)
+
+**Azioni**:
+
+- Cerca Record utilizzando i criteri di vista della newsletter
+- Azione di codifica per formattare gli indirizzi email per la tua piattaforma di email
+- Richiesta HTTP per aggiungere iscritti al tuo strumento di email marketing
+- Crea Record per il monitoraggio della campagna
+- Invia Email di conferma al team di marketing
+
+### Email Sequence Triggers
+
+**Problema**: vuoi attivare sequenze email sofisticate in base agli eventi CRM utilizzando strumenti di automazione email dedicati.
+
+**Soluzione**: invia nuovi lead o clienti alla tua piattaforma di automazione email quando si verificano eventi specifici.
+
+**Trigger**: Il Record è Creato (oggetto Persone con criteri specifici)
+
+**Azioni**:
+
+- Azione di codifica per determinare la sequenza email appropriata
+- Richiesta HTTP per aggiungere un contatto alla piattaforma di automazione email
+- Aggiorna Record per monitorare l'iscrizione alla sequenza
+- Crea Record per attività di follow-up per monitorare il coinvolgimento
+
+### Integrazione del Punteggio Lead
+
+**Problema**: hai bisogno di un punteggio lead sofisticato che combini i dati CRM con segnali esterni.
+
+**Solution**: Send lead data to external scoring tools or implement scoring logic within workflows.
+
+**Option 1 - External Tool**:
+
+**Trigger**: Il Record è Aggiornato (oggetto Persone)
+
+**Azioni**:
+
+- Richiesta HTTP per inviare dati lead alla piattaforma di scoring
+- Azione di codifica per elaborare la risposta di scoring
+- Aggiorna Record con punteggio lead
+- Crea Record per attività di vendita se il punteggio supera la soglia
+
+**Opzione 2 - Logica Interna**:
+
+**Trigger**: Il Record è Aggiornato (oggetto Persone)
+
+**Azioni**:
+
+- Azione di codifica con algoritmo di scoring (dimensione aziendale, settore, comportamento)
+- Aggiorna Record con punteggio calcolato
+- Invia allerta Email al rappresentante di vendita per lead ad alto punteggio
+
+### Generazione della Fattura
+
+**Problema**: quando gli accordi si chiudono, il tuo sistema di fatturazione deve essere aggiornato con informazioni su clienti e accordi.
+
+**Soluzione**: invia automaticamente i dati dell'accordo al tuo sistema di fatturazione quando le opportunità vengono vinte.
+
+**Trigger**: Il Record è Aggiornato (oggetto Opportunità, Fase = "Chiusa Vinta")
+
+**Azioni**:
+
+- Cerca Record per ottenere informazioni complete sul cliente
+- Azione di codifica per formattare i dati per il sistema di fatturazione
+- Richiesta HTTP per creare cliente nella piattaforma di fatturazione
+- Richiesta HTTP per generare fattura
+- Aggiorna Record per memorizzare il riferimento della fattura
+- Invia Email al team finanziario con i dettagli della fattura
+
+## Pattern di Integrazione Avanzati
+
+### Sincronizzazione Bidirezionale
+
+**Problema**: hai bisogno di mantenere sincronizzati i dati tra Twenty e un altro sistema in entrambe le direzioni.
+
+**Solution**: Combine scheduled workflows with webhook triggers for real-time sync.
+
+**Da Twenty a Sistema Esterno**:
+
+**Trigger**: Il Record è Aggiornato (qualsiasi oggetto rilevante)
+
+**Azioni**:
+
+- Richiesta HTTP per aggiornare il sistema esterno
+- Aggiorna Record per monitorare lo stato di sincronizzazione e il timestamp
+
+**Da Sistema Esterno a Twenty**:
+
+**Trigger**: Webhook (from external system)
+
+**Azioni**:
+
+- Cerca Record per trovare il record corrispondente
+- Aggiorna Record con nuovi dati dal sistema esterno
+- Crea Record per task di risoluzione dei conflitti se necessario
+
+### Elaborazione di Dati Multi-step
+
+**Problema**: i dati da fonti esterne richiedono un'elaborazione complessa prima di poter essere utilizzati in Twenty.
+
+**Soluzione**: utilizza azioni di codifica per trasformazione e validazione dei dati.
+
+**Trigger**: Webhook o Su Un Programma
+
+**Azioni**:
+
+- Azione di codifica per validare il formato dei dati in ingresso
+- Azione di codifica per trasformare la struttura dei dati
+- Azione di codifica per applicare regole e calcoli aziendali
+- Cerca Record per verificare la presenza di duplicati
+- Crea o Aggiorna Record con dati elaborati
+- Invia allerta Email se rilevati problemi di qualità dei dati
+
+## Suggerimenti di Implementazione
+
+- Memorizza le chiavi API in modo sicuro in Impostazioni → API & Webhooks
+- Usa HTTPS per tutte le chiamate API esterne
+- Tieni conto dei limiti di frequenza delle API - usa workflow programmati quando possibile
+- Considera aggiornamenti batch "Su Un Programma" quando non è richiesta l'elaborazione in tempo reale
+- Ricorda il limite di 100 workflow concorrenti per workspace - usa la disponibilità "Bulk" per i trigger manuali durante l'elaborazione di più record (vedi [Caratteristiche dei Workflow](/l/it/user-guide/workflows/workflow-features) per i dettagli)
+- Testa con dati di esempio prima di attivare i workflow
+
+Per risolvere problemi di integrazione, vedi la nostra guida [Risoluzione dei Problemi del Workflow](/l/it/user-guide/workflows/workflow-troubleshooting). Per assistenza nell'implementazione di integrazioni complesse, considera i nostri [Servizi Professionali](/l/it/user-guide/workflows/professional-services).

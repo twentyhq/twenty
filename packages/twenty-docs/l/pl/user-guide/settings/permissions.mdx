@@ -1,0 +1,106 @@
+---
+title: Uprawnienia
+info: "Dowiedz się, jak kontrolować dostęp: przypisywać role i ustawiać uprawnienia."
+image: /images/user-guide/permissions/permissions.png
+sectionInfo: Skonfiguruj ustawienia i preferencje w swoim miejscu pracy Twenty.
+---
+
+<Frame>
+  <img src="/images/user-guide/permissions/permissions.png" alt="Header" />
+</Frame>
+
+System uprawnień Twenty pozwala kontrolować dostęp do trzech głównych obszarów:
+
+- **Obiekty i pola**: Kontroluj, kto może przeglądać, edytować lub usuwać rekordy i poszczególne pola
+- **Ustawienia**: Zarządzaj dostępem do konfiguracji przestrzeni roboczej i funkcji administracyjnych
+- **Akcje**: Kontroluj ogólne działania w przestrzeni roboczej, takie jak importowanie danych czy wysyłanie e-maili
+
+## Tworzenie roli
+
+Aby utworzyć nową rolę:
+
+1. Przejdź do **Ustawienia → Role**
+2. W sekcji **Wszystkie role**, kliknij **+ Utwórz rolę**
+3. Wprowadź nazwę roli
+4. Na domyślnej karcie **Uprawnienia** skonfiguruj uprawnienia
+5. Kliknij **Zapisz**, aby zakończyć
+
+## Usuwanie roli
+
+Aby usunąć rolę:
+
+1. Przejdź do **Ustawienia → Role**
+2. Kliknij rolę, którą chcesz usunąć
+3. Otwórz kartę **Ustawienia**, a następnie kliknij **Usuń rolę**
+4. Kliknij **Potwierdź** w modalnym oknie
+
+Uwaga: Jeśli rola zostanie usunięta, każdy członek przestrzeni roboczej przypisany do niej zostanie automatycznie przypisany do domyślnej roli. Można usunąć wszystkie role poza **Admin**. Zawsze powinien być co najmniej jeden członek przypisany do roli **Admin**.
+
+## Przypisywanie ról członkom
+
+### Zobacz obecne przypisania
+
+- Przejdź do **Ustawienia → Role**
+- Zobacz wszystkie role i ile członków jest przypisanych do każdej
+- Zobacz, którzy członkowie mają jakie role
+
+### Przypisz rolę członkowi
+
+1. Przejdź do **Ustawienia → Role**
+2. Kliknij rolę, którą chcesz przypisać
+3. Otwórz kartę **Przypisanie**
+4. Kliknij **+ Przypisz do członka**
+5. Wybierz członka przestrzeni roboczej z listy
+6. Potwierdź przypisanie
+
+### Ustawienie domyślnej roli
+
+1. Przejdź do **Ustawienia → Role**
+2. W sekcji **Opcje** znajdź **Domyślna rola**
+3. Wybierz, jaką rolę powinni automatycznie otrzymywać nowi członkowie
+4. Nowi członkowie przestrzeni roboczej otrzymają tę rolę po dołączeniu
+
+**Uwaga**: Możesz przypisać role tylko istniejącym członkom przestrzeni roboczej. Aby zaprosić nowych członków, użyj [Zarządzanie członkami](/l/pl/user-guide/settings/member-management).
+
+## Dostosowanie uprawnień
+
+Uprawnienia określają, do czego każda rola ma dostęp lub co może modyfikować w obrębie twojej przestrzeni roboczej, w tym do rekordów obiektów przestrzeni roboczej, ustawień i działań.
+
+### Uprawnienia obiektów i pól
+
+Kontroluj dostęp do rekordów i poszczególnych pól:
+
+#### Uprawnienia na poziomie obiektu
+
+- W sekcji **Wszystkie obiekty** zastosuj uprawnienia takie jak **Zobacz rekord**, **Edytuj rekordy**, **Usuń rekordy** lub **Zniszcz rekordy** dla wszystkich obiektów
+- W sekcji **Uprawnienia na poziomie obiektu** skonfiguruj wyjątki dla poszczególnych obiektów. Te ustawienia nadpisują ustawienia z **Wszystkich obiektów**
+
+#### Uprawnienia na poziomie pola
+
+- Skonfiguruj uprawnienia dla poszczególnych pól w każdym obiekcie
+- Kontroluj, kto może **Zobaczyć pole**, **Edytować pole** lub mieć **Brak dostępu** do konkretnych pól
+- Uprawnienia pól działają tak samo jak uprawnienia obiektów z dziedziczeniem i nadpisaniami
+
+#### Zarządzanie nadpisaniami uprawnień
+
+Aby nadpisać uprawnienia nadrzędne i zastosować surowsze zasady:
+
+- Kliknij **X**, aby usunąć odziedziczoną regułę
+- Wybierz konkretne uprawnienia dla wybranego obiektu lub pola
+- Kliknij pomarańczową ikonę **Cofnij** (strzałka okrężna), aby przywrócić zmiany
+
+Gdy skończysz, kliknij **Zakończ**, a następnie **Zapisz** po przekierowaniu na stronę roli.
+
+### Uprawnienia do ustawień przestrzeni roboczej
+
+Kontroluj dostęp do ustawień przestrzeni roboczej na dwa sposoby:
+
+- Przełącz **Ustawienia pełny dostęp**, aby zapewnić pełny dostęp
+- Lub włącz konkretne uprawnienia (np. generowanie kluczy API, preferencje przestrzeni roboczej, przypisanie ról, konfiguracja modelu danych, ustawienia bezpieczeństwa i zarządzanie workflow)
+
+### Uprawnienia do działań w przestrzeni roboczej
+
+Kontroluj dostęp do ogólnych działań w przestrzeni roboczej:
+
+- Przełącz **Pełny dostęp do aplikacji**, aby przyznać pełne uprawnienia
+- Lub włącz poszczególne działania, takie jak **Wyślij e-mail**, **Importuj CSV** i **Eksportuj CSV**

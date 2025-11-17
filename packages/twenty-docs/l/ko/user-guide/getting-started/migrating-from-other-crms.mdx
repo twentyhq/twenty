@@ -1,0 +1,91 @@
+---
+title: 다른 CRM에서 마이그레이션하기
+info: 다른 CRM 시스템에서 Twenty로 데이터를 마이그레이션하기 위한 단계별 가이드.
+image: /images/user-guide/what-is-twenty/migrating_crm.png
+sectionInfo: Twenty의 기본을 이해하는 간단한 가이드
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/migrating_crm.png" alt="Header" />
+</Frame>
+
+## 시작하기 전에
+
+### 1. 현재 데이터 감사하기
+
+- **마이그레이션할 몇 가지 객체와 필드를 선택하세요**: 이 마이그레이션은 새로운 시작의 기회입니다.
+- 현재 CRM에서 이 데이터를 **내보내기**
+- **중복 제거** 및 오래된 기록 삭제
+- **활성된 워크플로우** 및 자동화 목록 작성
+
+### 2. 새 데이터 모델 생성
+
+다음의 [데이터 모델 가이드](/l/ko/user-guide/data-model/customize-your-data-model)를 따르세요:
+
+- 필요한 **데이터 모델 디자인**
+- **기존 필드를 Twenty의 표준 객체/필드와 맵핑**
+- 필요할 **맞춤 객체 / 필드 식별**
+- 설정 → 데이터 모델에서 **생성**
+
+## 마이그레이션 과정
+
+### 1. 데이터 가져오기
+
+**권장 순서:**
+
+1. **회사** 먼저 (기본 기록으로서)
+2. **사람** 두 번째 (회사에 연결됨)
+3. **기회** 세 번째 (사람/회사에 연결됨)
+
+Command Menu `Cmd + K` (Mac) 또는 `Ctrl + K` (Windows)를 통해 CSV 가져오기를 사용하세요. 자세한 지침은 [데이터 가져오기 가이드](/l/ko/user-guide/getting-started/import-export-data)를 참조하세요.
+
+### 2. 워크플로우 재구성
+
+- **간단하게 시작하기** - 가장 중요한 자동화를 먼저 재구성하세요
+- 기존 자동화를 대체하기 위해 **Twenty의 워크플로우 빌더 사용**
+
+## 일반적인 문제점
+
+### 데이터 형식 문제
+
+- **이메일 주소** - 중복 제거 (People 객체 요구사항)
+- **도메인** - 중복 제거 (Companies 객체 요구사항)
+
+<Warning>
+Please note that domain URLs created by the synchronization with your mailbox and calendar have the following format ```https://domain.com```
+</Warning>
+
+- **날짜 형식** - 일관된 형식을 보장 (YYYY-MM-DD) 또는 설정 → 경험에서 이 형식을 편집
+- **전화번호** - 국제 형식 (+1234567890)을 사용
+
+### 관계 매핑
+
+csv 가져오기 기능을 사용하여 기록 간의 관계를 가져오려면 다음 필드를 사용할 수 있습니다
+
+- 복잡한 관계에 대해 **Twenty ID 사용**
+- People 기록을 연결하는 **이메일 주소 사용**
+- Company 기록을 연결하는 **도메인 이름 사용**
+- 데이터 모델 섹션에서 고유하게 설정한 **다른 필드 사용**.
+  CSV 가져오기 중 관계를 생성하는 자세한 지침은 [데이터 가져오기-내보내기 가이드](/l/ko/user-guide/getting-started/import-export-data)를 읽어보세요.
+
+## 전문가의 도움
+
+### 우리의 서비스
+
+- 유도 마이그레이션을 위한 **4시간 온보딩 팩**
+- 더 고급 프로젝트를 위한 **구현 파트너**
+
+[구현 서비스](user-guide/getting-started/implementation-services)를 알아보세요.
+
+## 자가 호스팅에서 클라우드로 마이그레이션
+
+Twenty 자가 호스팅에서 Twenty Cloud로 이동하려면:
+
+1. 자가 호스팅 인스턴스에서 데이터를 **내보내기**
+2. 위의 표준 마이그레이션 과정을 **따르세요**
+3. **마이그레이션 지원 제공 가능**, 우리의 팀에 연락하세요
+
+## 마이그레이션 후 체크리스트
+
+<input type="checkbox" /> All data imported successfully <input type="checkbox" /> Custom fields working correctly <input type="checkbox" /> User permissions configured <input type="checkbox" /> Email/calendar sync connected <input type="checkbox" /> Critical workflows recreated and tested <input type="checkbox" /> Team trained on new system
+

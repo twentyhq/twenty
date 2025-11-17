@@ -1,0 +1,42 @@
+---
+title: Vstup obrázku
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import imageInputCode from '!!raw-loader!@site/src/ui/input/components/imageInputCode.js'
+
+Umožňuje uživatelům nahrát a odstranit obrázek.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ImageInput } from "@/ui/input/components/ImageInput";
+
+export const MyComponent = () => {
+  return <ImageInput/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Vlastnosti     | Typ                | Popis                                                                                                              |
+| -------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| obrázek        | textový řetězec    | URL zdroje obrázku                                                                                                 |
+| onUpload       | funkce             | Funkce, která se spustí při nahrání nového obrázku uživatelem. Přijímá objekt `File` jako parametr |
+| onRemove       | funkce             | Funkce, která se spustí po kliknutí uživatele na tlačítko odstranění                                               |
+| onAbort        | funkce             | Funkce, která se spustí při kliknutí uživatele na tlačítko přerušení během nahrávání obrázku                       |
+| isUploading    | booleovská hodnota | Indicates whether an image is currently being uploaded                                                             |
+| chybová zpráva | textový řetězec    | Volitelná chybová zpráva k zobrazení pod vstupním polem pro obrázek                                                |
+| neaktivní      | booleovská hodnota | If `true`, the entire input is disabled, and the buttons are not clickable                                         |
+
+</Tab>
+</Tabs>

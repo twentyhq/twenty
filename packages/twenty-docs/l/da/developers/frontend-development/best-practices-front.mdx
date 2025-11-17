@@ -1,0 +1,333 @@
+---
+title: Bedste praksis
+image: /images/user-guide/tips/light-bulb.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
+</Frame>
+
+Dette dokument beskriver de bedste praksis, som du bør følge, når du arbejder på frontend.
+
+## Tilstandshåndtering
+
+React og Recoil håndterer tilstandshåndtering i kodebasen.
+
+### Brug `useRecoilState` til at gemme tilstand
+
+Det er god praksis at oprette så mange atomer, som du har brug for til at gemme din tilstand.
+
+<Warning>
+
+Det er bedre at bruge ekstra atomer end at prøve at være for kortfattet med prop-drilling.
+
+</Warning>
+
+```tsx
+export const myAtomState = atom({
+  key: 'myAtomState',
+  default: 'default value',
+});
+
+export const MyComponent = () => {
+  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+
+  return (
+    <div>
+      <input
+        value={myAtom}
+        onChange={(e) => setMyAtom(e.target.value)}
+      />
+    </div>
+  );
+}
+```
+
+### Brug ikke `useRef` til at gemme tilstand
+
+Undgå brug af `useRef` til at gemme tilstand.
+
+Hvis du vil gemme tilstand, skal du bruge `useState` eller `useRecoilState`.
+
+Se [hvordan man håndterer re-renders](#managing-re-renders) hvis du føler, at du har brug for `useRef` til at forhindre nogle re-renders fra at ske.
+
+## Håndtering af re-renders
+
+Re-renders kan være svære at håndtere i React.
+
+Her er nogle regler at følge for at undgå unødvendige re-renders.
+
+Husk, at du **altid** kan undgå re-renders ved at forstå deres årsag.
+
+### Arbejd på rodniveau
+
+Undgåelse af re-renders i nye funktioner bliver nu lettere ved at eliminere dem på rodniveau.
+
+`PageChangeEffect` sidecar komponenten indeholder kun én `useEffect` der rummer al logik til at udføre ved en sideændring.
+
+På den måde ved du, at der kun er ét sted, der kan udløse en re-render.
+
+### Tænk altid to gange, før du tilføjer `useEffect` i din kodebase
+
+Re-renders er ofte forårsaget af unødvendige `useEffect`.
+
+Du bør overveje, om du har brug for `useEffect`, eller om du kan flytte logikken i en event handler funktion.
+
+Det er generelt nemt at flytte logikken i en `handleClick` eller `handleChange` funktion.
+
+Du kan også finde dem i biblioteker som Apollo: `onCompleted`, `onError`, osv.
+
+### Use a sibling component to extract `useEffect` or data fetching logic
+
+Hvis du føler, at du har brug for at tilføje en `useEffect` i din root komponent, bør du overveje at udtrække den i en sidecar komponent.
+
+Du kan anvende det samme for dataindsamlingslogik, med Apollo hooks.
+
+```tsx
+// ❌ Bad, will cause re-renders even if data is not changing, 
+//    because useEffect needs to be re-evaluated
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <div>{data}</div>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+```tsx
+// ✅ Good, will not cause re-renders if data is not changing, 
+//   because useEffect is re-evaluated in another sibling component
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+
+  return <div>{data}</div>;
+};
+
+export const PageData = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <></>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageData />
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+### Brug recoil familietilstande og recoil familieselectors
+
+Recoil familietilstande og selectors er en god måde at undgå re-renders.
+
+De er nyttige, når du har brug for at gemme en liste af elementer.
+
+### Du bør ikke bruge `React.memo(MyComponent)`
+
+Undgå brugen af `React.memo()` fordi det ikke løser årsagen til re-render, men i stedet bryder re-render kæden, hvilket kan føre til uventet adfærd og gøre koden meget svær at refaktorere.
+
+### Begræns brugen af `useCallback` eller `useMemo`
+
+De er ofte unødvendige og gør koden sværere at læse og vedligeholde for en præstationsgevinst der er umærkelig.
+
+## Console.logs
+
+`console.log` udsagn er værdifulde under udvikling, og giver realtid indsigt i variabelværdier og kodeflow. Men at efterlade dem i produktionskode kan føre til flere problemer:
+
+1. **Ydelse**: Overdreven logning kan påvirke ydelsen køretiden, især i klient-side applikationer.
+
+2. **Sikkerhed**: Logning af følsomme data kan afsløre kritiske oplysninger for enhver, der inspicerer browserens konsol.
+
+3. **Renlighed**: Fyldning af konsollen med logs kan skjule vigtige advarsler eller fejl, som udviklere eller værktøjer har brug for at se.
+
+4. **Professionalitet**: Slutbrugere eller klienter, der ser konsollen og ser en overflod af log udsagn, kan stille spørgsmålstegn ved kodens kvalitet og finish.
+
+Sørg for, at du fjerner alle `console.logs` før du laver kode til produktion.
+
+## Navngivning
+
+### Variabelnavngivning
+
+Variabelnavne skal nøjagtigt beskrive variablens formål eller funktion.
+
+#### Problemet med generiske navne
+
+Generiske navne i programmering er ikke ideelle, fordi de mangler specificitet, hvilket fører til uklarhed og reduceret kodens læsbarhed. Sådanne navne formår ikke at formidle variablen eller funktionens formål, hvilket gør det udfordrende for udviklere at forstå kodens hensigt uden dybere undersøgelse. Dette kan resultere i øget fejlfindingstid, højere tendens til fejl og vanskeligheder i vedligeholdelse og samarbejde. Mens beskrivende navngivning gør koden selvforklarende og lettere at navigere, hvilket forbedrer kodekvalitet og udviklerproduktivitet.
+
+```tsx
+// ❌ Bad, uses a generic name that doesn't communicate its
+//    purpose or content clearly
+const [value, setValue] = useState('');
+```
+
+```tsx
+// ✅ Good, uses a descriptive name
+const [email, setEmail] = useState('');
+```
+
+#### Nogle ord at undgå i variabelnavne
+
+- dummy
+
+### Eventhåndterere
+
+Eventhåndterernavne bør starte med `handle`, mens `on` er en præfiks brugt til at navngive events i component props.
+
+```tsx
+// ❌ Bad
+const onEmailChange = (val: string) => {
+  // ...
+};
+```
+
+```tsx
+// ✅ Good
+const handleEmailChange = (val: string) => {
+  // ...
+};
+```
+
+## Valgfri props
+
+Undgå at passere standardværdien for en valgfri prop.
+
+**EKSEMPEL**
+
+Tag `EmailField` komponenten defineret nedenfor:
+
+```tsx
+type EmailFieldProps = {
+  value: string;
+  disabled?: boolean;
+};
+
+const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
+  <TextInput value={value} disabled={disabled} fullWidth />
+);
+```
+
+**Brug**
+
+```tsx
+// ❌ Bad, passing in the same value as the default value adds no value
+const Form = () => <EmailField value="username@email.com" disabled={false} />;
+```
+
+```tsx
+// ✅ Good, assumes the default value
+const Form = () => <EmailField value="username@email.com" />;
+```
+
+## Komponent som props
+
+Try as much as possible to pass uninstantiated components as props, so children can decide on their own of what props they need to pass.
+
+Det mest almindelige eksempel på dette er ikonkomponenter:
+
+```tsx
+const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
+
+// In MyComponent
+const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
+  const theme = useTheme();
+
+  return (
+    <div>
+      <MyIcon size={theme.icon.size.md}>
+    </div>
+  )
+};
+```
+
+For at React forstår, at komponenten er en komponent, skal du bruge PascalCase, for senere at kunne instantiere den med `<MyIcon>`
+
+## Prop Drilling: Hold det minimalt
+
+Prop drilning, i React sammenhæng, refererer til praksis med at passere state variabler og deres setters gennem mange lag af komponenter, selv hvis mellemliggende komponenter ikke anvender dem. Mens det nogle gange er nødvendigt, kan det også medføre:
+
+1. **Nedsat Læsbarhed**: At sporere hvor en prop oprinder fra, eller hvor den anvendes, kan blive indviklet i en dybt indlejret komponentstruktur.
+
+2. **Vedligeholdelsesudfordringer**: Ændringer i en komponents prop-struktur kan kræve justeringer i flere komponenter, selv hvis de ikke direkte anvender prop'en.
+
+3. **Reduceret Komponent Genanvendelighed**: En komponent, der modtager mange props kun for at passere dem videre, bliver mindre almen og sværere at genbruge i forskellige sammenhænge.
+
+Hvis du føler, at du bruger overdreven prop drilning, se [best practices for state management](#state-management).
+
+## Importering
+
+Når du importerer, vælg de udpegede aliasser i stedet for at specificere komplette eller relative stier.
+
+**Aliasserne**
+
+```js
+{
+  alias: {
+    "~": path.resolve(__dirname, "src"),
+    "@": path.resolve(__dirname, "src/modules"),
+    "@testing": path.resolve(__dirname, "src/testing"),
+  },
+}
+```
+
+**Brug**
+
+```tsx
+// ❌ Bad, specifies the entire relative path
+import {
+  CatalogDecorator
+} from '../../../../../testing/decorators/CatalogDecorator';
+import {
+  ComponentDecorator
+} from '../../../../../testing/decorators/ComponentDecorator';
+```
+
+```tsx
+// ✅ Good, utilises the designated aliases
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'twenty-ui/testing';
+```
+
+## Skema Validering
+
+[Zod](https://github.com/colinhacks/zod) er skemavalideringen for utyped objekter:
+
+```js
+const validationSchema = z
+  .object({
+    exist: z.boolean(),
+    email: z
+      .string()
+      .email('Email must be a valid email'),
+    password: z
+      .string()
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+  })
+  .required();
+
+type Form = z.infer<typeof validationSchema>;
+```
+
+## Breaking Changes
+
+Udfør altid grundig manuel testning, før du fortsætter for at sikre, at ændringerne ikke har forårsaget forstyrrelser andre steder, givet at test endnu ikke er bredt integreret.
+

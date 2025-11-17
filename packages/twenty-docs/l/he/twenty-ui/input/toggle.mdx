@@ -1,0 +1,39 @@
+---
+title: מתג
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Toggle } from "twenty-ui/input";
+
+export const MyComponent = () => {
+  return (
+    <Toggle
+    value = {true}
+    onChange = {()=>console.log('On Change event')}
+    color="green"
+    toggleSize = "medium"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| תכונות     | סוג     | תיאור                                                                                                                    | ברירת מחדל |
+| ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| ערך        | בוליאני | The current state of the toggle                                                                                          | `שקר`      |
+| onChange   | פונקציה | Callback function triggered when the toggle state changes                                                                |            |
+| צבע        | מחרוזת  | Color of the toggle when it\                                                                                            | בצבע כחול  |
+| toggleSize | string  | Size of the toggle, affecting both height and weight. יש שתי אפשרויות: `קטן` ו- `בינוני` | בינוני     |
+
+</Tab>
+</Tabs>

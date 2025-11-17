@@ -1,0 +1,88 @@
+---
+title: Συμβουλή εφαρμογής
+image: /images/user-guide/tips/light-bulb.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
+</Frame>
+
+Ένα σύντομο μήνυμα που εμφανίζεται για να παρέχει επιπλέον πληροφορίες όταν ένας χρήστης αλληλεπιδρά με ένα στοιχείο.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
+
+export const MyComponent = () => {
+  return (
+    <>
+      <p id="hoverText" style={{ display: "inline-block" }}>
+        Customer Insights
+      </p>
+      <AppTooltip
+        className
+        anchorSelect="#hoverText"
+        content="Explore customer behavior and preferences"
+        delayHide={0}
+        offset={6}
+        noArrow={false}
+        isOpen={true}
+        place="bottom"
+        positionStrategy="absolute"
+      />
+    </>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Ιδιότητες            | Τύπος                                                   | Περιγραφή                                                                                                                                                                                                                                       |
+| -------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| όνομαΚλάσης          | αλφαριθμητικό                                           | Προαιρετική κλάση CSS για επιπλέον στυλ                                                                                                                                                                                                         |
+| επιλογήΆγκυρας       | Επιλογέας CSS                                           | Επιλογέας για την άγκυρα του αναδυόμενου κειμένου (το στοιχείο που ενεργοποιεί την εμφάνιση του)                                                                                                                             |
+| περιεχόμενο          | αλφαριθμητικό                                           | Το περιεχόμενο που θέλετε να εμφανίζεται στο αναδυόμενο κείμενο                                                                                                                                                                                 |
+| καθυστέρησηΑπόκρυψης | αριθμός                                                 | Η καθυστέρηση σε δευτερόλεπτα πριν την απόκρυψη του αναδυόμενου κειμένου μετά την απομάκρυνση του κέρσορα από την άγκυρα                                                                                                                        |
+| μετατόπιση           | αριθμός                                                 | Η μετατόπιση σε pixels για την τοποθέτηση του αναδυόμενου κειμένου                                                                                                                                                                              |
+| χωρίςΒέλος           | boolean                                                 | Αν είναι `true`, το βέλος στο αναδυόμενο κείμενο κρύβεται                                                                                                                                                                                       |
+| είναιΑνοιχτό         | boolean                                                 | Αν είναι `true`, το αναδυόμενο κείμενο είναι ανοιχτό από προεπιλογή                                                                                                                                                                             |
+| θέση                 | Αλφαριθμητικό 'PlacesType' από το 'react-tooltip'       | Ορίζει τη θέση του αναδυόμενου κειμένου. Οι τιμές περιλαμβάνουν `κάτω`, `αριστερά`, `δεξιά`, `επάνω`, `επάνω-αρχή`, `επάνω-τέλος`, `δεξιά-αρχή`, `δεξιά-τέλος`, `κάτω-αρχή`, `κάτω-τέλος`, `αριστερά-αρχή` και `αριστερά-τέλος` |
+| στρατηγικήΘέσης      | Αλφαριθμητικό 'PositionStrategy' από το 'react-tooltip' | Στρατηγική τοποθέτησης για το αναδυόμενο κείμενο. Έχει δύο τιμές: `απόλυτο` και `σταθερό`                                                                                                                       |
+
+</Tab>
+
+</Tabs>
+
+## Κείμενο που Υπερχειλίζει με Συμβουλή
+
+Διαχειρίζεται το υπερχειλιζόμενο κείμενο και εμφανίζει συμβουλή όταν το κείμενο υπερχειλίζει.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  const crmTaskDescription =
+    'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
+
+  return <OverflowingTextWithTooltip text={crmTaskDescription} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Ιδιότητες | Τύπος         | Περιγραφή                                                                   |
+| --------- | ------------- | --------------------------------------------------------------------------- |
+| κείμενο   | αλφαριθμητικό | Το περιεχόμενο που θέλετε να εμφανίζεται στην περιοχή υπερχείλισης κειμένου |
+
+</Tab>
+
+</Tabs>

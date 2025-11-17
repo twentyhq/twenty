@@ -1,0 +1,95 @@
+---
+title: Gestione contatti e account
+info: "Crea e gestisci i record di Persone e Aziende per costruire il tuo database clienti."
+image: /images/user-guide/home/contact-and-account-management.png
+sectionInfo: "Funzionalità essenziali di CRM per gestire lead, vendite e clienti."
+---
+
+<Frame>
+  <img src="/images/user-guide/home/contact-and-account-management.png" alt="Header" />
+</Frame>
+
+## Inserire dati nel tuo CRM
+
+Quando inizi a utilizzare Twenty, vorrai inserire i tuoi contatti e aziende nel sistema. Esistono diversi modi per popolare il tuo CRM a seconda del flusso di lavoro e delle sorgenti dati.
+
+### Inserimento manuale
+
+Il metodo più semplice è aggiungere i record direttamente tramite l'interfaccia di Twenty. Vai alla sezione `Persone` e fai clic sul pulsante `+` per aggiungere un nuovo contatto. Compila il loro nome, email, telefono e collegali alla loro azienda. Per le aziende, vai alla sezione `Aziende` e aggiungi i dettagli dell'organizzazione: nome dell'azienda, dominio, settore e dimensione.
+
+Il campo del dominio è particolarmente importante per l'identificazione dell'azienda, e il campo email è essenziale per l'identificazione della persona.
+
+### Importazioni CSV
+
+Quando hai dati esistenti da fogli di calcolo o altri sistemi, l'importazione CSV è la tua opzione più veloce. Puoi preparare i tuoi dati in Excel o Google Sheets, quindi caricarli tutti in una volta. Questo è particolarmente utile quando si migra da un altro CRM o quando qualcuno ha tracciato i contatti in fogli di calcolo. La nostra guida [Import/Export Data](/l/it/user-guide/getting-started/import-export-data) ti guida attraverso il processo.
+
+### Cattura dati automatizzata
+
+Per la generazione di lead continua, è possibile impostare flussi di lavoro automatizzati che portino dati direttamente in Twenty:
+
+**Formulari web**: Quando qualcuno compila un modulo sul tuo sito web, puoi configurarlo per inviare automaticamente le informazioni a Twenty. La compilazione del modulo attiva un webhook che attiva un flusso di lavoro in Twenty, creando il nuovo record di contatto senza alcun lavoro manuale.
+
+**Integrazione con altri sistemi**: se utilizzi altri strumenti aziendali, puoi connetterli a Twenty usando chiamate API e flussi di lavoro. Questo consente di sincronizzare automaticamente i dati tra i sistemi: ad esempio, portando nuovi clienti dal sistema di fatturazione o lead dalla piattaforma di marketing.
+
+Per saperne di più sull'impostazione di questi flussi di dati automatizzati, consulta la nostra sezione [Workflows](/l/it/user-guide/workflows/getting-started-workflows).
+
+### Sincronizzazione email e calendario
+
+Quando colleghi la tua casella di posta e il calendario a Twenty, il sistema può creare automaticamente record di Persone e Aziende per le persone che scrivi o incontri. Se invii un'email a qualcuno che non è già nel tuo CRM, Twenty può creare un nuovo record per loro. Succede lo stesso quando pianifichi incontri con nuovi contatti attraverso il tuo calendario.
+
+Questo è particolarmente utile per i team di vendita e sviluppo aziendale che incontrano costantemente nuove persone. Invece di aggiungere manualmente ogni nuovo contatto, Twenty li cattura automaticamente mentre comunichi. Scopri come impostarlo nella nostra guida [Emails and Calendars](/l/it/user-guide/collaboration/emails-and-calendars).
+
+### Ridurre il lavoro manuale
+
+Anche quando aggiungi dati manualmente, puoi utilizzare i flussi di lavoro per semplificare il processo. Ad esempio, potresti creare un'automazione che assegni nuovi contatti a membri del team in base alla loro posizione geografica, oppure che crei automaticamente attività di follow-up quando vengono aggiunti determinati tipi di contatti.
+
+## Organizzare i tuoi contatti
+
+### Mantenere i dati unici e puliti
+
+Twenty applica automaticamente l'unicità per mantenere i tuoi dati organizzati. L'indirizzo email di ciascuna persona funge da identificatore unico: non è possibile avere due persone con la stessa email. Similmente, i domini aziendali sono unici, quindi non creerai accidentalmente aziende duplicate.
+
+Se la tua azienda ha bisogno che altri campi siano unici (come numeri di telefono, o codici di riferimento), puoi configurarlo nel tuo modello di dati. Vai alla nostra sezione [Data Model](/l/it/user-guide/data-model/customize-your-data-model) per scoprire come impostare ulteriori vincoli di unicità per le tue esigenze specifiche.
+
+### Gestione dei duplicati
+
+A volte finirai con record duplicati. Twenty ha una funzione di fusione sia per Persone che Aziende: puoi combinare i record duplicati per mantenere il tuo database pulito senza perdere alcuna informazione.
+
+Per unire i record, seleziona 2 record, apri il menu dei comandi `Cmd+K` su Mac, `Ctrl+K` su Windows e fai clic su `Unisci record`.
+
+### Creazione di gerarchie aziendali
+
+Se lavori con grandi organizzazioni che hanno sussidiarie o divisioni multiple, puoi creare relazioni tra le aziende. Imposta i campi di relazione tra i record Azienda per mappare queste connessioni. Questo ti aiuta a comprendere la struttura organizzativa completa con cui hai a che fare.
+
+### Personalizzare le tue visualizzazioni
+
+Diversi membri del team potrebbero aver bisogno di vedere informazioni diverse. Puoi creare visualizzazioni personalizzate che mostrano diverse colonne per scopi diversi: forse il tuo team di vendita ha bisogno di vedere le fasi dell'affare mentre il tuo team di supporto si concentra sui dettagli del contatto. Scopri di più nel nostro articolo [Gestione delle Visualizzazioni](/l/it/user-guide/crm-essentials/view-management).
+
+## Lavorare con i record
+
+### Cosa troverai in ogni record
+
+Quando apri un record Persona o Azienda, vedrai tutte le loro informazioni organizzate in schede:
+
+- **Campi**: le informazioni di base come nome, email, telefono e qualsiasi campo personalizzato che hai aggiunto
+- **Relazioni**: mostra le connessioni tra questo record e i record di altri oggetti
+- **Timeline**: una vista cronologica di tutte le interazioni e gli aggiornamenti di questo record
+- **Attività**: qualsiasi attività di follow-up correlata a questo contatto
+- **Note**: note e osservazioni del team su questa persona o azienda
+- **File**: documenti e allegati relativi a questo record
+- **Email**: thread di email con questo contatto (quando il tuo team ha connesso le loro caselle di posta)
+- **Calendario**: Incontri e appuntamenti con questo contatto
+
+Le schede Email e Calendario sono particolarmente potenti: mostrano automaticamente tutti gli scambi di email e gli incontri che chiunque nel tuo team ha avuto con questo contatto, a condizione che abbiano collegato la loro casella di posta a Twenty. Puoi saperne di più su come impostarlo nella nostra guida [Emails and Calendars](/l/it/user-guide/collaboration/emails-and-calendars).
+
+### Aggiungere i campi di cui hai bisogno
+
+I campi standard potrebbero non catturare tutto ciò che è importante per la tua attività. Se hai bisogno di informazioni aggiuntive: come segmenti di clienti, fonti di riferimento o dati specifici del settore: puoi aggiungere campi personalizzati o modificare quelli esistenti. Vai alla nostra sezione [Data Model](/l/it/user-guide/data-model/customize-your-data-model) per scoprire come personalizzare la tua configurazione.
+
+## Gestione dei record eliminati
+
+Quando elimini un record in Twenty, non è definitivamente cancellato. I record sono "soft eliminati", il che significa che sono nascosti ma possono essere ripristinati se necessario.
+
+Per accedere ai record eliminati, apri il menu dei comandi `Cmd+K` su Mac, `Ctrl+K` su Windows, quindi fai clic su `Vedi record eliminati`. Da lì, puoi sia ripristinare i record oppure eliminarli definitivamente se sei sicuro di non averne bisogno.
+
+Questa rete di sicurezza significa che puoi ripulire il tuo database senza preoccuparti di perdere accidentalmente informazioni importanti.

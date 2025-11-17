@@ -56,6 +56,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
         const event = new ObjectRecordCreateEvent<T>();
 
         event.userId = authContext?.user?.id;
+        event.workspaceMemberId = authContext?.workspaceMemberId;
         event.recordId = after.id;
         event.properties = { after };
 
@@ -88,6 +89,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
           const event = new ObjectRecordUpdateEvent<T>();
 
           event.userId = authContext?.user?.id;
+          event.workspaceMemberId = authContext?.workspaceMemberId;
           event.recordId = after.id;
           event.properties = {
             before,
@@ -105,6 +107,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
         const event = new ObjectRecordDeleteEvent<T>();
 
         event.userId = authContext?.user?.id;
+        event.workspaceMemberId = authContext?.workspaceMemberId;
         event.recordId = before.id;
         event.properties = { before };
 
@@ -116,6 +119,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
         const event = new ObjectRecordDestroyEvent<T>();
 
         event.userId = authContext?.user?.id;
+        event.workspaceMemberId = authContext?.workspaceMemberId;
         event.recordId = before.id;
         event.properties = { before };
 
@@ -127,6 +131,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
         const event = new ObjectRecordUpsertEvent<T>();
 
         event.userId = authContext?.user?.id;
+        event.workspaceMemberId = authContext?.workspaceMemberId;
         event.recordId = after.id;
 
         const before = beforeEntities

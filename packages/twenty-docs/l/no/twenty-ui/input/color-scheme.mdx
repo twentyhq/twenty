@@ -1,0 +1,73 @@
+---
+title: Fargeskjema
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## Color Scheme Card
+
+Representerer forskjellige fargeordninger og er spesielt tilpasset for lyse og mørke temaer.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ColorSchemeCard } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+      <ColorSchemeCard
+      variant="Dark"
+      selected={true}
+      />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                                    | Beskrivelse                                                                           | Standard |
+| ----------------------- | --------------------------------------- | ------------------------------------------------------------------------------------- | -------- |
+| "variant"               | <span>streng</span>                     | Fargeordningsvarianten. Options include `Dark`, `Light`, and `System` | lys      |
+| "valgt"                 | <span>boolean</span>                    | Hvis `true`, viser en hake for å indikere den valgte fargeordningen.  |          |
+| additional props        | `React.ComponentPropsWithoutRef<'div'>` | Standard HTML `div` element props                                                     |          |
+
+</Tab>
+
+</Tabs>
+
+## Color Scheme Picker
+
+Lar brukere velge mellom forskjellige fargetemaer.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ColorSchemePicker } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return <ColorSchemePicker
+  value="Dark"
+  onChange
+  />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                  | Beskrivelse                                                                  |
+| ----------------------- | --------------------- | ---------------------------------------------------------------------------- |
+| verdi                   | `Fargeskjema`         | The currently selected color scheme                                          |
+| <span>onChange</span>   | <span>funksjon</span> | The callback function you want to trigger when a user selects a color scheme |
+
+</Tab>
+
+</Tabs>

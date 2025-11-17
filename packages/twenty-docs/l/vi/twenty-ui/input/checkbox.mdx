@@ -1,0 +1,47 @@
+---
+title: Hộp chọn
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Được sử dụng khi người dùng cần chọn nhiều giá trị từ một số tùy chọn.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Checkbox } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+    <Checkbox
+      checked={true}
+      indeterminate={false}
+      onChange={() => console.log("onChange function fired")}
+      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      variant="primary"
+      size="small"
+      shape="squared"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Thuộc Tính           | Loại    | Mô tả                                                                                                                                         |
+| -------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| được chọn            | boolean | Chỉ rõ liệu hộp chọn có được chọn                                                                                                             |
+| không xác định       | boolean | Chỉ rõ liệu hộp chọn có ở trạng thái không xác định (không được chọn hay không được chọn)                                  |
+| khi thay đổi         | hàm     | Hàm gọi lại bạn muốn kích hoạt khi trạng thái của hộp chọn thay đổi                                                                           |
+| khi Thay đổi Đã chọn | hàm     | Hàm gọi lại bạn muốn kích hoạt khi trạng thái `được chọn` thay đổi                                                                            |
+| biến thể             | string  | Kiểu biến thể hình thức của hộp. Các tùy chọn bao gồm: `primary`, `secondary`, và `tertiary`. |
+| kích cỡ              | string  | Kích thước của hộp chọn. Có hai tùy chọn: `small` và `large`                                                  |
+| hình dạng            | string  | Hình dạng của hộp chọn. Có hai tùy chọn: `squared` và `rounded`                                               |
+
+</Tab>
+</Tabs>

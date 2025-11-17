@@ -1,0 +1,54 @@
+---
+title: Välj
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+Gör det möjligt för användare att välja ett värde från en lista med fördefinierade alternativ.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from 'recoil';
+import { IconTwentyStar } from 'twenty-ui/display';
+
+import { Select } from '@/ui/input/components/Select';
+
+export const MyComponent = () => {
+
+  return (
+    <RecoilRoot>
+      <Select
+        className
+        disabled={false}
+        label="Select an option"
+        options={[
+          { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
+          { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
+        ]}
+        value="option1"
+      />
+    </RecoilRoot>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaper  | Typ      | Beskrivning                                                                                                                                                                                                                                                           |
+| ----------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| klassNamn   | string   | Valfri CSS-klass för ytterligare stil                                                                                                                                                                                                                                 |
+| inaktiverad | boolean  | När den är inställd på `true`, inaktiveras användarinteraktion med komponenten                                                                                                                                                                                        |
+| etikett     | string   | Etiketten för att beskriva syftet med `Select`-komponenten                                                                                                                                                                                                            |
+| vidÄndring  | funktion | Funktionen som kallas när de valda värdena ändras                                                                                                                                                                                                                     |
+| alternativ  | array    | Represents the options available for the `Selected` component. Det är en array av objekt där varje objekt har ett `värde` (den unika identifieraren), `etikett` (den unika identifieraren) och en valfri `Ikon` |
+| värde       | string   | Representerar det för närvarande valda värdet. It should match one of the `value` properties in the `options` array                                                                                                                                   |
+
+</Tab>
+</Tabs>
