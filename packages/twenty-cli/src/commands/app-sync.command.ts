@@ -15,7 +15,7 @@ export class AppSyncCommand {
       console.log(chalk.gray(`📁 App Path: ${appPath}`));
       console.log('');
 
-      return await this.synchronizeServerlessFunctions({ appPath });
+      return await this.synchronize({ appPath });
     } catch (error) {
       console.error(
         chalk.red('Sync failed:'),
@@ -25,11 +25,7 @@ export class AppSyncCommand {
     }
   }
 
-  private async synchronizeServerlessFunctions({
-    appPath,
-  }: {
-    appPath: string;
-  }) {
+  private async synchronize({ appPath }: { appPath: string }) {
     const { manifest, packageJson, yarnLock } = await loadManifest(appPath);
 
     const serverlessSyncResult = await this.apiService.syncApplication({
