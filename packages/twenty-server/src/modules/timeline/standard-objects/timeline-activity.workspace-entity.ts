@@ -76,7 +76,8 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
 
   // Special objects that don't have their own timeline and are 'link' to the main object
   @WorkspaceField({
-    universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedRecordCachedName,
+    universalIdentifier:
+      TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedRecordCachedName,
     type: FieldMetadataType.TEXT,
     label: msg`Linked Record cached name`,
     description: msg`Cached record name`,
@@ -95,7 +96,8 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   linkedRecordId: string | null;
 
   @WorkspaceField({
-    universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedObjectMetadataId,
+    universalIdentifier:
+      TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedObjectMetadataId,
     type: FieldMetadataType.UUID,
     label: msg`Linked Object Metadata Id`,
     description: msg`Linked Object Metadata Id`,

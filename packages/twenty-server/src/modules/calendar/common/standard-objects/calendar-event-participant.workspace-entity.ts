@@ -39,12 +39,14 @@ export enum CalendarEventParticipantResponseStatus {
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
-export class CalendarEventParticipantWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.id,
-  createdAt: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.deletedAt,
-}) {
+export class CalendarEventParticipantWorkspaceEntity extends createBaseWorkspaceEntity(
+  {
+    id: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.id,
+    createdAt: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.createdAt,
+    updatedAt: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.updatedAt,
+    deletedAt: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.deletedAt,
+  },
+) {
   @WorkspaceField({
     universalIdentifier: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,

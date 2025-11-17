@@ -31,12 +31,14 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
-export class MessageParticipantWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.id,
-  createdAt: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.deletedAt,
-}) {
+export class MessageParticipantWorkspaceEntity extends createBaseWorkspaceEntity(
+  {
+    id: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.id,
+    createdAt: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.createdAt,
+    updatedAt: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.updatedAt,
+    deletedAt: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.deletedAt,
+  },
+) {
   @WorkspaceField({
     universalIdentifier: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.role,
     type: FieldMetadataType.SELECT,

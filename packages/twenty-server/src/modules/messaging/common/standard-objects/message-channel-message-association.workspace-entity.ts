@@ -38,12 +38,14 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
   isUnique: true,
   indexWhereClause: '"deletedAt" IS NULL',
 })
-export class MessageChannelMessageAssociationWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.id,
-  createdAt: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.deletedAt,
-}) {
+export class MessageChannelMessageAssociationWorkspaceEntity extends createBaseWorkspaceEntity(
+  {
+    id: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.id,
+    createdAt: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.createdAt,
+    updatedAt: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.updatedAt,
+    deletedAt: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.deletedAt,
+  },
+) {
   @WorkspaceField({
     universalIdentifier:
       MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageExternalId,

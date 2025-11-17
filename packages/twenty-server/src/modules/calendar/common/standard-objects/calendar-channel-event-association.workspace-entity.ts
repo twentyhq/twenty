@@ -28,12 +28,14 @@ import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standa
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
-export class CalendarChannelEventAssociationWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.id,
-  createdAt: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.deletedAt,
-}) {
+export class CalendarChannelEventAssociationWorkspaceEntity extends createBaseWorkspaceEntity(
+  {
+    id: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.id,
+    createdAt: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.createdAt,
+    updatedAt: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.updatedAt,
+    deletedAt: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.deletedAt,
+  },
+) {
   /**
    * External ID of the calendar event. Comes from the provider's API, is unique per connected account.
    * Used by the provider to identify the event in their system.

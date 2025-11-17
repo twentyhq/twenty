@@ -32,12 +32,14 @@ export enum AutomatedTriggerType {
   icon: STANDARD_OBJECT_ICONS.workflowAutomatedTrigger,
 })
 @WorkspaceIsSystem()
-export class WorkflowAutomatedTriggerWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.id,
-  createdAt: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.deletedAt,
-}) {
+export class WorkflowAutomatedTriggerWorkspaceEntity extends createBaseWorkspaceEntity(
+  {
+    id: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.id,
+    createdAt: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.createdAt,
+    updatedAt: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.updatedAt,
+    deletedAt: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.deletedAt,
+  },
+) {
   @WorkspaceField({
     universalIdentifier: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.SELECT,

@@ -77,7 +77,8 @@ export class ConnectedAccountWorkspaceEntity extends createBaseWorkspaceEntity({
   refreshToken: string;
 
   @WorkspaceField({
-    universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastCredentialsRefreshedAt,
+    universalIdentifier:
+      CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastCredentialsRefreshedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Last credentials refreshed at`,
     description: msg`Last credentials refreshed at`,
@@ -125,7 +126,8 @@ export class ConnectedAccountWorkspaceEntity extends createBaseWorkspaceEntity({
   scopes: string[] | null;
 
   @WorkspaceField({
-    universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.connectionParameters,
+    universalIdentifier:
+      CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.connectionParameters,
     type: FieldMetadataType.RAW_JSON,
     label: msg`Custom Connection Parameters`,
     description: msg`JSON object containing custom connection parameters`,
