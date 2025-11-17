@@ -18,7 +18,7 @@ import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/stan
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.calendarChannelEventAssociation,
+  universalIdentifier: STANDARD_OBJECT_IDS.calendarChannelEventAssociation,
 
   namePlural: 'calendarChannelEventAssociations',
   labelSingular: msg`Calendar Channel Event Association`,

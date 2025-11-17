@@ -29,7 +29,7 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-ob
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.timelineActivity,
+  universalIdentifier: STANDARD_OBJECT_IDS.timelineActivity,
 
   namePlural: 'timelineActivities',
   labelSingular: msg`Timeline Activity`,

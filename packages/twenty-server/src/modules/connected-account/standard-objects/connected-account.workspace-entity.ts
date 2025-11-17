@@ -24,7 +24,7 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/stan
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.connectedAccount,
+  universalIdentifier: STANDARD_OBJECT_IDS.connectedAccount,
 
   namePlural: 'connectedAccounts',
   labelSingular: msg`Connected Account`,

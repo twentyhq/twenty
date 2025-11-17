@@ -1,9 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import {
-  FieldMetadataType,
-  RelationOnDeleteAction,
   ActorMetadata,
   type CurrencyMetadata,
+  FieldMetadataType,
+  RelationOnDeleteAction,
 } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -44,7 +44,7 @@ export const SEARCH_FIELDS_FOR_OPPORTUNITY: FieldTypeAndNameMetadata[] = [
 ];
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.opportunity,
+  universalIdentifier: STANDARD_OBJECT_IDS.opportunity,
 
   namePlural: 'opportunities',
   labelSingular: msg`Opportunity`,

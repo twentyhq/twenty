@@ -8,6 +8,8 @@ export interface WorkspaceEntityMetadataArgs {
    */
   readonly standardId: string;
 
+  readonly universalId: string;
+
   /**
    * Class to which table is applied.
    * Function target is a table defined in the class.

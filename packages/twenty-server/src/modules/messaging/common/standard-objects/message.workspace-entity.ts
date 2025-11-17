@@ -20,7 +20,7 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.message,
+  universalIdentifier: STANDARD_OBJECT_IDS.message,
 
   namePlural: 'messages',
   labelSingular: msg`Message`,

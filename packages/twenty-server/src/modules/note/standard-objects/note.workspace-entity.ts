@@ -1,8 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import {
+  ActorMetadata,
   FieldMetadataType,
   RelationOnDeleteAction,
-  ActorMetadata,
   type RichTextV2Metadata,
 } from 'twenty-shared/types';
 
@@ -41,7 +41,7 @@ export const SEARCH_FIELDS_FOR_NOTES: FieldTypeAndNameMetadata[] = [
 ];
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.note,
+  universalIdentifier: STANDARD_OBJECT_IDS.note,
 
   namePlural: 'notes',
   labelSingular: msg`Note`,

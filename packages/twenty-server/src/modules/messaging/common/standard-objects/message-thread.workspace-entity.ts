@@ -16,7 +16,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.messageThread,
+  universalIdentifier: STANDARD_OBJECT_IDS.messageThread,
 
   namePlural: 'messageThreads',
   labelSingular: msg`Message Thread`,

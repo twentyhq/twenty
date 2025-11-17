@@ -29,7 +29,7 @@ registerEnumType(MessageFolderPendingSyncAction, {
 });
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.messageFolder,
+  universalIdentifier: STANDARD_OBJECT_IDS.messageFolder,
 
   namePlural: 'messageFolders',
   labelSingular: msg`Message Folder`,

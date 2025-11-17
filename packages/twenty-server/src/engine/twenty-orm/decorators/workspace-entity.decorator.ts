@@ -6,7 +6,7 @@ import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manag
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 interface WorkspaceEntityOptions {
-  standardId: string;
+  universalIdentifier: string;
   namePlural: string;
   labelSingular: MessageDescriptor;
   labelPlural: MessageDescriptor;
@@ -52,7 +52,7 @@ export function WorkspaceEntity(
 
     metadataArgsStorage.addEntities({
       target,
-      standardId: options.standardId,
+      standardId: options.universalIdentifier,
       nameSingular: objectName,
       namePlural: options.namePlural,
       labelSingular: options.labelSingular?.message ?? '',
@@ -69,6 +69,7 @@ export function WorkspaceEntity(
       gate,
       duplicateCriteria,
       isSearchable,
+      universalId: options.universalIdentifier,
     });
   };
 }

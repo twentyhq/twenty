@@ -1,10 +1,10 @@
 import { msg } from '@lingui/core/macro';
 import {
-  FieldMetadataType,
-  RelationOnDeleteAction,
   ActorMetadata,
   EmailsMetadata,
+  FieldMetadataType,
   PhonesMetadata,
+  RelationOnDeleteAction,
   type FullNameMetadata,
   type LinksMetadata,
 } from 'twenty-shared/types';
@@ -31,8 +31,8 @@ import { PERSON_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspac
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-  type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
+  type FieldTypeAndNameMetadata,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -57,7 +57,7 @@ export const SEARCH_FIELDS_FOR_PERSON: FieldTypeAndNameMetadata[] = [
 ];
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.person,
+  universalIdentifier: STANDARD_OBJECT_IDS.person,
 
   namePlural: 'people',
   labelSingular: msg`Person`,

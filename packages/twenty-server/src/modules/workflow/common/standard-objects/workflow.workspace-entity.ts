@@ -1,8 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import {
+  ActorMetadata,
   FieldMetadataType,
   RelationOnDeleteAction,
-  ActorMetadata,
 } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -67,7 +67,7 @@ export const SEARCH_FIELDS_FOR_WORKFLOWS: FieldTypeAndNameMetadata[] = [
 ];
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.workflow,
+  universalIdentifier: STANDARD_OBJECT_IDS.workflow,
 
   namePlural: 'workflows',
   labelSingular: msg`Workflow`,

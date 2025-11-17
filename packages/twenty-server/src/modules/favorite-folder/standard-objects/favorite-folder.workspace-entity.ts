@@ -14,7 +14,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.favoriteFolder,
+  universalIdentifier: STANDARD_OBJECT_IDS.favoriteFolder,
 
   namePlural: 'favoriteFolders',
   labelSingular: msg`Favorite Folder`,

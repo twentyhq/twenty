@@ -1,8 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import {
+  ActorMetadata,
   FieldMetadataType,
   RelationOnDeleteAction,
-  ActorMetadata,
 } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -37,7 +37,7 @@ export const SEARCH_FIELDS_FOR_DASHBOARD: FieldTypeAndNameMetadata[] = [
 ];
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.dashboard,
+  universalIdentifier: STANDARD_OBJECT_IDS.dashboard,
 
   namePlural: 'dashboards',
   labelSingular: msg`Dashboard`,

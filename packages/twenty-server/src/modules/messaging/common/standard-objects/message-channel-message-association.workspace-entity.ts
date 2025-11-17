@@ -24,7 +24,7 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/stan
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.messageChannelMessageAssociation,
+  universalIdentifier: STANDARD_OBJECT_IDS.messageChannelMessageAssociation,
 
   namePlural: 'messageChannelMessageAssociations',
   labelSingular: msg`Message Channel Message Association`,

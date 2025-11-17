@@ -21,7 +21,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.taskTarget,
+  universalIdentifier: STANDARD_OBJECT_IDS.taskTarget,
 
   namePlural: 'taskTargets',
   labelSingular: msg`Task Target`,

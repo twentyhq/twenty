@@ -1,8 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import {
+  ActorMetadata,
   FieldMetadataType,
   RelationOnDeleteAction,
-  ActorMetadata,
   type RichTextV2Metadata,
 } from 'twenty-shared/types';
 
@@ -44,7 +44,7 @@ export const SEARCH_FIELDS_FOR_TASKS: FieldTypeAndNameMetadata[] = [
 ];
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.task,
+  universalIdentifier: STANDARD_OBJECT_IDS.task,
 
   namePlural: 'tasks',
   labelSingular: msg`Task`,

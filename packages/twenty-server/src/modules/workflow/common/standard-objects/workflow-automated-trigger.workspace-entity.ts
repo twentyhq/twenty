@@ -23,7 +23,7 @@ export enum AutomatedTriggerType {
 }
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.workflowAutomatedTrigger,
+  universalIdentifier: STANDARD_OBJECT_IDS.workflowAutomatedTrigger,
 
   namePlural: 'workflowAutomatedTriggers',
   labelSingular: msg`WorkflowAutomatedTrigger`,

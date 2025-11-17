@@ -1,8 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import {
   FieldMetadataType,
-  RelationOnDeleteAction,
   LinksMetadata,
+  RelationOnDeleteAction,
 } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -23,7 +23,7 @@ import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/cale
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.calendarEvent,
+  universalIdentifier: STANDARD_OBJECT_IDS.calendarEvent,
 
   namePlural: 'calendarEvents',
   labelSingular: msg`Calendar event`,

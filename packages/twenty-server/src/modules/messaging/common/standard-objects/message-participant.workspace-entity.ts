@@ -20,7 +20,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.messageParticipant,
+  universalIdentifier: STANDARD_OBJECT_IDS.messageParticipant,
 
   namePlural: 'messageParticipants',
   labelSingular: msg`Message Participant`,

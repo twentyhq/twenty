@@ -27,7 +27,7 @@ export enum CalendarEventParticipantResponseStatus {
 }
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.calendarEventParticipant,
+  universalIdentifier: STANDARD_OBJECT_IDS.calendarEventParticipant,
 
   namePlural: 'calendarEventParticipants',
   labelSingular: msg`Calendar event participant`,

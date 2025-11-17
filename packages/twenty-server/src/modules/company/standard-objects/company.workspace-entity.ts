@@ -1,10 +1,10 @@
 import { msg } from '@lingui/core/macro';
 import {
-  FieldMetadataType,
-  RelationOnDeleteAction,
   ActorMetadata,
   AddressMetadata,
+  FieldMetadataType,
   LinksMetadata,
+  RelationOnDeleteAction,
   type CurrencyMetadata,
 } from 'twenty-shared/types';
 
@@ -30,8 +30,8 @@ import { COMPANY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspa
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-  type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
+  type FieldTypeAndNameMetadata,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
@@ -51,7 +51,7 @@ export const SEARCH_FIELDS_FOR_COMPANY: FieldTypeAndNameMetadata[] = [
 ];
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.company,
+  universalIdentifier: STANDARD_OBJECT_IDS.company,
 
   namePlural: 'companies',
   labelSingular: msg`Company`,

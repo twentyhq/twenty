@@ -21,7 +21,7 @@ import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-obj
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.noteTarget,
+  universalIdentifier: STANDARD_OBJECT_IDS.noteTarget,
 
   namePlural: 'noteTargets',
   labelSingular: msg`Note Target`,

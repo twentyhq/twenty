@@ -4,9 +4,9 @@ import { msg } from '@lingui/core/macro';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
   FieldMetadataType,
+  FullNameMetadata,
   NumberDataType,
   RelationOnDeleteAction,
-  FullNameMetadata,
 } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -86,7 +86,7 @@ export const SEARCH_FIELDS_FOR_WORKSPACE_MEMBER: FieldTypeAndNameMetadata[] = [
 ];
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.workspaceMember,
+  universalIdentifier: STANDARD_OBJECT_IDS.workspaceMember,
 
   namePlural: 'workspaceMembers',
   labelSingular: msg`Workspace Member`,
