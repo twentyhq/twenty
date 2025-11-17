@@ -1,0 +1,44 @@
+---
+title: crwdns63260:0crwdne63260:0
+image: crwdns63282:0crwdne63282:0
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+crwdns63290:0crwdne63290:0
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter } from "react-router-dom";
+import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+
+export const MyComponent = () => {
+  const breadcrumbLinks = [
+    { children: "Home", href: "/" },
+    { children: "Category", href: "/category" },
+    { children: "Subcategory", href: "/category/subcategory" },
+    { children: "Current Page" },
+  ];
+
+  return (
+    <BrowserRouter>
+      <Breadcrumb className links={breadcrumbLinks} />
+    </BrowserRouter>
+    )
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| crwdns63296:0crwdne63296:0 | crwdns63302:0crwdne63302:0 | crwdns63308:0crwdne63308:0                                                            |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| crwdns63314:0crwdne63314:0 | crwdns63320:0crwdne63320:0 | crwdns63324:0crwdne63324:0                                                            |
+| crwdns63330:0crwdne63330:0 | crwdns63338:0crwdne63338:0 | crwdns63344:0crwdne63344:0 crwdns63352:0crwdne63352:0 |
+
+</Tab>
+</Tabs>

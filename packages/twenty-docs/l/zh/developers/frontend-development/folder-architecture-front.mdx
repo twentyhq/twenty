@@ -1,0 +1,114 @@
+---
+title: 資料夾架構
+info: 深入了解我們的資料夾架構
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+In this guide, you will explore the details of the project directory structure and how it contributes to the organization and maintainability of Twenty.
+
+通過遵循這種資料夾架構慣例，更容易找到與特定功能相關的文件，確保應用程序具有可擴展性和可維護性。
+
+```
+front
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
+│   └───ui
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
+└───pages
+└───...
+```
+
+## Pages
+
+包含應用程序路由所定義的頂層組件。 它們從模組資料夾中導入更多低級別的組件（詳情如下）。
+
+## 模組
+
+每個模組代表一個功能或一組功能，包括其專屬的組件、狀態和運行邏輯。
+它們應遵循以下結構。 您可以在模組內嵌套模組（稱為子模組），同樣的規則適用。
+
+```
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
+```
+
+### 上下文
+
+上下文是一種通過組件樹傳遞數據的方法，不必在每個層次手動向下傳遞 props。
+
+詳情請參閱 [React 上下文](https://react.dev/reference/react#context-hooks)。
+
+### GraphQL
+
+包括片段、查詢和變更。
+
+更多詳情參閱 [GraphQL](https://graphql.org/learn/)。
+
+- 片段
+
+片段是可重用的查詢部分，您可以在不同的地方使用。 通過使用片段，可以更容易避免重複代碼。
+
+更多詳情請參閱 [GraphQL 片段](https://graphql.org/learn/queries/#fragments)。
+
+- 查詢
+
+更多詳情請參閱 [GraphQL 查詢](https://graphql.org/learn/queries/)。
+
+- Mutations
+
+更多詳情請參閱 [GraphQL 變更](https://graphql.org/learn/queries/#mutations)。
+
+### 鉤子
+
+詳情請參閱 [鉤子](https://react.dev/learn/reusing-logic-with-custom-hooks)。
+
+### 狀態
+
+包含狀態管理邏輯。 [RecoilJS](https://recoiljs.org) 負責。
+
+- 選擇器: 更多詳情請參閱 [RecoilJS 選擇器](https://recoiljs.org/docs/basic-tutorial/selectors)。
+
+React 的內建狀態管理仍然在組件內部處理狀態。
+
+### 實用工具
+
+應只包含可重用的純函數。 否則，請在 `hooks` 資料夾中創建自定義鉤子。
+
+## UI
+
+包含應用程序中使用的所有可重用用戶介面組件。
+
+此資料夾可以包含子資料夾，例如 `data`、`display`、`feedback` 和 `input` 針對特定組件類型。 每個組件應該是自成一體且可重用的，以便在應用程序的不同部分重複使用。
+
+透過將用戶介面組件與模組資料夾中的其他組件分開，可以更容易維持一致的設計，且在不影響代碼庫其他部分（業務邏輯）的情況下進行用戶介面變更。
+
+## 介面和相依
+
+您可以從任何模組導入其他模組代碼，但 `ui` 資料夾除外。 這將使其代碼易於測試。
+
+### 內部
+
+每個部分（鉤子、狀態等） 模組可以有一個 `internal` 資料夾，其中包含僅在模組內使用的部分。

@@ -1,0 +1,88 @@
+---
+title: App-nutpunt
+image: /images/user-guide/tips/light-bulb.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
+</Frame>
+
+‘n Kort boodskap wat bykomende inligting vertoon wanneer 'n gebruiker met 'n element in wisselwerking tree.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
+
+export const MyComponent = () => {
+  return (
+    <>
+      <p id="hoverText" style={{ display: "inline-block" }}>
+        Customer Insights
+      </p>
+      <AppTooltip
+        className
+        anchorSelect="#hoverText"
+        content="Explore customer behavior and preferences"
+        delayHide={0}
+        offset={6}
+        noArrow={false}
+        isOpen={true}
+        place="bottom"
+        positionStrategy="absolute"
+      />
+    </>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Eienskappe       | Tipe                                           | Beskrywing                                                                                                                                                                                                                         |
+| ---------------- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| klasNaam         | string                                         | Opsionele CSS-klas vir addisionele stylering                                                                                                                                                                                       |
+| anchorSelect     | CSS selektor                                   | Selektor vir die hulpmiddelwenk-anker (die element wat die hulpmiddelwenk aktiveer)                                                                                                                             |
+| inhoud           | string                                         | Die inhoud wat jy binne die hulpmiddelwenk wil vertoon                                                                                                                                                                             |
+| delayHide        | nommer                                         | The delay in seconds before hiding the tooltip after the cursor leaves the anchor                                                                                                                                                  |
+| verskuiwing      | nommer                                         | Die verskuiwing in pixels vir die posisionering van die hulpmiddelwenk                                                                                                                                                             |
+| noArrow          | booleaanse                                     | Indien `waar`, verberg die pyl op die hulpmiddelwenk                                                                                                                                                                               |
+| isOop            | booleaanse                                     | Indien `waar`, is die hulpmiddelwenk standaard oop                                                                                                                                                                                 |
+| plek             | `PlekTipe` string van `react-tooltip`          | Spesifiseer die plasing van die hulpmiddelwenk. Waardes sluit in `onder`, `links`, `regs`, `bo`, `bo-begin`, `bo-einde`, `regs-begin`, `regs-einde`, `onder-begin`, `onder-einde`, `links-begin`, en `links-einde` |
+| positionStrategy | `PositionStrategy` string from `react-tooltip` | Posisioneerstrategie vir die hulpmiddelwenk. Het twee waardes: `absoluut` en `vasgestel`                                                                                                           |
+
+</Tab>
+
+</Tabs>
+
+## Overflowing Text with Tooltip
+
+Hanteer oorloopende teks en vertoon 'n hulpmiddelwenk wanneer die teks oorloop.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  const crmTaskDescription =
+    'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
+
+  return <OverflowingTextWithTooltip text={crmTaskDescription} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Eienskappe | Tipe   | Beskrywing                                                |
+| ---------- | ------ | --------------------------------------------------------- |
+| teks       | string | Die inhoud wat jy in die oorloopende teksarea wil vertoon |
+
+</Tab>
+
+</Tabs>

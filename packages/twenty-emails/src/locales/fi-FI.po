@@ -90,13 +90,18 @@ msgstr "Hyväksy kutsu"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
 msgstr "Vahvista sähköpostiosoitteesi"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr "Kiitos, että rekisteröidyit Twenty:n käyttäjäksi! Ennen kuin aloitamme, meidän täytyy vahvistaa, että kyseessä on sinä. Klikkaa alla vahvistaaksesi sähköpostiosoitteesi."
+msgid "Confirm new email"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx

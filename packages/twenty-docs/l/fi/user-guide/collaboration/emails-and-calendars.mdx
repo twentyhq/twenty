@@ -1,0 +1,114 @@
+---
+title: Sähköpostit ja kalenterit
+info: "Tarkastele ja hallitse sähköpostikeskusteluja CRM-tietueidesi sisällä."
+image: /images/user-guide/emails/emails_header.png
+sectionInfo: Keskitetään viestintä ja tiimityöskentely
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+**Huomautus**: Yhdistääksesi sähköpostitilisi ja määrittääksesi synkronointiasetukset, siirry kohtaan [Email & Calendar Setup](/l/fi/user-guide/settings/email-calendar-setup).
+
+## Miten sähköpostintegraatio toimii
+
+Twenty yhdistää automaattisesti sähköpostit yhdistetyistä postilaatikoistasi vastaaviin CRM-tietueisiin, pitäen koko viestintähistorian yhdessä paikassa.
+
+### Where to Find Emails
+
+Sähköpostikeskustelut näkyvät kolmessa pääobjektissa:
+
+- **Henkilöt**: Tarkastele kaikkia tietyn yhteyshenkilön kanssa vaihdettuja sähköposteja
+- **Yritykset**: Näe kaikki yritykseen ja sen työntekijöihin liittyvät sähköpostit
+- **Mahdollisuudet**: Pääsy sähköpostiketjuihin, jotka liittyvät tähän mahdollisuuteen linkitettyyn yritykseen. Yksittäisten henkilöiden sähköpostiketjuja mahdollisuudessa ei vielä näytetä.
+
+### Sähköpostiketjujen tarkastelu
+
+1. **Siirry tietueeseen**: Mene henkilön, yrityksen tai mahdollisuuden tietueeseen
+2. **Valitse sähköpostivälilehti**: Napsauta `Sähköpostit` -välilehteä synkronoitujen sähköpostien tarkasteluun
+3. **Avaa sähköpostiketju**: Napsauta mitä tahansa sähköpostia avatakseen ja lukeaksesi koko keskustelun
+4. **Selaa historiaa**: Vieritä läpi täydellinen sähköpostihistoria kyseisen yhteyshenkilön kanssa
+
+<img src="/images/user-guide/emails/show-inbox.png" style={{width:'100%'}}/>
+
+## Mitä näet
+
+### Email Thread View
+
+Kun avaat sähköpostiketjun, voit:
+
+- **Lue koko keskustelut**: Näe täydellinen sähköpostivaihto
+- **Näe osallistujat**: Näe kaikki sähköpostiketjuun osallistuneet henkilöt
+- **Tarkista aikaleimat**: Tiedä tarkalleen, milloin kukin sähköposti lähetettiin
+- **Pääsy kontekstiin**: Ymmärrä koko viestintähistoria
+
+### Sähköpostin näkyvyys
+
+Postilaatikon asetuksista riippuen saatat nähdä:
+
+- **Täysi sisältö**: Täydellinen sähköpostin teksti ja yksityiskohdat
+- **Aihe + metadata**: Aihe, lähettäjä, vastaanottaja ja aikaleima
+- **Vain metadata**: Perustiedot ilman sähköpostisisältöä
+
+## Sähköpostin synkronointikäyttäytyminen
+
+### Mitä synkronoituu
+
+- **Ulkopuoliset sähköpostit**: Kaikki sähköpostit organisaation ulkopuolisilta kontakteilta
+- **Automaattinen linkitys**: Sähköpostit yhdistetään olemassa oleviin henkilö- ja yritystietueisiin
+- **Useita osoitteita**: Sähköpostit mistä tahansa osoitteesta linkittyvät samaan yhteystietueeseen
+- **Päivitykset**: Uudet sähköpostit tulevat näkyville 5 minuutin kuluessa
+
+### Mitä ei synkronoida
+
+- **Sisäiset sähköpostit**: Kollegojen (sama domain) väliset sähköpostit pysyvät yksityisinä
+- **Ryhmäsähköpostit**: Jakelulistat ja ryhmäsähköpostit on jätetty pois
+- **Poissuljetut kansiot**: Kansiot, joita et ole valinnut synkronoitavaksi (konfiguroitu kohdassa Asetukset → Tilit → Sähköposti)
+
+### Valikoiva kansiosynkronointi (Lab-ominaisuus)
+
+Hallinnoi, mitkä sähköpostikansiot synkronoidaan Twentyn kanssa:
+
+1. Ota käyttöön `Viestikansio` kohdassa Asetukset → Julkaisut → Lab
+2. Määritä kansiot kohdassa Asetukset → Tilit → Sähköposti
+3. Valitse tietyt kansiot sisällytettäväksi tai poissuljettavaksi (Saapuneet, Lähetetyt, Arkisto, mukautetut kansiot)
+
+## Sähköpostin synkronoinnin vianetsintä
+
+### Yleiset synkronointiongelmat
+
+- **Synkronointiviiveet**: Sähköpostit näkyvät 5 minuutin kuluessa, mutta alkuperäisten tuontien kohdalla kestää kauemmin
+- **Puuttuvat sähköpostit**: Tarkista, jos:
+  - Kansiot on poissuljettu Viestikansion asetuksissa
+  - Contact auto-creation is disabled (emails need existing Twenty records)
+  - Sähköposti on kollegoilta (sama domain) tai ryhmälistoilta
+  - Postilaatikko on edelleen suorittamassa alkuperäistä synkronointia
+
+### Sähköpostin rajoitukset
+
+- **Järjestelmäkansiot**: Jotkin sähköpostikansiot eivät välttämättä ole saatavilla synkronointiin
+- **Alias**: Vain oikeat postilaatikot voidaan yhdistää (ei sähköpostialiaseja)
+
+## Kalenterin integrointi
+
+### Kalenterivälilehti
+
+Sähköpostivälilehden vieressä on `Kalenteri`-välilehti, joka sisältää tietueen kanssa sovittujen tapaamisten historian.
+
+**Saatavilla seuraaville:**
+
+- **Henkilöt**: Näe kaikki tietyn yhteyshenkilön kanssa sovitut tapaamiset
+- **Yritykset**: Näe kaikki yritykseen ja sen työntekijöihin liittyvät tapaamiset
+- **Mahdollisuudet**: Pääsy tapaamishistoriaan, joka liittyy tähän mahdollisuuteen linkitettyyn yritykseen
+
+**Näkyvyysasetukset**: Kalenteritiedot noudattavat samoja näkyvyysasetuksia kuin sähköpostit, varmistaen yhtenäiset yksityisyysasetukset molemmilla viestintäkanavilla.
+
+### Tapaamishistorian tarkastelu
+
+1. **Siirry tietueeseen**: Mene henkilön, yrityksen tai mahdollisuuden tietueeseen
+2. **Valitse kalenterivälilehti**: Napsauta `Kalenteri`-välilehteä sähköpostivälilehden vieressä
+3. **Selaa tapaamishistoriaa**: Näe kaikki sovitut tapaamiset ja niiden yksityiskohdat
+4. **Access Meeting Context**: See meeting participants, times, and related information
+
+

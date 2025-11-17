@@ -1,0 +1,333 @@
+---
+title: שיטות עבודה מומלצות
+image: /images/user-guide/tips/light-bulb.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
+</Frame>
+
+מסמך זה מתאר את השיטות המומלצות שיש לעקוב אחריהן בעת עבודה על הצד הקדמי.
+
+## ניהול מצב
+
+React ו-Recoil מנהלים את ניהול המצב בקוד.
+
+### השתמש ב-`useRecoilState` לאחסן מצב
+
+It's good practice to create as many atoms as you need to store your state.
+
+<Warning>
+
+עדיף להשתמש באטומים נוספים מאשר לנסות להיות תמציתי מדי עם מעבר פרופס.
+
+</Warning>
+
+```tsx
+export const myAtomState = atom({
+  key: 'myAtomState',
+  default: 'default value',
+});
+
+export const MyComponent = () => {
+  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+
+  return (
+    <div>
+      <input
+        value={myAtom}
+        onChange={(e) => setMyAtom(e.target.value)}
+      />
+    </div>
+  );
+}
+```
+
+### Do not use `useRef` to store state
+
+Avoid using `useRef` to store state.
+
+אם אתה רוצה לאחסן מצב, עליך להשתמש ב-`useState` או ב-`useRecoilState`.
+
+ראה [כיצד לנהל רינדורים חוזרים](#managing-re-renders) אם אתה מרגיש צורך להשתמש ב-`useRef` למניעת רינדורים חוזרים מסוימים.
+
+## ניהול רינדור חוזר
+
+Re-renders can be hard to manage in React.
+
+Here are some rules to follow to avoid unnecessary re-renders.
+
+זכור שתמיד תוכל להימנע מרינדורים חוזרים על ידי הבנה של סיבתם.
+
+### Work at the root level
+
+הימנעות מרינדורים חוזרים בתכונות חדשות הפך קל על ידי ביטולם ברמה השורשית.
+
+רכיב ה-sidecar `PageChangeEffect` מכיל רק `useEffect` אחד שמחזיק את כל הלוגיקה לביצוע בשינוי דף.
+
+That way you know that there's just one place that can trigger a re-render.
+
+### תמיד תחשוב פעמיים לפני שתוסיף `useEffect` לקוד שלך
+
+רינדורים חוזרים נגרמים לעיתים קרובות על ידי `useEffect` שאינם נחוצים.
+
+You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
+
+בכלליות, תמצא שזה קל להעביר את הלוגיקה לפונקציות כמו `handleClick` או `handleChange`.
+
+תוכל למצוא גם בספריות כמו Apollo: `onCompleted`, `onError` וכו'.
+
+### Use a sibling component to extract `useEffect` or data fetching logic
+
+If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
+
+תוכל להחיל את אותו הדבר על לוגיקת הבאת נתונים, עם Hooks של Apollo.
+
+```tsx
+// ❌ Bad, will cause re-renders even if data is not changing, 
+//    because useEffect needs to be re-evaluated
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <div>{data}</div>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+```tsx
+// ✅ Good, will not cause re-renders if data is not changing, 
+//   because useEffect is re-evaluated in another sibling component
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+
+  return <div>{data}</div>;
+};
+
+export const PageData = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <></>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageData />
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+### השתמש במצבי משפחה של Recoil ובבוררי משפחה של Recoil
+
+מצבי משפחה ובוררי משפחה של Recoil הם דרך מצוינת להימנע מרינדורים חוזרים.
+
+הם שימושיים כשאתה צריך לאחסן רשימת פריטים.
+
+### אסור לכם להשתמש ב-`React.memo(MyComponent)`
+
+הימנע משימוש ב-`React.memo()` כי זה לא פותר את הסיבה לרינדור החוזר, ובמקום זאת הוא שובר את שרשרת הרינדור החוזר, מה שיכול להוביל להתנהגות לא צפויה ולהקשות על ריפקטור של הקוד.
+
+### הגבל את השימוש ב-`useCallback` או `useMemo`
+
+לעיתים קרובות הם לא נחוצים ויעשו את הקוד קשה לקריאה ולתחזוקה בשביל שיפור ביצועים שלא ניתן להבחין בו.
+
+## יומני קונסולה
+
+`console.log` הם בעלי ערך במהלך הפיתוח, ומספקים תובנות בזמן אמת על ערכי משתנים וזרימת הקוד. אבל השארתם בקוד הייצור יכולה להוביל למספר בעיות:
+
+1. **ביצועים**: רישום יתר עשוי להשפיע על ביצועי הזמן ריצה, במיוחד באפליקציות לקוח.
+
+2. **אבטחה**: תיעוד נתונים רגישים עשוי לחשוף מידע קריטי לכל מי שבודק את קונסולת הדפדפן.
+
+3. **ניקיון**: מילוי הקונסולה ברישומים עשוי להסתיר אזהרות או שגיאות חיוניות שהמפתחים או הכלים צריכים לראות.
+
+4. **מקצועניות**: משתמשים או לקוחות הקוראים את הקונסולה ורואים מסמכים רבים עלולים לפקפק באיכות ובגימור של הקוד.
+
+ודא שאתה מסיר את כל `console.logs` לפני שדוחף את הקוד לייצור.
+
+## שמות
+
+### שמות משתנים
+
+שמות המשתנים צריכים לתאר במדויק את המטרה או הפונקציה של המשתנה.
+
+#### הבעיה עם שמות כלליים
+
+שמות כלליים בתכנות אינם אידיאליים מכיוון שהם חסרים סוגיות, מובילים לעמימות ומפחיתים את קריאות הקוד. שמות כאלה אינם מעבירים את מטרת המשתנה או הפונקציה, מה שמקשה על המפתחים להבין את כוונת הקוד מבלי לחקור לעומק. זה יכול להוביל לזמן ניפוי באגים מוגבר, לחשוף יותר שגיאות ולקשיים בתחזוקה ושיתוף פעולה. בינתיים, שמות תיאוריים עושים את הקוד ברור יותר וקלים לניווט, משפרים את איכות הקוד ופריון המפתחים.
+
+```tsx
+// ❌ Bad, uses a generic name that doesn't communicate its
+//    purpose or content clearly
+const [value, setValue] = useState('');
+```
+
+```tsx
+// ✅ Good, uses a descriptive name
+const [email, setEmail] = useState('');
+```
+
+#### כמה מילים להימנע מהן בשמות משתנים
+
+- dummy
+
+### מטפלי אירועים
+
+Event handler names should start with `handle`, while `on` is a prefix used to name events in components props.
+
+```tsx
+// ❌ Bad
+const onEmailChange = (val: string) => {
+  // ...
+};
+```
+
+```tsx
+// ✅ Good
+const handleEmailChange = (val: string) => {
+  // ...
+};
+```
+
+## פרופס אופציונליים
+
+הימנע מהעברת ערך ברירת המחדל לפרופס אופציונלי.
+
+**דוגמא**
+
+קח את הרכיב `EmailField` המוגדר למטה:
+
+```tsx
+type EmailFieldProps = {
+  value: string;
+  disabled?: boolean;
+};
+
+const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
+  <TextInput value={value} disabled={disabled} fullWidth />
+);
+```
+
+**שימוש**
+
+```tsx
+// ❌ Bad, passing in the same value as the default value adds no value
+const Form = () => <EmailField value="username@email.com" disabled={false} />;
+```
+
+```tsx
+// ✅ Good, assumes the default value
+const Form = () => <EmailField value="username@email.com" />;
+```
+
+## רכיב כפרופס
+
+Try as much as possible to pass uninstantiated components as props, so children can decide on their own of what props they need to pass.
+
+הדוגמה הנפוצה ביותר לכך היא רכיבי אייקון:
+
+```tsx
+const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
+
+// In MyComponent
+const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
+  const theme = useTheme();
+
+  return (
+    <div>
+      <MyIcon size={theme.icon.size.md}>
+    </div>
+  )
+};
+```
+
+כדי ש-React יבין שרכיב הוא רכיב, יש להשתמש ב-PascalCase, כדי לאקטב אותו מאוחר יותר עם `<MyIcon>`
+
+## Prop Drilling: Keep It Minimal
+
+פרופ קידוח, בהקשר של React, מתייחס לפרקטיקה של העברת משתני מצב וההגדרות שלהם דרך שכבות רבות של רכיבים, גם אם רכיבים ביניים לא משתמשים בהם. למרות שלפעמים זה הכרחי, קידוח פרופ מוגזם יכול להוביל ל:
+
+1. **ירידה בקריאות**: מעקב אחר מאיפה מגיעה מידה או היכן נעשה בה שימוש עשוי להפוך למורכב במבנה רכיבים מקונן עמוק.
+
+2. **אתגרי תחזוקה**: שינויים במבנה ההשתמרות של רכיב אחד עשויים לדרוש התאמות במספר רכיבים, גם אם הם לא משתמשים בה ישירות.
+
+3. **ירידה בשימוש חוזר ברכיב**: רכיב שמקבל הרבה השתמרויות רק כדי להעביר אותם מטה הופך לפחות כללי וקשה יותר לשימוש חוזר בהקשרים שונים.
+
+If you feel that you are using excessive prop drilling, see [state management best practices](#state-management).
+
+## יבוא
+
+בעת היבוא, העדיף את הכינויים המיועדים במקום לציין נתיבים מלאים או יחסיים.
+
+**The Aliases**
+
+```js
+{
+  alias: {
+    "~": path.resolve(__dirname, "src"),
+    "@": path.resolve(__dirname, "src/modules"),
+    "@testing": path.resolve(__dirname, "src/testing"),
+  },
+}
+```
+
+**שימוש**
+
+```tsx
+// ❌ Bad, specifies the entire relative path
+import {
+  CatalogDecorator
+} from '../../../../../testing/decorators/CatalogDecorator';
+import {
+  ComponentDecorator
+} from '../../../../../testing/decorators/ComponentDecorator';
+```
+
+```tsx
+// ✅ Good, utilises the designated aliases
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'twenty-ui/testing';
+```
+
+## אימות סכמות
+
+[Zod](https://github.com/colinhacks/zod) הוא מאמת סכמות עבור אובייקטים לא מוקלדים:
+
+```js
+const validationSchema = z
+  .object({
+    exist: z.boolean(),
+    email: z
+      .string()
+      .email('Email must be a valid email'),
+    password: z
+      .string()
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+  })
+  .required();
+
+type Form = z.infer<typeof validationSchema>;
+```
+
+## Breaking Changes
+
+תמיד ביצע בדיקות ידניות מקיפות לפני ההתקדמות כדי לוודא שהשינויים לא גרמו לשיבושים במקומות אחרים, מאחר שהבדיקות עדיין לא שולבו באופן נרחב.
+

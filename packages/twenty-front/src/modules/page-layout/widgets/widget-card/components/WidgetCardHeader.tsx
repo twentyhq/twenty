@@ -1,3 +1,5 @@
+import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -10,7 +12,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
 
 export type WidgetCardHeaderProps = {
-  isWidgetCardHovered: boolean;
+  widgetId: string;
   isInEditMode: boolean;
   isEmpty?: boolean;
   title: string;
@@ -50,7 +52,7 @@ const StyledIconButtonContainer = styled(motion.div)`
 `;
 
 export const WidgetCardHeader = ({
-  isWidgetCardHovered = false,
+  widgetId,
   isEmpty = false,
   isInEditMode = false,
   isResizing = false,
@@ -60,6 +62,11 @@ export const WidgetCardHeader = ({
   className,
 }: WidgetCardHeaderProps) => {
   const theme = useTheme();
+
+  const isWidgetCardHovered = useRecoilComponentFamilyValue(
+    widgetCardHoveredComponentFamilyState,
+    widgetId,
+  );
 
   return (
     <StyledWidgetCardHeader className={className}>

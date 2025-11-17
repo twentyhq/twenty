@@ -1,0 +1,96 @@
+---
+title: Frontend Commando's
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
+</Frame>
+
+## Nuttige commando's
+
+### De app starten
+
+```bash
+npx nx start twenty-front
+```
+
+### Regenerate graphql schema based on API graphql schema
+
+```bash
+npx nx run twenty-front:graphql:generate --configuration=metadata
+```
+
+OF
+
+```bash
+npx nx run twenty-front:graphql:generate
+```
+
+### Lint
+
+```bash
+npx nx run twenty-front:lint # pass --fix to fix lint errors
+```
+
+## Vertalingen
+
+```bash
+npx nx run twenty-front:lingui:extract
+npx nx run twenty-front:lingui:compile
+```
+
+### Test
+
+```bash
+npx nx run twenty-front:test # run jest tests
+npx nx run twenty-front:storybook:serve:dev # run storybook
+npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve:dev to be running)
+npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
+```
+
+## Technologische stack
+
+Het project heeft een schone en eenvoudige stack, met minimale boilerplate-code.
+
+**App**
+
+- [React](https://react.dev/)
+- [Apollo](https://www.apollographql.com/docs/)
+- [GraphQL Codegen](https://the-guild.dev/graphql/codegen)
+- [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
+- [TypeScript](https://www.typescriptlang.org/)
+
+**Testen**
+
+- [Jest](https://jestjs.io/)
+- [Storybook](https://storybook.js.org/)
+
+**Tools**
+
+- [Yarn](https://yarnpkg.com/)
+- [Craco](https://craco.js.org/docs/)
+- [ESLint](https://eslint.org/)
+
+## Architectuur
+
+### Routering
+
+[React Router](https://reactrouter.com/) verzorgt de routing.
+
+Om onnodige [her-renders](/l/nl/developers/frontend-development/best-practices-front#managing-re-renders) te vermijden, zit alle routing logica in een `useEffect` in `PageChangeEffect`.
+
+### State Management
+
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) verzorgt state management.
+
+Zie [beste praktijken](/l/nl/developers/frontend-development/best-practices-front#state-management) voor meer informatie over state management.
+
+## Testen
+
+[Jest](https://jestjs.io/) dient als het hulpmiddel voor unit testing terwijl [Storybook](https://storybook.js.org/) voor component testing is.
+
+Jest is voornamelijk bedoeld voor het testen van hulpprogramma's en niet de componenten zelf.
+
+Storybook is voor het testen van het gedrag van geïsoleerde componenten, evenals het weergeven van het ontwerp systeem.
+

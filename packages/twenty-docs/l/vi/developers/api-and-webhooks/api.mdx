@@ -1,0 +1,56 @@
+---
+title: API
+image: /images/docs/getting-started/api.png
+info: Khám phá cách sử dụng các API của chúng tôi.
+---
+
+<Frame>
+  <img src="/images/docs/getting-started/api.png" alt="Header" />
+</Frame>
+
+## Tổng quan
+
+API của Twenty cho phép các nhà phát triển tương tác lập trình với nền tảng CRM của Twenty. Sử dụng API, bạn có thể tích hợp Twenty với các hệ thống khác, tự động đồng bộ dữ liệu và xây dựng giải pháp tùy chỉnh xung quanh dữ liệu khách hàng của bạn. API cung cấp các điểm cuối để **tạo, đọc, cập nhật và xóa** các đối tượng CRM cốt lõi (chẳng hạn như người và công ty) cũng như truy cập cấu hình siêu dữ liệu.
+
+**API Playground:**  You can now access the API Playground within the app's settings. Để thử các lệnh gọi API thực tế, hãy đăng nhập vào không gian làm việc Twenty của bạn và đi đến **Cài Đặt → API & Webhooks**. Điều này mở ra Khu Vực API trong ứng dụng và phần cài đặt cho các chìa khóa API.
+**[Đi tới Cài Đặt API](https://app.twenty.com/settings)**
+
+## Xác thực
+
+API của Twenty sử dụng các chìa khóa API để xác thực. Mỗi yêu cầu đến các điểm cuối bảo vệ phải bao gồm một chìa khóa API trong đầu mục.
+
+- **Chìa Khóa API:** Bạn có thể tạo một chìa khóa API mới từ trang **cài đặt API** của ứng dụng Twenty của bạn. Mỗi chìa khóa API là một token bí mật cho phép truy cập dữ liệu CRM của bạn, vì vậy hãy giữ nó an toàn. Nếu chìa khóa bị lộ, hãy thu hồi nó từ cài đặt và tạo một cái mới.
+- **Đầu Mục Xác Thực:** Khi bạn có một chìa khóa API, hãy bao gồm nó trong đầu mục `Authorization` của yêu cầu HTTP của bạn. Sử dụng phương thức token Bearer. Ví dụ:
+
+  ```
+  Authorization: Bearer YOUR_API_KEY
+  ```
+
+  Thay thế `YOUR_API_KEY` bằng chìa khóa bạn đã nhận được. Đầu mục này phải có mặt trên **tất cả yêu cầu API**. Nếu token bị thiếu hoặc không hợp lệ, API sẽ trả về lỗi xác thực (HTTP 401 Unauthorized).
+
+## Các Điểm Cuối API
+
+Tất cả các tài nguyên có thể được truy cập thông qua REST hoặc GraphQL.
+
+- **Đám Mây:** `https://api.twenty.com/` hoặc miền tùy chỉnh của bạn / tên miền phụ
+- **Self-Hosted Instances:** If you are running Twenty on your own server, use your own domain in place of `api.twenty.com` (for example, `https://{your-domain}/rest/`).
+
+Các điểm cuối được phân thành hai loại: **API Cốt Lõi** và **API Siêu Dữ Liệu**. **API Cốt Lõi** giải quyết dữ liệu chính của CRM (ví dụ: người, công ty, ghi chú, nhiệm vụ), trong khi **API Siêu Dữ Liệu** đề cập đến dữ liệu cấu hình (như trường tùy chỉnh hoặc định nghĩa đối tượng). Hầu hết các tích hợp sẽ chủ yếu sử dụng API Cốt Lõi.
+
+### API Cốt Lõi
+
+Truy cập trên `/rest/` hoặc `/graphql/`.
+**API Cốt Lõi** phục vụ như một giao diện hợp nhất để quản lý các thực thể CRM cốt lõi (người, công ty, ghi chú, nhiệm vụ) và mối quan hệ của chúng, cung cấp các mô hình tương tác **cả REST và GraphQL**.
+
+### API Siêu Dữ Liệu
+
+Truy cập trên `/rest/metadata/` hoặc `/metadata/`.
+Các điểm cuối của API Siêu Dữ Liệu cho phép bạn lấy thông tin về sơ đồ và cài đặt của bạn. Ví dụ, bạn có thể lấy các định nghĩa của trường tùy chỉnh, sơ đồ đối tượng, v.v.
+
+- **Ví Dụ Các Điểm Cuối:**
+
+  - `GET /rest/metadata/objects` – Liệt kê tất cả các loại đối tượng và siêu dữ liệu của chúng (các trường, mối quan hệ).
+  - `GET /rest/metadata/objects/{objectName}` – Lấy siêu dữ liệu cho một đối tượng cụ thể (ví dụ: `người`, `công ty`).
+  - `GET /rest/metadata/picklists` – Lấy các tùy chọn trường danh sách chạy xuống được định nghĩa trong CRM.
+
+Thường thì các điểm cuối siêu dữ liệu được sử dụng để hiểu cấu trúc dữ liệu (cho các tích hợp động hoặc xây dựng biểu mẫu) hơn là để quản lý các bản ghi thực tế. Chúng thường chỉ đọc. Xác thực cũng được yêu cầu cho những cái này (sử dụng chìa khóa API của bạn).

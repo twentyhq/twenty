@@ -1,0 +1,60 @@
+---
+title: Objecten
+info: "Leer over standaardobjecten en hoe u aangepaste objecten kunt maken voor uw zakelijke behoeften."
+image: /images/user-guide/objects/objects_orange.png
+sectionInfo: Flexibel datamodel ontworpen om uw unieke bedrijfsprocessen te ondersteunen
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/objects/objects_orange.png" alt="Header" />
+</Frame>
+
+## Standaardobjecten
+
+Standaardobjecten zijn vooraf gedefinieerde entiteiten in uw werkruimte die u helpen op te starten. Ze maken deel uit van een gedeeld datamodel dat toegankelijk is voor alle gebruikers van Twenty. U kunt ze gebruiken zoals ze zijn, aanpassen of deactiveren.
+
+<img src="/images/user-guide/objects/standard-objects.png"style={{width:'100%'}}/>
+
+### Personen
+
+Het `People` object slaat uw contacten op. Het bevat contactgegevens en interactiegeschiedenis, zodat u al uw klantinteracties op één plek kunt zien.
+
+### Bedrijf
+
+Het `Companies` object slaat uw bedrijfsaccounts op. Het omvat details zoals industrie, grootte en locatie. Bedrijven verbinden zich met zowel de `People` als `Opportunities` objecten.
+
+### Kansen
+
+Het `Opportunities` object slaat gegevens met betrekking tot deals op. Het volgt de voortgang van potentiële verkopen, van prospectie tot sluiting, waarbij fasen, dealgrootten, bijbehorende account en verwachte sluitingsdatum worden geregistreerd. You can view your sales pipeline in a kanban layout.
+
+## Aangepaste objecten
+
+Aangepaste objecten laten u informatie opslaan die uniek is voor uw organisatie en waarmee standaardobjecten niet kunnen omgaan. For example, if you're SpaceX, you may want to create a custom object for Rockets and Launches.
+
+<img src="/images/user-guide/objects/custom-objects.png"style={{width:'100%'}}/>
+
+### Een nieuw aangepast object maken
+
+Om een nieuw aangepast object te maken:
+
+1. Ga in de zijbalk links naar Instellingen.
+2. Ga onder Werkruimte naar Datamodel. Hier kunt u een overzicht zien van al uw bestaande Standaard- en Aangepaste objecten (zowel actief als uitgeschakeld).
+
+<VimeoEmbed videoId="926288174" title="Video demonstration" />
+
+3. Klik bovenaan op `+ Nieuw object`. Voer de naam in (zowel enkelvoud als meervoud), kies een pictogram en voeg een beschrijving toe voor uw aangepaste object en klik op Opslaan (rechtsboven). Als voorbeeld van aangepast object zou het enkelvoud "notering" zijn en het meervoud "noteringen" met een beschrijving zoals "Noteringen die hosts hebben gecreëerd om hun eigendom te laten zien."
+
+<Warning>
+De enkelvoudige en meervoudige namen moeten verschillend zijn. Dit is vereist om onze GraphQL API correct te laten werken.
+</Warning>
+
+<VimeoEmbed videoId="926293493" title="Video demonstration" />
+
+4. Zodra u uw aangepaste object heeft gemaakt, kunt u het beheren. U kunt de naam, het pictogram en de beschrijving bewerken, de verschillende velden bekijken en meer velden toevoegen.
+
+<img src="/images/user-guide/objects/customize-fields.png"style={{width:'100%'}}/>
+
+**Opmerking:** Als u niet zeker weet of een nieuw object of veld nodig is, lees [dit artikel](/l/nl/user-guide/data-model/customize-your-data-model) voor richtlijnen over het ontwerpen van uw datamodel.
+

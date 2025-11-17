@@ -1,0 +1,390 @@
+---
+title: Frissítési útmutató
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+## Általános irányelvek
+
+**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
+
+To restore backup, run `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
+
+Ha a Docker Compose-t használta, kövesse az alábbi lépéseket:
+
+1. A Terminálban, azon a gazdagépen, ahol a Twenty fut, kapcsolja ki a Twenty-t: `docker compose down`
+
+2. Upgrade the version by changing the `TAG` value in the .env file near your docker-compose. ( We recommend consuming `major.minor` version such as `v0.53` )
+
+3. Hozza vissza a Twenty-t online állapotba: `docker compose up -d`
+
+If you want to upgrade your instance by few versions, e.g. from v0.33.0 to v0.35.0, you have to upgrade your instance sequentially, in this example from v0.33.0 to v0.34.0, then from v0.34.0 to v0.35.0.
+
+**Győződjön meg arról, hogy az egyes frissített verziók után nincs sérült biztonsági másolat.**
+
+## Verzió-specifikus frissítési lépések
+
+## v1.0
+
+Hello Twenty v1.0! 🎉
+
+## v0.60
+
+### Teljesítménynövelések
+
+All interactions with the metadata API have been optimized for better performance, particularly for object metadata manipulation and workspace creation operations.
+
+Átalakítottuk a gyorsítótárazási stratégiánkat, hogy előnyben részesítsük a gyorsítótár találatokat az adatbázis lekérdezésekhez képest, jelentősen javítva a metadata API műveletek teljesítményét.
+
+Ha bármilyen futásidejű problémát tapasztal frissítés után, előfordulhat, hogy ki kell ürítenie a gyorsítótárát, hogy szinkronban legyen a legutóbbi változásokkal. Futtassa ezt a parancsot a twenty-server tárolójában:
+
+```bash
+yarn command:prod cache:flush
+```
+
+### v0.55
+
+Frissítse Twenty példányát a v0.55 kép használatára
+
+Nincs szükség már semmilyen parancs futtatására, az új kép automatikusan gondoskodik az összes szükséges migrációról.
+
+### `User does not have permission` error
+
+If you encounter authorization errors on most requests after upgrading, you may need to flush your cache to recompute the latest permissions.
+
+A `twenty-server` tárolójában futtassa:
+
+```bash
+yarn command:prod cache:flush
+```
+
+This issue is specific to this Twenty version and should not be required for future upgrades.
+
+### v0.54
+
+A `0.53` verzió óta nincs szükség kézi intézkedésekre.
+
+#### Metadata séma megszüntetése
+
+Egyesítettük a `metadata` sémát a `core` sémával, hogy egyszerűsítsük az adatok lekérdezését a `TypeORM`-ből.
+Egyesítettük a `migrate` parancs lépést az `upgrade` paranccsal. Nem ajánljuk a `migrate` parancsot manuálisan futtatni semmilyen szerver/munkás tárolójában.
+
+### v0.53 óta
+
+A `0.53` óta a frissítést programozott módon hajtja végre a `DockerFile`, ez azt jelenti, hogy mostantól nem kell többé manuálisan parancsokat futtatnia.
+
+Győződjön meg róla, hogy példányát egymás után frissíti, anélkül, hogy kihagyna bármilyen fő verziót (pl. `0.43.3`-tól `0.44.0`-ig megengedett, de `0.43.1`-ről `0.45.0`-ra nem), különben munkaterület verzió deszinkronizációjához vezethet, ami futásidejű hibát és hiányzó funkcionalitást eredményezhet.
+
+Annak ellenőrzéséhez, hogy egy munkaterületet helyesen migráltak-e, ellenőrizheti a verzióját az adatbázis `core.workspace` táblájában.
+
+A Twenty példányának aktuális `major.minor` verziójának tartományában kell lennie, megtekintheti példányának verzióját az admin panelen (az `/settings/admin-panel` alatt érhető el, ha a felhasználónak a `canAccessFullAdminPanel` tulajdonság be van állítva az adatbázisban) vagy a `echo $APP_VERSION` futtatásával a `twenty-server` tárolóban.
+
+Egy deszinkronizált munkaterület verziójának javításához frissítenie kell a megfelelő Twenty verzióját követve a kapcsolódó frissítési útmutatókat egymás után, amíg el nem éri a kívánt verziót.
+
+#### `auditLog` eltávolítása
+
+Eltávolítottuk az auditLog standard objektumot, ami azt jelenti, hogy a biztonsági másolat mérete jelentősen csökkenhet ezen a migráción.
+
+### v0.51-től v0.52-ig
+
+Frissítse Twenty példányát a v0.52 kép használatára
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+#### I have a workspace blocked in version between `0.52.0` and `0.52.6`
+
+Sajnos a `0.52.0` és a `0.52.6` teljesen eltávolításra került a dockerHub-ból.
+You will have to manually update your workspace version to `0.51.0` in database and upgrade using twenty version `0.52.11` following its just above upgrade guide.
+
+### v0.50-től v0.51-ig
+
+Frissítse Twenty példányát a v0.51 kép használatára
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### v0.44.0-tól v0.50.0-ig
+
+Frissítse Twenty példányát a v0.50.0 kép használatára
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+#### Docker-compose.yml módosítása
+
+Ez a verzió tartalmaz egy `docker-compose.yml` módosítást, hogy a `worker` szolgáltatás hozzáférést kapjon a `server-local-data` kötethez.
+Kérjük, frissítse helyi `docker-compose.yml` fájlját a [v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml) alapján
+
+### v0.43.0-tól v0.44.0-ig
+
+Frissítse Twenty példányát a v0.44.0 kép használatára
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### v0.42.0-tól v0.43.0-ig
+
+Frissítse Twenty példányát a v0.43.0 kép használatára
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+Ebben a verzióban áttértünk a postgres:16 kép használatára a docker-compose.yml-ben.
+
+#### (1. lehetőség) Adatbázis migráció
+
+Megmaradni a meglévő postgres-spilo képpel rendben van, de le kell fagyasztani a verziót docker-compose.yml-ben 0.43.0-ra.
+
+#### (2. lehetőség) Adatbázis migráció
+
+Ha át szeretné migrálni adatbázisát az új postgres:16 képre, kövesse az alábbi lépéseket:
+
+1. Mentse le adatbázisát a régi postgres-spilo konténerből
+
+```
+docker exec -it twenty-db-1 sh
+pg_dump -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} > databases_backup.sql
+exit
+docker cp twenty-db-1:/home/postgres/databases_backup.sql .
+```
+
+Győződjön meg róla, hogy a mentési fájl nem üres.
+
+2. Frissítse docker-compose.yml fájlját a postgres:16 kép használatára a [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) fájl szerint.
+
+3. Állítsa vissza az adatbázist az új postgres:16 konténerbe.
+
+```
+docker cp databases_backup.sql twenty-db-1:/databases_backup.sql
+docker exec -it twenty-db-1 sh
+psql -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} -f databases_backup.sql
+exit
+```
+
+### v0.41.0-tól v0.42.0-ig
+
+Frissítse Twenty példányát a v0.42.0 kép használatára
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.42
+```
+
+**Környezeti változók**
+
+- Eltávolítva: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
+- Hozzáadva: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
+
+### v0.40.0-tól v0.41.0-ig
+
+Frissítse Twenty példányát a v0.41.0 kép használatára
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.41
+```
+
+**Környezeti változók**
+
+- Eltávolítva: `AUTH_MICROSOFT_TENANT_ID`
+
+### v0.35.0-től v0.40.0-ig
+
+Frissítse Twenty példányát a v0.40.0 képre
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.40
+```
+
+**Környezeti változók**
+
+- Hozzáadva: `IS_EMAIL_VERIFICATION_REQUIRED`, `EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`, `WORKFLOW_EXEC_THROTTLE_LIMIT`, `WORKFLOW_EXEC_THROTTLE_TTL`
+
+### v0.34.0-től v0.35.0-ig
+
+Frissítse Twenty példányát a v0.35.0 kép használatára
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.35
+```
+
+A `yarn database:migrate:prod` parancs alkalmazza a migrációkat az adatbázis struktúrára (core és metadata sémák)
+A `yarn command:prod upgrade-0.35` gondoskodik az összes munkaterület adatainak migrációjáról.
+
+**Környezeti változók**
+
+- Kicseréltük a `ENABLE_DB_MIGRATIONS`-t `DISABLE_DB_MIGRATIONS`-re (alapértelmezett értéke most `false`, valószínűleg nem kell beállítania semmit)
+
+### v0.33.0-től v0.34.0-ig
+
+Frissítse Twenty példányát a v0.34.0 kép használatára
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.34
+```
+
+A `yarn database:migrate:prod` parancs alkalmazza a migrációkat az adatbázis struktúrára (core és metadata sémák)
+A `yarn command:prod upgrade-0.34` gondoskodik az összes munkaterület adatainak migrációjáról.
+
+**Környezeti változók**
+
+- Eltávolítva: `FRONT_BASE_URL`
+- Hozzáadva: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
+
+Frissítettük a frontend URL kezelésének módját.
+Mostantól beállíthatja a frontend URL-t a `FRONT_DOMAIN`, `FRONT_PROTOCOL` és `FRONT_PORT` változók használatával.
+Ha a FRONT_DOMAIN nincs beállítva, a frontend URL visszaesik a `SERVER_URL`-re.
+
+### v0.32.0-től v0.33.0-ig
+
+Frissítse Twenty példányát a v0.33.0 kép használatára
+
+```
+yarn command:prod cache:flush
+yarn database:migrate:prod
+yarn command:prod upgrade-0.33
+```
+
+A `yarn command:prod cache:flush` parancs törli a Redis gyorsítótárat.
+A `yarn database:migrate:prod` parancs alkalmazza a migrációkat az adatbázis struktúrára (core és metadata sémák)
+A `yarn command:prod upgrade-0.33` gondoskodik az összes munkaterület adatainak migrációjáról.
+
+Ettől a verziótól kezdve, a twenty-postgres kép az adatbázishoz elavulttá vált, és a twenty-postgres-spilo-t használják helyette.
+Ha továbbra is szeretné használni a twenty-postgres képet, egyszerűen cserélje ki a `twentycrm/twenty-postgres:${TAG}`-t `twentycrm/twenty-postgres`-re a docker-compose.yml-ben.
+
+### v0.31.0-től v0.32.0-ig
+
+Frissítse Twenty példányát a v0.32.0 kép használatára
+
+**Sémai és adatok migrációja**
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.32
+```
+
+A `yarn database:migrate:prod` parancs alkalmazza a migrációkat az adatbázis struktúrára (core és metadata sémák)
+A `yarn command:prod upgrade-0.32` gondoskodik az összes munkaterület adatainak migrációjáról.
+
+**Környezeti változók**
+
+Frissítettük a Redis kapcsolat kezelésének módját.
+
+- Eltávolítva: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
+- Hozzáadva: `REDIS_URL`
+
+Frissítse `.env` fájlját az új `REDIS_URL` változó használatára az egyes Redis kapcsolati paraméterek helyett.
+
+Egyszerűsítettük az JWT tokenek kezelésének módját is.
+
+- Eltávolítva: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
+- Hozzáadva: `APP_SECRET`
+
+Frissítse `.env` fájlját az új `APP_SECRET` változó használatára az egyes tokenek titkai helyett (használhatja ugyanazt a titkot, mint korábban vagy generálhat egy új véletlenszerű karakterláncot)
+
+**Csatlakoztatott fiók**
+
+Ha összekötött fiókot használ, hogy szinkronizálja a Google emailjeit és naptárait, aktiválnia kell a [People API](https://developers.google.com/people) a Google Admin konzolon.
+
+### v0.30.0-tól v0.31.0-ig
+
+Frissítse Twenty példányát a v0.31.0 kép használatára
+
+**Sémai és adatok migrációja**:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.31
+```
+
+A `yarn database:migrate:prod` parancs alkalmazza a migrációkat az adatbázis struktúrára (core és metadata sémák)
+A `yarn command:prod upgrade-0.31` gondoskodik az összes munkaterület adatainak migrációjáról.
+
+### v0.24.0-től v0.30.0-ig
+
+Frissítse Twenty példányát a v0.30.0 kép használatára
+
+**Breaking change**:
+To enhance performances, Twenty now requires redis cache to be configured. Frissítettük a [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) hogy tükrözze ezt.
+Győződjön meg róla, hogy frissítette konfigurációját, és frissítette a környezeti változóit ennek megfelelően:
+
+```
+REDIS_HOST={your-redis-host}
+REDIS_PORT={your-redis-port}
+CACHE_STORAGE_TYPE=redis
+```
+
+**Sémai és adatok migrációja**:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.30
+```
+
+A `yarn database:migrate:prod` parancs alkalmazza a migrációkat az adatbázis struktúrára (core és metadata sémák)
+A `yarn command:prod upgrade-0.30` gondoskodik az összes munkaterület adatainak migrációjáról.
+
+### v0.23.0-tól v0.24.0-ig
+
+Frissítse Twenty példányát a v0.24.0 kép használatára
+
+Futtassa a következő parancsokat:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.24
+```
+
+A `yarn database:migrate:prod` parancs alkalmazza a migrációkat az adatbázis struktúrára (core és metadata sémák)
+A `yarn command:prod upgrade-0.24` gondoskodik az összes munkaterület adatainak migrációjáról.
+
+### v0.22.0-tól v0.23.0-ig
+
+Frissítse Twenty példányát a v0.23.0 kép használatára
+
+Futtassa a következő parancsokat:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.23
+```
+
+A `yarn database:migrate:prod` parancs alkalmazza a migrációkat az Adatbázisra.
+A `yarn command:prod upgrade-0.23` gondoskodik az adatok migrációjáról, beleértve az aktivitások átadását feladatokba/jegyzetekbe.
+
+### v0.21.0-tól v0.22.0-ig
+
+Frissítse Twenty példányát a v0.22.0 kép használatára
+
+Futtassa a következő parancsokat:
+
+```
+yarn database:migrate:prod
+yarn command:prod workspace:sync-metadata -f
+yarn command:prod upgrade-0.22
+```
+
+A `yarn database:migrate:prod` parancs alkalmazza a migrációkat az Adatbázisra.
+A `yarn command:prod workspace:sync-metadata -f` parancs szinkronizálja a standard objektumok definícióját a metaadat-táblákkal és alkalmazza a szükséges migrációkat a meglévő munkaterületeken.
+The `yarn command:prod upgrade-0.22` command will apply specific data transformations to adapt to the new object defaultRequestInstrumentationOptions.
+
+
+
+

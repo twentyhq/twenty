@@ -1,0 +1,42 @@
+---
+title: Εισαγωγή Εικόνας
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import imageInputCode from '!!raw-loader!@site/src/ui/input/components/imageInputCode.js'
+
+Επιτρέπει στους χρήστες να ανεβάζουν και να αφαιρούν μια εικόνα.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ImageInput } from "@/ui/input/components/ImageInput";
+
+export const MyComponent = () => {
+  return <ImageInput/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Ιδιότητες    | Τύπος         | Περιγραφή                                                                                                                        |
+| ------------ | ------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| εικόνα       | αλφαριθμητικό | Η πηγή URL της εικόνας                                                                                                           |
+| onUpload     | λειτουργία    | Η λειτουργία που καλείται όταν ένας χρήστης ανεβάζει μια νέα εικόνα. Λαμβάνει το αντικείμενο `File` ως παράμετρο |
+| onRemove     | λειτουργία    | Η λειτουργία που καλείται όταν ο χρήστης πατά το κουμπί αφαίρεσης                                                                |
+| onAbort      | συνάρτηση     | Η λειτουργία που καλείται όταν ένας χρήστης πατήσει το κουμπί διακοπής κατά την αποστολή της εικόνας                             |
+| isUploading  | boolean       | Υποδεικνύει αν μια εικόνα ανεβαίνει αυτή τη στιγμή                                                                               |
+| errorMessage | αλφαριθμητικό | Ένα προαιρετικό μήνυμα σφάλματος για εμφάνιση κάτω από την εισαγωγή εικόνας                                                      |
+| disabled     | boolean       | If `true`, the entire input is disabled, and the buttons are not clickable                                                       |
+
+</Tab>
+</Tabs>

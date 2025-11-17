@@ -1,0 +1,95 @@
+---
+title: İletişim ve Hesap Yönetimi
+info: "Müşteri veritabanınızı oluşturmak için Kişi ve Şirket kayıtları oluşturun ve yönetin."
+image: /images/user-guide/home/contact-and-account-management.png
+sectionInfo: "Potansiyel müşteri, satış ve müşteri yönetimi için temel CRM özellikleri"
+---
+
+<Frame>
+  <img src="/images/user-guide/home/contact-and-account-management.png" alt="Header" />
+</Frame>
+
+## Getting data into your CRM
+
+Twenty kullanmaya başladığınızda, kişilerinizi ve şirketlerinizi sisteme eklemek isteyeceksiniz. There are several ways to populate your CRM depending on your workflow and data sources.
+
+### Manuel giriş
+
+En basit yaklaşım, kayıtları doğrudan Twenty arayüzü üzerinden eklemektir. `Kişiler` bölümüne gidin ve yeni bir kişi eklemek için `+` düğmesine tıklayın. Adını, e-posta adresini, telefonunu doldurun ve şirkete bağlayın. Şirketler için `Şirketler` bölümüne giderek organizasyon detaylarını ekleyin: şirket adı, alan adı, sektör ve boyut.
+
+Alan adı alanı, şirket tanımlaması için, e-posta alanı ise kişi tanımlaması için özellikle önemlidir.
+
+### CSV imports
+
+When you have existing data from spreadsheets or other systems, CSV import is your fastest option. Verilerinizi Excel veya Google Sheets üzerinde hazırlayabilir, ardından hepsini bir seferde yükleyebilirsiniz. Bu, başka bir CRM'den geçiş yaparken veya birileri elektronik tablolar üzerinde kişileri takip ediyorsa özellikle faydalıdır. [Veri İçe/ Dışa Aktarma](/l/tr/user-guide/getting-started/import-export-data) rehberimiz süreci adım adım anlatır.
+
+### Otomatik veri alımı
+
+Sürekli müşteri kazanımı için, verileri doğrudan Twenty'e getiren otomatik iş akışları kurabilirsiniz:
+
+**Web sitesi formları**: Web sitenizde biri bir form doldurduğunda, bu bilgileri otomatik olarak Twenty'e gönderecek şekilde yapılandırabilirsiniz. Form gönderimi, Twenty'de manuel iş olmadan yeni kişi kaydı oluşturan bir iş akışını etkinleştiren bir webhook tetikler.
+
+**Diğer sistemlerle entegrasyon**: Başka iş araçları kullanıyorsanız, bunları API çağrıları ve iş akışları kullanarak Twenty ile bağlayabilirsiniz. Bu, sistemler arasında verilerinizi otomatik olarak senkronize etmenizi sağlar: örneğin, faturalama sisteminizden yeni müşteriler veya pazarlama platformunuzdan potansiyel müşteriler alabilir.
+
+Bu otomatik veri akışlarını kurma hakkında daha fazla bilgi için [İş Akışları](/l/tr/user-guide/workflows/getting-started-workflows) bölümüne göz atın.
+
+### E-posta ve takvim senkronizasyonu
+
+Posta kutunuzu ve takviminizi Twenty'e bağladığınızda, sistem, e-posta gönderdiğinizde veya toplantı yaptığınız kişiler için otomatik olarak Kişi ve Şirket kayıtları oluşturabilir. Eğer CRM'inizde daha önce kayıtlı olmayan bir kişiye e-posta gönderirseniz, Twenty onlar için yeni bir Kişi kaydı oluşturabilir. Aynı durum, takviminiz üzerinden yeni kişilerle toplantılar planladığınızda da gerçekleşir.
+
+Bu, sürekli yeni insanlarla tanışan satış ve iş geliştirme ekipleri için özellikle faydalıdır. Instead of manually adding every new contact, Twenty captures them automatically as you communicate. Bunu nasıl ayarlayacağınızı öğrenmek için [E-mailler ve Takvimler](/l/tr/user-guide/collaboration/emails-and-calendars) rehberimize göz atın.
+
+### Manuel çalışmayı azaltma
+
+Verileri manuel olarak eklerken bile, süreci hızlandırmak için iş akışlarını kullanabilirsiniz. Örneğin, yeni kişileri konumlarına göre ekip üyelerine atayan veya belirli türdeki kişiler eklendiğinde otomatik olarak takip görevleri oluşturan otomasyon kurabilirsiniz.
+
+## Kişilerinizi düzenleme
+
+### Verileri benzersiz ve temiz tutma
+
+Twenty, verilerinizi düzenli tutmak için otomatik olarak benzersizliği sağlar. Her kişinin e-posta adresi benzersiz bir tanımlayıcı olarak hizmet eder: aynı e-posta adresine sahip iki kişi olamaz. Benzer şekilde, şirket alan adları benzersizdir, bu nedenle yanlışlıkla çift şirketler oluşturamazsınız.
+
+İşletmenizin diğer alanların benzersiz olmasını gerektirmesi durumunda (örneğin, telefon numaraları veya referans kodları gibi), bunu veri modelinizde yapılandırabilirsiniz. Spesifik ihtiyaçlarınız için ek benzersizlik kısıtlamalarını nasıl ayarlayacağınızı öğrenmek için [Veri Modeli](/l/tr/user-guide/data-model/customize-your-data-model) bölümümüze gidin.
+
+### Kopyalarla başa çıkma
+
+Bazen çift kayıtlarla karşılaşacaksınız. Twenty'nin Hem Kişiler hem de Şirketler için bir birleştirme özelliği vardır: çift kayıtları bir araya getirerek veritabanınızı temiz tutabilir, hiçbir bilgiyi kaybetmezsiniz.
+
+Kayıtları birleştirmek için 2 kaydı seçin, Mac'te `Cmd+K`, Windows'ta `Ctrl+K` komut menüsünü açın ve `Kayıtları Birleştir`'e tıklayın.
+
+### Şirket hiyerarşileri oluşturma
+
+Eğer iştirakleri veya birden fazla bölümü olan büyük organizasyonlarla çalışıyorsanız, şirketler arasında ilişkiler oluşturabilirsiniz. Bu bağlantıları haritalamak için Şirket kayıtları arasında ilişki alanları kurun. Bu, karşı karşıya olduğunuz organizasyonun tam yapısını anlamanıza yardımcı olur.
+
+### Görünümlerinizi özelleştirme
+
+Farklı ekip üyeleri farklı bilgileri görmek isteyebilir. Farklı amaçlar için farklı sütunlar gösteren özel görünümler oluşturabilirsiniz: belki satış ekibiniz anlaşma aşamalarını görmek isterken destek ekibiniz iletişim detaylarına odaklanır. Bu konuda daha fazla bilgi için [Görünüm Yönetimi](/l/tr/user-guide/crm-essentials/view-management) makalemize bakın.
+
+## Kayıtlarla çalışma
+
+### Her kayıtta bulacaklarınız
+
+Bir Kişi veya Şirket kaydını açtığınızda, tüm bilgilerini sekmelerde düzenlenmiş olarak göreceksiniz:
+
+- **Alanlar**: Name, email, telefon gibi temel bilgiler ve eklediğiniz özel alanlar
+- **İlişkiler**: Bu kaydın diğer nesnelerle olan bağlantılarını gösterir
+- **Zaman Çizelgesi**: Bu kayıtla ilgili tüm etkileşimler ve güncellemelerin kronolojik görünümü
+- **Görevler**: Bu kişiyle ilgili takip görevleri
+- **Notlar**: Bu kişi veya şirket hakkında ekip notları ve gözlemleri
+- **Dosyalar**: Bu kayıtla ilgili belgeler ve ekler
+- **E-postalar**: Bu kişiyle olan e-posta yazışmaları (ekibiniz posta kutularını bağladığında)
+- **Takvim**: Bu kişiyle yapılan toplantılar ve randevular
+
+E-posta ve Takvim sekmeleri özellikle güçlüdür: Ekibinizden herhangi biri, posta kutusunu Twenty'ye bağladığı sürece, bu kişiyle yapılan tüm e-posta alışverişlerini ve toplantıları otomatik olarak gösterir. Bunu nasıl kuracağınız hakkında daha fazla bilgiyi [E-postalar ve Takvimler](/l/tr/user-guide/collaboration/emails-and-calendars) kılavuzumuzda bulabilirsiniz.
+
+### Gerekli alanları ekleme
+
+Standart alanlar, işiniz için önemli her şeyi yakalamayabilir. Ek bilgiye ihtiyacınız varsa: müşteri segmentleri, yönlendirme kaynakları veya sektöre özgü veriler gibi: özelleştirilmiş alanlar ekleyebilir veya mevcut olanları değiştirebilirsiniz. Kurulumunuzu nasıl özelleştireceğinizi öğrenmek için [Veri Modeli](/l/tr/user-guide/data-model/customize-your-data-model) bölümümüze gidin.
+
+## Silinen kayıtların yönetimi
+
+Twenty'de bir kaydı sildiğinizde, tamamen kaybolmaz. Kayıtlar "yumuşak silinir," yani gizlenir ancak gerekirse geri getirilebilir.
+
+Silinen kayıtlara ulaşmak için, Mac'te `Cmd+K`, Windows'ta `Ctrl+K` komut menüsünü açın, ardından `Silinen kayıtları gör`e tıklayın. Oradan, kayıtları ya geri yükleyebilir ya da ihtiyacınız olmadığına eminseniz kalıcı olarak silebilirsiniz.
+
+Bu güvenlik ağı, önemli bilgileri yanlışlıkla kaybetme endişesi olmadan veritabanınızı temizlemenizi sağlar.

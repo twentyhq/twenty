@@ -138,7 +138,6 @@ describe('ToolService', () => {
       expect(tools['create_testObject']).toBeDefined();
       expect(tools['update_testObject']).toBeDefined();
       expect(tools['find_testObject']).toBeDefined();
-      expect(tools['find_one_testObject']).toBeDefined();
       expect(tools['soft_delete_testObject']).toBeDefined();
       expect(tools['soft_delete_many_testObject']).toBeDefined();
 

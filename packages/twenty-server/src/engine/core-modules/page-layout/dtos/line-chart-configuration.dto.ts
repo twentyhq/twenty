@@ -134,6 +134,13 @@ export class LineChartConfigurationDTO {
   @IsOptional()
   filter?: ObjectRecordFilter;
 
+  @Field(() => Boolean, {
+    nullable: true,
+  })
+  @IsBoolean()
+  @IsOptional()
+  isStacked?: boolean;
+
   @Field(() => String, { nullable: true, defaultValue: 'UTC' })
   @IsTimeZone()
   @IsOptional()

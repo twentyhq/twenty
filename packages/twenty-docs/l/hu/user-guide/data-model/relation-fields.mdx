@@ -1,0 +1,62 @@
+---
+title: Kapcsolati mezők
+info: Ismerje meg, hogyan hozhat létre kapcsolatokat az objektumok között a kapcsolatmezők használatával, és hogyan konfigurálhat 1-n-típusú kapcsolatokat.
+image: /images/user-guide/fields/relations_field.png
+sectionInfo: Rugalmas adatmodell, amely az Ön egyedi üzleti folyamatait támogatja
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/relations_field.png" alt="Header" />
+</Frame>
+
+## Mik azok a kapcsolatmezők?
+
+A kapcsolatmezők összekötik az egyik objektum rekordjait egy másik objektum rekordjaival. Például:
+
+- **Emberek** → **Vállalatok** (minden személy egy vállalatnál dolgozik)
+- **Lehetőségek** → **Emberek** (minden ügyletnek van kapcsolattartó személye)
+- **Feladatok** → **Lehetőségek** (minden feladat egy meghatározott ügylethez kapcsolódik)
+
+## Kapcsolatmezők létrehozása
+
+### 1. A mező hozzáadása
+
+Lépjen a **Beállítások → Adatmodell → [Az Ön objektuma]** pontra, és kattintson a **Mező hozzáadása** gombra.
+
+### 2. Kapcsolat típusának megválasztása
+
+- **Mező típusa**: Válassza a "Kapcsolat" lehetőséget
+- **Célobjektum**: Válassza ki, melyik objektumhoz szeretne kapcsolódni
+- **Kapcsolat**: Jelenleg csak **1-n-típusú** kapcsolatokat támogat. Ügyeljen rá, hogy a kapcsolat megfelelő irányba legyen létrehozva.
+
+### 3. Mezőnevek konfigurálása
+
+Be kell állítania a kapcsolat mindkét oldalának neveit:
+
+- **Forrásmező neve**: Hogyan jelenik meg a mező az aktuális objektumán
+- **Célmező neve**: Hogyan jelenik meg a fordított mező a célobjektumon
+
+<Warning>
+A mezőnevek nem módosíthatók, miután a kapcsolat mentésre került, mivel ez hatással van az API struktúrájára. Válasszon körültekintően.
+</Warning>
+
+## Kapcsolódás a csapattagokhoz
+
+Bármely objektumhoz létrehozhat kapcsolatot, beleértve a **Munkahelyi Tagokat** (az Ön Twenty csapatának felhasználóit). Ez hasznos a tulajdonmezők létrehozására:
+
+- **Fióktulajdonos**: Egy cég összekapcsolása azzal a csapattaggal, aki kezeli azt
+- **Ügylet Tulajdonos**: Egy lehetőség hozzárendelése egy konkrét értékesítőhöz
+
+Amikor kapcsolatot hoz létre a`Munkahelyi Tagok`-kal, láthatja csapattagjai neveit a lenyíló listákban, így egyszerűvé téve a tulajdon és felelősség hozzárendelését.
+
+## Legjobb gyakorlatok
+
+- **Tervezze meg kapcsolatokat** mielőtt létrehozza azokat
+- **Használjon világos, leíró neveket** mindkét mezőnévhez
+- **Tesztelje a kapcsolatokat** mintaadatokkal, mielőtt teljesen bevezeti
+
+## Közelgő funkciók
+
+- **Morph Many kapcsolatok** (Érkezik 2025 negyedik negyedévére)
+- **Sok-az-sokhoz kapcsolatok** (Érkezik 2026 első negyedévére)
+

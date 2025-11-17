@@ -1,0 +1,73 @@
+---
+title: Färgschema
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## Color Scheme Card
+
+Representerar olika färgscheman och är speciellt anpassat för ljusa och mörka teman.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ColorSchemeCard } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+      <ColorSchemeCard
+      variant="Dark"
+      selected={true}
+      />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Egenskaper             | Typ                                     | Beskrivning                                                                                  | Standard |
+| ---------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------- | -------- |
+| variant                | string                                  | The color scheme variant. Alternativ inkluderar `Mörk`, `Ljus`, och `System` | ljust    |
+| vald                   | boolean                                 | Om `sant`, visas en bock för att indikera det valda färgschemat                              |          |
+| ytterligare egenskaper | `React.ComponentPropsWithoutRef<'div'>` | Standard HTML `div` elementets egenskaper                                                    |          |
+
+</Tab>
+
+</Tabs>
+
+## Color Scheme Picker
+
+Tillåter användare att välja mellan olika färgscheman.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ColorSchemePicker } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return <ColorSchemePicker
+  value="Dark"
+  onChange
+  />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Egenskaper | Typ          | Beskrivning                                                                 |
+| ---------- | ------------ | --------------------------------------------------------------------------- |
+| värde      | `Färgschema` | Det nuvarande valda färgschemat                                             |
+| vidÄndring | funktion     | Callback-funktionen du vill aktivera när en användare väljer ett färgschema |
+
+</Tab>
+
+</Tabs>

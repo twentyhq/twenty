@@ -1,0 +1,214 @@
+---
+title: 1-Klik met Docker Compose
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+<Warning>
+Docker containers are for production hosting or self-hosting, for the contribution please check the [Local Setup](https://docs.twenty.com/l/nl/developers/local-setup).
+</Warning>
+
+## Overzicht
+
+Deze handleiding biedt stapsgewijze instructies voor het installeren en configureren van de Twenty-applicatie met behulp van Docker Compose. Het doel is om het proces eenvoudig te maken en veelvoorkomende valkuilen te vermijden die uw setup kunnen verstoren.
+
+**Belangrijk:** Wijzig alleen de instellingen die expliciet in deze handleiding worden vermeld. Het wijzigen van andere configuraties kan tot problemen leiden.
+
+Zie docs [Setup Omgevingsvariabelen](https://docs.twenty.com/l/nl/developers/self-hosting/setup) voor geavanceerde configuratie. Alle omgevingsvariabelen moeten op server- en/of werkniveau in het docker-compose.yml-bestand worden gedeclareerd, afhankelijk van de variabele.
+
+## Systeemvereisten
+
+- RAM: Zorg ervoor dat uw omgeving minimaal 2GB RAM heeft. Onvoldoende geheugen kan ervoor zorgen dat processen crashen.
+- Docker & Docker Compose: Zorg ervoor dat beide zijn geïnstalleerd en up-to-date zijn.
+
+## Optie 1: Eén-regel script
+
+Installeer de laatste stabiele versie van Twenty met één enkele opdracht:
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+Om een specifieke versie of branch te installeren:
+
+```bash
+VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+- Vervang x.y.z door het gewenste versienummer.
+- Vervang branch-naam door de naam van de tak die u wilt installeren.
+
+## Optie 2: Handmatige stappen
+
+Volg deze stappen voor een handmatige setup.
+
+### Stap 1: Stel het Omgevingsbestand in
+
+1. **Creëer het .env-bestand**
+
+   Kopieer het voorbeeld van het omgevingsbestand naar een nieuw .env-bestand in uw werkmap:
+
+   ```bash
+   curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
+   ```
+
+2. **Genereer Geheim Tokens**
+
+   Voer de volgende opdracht uit om een unieke willekeurige string te genereren:
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   **Belangrijk:** Houd deze waarde geheim / deel het niet.
+
+3. **Werk het `.env` bij**
+
+   Vervang de tijdelijke waarde in uw .env-bestand door de gegenereerde token:
+
+   ```ini
+   APP_SECRET=first_random_string
+   ```
+
+4. **Stel het Postgres-wachtwoord in**
+
+   Werk de waarde `PG_DATABASE_PASSWORD` in het .env-bestand bij met een sterk wachtwoord zonder speciale tekens.
+
+   ```ini
+   PG_DATABASE_PASSWORD=my_strong_password
+   ```
+
+### Stap 2: Verkrijg het Docker Compose-bestand
+
+Download het `docker-compose.yml`-bestand naar uw werkmap:
+
+```bash
+curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/docker-compose.yml
+```
+
+### Stap 3: Start de Applicatie
+
+Start de Docker-containers:
+
+```bash
+docker compose up -d
+```
+
+### Stap 4: Toegang tot de Applicatie
+
+Als u twentyCRM op uw eigen computer host, open dan uw browser en ga naar [http://localhost:3000](http://localhost:3000).
+
+Als u het op een server host, controleer dan of de server draait en dat alles in orde is met
+
+```bash
+curl http://localhost:3000
+```
+
+## Configuratie
+
+### Stel Twenty bloot aan Externe Toegang
+
+Standaard draait Twenty op `localhost` op poort `3000`. Om toegang te krijgen via een extern domein of IP-adres, moet u de `SERVER_URL` in uw `.env`-bestand configureren.
+
+#### Begrijpen van `SERVER_URL`
+
+- **Protocol:** Gebruik `http` of `https` afhankelijk van uw setup.
+  - Gebruik `http` als u geen SSL heeft ingesteld.
+  - Gebruik `https` als u SSL heeft geconfigureerd.
+- **Domein/IP:** Dit is de domeinnaam of het IP-adres waar uw applicatie toegankelijk is.
+- **Poort:** Vermeld het poortnummer als u geen gebruik maakt van de standaardpoorten (`80` voor `http`, `443` voor `https`).
+
+### SSL-vereisten
+
+SSL (HTTPS) is vereist voor bepaalde browserfunctionaliteiten om correct te werken. Hoewel deze functies tijdens lokale ontwikkeling kunnen werken (omdat browsers localhost anders behandelen), is een goede SSL-configuratie nodig bij het hosten van Twenty op een gewoon domein.
+
+Voorbeeld: de Klembord-API heeft mogelijk een beveiligde context nodig - sommige functies zoals kopieerknoppen in de applicatie werken mogelijk niet zonder HTTPS.
+
+We raden ten zeerste aan om Twenty achter een reverse proxy met SSL-beëindiging te zetten voor optimale beveiliging en functionaliteit.
+
+#### Configuratie van `SERVER_URL`
+
+1. **Bepaal Uw Toegangs-URL**
+   - **Zonder Reverse Proxy (Directe Toegang):**
+
+     Als u de applicatie direct benadert zonder reverse proxy:
+
+     ```ini
+     SERVER_URL=http://your-domain-or-ip:3000
+     ```
+
+   - **Met Reverse Proxy (Standaard Poorten):**
+
+     Als u een reverse proxy zoals Nginx of Traefik gebruikt en SSL heeft geconfigureerd:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip
+     ```
+
+   - **Met Reverse Proxy (Aangepaste Poorten):**
+
+     Als u niet-standaard poorten gebruikt:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip:custom-port
+     ```
+
+2. **Werk het `.env`-bestand bij**
+
+   Open uw `.env`-bestand en werk de `SERVER_URL` bij:
+
+   ```ini
+   SERVER_URL=http(s)://your-domain-or-ip:your-port
+   ```
+
+   **Voorbeelden:**
+
+   - Directe toegang zonder SSL:
+     ```ini
+     SERVER_URL=http://123.45.67.89:3000
+     ```
+   - Toegang via domein met SSL:
+     ```ini
+     SERVER_URL=https://mytwentyapp.com
+     ```
+
+3. **Herstart de Applicatie**
+
+   Om de wijzigingen door te voeren, herstart de Docker-containers:
+
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+#### Overwegingen
+
+- **Reverse Proxy Configuratie:**
+
+  Zorg ervoor dat je reverse proxy verzoeken doorstuurt naar de juiste interne poort (`3000` standaard). Configureer SSL-terminatie en de nodige headers.
+
+- **Firewall Instellingen:**
+
+  Open de benodigde poorten in je firewall om extern toegang te verlenen.
+
+- **Consistentie:**
+
+  De `SERVER_URL` moet overeenkomen met hoe gebruikers je applicatie in hun browsers benaderen.
+
+#### Persistentie
+
+- **Gegevensvolumes:**
+
+  De Docker Compose-configuratie gebruikt volumes om gegevens voor de database en serveropslag te bewaren.
+
+- **Staatloze Omgevingen:**
+
+  Als je implementeert in een staatloze omgeving (bijv. bepaalde clouddiensten), configureer dan externe opslag om gegevens te behouden.
+
+## Problemen oplossen
+
+Als je een probleem tegenkomt, bekijk dan [Problemen oplossen](https://docs.twenty.com/l/nl/developers/self-hosting/troubleshooting) voor oplossingen.
+

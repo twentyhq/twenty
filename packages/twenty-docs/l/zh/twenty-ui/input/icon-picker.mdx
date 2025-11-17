@@ -1,0 +1,56 @@
+---
+title: 圖示選擇器
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+一個基於下拉列表的圖示選擇器，允許使用者從清單中選擇圖示。
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import React, { useState } from "react";
+import { IconPicker } from "@/ui/input/components/IconPicker";
+
+export const MyComponent = () => {
+
+   const [selectedIcon, setSelectedIcon] = useState("");
+   const handleIconChange = ({ iconKey, Icon }) => {
+     console.log("Selected Icon:", iconKey);
+     setSelectedIcon(iconKey);
+   };
+
+  return (
+    <RecoilRoot>
+      <IconPicker
+        disabled={false}
+        onChange={handleIconChange}
+        selectedIconKey={selectedIcon}
+        variant="primary"
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性              | 類型       | 描述                                                                                                      |
+| --------------- | -------- | ------------------------------------------------------------------------------------------------------- |
+| 禁用              | 布爾值      | 如果設為 `true`，將停用圖示選擇器                                                                                    |
+| 變更事件            | function | 用戶選擇圖示時觸發的回調函數。 接收一個具有 `iconKey` 和 `Icon` 屬性的對象                                                         |
+| selectedIconKey | 字串       | 最初選擇的圖示的鍵值                                                                                              |
+| onClickOutside  | function | 當用戶點擊下拉列表外部時觸發的回調函數                                                                                     |
+| onClose         | function | 下拉列表關閉時觸發的回調函數                                                                                          |
+| onOpen          | function | 下拉列表打開時觸發的回調函數                                                                                          |
+| 變體              | 字串       | The visual style variant of the clickable icon. 選項包括：`primary`，`secondary` 和 `tertiary` |
+
+</Tab>
+</Tabs>

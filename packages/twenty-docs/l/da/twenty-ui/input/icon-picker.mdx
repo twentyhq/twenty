@@ -1,0 +1,56 @@
+---
+title: Ikon Vælger
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+En dropdown-baseret ikonvælger, der lader brugerne vælge et ikon fra en liste.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import React, { useState } from "react";
+import { IconPicker } from "@/ui/input/components/IconPicker";
+
+export const MyComponent = () => {
+
+   const [selectedIcon, setSelectedIcon] = useState("");
+   const handleIconChange = ({ iconKey, Icon }) => {
+     console.log("Selected Icon:", iconKey);
+     setSelectedIcon(iconKey);
+   };
+
+  return (
+    <RecoilRoot>
+      <IconPicker
+        disabled={false}
+        onChange={handleIconChange}
+        selectedIconKey={selectedIcon}
+        variant="primary"
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaber      | Type     | Beskrivelse                                                                                                                                |
+| --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| deaktiveret     | boolean  | Deaktiverer ikonvælgeren, hvis den er indstillet til `true`                                                                                |
+| onChange        | funktion | Funktion, der udløses, når brugeren vælger et ikon. Den modtager et objekt med `iconKey` og `Icon` egenskaber              |
+| selectedIconKey | streng   | Nøglen for det oprindeligt valgte ikon                                                                                                     |
+| onClickOutside  | funktion | Funktion udløst, når brugeren klikker udenfor dropdown-menuen                                                                              |
+| onClose         | funktion | Funktion udløst, når dropdown-menuen lukkes                                                                                                |
+| onOpen          | funktion | Funktion udløst, når dropdown-menuen åbnes                                                                                                 |
+| variant         | streng   | Den visuelle stilvariant af det klikbare ikon. Muligheder inkluderer: `primary`, `secondary` og `tertiary` |
+
+</Tab>
+</Tabs>

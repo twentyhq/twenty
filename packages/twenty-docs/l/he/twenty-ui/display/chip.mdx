@@ -1,0 +1,148 @@
+---
+title: שבב
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+אלמנט חזותי שניתן להשתמש בו כמיכל לחיץ או לא לחיץ עם תווית, רכיבים אופציונליים משמאל ומימין, ואפשרויות עיצוב שונות להצגת תוויות ותגים.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+    <Chip
+      size="large"
+      label="Clickable Chip"
+      clickable={true}
+      variant="highlighted"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+    />
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| תכונות             | סוג                            | תיאור                                                                                                 |
+| ------------------ | ------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| קישור לישויות      | string                         | הקישור לישות                                                                                          |
+| מזהה ישות          | מחרוזת                         | המזהה הייחודי של הישות                                                                                |
+| שם                 | string                         | שמו של הישות                                                                                          |
+| כתובת URL של תמונה | מחרוזת                         | תמונתו של                                                                                             |
+| סוג אווטאר         | סוג האווטאר                    | סוג האווטאר שברצונך להציג. כולל שתי אפשרויות: `מעוגל` ו- `מרובע`      |
+| variant            | `EntityChipVariant` הערך הסגור | גרסה של רכיב הישות שברצונך להציג. כולל שתי אפשרויות: `רגיל` ו- `שקוף` |
+| LeftIcon           | רכיב איקון                     | רכיב React המייצג אייקון. מוצג בצידו השמאלי של השבב                                   |
+
+</Tab>
+</Tabs>
+
+## דוגמאות
+
+### שבב שקוף לא מופעל
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Transparent Disabled Chip"
+      clickable={false}
+      variant="rounded"
+      accent="text-secondary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+
+```
+
+<br/>
+
+### שבב לא מופעל עם כלי עזר
+
+```jsx
+import { Chip } from "twenty-ui/components";
+  
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Disabled chip that triggers a tooltip when overflowing."
+      clickable={false}
+      variant="regular"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+```
+
+## שבב ישות
+
+אלמנט דמוי שבב להצגת מידע על ישות.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+import { IconTwentyStar } from 'twenty-ui/display';
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <Chip
+        linkToEntity="/entity-link"
+        entityId="entityTest"
+        name="Entity name"
+        pictureUrl=""
+        avatarType="rounded"
+        variant="regular"
+        LeftIcon={IconTwentyStar}
+      />
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| תכונות             | סוג                            | תיאור                                                                                                 |
+| ------------------ | ------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| קישור לישויות      | string                         | הקישור לישות                                                                                          |
+| מזהה ישות          | מחרוזת                         | המזהה הייחודי של הישות                                                                                |
+| שם                 | מחרוזת                         | שמו של הישות                                                                                          |
+| כתובת URL של תמונה | string                         | תמונתו של                                                                                             |
+| סוג אווטאר         | סוג האווטאר                    | סוג האווטאר שברצונך להציג. כולל שתי אפשרויות: `מעוגל` ו- `מרובע`      |
+| גרסה               | `EntityChipVariant` הערך הסגור | גרסה של רכיב הישות שברצונך להציג. כולל שתי אפשרויות: `רגיל` ו- `שקוף` |
+| LeftIcon           | רכיב אייקון                    | רכיב React המייצג אייקון. מוצג בצידו השמאלי של השבב                                   |
+
+</Tab>
+</Tabs>

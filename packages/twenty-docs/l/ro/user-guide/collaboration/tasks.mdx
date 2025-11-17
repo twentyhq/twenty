@@ -1,0 +1,118 @@
+---
+title: Sarcini
+info: Înțelegeți cum să gestionați eficient sarcinile în Twenty.
+image: /images/user-guide/tasks/tasks_header.png
+sectionInfo: Descoperiți cum să valorificați Notițele și Sarcinile pentru a colabora mai bine cu echipa dumneavoastră.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Gestionați toate sarcinile din spațiul dvs. de lucru folosind funcția **Sarcini**. Acest ghid vă va arăta cum să creați și să gestionați sarcini, să treceți între sarcinile viitoare și cele completate, să editați detaliile sarcinilor și multe altele.
+
+## Cazuri de Utilizare Comune
+
+### Sales Follow-ups
+
+- **Pași Următori în Întâlniri**: Creați sarcini pentru elementele discutate în timpul apelurilor cu clienții
+- **Urmărirea Propunerilor**: Setați mementouri pentru a verifica propunerile în așteptare
+- **Revizuirea Contractelor**: Programați sarcini pentru negocieri și aprobări de contracte
+
+### Succesul Clienților
+
+- **Sarcini de Integrare**: Creați automat liste de verificare de integrare când se închid contractele
+- **Check-in Reminders**: Schedule regular customer health check calls
+- **Pregătirea pentru Reînnoire**: Stabiliți sarcini pentru a pregăti reînnoirile de contracte cu 90 de zile în avans
+
+### Management Intern al Proiectelor
+
+Dincolo de vânzări și succesul clienților, Sarcinile suportă necesități organizaționale mai largi:
+
+- **Dezvoltare de Produs**: Urmăriți lansările de funcții, remedierile de erori și jaloanele de dezvoltare
+- **Campanii de Marketing**: Gestionați lansările de campanii, crearea de conținut și activitățile promoționale
+- **Operațiuni HR**: Gestionați procesele de recrutare, integrarea angajaților și evaluările de performanță
+- **Sarcini Financiare**: Programați revizuiri de buget, procesarea facturilor și raportarea financiară
+- **Operațiuni**: Coordonarea managementului facilităților, relațiile cu furnizorii și îmbunătățirile proceselor
+
+### Automated Task Creation
+
+Use [Workflows](/l/ro/user-guide/workflows/getting-started-workflows) to automatically create tasks:
+
+- **Declanșatori Câștigați**: Creați automat sarcini de integrare atribuite echipei de Succes al Clienților când oportunitățile se încheie
+- **Mementouri prin E-mail**: Configurați mementouri săptămânale prin e-mail pentru sarcinile datorate în această săptămână (trimise în fiecare luni)
+- **Automatizarea Pipeline-ului**: Creați sarcini de urmărire atunci când contractele întâmpină blocaje în etape specifice
+- **Integrarea Întâlnirilor**: Generează automat sarcini din înregistrările de întâlniri sau evenimentele din calendar
+
+## Caracteristici Sarcini
+
+### Câmpul Relații
+
+Sarcinile includ un câmp „Relații” care vă permite să atașați o singură sarcină la mai multe înregistrări din diferite obiecte. De exemplu, puteți lega o sarcină de urmărire la:
+
+- Persoana pe care trebuie să o contactați
+- Compania pe care o reprezintă
+- The Opportunity being pursued
+- Orice Notițe relevante sau alte înregistrări
+
+Această relație morph many asigură că sarcinile sunt accesibile din toate paginile de înregistrare relevante și oferă context complet.
+
+### Etichetarea Utilizatorilor
+
+**Notă**: Etichetarea utilizatorilor în sarcini nu este disponibilă în prezent. Această caracteristică este planificată pentru 2026, ceea ce vă va permite să menționați membrii echipei și să declanșați notificări atunci când atribuiți sau actualizați sarcini.
+
+## Crearea de Sarcini
+
+Crearea de sarcini în Twenty este fără efort. Puteți fie să:
+
+- Mergeți la fila `Sarcini` și apăsați butonul `+` din partea dreaptă sus a paginii.
+- Utilizați funcția de căutare apăsând `cmd/ctrl + k`, apoi selectați 'Creați sarcină' din lista de acțiuni rapide.
+- Mergeți la o `Pagină de înregistrare` și apăsați `+` din dreapta sus a paginii sau mergeți la fila Sarcini și apăsați butonul `Adaugă sarcină`.
+
+<VimeoEmbed videoId="928786754" title="Creating tasks" />
+
+### Adding Task Content
+
+Odată ce ați creat o sarcină, o puteți îmbunătăți cu conținut bogat, cum ar fi Titluri, Puncte de glonţ sau chiar imagini. Pentru a face acest lucru, apăsați `/` și introduceți comanda dorită.
+
+## Vizualizarea sarcinilor
+
+Pagina **Sarcini** afișează toate sarcinile dvs. din întregul spațiu de lucru. Aici puteți:
+
+- Filtrați sarcinile atribuite unui anumit utilizator, făcând clic pe butonul cu numele dvs. în dreapta sus a ecranului.
+- Comutați între sarcinile viitoare (`De făcut`) și cele completate (`Gata`) pentru a vedea la ce trebuie să acordați atenție și ce ați realizat.
+
+De asemenea, puteți vedea sarcini pentru o anumită înregistrare pe pagina sa de `Înregistrare`.
+
+<VimeoEmbed videoId="927908280" title="Viewing tasks" />
+
+## Editarea sarcinilor
+
+To edit a task, you should click on its card. Aceasta va deschide un panou lateral care oferă următoarele caracteristici:
+
+- **Assignee and Due date**: Update the assignee or edit the due date.
+- **Comentarii**: Lucrați împreună cu membrii echipei dvs. adăugând comentarii la sarcini pentru a oferi actualizări sau feedback.
+- **Automatizări**: Datorită API-ului și Webhook-urilor, puteți automatiza crearea sarcinilor declanșate de activități specifice în spațiul de lucru.
+
+## Marcarea Sarcinilor ca și Complete
+
+Pentru a marca o sarcină ca fiind completă:
+
+1. Localizați sarcina pe pagina dvs. cu `Sarcini` sau într-o `Pagina de înregistrare`.
+2. Faceți clic pe cercul din stânga cărții sarcinii, acesta se va schimba pentru a semnala finalizarea.
+3. Starea sarcinii va fi actualizată automat la `Gata`.
+
+Această procedură va ajuta la păstrarea unui registru actualizat al realizărilor dvs.
+
+<VimeoEmbed videoId="927910083" title="Marking tasks as complete" />
+
+## Ștergeți o sarcină
+
+Pentru a șterge permanent o sarcină:
+
+1. Open the task you want to delete by clicking on its card, either from the `Tasks` page or within a `Record page`.
+2. Faceți clic pe iconița de coș de gunoi situată în colțul din dreapta sus al panoului de detalii al sarcinii.
+
+Vă rugăm să rețineți, ștergerea unei sarcini este permanentă și nu poate fi anulată. Luați în considerare marcarea sarcinilor ca `Gata` dacă există șanse să aveți nevoie să vă referiți la ele din nou.

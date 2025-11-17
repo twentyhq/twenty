@@ -1,0 +1,183 @@
+---
+title: Hurtigtaster
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+## Innledning
+
+Når du trenger å lytte til en hurtigtast, vil du normalt bruke `onKeyDown`-begivenhetslytter.
+
+I `twenty-front`, derimot, kan det oppstå konflikter mellom de samme hurtigtastene som brukes i forskjellige komponenter, montert samtidig.
+
+For eksempel, hvis du har en side som lytter til Enter-tasten, og en modal som lytter til Enter-tasten, med en Velg komponent inne i den modalen som også lytter til Enter-tasten, kan det oppstå en konflikt når alle er montert samtidig.
+
+## `useScopedHotkeys` hooken
+
+For å håndtere dette problemet har vi en tilpasset hook som gjør det mulig å lytte til hurtigtaster uten noen konflikt.
+
+You place it in a component, and it will listen to the hotkeys only when the component is mounted AND when the specified **hotkey scope** is active.
+
+## Hvordan lytte til hurtigtaster i praksis?
+
+Det er to trinn involvert i oppsett av hurtigtastlytting:
+
+1. Set the [hotkey scope](#what-is-a-hotkey-scope-) that will listen to hotkeys
+2. Bruk `useScopedHotkeys` hooken for å lytte til hurtigtaster
+
+Å sette opp hurtigtastomfang er nødvendig selv på enkle sider, fordi andre UI-elementer som venstremeny eller kommandomeny også kan lytte til hurtigtaster.
+
+## Brukstilfeller for hurtigtaster
+
+Generelt vil du ha to brukstilfeller som krever hurtigtaster:
+
+1. På en side eller en komponent montert på en side
+2. I en modal-type komponent som tar fokus på grunn av en brukerhandling
+
+Det andre brukstilfellet kan skje rekursivt: en rullegardin i en modal for eksempel.
+
+### Lytte til hurtigtaster på en side
+
+Eksempel:
+
+```tsx
+const PageListeningEnter = () => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  // 1. Set the hotkey scope in a useEffect
+  useEffect(() => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleEnterPage,
+    );
+
+    // Revert to the previous hotkey scope when the component is unmounted
+    return () => {
+      goBackToPreviousHotkeyScope();
+    };
+  }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
+
+  // 2. Use the useScopedHotkeys hook
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      // Some logic executed on this page when the user presses Enter
+      // ...
+    },
+    ExampleHotkeyScopes.ExampleEnterPage,
+  );
+
+  return <div>My page that listens for Enter</div>;
+};
+```
+
+### Lytte til hurtigtaster i en modal-type komponent
+
+For dette eksempelet vil vi bruke en modal komponent som lytter til Escape-tasten for å be forelderen lukke den.
+
+Her endrer brukerinteraksjonen omfanget.
+
+```tsx
+const ExamplePageWithModal = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  const handleOpenModalClick = () => {
+    // 1. Set the hotkey scope when user opens the modal
+    setShowModal(true);
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleModal,
+    );
+  };
+
+  const handleModalClose = () => {
+    // 1. Revert to the previous hotkey scope when the modal is closed
+    setShowModal(false);
+    goBackToPreviousHotkeyScope();
+  };
+
+  return <div>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
+    {showModal && <MyModalComponent onClose={handleModalClose} />}
+  </div>;
+};
+```
+
+Deretter i modalkomponenten:
+
+```tsx
+const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onClose()
+    },
+    ExampleHotkeyScopes.ExampleModal,
+  );
+
+  return <div>My modal component</div>;
+};
+```
+
+Det er viktig å bruke dette mønsteret når du ikke er sikker på at bare bruk av useEffect med montering/avmontering vil være nok til å unngå konflikter.
+
+Disse konfliktene kan være vanskelige å feilsøke, og det kan skje oftere enn ikke med useEffects.
+
+## Hva er et hurtigtast omfang?
+
+Et hurtigtast omfang er en streng som representerer en kontekst der hurtigtastene er aktive. Det er generelt kodet som en enum.
+
+Når du endrer hurtigtast omfanget, vil hurtigtastene som lytter til dette omfanget bli aktivert og hurtigtastene som lytter til andre omfang bli deaktivert.
+
+Du kan sette kun ett omfang om gangen.
+
+Som et eksempel er hurtigtast-omfangene for hver side definert i `PageHotkeyScope` enumen:
+
+```tsx
+export enum PageHotkeyScope {
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
+}
+```
+
+Internt lagres det for øyeblikket valgte omfanget i en Recoil-tilstand som er delt over hele applikasjonen:
+
+```tsx
+export const currentHotkeyScopeState = createState<HotkeyScope>({
+  key: 'currentHotkeyScopeState',
+  defaultValue: INITIAL_HOTKEYS_SCOPE,
+});
+```
+
+Men denne Recoil-tilstanden skal aldri håndteres manuelt! Vi vil se hvordan du bruker det i neste seksjon.
+
+## Hvordan fungerer det internt?
+
+Vi laget en tynn wrap på toppen av [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) som gjør det mer ytelsesvennlig og unngår unødvendige re-renders.
+
+Vi lager også en Recoil-tilstand for å håndtere hurtigtast omfang-tilstanden og gjøre den tilgjengelig overalt i applikasjonen.

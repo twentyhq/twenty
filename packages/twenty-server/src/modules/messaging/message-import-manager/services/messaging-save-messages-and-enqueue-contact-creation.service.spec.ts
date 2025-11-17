@@ -228,36 +228,6 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
     );
   });
 
-  it('should not create group emails contacts', async () => {
-    await service.saveMessagesAndEnqueueContactCreation(
-      [
-        {
-          ...mockMessages[0],
-          participants: [
-            {
-              role: 'from',
-              handle: 'contact@group.com',
-              displayName: 'participant that is the Connected Account',
-            },
-          ],
-        },
-      ],
-      mockMessageChannel,
-      mockConnectedAccount,
-      workspaceId,
-    );
-
-    expect(messageQueueService.add).toHaveBeenCalledWith(
-      CreateCompanyAndContactJob.name,
-      {
-        workspaceId,
-        connectedAccount: mockConnectedAccount,
-        source: FieldActorSource.EMAIL,
-        contactsToCreate: [],
-      },
-    );
-  });
-
   it('should not create personal emails contacts', async () => {
     await service.saveMessagesAndEnqueueContactCreation(
       [

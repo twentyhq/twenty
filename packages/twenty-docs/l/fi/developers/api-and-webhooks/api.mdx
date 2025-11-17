@@ -1,0 +1,56 @@
+---
+title: API
+image: /images/docs/getting-started/api.png
+info: Löydä, kuinka käyttää API:tamme.
+---
+
+<Frame>
+  <img src="/images/docs/getting-started/api.png" alt="Header" />
+</Frame>
+
+## Yleiskatsaus
+
+Twenty API mahdollistaa kehittäjien vuorovaikuttaa ohjelmallisesti Twenty CRM -alustan kanssa. API:n avulla voit integroida Twentyn muihin järjestelmiin, automatisoida datan synkronointia ja rakentaa räätälöityjä ratkaisuja asiakasdataasi varten. API tarjoaa päätepisteet **luomaan, lukemaan, päivittämään ja poistamaan** CRM-ydinobjekteja (kuten henkilöitä ja yrityksiä) sekä käyttämään metatiedon määrityksiä.
+
+**API-leikkikenttä:**  Nyt voit käyttää API-leikkikenttää sovelluksen asetuksista. Kokeile API-kutsuja reaaliajassa kirjautumalla Twenty-työtilaasi ja siirtymällä kohtaan **Asetukset → API:t & Webhooks**. Tämä avaa sovelluksen sisäisen API-leikkikentän ja asetukset API-avaimille.
+**[Siirry API-asetuksiin](https://app.twenty.com/settings)**
+
+## Todennus
+
+Twentyn API käyttää API-avaimia tunnistautumiseen. Every request to protected endpoints must include an API key in the header.
+
+- **API-avaimet:** Voit luoda uuden API-avaimen Twentyn sovelluksen **API-asetukset** sivulta. Jokainen API-avain on salainen tunniste, joka antaa pääsyn CRM-dataasi, joten säilytä se turvallisesti. Jos avain vaarantuu, peru se asetuksista ja luo uusi.
+- **Auth Header:** Kun sinulla on API-avain, lisää se HTTP-pyyntöjesi `Authorization`-otsakkeeseen. Käytä Bearer token -järjestelmää. Esimerkki:
+
+  ```
+  Authorization: Bearer YOUR_API_KEY
+  ```
+
+  Korvaa `YOUR_API_KEY` saamallasi avaimella. Tämän otsikon on oltava kaikissa **API-pyynnöissä**. Jos tunniste puuttuu tai on virheellinen, API vastaa tunnistautumisvirheellä (HTTP 401 Ei oikeutta).
+
+## API-päätepisteet
+
+Kaikki resurssit ovat saavutettavissa ja käytettävissä RESTin tai GraphQL:n kautta.
+
+- **Pilvi:** `https://api.twenty.com/` tai oma mukautettu verkkotunnuksesi / aliverkkotunnus
+- **Self-Hosted Instances:** If you are running Twenty on your own server, use your own domain in place of `api.twenty.com` (for example, `https://{your-domain}/rest/`).
+
+Päätepisteet on jaettu kahteen kategoriaan: **Core API** ja **Metadata API**. **Core API** käsittelee ensisijaisia CRM-datoja (esim. henkilöt, yritykset, muistiot, tehtävät), kun taas **Metadata API** kattaa konfigurointidatan (kuten mukautetut kentät tai objektimäärittelyt). Useimmat integraatiot käyttävät pääsääntöisesti Core API:tä.
+
+### Core API
+
+Saatavilla `/rest/` tai `/graphql/`.
+**Core API** toimii yhtenäisenä rajapintana ydintietoja CRM-entiteettien hallintaan (henkilöt, yritykset, muistiot, tehtävät) ja niiden suhteiden hallintaan, tarjoten **sekä REST että GraphQL** vuorovaikutusmalleja.
+
+### Metadata API
+
+Saatavilla `/rest/metadata/` tai `/metadata/`.
+Metadata API:n päätepisteet mahdollistavat skeeman ja asetusten tietojen noutamisen. Voit esimerkiksi hakea mukautettujen kenttien määrityksiä, objektischeman jne.
+
+- **Esimerkki päätepisteistä:**
+
+  - `GET /rest/metadata/objects` – Listaa kaikki objektityypit ja niiden metatiedot (kentät, suhteet).
+  - `GET /rest/metadata/objects/{objectName}` – Hae metatiedot tietylle objektille (kuten `henkilöt`, `yritykset`).
+  - `GET /rest/metadata/picklists` – Nouda pudotusvalikkokenttien vaihtoehdot määriteltyinä CRM:ssä.
+
+Tyypillisesti metadatapäätepisteitä käytetään datan rakenteen ymmärtämiseen (dynaamisten integraatioiden tai lomakerakentamisen yhteydessä) pikemmin kuin varsinaisten tietueiden hallintaan. Ne ovat useimmissa tapauksissa vain lukukelpoisia. Myös näille vaaditaan tunnistautuminen (käytä API-avaintasi).

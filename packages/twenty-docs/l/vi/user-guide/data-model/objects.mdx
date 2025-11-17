@@ -1,0 +1,60 @@
+---
+title: Đối tượng
+info: "Tìm hiểu về các đối tượng tiêu chuẩn và cách tạo đối tượng tùy chỉnh cho nhu cầu kinh doanh của bạn."
+image: /images/user-guide/objects/objects_orange.png
+sectionInfo: Mô hình dữ liệu linh hoạt được thiết kế để hỗ trợ các quy trình kinh doanh độc đáo của bạn.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/objects/objects_orange.png" alt="Header" />
+</Frame>
+
+## Đối tượng tiêu chuẩn
+
+Các đối tượng tiêu chuẩn là các thực thể đã được định nghĩa sẵn trong không gian làm việc của bạn để giúp bạn bắt đầu. Chúng là một phần của mô hình dữ liệu dùng chung mà tất cả người dùng của Twenty có thể truy cập. Bạn có thể sử dụng nguyên trạng, tùy chỉnh hoặc ngưng sử dụng chúng.
+
+<img src="/images/user-guide/objects/standard-objects.png"style={{width:'100%'}}/>
+
+### Người
+
+Đối tượng `People` lưu trữ các liên hệ của bạn. Nó bao gồm chi tiết liên hệ và lịch sử tương tác, giúp bạn có thể xem tất cả các tương tác của khách hàng ở một nơi.
+
+### Doanh nghiệp
+
+Đối tượng `Companies` lưu trữ thông tin tài khoản doanh nghiệp của bạn. Nó bao gồm các chi tiết như ngành, quy mô và vị trí. Các công ty kết nối với cả đối tượng `People` và `Opportunities`.
+
+### Cơ hội
+
+Đối tượng `Opportunities` lưu trữ dữ liệu liên quan đến thương vụ. Nó theo dõi sự phát triển của các cơ hội bán hàng tiềm năng, từ tìm phương án đến khi đóng, ghi lại các giai đoạn, quy mô thương vụ, tài khoản liên quan và dự kiến ngày đóng. Bạn có thể xem tiến trình bán hàng của mình dưới dạng bố cục kanban.
+
+## Đối tượng tùy chỉnh
+
+Đối tượng tùy chỉnh cho phép bạn lưu trữ thông tin độc đáo cho tổ chức của bạn mà các đối tượng tiêu chuẩn không thể xử lý. Ví dụ, nếu bạn là SpaceX, bạn có thể muốn tạo một đối tượng tùy chỉnh cho Rockets và Launches.
+
+<img src="/images/user-guide/objects/custom-objects.png"style={{width:'100%'}}/>
+
+### Tạo một đối tượng tùy chỉnh mới
+
+Để tạo một đối tượng tùy chỉnh mới:
+
+1. Đi tới Cài đặt trong thanh bên trái.
+2. Dưới Nhóm làm việc, đi đến Mô hình dữ liệu. Tại đây bạn sẽ có thể xem tổng quan về tất cả các đối tượng Tiêu chuẩn và Tùy chỉnh hiện có của bạn (cả kích hoạt và vô hiệu hoá).
+
+<VimeoEmbed videoId="926288174" title="Video demonstration" />
+
+3. Nhấp vào `+ Đối tượng mới` ở trên cùng. Nhập tên (cả số ít và số nhiều), chọn biểu tượng và thêm mô tả cho đối tượng tùy chỉnh của bạn và nhấn Lưu (ở góc trên bên phải). Using Listing as an example of custom object, the singular would be "listing" and the plural would be "listings" along with a description like "Listings that hosts created to showcase their property."
+
+<Warning>
+Tên số ít và số nhiều phải khác nhau. Điều này là cần thiết để API GraphQL của chúng tôi hoạt động đúng.
+</Warning>
+
+<VimeoEmbed videoId="926293493" title="Video demonstration" />
+
+4. Sau khi bạn tạo đối tượng tùy chỉnh, bạn sẽ có thể quản lý nó. Bạn có thể chỉnh sửa tên, biểu tượng và mô tả, xem các trường khác nhau và thêm nhiều trường hơn.
+
+<img src="/images/user-guide/objects/customize-fields.png"style={{width:'100%'}}/>
+
+**Lưu ý:** Nếu bạn không chắc chắn liệu một đối tượng hoặc trường mới có cần thiết hay không, hãy xem [bài viết này](/l/vi/user-guide/data-model/customize-your-data-model) để được hướng dẫn về thiết lập mô hình dữ liệu của bạn.
+

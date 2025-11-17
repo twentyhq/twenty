@@ -7,25 +7,28 @@ import { isDefined } from 'twenty-shared/utils';
 export type ColorSampleVariant = 'default' | 'pipeline';
 
 export type ColorSampleProps = {
-  colorName?: ThemeColor;
+  colorName: ThemeColor;
   color?: string;
   variant?: ColorSampleVariant;
 };
 
-const getColor = (theme: ThemeType, colorName?: ThemeColor, color?: string) => {
+const getColor = (theme: ThemeType, colorName: ThemeColor, color?: string) => {
   if (isDefined(color)) {
     return color;
   }
-  if (isDefined(colorName)) {
-    return theme.tag.background[colorName];
-  }
-  return 'transparent';
+
+  return theme.tag.background[colorName];
+};
+
+const getBorderColor = (theme: ThemeType, colorName: ThemeColor) => {
+  return theme.tag.text[colorName];
 };
 
 const StyledColorSample = styled.div<ColorSampleProps>`
   background-color: ${({ theme, colorName, color }) =>
     getColor(theme, colorName, color)};
-  border: 1px solid ${({ theme }) => theme.border.color.transparentStrong};
+  border: 1px solid
+    ${({ theme, colorName }) => getBorderColor(theme, colorName)};
   border-radius: 60px;
   height: ${({ theme }) => theme.spacing(4)};
   width: ${({ theme }) => theme.spacing(3)};

@@ -1,0 +1,226 @@
+---
+title: Probleemoplossing
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Probleemoplossing
+
+If you encounter any problem while setting up environment for development, upgrading your instance or self-hosting,
+here are some solutions for common problems.
+
+### Self-gasheer
+
+#### Eerste installasie resultaat in 'wagwoordverifikasie het misluk vir gebruiker "postgres"'
+
+🚨 **BELANGRIK: Hierdie oplossing is SLEGS vir vars installasies** 🚨
+As jy 'n bestaande Twenty-instansie met produksiedata het, **MOENIE** hierdie stappe volg nie, aangesien dit jou databasis permanent sal verwyder!
+
+Terwyl jy Twenty vir die eerste keer installeer, wil jy dalk die standaard databasis-wagwoord verander.
+Die wagwoord wat jy tydens die eerste installasie stel, word permanent in die databasisvolume gestoor. As jy later probeer om hierdie wagwoord in jou konfigurasie te verander sonder om die ou volume te verwyder, sal jy outentikasiefoute kry omdat die databasis steeds die oorspronklike wagwoord gebruik.
+
+⚠️ WAARSKUWING: Volgende stappe sal ALLE databasisdata PERMANENT VERWYDER! ⚠️ Gaan net voort as dit 'n vars installasie is sonder belangrike data.
+
+Om die `PG_DATABASE_PASSWORD` op te dateer moet jy:
+
+```sh
+# Update the PG_DATABASE_PASSWORD in .env
+docker compose down --volumes
+docker compose up -d
+```
+
+#### CR reëlbreke gevind [Windows]
+
+Dit is as gevolg van die reëlbreekkarakters van Windows en die git-konfigurasie. Probeer:
+
+```
+git config --global core.autocrlf false
+```
+
+Verwyder dan die bewaarplek en kloon dit weer.
+
+#### Ontbrekende metadataskema
+
+Tydens die Twenty-installasie moet jy jou postgres-databasis met die regte skemas, uitbreidings en gebruikers voorsien.
+As jy suksesvol is in die uitvoering van hierdie voorsiening, behoort jy `default` en `metadata` skemas in jou databasis te hê.
+As jy nie het nie, maak seker jy het nie meer as een postgres-instansie wat op jou rekenaar loop nie.
+
+#### Kan nie module 'twenty-emails' of sy ooreenstemmende tipesverklarings vind nie.
+
+Jy moet die pakket `twenty-emails` bou voordat jy die initialisering van die databasis uitvoer met `npx nx run twenty-emails:build`
+
+#### Ontbrekende twenty-x pakket
+
+Maak seker dat jy `yarn` in die wortelgids uitvoer en dan `npx nx server:dev twenty-server`. As dit steeds nie werk nie, probeer om die ontbrekende pakket handmatig te bou.
+
+#### Lint werk nie op stoor nie
+
+Dit behoort uit die boks te werk met die eslint-uitbreiding geïnstalleer. As dit nie werk nie, probeer om dit by jou vscode-instelling by te voeg (op die ontwikkelaar houer-sfeer):
+
+```
+"editor.codeActionsOnSave": {
+
+  "source.fixAll.eslint": "explicit"
+
+}
+```
+
+#### Terwyl `npx nx start` of `npx nx start twenty-front` uitgevoer word, word 'n geheue-fout gewerp.
+
+In `packages/twenty-front/.env` ontmerk `VITE_DISABLE_TYPESCRIPT_CHECKER=true` en `VITE_DISABLE_ESLINT_CHECKER=true` om agtergrondkontrole uit te skakel, sodoende die hoeveelheid benodige RAM te verminder.
+
+**As dit nie werk nie:**  
+Voer slegs die dienste wat jy nodig het, uit in plaas van `npx nx start`. Byvoorbeeld, as jy aan die bediener werk, voer slegs `npx nx worker twenty-server` uit.
+
+**As dit nie werk nie:**  
+As jy probeer het om slegs `npx nx run twenty-server:start` op WSL uit te voer en dit misluk met die onderstaande geheue-fout:
+
+`FATALE FOUT: Onvoldoende merk-kompacts naby hoop-limiet. Toekenning het misluk - JavaScript-heap het nie genoeg geheue`
+
+Workaround is to execute below command in terminal or add it in .bashrc profile to get setup automatically:
+
+`export NODE_OPTIONS="--max-old-space-size=8192"`
+
+Die --max-old-space-size=8192-vlag stel 'n boonste limiet van 8GB vir die Node.js-hoop; gebruik skaal met toepassingsvraag.
+Verwysing: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
+
+**As dit nie werk nie:**  
+Ondersoek watter prosesse die meeste van jou rekenaar-RAM neem. By Twenty het ons opgemerk dat sommige VScode-uitbreidings baie RAM geneem het, so ons deaktiveer dit tydelik.
+
+**As dit nie werk nie:**  
+Herbegin van jou rekenaar help om spookprosesse skoon te maak.
+
+#### Terwyl `npx nx start` uitgevoer word, is daar vreemde [0] en [1] in logs
+
+Dis verwag, aangesien opdrag `npx nx start` meer opdragte onder die deksel laat loop.
+
+#### Geen e-posse word gestuur nie
+
+Meeste van die tyd is dit omdat die `worker` nie in die agtergrond loop nie. Probeer om uit te voer
+
+```
+npx nx worker twenty-server
+```
+
+#### Kan nie aan my Microsoft 365-rekening koppel nie
+
+Meeste van die tyd is dit omdat jou administrateur nie die Microsoft 365-lisensie vir jou rekening aangeskakel het nie. Gaan na [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).
+
+As jy 'n foutkode `AADSTS50020` het, beteken dit waarskynlik dat jy 'n persoonlike Microsoft-rekening gebruik. Dit word nog nie ondersteun nie. Meer inligting [hier](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
+
+#### While running `yarn` warnings appear in console
+
+Waarskuwings inlig oor die aflaai van bykomende afhanklikhede wat nie uitdruklik in `package.json` vermeld is nie, solank as wat geen brekende fout voorkom nie, behoort alles soos verwag te werk.
+
+#### Wanneer gebruiker toegang tot login-bladsy kry, verskyn fout oor ongemagtigde gebruiker wat probeer om toegang tot werksruimte te hê in logs
+
+Dis verwag want gebruiker is ongemagtig wanneer uitgeteken omdat sy identiteit nie geverifieer is nie.
+
+#### Hoe om te kontroleer of jou werker loop?
+
+- Gaan na [webhook-test.com](https://webhook-test.com/) en kopieer **Jou Unieke Webhook URL**.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Webhook test" />
+</div>
+- Maak jou Twenty-app oop, navigeer na `/settings`, en skakel die **Gevorderde** skakel onderaan links in.
+- Skep 'n nuwe webhook.
+- Plak **Jou Unieke Webhook URL** in die **Eindpunt-URL**-veld in Twenty. Stel die **Filters** tot `Companies` en `Created`.
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Webhook settings" />
+</div>
+- Gaan na `/objects/companies` en skep 'n nuwe maatskappyrekord.
+- Gaan terug na [webhook-test.com](https://webhook-test.com/) en kyk of 'n nuwe **POST-versoek** ontvang is.
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Webhook test result" />
+</div>
+- As 'n **POST-versoek** ontvang word, werk jou werker suksesvol. Andersins, moet jy jou werker probleemoplos.
+
+#### Voorentoe misluk om te begin en gee fout TS5042: Opsie 'projek' kan nie met brondatale op 'n opdragreëling gemeng word nie
+
+Comment out checker plugin in `packages/twenty-ui/vite-config.ts` like in example below
+
+```
+plugins: [
+      react({ jsxImportSource: '@emotion/react' }),
+      tsconfigPaths(),
+      svgr(),
+      dts(dtsConfig),
+      // checker(checkersConfig),
+      wyw({
+        include: [
+          '**/OverflowingTextWithTooltip.tsx',
+          '**/Chip.tsx',
+          '**/Tag.tsx',
+          '**/Avatar.tsx',
+          '**/AvatarChip.tsx',
+        ],
+        babelOptions: {
+          presets: ['@babel/preset-typescript', '@babel/preset-react'],
+        },
+      }),
+    ],
+```
+
+#### Administrasiepaneel nie toeganklik nie
+
+Voer `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` uit in databasis houer om toegang tot administrasiepaneel te kry.
+
+### 1-click Docker compose
+
+#### Nie in staat om in te teken nie
+
+As jy nie kan aanmeld na opstel nie:
+
+1. Voer die volgende opdragte uit:
+   ```bash
+   docker exec -it twenty-server-1 yarn
+   docker exec -it twenty-server-1 npx nx database:reset  --configuration=no-seed
+   ```
+2. Herbegin die Docker-houers:
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+Neem kennis dat die databasis:reset-opdrag jou databasis heeltemal sal uitvee en van nuuts af weer skep.
+
+#### Verbindingskwessies agter 'n omgekeerde volmag
+
+As jy Twenty agter 'n omgekeerde volmag bedryf en verbindingsprobleme ondervind:
+
+1. **Verifieer SERVER_URL:**
+
+   Verseker dat `SERVER_URL` in jou `.env`-lêer ooreenstem met jou eksterne toegang-URL, insluitend `https` indien SSL aangeskakel is.
+
+2. **Kontroleer Omgekeerde Volmag Instellings:**
+
+   - Bevestig dat jou omgekeerde volmag versoeke korrek na die Twenty-bediener deurstuur.
+   - Verseker dat kopstukke soos `X-Forwarded-For` en `X-Forwarded-Proto` behoorlik ingestel is.
+
+3. **Herbegin Dienste:**
+
+   Na veranderinge, herbegin beide die omgekeerde volmag en Twenty-houers.
+
+#### Fout wanneer 'n beeld opgelaai word - toestemming geweier
+
+Die omskakeling van die data-lêergids eienaarskap op die gasheer van root na 'n ander gebruiker en groep los hierdie probleem op.
+
+## Hulp Kry
+
+As jy kwessies teëkom wat nie in hierdie gids gedek word nie:
+
+- Gaan Logs na:
+
+  Sien houerlogs vir foutboodskappe:
+
+  ```bash
+  docker compose logs
+  ```
+
+- Gemeenskapsondersteuning:
+
+  Neem kontak op met die [Twenty-gemeenskap](https://github.com/twentyhq/twenty/issues) of [ondersteuningskanale](https://discord.gg/cx5n4Jzs57) vir hulp.

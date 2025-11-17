@@ -1,0 +1,42 @@
+---
+title: Kuvan Syöte
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import imageInputCode from '!!raw-loader!@site/src/ui/input/components/imageInputCode.js'
+
+Sallii käyttäjien ladata ja poistaa kuvan.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ImageInput } from "@/ui/input/components/ImageInput";
+
+export const MyComponent = () => {
+  return <ImageInput/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Rekvisiitat   | Tyyppi     | Kuvaus                                                                                                      |
+| ------------- | ---------- | ----------------------------------------------------------------------------------------------------------- |
+| kuva          | merkkijono | Kuvan lähde-URL-osoite                                                                                      |
+| onUpload      | funktio    | Funktio, jota kutsutaan, kun käyttäjä lataa uuden kuvan. Se saa parametrina `File`-objektin |
+| onRemove      | funktio    | Funktio, jota kutsutaan, kun käyttäjä napsauttaa poistonäppäintä                                            |
+| onAbort       | toiminto   | Funktio, jota kutsutaan, kun käyttäjä napsauttaa peruutusnäppäintä kuvien latauksen aikana                  |
+| isUploading   | looginen   | Ilmaisee, onko kuva parhaillaan latautumassa                                                                |
+| virhesanoma   | merkkijono | Valinnainen virhesanoma, joka näytetään kuvan syötteen alapuolella                                          |
+| pois käytöstä | looginen   | Jos `true`, koko syöte on pois käytöstä, eikä painikkeita voi napsauttaa                                    |
+
+</Tab>
+</Tabs>

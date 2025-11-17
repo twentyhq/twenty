@@ -262,6 +262,15 @@ export class WorkspaceEntity {
   @Column({ default: false })
   isCustomDomainEnabled: boolean;
 
+  @Field(() => [String], { nullable: true })
+  @Column({
+    type: 'varchar',
+    array: true,
+    nullable: true,
+    default: '{email,profilePicture,firstName,lastName}',
+  })
+  editableProfileFields: string[] | null;
+
   // TODO: set as non nullable
   @Column({ nullable: true, type: 'uuid' })
   defaultRoleId: string | null;

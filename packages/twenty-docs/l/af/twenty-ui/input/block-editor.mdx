@@ -1,0 +1,34 @@
+---
+title: Block Editor
+image: /images/user-guide/api/api.png
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+Gebruik 'n blok-gebaseerde ryk teks redigeerder van [BlockNote](https://www.blocknotejs.org/) om gebruikers toe te laat om blokke van inhoud te redigeer en te besigtig.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { useBlockNote } from "@blocknote/react";
+import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+
+export const MyComponent = () => {
+  const BlockNoteEditor = useBlockNote();
+
+  return <BlockEditor editor={BlockNoteEditor} />;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Eienskappe  | Tipe                   | Beskrywing                                 |
+| ----------- | ---------------------- | ------------------------------------------ |
+| redigeerder | `BlockNoteRedigeerder` | The block editor instance or configuration |
+
+</Tab>
+</Tabs>

@@ -1,0 +1,47 @@
+---
+title: Πλαίσιο ελέγχου
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Χρησιμοποιείται όταν ένας χρήστης πρέπει να επιλέξει πολλαπλές τιμές από αρκετές επιλογές.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Checkbox } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+    <Checkbox
+      checked={true}
+      indeterminate={false}
+      onChange={() => console.log("onChange function fired")}
+      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      variant="primary"
+      size="small"
+      shape="squared"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Ιδιότητες       | Τύπος         | Περιγραφή                                                                                                                          |
+| --------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| επιλεγμένο      | boolean       | Υποδεικνύει αν το πλαίσιο ελέγχου είναι επιλεγμένο                                                                                 |
+| indeterminate   | boolean       | Indicates whether the checkbox is in an indeterminate state (neither checked nor unchecked)                     |
+| κατά την αλλαγή | συνάρτηση     | The callback function you want to trigger when the checkbox state changes                                                          |
+| onCheckedChange | λειτουργία    | The callback function you want to trigger when the `checked` state changes                                                         |
+| "variant"       | αλφαριθμητικό | Η οπτική παραλλαγή του πλαισίου. Οι επιλογές περιλαμβάνουν: `primary`, `secondary`, και `tertiary` |
+| μέγεθος         | αλφαριθμητικό | Το μέγεθος του πλαισίου ελέγχου. Has two options: `small` and `large`                              |
+| σχήμα           | αλφαριθμητικό | Το σχήμα του πλαισίου ελέγχου. Has two options: `squared` and `rounded`                            |
+
+</Tab>
+</Tabs>
