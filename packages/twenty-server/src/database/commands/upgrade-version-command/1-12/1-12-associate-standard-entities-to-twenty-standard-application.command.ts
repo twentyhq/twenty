@@ -79,38 +79,39 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
             case 'fieldMetadata':
             case 'index':
             case 'objectMetadata': {
-              const currentMetadataEntity =
-                ALL_METADATA_ENTITY_BY_METADATA_NAME[metadataName];
+              // Commented as should be migrated by the sync metadata
+              // const currentMetadataEntity =
+              //   ALL_METADATA_ENTITY_BY_METADATA_NAME[metadataName];
 
-              const metadataEntityRepository =
-                queryRunner.manager.getRepository(currentMetadataEntity);
+              // const metadataEntityRepository =
+              //   queryRunner.manager.getRepository(currentMetadataEntity);
 
-              const standardEntities = await metadataEntityRepository.find({
-                select: {
-                  standardId: true,
-                  universalIdentifier: true,
-                  applicationId: true,
-                  id: true,
-                },
-                where: {
-                  standardId: Not(IsNull()),
-                  workspaceId,
-                  applicationId: IsNull(),
-                },
-                withDeleted: true,
-              });
+              // const standardEntities = await metadataEntityRepository.find({
+              //   select: {
+              //     standardId: true,
+              //     universalIdentifier: true,
+              //     applicationId: true,
+              //     id: true,
+              //   },
+              //   where: {
+              //     standardId: Not(IsNull()),
+              //     workspaceId,
+              //     applicationId: IsNull(),
+              //   },
+              //   withDeleted: true,
+              // });
 
-              for (const entity of standardEntities) {
-                this.logger.log(
-                  `Processing entity id=${entity.id} standardId=${entity.standardId}`,
-                );
+              // for (const entity of standardEntities) {
+              //   this.logger.log(
+              //     `Processing entity id=${entity.id} standardId=${entity.standardId}`,
+              //   );
 
-                await metadataEntityRepository.update(entity.id, {
-                  universalIdentifier:
-                    entity.universalIdentifier ?? entity.standardId,
-                  applicationId: twentyStandardApplication.id,
-                });
-              }
+              //   await metadataEntityRepository.update(entity.id, {
+              //     universalIdentifier:
+              //       entity.universalIdentifier ?? entity.standardId,
+              //     applicationId: twentyStandardApplication.id,
+              //   });
+              // }
               break;
             }
             case 'view': {

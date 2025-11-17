@@ -70,8 +70,8 @@ export const BLOCKLIST_STANDARD_FIELD_IDS = {
 export const CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS = {
   id: '20202020-c01a-4021-8a21-9edf06bfef0a',
   createdAt: '20202020-c01b-4022-9b22-afefd7cffefb',
-  updatedAt: '20202020-c01c-4023-8c23-bffef8dffef0c',
-  deletedAt: '20202020-c01d-4024-9d24-cffef9effef1d',
+  updatedAt: '20202020-c01c-4023-8c23-bffef8dffef0',
+  deletedAt: '20202020-c01d-4024-9d24-cffef9effef1',
   calendarChannel: '20202020-93ee-4da4-8d58-0282c4a9cb7d',
   calendarEvent: '20202020-5aa5-437e-bb86-f42d457783e3',
   eventExternalId: '20202020-9ec8-48bb-b279-21d0734a75a1',
