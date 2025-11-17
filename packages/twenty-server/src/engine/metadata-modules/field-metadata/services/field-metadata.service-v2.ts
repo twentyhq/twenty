@@ -7,7 +7,6 @@ import { FindOneOptions, Repository } from 'typeorm';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
-import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -21,7 +20,6 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metada
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util';
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
-import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
@@ -68,7 +66,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
     deleteOneFieldInput: DeleteOneFieldInput;
     workspaceId: string;
     isSystemBuild?: boolean;
-  }): Promise<FieldMetadataDTO> {
+  }): Promise<FlatFieldMetadata> {
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatIndexMaps: existingFlatIndexMaps,
@@ -133,9 +131,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
       );
     }
 
-    return fromFlatFieldMetadataToFieldMetadataDto(
-      flatFieldMetadatasToDelete[0],
-    );
+    return flatFieldMetadatasToDelete[0];
   }
 
   async updateOneField({

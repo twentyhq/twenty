@@ -27,6 +27,7 @@ import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/rel
 import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
+import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
@@ -51,10 +52,13 @@ export class FieldMetadataResolver {
     @Context() context: I18nContext,
   ) {
     try {
-      return await this.fieldMetadataServiceV2.createOneField({
-        createFieldInput: input.field,
-        workspaceId,
-      });
+      const flatFieldMetadata =
+        await this.fieldMetadataServiceV2.createOneField({
+          createFieldInput: input.field,
+          workspaceId,
+        });
+
+      return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
     } catch (error) {
       return fieldMetadataGraphqlApiExceptionHandler(
         error,
@@ -71,10 +75,13 @@ export class FieldMetadataResolver {
     @Context() context: I18nContext,
   ) {
     try {
-      return await this.fieldMetadataServiceV2.updateOneField({
-        updateFieldInput: { ...input.update, id: input.id },
-        workspaceId,
-      });
+      const flatFieldMetadata =
+        await this.fieldMetadataServiceV2.updateOneField({
+          updateFieldInput: { ...input.update, id: input.id },
+          workspaceId,
+        });
+
+      return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(
         error,
@@ -95,10 +102,13 @@ export class FieldMetadataResolver {
     }
 
     try {
-      return await this.fieldMetadataServiceV2.deleteOneField({
-        deleteOneFieldInput,
-        workspaceId,
-      });
+      const flatFieldMetadata =
+        await this.fieldMetadataServiceV2.deleteOneField({
+          deleteOneFieldInput,
+          workspaceId,
+        });
+
+      return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(
         error,

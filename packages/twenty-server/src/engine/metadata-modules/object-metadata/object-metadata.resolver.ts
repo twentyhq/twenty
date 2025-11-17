@@ -18,6 +18,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { CreateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
@@ -111,10 +112,13 @@ export class ObjectMetadataResolver {
     @Context() context: I18nContext,
   ) {
     try {
-      return await this.objectMetadataServiceV2.createOneObject({
-        createObjectInput: input.object,
-        workspaceId,
-      });
+      const flatobjectMetadata =
+        await this.objectMetadataServiceV2.createOneObject({
+          createObjectInput: input.object,
+          workspaceId,
+        });
+
+      return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
     } catch (error) {
       objectMetadataGraphqlApiExceptionHandler(
         error,
@@ -131,10 +135,13 @@ export class ObjectMetadataResolver {
     @Context() context: I18nContext,
   ) {
     try {
-      return await this.objectMetadataServiceV2.deleteOneObject({
-        deleteObjectInput,
-        workspaceId,
-      });
+      const flatobjectMetadata =
+        await this.objectMetadataServiceV2.deleteOneObject({
+          deleteObjectInput,
+          workspaceId,
+        });
+
+      return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
     } catch (error) {
       objectMetadataGraphqlApiExceptionHandler(
         error,
@@ -151,10 +158,13 @@ export class ObjectMetadataResolver {
     @Context() context: I18nContext,
   ) {
     try {
-      return await this.objectMetadataServiceV2.updateOneObject({
-        updateObjectInput,
-        workspaceId,
-      });
+      const flatobjectMetadata =
+        await this.objectMetadataServiceV2.updateOneObject({
+          updateObjectInput,
+          workspaceId,
+        });
+
+      return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
     } catch (error) {
       objectMetadataGraphqlApiExceptionHandler(
         error,

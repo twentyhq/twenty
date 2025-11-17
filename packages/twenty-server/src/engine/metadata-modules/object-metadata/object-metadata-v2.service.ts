@@ -13,14 +13,12 @@ import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metada
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
-import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-update-object-input-to-flat-object-metadata-and-related-flat-entities.util';
 import { fromCreateViewFieldInputToFlatViewFieldToCreate } from 'src/engine/metadata-modules/flat-view-field/utils/from-create-view-field-input-to-flat-view-field-to-create.util';
 import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/metadata-modules/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
-import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
@@ -55,7 +53,7 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
   }: {
     workspaceId: string;
     updateObjectInput: UpdateOneObjectInput;
-  }): Promise<ObjectMetadataDTO> {
+  }): Promise<FlatObjectMetadata> {
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatIndexMaps: existingFlatIndexMaps,
@@ -162,7 +160,7 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
       );
     }
 
-    return fromFlatObjectMetadataToObjectMetadataDto(updatedFlatObjectMetadata);
+    return updatedFlatObjectMetadata;
   }
 
   async deleteOneObject({
@@ -173,7 +171,7 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
     deleteObjectInput: DeleteOneObjectInput;
     workspaceId: string;
     isSystemBuild?: boolean;
-  }): Promise<ObjectMetadataDTO> {
+  }): Promise<FlatObjectMetadata> {
     const deletedObjectMetadataDtos = await this.deleteManyObjectMetadatas({
       deleteObjectInputs: [deleteObjectInput],
       workspaceId,
@@ -200,7 +198,7 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
     deleteObjectInputs: DeleteOneObjectInput[];
     workspaceId: string;
     isSystemBuild?: boolean;
-  }): Promise<ObjectMetadataDTO[]> {
+  }): Promise<FlatObjectMetadata[]> {
     if (deleteObjectInputs.length === 0) {
       return [];
     }
@@ -319,9 +317,7 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
       );
     }
 
-    return flatObjectMetadatasToDelete.map(
-      fromFlatObjectMetadataToObjectMetadataDto,
-    );
+    return flatObjectMetadatasToDelete;
   }
 
   async createOneObject({
