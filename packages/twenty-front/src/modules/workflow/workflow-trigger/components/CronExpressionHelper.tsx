@@ -49,7 +49,7 @@ const StyledScheduleTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-bottom: ${({theme}) => theme.spacing(1)}
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledExecutionItem = styled.div`
