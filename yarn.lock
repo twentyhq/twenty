@@ -15916,14 +15916,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.46.0, @playwright/test@npm:^1.51.0":
-  version: 1.51.0
-  resolution: "@playwright/test@npm:1.51.0"
+"@playwright/test@npm:^1.56.1":
+  version: 1.56.1
+  resolution: "@playwright/test@npm:1.56.1"
   dependencies:
-    playwright: "npm:1.51.0"
+    playwright: "npm:1.56.1"
   bin:
     playwright: cli.js
-  checksum: 10c0/ae83dd2c3a32133de58f44a9dbcd73a8059155ebd8acc736ba8bd0a7ca99b194afe2e8f5a500861d18b1c8f06b4e4ea8de4a2402297c59053d4becc404b47e0a
+  checksum: 10c0/2b5b0e1f2e6a18f6e5ce6897c7440ca78f64e0b004834e9808e93ad2b78b96366b562ae4366602669cf8ad793a43d85481b58541e74be71e905e732d833dd691
   languageName: node
   linkType: hard
 
@@ -47915,7 +47915,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.51.0, playwright-core@npm:>=1.2.0":
+"playwright-core@npm:1.56.1":
+  version: 1.56.1
+  resolution: "playwright-core@npm:1.56.1"
+  bin:
+    playwright-core: cli.js
+  checksum: 10c0/ffd40142b99c68678b387445d5b42f1fee4ab0b65d983058c37f342e5629f9cdbdac0506ea80a0dfd41a8f9f13345bad54e9a8c35826ef66dc765f4eb3db8da7
+  languageName: node
+  linkType: hard
+
+"playwright-core@npm:>=1.2.0":
   version: 1.51.0
   resolution: "playwright-core@npm:1.51.0"
   bin:
@@ -47924,18 +47933,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:1.51.0, playwright@npm:^1.14.0, playwright@npm:^1.46.0":
-  version: 1.51.0
-  resolution: "playwright@npm:1.51.0"
+"playwright@npm:1.56.1, playwright@npm:^1.14.0, playwright@npm:^1.56.1":
+  version: 1.56.1
+  resolution: "playwright@npm:1.56.1"
   dependencies:
     fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.51.0"
+    playwright-core: "npm:1.56.1"
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     playwright: cli.js
-  checksum: 10c0/e8509ea500e03e8051fd243f2347ac3196ff8dde4c20ae3aba4cf723e2b647a0158d209fba062995dab90590229a483d723562cf1ea8b2fc11698617027416fd
+  checksum: 10c0/8e9965aede86df0f4722063385748498977b219630a40a10d1b82b8bd8d4d4e9b6b65ecbfa024331a30800163161aca292fb6dd7446c531a1ad25f4155625ab4
   languageName: node
   linkType: hard
 
@@ -54834,7 +54843,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-e2e-testing@workspace:packages/twenty-e2e-testing"
   dependencies:
-    "@playwright/test": "npm:^1.51.0"
+    "@playwright/test": "npm:^1.56.1"
+    playwright: "npm:^1.56.1"
   languageName: unknown
   linkType: soft
 
@@ -54888,6 +54898,7 @@ __metadata:
     "@nivo/line": "npm:^0.99.0"
     "@nivo/pie": "npm:^0.99.0"
     "@nivo/radial-bar": "npm:^0.99.0"
+    "@playwright/test": "npm:^1.56.1"
     "@react-email/components": "npm:^0.5.3"
     "@react-pdf/renderer": "npm:^4.1.6"
     "@scalar/api-reference-react": "npm:^0.4.36"
@@ -54948,6 +54959,7 @@ __metadata:
     monaco-editor: "npm:^0.51.0"
     monaco-editor-auto-typings: "npm:^0.4.5"
     optionator: "npm:^0.9.1"
+    playwright: "npm:^1.56.1"
     qs: "npm:^6.11.2"
     react-data-grid: "npm:7.0.0-beta.13"
     react-datepicker: "npm:^6.7.1"
@@ -55333,7 +55345,6 @@ __metadata:
     "@nx/storybook": "npm:21.3.11"
     "@nx/vite": "npm:21.3.11"
     "@nx/web": "npm:21.3.11"
-    "@playwright/test": "npm:^1.46.0"
     "@radix-ui/colors": "npm:^3.0.0"
     "@sentry/profiling-node": "npm:^9.26.0"
     "@sentry/react": "npm:^9.26.0"
@@ -55463,7 +55474,6 @@ __metadata:
     msw-storybook-addon: "npm:^2.0.5"
     nx: "npm:21.3.11"
     planer: "npm:^1.2.0"
-    playwright: "npm:^1.46.0"
     pluralize: "npm:^8.0.0"
     prettier: "npm:^3.1.1"
     raw-loader: "npm:^4.0.2"
