@@ -302,7 +302,37 @@ export const STANDARD_OBJECTS = {
           CALENDAR_EVENT_STANDARD_FIELD_IDS.calendarEventParticipants,
       },
     },
-    views: {},
+    views: {
+      allCalendarEvents: {
+        universalIdentifier: '20202020-c001-4c01-8c01-ca1ebe0ca001',
+        viewFields: {
+          title: {
+            universalIdentifier: '20202020-cf01-4c01-8c01-ca1ebe0caf01',
+          },
+          startsAt: {
+            universalIdentifier: '20202020-cf01-4c01-8c01-ca1ebe0caf02',
+          },
+          endsAt: {
+            universalIdentifier: '20202020-cf01-4c01-8c01-ca1ebe0caf03',
+          },
+          isFullDay: {
+            universalIdentifier: '20202020-cf01-4c01-8c01-ca1ebe0caf04',
+          },
+          location: {
+            universalIdentifier: '20202020-cf01-4c01-8c01-ca1ebe0caf05',
+          },
+          conferenceLink: {
+            universalIdentifier: '20202020-cf01-4c01-8c01-ca1ebe0caf06',
+          },
+          isCanceled: {
+            universalIdentifier: '20202020-cf01-4c01-8c01-ca1ebe0caf07',
+          },
+          createdAt: {
+            universalIdentifier: '20202020-cf01-4c01-8c01-ca1ebe0caf08',
+          },
+        },
+      },
+    },
   },
   company: {
     universalIdentifier: STANDARD_OBJECT_IDS.company,
@@ -787,7 +817,19 @@ export const STANDARD_OBJECTS = {
           MESSAGE_THREAD_STANDARD_FIELD_IDS.messageThreadSubscribers,
       },
     },
-    views: {},
+    views: {
+      allMessageThreads: {
+        universalIdentifier: '20202020-d002-4d02-8d02-ae55a9ba2002',
+        viewFields: {
+          messages: {
+            universalIdentifier: '20202020-df02-4d02-8d02-ae55a9ba2f01',
+          },
+          createdAt: {
+            universalIdentifier: '20202020-df02-4d02-8d02-ae55a9ba2f02',
+          },
+        },
+      },
+    },
   },
   message: {
     universalIdentifier: STANDARD_OBJECT_IDS.message,
@@ -824,7 +866,34 @@ export const STANDARD_OBJECTS = {
           MESSAGE_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
       },
     },
-    views: {},
+    views: {
+      allMessages: {
+        universalIdentifier: '20202020-d001-4d01-8d01-ae55a9e5a001',
+        viewFields: {
+          subject: {
+            universalIdentifier: '20202020-df01-4d01-8d01-ae55a9e5af01',
+          },
+          messageThread: {
+            universalIdentifier: '20202020-df01-4d01-8d01-ae55a9e5af02',
+          },
+          messageParticipants: {
+            universalIdentifier: '20202020-df01-4d01-8d01-ae55a9e5af03',
+          },
+          receivedAt: {
+            universalIdentifier: '20202020-df01-4d01-8d01-ae55a9e5af04',
+          },
+          headerMessageId: {
+            universalIdentifier: '20202020-df01-4d01-8d01-ae55a9e5af05',
+          },
+          text: {
+            universalIdentifier: '20202020-df01-4d01-8d01-ae55a9e5af06',
+          },
+          createdAt: {
+            universalIdentifier: '20202020-df01-4d01-8d01-ae55a9e5af07',
+          },
+        },
+      },
+    },
   },
   note: {
     universalIdentifier: STANDARD_OBJECT_IDS.note,
@@ -1786,7 +1855,40 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.numberFormat,
       },
     },
-    views: {},
+    views: {
+      allWorkspaceMembers: {
+        universalIdentifier: '20202020-e001-4e01-8e01-a0bcaeabe100',
+        viewFields: {
+          name: {
+            universalIdentifier: '20202020-ef01-4e01-8e01-a0bcaeabe1f0',
+          },
+          userEmail: {
+            universalIdentifier: '20202020-ef01-4e01-8e01-a0bcaeabe1f1',
+          },
+          avatarUrl: {
+            universalIdentifier: '20202020-ef01-4e01-8e01-a0bcaeabe1f2',
+          },
+          colorScheme: {
+            universalIdentifier: '20202020-ef01-4e01-8e01-a0bcaeabe1f3',
+          },
+          locale: {
+            universalIdentifier: '20202020-ef01-4e01-8e01-a0bcaeabe1f4',
+          },
+          timeZone: {
+            universalIdentifier: '20202020-ef01-4e01-8e01-a0bcaeabe1f5',
+          },
+          dateFormat: {
+            universalIdentifier: '20202020-ef01-4e01-8e01-a0bcaeabe1f6',
+          },
+          timeFormat: {
+            universalIdentifier: '20202020-ef01-4e01-8e01-a0bcaeabe1f7',
+          },
+          createdAt: {
+            universalIdentifier: '20202020-ef01-4e01-8e01-a0bcaeabe1f8',
+          },
+        },
+      },
+    },
   },
 } as const satisfies Record<
   string,

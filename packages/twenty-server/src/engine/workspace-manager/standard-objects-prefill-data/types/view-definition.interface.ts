@@ -19,6 +19,8 @@ export interface ViewDefinition {
   kanbanFieldMetadataId?: string;
   kanbanAggregateOperation?: AggregateOperations;
   kanbanAggregateOperationFieldMetadataId?: string;
+  calendarFieldMetadataId?: string;
+  calendarLayout?: string;
   fields?: {
     universalIdentifier: string;
     fieldMetadataId: string;

@@ -49,72 +49,30 @@ export const prefillCoreViews = async ({
   workspaceSchemaName,
   twentyStandardFlatApplication,
 }: PrefillCoreViewsArgs): Promise<ViewEntity[]> => {
-  const views: ViewDefinition[] = [
-    companiesAllView({
+  const views = [
+    companiesAllView,
+    peopleAllView,
+    opportunitiesAllView,
+    opportunitiesByStageView,
+    notesAllView,
+    tasksAllView,
+    tasksAssignedToMeView,
+    tasksByStatusView,
+    workflowsAllView,
+    workflowVersionsAllView,
+    workflowRunsAllView,
+    dashboardsAllView,
+    workspaceMembersAllView,
+    messagesAllView,
+    messageThreadsAllView,
+    calendarEventsAllView,
+  ].map((seeder) =>
+    seeder({
       objectMetadataItems,
       useCoreNaming: true,
       twentyStandardFlatApplication,
     }),
-    peopleAllView({
-      objectMetadataItems,
-      useCoreNaming: true,
-      twentyStandardFlatApplication,
-    }),
-    opportunitiesAllView({
-      objectMetadataItems,
-      useCoreNaming: true,
-      twentyStandardFlatApplication,
-    }),
-    opportunitiesByStageView({
-      objectMetadataItems,
-      useCoreNaming: true,
-      twentyStandardFlatApplication,
-    }),
-    notesAllView({
-      objectMetadataItems,
-      useCoreNaming: true,
-      twentyStandardFlatApplication,
-    }),
-    tasksAllView({
-      objectMetadataItems,
-      useCoreNaming: true,
-      twentyStandardFlatApplication,
-    }),
-    tasksAssignedToMeView({
-      objectMetadataItems,
-      useCoreNaming: true,
-      twentyStandardFlatApplication,
-    }),
-    tasksByStatusView({
-      objectMetadataItems,
-      useCoreNaming: true,
-      twentyStandardFlatApplication,
-    }),
-    workflowsAllView({
-      objectMetadataItems,
-      useCoreNaming: true,
-      twentyStandardFlatApplication,
-    }),
-    workflowVersionsAllView({
-      objectMetadataItems,
-      useCoreNaming: true,
-      twentyStandardFlatApplication,
-    }),
-    workflowRunsAllView({
-      objectMetadataItems,
-      useCoreNaming: true,
-      twentyStandardFlatApplication,
-    }),
-    dashboardsAllView({
-      objectMetadataItems,
-      useCoreNaming: true,
-      twentyStandardFlatApplication,
-    }),
-    workspaceMembersAllView(objectMetadataItems, true),
-    messagesAllView(objectMetadataItems, true),
-    messageThreadsAllView(objectMetadataItems, true),
-    calendarEventsAllView(objectMetadataItems, true),
-  ];
+  );
 
   const queryRunner = coreDataSource.createQueryRunner();
 
