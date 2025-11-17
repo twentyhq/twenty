@@ -49,6 +49,7 @@ const StyledSidePanel = styled.aside`
   height: 100%;
   overflow: hidden;
   width: 100%;
+  box-sizing: border-box;
 `;
 
 export const RecordPageSidePanelLayout = ({
