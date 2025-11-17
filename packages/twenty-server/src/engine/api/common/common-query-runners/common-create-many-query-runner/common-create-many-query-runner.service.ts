@@ -30,6 +30,7 @@ import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runne
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
+import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -44,6 +45,13 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   ObjectRecord[]
 > {
   protected readonly operationName = CommonQueryNames.CREATE_MANY;
+
+  constructor(
+    private readonly createdByFromAuthContextService: CreatedByFromAuthContextService,
+  ) {
+    super();
+  }
+
   async run(
     args: CommonExtendedInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
@@ -72,6 +80,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
       args,
+      authContext,
     });
 
     const upsertedRecords = await this.fetchUpsertedRecords({
@@ -168,11 +177,13 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     objectMetadataItemWithFieldMaps,
     objectMetadataMaps,
     args,
+    authContext,
   }: {
     repository: WorkspaceRepository<ObjectLiteral>;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
     args: CommonExtendedInput<CreateManyQueryArgs>;
+    authContext: AuthContext;
   }): Promise<InsertResult> {
     const { selectedFieldsResult } = args;
 
@@ -184,7 +195,18 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         objectMetadataMaps,
       });
 
-      return await repository.insert(args.data, undefined, selectedColumns);
+      const recordsToInsertWithCreatedBy =
+        await this.createdByFromAuthContextService.injectCreatedBy(
+          args.data,
+          objectMetadataItemWithFieldMaps.nameSingular,
+          authContext,
+        );
+
+      return await repository.insert(
+        recordsToInsertWithCreatedBy,
+        undefined,
+        selectedColumns,
+      );
     }
 
     return this.performUpsertOperation({
@@ -193,6 +215,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       objectMetadataMaps,
       args,
       selectedFieldsResult,
+      authContext,
     });
   }
 
@@ -202,12 +225,14 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     objectMetadataMaps,
     args,
     selectedFieldsResult,
+    authContext,
   }: {
     repository: WorkspaceRepository<ObjectLiteral>;
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
     args: CreateManyQueryArgs;
     selectedFieldsResult: CommonSelectedFieldsResult;
+    authContext: AuthContext;
   }): Promise<InsertResult> {
     const conflictingFields = getConflictingFields(
       objectMetadataItemWithFieldMaps,
@@ -248,8 +273,15 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       });
     }
 
+    const recordsToInsertWithCreatedBy =
+      await this.createdByFromAuthContextService.injectCreatedBy(
+        recordsToInsert,
+        objectMetadataItemWithFieldMaps.nameSingular,
+        authContext,
+      );
+
     await this.processRecordsToInsert({
-      recordsToInsert,
+      recordsToInsert: recordsToInsertWithCreatedBy,
       repository,
       result,
       columnsToReturn,

@@ -10,6 +10,7 @@ import { ProcessNestedRelationsV2Helper } from 'src/engine/api/graphql/graphql-q
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
+import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -21,6 +22,7 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
 import { ViewFilterGroupModule } from 'src/engine/metadata-modules/view-filter-group/view-filter-group.module';
 import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
+import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
 
@@ -41,6 +43,7 @@ import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-wo
     MetricsModule,
     GlobalWorkspaceDataSourceModule,
     FeatureFlagModule,
+    WorkspaceMetadataCacheModule,
   ],
   providers: [
     ProcessNestedRelationsHelper,
@@ -50,6 +53,7 @@ import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-wo
     ...CommonQueryRunners,
     CommonResultGettersService,
     GroupByWithRecordsService,
+    CreatedByFromAuthContextService,
   ],
   exports: [...CommonQueryRunners],
 })

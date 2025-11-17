@@ -18,6 +18,7 @@
       "name": "twenty-server - worker debug",
       "type": "node",
       "request": "launch",
+      "runtimeVersion": "24.5",
       "runtimeExecutable": "npx",
       "runtimeArgs": ["nx", "run", "twenty-server:worker"],
       "outputCapture": "std",
