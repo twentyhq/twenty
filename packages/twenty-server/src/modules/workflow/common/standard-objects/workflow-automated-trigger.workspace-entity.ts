@@ -35,6 +35,7 @@ export enum AutomatedTriggerType {
 export class WorkflowAutomatedTriggerWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.type,
+    universalIdentifier: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.SELECT,
     label: msg`Automated Trigger Type`,
     description: msg`The workflow automated trigger type`,
@@ -57,6 +58,7 @@ export class WorkflowAutomatedTriggerWorkspaceEntity extends BaseWorkspaceEntity
 
   @WorkspaceField({
     standardId: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.settings,
+    universalIdentifier: WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS.settings,
     type: FieldMetadataType.RAW_JSON,
     label: msg`Settings`,
     description: msg`The workflow automated trigger settings`,

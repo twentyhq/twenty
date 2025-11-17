@@ -42,6 +42,7 @@ registerEnumType(MessageFolderPendingSyncAction, {
 export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.name,
+    universalIdentifier: MESSAGE_FOLDER_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
     description: msg`Folder name`,
@@ -63,6 +64,7 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.syncCursor,
+    universalIdentifier: MESSAGE_FOLDER_STANDARD_FIELD_IDS.syncCursor,
     type: FieldMetadataType.TEXT,
     label: msg`Sync Cursor`,
     description: msg`Sync Cursor`,
@@ -72,6 +74,7 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.isSentFolder,
+    universalIdentifier: MESSAGE_FOLDER_STANDARD_FIELD_IDS.isSentFolder,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Is Sent Folder`,
     description: msg`Is Sent Folder`,
@@ -82,6 +85,7 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.isSynced,
+    universalIdentifier: MESSAGE_FOLDER_STANDARD_FIELD_IDS.isSynced,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Is Synced`,
     description: msg`Is Synced`,
@@ -92,6 +96,7 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.parentFolderId,
+    universalIdentifier: MESSAGE_FOLDER_STANDARD_FIELD_IDS.parentFolderId,
     type: FieldMetadataType.TEXT,
     label: msg`Parent Folder ID`,
     description: msg`Parent Folder ID`,
@@ -103,6 +108,7 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.externalId,
+    universalIdentifier: MESSAGE_FOLDER_STANDARD_FIELD_IDS.externalId,
     type: FieldMetadataType.TEXT,
     label: msg`External ID`,
     description: msg`External ID`,
@@ -114,6 +120,7 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.pendingSyncAction,
+    universalIdentifier: MESSAGE_FOLDER_STANDARD_FIELD_IDS.pendingSyncAction,
     type: FieldMetadataType.SELECT,
     label: msg`Pending Sync Action`,
     description: msg`Pending action for folder sync`,

@@ -39,6 +39,7 @@ export const SEARCH_FIELDS_FOR_CUSTOM_OBJECT: FieldTypeAndNameMetadata[] = [
 export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
+    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
     label: msg`Name`,
     description: msg`Name`,
     type: FieldMetadataType.TEXT,
@@ -48,6 +49,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.position,
+    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.position,
     label: msg`Position`,
     description: msg`Position`,
     type: FieldMetadataType.POSITION,
@@ -60,6 +62,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
+    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',
@@ -153,6 +156,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,
+    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
     description: SEARCH_VECTOR_FIELD.description,

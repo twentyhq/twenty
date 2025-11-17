@@ -35,8 +35,8 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
    * So two External ID can be related to the same event sharing the same iCalUID.
    */
   @WorkspaceField({
-    standardId:
-      CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.eventExternalId,
+    standardId: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.eventExternalId,
+    universalIdentifier: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.eventExternalId,
     type: FieldMetadataType.TEXT,
     label: msg`Event external ID`,
     description: msg`Event external ID`,
@@ -45,8 +45,8 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
   eventExternalId: string;
 
   @WorkspaceField({
-    standardId:
-      CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.recurringEventExternalId,
+    standardId: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.recurringEventExternalId,
+    universalIdentifier: CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.recurringEventExternalId,
     type: FieldMetadataType.TEXT,
     label: msg`Recurring Event ID`,
     description: msg`Recurring Event ID`,

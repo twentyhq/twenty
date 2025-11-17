@@ -40,8 +40,8 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 })
 export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
-    standardId:
-      MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageExternalId,
+    standardId: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageExternalId,
+    universalIdentifier: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageExternalId,
     type: FieldMetadataType.TEXT,
     label: msg`Message External Id`,
     description: msg`Message id from the messaging provider`,
@@ -51,8 +51,8 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
   messageExternalId: string | null;
 
   @WorkspaceField({
-    standardId:
-      MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageThreadExternalId,
+    standardId: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageThreadExternalId,
+    universalIdentifier: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageThreadExternalId,
     type: FieldMetadataType.TEXT,
     label: msg`Thread External Id`,
     description: msg`Thread id from the messaging provider`,
@@ -63,6 +63,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
 
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.direction,
+    universalIdentifier: MESSAGE_STANDARD_FIELD_IDS.direction,
     type: FieldMetadataType.SELECT,
     label: msg`Direction`,
     description: msg`Message Direction`,

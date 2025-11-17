@@ -13,7 +13,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/workspace-duplicate-criteria.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
@@ -63,9 +63,15 @@ export const SEARCH_FIELDS_FOR_COMPANY: FieldTypeAndNameMetadata[] = [
 })
 @WorkspaceDuplicateCriteria([['name'], ['domainNamePrimaryLinkUrl']])
 @WorkspaceIsSearchable()
-export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
+export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: COMPANY_STANDARD_FIELD_IDS.id,
+  createdAt: COMPANY_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: COMPANY_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: COMPANY_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.name,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
     description: msg`The company name`,
@@ -75,6 +81,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.domainName,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.domainName,
     type: FieldMetadataType.LINKS,
     label: msg`Domain Name`,
     description: msg`The company website URL. We use this url to fetch the company icon`,
@@ -88,6 +95,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.employees,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.employees,
     type: FieldMetadataType.NUMBER,
     label: msg`Employees`,
     description: msg`Number of employees in the company`,
@@ -98,6 +106,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.linkedinLink,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.linkedinLink,
     type: FieldMetadataType.LINKS,
     label: msg`Linkedin`,
     description: msg`The company Linkedin account`,
@@ -108,6 +117,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.xLink,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.xLink,
     type: FieldMetadataType.LINKS,
     label: msg`X`,
     description: msg`The company Twitter/X account`,
@@ -118,6 +128,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.annualRecurringRevenue,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.annualRecurringRevenue,
     type: FieldMetadataType.CURRENCY,
     label: msg`ARR`,
     description: msg`Annual Recurring Revenue: The actual or estimated annual revenue of the company`,
@@ -128,6 +139,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.address,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.address,
     type: FieldMetadataType.ADDRESS,
     label: msg`Address`,
     description: msg`Address of the company`,
@@ -138,6 +150,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.idealCustomerProfile,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.idealCustomerProfile,
     type: FieldMetadataType.BOOLEAN,
     label: msg`ICP`,
     description: msg`Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you`,
@@ -148,6 +161,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.position,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
     description: msg`Company record position`,
@@ -159,6 +173,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.createdBy,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',
@@ -273,6 +288,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.address_deprecated,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.address_deprecated,
     type: FieldMetadataType.TEXT,
     label: msg`Address (deprecated) `,
     description: msg`Address of the company - deprecated in favor of new address field`,
@@ -284,6 +300,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.searchVector,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
     description: SEARCH_VECTOR_FIELD.description,

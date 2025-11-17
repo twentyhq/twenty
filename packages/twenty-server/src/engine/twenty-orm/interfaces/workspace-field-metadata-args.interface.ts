@@ -1,7 +1,7 @@
 import {
-  type FieldMetadataType,
-  type FieldMetadataSettings,
   type FieldMetadataOptions,
+  type FieldMetadataSettings,
+  type FieldMetadataType,
 } from 'twenty-shared/types';
 
 import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
@@ -14,6 +14,8 @@ export interface WorkspaceFieldMetadataArgs {
    * Standard id.
    */
   readonly standardId: string;
+
+  readonly universalIdentifier: string;
 
   /**
    * Class to which field is applied.

@@ -42,6 +42,7 @@ export enum CalendarEventParticipantResponseStatus {
 export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.handle,
+    universalIdentifier: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: msg`Handle`,
     description: msg`Handle`,
@@ -51,6 +52,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
+    universalIdentifier: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
     type: FieldMetadataType.TEXT,
     label: msg`Display Name`,
     description: msg`Display Name`,
@@ -60,6 +62,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.isOrganizer,
+    universalIdentifier: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.isOrganizer,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Is Organizer`,
     description: msg`Is Organizer`,
@@ -70,6 +73,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.responseStatus,
+    universalIdentifier: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.responseStatus,
     type: FieldMetadataType.SELECT,
     label: msg`Response Status`,
     description: msg`Response Status`,

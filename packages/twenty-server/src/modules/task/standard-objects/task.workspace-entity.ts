@@ -11,7 +11,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -55,9 +55,15 @@ export const SEARCH_FIELDS_FOR_TASKS: FieldTypeAndNameMetadata[] = [
   labelIdentifierStandardId: TASK_STANDARD_FIELD_IDS.title,
 })
 @WorkspaceIsSearchable()
-export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
+export class TaskWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: TASK_STANDARD_FIELD_IDS.id,
+  createdAt: TASK_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: TASK_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: TASK_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.position,
+    universalIdentifier: TASK_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
     description: msg`Task record position`,
@@ -69,6 +75,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.title,
+    universalIdentifier: TASK_STANDARD_FIELD_IDS.title,
     type: FieldMetadataType.TEXT,
     label: msg`Title`,
     description: msg`Task title`,
@@ -78,6 +85,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.bodyV2,
+    universalIdentifier: TASK_STANDARD_FIELD_IDS.bodyV2,
     type: FieldMetadataType.RICH_TEXT_V2,
     label: msg`Body`,
     description: msg`Task body`,
@@ -88,6 +96,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.dueAt,
+    universalIdentifier: TASK_STANDARD_FIELD_IDS.dueAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Due Date`,
     description: msg`Task due date`,
@@ -98,6 +107,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.status,
+    universalIdentifier: TASK_STANDARD_FIELD_IDS.status,
     type: FieldMetadataType.SELECT,
     label: msg`Status`,
     description: msg`Task status`,
@@ -124,6 +134,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.createdBy,
+    universalIdentifier: TASK_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',
@@ -201,6 +212,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: TASK_STANDARD_FIELD_IDS.searchVector,
+    universalIdentifier: TASK_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
     description: SEARCH_VECTOR_FIELD.description,

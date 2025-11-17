@@ -98,6 +98,7 @@ export const SEARCH_FIELDS_FOR_WORKFLOW_RUNS: FieldTypeAndNameMetadata[] = [
 export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.name,
+    universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
     description: msg`Name of the workflow run`,
@@ -107,6 +108,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.enqueuedAt,
+    universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.enqueuedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Workflow run enqueued at`,
     description: msg`Workflow run enqueued at`,
@@ -117,6 +119,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.startedAt,
+    universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.startedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Workflow run started at`,
     description: msg`Workflow run started at`,
@@ -127,6 +130,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.endedAt,
+    universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.endedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Workflow run ended at`,
     description: msg`Workflow run ended at`,
@@ -137,6 +141,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.status,
+    universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.status,
     type: FieldMetadataType.SELECT,
     label: msg`Workflow run status`,
     description: msg`Workflow run status`,
@@ -191,6 +196,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.createdBy,
+    universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Executed by`,
     icon: 'IconCreativeCommonsSa',
@@ -200,6 +206,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.state,
+    universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.state,
     type: FieldMetadataType.RAW_JSON,
     label: msg`State`,
     description: msg`State of the workflow run`,
@@ -209,6 +216,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.position,
+    universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
     description: msg`Workflow run position`,
@@ -220,6 +228,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.searchVector,
+    universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
     description: SEARCH_VECTOR_FIELD.description,

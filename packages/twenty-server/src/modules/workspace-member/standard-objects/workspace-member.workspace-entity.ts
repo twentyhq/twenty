@@ -101,6 +101,7 @@ export const SEARCH_FIELDS_FOR_WORKSPACE_MEMBER: FieldTypeAndNameMetadata[] = [
 export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.position,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
     description: msg`Workspace member position`,
@@ -112,6 +113,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.name,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.FULL_NAME,
     label: msg`Name`,
     description: msg`Workspace member name`,
@@ -121,6 +123,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.colorScheme,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.colorScheme,
     type: FieldMetadataType.TEXT,
     label: msg`Color Scheme`,
     description: msg`Preferred color scheme`,
@@ -132,6 +135,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.locale,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.locale,
     type: FieldMetadataType.TEXT,
     label: msg`Language`,
     description: msg`Preferred language`,
@@ -143,6 +147,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.avatarUrl,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.avatarUrl,
     type: FieldMetadataType.TEXT,
     label: msg`Avatar Url`,
     description: msg`Workspace member avatar`,
@@ -154,6 +159,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsUnique()
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userEmail,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userEmail,
     type: FieldMetadataType.TEXT,
     label: msg`User Email`,
     description: msg`Related user email address`,
@@ -164,6 +170,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.calendarStartDay,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.calendarStartDay,
     type: FieldMetadataType.NUMBER,
     label: msg`Start of the week`,
     defaultValue: 7,
@@ -177,6 +184,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userId,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userId,
     type: FieldMetadataType.UUID,
     label: msg`User Id`,
     description: msg`Associated User Id`,
@@ -187,6 +195,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeZone,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeZone,
     type: FieldMetadataType.TEXT,
     label: msg`Time zone`,
     defaultValue: "'system'",
@@ -198,6 +207,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.dateFormat,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.dateFormat,
     type: FieldMetadataType.SELECT,
     label: msg`Date format`,
     description: msg`User's preferred date format`,
@@ -235,6 +245,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeFormat,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeFormat,
     type: FieldMetadataType.SELECT,
     label: msg`Time format`,
     description: msg`User's preferred time format`,
@@ -379,6 +390,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.searchVector,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
     description: SEARCH_VECTOR_FIELD.description,
@@ -395,6 +407,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.numberFormat,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.numberFormat,
     type: FieldMetadataType.SELECT,
     label: msg`Number format`,
     description: msg`User's preferred number format`,

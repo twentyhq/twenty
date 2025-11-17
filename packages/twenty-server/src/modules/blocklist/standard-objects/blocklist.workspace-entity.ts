@@ -29,6 +29,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 export class BlocklistWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BLOCKLIST_STANDARD_FIELD_IDS.handle,
+    universalIdentifier: BLOCKLIST_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: msg`Handle`,
     description: msg`Handle`,

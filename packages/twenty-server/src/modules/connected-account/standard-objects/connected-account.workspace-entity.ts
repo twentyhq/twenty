@@ -37,6 +37,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handle,
+    universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: msg`handle`,
     description: msg`The account handle (email, username, phone number, etc.)`,
@@ -46,6 +47,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.provider,
+    universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.provider,
     type: FieldMetadataType.TEXT,
     label: msg`provider`,
     description: msg`The account provider`,
@@ -55,6 +57,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accessToken,
+    universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accessToken,
     type: FieldMetadataType.TEXT,
     label: msg`Access Token`,
     description: msg`Messaging provider access token`,
@@ -64,6 +67,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.refreshToken,
+    universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.refreshToken,
     type: FieldMetadataType.TEXT,
     label: msg`Refresh Token`,
     description: msg`Messaging provider refresh token`,
@@ -73,6 +77,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastCredentialsRefreshedAt,
+    universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastCredentialsRefreshedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Last credentials refreshed at`,
     description: msg`Last credentials refreshed at`,
@@ -83,6 +88,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastSyncHistoryId,
+    universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastSyncHistoryId,
     type: FieldMetadataType.TEXT,
     label: msg`Last sync history ID`,
     description: msg`Last sync history ID`,
@@ -92,6 +98,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.authFailedAt,
+    universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.authFailedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Auth failed at`,
     description: msg`Auth failed at`,
@@ -102,6 +109,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handleAliases,
+    universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handleAliases,
     type: FieldMetadataType.TEXT,
     label: msg`Handle Aliases`,
     description: msg`Handle Aliases`,
@@ -111,6 +119,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.scopes,
+    universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.scopes,
     type: FieldMetadataType.ARRAY,
     label: msg`Scopes`,
     description: msg`Scopes`,
@@ -121,6 +130,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.connectionParameters,
+    universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.connectionParameters,
     type: FieldMetadataType.RAW_JSON,
     label: msg`Custom Connection Parameters`,
     description: msg`JSON object containing custom connection parameters`,

@@ -111,6 +111,7 @@ registerEnumType(MessageChannelPendingGroupEmailsAction, {
 export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.visibility,
+    universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.visibility,
     type: FieldMetadataType.SELECT,
     label: msg`Visibility`,
     description: msg`Visibility`,
@@ -141,6 +142,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.handle,
+    universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: msg`Handle`,
     description: msg`Handle`,
@@ -150,6 +152,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.type,
+    universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.SELECT,
     label: msg`Type`,
     description: msg`Channel Type`,
@@ -175,6 +178,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   // TODO: Deprecate this field and migrate data to contactAutoCreationFor
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.isContactAutoCreationEnabled,
+    universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.isContactAutoCreationEnabled,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Is Contact Auto Creation Enabled`,
     description: msg`Is Contact Auto Creation Enabled`,
@@ -185,6 +189,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.contactAutoCreationPolicy,
+    universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.contactAutoCreationPolicy,
     type: FieldMetadataType.SELECT,
     label: msg`Contact auto creation policy`,
     description: msg`Automatically create People records when receiving or sending emails`,
@@ -215,6 +220,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.messageFolderImportPolicy,
+    universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.messageFolderImportPolicy,
     type: FieldMetadataType.SELECT,
     label: msg`Message folder import policy`,
     description: msg`Message folder import policy`,
@@ -239,6 +245,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.excludeNonProfessionalEmails,
+    universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.excludeNonProfessionalEmails,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Exclude non professional emails`,
     description: msg`Exclude non professional emails`,
@@ -249,6 +256,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.excludeGroupEmails,
+    universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.excludeGroupEmails,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Exclude group emails`,
     description: msg`Exclude group emails`,
@@ -259,6 +267,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.pendingGroupEmailsAction,
+    universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.pendingGroupEmailsAction,
     type: FieldMetadataType.SELECT,
     label: msg`Pending group emails action`,
     description: msg`Pending action for group emails`,
@@ -289,6 +298,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.isSyncEnabled,
+    universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.isSyncEnabled,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Is Sync Enabled`,
     description: msg`Is Sync Enabled`,
@@ -299,6 +309,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncCursor,
+    universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncCursor,
     type: FieldMetadataType.TEXT,
     label: msg`Last sync cursor`,
     description: msg`Last sync cursor`,
@@ -308,6 +319,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncedAt,
+    universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Last sync date`,
     description: msg`Last sync date`,
@@ -318,6 +330,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
+    universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
     type: FieldMetadataType.SELECT,
     label: msg`Sync status`,
     description: msg`Sync status`,
@@ -360,6 +373,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStage,
+    universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStage,
     type: FieldMetadataType.SELECT,
     label: msg`Sync stage`,
     description: msg`Sync stage`,
@@ -420,6 +434,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStageStartedAt,
+    universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStageStartedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Sync stage started at`,
     description: msg`Sync stage started at`,
@@ -430,6 +445,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.throttleFailureCount,
+    universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.throttleFailureCount,
     type: FieldMetadataType.NUMBER,
     label: msg`Throttle Failure Count`,
     description: msg`Throttle Failure Count`,

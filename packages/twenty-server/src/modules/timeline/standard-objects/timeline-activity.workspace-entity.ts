@@ -42,6 +42,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.happensAt,
+    universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.happensAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Creation date`,
     description: msg`Creation date`,
@@ -52,6 +53,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.name,
+    universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Event name`,
     description: msg`Event name`,
@@ -61,6 +63,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.properties,
+    universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.properties,
     type: FieldMetadataType.RAW_JSON,
     label: msg`Event details`,
     description: msg`Json value for event details`,
@@ -72,6 +75,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   // Special objects that don't have their own timeline and are 'link' to the main object
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedRecordCachedName,
+    universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedRecordCachedName,
     type: FieldMetadataType.TEXT,
     label: msg`Linked Record cached name`,
     description: msg`Cached record name`,
@@ -81,6 +85,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedRecordId,
+    universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedRecordId,
     type: FieldMetadataType.UUID,
     label: msg`Linked Record id`,
     description: msg`Linked Record id`,
@@ -91,6 +96,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedObjectMetadataId,
+    universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedObjectMetadataId,
     type: FieldMetadataType.UUID,
     label: msg`Linked Object Metadata Id`,
     description: msg`Linked Object Metadata Id`,

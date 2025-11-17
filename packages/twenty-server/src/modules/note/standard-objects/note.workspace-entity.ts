@@ -11,7 +11,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -52,9 +52,15 @@ export const SEARCH_FIELDS_FOR_NOTES: FieldTypeAndNameMetadata[] = [
   labelIdentifierStandardId: NOTE_STANDARD_FIELD_IDS.title,
 })
 @WorkspaceIsSearchable()
-export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
+export class NoteWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: NOTE_STANDARD_FIELD_IDS.id,
+  createdAt: NOTE_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: NOTE_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: NOTE_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.position,
+    universalIdentifier: NOTE_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
     description: msg`Note record position`,
@@ -66,6 +72,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.title,
+    universalIdentifier: NOTE_STANDARD_FIELD_IDS.title,
     type: FieldMetadataType.TEXT,
     label: msg`Title`,
     description: msg`Note title`,
@@ -75,6 +82,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.bodyV2,
+    universalIdentifier: NOTE_STANDARD_FIELD_IDS.bodyV2,
     type: FieldMetadataType.RICH_TEXT_V2,
     label: msg`Body`,
     description: msg`Note body`,
@@ -85,6 +93,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.createdBy,
+    universalIdentifier: NOTE_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',
@@ -146,6 +155,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.searchVector,
+    universalIdentifier: NOTE_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
     description: SEARCH_VECTOR_FIELD.description,

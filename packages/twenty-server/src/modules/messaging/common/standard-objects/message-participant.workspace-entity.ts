@@ -34,6 +34,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.role,
+    universalIdentifier: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.role,
     type: FieldMetadataType.SELECT,
     label: msg`Role`,
     description: msg`Role`,
@@ -50,6 +51,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.handle,
+    universalIdentifier: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: msg`Handle`,
     description: msg`Handle`,
@@ -59,6 +61,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
+    universalIdentifier: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
     type: FieldMetadataType.TEXT,
     label: msg`Display Name`,
     description: msg`Display Name`,

@@ -51,6 +51,7 @@ export const SEARCH_FIELDS_FOR_DASHBOARD: FieldTypeAndNameMetadata[] = [
 export class DashboardWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: DASHBOARD_STANDARD_FIELD_IDS.title,
+    universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.title,
     type: FieldMetadataType.TEXT,
     label: msg`Title`,
     description: msg`Dashboard title`,
@@ -60,6 +61,7 @@ export class DashboardWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: DASHBOARD_STANDARD_FIELD_IDS.pageLayoutId,
+    universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.pageLayoutId,
     type: FieldMetadataType.UUID,
     label: msg`Page Layout ID`,
     description: msg`Dashboard page layout`,
@@ -71,6 +73,7 @@ export class DashboardWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: DASHBOARD_STANDARD_FIELD_IDS.position,
+    universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
     description: msg`Dashboard record Position`,
@@ -82,6 +85,7 @@ export class DashboardWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: DASHBOARD_STANDARD_FIELD_IDS.createdBy,
+    universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',
@@ -127,6 +131,7 @@ export class DashboardWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: DASHBOARD_STANDARD_FIELD_IDS.searchVector,
+    universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
     description: SEARCH_VECTOR_FIELD.description,

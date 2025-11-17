@@ -26,6 +26,7 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 export class FavoriteFolderWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.position,
+    universalIdentifier: FAVORITE_FOLDER_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.NUMBER,
     label: msg`Position`,
     description: msg`Favorite folder position`,
@@ -37,6 +38,7 @@ export class FavoriteFolderWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.name,
+    universalIdentifier: FAVORITE_FOLDER_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
     description: msg`Name of the favorite folder`,

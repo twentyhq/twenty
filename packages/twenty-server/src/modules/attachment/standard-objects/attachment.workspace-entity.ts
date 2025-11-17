@@ -1,14 +1,14 @@
 import { msg } from '@lingui/core/macro';
 import {
+  ActorMetadata,
   FieldMetadataType,
   RelationOnDeleteAction,
-  ActorMetadata,
 } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -41,18 +41,25 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   labelIdentifierStandardId: ATTACHMENT_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSystem()
-export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
+export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: ATTACHMENT_STANDARD_FIELD_IDS.id,
+  createdAt: ATTACHMENT_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: ATTACHMENT_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: ATTACHMENT_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
     description: msg`Attachment name`,
     icon: 'IconFileUpload',
+    universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.name,
   })
   name: string;
 
   @WorkspaceField({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.fullPath,
+    universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.fullPath,
     type: FieldMetadataType.TEXT,
     label: msg`Full path`,
     description: msg`Attachment full path`,
@@ -63,6 +70,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   // Deprecated: Use fileCategory instead
   @WorkspaceField({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.type,
+    universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.TEXT,
     label: msg`Type (deprecated)`,
     description: msg`Attachment type (deprecated - use fileCategory)`,
@@ -72,6 +80,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.fileCategory,
+    universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.fileCategory,
     type: FieldMetadataType.SELECT,
     label: msg`File category`,
     description: msg`Attachment file category`,
@@ -132,6 +141,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.createdBy,
+    universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',

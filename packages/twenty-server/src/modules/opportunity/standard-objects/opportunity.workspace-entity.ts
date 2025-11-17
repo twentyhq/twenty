@@ -11,7 +11,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { createBaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -55,9 +55,15 @@ export const SEARCH_FIELDS_FOR_OPPORTUNITY: FieldTypeAndNameMetadata[] = [
   labelIdentifierStandardId: OPPORTUNITY_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSearchable()
-export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
+export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
+  id: OPPORTUNITY_STANDARD_FIELD_IDS.id,
+  createdAt: OPPORTUNITY_STANDARD_FIELD_IDS.createdAt,
+  updatedAt: OPPORTUNITY_STANDARD_FIELD_IDS.updatedAt,
+  deletedAt: OPPORTUNITY_STANDARD_FIELD_IDS.deletedAt,
+}) {
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.name,
+    universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
     description: msg`The opportunity name`,
@@ -67,6 +73,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.amount,
+    universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.amount,
     type: FieldMetadataType.CURRENCY,
     label: msg`Amount`,
     description: msg`Opportunity amount`,
@@ -77,6 +84,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.closeDate,
+    universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.closeDate,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Close date`,
     description: msg`Opportunity close date`,
@@ -87,6 +95,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.stage,
+    universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.stage,
     type: FieldMetadataType.SELECT,
     label: msg`Stage`,
     description: msg`Opportunity stage`,
@@ -110,6 +119,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.position,
+    universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
     description: msg`Opportunity record position`,
@@ -121,6 +131,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.createdBy,
+    universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',
@@ -226,6 +237,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.probabilityDeprecated,
+    universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.probabilityDeprecated,
     type: FieldMetadataType.TEXT,
     label: msg`Probability`,
     description: msg`Opportunity probability`,
@@ -237,6 +249,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.searchVector,
+    universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
     description: SEARCH_VECTOR_FIELD.description,

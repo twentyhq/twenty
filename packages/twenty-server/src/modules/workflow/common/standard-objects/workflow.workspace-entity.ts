@@ -80,6 +80,7 @@ export const SEARCH_FIELDS_FOR_WORKFLOWS: FieldTypeAndNameMetadata[] = [
 export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.name,
+    universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
     description: msg`The workflow name`,
@@ -89,6 +90,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.lastPublishedVersionId,
+    universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.lastPublishedVersionId,
     type: FieldMetadataType.TEXT,
     label: msg`Last published Version Id`,
     description: msg`The workflow last published version id`,
@@ -100,6 +102,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.statuses,
+    universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.statuses,
     type: FieldMetadataType.MULTI_SELECT,
     label: msg`Statuses`,
     description: msg`The current statuses of the workflow versions`,
@@ -112,6 +115,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.position,
+    universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
     description: msg`Workflow record position`,
@@ -123,6 +127,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.searchVector,
+    universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
     description: SEARCH_VECTOR_FIELD.description,
@@ -211,6 +216,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.createdBy,
+    universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',

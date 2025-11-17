@@ -41,6 +41,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: FAVORITE_STANDARD_FIELD_IDS.position,
+    universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.NUMBER,
     label: msg`Position`,
     description: msg`Favorite position`,
@@ -229,6 +230,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: FAVORITE_STANDARD_FIELD_IDS.view,
+    universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.view,
     type: FieldMetadataType.UUID,
     label: msg`ViewId`,
     description: msg`ViewId`,

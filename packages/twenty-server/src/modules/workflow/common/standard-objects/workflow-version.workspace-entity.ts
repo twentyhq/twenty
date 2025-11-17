@@ -85,6 +85,7 @@ export const SEARCH_FIELDS_FOR_WORKFLOW_VERSIONS: FieldTypeAndNameMetadata[] = [
 export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.name,
+    universalIdentifier: WORKFLOW_VERSION_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
     description: msg`The workflow version name`,
@@ -94,6 +95,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.trigger,
+    universalIdentifier: WORKFLOW_VERSION_STANDARD_FIELD_IDS.trigger,
     type: FieldMetadataType.RAW_JSON,
     label: msg`Version trigger`,
     description: msg`Json object to provide trigger`,
@@ -104,6 +106,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.steps,
+    universalIdentifier: WORKFLOW_VERSION_STANDARD_FIELD_IDS.steps,
     type: FieldMetadataType.RAW_JSON,
     label: msg`Version steps`,
     description: msg`Json object to provide steps`,
@@ -114,6 +117,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.status,
+    universalIdentifier: WORKFLOW_VERSION_STANDARD_FIELD_IDS.status,
     type: FieldMetadataType.SELECT,
     label: msg`Version status`,
     description: msg`The workflow version status`,
@@ -125,6 +129,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.position,
+    universalIdentifier: WORKFLOW_VERSION_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
     description: msg`Workflow version position`,
@@ -136,6 +141,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.searchVector,
+    universalIdentifier: WORKFLOW_VERSION_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
     description: SEARCH_VECTOR_FIELD.description,

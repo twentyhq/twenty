@@ -34,6 +34,7 @@ import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/stand
 export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.headerMessageId,
+    universalIdentifier: MESSAGE_STANDARD_FIELD_IDS.headerMessageId,
     type: FieldMetadataType.TEXT,
     label: msg`Header message Id`,
     description: msg`Message id from the message header`,
@@ -43,6 +44,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.subject,
+    universalIdentifier: MESSAGE_STANDARD_FIELD_IDS.subject,
     type: FieldMetadataType.TEXT,
     label: msg`Subject`,
     description: msg`Subject`,
@@ -52,6 +54,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.text,
+    universalIdentifier: MESSAGE_STANDARD_FIELD_IDS.text,
     type: FieldMetadataType.TEXT,
     label: msg`Text`,
     description: msg`Text`,
@@ -61,6 +64,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.receivedAt,
+    universalIdentifier: MESSAGE_STANDARD_FIELD_IDS.receivedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Received At`,
     description: msg`The date the message was received`,

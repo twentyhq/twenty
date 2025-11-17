@@ -38,6 +38,7 @@ import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/co
 export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.title,
+    universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.title,
     type: FieldMetadataType.TEXT,
     label: msg`Title`,
     description: msg`Title`,
@@ -47,6 +48,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.isCanceled,
+    universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.isCanceled,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Is canceled`,
     description: msg`Is canceled`,
@@ -57,6 +59,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.isFullDay,
+    universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.isFullDay,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Is Full Day`,
     description: msg`Is Full Day`,
@@ -67,6 +70,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.startsAt,
+    universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.startsAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Start Date`,
     description: msg`Start Date`,
@@ -77,6 +81,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.endsAt,
+    universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.endsAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`End Date`,
     description: msg`End Date`,
@@ -87,6 +92,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.externalCreatedAt,
+    universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.externalCreatedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Creation DateTime`,
     description: msg`Creation DateTime`,
@@ -97,6 +103,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.externalUpdatedAt,
+    universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.externalUpdatedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Update DateTime`,
     description: msg`Update DateTime`,
@@ -107,6 +114,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.description,
+    universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.description,
     type: FieldMetadataType.TEXT,
     label: msg`Description`,
     description: msg`Description`,
@@ -116,6 +124,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.location,
+    universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.location,
     type: FieldMetadataType.TEXT,
     label: msg`Location`,
     description: msg`Location`,
@@ -125,6 +134,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUID,
+    universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUID,
     type: FieldMetadataType.TEXT,
     label: msg`iCal UID`,
     description: msg`iCal UID`,
@@ -134,6 +144,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.conferenceSolution,
+    universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.conferenceSolution,
     type: FieldMetadataType.TEXT,
     label: msg`Conference Solution`,
     description: msg`Conference Solution`,
@@ -143,6 +154,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.conferenceLink,
+    universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.conferenceLink,
     type: FieldMetadataType.LINKS,
     label: msg`Meet Link`,
     description: msg`Meet Link`,

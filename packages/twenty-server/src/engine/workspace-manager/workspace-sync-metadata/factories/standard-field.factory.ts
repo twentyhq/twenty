@@ -164,7 +164,7 @@ export class StandardFieldFactory {
         relationTargetObjectMetadataId: null,
         morphId: null,
         applicationId: context.twentyStandardFlatApplication.id,
-        universalIdentifier: v4(),
+        universalIdentifier: workspaceFieldMetadataArgs.universalIdentifier,
       },
     ];
   }
