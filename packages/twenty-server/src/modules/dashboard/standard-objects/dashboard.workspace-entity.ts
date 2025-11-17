@@ -96,7 +96,7 @@ export class DashboardWorkspaceEntity extends createBaseWorkspaceEntity({
   createdBy: ActorMetadata;
 
   @WorkspaceRelation({
-    standardId: DASHBOARD_STANDARD_FIELD_IDS.timelineActivities,
+    universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Timeline Activities`,
     description: msg`Timeline activities linked to the dashboard`,
@@ -108,7 +108,7 @@ export class DashboardWorkspaceEntity extends createBaseWorkspaceEntity({
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: DASHBOARD_STANDARD_FIELD_IDS.favorites,
+    universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.favorites,
     type: RelationType.ONE_TO_MANY,
     label: msg`Favorites`,
     description: msg`Favorites linked to the dashboard`,
@@ -119,7 +119,7 @@ export class DashboardWorkspaceEntity extends createBaseWorkspaceEntity({
   favorites: Relation<FavoriteWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: DASHBOARD_STANDARD_FIELD_IDS.attachments,
+    universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.attachments,
     type: RelationType.ONE_TO_MANY,
     label: msg`Attachments`,
     description: msg`Attachments linked to the dashboard`,

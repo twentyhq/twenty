@@ -450,7 +450,7 @@ export class MessageChannelWorkspaceEntity extends createBaseWorkspaceEntity({
   throttleFailureCount: number;
 
   @WorkspaceRelation({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.connectedAccount,
+    universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.connectedAccount,
     type: RelationType.MANY_TO_ONE,
     label: msg`Connected Account`,
     description: msg`Connected Account`,
@@ -465,7 +465,7 @@ export class MessageChannelWorkspaceEntity extends createBaseWorkspaceEntity({
   connectedAccountId: string;
 
   @WorkspaceRelation({
-    standardId:
+    universalIdentifier:
       MESSAGE_CHANNEL_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
     type: RelationType.ONE_TO_MANY,
     label: msg`Message Channel Association`,
@@ -480,7 +480,7 @@ export class MessageChannelWorkspaceEntity extends createBaseWorkspaceEntity({
   >;
 
   @WorkspaceRelation({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.messageFolders,
+    universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.messageFolders,
     type: RelationType.ONE_TO_MANY,
     label: msg`Message Folders`,
     description: msg`Message Folders`,

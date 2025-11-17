@@ -271,7 +271,7 @@ export class WorkspaceMemberWorkspaceEntity extends createBaseWorkspaceEntity({
 
   // Relations
   @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.assignedTasks,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.assignedTasks,
     type: RelationType.ONE_TO_MANY,
     label: msg`Assigned tasks`,
     description: msg`Tasks assigned to the workspace member`,
@@ -283,7 +283,7 @@ export class WorkspaceMemberWorkspaceEntity extends createBaseWorkspaceEntity({
   assignedTasks: Relation<TaskWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.favorites,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.favorites,
     type: RelationType.ONE_TO_MANY,
     label: msg`Favorites`,
     description: msg`Favorites linked to the workspace member`,
@@ -295,7 +295,7 @@ export class WorkspaceMemberWorkspaceEntity extends createBaseWorkspaceEntity({
   favorites: Relation<FavoriteWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.accountOwnerForCompanies,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.accountOwnerForCompanies,
     type: RelationType.ONE_TO_MANY,
     label: msg`Account Owner For Companies`,
     description: msg`Account owner for companies`,
@@ -307,7 +307,7 @@ export class WorkspaceMemberWorkspaceEntity extends createBaseWorkspaceEntity({
   accountOwnerForCompanies: Relation<CompanyWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredAttachments,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredAttachments,
     type: RelationType.ONE_TO_MANY,
     label: msg`Authored attachments`,
     description: msg`Attachments created by the workspace member`,
@@ -320,7 +320,7 @@ export class WorkspaceMemberWorkspaceEntity extends createBaseWorkspaceEntity({
   authoredAttachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.connectedAccounts,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.connectedAccounts,
     type: RelationType.ONE_TO_MANY,
     label: msg`Connected accounts`,
     description: msg`Connected accounts`,
@@ -332,7 +332,7 @@ export class WorkspaceMemberWorkspaceEntity extends createBaseWorkspaceEntity({
   connectedAccounts: Relation<ConnectedAccountWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.messageParticipants,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.messageParticipants,
     type: RelationType.ONE_TO_MANY,
     label: msg`Message Participants`,
     description: msg`Message Participants`,
@@ -344,7 +344,7 @@ export class WorkspaceMemberWorkspaceEntity extends createBaseWorkspaceEntity({
   messageParticipants: Relation<MessageParticipantWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.blocklist,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.blocklist,
     type: RelationType.ONE_TO_MANY,
     label: msg`Blocklist`,
     description: msg`Blocklisted handles`,
@@ -356,7 +356,7 @@ export class WorkspaceMemberWorkspaceEntity extends createBaseWorkspaceEntity({
   blocklist: Relation<BlocklistWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.calendarEventParticipants,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.calendarEventParticipants,
     type: RelationType.ONE_TO_MANY,
     label: msg`Calendar Event Participants`,
     description: msg`Calendar Event Participants`,
@@ -370,7 +370,7 @@ export class WorkspaceMemberWorkspaceEntity extends createBaseWorkspaceEntity({
   >;
 
   @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timelineActivities,
+    universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Events`,
     description: msg`Events linked to the workspace member`,

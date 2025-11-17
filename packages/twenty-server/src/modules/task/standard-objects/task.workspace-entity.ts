@@ -138,7 +138,7 @@ export class TaskWorkspaceEntity extends createBaseWorkspaceEntity({
   createdBy: ActorMetadata;
 
   @WorkspaceRelation({
-    standardId: TASK_STANDARD_FIELD_IDS.taskTargets,
+    universalIdentifier: TASK_STANDARD_FIELD_IDS.taskTargets,
     label: msg`Relations`,
     description: msg`Task targets`,
     icon: 'IconArrowUpRight',
@@ -151,7 +151,7 @@ export class TaskWorkspaceEntity extends createBaseWorkspaceEntity({
   taskTargets: Relation<TaskTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: TASK_STANDARD_FIELD_IDS.attachments,
+    universalIdentifier: TASK_STANDARD_FIELD_IDS.attachments,
     label: msg`Attachments`,
     description: msg`Task attachments`,
     icon: 'IconFileImport',
@@ -164,7 +164,7 @@ export class TaskWorkspaceEntity extends createBaseWorkspaceEntity({
   attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: TASK_STANDARD_FIELD_IDS.assignee,
+    universalIdentifier: TASK_STANDARD_FIELD_IDS.assignee,
     label: msg`Assignee`,
     description: msg`Task assignee`,
     icon: 'IconUserCircle',
@@ -180,7 +180,7 @@ export class TaskWorkspaceEntity extends createBaseWorkspaceEntity({
   assigneeId: string | null;
 
   @WorkspaceRelation({
-    standardId: TASK_STANDARD_FIELD_IDS.timelineActivities,
+    universalIdentifier: TASK_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Timeline Activities`,
     description: msg`Timeline Activities linked to the task.`,
@@ -193,7 +193,7 @@ export class TaskWorkspaceEntity extends createBaseWorkspaceEntity({
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: TASK_STANDARD_FIELD_IDS.favorites,
+    universalIdentifier: TASK_STANDARD_FIELD_IDS.favorites,
     type: RelationType.ONE_TO_MANY,
     label: msg`Favorites`,
     description: msg`Favorites linked to the task`,

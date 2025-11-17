@@ -62,7 +62,7 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends createBaseWo
   recurringEventExternalId: string;
 
   @WorkspaceRelation({
-    standardId:
+    universalIdentifier:
       CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.calendarChannel,
     type: RelationType.MANY_TO_ONE,
     label: msg`Channel ID`,
@@ -78,7 +78,7 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends createBaseWo
   calendarChannelId: string;
 
   @WorkspaceRelation({
-    standardId:
+    universalIdentifier:
       CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.calendarEvent,
     type: RelationType.MANY_TO_ONE,
     label: msg`Event ID`,

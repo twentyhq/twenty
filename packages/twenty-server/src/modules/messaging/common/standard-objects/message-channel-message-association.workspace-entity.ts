@@ -93,7 +93,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends createBaseW
   direction: MessageDirection;
 
   @WorkspaceRelation({
-    standardId:
+    universalIdentifier:
       MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageChannel,
     type: RelationType.MANY_TO_ONE,
     label: msg`Message Channel Id`,
@@ -110,7 +110,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends createBaseW
   messageChannelId: string;
 
   @WorkspaceRelation({
-    standardId: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.message,
+    universalIdentifier: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.message,
     type: RelationType.MANY_TO_ONE,
     label: msg`Message Id`,
     description: msg`Message Id`,

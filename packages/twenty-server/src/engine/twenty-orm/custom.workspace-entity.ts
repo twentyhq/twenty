@@ -74,7 +74,7 @@ export class CustomWorkspaceEntity extends createBaseWorkspaceEntity({
   createdBy: ActorMetadata;
 
   @WorkspaceRelation({
-    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.noteTargets,
+    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.noteTargets,
     label: msg`Notes`,
     type: RelationType.ONE_TO_MANY,
     description: (objectMetadata) => {
@@ -90,7 +90,7 @@ export class CustomWorkspaceEntity extends createBaseWorkspaceEntity({
   noteTargets: NoteTargetWorkspaceEntity[];
 
   @WorkspaceRelation({
-    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.taskTargets,
+    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.taskTargets,
     label: msg`Tasks`,
     type: RelationType.ONE_TO_MANY,
     description: (objectMetadata) => {
@@ -106,7 +106,7 @@ export class CustomWorkspaceEntity extends createBaseWorkspaceEntity({
   taskTargets: TaskTargetWorkspaceEntity[];
 
   @WorkspaceRelation({
-    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.favorites,
+    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.favorites,
     label: msg`Favorites`,
     type: RelationType.ONE_TO_MANY,
     description: (objectMetadata) => {
@@ -123,7 +123,7 @@ export class CustomWorkspaceEntity extends createBaseWorkspaceEntity({
   favorites: FavoriteWorkspaceEntity[];
 
   @WorkspaceRelation({
-    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.attachments,
+    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.attachments,
     label: msg`Attachments`,
     type: RelationType.ONE_TO_MANY,
     description: (objectMetadata) => {
@@ -140,7 +140,7 @@ export class CustomWorkspaceEntity extends createBaseWorkspaceEntity({
   attachments: AttachmentWorkspaceEntity[];
 
   @WorkspaceRelation({
-    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.timelineActivities,
+    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.timelineActivities,
     label: msg`Timeline Activities`,
     type: RelationType.ONE_TO_MANY,
     description: (objectMetadata) => {

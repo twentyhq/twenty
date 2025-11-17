@@ -174,7 +174,7 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
 
   // Relations
   @WorkspaceRelation({
-    standardId: COMPANY_STANDARD_FIELD_IDS.people,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.people,
     type: RelationType.ONE_TO_MANY,
     label: msg`People`,
     description: msg`People linked to the company.`,
@@ -186,7 +186,7 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   people: Relation<PersonWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: COMPANY_STANDARD_FIELD_IDS.accountOwner,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.accountOwner,
     type: RelationType.MANY_TO_ONE,
     label: msg`Account Owner`,
     description: msg`Your team member responsible for managing the company account`,
@@ -202,7 +202,7 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   accountOwnerId: string | null;
 
   @WorkspaceRelation({
-    standardId: COMPANY_STANDARD_FIELD_IDS.taskTargets,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.taskTargets,
     type: RelationType.ONE_TO_MANY,
     label: msg`Tasks`,
     description: msg`Tasks tied to the company`,
@@ -214,7 +214,7 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   taskTargets: Relation<TaskTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: COMPANY_STANDARD_FIELD_IDS.noteTargets,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.noteTargets,
     type: RelationType.ONE_TO_MANY,
     label: msg`Notes`,
     description: msg`Notes tied to the company`,
@@ -226,7 +226,7 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   noteTargets: Relation<NoteTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: COMPANY_STANDARD_FIELD_IDS.opportunities,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.opportunities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Opportunities`,
     description: msg`Opportunities linked to the company.`,
@@ -238,7 +238,7 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   opportunities: Relation<OpportunityWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: COMPANY_STANDARD_FIELD_IDS.favorites,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.favorites,
     type: RelationType.ONE_TO_MANY,
     label: msg`Favorites`,
     description: msg`Favorites linked to the company`,
@@ -251,7 +251,7 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   favorites: Relation<FavoriteWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: COMPANY_STANDARD_FIELD_IDS.attachments,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.attachments,
     type: RelationType.ONE_TO_MANY,
     label: msg`Attachments`,
     description: msg`Attachments linked to the company`,
@@ -264,7 +264,7 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: COMPANY_STANDARD_FIELD_IDS.timelineActivities,
+    universalIdentifier: COMPANY_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Timeline Activities`,
     description: msg`Timeline Activities linked to the company`,

@@ -1,8 +1,8 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { isDefined, isUUID } from 'class-validator';
+import { type RelationOnDeleteAction } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
 import { type ObjectType } from 'typeorm';
-import { type RelationOnDeleteAction } from 'twenty-shared/types';
 
 import { type RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -12,7 +12,7 @@ import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 interface WorkspaceRelationMinimumBaseOptions<TClass> {
-  standardId: string;
+  universalIdentifier: string;
   label: MessageDescriptor;
   description?:
     | MessageDescriptor
@@ -106,7 +106,7 @@ export function WorkspaceRelation<TClass extends object>(
 
     metadataArgsStorage.addRelations({
       target: object.constructor,
-      standardId: options.standardId,
+      standardId: options.universalIdentifier,
       name,
       label,
       type: options.type,
@@ -131,6 +131,7 @@ export function WorkspaceRelation<TClass extends object>(
       isMorphRelation: options.isMorphRelation ?? false,
       morphId: options.isMorphRelation ? options.morphId : undefined,
       isLabelSyncedWithName,
+      universalIdentifier: options.universalIdentifier,
     });
   };
 }

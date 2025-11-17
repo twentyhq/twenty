@@ -320,7 +320,7 @@ export class CalendarChannelWorkspaceEntity extends createBaseWorkspaceEntity({
   throttleFailureCount: number;
 
   @WorkspaceRelation({
-    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.connectedAccount,
+    universalIdentifier: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.connectedAccount,
     type: RelationType.MANY_TO_ONE,
     label: msg`Connected Account`,
     description: msg`Connected Account`,
@@ -335,7 +335,7 @@ export class CalendarChannelWorkspaceEntity extends createBaseWorkspaceEntity({
   connectedAccountId: string;
 
   @WorkspaceRelation({
-    standardId:
+    universalIdentifier:
       CALENDAR_CHANNEL_STANDARD_FIELD_IDS.calendarChannelEventAssociations,
     type: RelationType.ONE_TO_MANY,
     label: msg`Calendar Channel Event Associations`,

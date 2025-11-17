@@ -42,7 +42,7 @@ export class BlocklistWorkspaceEntity extends createBaseWorkspaceEntity({
   handle: string;
 
   @WorkspaceRelation({
-    standardId: BLOCKLIST_STANDARD_FIELD_IDS.workspaceMember,
+    universalIdentifier: BLOCKLIST_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationType.MANY_TO_ONE,
     label: msg`WorkspaceMember`,
     description: msg`WorkspaceMember`,

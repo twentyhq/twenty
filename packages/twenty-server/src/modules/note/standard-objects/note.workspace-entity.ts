@@ -99,7 +99,7 @@ export class NoteWorkspaceEntity extends createBaseWorkspaceEntity({
   createdBy: ActorMetadata;
 
   @WorkspaceRelation({
-    standardId: NOTE_STANDARD_FIELD_IDS.noteTargets,
+    universalIdentifier: NOTE_STANDARD_FIELD_IDS.noteTargets,
     label: msg`Relations`,
     description: msg`Note targets`,
     icon: 'IconArrowUpRight',
@@ -112,7 +112,7 @@ export class NoteWorkspaceEntity extends createBaseWorkspaceEntity({
   noteTargets: Relation<NoteTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: NOTE_STANDARD_FIELD_IDS.attachments,
+    universalIdentifier: NOTE_STANDARD_FIELD_IDS.attachments,
     label: msg`Attachments`,
     description: msg`Note attachments`,
     icon: 'IconFileImport',
@@ -125,7 +125,7 @@ export class NoteWorkspaceEntity extends createBaseWorkspaceEntity({
   attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: NOTE_STANDARD_FIELD_IDS.timelineActivities,
+    universalIdentifier: NOTE_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Timeline Activities`,
     description: msg`Timeline Activities linked to the note.`,
@@ -138,7 +138,7 @@ export class NoteWorkspaceEntity extends createBaseWorkspaceEntity({
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: NOTE_STANDARD_FIELD_IDS.favorites,
+    universalIdentifier: NOTE_STANDARD_FIELD_IDS.favorites,
     type: RelationType.ONE_TO_MANY,
     label: msg`Favorites`,
     description: msg`Favorites linked to the note`,

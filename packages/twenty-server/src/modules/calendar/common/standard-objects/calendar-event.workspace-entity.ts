@@ -157,7 +157,7 @@ export class CalendarEventWorkspaceEntity extends createBaseWorkspaceEntity({
   conferenceLink: LinksMetadata;
 
   @WorkspaceRelation({
-    standardId:
+    universalIdentifier:
       CALENDAR_EVENT_STANDARD_FIELD_IDS.calendarChannelEventAssociations,
     type: RelationType.ONE_TO_MANY,
     label: msg`Calendar Channel Event Associations`,
@@ -171,7 +171,7 @@ export class CalendarEventWorkspaceEntity extends createBaseWorkspaceEntity({
   >;
 
   @WorkspaceRelation({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.calendarEventParticipants,
+    universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.calendarEventParticipants,
     type: RelationType.ONE_TO_MANY,
     label: msg`Event Participants`,
     description: msg`Event Participants`,

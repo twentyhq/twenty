@@ -108,7 +108,7 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
 
   // Who made the action
   @WorkspaceRelation({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workspaceMember,
+    universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workspaceMember,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workspace Member`,
     description: msg`Event workspace member`,
@@ -124,7 +124,7 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   workspaceMemberId: string | null;
 
   @WorkspaceRelation({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.person,
+    universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.person,
     type: RelationType.MANY_TO_ONE,
     label: msg`Person`,
     description: msg`Event person`,
@@ -140,7 +140,7 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   personId: string | null;
 
   @WorkspaceRelation({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.company,
+    universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.company,
     type: RelationType.MANY_TO_ONE,
     label: msg`Company`,
     description: msg`Event company`,
@@ -156,7 +156,7 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   companyId: string | null;
 
   @WorkspaceRelation({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.opportunity,
+    universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.opportunity,
     type: RelationType.MANY_TO_ONE,
     label: msg`Opportunity`,
     description: msg`Event opportunity`,
@@ -172,7 +172,7 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   opportunityId: string | null;
 
   @WorkspaceRelation({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.note,
+    universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.note,
     type: RelationType.MANY_TO_ONE,
     label: msg`Note`,
     description: msg`Event note`,
@@ -188,7 +188,7 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   noteId: string | null;
 
   @WorkspaceRelation({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.task,
+    universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.task,
     type: RelationType.MANY_TO_ONE,
     label: msg`Task`,
     description: msg`Event task`,
@@ -204,7 +204,7 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   taskId: string | null;
 
   @WorkspaceRelation({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workflow,
+    universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workflow,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workflow`,
     description: msg`Event workflow`,
@@ -220,7 +220,7 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   workflowId: string | null;
 
   @WorkspaceRelation({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workflowVersion,
+    universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workflowVersion,
     type: RelationType.MANY_TO_ONE,
     label: msg`WorkflowVersion`,
     description: msg`Event workflow version`,
@@ -236,7 +236,7 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   workflowVersionId: string | null;
 
   @WorkspaceRelation({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workflowRun,
+    universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.workflowRun,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workflow Run`,
     description: msg`Event workflow run`,
@@ -252,7 +252,7 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   workflowRunId: string | null;
 
   @WorkspaceRelation({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.dashboard,
+    universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.dashboard,
     type: RelationType.MANY_TO_ONE,
     label: msg`Dashboard`,
     description: msg`Event dashboard`,

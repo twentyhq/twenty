@@ -57,7 +57,7 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
 
   // Relations
   @WorkspaceRelation({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.forWorkspaceMember,
+    universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.forWorkspaceMember,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workspace Member`,
     description: msg`Favorite workspace member`,
@@ -73,7 +73,7 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   forWorkspaceMemberId: string;
 
   @WorkspaceRelation({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.person,
+    universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.person,
     type: RelationType.MANY_TO_ONE,
     label: msg`Person`,
     description: msg`Favorite person`,
@@ -89,7 +89,7 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   personId: string;
 
   @WorkspaceRelation({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.company,
+    universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.company,
     type: RelationType.MANY_TO_ONE,
     label: msg`Company`,
     description: msg`Favorite company`,
@@ -105,7 +105,7 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   companyId: string;
 
   @WorkspaceRelation({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.favoriteFolder,
+    universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.favoriteFolder,
     type: RelationType.MANY_TO_ONE,
     label: msg`Favorite Folder`,
     description: msg`The folder this favorite belongs to`,
@@ -121,7 +121,7 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   favoriteFolderId: string;
 
   @WorkspaceRelation({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.opportunity,
+    universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.opportunity,
     type: RelationType.MANY_TO_ONE,
     label: msg`Opportunity`,
     description: msg`Favorite opportunity`,
@@ -137,7 +137,7 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   opportunityId: string;
 
   @WorkspaceRelation({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.workflow,
+    universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.workflow,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workflow`,
     description: msg`Favorite workflow`,
@@ -153,7 +153,7 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   workflowId: string;
 
   @WorkspaceRelation({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.workflowVersion,
+    universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.workflowVersion,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workflow`,
     description: msg`Favorite workflow version`,
@@ -169,7 +169,7 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   workflowVersionId: string;
 
   @WorkspaceRelation({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.workflowRun,
+    universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.workflowRun,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workflow`,
     description: msg`Favorite workflow run`,
@@ -185,7 +185,7 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   workflowRunId: string;
 
   @WorkspaceRelation({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.task,
+    universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.task,
     type: RelationType.MANY_TO_ONE,
     label: msg`Task`,
     description: msg`Favorite task`,
@@ -201,7 +201,7 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   taskId: string;
 
   @WorkspaceRelation({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.note,
+    universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.note,
     type: RelationType.MANY_TO_ONE,
     label: msg`Note`,
     description: msg`Favorite note`,
@@ -217,7 +217,7 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   noteId: string;
 
   @WorkspaceRelation({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.dashboard,
+    universalIdentifier: FAVORITE_STANDARD_FIELD_IDS.dashboard,
     type: RelationType.MANY_TO_ONE,
     label: msg`Dashboard`,
     description: msg`Favorite dashboard`,

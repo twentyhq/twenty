@@ -196,7 +196,7 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
 
   // Relations
   @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.company,
+    universalIdentifier: PERSON_STANDARD_FIELD_IDS.company,
     type: RelationType.MANY_TO_ONE,
     label: msg`Company`,
     description: msg`Contact’s company`,
@@ -212,7 +212,7 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   companyId: string | null;
 
   @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.pointOfContactForOpportunities,
+    universalIdentifier: PERSON_STANDARD_FIELD_IDS.pointOfContactForOpportunities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Opportunities`,
     description: msg`List of opportunities for which that person is the point of contact`,
@@ -224,7 +224,7 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   pointOfContactForOpportunities: Relation<OpportunityWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.taskTargets,
+    universalIdentifier: PERSON_STANDARD_FIELD_IDS.taskTargets,
     type: RelationType.ONE_TO_MANY,
     label: msg`Tasks`,
     description: msg`Tasks tied to the contact`,
@@ -236,7 +236,7 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   taskTargets: Relation<TaskTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.noteTargets,
+    universalIdentifier: PERSON_STANDARD_FIELD_IDS.noteTargets,
     type: RelationType.ONE_TO_MANY,
     label: msg`Notes`,
     description: msg`Notes tied to the contact`,
@@ -248,7 +248,7 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   noteTargets: Relation<NoteTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.favorites,
+    universalIdentifier: PERSON_STANDARD_FIELD_IDS.favorites,
     type: RelationType.ONE_TO_MANY,
     label: msg`Favorites`,
     description: msg`Favorites linked to the contact`,
@@ -260,7 +260,7 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   favorites: Relation<FavoriteWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.attachments,
+    universalIdentifier: PERSON_STANDARD_FIELD_IDS.attachments,
     type: RelationType.ONE_TO_MANY,
     label: msg`Attachments`,
     description: msg`Attachments linked to the contact.`,
@@ -272,7 +272,7 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.messageParticipants,
+    universalIdentifier: PERSON_STANDARD_FIELD_IDS.messageParticipants,
     type: RelationType.ONE_TO_MANY,
     label: msg`Message Participants`,
     description: msg`Message Participants`,
@@ -285,7 +285,7 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   messageParticipants: Relation<MessageParticipantWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.calendarEventParticipants,
+    universalIdentifier: PERSON_STANDARD_FIELD_IDS.calendarEventParticipants,
     type: RelationType.ONE_TO_MANY,
     label: msg`Calendar Event Participants`,
     description: msg`Calendar Event Participants`,
@@ -299,7 +299,7 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   >;
 
   @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.timelineActivities,
+    universalIdentifier: PERSON_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Events`,
     description: msg`Events linked to the person`,

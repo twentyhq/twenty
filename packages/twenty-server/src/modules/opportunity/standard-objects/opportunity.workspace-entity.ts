@@ -135,7 +135,7 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
   createdBy: ActorMetadata;
 
   @WorkspaceRelation({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.pointOfContact,
+    universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.pointOfContact,
     type: RelationType.MANY_TO_ONE,
     label: msg`Point of Contact`,
     description: msg`Opportunity point of contact`,
@@ -151,7 +151,7 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
   pointOfContactId: string | null;
 
   @WorkspaceRelation({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.company,
+    universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.company,
     type: RelationType.MANY_TO_ONE,
     label: msg`Company`,
     description: msg`Opportunity company`,
@@ -167,7 +167,7 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
   companyId: string | null;
 
   @WorkspaceRelation({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.favorites,
+    universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.favorites,
     type: RelationType.ONE_TO_MANY,
     label: msg`Favorites`,
     description: msg`Favorites linked to the opportunity`,
@@ -180,7 +180,7 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
   favorites: Relation<FavoriteWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.taskTargets,
+    universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.taskTargets,
     type: RelationType.ONE_TO_MANY,
     label: msg`Tasks`,
     description: msg`Tasks tied to the opportunity`,
@@ -192,7 +192,7 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
   taskTargets: Relation<TaskTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.noteTargets,
+    universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.noteTargets,
     type: RelationType.ONE_TO_MANY,
     label: msg`Notes`,
     description: msg`Notes tied to the opportunity`,
@@ -204,7 +204,7 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
   noteTargets: Relation<NoteTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.attachments,
+    universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.attachments,
     type: RelationType.ONE_TO_MANY,
     label: msg`Attachments`,
     description: msg`Attachments linked to the opportunity`,
@@ -217,7 +217,7 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
   attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.timelineActivities,
+    universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Timeline Activities`,
     description: msg`Timeline Activities linked to the opportunity.`,

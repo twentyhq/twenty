@@ -50,7 +50,7 @@ export class FavoriteFolderWorkspaceEntity extends createBaseWorkspaceEntity({
   name: string;
 
   @WorkspaceRelation({
-    standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.favorites,
+    universalIdentifier: FAVORITE_FOLDER_STANDARD_FIELD_IDS.favorites,
     type: RelationType.ONE_TO_MANY,
     label: msg`Favorites`,
     description: msg`Favorites in this folder`,

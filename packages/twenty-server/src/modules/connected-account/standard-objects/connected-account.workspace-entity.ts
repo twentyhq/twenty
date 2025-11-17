@@ -137,7 +137,7 @@ export class ConnectedAccountWorkspaceEntity extends createBaseWorkspaceEntity({
   connectionParameters: ImapSmtpCaldavParams | null;
 
   @WorkspaceRelation({
-    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accountOwner,
+    universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accountOwner,
     type: RelationType.MANY_TO_ONE,
     label: msg`Account Owner`,
     description: msg`Account Owner`,
@@ -152,7 +152,7 @@ export class ConnectedAccountWorkspaceEntity extends createBaseWorkspaceEntity({
   accountOwnerId: string;
 
   @WorkspaceRelation({
-    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.messageChannels,
+    universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.messageChannels,
     type: RelationType.ONE_TO_MANY,
     label: msg`Message Channels`,
     description: msg`Message Channels`,
@@ -163,7 +163,7 @@ export class ConnectedAccountWorkspaceEntity extends createBaseWorkspaceEntity({
   messageChannels: Relation<MessageChannelWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.calendarChannels,
+    universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.calendarChannels,
     type: RelationType.ONE_TO_MANY,
     label: msg`Calendar Channels`,
     description: msg`Calendar Channels`,

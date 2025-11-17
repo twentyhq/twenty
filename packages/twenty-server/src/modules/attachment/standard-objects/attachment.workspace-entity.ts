@@ -147,7 +147,7 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
 
   // Deprecated: Use createdBy composite field instead
   @WorkspaceRelation({
-    standardId: ATTACHMENT_STANDARD_FIELD_IDS.author,
+    universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.author,
     type: RelationType.MANY_TO_ONE,
     label: msg`Author`,
     description: msg`Attachment author (deprecated - use createdBy)`,
@@ -163,7 +163,7 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   authorId: string | null;
 
   @WorkspaceRelation({
-    standardId: ATTACHMENT_STANDARD_FIELD_IDS.task,
+    universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.task,
     type: RelationType.MANY_TO_ONE,
     label: msg`Task`,
     description: msg`Attachment task`,
@@ -179,7 +179,7 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   taskId: string | null;
 
   @WorkspaceRelation({
-    standardId: ATTACHMENT_STANDARD_FIELD_IDS.note,
+    universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.note,
     type: RelationType.MANY_TO_ONE,
     label: msg`Note`,
     description: msg`Attachment note`,
@@ -195,7 +195,7 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   noteId: string | null;
 
   @WorkspaceRelation({
-    standardId: ATTACHMENT_STANDARD_FIELD_IDS.person,
+    universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.person,
     type: RelationType.MANY_TO_ONE,
     label: msg`Person`,
     description: msg`Attachment person`,
@@ -211,7 +211,7 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   personId: string | null;
 
   @WorkspaceRelation({
-    standardId: ATTACHMENT_STANDARD_FIELD_IDS.company,
+    universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.company,
     type: RelationType.MANY_TO_ONE,
     label: msg`Company`,
     description: msg`Attachment company`,
@@ -227,7 +227,7 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   companyId: string | null;
 
   @WorkspaceRelation({
-    standardId: ATTACHMENT_STANDARD_FIELD_IDS.opportunity,
+    universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.opportunity,
     type: RelationType.MANY_TO_ONE,
     label: msg`Opportunity`,
     description: msg`Attachment opportunity`,
@@ -243,7 +243,7 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   opportunityId: string | null;
 
   @WorkspaceRelation({
-    standardId: ATTACHMENT_STANDARD_FIELD_IDS.dashboard,
+    universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.dashboard,
     type: RelationType.MANY_TO_ONE,
     label: msg`Dashboard`,
     description: msg`Attachment dashboard`,
@@ -259,7 +259,7 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   dashboardId: string | null;
 
   @WorkspaceRelation({
-    standardId: ATTACHMENT_STANDARD_FIELD_IDS.workflow,
+    universalIdentifier: ATTACHMENT_STANDARD_FIELD_IDS.workflow,
     type: RelationType.MANY_TO_ONE,
     label: msg`Workflow`,
     description: msg`Attachment workflow`,

@@ -37,7 +37,7 @@ export class NoteTargetWorkspaceEntity extends createBaseWorkspaceEntity({
   deletedAt: NOTE_TARGET_STANDARD_FIELD_IDS.deletedAt,
 }) {
   @WorkspaceRelation({
-    standardId: NOTE_TARGET_STANDARD_FIELD_IDS.note,
+    universalIdentifier: NOTE_TARGET_STANDARD_FIELD_IDS.note,
     type: RelationType.MANY_TO_ONE,
     label: msg`Note`,
     description: msg`NoteTarget note`,
@@ -53,7 +53,7 @@ export class NoteTargetWorkspaceEntity extends createBaseWorkspaceEntity({
   noteId: string | null;
 
   @WorkspaceRelation({
-    standardId: NOTE_TARGET_STANDARD_FIELD_IDS.person,
+    universalIdentifier: NOTE_TARGET_STANDARD_FIELD_IDS.person,
     type: RelationType.MANY_TO_ONE,
     label: msg`Person`,
     description: msg`NoteTarget person`,
@@ -69,7 +69,7 @@ export class NoteTargetWorkspaceEntity extends createBaseWorkspaceEntity({
   personId: string | null;
 
   @WorkspaceRelation({
-    standardId: NOTE_TARGET_STANDARD_FIELD_IDS.company,
+    universalIdentifier: NOTE_TARGET_STANDARD_FIELD_IDS.company,
     type: RelationType.MANY_TO_ONE,
     label: msg`Company`,
     description: msg`NoteTarget company`,
@@ -85,7 +85,7 @@ export class NoteTargetWorkspaceEntity extends createBaseWorkspaceEntity({
   companyId: string | null;
 
   @WorkspaceRelation({
-    standardId: NOTE_TARGET_STANDARD_FIELD_IDS.opportunity,
+    universalIdentifier: NOTE_TARGET_STANDARD_FIELD_IDS.opportunity,
     type: RelationType.MANY_TO_ONE,
     label: msg`Opportunity`,
     description: msg`NoteTarget opportunity`,
