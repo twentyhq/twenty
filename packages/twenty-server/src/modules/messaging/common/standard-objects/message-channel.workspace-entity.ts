@@ -233,7 +233,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'blue',
       },
     ],
-    defaultValue: `'${MessageFolderImportPolicy.SELECTED_FOLDERS}'`,
+    defaultValue: `'${MessageFolderImportPolicy.ALL_FOLDERS}'`,
   })
   messageFolderImportPolicy: MessageFolderImportPolicy;
 
