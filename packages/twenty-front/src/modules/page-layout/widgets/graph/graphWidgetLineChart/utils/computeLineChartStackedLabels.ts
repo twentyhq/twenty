@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const computeLineChartStackedLabels = (
   points: readonly Point<LineSeries>[],
-  _yScale: (value: number) => number,
 ): GraphLabelData[] => {
   const groupTotals = new Map<
     string,

@@ -46,8 +46,8 @@ const meta: Meta<typeof GraphWidgetLineChart> = {
       control: 'boolean',
     },
     groupMode: {
-      control: 'boolean',
-      options: ['stacked'],
+      control: 'select',
+      options: ['stacked', undefined],
     },
     xAxisLabel: {
       control: 'text',
