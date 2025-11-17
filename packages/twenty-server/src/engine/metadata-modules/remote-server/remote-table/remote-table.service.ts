@@ -6,11 +6,9 @@ import { plural } from 'pluralize';
 import { DataSource, Repository } from 'typeorm';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
-import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import {
   RemoteServerEntity,
   type RemoteServerType,
@@ -57,8 +55,8 @@ export class RemoteTableService {
     >,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly dataSourceService: DataSourceService,
-    private readonly objectMetadataService: ObjectMetadataService,
-    private readonly fieldMetadataService: FieldMetadataService,
+    private readonly objectMetadataService: ObjectMetadataServiceV2,
+    private readonly fieldMetadataService: FieldMetadataServiceV2,
     private readonly distantTableService: DistantTableService,
     private readonly foreignTableService: ForeignTableService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
@@ -421,10 +419,10 @@ export class RemoteTableService {
       });
 
     if (objectMetadata) {
-      await this.objectMetadataService.deleteOneObject(
-        { id: objectMetadata.id },
+      await this.objectMetadataService.deleteOneObject({
+        deleteObjectInput: { id: objectMetadata.id },
         workspaceId,
-      );
+      });
     }
 
     await this.foreignTableService.deleteForeignTable(
@@ -455,21 +453,23 @@ export class RemoteTableService {
       ? `${plural(localTableBaseName)}${localTableSuffix}`
       : plural(localTableBaseName);
 
-    const objectMetadata = await this.objectMetadataService.createOne({
-      nameSingular: camelCase(localTableNameSingular),
-      namePlural: camelCase(localTableNamePlural),
-      labelSingular: camelToTitleCase(camelCase(localTableBaseName)),
-      labelPlural: camelToTitleCase(plural(camelCase(localTableBaseName))),
-      description: 'Remote table',
-      dataSourceId: dataSourceMetadataId,
+    const objectMetadata = await this.objectMetadataService.createOneObject({
+      createObjectInput: {
+        nameSingular: camelCase(localTableNameSingular),
+        namePlural: camelCase(localTableNamePlural),
+        labelSingular: camelToTitleCase(camelCase(localTableBaseName)),
+        labelPlural: camelToTitleCase(plural(camelCase(localTableBaseName))),
+        description: 'Remote table',
+        dataSourceId: dataSourceMetadataId,
+        icon: 'IconPlug',
+        isRemote: true,
+        primaryKeyColumnType: distantTableIdColumn.udtName,
+        primaryKeyFieldMetadataSettings: mapUdtNameToFieldSettings(
+          distantTableIdColumn.udtName,
+        ),
+      },
       workspaceId: workspaceId,
-      icon: 'IconPlug',
-      isRemote: true,
-      primaryKeyColumnType: distantTableIdColumn.udtName,
-      primaryKeyFieldMetadataSettings: mapUdtNameToFieldSettings(
-        distantTableIdColumn.udtName,
-      ),
-    } satisfies CreateObjectInput);
+    });
 
     for (const column of distantTableColumns) {
       const columnName = camelCase(column.columnName);
@@ -484,8 +484,14 @@ export class RemoteTableService {
         );
 
         if (columnName === 'id') {
-          await this.objectMetadataService.updateOne(objectMetadata.id, {
-            labelIdentifierFieldMetadataId: field.id,
+          await this.objectMetadataService.updateOneObject({
+            workspaceId,
+            updateObjectInput: {
+              id: objectMetadata.id,
+              update: {
+                labelIdentifierFieldMetadataId: field.id,
+              },
+            },
           });
         }
       } catch (error) {
@@ -589,7 +595,10 @@ export class RemoteTableService {
         );
       }
 
-      await this.fieldMetadataService.deleteOne(fieldMetadataToDelete.id);
+      await this.fieldMetadataService.deleteOneField({
+        deleteOneFieldInput: { id: fieldMetadataToDelete.id },
+        workspaceId,
+      });
     }
   }
 
@@ -598,18 +607,20 @@ export class RemoteTableService {
     columnName: string,
     columnType: string,
     objectMetadataId: string,
-  ): Promise<FieldMetadataEntity> {
-    return this.fieldMetadataService.createOne({
-      name: columnName,
-      label: camelToTitleCase(columnName),
-      description: 'Field of remote',
-      type: mapUdtNameToFieldType(columnType),
+  ): Promise<FlatFieldMetadata> {
+    return this.fieldMetadataService.createOneField({
+      createFieldInput: {
+        name: columnName,
+        label: camelToTitleCase(columnName),
+        description: 'Field of remote',
+        type: mapUdtNameToFieldType(columnType),
+        objectMetadataId: objectMetadataId,
+        isRemoteCreation: true,
+        isNullable: true,
+        icon: 'IconPlug',
+        settings: mapUdtNameToFieldSettings(columnType),
+      },
       workspaceId: workspaceId,
-      objectMetadataId: objectMetadataId,
-      isRemoteCreation: true,
-      isNullable: true,
-      icon: 'IconPlug',
-      settings: mapUdtNameToFieldSettings(columnType),
-    } satisfies CreateFieldInput);
+    });
   }
 }

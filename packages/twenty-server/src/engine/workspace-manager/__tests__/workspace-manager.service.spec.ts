@@ -13,7 +13,6 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -28,13 +27,13 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
 
 describe('WorkspaceManagerService', () => {
   let service: WorkspaceManagerService;
-  let objectMetadataServiceV2: ObjectMetadataServiceV2;
   let workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>;
   let dataSourceRepository: Repository<DataSourceEntity>;
   let workspaceDataSourceService: WorkspaceDataSourceService;
   let roleTargetsRepository: Repository<RoleTargetsEntity>;
   let roleRepository: Repository<RoleEntity>;
   let mockDataSource: jest.Mocked<DataSource>;
+  let objectMetadataServiceV2: ObjectMetadataServiceV2;
 
   beforeEach(async () => {
     mockDataSource = {
@@ -103,10 +102,6 @@ describe('WorkspaceManagerService', () => {
           useValue: {},
         },
         {
-          provide: ObjectMetadataService,
-          useValue: {},
-        },
-        {
           provide: RoleService,
           useValue: {},
         },
@@ -154,9 +149,6 @@ describe('WorkspaceManagerService', () => {
     }).compile();
 
     service = module.get<WorkspaceManagerService>(WorkspaceManagerService);
-    objectMetadataServiceV2 = module.get<ObjectMetadataServiceV2>(
-      ObjectMetadataServiceV2,
-    );
     workspaceMigrationRepository = module.get<
       Repository<WorkspaceMigrationEntity>
     >(getRepositoryToken(WorkspaceMigrationEntity));
@@ -171,6 +163,9 @@ describe('WorkspaceManagerService', () => {
     );
     roleRepository = module.get<Repository<RoleEntity>>(
       getRepositoryToken(RoleEntity),
+    );
+    objectMetadataServiceV2 = module.get<ObjectMetadataServiceV2>(
+      ObjectMetadataServiceV2,
     );
   });
 

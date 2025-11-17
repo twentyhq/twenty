@@ -24,9 +24,8 @@ import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
-import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
+import { ViewFieldV2Service } from 'src/engine/metadata-modules/view-field/services/view-field-v2.service';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
@@ -54,7 +53,6 @@ import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/
 export class ViewResolver {
   constructor(
     private readonly viewService: ViewService,
-    private readonly viewFieldService: ViewFieldService,
     private readonly viewFilterService: ViewFilterService,
     private readonly viewFilterGroupService: ViewFilterGroupService,
     private readonly viewSortService: ViewSortService,
@@ -62,7 +60,8 @@ export class ViewResolver {
     private readonly i18nService: I18nService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly viewV2Service: ViewV2Service,
-    private readonly userRoleService: UserRoleService,
+
+    private readonly viewFieldV2Service: ViewFieldV2Service,
   ) {}
 
   @ResolveField(() => String)
@@ -265,7 +264,7 @@ export class ViewResolver {
       return view.viewFields;
     }
 
-    return this.viewFieldService.findByViewId(workspace.id, view.id);
+    return this.viewFieldV2Service.findByViewId(workspace.id, view.id);
   }
 
   @ResolveField(() => [ViewFilterDTO])

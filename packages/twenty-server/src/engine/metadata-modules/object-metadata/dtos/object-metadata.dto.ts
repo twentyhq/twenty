@@ -2,7 +2,6 @@ import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
 import {
   Authorize,
-  BeforeDeleteOne,
   CursorConnection,
   FilterableField,
   IDField,
@@ -14,7 +13,6 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
-import { BeforeDeleteOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-delete-one-object.hook';
 
 @ObjectType('Object')
 @Authorize({
@@ -28,7 +26,6 @@ import { BeforeDeleteOneObject } from 'src/engine/metadata-modules/object-metada
   disableSort: true,
   maxResultsSize: 1000,
 })
-@BeforeDeleteOne(BeforeDeleteOneObject)
 @CursorConnection('fields', () => FieldMetadataDTO)
 @CursorConnection('indexMetadatas', () => IndexMetadataDTO)
 export class ObjectMetadataDTO {
