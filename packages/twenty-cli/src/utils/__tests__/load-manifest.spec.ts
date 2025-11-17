@@ -411,4 +411,9 @@ export const format = async (params: any): Promise<any> => {
       'hello.ts',
     ]);
   });
+
+  it('manifest should contains typescript sources', async () => {
+    const { isTwentyClientUsed } = await loadManifest(appDirectory);
+    expect(isTwentyClientUsed).toBe(false);
+  });
 });
