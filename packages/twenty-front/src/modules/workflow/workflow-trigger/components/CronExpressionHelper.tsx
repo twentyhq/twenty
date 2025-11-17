@@ -36,7 +36,7 @@ const StyledSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(3)} ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledScheduleDescription = styled.div`
@@ -49,6 +49,7 @@ const StyledScheduleTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
+  margin-bottom: ${({theme}) => theme.spacing(1)}
 `;
 
 const StyledExecutionItem = styled.div`
