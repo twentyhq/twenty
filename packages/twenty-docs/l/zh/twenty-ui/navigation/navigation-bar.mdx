@@ -1,0 +1,52 @@
+---
+title: 導航欄
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+渲染一個包含多個 `NavigationBarItem` 組件的導航欄。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+
+export const MyComponent = () => {
+
+   const navigationItems = [
+     {
+       name: "Home",
+       Icon: IconHome,
+       onClick: () => console.log("Home clicked"),
+     },
+     {
+       name: "Profile",
+       Icon: IconUser,
+       onClick: () => console.log("Profile clicked"),
+     },
+     {
+       name: "Settings",
+       Icon: IconSettings,
+       onClick: () => console.log("Settings clicked"),
+     },
+   ];
+
+  return <NavigationBar activeItemName="Home" items={navigationItems}/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性             | 類型 | 描述                                                                      |
+| -------------- | -- | ----------------------------------------------------------------------- |
+| activeItemName | 字串 | 當前活動導航項的名稱                                                              |
+| 項目             | 數組 | 代表每個導航項的物件數組。 每個物件包含項目的 `name`，要顯示的 `Icon` 組件，和當項目被點擊時要調用的 `onClick` 函數 |
+
+</Tab>
+</Tabs>

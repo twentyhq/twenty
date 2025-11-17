@@ -1,0 +1,45 @@
+---
+title: Mukautetut objektit
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+Objects are structures that allow you to store data (records, attributes, and values) specific to an organization. Twenty provides both standard and custom objects.
+
+Vakiomuotoiset objektit ovat sisäänrakennettuja objekteja, joissa on joukko attribuutteja kaikille käyttäjille. Examples of standard objects in Twenty include Company and Person. Standard objects have standard fields that are also available for all Twenty users, like Company.displayName.
+
+Mukautetut objektit ovat objekteja, jotka voit luoda tallentamaan organisaatiollesi ainutlaatuista tietoa. Ne eivät ole sisäänrakennettuja; työpaikkasi jäsenet voivat luoda ja mukauttaa mukautettuja objekteja tallentaakseen tietoa, johon vakiomuotoiset objektit eivät sovi.
+
+## Korkean tason skeema
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/custom-object-schema.png" alt="High level schema" />
+</div>
+
+<br/>
+
+## How it works
+
+Mukautetut objektit tulevat metatietotaulukoista, jotka määrittävät objektien muodon, nimen ja tyypin. Kaikki tämä tieto sisältyy metatietoskeematietokantaan, joka koostuu seuraavista taulukoista:
+
+- **DataSource**: Details where the data is present.
+- **Object**: Describes the object and links to a DataSource.
+- **Kenttä**: Kuvaa objektin kentät ja liittää ne objektiin.
+
+To add a custom object, the workspaceMember will query the /metadata API. Tämä päivittää metatietoja vastaavasti ja laskee GraphQL-skeeman metatietojen perusteella, tallentaen sen GQL-välimuistiin myöhempää käyttöä varten.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/add-custom-objects.jpeg" alt="Query the /metadata API to add custom objects" />
+</div>
+
+<br/>
+
+To fetch data, the process involves making queries through the /graphql endpoint and passing them through the Query Resolver.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/custom-object-schema.png" alt="Query the /graphql endpoint to fetch data" />
+</div>
+

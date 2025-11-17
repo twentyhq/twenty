@@ -17,6 +17,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
 import { UpdateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/update-view-field.input';
@@ -32,6 +33,9 @@ import {
 import { ViewFieldRestApiExceptionFilter } from 'src/engine/metadata-modules/view-field/filters/view-field-rest-api-exception.filter';
 import { ViewFieldV2Service } from 'src/engine/metadata-modules/view-field/services/view-field-v2.service';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
+import { CreateViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-field-permission.guard';
+import { DeleteViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-field-permission.guard';
+import { UpdateViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-field-permission.guard';
 
 @Controller('rest/metadata/viewFields')
 @UseGuards(WorkspaceAuthGuard)
@@ -44,6 +48,7 @@ export class ViewFieldController {
   ) {}
 
   @Get()
+  @UseGuards(NoPermissionGuard)
   async findMany(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('viewId') viewId?: string,
@@ -56,6 +61,7 @@ export class ViewFieldController {
   }
 
   @Get(':id')
+  @UseGuards(NoPermissionGuard)
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -81,6 +87,7 @@ export class ViewFieldController {
   }
 
   @Patch(':id')
+  @UseGuards(UpdateViewFieldPermissionGuard)
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewFieldInput['update'],
@@ -122,6 +129,7 @@ export class ViewFieldController {
   }
 
   @Post()
+  @UseGuards(CreateViewFieldPermissionGuard)
   async create(
     @Body() input: CreateViewFieldInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -161,6 +169,7 @@ export class ViewFieldController {
   }
 
   @Delete(':id')
+  @UseGuards(DeleteViewFieldPermissionGuard)
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

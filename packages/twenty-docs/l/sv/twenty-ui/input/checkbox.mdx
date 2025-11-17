@@ -1,0 +1,47 @@
+---
+title: Checkruta
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Används när en användare behöver välja flera värden från flera alternativ.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Checkbox } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+    <Checkbox
+      checked={true}
+      indeterminate={false}
+      onChange={() => console.log("onChange function fired")}
+      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      variant="primary"
+      size="small"
+      shape="squared"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaper          | Typ      | Beskrivning                                                                                                                       |
+| ------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| markerad            | boolean  | Anger om kryssrutan är markerad                                                                                                   |
+| obestämd            | boolean  | Anger om kryssrutan är i ett obestämt läge (varken markerad eller omarkerad)                                   |
+| vidÄndring          | funktion | Återanropsfunktionen du vill trigga när kryssrutans tillstånd ändras                                                              |
+| vidMarkeringÄndring | funktion | Återanropsfunktionen du vill trigga när `markerad` tillståndet ändras                                                             |
+| variant             | string   | Den visuella stilvarianten av rutan. Alternativ inkluderar: `primary`, `secondary` och `tertiary` |
+| storlek             | string   | Storleken på kryssrutan. Has two options: `small` and `large`                                     |
+| form                | string   | Formen på kryssrutan. Har två alternativ: `squared` och `rounded`                                 |
+
+</Tab>
+</Tabs>

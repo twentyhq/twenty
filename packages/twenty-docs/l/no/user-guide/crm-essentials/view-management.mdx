@@ -1,0 +1,121 @@
+---
+title: View Management
+info: "Opprett og tilpass visninger for å organisere dataene dine med filtre, sortering og forskjellige oppsett."
+image: /images/user-guide/table-views/table.png
+sectionInfo: "Essensielle CRM-funksjoner for styring av leads, salg og kunder"
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+## Oppsettalternativer
+
+Du kan vise dataene dine i tre forskjellige oppsett, hver tilpasset ulike formål. Tilpassede oppsett for å tilpasse hvordan siden ser ut for hver type oppføring vil bli utgitt i desember 2025.
+
+### Standardvisning
+
+Hvert objekt leveres med en ufiltrert, usortert og ikke-slettbar visning kjent som standardvisning. Den er oppkalt etter objektets flertallsnavn, som`Alle selskaper`, `Alle personer`, `Alle muligheter`.
+<img src="/images/user-guide/views/default-view.png" style={{width:'100%'}}/>
+
+### Listeoppsett
+
+Standard tabellformat som viser oppføringer i rader og kolonner. Dette er perfekt for å se detaljert informasjon på et øyeblikk og sammenligne oppføringer side om side.
+
+### List Group By Layout
+
+Organiserer oppføringene dine ved å gruppere dem basert på et valgt felt. For eksempel kan du gruppere muligheter etter stadium, selskaper etter plassering, eller andre valgte felt. Dette hjelper deg med å se mønstre og organisere relaterte oppføringer sammen.
+
+### Kanban-oppsett
+
+Et visuelt tavle der hver kolonne representerer et stadium og hver oppføring vises som et kort. Dette oppsettet er ideelt for styring av pipeliner og arbeidsflyter der oppføringer beveger seg gjennom forskjellige stadier. For mer informasjon om bruk av Kanban-visninger for pipeline-styring, se vår [Pipeline](/l/no/user-guide/crm-essentials/pipeline) artikkel.
+
+<VimeoEmbed videoId="927888627" title="Video demonstration" />
+
+## Opprette nye visninger
+
+Det er tre måter å opprette en ny visning på:
+
+### Bruk av kommandomeny
+
+Bruk `Cmd+K` på Mac (eller `Ctrl+K` på Windows) for å åpne kommandomenyen, deretter klikk `Opprett en ny visning`.
+
+### Bruk av visningsmenyen
+
+Klikk på visningsmenyen (øverst til venstre), deretter klikk `Legg til visning` nederst. Fra denne menyen kan du:
+
+- Velg et ikon og navn for visningen din
+- Select the layout type (List or Kanban)
+
+<Warning>
+Viktig: Du må først velge Listeoppsett og deretter legge til en Grupper etter. Du kan ikke opprette en Liste Grupper Etter direkte derfra.
+</Warning>
+- For Kanban views, select which select field to use as column headers
+
+<VimeoEmbed videoId="927639721" title="Video demonstration" />
+
+### Opprette visninger fra eksisterende filtre
+
+Når du endrer sorteringen og filtreringen av en eksisterende visning, vises en `Lagre som ny visning`-knapp. Dette lar deg opprette en ny visning basert på dine nåværende tilpasninger.
+
+<VimeoEmbed videoId="927643495" title="Video demonstration" />
+
+## Making Views Actionable
+
+Veiledningen nedenfor viser deg hvordan du tilpasser kolonnene i visningene dine. Vi anbefaler ikke å beholde alle kolonnene: disse visningene kan forenkles og gjøres aksjonsdyktige ved å legge til sorteringsbetingelser og vise kun visse kolonner som er relevante for din konkrete bruk.
+
+## Tilpasse visningene dine
+
+Alle oppsett har de samme tilpasningsalternativene: sortering, filtrering og feltvalg. Du kan gjøre raske engangs endringer ved å klikke direkte på kolonnenavnet, eller bruke `Alternativmenyen` for mer omfattende redigering.
+
+### Hurtig handlinger vs Alternativmeny
+
+**For engangs endringer**: Klikk direkte på kolonneoverskrifter for å sortere, eller bruk`Flytt Venstre`, `Flytt Høyre` knapper.
+
+**For flere redigeringer**: Bruk `Alternativmenyen` (øverst til høyre) når du vil foreta flere endringer på rad. Denne menyen gir deg tilgang til:
+
+- **Oppsettsvalg** (Liste, Liste Gruppert Etter, Kanban)
+- **Grupperingsalternativer** (for Liste Gruppert Etter oppsett)
+- **Feltbehandling** (vis/skjul og omorganisere kolonner)
+
+### Filtrere dine data
+
+Du kan bruke filtre for å vise kun de oppføringene som oppfyller kriteriene dine. Klikk `Filter` i verktøylinjen, velg et felt, velg din betingelse, og sett verdien. Du kan legge til flere filtre for avansert filtrering basert på flere betingelser.
+
+<VimeoEmbed videoId="926282262" title="Video demonstration" />
+
+### Sortere dine oppføringer
+
+Kontroller rekkefølgen på oppføringene dine ved å klikke på en hvilken som helst kolonneoverskrift for å sortere etter det feltet. Klikk igjen for å reversere sorteringsrekkefølgen. Du kan bruke flere sorteringer for kompleks organisering.
+
+<VimeoEmbed videoId="927885588" title="Video demonstration" />
+
+### Håndtere felt og kolonner
+
+Du kan velge hvilke felt du vil vise og omorganisere dem. For raske endringer, klikk direkte på et kolonnenavn. For flere redigeringer, bruk `Alternativmeny → Felt` der du kan:
+
+- Vis eller skjul felter ved hjelp av øyeikonet
+- Omorganisere felt ved å dra og slippe
+- Gjøre flere endringer effektivt på ett sted
+
+## Administrere dine visninger
+
+### View Dropdown Menu Features
+
+Visningsmenyen (øverst til venstre) er ditt sentrale knutepunkt for visningsadministrasjon. Herfra kan du:
+
+- **Edit view names and icons**: Click the three dots next to any view
+- **Omorganiser visninger**: Dra og slipp visninger for å organisere dem etter prioritet
+- **Lagre visninger som favoritter**: Favoritter vises like under Innstillinger for rask tilgang
+
+### Redigere og slette visninger
+
+For å endre eller fjerne visninger, åpne visningsmenyen og hold musepekeren over visningen du vil endre. Klikk de tre prikkene som vises for å få tilgang til redigerings- og slettingsalternativer.
+
+### Favoritter og organisering
+
+Visninger lagret som favoritter vises like under Innstillinger i din navigasjon, og gir deg øyeblikkelig tilgang til dine viktigste visninger. Use the view dropdown menu to organize your views by dragging them into the order that works best for your workflow.
+
+For mer avansert dataorganisering, se vår [Datamodellseksjon](/l/no/user-guide/data-model/customize-your-data-model) for å lære om tilpassing av felt og objekter.

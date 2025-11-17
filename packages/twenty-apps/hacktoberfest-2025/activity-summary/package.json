@@ -1,4 +1,5 @@
 {
+  "name": "activity-summary",
   "version": "0.0.1",
   "license": "MIT",
   "engines": {
@@ -12,36 +13,5 @@
   },
   "devDependencies": {
     "@types/node": "^24.7.2"
-  },
-  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/appManifest.schema.json",
-  "universalIdentifier": "b53627f5-ca60-478c-bc43-c7ab4904e34a",
-  "name": "Activity Summary",
-  "description": "A TypeScript-based reporting bot that summarizes activity from your Twenty CRM workspace and sends daily/periodic reports to Slack, Discord, and WhatsApp. Meet Kylian Mbaguette, your friendly CRM activity reporter!",
-  "env": {
-    "TWENTY_API_KEY": {
-      "description": "Twenty API Key",
-      "isSecret": true
-    },
-    "DAYS_AGO": {
-      "description": "How far back into the past we want to summarise – defaults to the past 7 days",
-      "value": "7",
-      "isSecret": false
-    },
-    "SLACK_HOOK_URL": {
-      "description": "Slack hook URL for sending message to channel",
-      "isSecret": true
-    },
-    "DISCORD_WEBHOOK_URL": {
-      "description": "Discord webhook URL for sending message to channel of a server",
-      "isSecret": true
-    },
-    "FB_GRAPH_TOKEN": {
-      "description": "For Facebook auth",
-      "isSecret": true
-    },
-    "WHATSAPP_RECIPIENT_PHONE_NUMBER": {
-      "description": "Phone number for receiving WhatsApp message",
-      "isSecret": true
-    }
   }
 }

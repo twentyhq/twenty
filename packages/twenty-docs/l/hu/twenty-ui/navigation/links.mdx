@@ -1,0 +1,168 @@
+---
+title: Linkek
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Kapcsolati link
+
+Egy stilizált link komponens a kapcsolati információk megjelenítésére.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+
+import { ContactLink } from 'twenty-ui/navigation';
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log('Contact link clicked!', event);
+  };
+
+  return (
+    <Router>
+      <ContactLink
+        className
+        href="mailto:example@example.com"
+        onClick={handleLinkClick}
+      >
+        example@example.com
+      </ContactLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Tulajdonságok | Típus             | Leírás                                                      |
+| ------------- | ----------------- | ----------------------------------------------------------- |
+| className     | string            | Opcionális név a további stílushoz                          |
+| href          | string            | A link cél URL-je vagy útvonala                             |
+| kattintás     | funkció           | Visszahívó függvény, amely a link kattintásakor aktiválódik |
+| gyermekek     | `React.ReactNode` | A link belsejében megjelenő tartalom                        |
+
+</Tab>
+
+</Tabs>
+
+## Raw Link
+
+Egy stilizált link komponens linkek megjelenítésére.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RawLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RawLink className href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RawLink>
+    </Router>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Tulajdonságok | Típus             | Leírás                                                      |
+| ------------- | ----------------- | ----------------------------------------------------------- |
+| className     | string            | Opcionális név a további stílushoz                          |
+| href          | string            | A link cél URL-je vagy útvonala                             |
+| kattintás     | függvény          | Visszahívó függvény, amely a link kattintásakor aktiválódik |
+| gyermekek     | `React.ReactNode` | A link belsejében megjelenő tartalom                        |
+
+</Tab>
+</Tabs>
+
+## Rounded Link
+
+A rounded-styled link with a Chip component for links.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RoundedLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RoundedLink href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RoundedLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Tulajdonságok | Típus             | Leírás                                                      |
+| ------------- | ----------------- | ----------------------------------------------------------- |
+| href          | string            | A link cél URL-je vagy útvonala                             |
+| gyermekek     | `React.ReactNode` | A link belsejében megjelenő tartalom                        |
+| kattintás     | funkció           | Visszahívó függvény, amely a link kattintásakor aktiválódik |
+
+</Tab>
+</Tabs>
+
+## Social Link
+
+Stilizált szociális linkek, különféle szociális link típusokkal, mint URL, LinkedIn és X (vagy Twitter).
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { SocialLink } from "twenty-ui/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <SocialLink
+        type="twitter"
+        href="https://twitter.com/twentycrm"
+      ></SocialLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Tulajdonságok | Típus             | Leírás                                                                                                      |
+| ------------- | ----------------- | ----------------------------------------------------------------------------------------------------------- |
+| href          | string            | A link cél URL-je vagy útvonala                                                                             |
+| gyermekek     | `React.ReactNode` | A link belsejében megjelenő tartalom                                                                        |
+| típus         | string            | A szociális link típusai. Options include: `url`, `LinkedIn`, and `Twitter` |
+| kattintás     | funkció           | Visszahívó függvény, amely a link kattintásakor aktiválódik                                                 |
+
+</Tab>
+</Tabs>

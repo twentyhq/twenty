@@ -1,0 +1,383 @@
+---
+title: Οδηγός αναβάθμισης
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+## Γενικές κατευθυντήριες οδηγίες
+
+**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
+
+To restore backup, run `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
+
+Εάν χρησιμοποιήσατε το Docker Compose, ακολουθήστε αυτά τα βήματα:
+
+1. Στη γραμμή εντολών, στην υποδοχή όπου τρέχει το Twenty, απενεργοποιήστε το Twenty: `docker compose down`
+
+2. Αναβαθμίστε την έκδοση αλλάζοντας την τιμή `TAG` στο αρχείο .env κοντά στο docker-compose. ( Σας συνιστούμε να χρησιμοποιήσετε την έκδοση `major.minor` όπως `v0.53` )
+
+3. Επαναφέρετε το Twenty στο διαδίκτυο με `docker compose up -d`
+
+Εάν θέλετε να αναβαθμίσετε την έκδοσή σας κατά λίγες και μόνο εκδόσεις, π.χ. από v0.33.0 σε v0.35.0, πρέπει να αναβαθμίσετε την εγκατάστασή σας διαδοχικά, σε αυτό το παράδειγμα από v0.33.0 σε v0.34.0, και μετά από v0.34.0 σε v0.35.0.
+
+**Make sure that after each upgraded version you have non-corrupted backup.**
+
+## Version-specific upgrade steps
+
+## v1.0
+
+Γεια σου Twenty v1.0! 🎉
+
+## v0.60
+
+### Βελτιώσεις απόδοσης
+
+Όλες οι αλληλεπιδράσεις με το metadata API έχουν βελτιστοποιηθεί για καλύτερη απόδοση, ιδιαίτερα για την επεξεργασία μεταδεδομένων αντικειμένων και εργασιών δημιουργίας χώρων.
+
+Έχουμε επαναδομήσει τη στρατηγική caching μας για να δώσουμε προτεραιότητα στα cache hits έναντι των ερωτημάτων της βάσης δεδομένων όταν αυτό είναι εφικτό, βελτιώνοντας σημαντικά την απόδοση των λειτουργιών του metadata API.
+
+Εάν αντιμετωπίσετε προβλήματα χρόνου εκτέλεσης μετά την αναβάθμιση, ίσως χρειαστεί να αδειάσετε την cache σας για να βεβαιωθείτε ότι είναι συγχρονισμένη με τις τελευταίες αλλαγές. Τρέξτε αυτή την εντολή στο container του twenty-server:
+
+```bash
+yarn command:prod cache:flush
+```
+
+### v0.55
+
+Αναβαθμίστε την εγκατάσταση του Twenty για να χρησιμοποιήσετε την εικόνα v0.55
+
+Δεν χρειάζεται πλέον να τρέχετε καμία εντολή, η νέα εικόνα θα φροντίσει αυτόματα για την εκτέλεση όλων των απαιτούμενων μεταναστεύσεων.
+
+### Σφάλμα `Ο χρήστης δεν έχει δικαιώματα`
+
+Εάν αντιμετωπίσετε σφάλματα εξουσιοδότησης στις περισσότερες αιτήσεις μετά την αναβάθμιση, ίσως χρειαστεί να αδειάσετε την cache σας για να υπολογίσετε εκ νέου τα τελευταία δικαιώματα.
+
+Στο container του `twenty-server`, τρέξτε:
+
+```bash
+yarn command:prod cache:flush
+```
+
+Αυτό το πρόβλημα είναι συγκεκριμένο για αυτή την έκδοση του Twenty και δεν θα είναι απαραίτητο για μελλοντικές αναβαθμίσεις.
+
+### v0.54
+
+Από την έκδοση `0.53`, δεν απαιτούνται χειροκίνητες ενέργειες.
+
+#### Απαξίωση του σχήματος μεταδεδομένων
+
+Συγχωνεύσαμε το σχήμα `metadata` στο `core` για να απλοποιήσουμε την ανάκτηση δεδομένων από το `TypeORM`.
+Έχουμε συγχωνεύσει το βήμα εντολής `migrate` μέσα στην εντολή `upgrade`. Δεν συνιστούμε να τρέξετε το `migrate` χειροκίνητα σε οποιοδήποτε από τα containers του server/worker σας.
+
+### Από v0.53
+
+Ξεκινώντας από την έκδοση `0.53`, η αναβάθμιση γίνεται προγραμματικά μέσα στο `DockerFile`, αυτό σημαίνει ότι από τώρα και στο εξής, δεν θα χρειαστεί να τρέχετε καμία εντολή χειροκίνητα πια.
+
+Βεβαιωθείτε ότι συνεχίζετε να αναβαθμίζετε την έκδοσή σας διαδοχικά, χωρίς να παραλείψετε καμία σημαντική έκδοση (π.χ. επιτρέπεται από `0.43.3` σε `0.44.0`, αλλά δεν επιτρέπεται από `0.43.1` σε `0.45.0`), αλλιώς μπορεί να οδηγήσει σε αποσύνδεση έκδοσης χώρου εργασίας που μπορεί να οδηγήσει σε σφάλμα χρόνου εκτέλεσης και έλλειψη λειτουργικότητας.
+
+Για να ελέγξετε αν ένας χώρος εργασίας έχει μεταναστεύσει σωστά, μπορείτε να ελέγξετε την έκδοσή του στη βάση δεδομένων στο πίνακα `core.workspace`.
+
+It should always be in the range of your current Twenty's instance `major.minor` version, you can view your instance version in the admin panel (at `/settings/admin-panel`, accessible if your user has `canAccessFullAdminPanel` property set to true in the database) or by running `echo $APP_VERSION` in your `twenty-server` container.
+
+Για να διορθώσετε μια αποσυνδεδεμένη έκδοση χώρου εργασίας, θα πρέπει να αναβαθμίσετε από τη σχετική έκδοση του twenty ακολουθώντας τον σχετικό οδηγό αναβάθμισης διαδοχικά και ούτω καθεξής μέχρι να φτάσετε στην επιθυμητή έκδοση.
+
+#### Αφαίρεση `auditLog`
+
+Έχουμε αφαιρέσει το τυπικό αντικείμενο auditLog, που σημαίνει ότι το μέγεθος του αντιγράφου ασφαλείας σας μπορεί να μειωθεί σημαντικά μετά από αυτή τη μετανάστευση.
+
+### v0.51 σε v0.52
+
+Αναβαθμίστε την εγκατάσταση του Twenty για να χρησιμοποιήσετε την εικόνα v0.52
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+#### Έχω έναν χώρο εργασίας μπλοκαρισμένο στην έκδοση μεταξύ `0.52.0` και `0.52.6`
+
+Δυστυχώς, οι εκδόσεις `0.52.0` και `0.52.6` έχουν αφαιρεθεί πλήρως από το dockerHub.
+Θα χρειαστεί να ενημερώσετε χειροκίνητα την έκδοση του χώρου εργασίας σας σε `0.51.0` στη βάση δεδομένων και να αναβαθμίσετε χρησιμοποιώντας την έκδοση twenty `0.52.11` ακολουθώντας τη σχετική καθοδήγηση αναβάθμισης.
+
+### v0.50 σε v0.51
+
+Αναβαθμίστε την εγκατάσταση του Twenty για να χρησιμοποιήσετε την εικόνα v0.51
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### v0.44.0 σε v0.50.0
+
+Αναβαθμίστε την εγκατάσταση του Twenty για να χρησιμοποιήσετε την εικόνα v0.50.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+#### Μεταβολή docker-compose.yml
+
+Αυτή η έκδοση παρέχει μια μεταβολή στο `docker-compose.yml` για να δώσει στην υπηρεσία `worker` πρόσβαση στον όγκο `server-local-data`.
+Ενημερώστε το τοπικό σας `docker-compose.yml` με την [έκδοση v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml)
+
+### v0.43.0 σε v0.44.0
+
+Αναβαθμίστε την εγκατάσταση του Twenty για να χρησιμοποιήσετε την εικόνα v0.44.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### v0.42.0 σε v0.43.0
+
+Αναβαθμίστε την εγκατάσταση του Twenty για να χρησιμοποιήσετε την εικόνα v0.43.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+Σε αυτή την έκδοση, έχουμε επίσης μεταβεί στην εικόνα postgres:16 στο docker-compose.yml.
+
+#### (Επιλογή 1) Μεταναστευση βάσης δεδομένων
+
+Η διατήρηση της υπάρχουσας εικόνας postgres-spilo είναι μια καλή επιλογή, αλλά θα πρέπει να παγώσετε την έκδοση στο docker-compose.yml σας στην 0.43.0.
+
+#### (Επιλογή 2) Μεταναστευση βάσης δεδομένων
+
+Αν θέλετε να μεταναστέψετε τη βάση δεδομένων σας στην νέα εικόνα postgres:16, παρακαλούμε ακολουθήστε αυτά τα βήματα:
+
+1. Dump your database from the old postgres-spilo container
+
+```
+docker exec -it twenty-db-1 sh
+pg_dump -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} > databases_backup.sql
+exit
+docker cp twenty-db-1:/home/postgres/databases_backup.sql .
+```
+
+Βεβαιωθείτε ότι το αρχείο αντίγραφο ασφαλείας σας δεν είναι κενό.
+
+2. Αναβαθμίστε το docker-compose.yml σας για να χρησιμοποιήστε την εικόνα postgres:16 όπως στο αρχείο [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml).
+
+3. Επαναφέρετε τη βάση δεδομένων στο νέο container postgres:16
+
+```
+docker cp databases_backup.sql twenty-db-1:/databases_backup.sql
+docker exec -it twenty-db-1 sh
+psql -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} -f databases_backup.sql
+exit
+```
+
+### v0.41.0 σε v0.42.0
+
+Αναβαθμίστε την εγκατάσταση του Twenty για να χρησιμοποιήσετε την εικόνα v0.42.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.42
+```
+
+**Μεταβλητές περιβάλλοντος**
+
+- Αφαιρέθηκαν: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
+- Προστέθηκαν: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
+
+### v0.40.0 σε v0.41.0
+
+Αναβαθμίστε την εγκατάσταση του Twenty για να χρησιμοποιήσετε την εικόνα v0.41.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.41
+```
+
+**Μεταβλητές περιβάλλοντος**
+
+- Αφαιρέθηκε: `AUTH_MICROSOFT_TENANT_ID`
+
+### v0.35.0 σε v0.40.0
+
+Αναβαθμίστε την εγκατάσταση του Twenty για να χρησιμοποιήσετε την εικόνα v0.40.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.40
+```
+
+**Μεταβλητές περιβάλλοντος**
+
+- Προστέθηκαν: `IS_EMAIL_VERIFICATION_REQUIRED`, `EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`, `WORKFLOW_EXEC_THROTTLE_LIMIT`, `WORKFLOW_EXEC_THROTTLE_TTL`
+
+### v0.34.0 σε v0.35.0
+
+Αναβαθμίστε την εγκατάσταση του Twenty για να χρησιμοποιήσετε την εικόνα v0.35.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.35
+```
+
+Η εντολή `yarn database:migrate:prod` θα εφαρμόσει τις μεταναστεύσεις στη δομή της βάσης δεδομένων (πυρήνας και σχήματα μεταδεδομένων). Η `yarn command:prod upgrade-0.35` αναλαμβάνει τη μετανάστευση δεδομένων όλων των χώρων εργασίας.
+
+**Μεταβλητές περιβάλλοντος**
+
+- Αντικαταστήσαμε το `ENABLE_DB_MIGRATIONS` με το `DISABLE_DB_MIGRATIONS` (η προεπιλεγμένη τιμή είναι πλέον `false`, πιθανότατα δεν χρειάζεστε να ορίσετε τίποτα)
+
+### v0.33.0 σε v0.34.0
+
+Αναβαθμίστε την εγκατάσταση του Twenty για να χρησιμοποιήσετε την εικόνα v0.34.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.34
+```
+
+Η εντολή `yarn database:migrate:prod` θα εφαρμόσει τις μεταναστεύσεις στη δομή της βάσης δεδομένων (πυρήνας και σχήματα μεταδεδομένων). Η `yarn command:prod upgrade-0.34` αναλαμβάνει τη μετανάστευση δεδομένων όλων των χώρων εργασίας.
+
+**Μεταβλητές περιβάλλοντος**
+
+- Αφαιρέθηκε: `FRONT_BASE_URL`
+- Προστέθηκαν: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
+
+Έχουμε ενημερώσει τον τρόπο που χειριζόμαστε το URL του frontend.
+Τώρα μπορείτε να ορίσετε το URL του frontend χρησιμοποιώντας τις μεταβλητές `FRONT_DOMAIN`, `FRONT_PROTOCOL` και `FRONT_PORT`.
+Εάν το FRONT_DOMAIN δεν έχει ρυθμιστεί, το URL του frontend θα επιστραφεί στο `SERVER_URL`.
+
+### v0.32.0 σε v0.33.0
+
+Αναβαθμίστε την εγκατάσταση του Twenty για να χρησιμοποιήσετε την εικόνα v0.33.0
+
+```
+yarn command:prod cache:flush
+yarn database:migrate:prod
+yarn command:prod upgrade-0.33
+```
+
+Η εντολή `yarn command:prod cache:flush` θα αδειάσει το cache του Redis.
+Η εντολή `yarn database:migrate:prod` θα εφαρμόσει τις μεταναστεύσεις στη δομή της βάσης δεδομένων (πυρήνας και σχήματα μεταδεδομένων). Η `yarn command:prod upgrade-0.33` αναλαμβάνει τη μετανάστευση δεδομένων όλων των χώρων εργασίας.
+
+Από αυτήν την έκδοση, η εικόνα twenty-postgres για τη ΒΔ αποσύρθηκε και αντί αυτής, χρησιμοποιείται η twenty-postgres-spilo.
+Αν θέλετε να συνεχίσετε να χρησιμοποιείτε την εικόνα twenty-postgres, απλά αντικαταστήστε το `twentycrm/twenty-postgres:${TAG}` με το `twentycrm /twenty-postgres` στο docker-compose.yml.
+
+### v0.31.0 σε v0.32.0
+
+Αναβαθμίστε την εγκατάσταση του Twenty για να χρησιμοποιήσετε την εικόνα v0.32.0
+
+**Μετανάστευση σχήματος και δεδομένων**
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.32
+```
+
+Η εντολή `yarn database:migrate:prod` θα εφαρμόσει τις μεταναστεύσεις στη δομή της βάσης δεδομένων (πυρήνας και σχήματα μεταδεδομένων). Η `yarn command:prod upgrade-0.32` αναλαμβάνει τη μετανάστευση δεδομένων όλων των χώρων εργασίας.
+
+**Μεταβλητές περιβάλλοντος**
+
+Έχουμε ενημερώσει τον τρόπο που χειριζόμαστε τη σύνδεση Redis.
+
+- Αφαιρέθηκαν: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
+- Προστέθηκε: `REDIS_URL`
+
+Ενημερώστε το αρχείο `.env` σας για να χρησιμοποιήσετε τη νέα μεταβλητή `REDIS_URL` αντί για τις μεμονωμένες παραμέτρους σύνδεσης Redis.
+
+Έχουμε επίσης απλοποιήσει τον τρόπο που χειριζόμαστε τα διακριτικά JWT.
+
+- Αφαιρέθηκαν: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
+- Προστέθηκε: `APP_SECRET`
+
+Ενημερώστε το αρχείο `.env` σας για να χρησιμοποιήσετε τη νέα μεταβλητή `APP_SECRET` αντί για τα μεμονωμένα μυστικά των διακριτικών (μπορείτε να χρησιμοποιήσετε το ίδιο μυστικό όπως πριν ή να δημιουργήσετε μια νέα τυχαία σειρά)
+
+**Συνδεδεμένος Λογαριασμός**
+
+Εάν χρησιμοποιείτε συνδεδεμένο λογαριασμό για να συγχρονίζετε τα Gmail και τα ημερολόγια σας, θα χρειαστεί να ενεργοποιήσετε το [People API](https://developers.google.com/people) στην κονσόλα διαχειριστή του Google.
+
+### v0.30.0 σε v0.31.0
+
+Αναβαθμίστε την εγκατάσταση του Twenty για να χρησιμοποιήσετε την εικόνα v0.31.0
+
+**Μετανάστευση σχήματος και δεδομένων**:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.31
+```
+
+Η εντολή `yarn database:migrate:prod` θα εφαρμόσει τις μεταναστεύσεις στη δομή της βάσης δεδομένων (πυρήνας και σχήματα μεταδεδομένων). Η `yarn command:prod upgrade-0.31` αναλαμβάνει τη μετανάστευση δεδομένων όλων των χώρων εργασίας.
+
+### v0.24.0 σε v0.30.0
+
+Αναβαθμίστε την εγκατάσταση του Twenty για να χρησιμοποιήσετε την εικόνα v0.30.0
+
+**Breaking change**:
+To enhance performances, Twenty now requires redis cache to be configured. Έχουμε ενημερώσει το [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) για να αντικατοπτρίζει αυτό.
+Βεβαιωθείτε ότι έχετε ενημερώσει τη διαμόρφωσή σας και ότι έχετε ενημερώσει τις μεταβλητές περιβάλλοντος σας αναλόγως:
+
+```
+REDIS_HOST={your-redis-host}
+REDIS_PORT={your-redis-port}
+CACHE_STORAGE_TYPE=redis
+```
+
+**Μετανάστευση σχήματος και δεδομένων**:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.30
+```
+
+Η εντολή `yarn database:migrate:prod` θα εφαρμόσει τις μεταναστεύσεις στη δομή της βάσης δεδομένων (πυρήνας και σχήματα μεταδεδομένων). Η `yarn command:prod upgrade-0.30` αναλαμβάνει τη μετανάστευση δεδομένων όλων των χώρων εργασίας.
+
+### v0.23.0 σε v0.24.0
+
+Αναβαθμίστε την εγκατάσταση του Twenty για να χρησιμοποιήσετε την εικόνα v0.24.0
+
+Εκτελέστε τις παρακάτω εντολές:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.24
+```
+
+Η εντολή `yarn database:migrate:prod` θα εφαρμόσει τις μεταναστεύσεις στη δομή της βάσης δεδομένων (πυρήνας και σχήματα μεταδεδομένων). Η `yarn command:prod upgrade-0.24` αναλαμβάνει τη μετανάστευση δεδομένων όλων των χώρων εργασίας.
+
+### v0.22.0 σε v0.23.0
+
+Αναβαθμίστε την εγκατάσταση του Twenty για να χρησιμοποιήσετε την εικόνα v0.23.0
+
+Εκτελέστε τις παρακάτω εντολές:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.23
+```
+
+Η εντολή `yarn database:migrate:prod` θα εφαρμόσει τις μεταναστεύσεις στη βάση δεδομένων.
+Η εντολή `yarn command:prod upgrade-0.23` αναλαμβάνει τη μετανάστευση δεδομένων, συμπεριλαμβανομένης της μεταφοράς δραστηριοτήτων σε αναθέσεις/σημειώσεις.
+
+### v0.21.0 σε v0.22.0
+
+Αναβαθμίστε την εγκατάσταση του Twenty για να χρησιμοποιήσετε την εικόνα v0.22.0
+
+Εκτελέστε τις παρακάτω εντολές:
+
+```
+yarn database:migrate:prod
+yarn command:prod workspace:sync-metadata -f
+yarn command:prod upgrade-0.22
+```
+
+Η εντολή `yarn database:migrate:prod` θα εφαρμόσει τις μεταναστεύσεις στη βάση δεδομένων.
+Η εντολή `yarn command:prod workspace:sync-metadata -f` θα συγχρονίσει τον ορισμό των προτύπων αντικειμένων με τους πίνακες μεταδεδομένων και θα εφαρμόσει τις απαιτούμενες μεταβάσεις στα υπάρχοντα χώρους εργασίας.
+Η εντολή `yarn command:prod upgrade-0.22` θα εφαρμόσει συγκεκριμένους μετασχηματισμούς δεδομένων για να προσαρμόσει στις νέες επιλογές `defaultRequestInstrumentationOptions` των αντικειμένων.
+
+
+
+

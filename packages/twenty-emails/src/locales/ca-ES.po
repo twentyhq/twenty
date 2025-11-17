@@ -90,13 +90,18 @@ msgstr "Accepta la invitació"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
 msgstr "Confirma la teva adreça de correu electrònic"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr "Gràcies per registrar-te a Twenty! Abans de començar, només necessitem confirmar que ets tu. Clica a continuació per verificar la teva adreça de correu electrònic."
+msgid "Confirm new email"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -130,13 +135,23 @@ msgstr "Restableix la teva contrasenya 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "Aquest enllaç només és vàlid durant els propers {duration}. Si l'enllaç no funciona, pots fer servir directament l'enllaç de verificació d'inici de sessió:"
+msgid "Set your password 🗝"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
 msgstr "Restableix"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set"
+msgstr "Estableix"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "Aquest enllaç només és vàlid durant els propers {duration}. Si l'enllaç no funciona, pots fer servir directament l'enllaç de verificació d'inici de sessió:"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx

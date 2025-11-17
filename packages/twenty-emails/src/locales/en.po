@@ -85,13 +85,18 @@ msgstr "Accept invite"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr "Confirm your new email address"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
 msgstr "Confirm your email address"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
+msgid "Confirm new email"
+msgstr "Confirm new email"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -125,13 +130,23 @@ msgstr "Reset your password 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgid "Set your password 🗝"
+msgstr "Set your password 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
 msgstr "Reset"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set"
+msgstr "Set"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx

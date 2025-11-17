@@ -115,6 +115,8 @@
     "@lingui/cli": "^5.1.2",
     "@lingui/swc-plugin": "^5.6.0",
     "@lingui/vite-plugin": "^5.1.2",
+    "@playwright/test": "^1.56.1",
+    "@tiptap/suggestion": "^3.4.2",
     "@types/apollo-upload-client": "^17.0.2",
     "@types/file-saver": "^2.0.7",
     "@types/js-cookie": "^3.0.3",
@@ -140,6 +142,7 @@
     "monaco-editor": "^0.51.0",
     "monaco-editor-auto-typings": "^0.4.5",
     "optionator": "^0.9.1",
+    "playwright": "^1.56.1",
     "rollup-plugin-visualizer": "^5.14.0",
     "vite-tsconfig-paths": "^4.2.1"
   }

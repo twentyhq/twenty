@@ -161,6 +161,11 @@ msgstr ""
 msgid "Action Needed to Reset Password"
 msgstr ""
 
+#. js-lingui-id: 8Q5bRY
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Set Password"
+msgstr ""
+
 #. js-lingui-id: 52fA3U
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Active fields cannot be deleted"
@@ -579,9 +584,9 @@ msgstr ""
 msgid "Can't impersonate user via api key"
 msgstr ""
 
-#. js-lingui-id: 874/Xl
+#. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-deactivated version"
+msgid "Cannot activate non-draft or non-last-published version"
 msgstr ""
 
 #. js-lingui-id: LIPsWu
@@ -613,6 +618,11 @@ msgstr ""
 #. js-lingui-id: otFZos
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
+msgstr ""
+
+#. js-lingui-id: IDMgr/
+#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
+msgid "Cannot have more than one active workflow version"
 msgstr ""
 
 #. js-lingui-id: PjZIyI
@@ -979,9 +989,19 @@ msgstr ""
 msgid "Duplicated option {field}"
 msgstr ""
 
+#. js-lingui-id: AcnTuz
+#: src/engine/core-modules/user/services/user.service.ts
+msgid "Email already in use"
+msgstr ""
+
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Email already verified."
+msgstr ""
+
+#. js-lingui-id: LT5dFi
+#: src/engine/core-modules/user/services/user.service.ts
+msgid "Email can only be updated when you belong to a single workspace."
 msgstr ""
 
 #. js-lingui-id: xw6iqb
@@ -1412,11 +1432,6 @@ msgstr ""
 msgid "Field used for full-text search"
 msgstr ""
 
-#. js-lingui-id: s3HtdT
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "FieldMetadataId is required"
-msgstr ""
-
 #. js-lingui-id: Sof2+k
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "FieldMetadataId is required to create a view field."
@@ -1685,16 +1700,6 @@ msgstr ""
 msgid "Invalid verification code. Please try again."
 msgstr ""
 
-#. js-lingui-id: 8xkULN
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "Invalid view sort data"
-msgstr ""
-
-#. js-lingui-id: I0OzaR
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "Invalid view sort data for view sort id: {id}"
-msgstr ""
-
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1831,6 +1836,12 @@ msgstr ""
 #. js-lingui-id: vXIe7J
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Language"
+msgstr ""
+
+#. js-lingui-id: hHtzNQ
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+msgid "Last credentials refreshed at"
 msgstr ""
 
 #. js-lingui-id: WvYp6o
@@ -2106,11 +2117,6 @@ msgstr ""
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
 msgstr ""
 
-#. js-lingui-id: DsdcRG
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
-msgid "Morph relation fields are disabled for your workspace"
-msgstr ""
-
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
@@ -2201,6 +2207,11 @@ msgstr ""
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Names are not synced with labels"
+msgstr ""
+
+#. js-lingui-id: TYhxR+
+#: src/engine/core-modules/user/services/user.service.ts
+msgid "New email must be different from current email"
 msgstr ""
 
 #. js-lingui-id: hQQZse
@@ -2644,6 +2655,11 @@ msgstr ""
 msgid "Please check your connection settings. Make sure the server host, port, and password are correct."
 msgstr ""
 
+#. js-lingui-id: mqzu5F
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Please confirm your updated email"
+msgstr ""
+
 #. js-lingui-id: v0iiWr
 #: src/engine/core-modules/webhook/webhook.service.ts
 #: src/engine/core-modules/webhook/webhook.service.ts
@@ -2990,16 +3006,6 @@ msgstr ""
 msgid "Sunday"
 msgstr ""
 
-#. js-lingui-id: VuvnTL
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Sync all folders"
-msgstr ""
-
-#. js-lingui-id: 9PsZjo
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Sync all folders including new ones"
-msgstr ""
-
 #. js-lingui-id: oyJYg7
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -3231,6 +3237,11 @@ msgstr ""
 #. js-lingui-id: 8h4mhq
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "The executor of the workflow"
+msgstr ""
+
+#. js-lingui-id: o6DGfJ
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "The field \"{field}\" cannot be updated. Please contact your workspace administrator."
 msgstr ""
 
 #. js-lingui-id: LdhPiK
@@ -3519,11 +3530,6 @@ msgstr ""
 msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
 msgstr ""
 
-#. js-lingui-id: rtir7c
-#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
-msgid "unknown"
-msgstr ""
-
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
@@ -3569,6 +3575,12 @@ msgstr ""
 #. js-lingui-id: d1BTW8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Id"
+msgstr ""
+
+#. js-lingui-id: pMOjQa
+#: src/engine/core-modules/auth/token/services/access-token.service.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "User is not a member of the workspace."
 msgstr ""
 
 #. js-lingui-id: B43Kks
@@ -3807,16 +3819,6 @@ msgstr ""
 msgid "View not found"
 msgstr ""
 
-#. js-lingui-id: znNExx
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "View sort (id: {id}) not found"
-msgstr ""
-
-#. js-lingui-id: 3zMs+f
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "View sort not found"
-msgstr ""
-
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
 msgid "View to delete not found"
@@ -3841,11 +3843,6 @@ msgstr ""
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "ViewId"
-msgstr ""
-
-#. js-lingui-id: kpQRY2
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "ViewId is required"
 msgstr ""
 
 #. js-lingui-id: l88nXn
@@ -4125,11 +4122,6 @@ msgstr ""
 msgid "Workspace Members"
 msgstr ""
 
-#. js-lingui-id: bBr+RW
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "WorkspaceId is required"
-msgstr ""
-
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
@@ -4205,8 +4197,13 @@ msgid "You cannot set permissions on system objects as they are managed by the p
 msgstr ""
 
 #. js-lingui-id: EFQeXU
-#: src/engine/guards/settings-permissions.guard.ts
+#: src/engine/guards/settings-permission.guard.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
+msgstr ""
+
+#. js-lingui-id: P69VwK
+#: src/engine/core-modules/user/user.resolver.ts
+msgid "You do not have permission to delete this user from the workspace. Please contact your workspace administrator for access."
 msgstr ""
 
 #. js-lingui-id: +2vVRB
@@ -4214,14 +4211,19 @@ msgstr ""
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr ""
 
-#. js-lingui-id: k7P8yU
+#. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "You do not have permission to manage security settings. Please contact your workspace administrator."
+msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
 msgstr ""
 
-#. js-lingui-id: svchJc
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "You do not have permission to manage workspace settings. Please contact your workspace administrator."
+#. js-lingui-id: M1he8p
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+msgid "You don't have permission to create workspace-level views."
+msgstr ""
+
+#. js-lingui-id: QmL9y9
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+msgid "You don't have permission to modify this view."
 msgstr ""
 
 #. js-lingui-id: z+7x/s

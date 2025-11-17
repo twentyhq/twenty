@@ -7,6 +7,7 @@ import { ActivateWorkflowSingleRecordAction } from '@/action-menu/actions/record
 import { AddNodeWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/AddNodeWorkflowSingleRecordAction';
 import { DeactivateWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/DeactivateWorkflowSingleRecordAction';
 import { DiscardDraftWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/DiscardDraftWorkflowSingleRecordAction';
+import { DuplicateWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction';
 import { SeeActiveVersionWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/SeeActiveVersionWorkflowSingleRecordAction';
 import { SeeRunsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/SeeRunsWorkflowSingleRecordAction';
 import { SeeVersionsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/components/SeeVersionsWorkflowSingleRecordAction';
@@ -35,6 +36,7 @@ import {
   IconPower,
   IconReorder,
   IconVersions,
+  IconCopy,
 } from 'twenty-ui/display';
 
 const areWorkflowTriggerAndStepsDefined = (
@@ -114,6 +116,25 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
       component: <DiscardDraftWorkflowSingleRecordAction />,
+    },
+    [WorkflowSingleRecordActionKeys.DUPLICATE_WORKFLOW]: {
+      key: WorkflowSingleRecordActionKeys.DUPLICATE_WORKFLOW,
+      label: msg`Duplicate Workflow`,
+      shortLabel: msg`Duplicate`,
+      isPinned: false,
+      position: 10,
+      Icon: IconCopy,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
+      shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
+        isDefined(workflowWithCurrentVersion) &&
+        isDefined(workflowWithCurrentVersion.currentVersion) &&
+        !isDefined(selectedRecord?.deletedAt),
+      availableOn: [
+        ActionViewType.SHOW_PAGE,
+        ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ],
+      component: <DuplicateWorkflowSingleRecordAction />,
     },
     [WorkflowSingleRecordActionKeys.SEE_ACTIVE_VERSION]: {
       key: WorkflowSingleRecordActionKeys.SEE_ACTIVE_VERSION,
@@ -267,6 +288,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     NoSelectionRecordActionKeys.GO_TO_PEOPLE,
     NoSelectionRecordActionKeys.GO_TO_COMPANIES,
     NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
+    NoSelectionRecordActionKeys.GO_TO_DASHBOARDS,
     NoSelectionRecordActionKeys.GO_TO_SETTINGS,
     NoSelectionRecordActionKeys.GO_TO_TASKS,
     NoSelectionRecordActionKeys.GO_TO_NOTES,
@@ -345,14 +367,17 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
       position: 26,
     },
-    [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
+    [NoSelectionRecordActionKeys.GO_TO_DASHBOARDS]: {
       position: 27,
     },
-    [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
+    [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
       position: 28,
     },
-    [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+    [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
       position: 29,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+      position: 30,
     },
   },
 });

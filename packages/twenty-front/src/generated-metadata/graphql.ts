@@ -222,6 +222,7 @@ export type Application = {
   name: Scalars['String'];
   objects: Array<Object>;
   serverlessFunctions: Array<ServerlessFunction>;
+  universalIdentifier: Scalars['String'];
   version: Scalars['String'];
 };
 
@@ -659,6 +660,7 @@ export type CoreView = {
   calendarFieldMetadataId?: Maybe<Scalars['UUID']>;
   calendarLayout?: Maybe<ViewCalendarLayout>;
   createdAt: Scalars['DateTime'];
+  createdByUserWorkspaceId?: Maybe<Scalars['UUID']>;
   deletedAt?: Maybe<Scalars['DateTime']>;
   icon: Scalars['String'];
   id: Scalars['UUID'];
@@ -678,6 +680,7 @@ export type CoreView = {
   viewFilters: Array<CoreViewFilter>;
   viewGroups: Array<CoreViewGroup>;
   viewSorts: Array<CoreViewSort>;
+  visibility: ViewVisibility;
   workspaceId: Scalars['UUID'];
 };
 
@@ -908,6 +911,8 @@ export type CreateRouteTriggerInput = {
 export type CreateServerlessFunctionInput = {
   code?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
+  handlerName?: InputMaybe<Scalars['String']>;
+  handlerPath?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
 };
@@ -965,6 +970,7 @@ export type CreateViewInput = {
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   position?: InputMaybe<Scalars['Float']>;
   type?: InputMaybe<ViewType>;
+  visibility?: InputMaybe<ViewVisibility>;
 };
 
 export type CreateViewSortInput = {
@@ -1174,6 +1180,13 @@ export type DomainValidRecords = {
   records: Array<DomainRecord>;
 };
 
+export type DuplicateWorkflowInput = {
+  /** Workflow ID to duplicate */
+  workflowIdToDuplicate: Scalars['UUID'];
+  /** Workflow version ID to copy */
+  workflowVersionIdToCopy: Scalars['UUID'];
+};
+
 export type DuplicateWorkflowVersionStepInput = {
   stepId: Scalars['String'];
   workflowVersionId: Scalars['String'];
@@ -1257,10 +1270,10 @@ export enum FeatureFlagKey {
   IS_APPLICATION_ENABLED = 'IS_APPLICATION_ENABLED',
   IS_DASHBOARD_V2_ENABLED = 'IS_DASHBOARD_V2_ENABLED',
   IS_EMAILING_DOMAIN_ENABLED = 'IS_EMAILING_DOMAIN_ENABLED',
+  IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED = 'IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED',
   IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_MESSAGE_FOLDER_CONTROL_ENABLED = 'IS_MESSAGE_FOLDER_CONTROL_ENABLED',
-  IS_MORPH_RELATION_ENABLED = 'IS_MORPH_RELATION_ENABLED',
   IS_PAGE_LAYOUT_ENABLED = 'IS_PAGE_LAYOUT_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IS_PUBLIC_DOMAIN_ENABLED = 'IS_PUBLIC_DOMAIN_ENABLED',
@@ -1445,12 +1458,6 @@ export type GetAuthorizationUrlForSsoOutput = {
   authorizationURL: Scalars['String'];
   id: Scalars['UUID'];
   type: Scalars['String'];
-};
-
-export type GetLoginTokenFromEmailVerificationTokenOutput = {
-  __typename?: 'GetLoginTokenFromEmailVerificationTokenOutput';
-  loginToken: AuthToken;
-  workspaceUrls: WorkspaceUrls;
 };
 
 export type GetServerlessFunctionSourceCodeInput = {
@@ -1678,6 +1685,7 @@ export type LineChartConfiguration = {
   filter?: Maybe<Scalars['JSON']>;
   firstDayOfTheWeek?: Maybe<Scalars['Int']>;
   graphType: GraphType;
+  isStacked?: Maybe<Scalars['Boolean']>;
   omitNullValues?: Maybe<Scalars['Boolean']>;
   primaryAxisDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   primaryAxisGroupByFieldMetadataId: Scalars['UUID'];
@@ -1811,6 +1819,7 @@ export type Mutation = {
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
+  deleteUserFromWorkspace: UserWorkspace;
   deleteWebhook: Scalars['Boolean'];
   deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;
@@ -1825,6 +1834,7 @@ export type Mutation = {
   destroyPageLayoutTab: Scalars['Boolean'];
   destroyPageLayoutWidget: Scalars['Boolean'];
   disablePostgresProxy: PostgresCredentials;
+  duplicateWorkflow: WorkflowVersionDto;
   duplicateWorkflowVersionStep: WorkflowVersionStepChanges;
   editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLinkOutput;
@@ -1837,8 +1847,6 @@ export type Mutation = {
   getAuthTokensFromOTP: AuthTokens;
   getAuthorizationUrlForSSO: GetAuthorizationUrlForSsoOutput;
   getLoginTokenFromCredentials: LoginTokenOutput;
-  getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
-  getWorkspaceAgnosticTokenFromEmailVerificationToken: AvailableWorkspacesAndAccessTokensOutput;
   impersonate: ImpersonateOutput;
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
@@ -1898,6 +1906,7 @@ export type Mutation = {
   updatePageLayoutWidget: PageLayoutWidget;
   updatePageLayoutWithTabsAndWidgets: PageLayout;
   updatePasswordViaResetToken: InvalidatePasswordOutput;
+  updateUserEmail: Scalars['Boolean'];
   updateWebhook?: Maybe<Webhook>;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean'];
@@ -1914,6 +1923,8 @@ export type Mutation = {
   upsertPermissionFlags: Array<PermissionFlag>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
+  verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginTokenOutput;
+  verifyEmailAndGetWorkspaceAgnosticToken: AvailableWorkspacesAndAccessTokensOutput;
   verifyEmailingDomain: EmailingDomain;
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
 };
@@ -2293,6 +2304,11 @@ export type MutationDeleteTwoFactorAuthenticationMethodArgs = {
 };
 
 
+export type MutationDeleteUserFromWorkspaceArgs = {
+  workspaceMemberIdToDelete: Scalars['String'];
+};
+
+
 export type MutationDeleteWebhookArgs = {
   input: DeleteWebhookInput;
 };
@@ -2358,6 +2374,11 @@ export type MutationDestroyPageLayoutWidgetArgs = {
 };
 
 
+export type MutationDuplicateWorkflowArgs = {
+  input: DuplicateWorkflowInput;
+};
+
+
 export type MutationDuplicateWorkflowVersionStepArgs = {
   input: DuplicateWorkflowVersionStepInput;
 };
@@ -2411,21 +2432,6 @@ export type MutationGetLoginTokenFromCredentialsArgs = {
   origin: Scalars['String'];
   password: Scalars['String'];
   verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
-};
-
-
-export type MutationGetLoginTokenFromEmailVerificationTokenArgs = {
-  captchaToken?: InputMaybe<Scalars['String']>;
-  email: Scalars['String'];
-  emailVerificationToken: Scalars['String'];
-  origin: Scalars['String'];
-};
-
-
-export type MutationGetWorkspaceAgnosticTokenFromEmailVerificationTokenArgs = {
-  captchaToken?: InputMaybe<Scalars['String']>;
-  email: Scalars['String'];
-  emailVerificationToken: Scalars['String'];
 };
 
 
@@ -2732,6 +2738,12 @@ export type MutationUpdatePasswordViaResetTokenArgs = {
 };
 
 
+export type MutationUpdateUserEmailArgs = {
+  newEmail: Scalars['String'];
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
+};
+
+
 export type MutationUpdateWebhookArgs = {
   input: UpdateWebhookInput;
 };
@@ -2814,6 +2826,21 @@ export type MutationUserLookupAdminPanelArgs = {
 
 export type MutationValidateApprovedAccessDomainArgs = {
   input: ValidateApprovedAccessDomainInput;
+};
+
+
+export type MutationVerifyEmailAndGetLoginTokenArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  emailVerificationToken: Scalars['String'];
+  origin: Scalars['String'];
+};
+
+
+export type MutationVerifyEmailAndGetWorkspaceAgnosticTokenArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  emailVerificationToken: Scalars['String'];
 };
 
 
@@ -3063,16 +3090,25 @@ export type PermissionFlag = {
 };
 
 export enum PermissionFlagType {
-  ADMIN_PANEL = 'ADMIN_PANEL',
+  AI = 'AI',
+  AI_SETTINGS = 'AI_SETTINGS',
   API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
+  APPLICATIONS = 'APPLICATIONS',
+  BILLING = 'BILLING',
+  CONNECTED_ACCOUNTS = 'CONNECTED_ACCOUNTS',
   DATA_MODEL = 'DATA_MODEL',
+  DOWNLOAD_FILE = 'DOWNLOAD_FILE',
   EXPORT_CSV = 'EXPORT_CSV',
   IMPERSONATE = 'IMPERSONATE',
   IMPORT_CSV = 'IMPORT_CSV',
+  LAYOUTS = 'LAYOUTS',
+  PROFILE_INFORMATION = 'PROFILE_INFORMATION',
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
   SEND_EMAIL_TOOL = 'SEND_EMAIL_TOOL',
   SSO_BYPASS = 'SSO_BYPASS',
+  UPLOAD_FILE = 'UPLOAD_FILE',
+  VIEWS = 'VIEWS',
   WORKFLOWS = 'WORKFLOWS',
   WORKSPACE = 'WORKSPACE',
   WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
@@ -4373,6 +4409,7 @@ export type UpdateViewInput = {
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   position?: InputMaybe<Scalars['Float']>;
   type?: InputMaybe<ViewType>;
+  visibility?: InputMaybe<ViewVisibility>;
 };
 
 export type UpdateViewSortInput = {
@@ -4416,6 +4453,7 @@ export type UpdateWorkspaceInput = {
   customDomain?: InputMaybe<Scalars['String']>;
   defaultRoleId?: InputMaybe<Scalars['UUID']>;
   displayName?: InputMaybe<Scalars['String']>;
+  editableProfileFields?: InputMaybe<Array<Scalars['String']>>;
   inviteHash?: InputMaybe<Scalars['String']>;
   isGoogleAuthBypassEnabled?: InputMaybe<Scalars['Boolean']>;
   isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']>;
@@ -4460,6 +4498,7 @@ export type User = {
   disabled?: Maybe<Scalars['Boolean']>;
   email: Scalars['String'];
   firstName: Scalars['String'];
+  hasPassword: Scalars['Boolean'];
   id: Scalars['UUID'];
   isEmailVerified: Scalars['Boolean'];
   lastName: Scalars['String'];
@@ -4537,6 +4576,7 @@ export type ValidateApprovedAccessDomainInput = {
 export type ValidatePasswordResetTokenOutput = {
   __typename?: 'ValidatePasswordResetTokenOutput';
   email: Scalars['String'];
+  hasPassword: Scalars['Boolean'];
   id: Scalars['UUID'];
 };
 
@@ -4546,6 +4586,12 @@ export type VerificationRecord = {
   priority?: Maybe<Scalars['Float']>;
   type: Scalars['String'];
   value: Scalars['String'];
+};
+
+export type VerifyEmailAndGetLoginTokenOutput = {
+  __typename?: 'VerifyEmailAndGetLoginTokenOutput';
+  loginToken: AuthToken;
+  workspaceUrls: WorkspaceUrls;
 };
 
 export type VerifyTwoFactorAuthenticationMethodOutput = {
@@ -4608,6 +4654,11 @@ export enum ViewType {
   CALENDAR = 'CALENDAR',
   KANBAN = 'KANBAN',
   TABLE = 'TABLE'
+}
+
+export enum ViewVisibility {
+  UNLISTED = 'UNLISTED',
+  WORKSPACE = 'WORKSPACE'
 }
 
 export type Webhook = {
@@ -4749,6 +4800,7 @@ export type Workspace = {
   defaultRole?: Maybe<Role>;
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
+  editableProfileFields?: Maybe<Array<Scalars['String']>>;
   featureFlags?: Maybe<Array<FeatureFlagDto>>;
   hasValidEnterpriseKey: Scalars['Boolean'];
   id: Scalars['UUID'];
@@ -4775,6 +4827,7 @@ export type Workspace = {
   viewGroups?: Maybe<Array<CoreViewGroup>>;
   viewSorts?: Maybe<Array<CoreViewSort>>;
   views?: Maybe<Array<CoreView>>;
+  workspaceCustomApplicationId?: Maybe<Scalars['String']>;
   workspaceMembersCount?: Maybe<Scalars['Float']>;
   workspaceUrls: WorkspaceUrls;
 };
@@ -5097,25 +5150,6 @@ export type GetLoginTokenFromCredentialsMutationVariables = Exact<{
 
 export type GetLoginTokenFromCredentialsMutation = { __typename?: 'Mutation', getLoginTokenFromCredentials: { __typename?: 'LoginTokenOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
 
-export type GetLoginTokenFromEmailVerificationTokenMutationVariables = Exact<{
-  emailVerificationToken: Scalars['String'];
-  email: Scalars['String'];
-  captchaToken?: InputMaybe<Scalars['String']>;
-  origin: Scalars['String'];
-}>;
-
-
-export type GetLoginTokenFromEmailVerificationTokenMutation = { __typename?: 'Mutation', getLoginTokenFromEmailVerificationToken: { __typename?: 'GetLoginTokenFromEmailVerificationTokenOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } };
-
-export type GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutationVariables = Exact<{
-  emailVerificationToken: Scalars['String'];
-  email: Scalars['String'];
-  captchaToken?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation = { __typename?: 'Mutation', getWorkspaceAgnosticTokenFromEmailVerificationToken: { __typename?: 'AvailableWorkspacesAndAccessTokensOutput', availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> }, tokens: { __typename?: 'AuthTokenPair', accessOrWorkspaceAgnosticToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
-
 export type ImpersonateMutationVariables = Exact<{
   userId: Scalars['UUID'];
   workspaceId: Scalars['UUID'];
@@ -5206,6 +5240,25 @@ export type UpdatePasswordViaResetTokenMutationVariables = Exact<{
 
 export type UpdatePasswordViaResetTokenMutation = { __typename?: 'Mutation', updatePasswordViaResetToken: { __typename?: 'InvalidatePasswordOutput', success: boolean } };
 
+export type VerifyEmailAndGetLoginTokenMutationVariables = Exact<{
+  emailVerificationToken: Scalars['String'];
+  email: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
+  origin: Scalars['String'];
+}>;
+
+
+export type VerifyEmailAndGetLoginTokenMutation = { __typename?: 'Mutation', verifyEmailAndGetLoginToken: { __typename?: 'VerifyEmailAndGetLoginTokenOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } };
+
+export type VerifyEmailAndGetWorkspaceAgnosticTokenMutationVariables = Exact<{
+  emailVerificationToken: Scalars['String'];
+  email: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type VerifyEmailAndGetWorkspaceAgnosticTokenMutation = { __typename?: 'Mutation', verifyEmailAndGetWorkspaceAgnosticToken: { __typename?: 'AvailableWorkspacesAndAccessTokensOutput', availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> }, tokens: { __typename?: 'AuthTokenPair', accessOrWorkspaceAgnosticToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
   captchaToken?: InputMaybe<Scalars['String']>;
@@ -5226,7 +5279,7 @@ export type ValidatePasswordResetTokenQueryVariables = Exact<{
 }>;
 
 
-export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePasswordResetToken: { __typename?: 'ValidatePasswordResetTokenOutput', id: string, email: string } };
+export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePasswordResetToken: { __typename?: 'ValidatePasswordResetTokenOutput', id: string, email: string, hasPassword: boolean } };
 
 export type BillingPriceLicensedFragmentFragment = { __typename?: 'BillingPriceLicensed', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType };
 
@@ -5706,6 +5759,14 @@ export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
 
 export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: { __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean } };
 
+export type UpdateUserEmailMutationVariables = Exact<{
+  newEmail: Scalars['String'];
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type UpdateUserEmailMutation = { __typename?: 'Mutation', updateUserEmail: boolean };
+
 export type ApiKeyForRoleFragmentFragment = { __typename?: 'ApiKeyForRole', id: string, name: string, expiresAt: string, revokedAt?: string | null };
 
 export type FieldPermissionFragmentFragment = { __typename?: 'FieldPermission', objectMetadataId: string, fieldMetadataId: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null, id: string, roleId: string };
@@ -5904,7 +5965,7 @@ export type BillingSubscriptionFragmentFragment = { __typename?: 'BillingSubscri
 
 export type CurrentBillingSubscriptionFragmentFragment = { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, routerModel: string, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, routerModel: string, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
 
 export type WorkspaceUrlsFragmentFragment = { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null };
 
@@ -5912,6 +5973,13 @@ export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }
 
 
 export type DeleteUserAccountMutation = { __typename?: 'Mutation', deleteUser: { __typename?: 'User', id: string } };
+
+export type DeleteUserWorkspaceMutationVariables = Exact<{
+  workspaceMemberIdToDelete: Scalars['String'];
+}>;
+
+
+export type DeleteUserWorkspaceMutation = { __typename?: 'Mutation', deleteUserFromWorkspace: { __typename?: 'UserWorkspace', id: string } };
 
 export type UploadProfilePictureMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -5923,7 +5991,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, routerModel: string, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, routerModel: string, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
 
 export type ViewFieldFragmentFragment = { __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null };
 
@@ -5931,7 +5999,7 @@ export type ViewFilterFragmentFragment = { __typename?: 'CoreViewFilter', id: st
 
 export type ViewFilterGroupFragmentFragment = { __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string };
 
-export type ViewFragmentFragment = { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
+export type ViewFragmentFragment = { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
 
 export type ViewGroupFragmentFragment = { __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null };
 
@@ -5942,7 +6010,7 @@ export type CreateCoreViewMutationVariables = Exact<{
 }>;
 
 
-export type CreateCoreViewMutation = { __typename?: 'Mutation', createCoreView: { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> } };
+export type CreateCoreViewMutation = { __typename?: 'Mutation', createCoreView: { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> } };
 
 export type CreateCoreViewFieldMutationVariables = Exact<{
   input: CreateViewFieldInput;
@@ -6083,7 +6151,7 @@ export type UpdateCoreViewMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCoreViewMutation = { __typename?: 'Mutation', updateCoreView: { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> } };
+export type UpdateCoreViewMutation = { __typename?: 'Mutation', updateCoreView: { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> } };
 
 export type UpdateCoreViewFieldMutationVariables = Exact<{
   input: UpdateViewFieldInput;
@@ -6125,7 +6193,7 @@ export type UpdateCoreViewSortMutation = { __typename?: 'Mutation', updateCoreVi
 export type FindAllCoreViewsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindAllCoreViewsQuery = { __typename?: 'Query', getCoreViews: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
+export type FindAllCoreViewsQuery = { __typename?: 'Query', getCoreViews: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
 
 export type FindManyCoreViewFieldsQueryVariables = Exact<{
   viewId: Scalars['String'];
@@ -6167,14 +6235,14 @@ export type FindManyCoreViewsQueryVariables = Exact<{
 }>;
 
 
-export type FindManyCoreViewsQuery = { __typename?: 'Query', getCoreViews: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
+export type FindManyCoreViewsQuery = { __typename?: 'Query', getCoreViews: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
 
 export type FindOneCoreViewQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type FindOneCoreViewQuery = { __typename?: 'Query', getCoreView?: { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> } | null };
+export type FindOneCoreViewQuery = { __typename?: 'Query', getCoreView?: { __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> } | null };
 
 export type FindOneCoreViewFieldQueryVariables = Exact<{
   id: Scalars['String'];
@@ -6268,6 +6336,13 @@ export type DeleteWorkflowVersionStepMutationVariables = Exact<{
 
 
 export type DeleteWorkflowVersionStepMutation = { __typename?: 'Mutation', deleteWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
+
+export type DuplicateWorkflowMutationVariables = Exact<{
+  input: DuplicateWorkflowInput;
+}>;
+
+
+export type DuplicateWorkflowMutation = { __typename?: 'Mutation', duplicateWorkflow: { __typename?: 'WorkflowVersionDTO', id: string, name: string, status: string, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string, workflowId: string } };
 
 export type DuplicateWorkflowVersionStepMutationVariables = Exact<{
   input: DuplicateWorkflowVersionStepInput;
@@ -6861,6 +6936,7 @@ export const UserQueryFragmentFragmentDoc = gql`
   firstName
   lastName
   email
+  hasPassword
   canAccessFullAdminPanel
   canImpersonate
   supportUserHash
@@ -6875,6 +6951,7 @@ export const UserQueryFragmentFragmentDoc = gql`
     ...DeletedWorkspaceMemberQueryFragment
   }
   currentUserWorkspace {
+    id
     permissionFlags
     objectsPermissions {
       ...ObjectPermissionFragment
@@ -6924,6 +7001,7 @@ export const UserQueryFragmentFragmentDoc = gql`
     routerModel
     isTwoFactorAuthenticationEnforced
     trashRetentionDays
+    editableProfileFields
   }
   availableWorkspaces {
     ...AvailableWorkspacesFragment
@@ -7014,6 +7092,8 @@ export const ViewFragmentFragmentDoc = gql`
   anyFieldFilterValue
   calendarFieldMetadataId
   calendarLayout
+  visibility
+  createdByUserWorkspaceId
   viewFields {
     ...ViewFieldFragment
   }
@@ -8076,98 +8156,6 @@ export function useGetLoginTokenFromCredentialsMutation(baseOptions?: Apollo.Mut
 export type GetLoginTokenFromCredentialsMutationHookResult = ReturnType<typeof useGetLoginTokenFromCredentialsMutation>;
 export type GetLoginTokenFromCredentialsMutationResult = Apollo.MutationResult<GetLoginTokenFromCredentialsMutation>;
 export type GetLoginTokenFromCredentialsMutationOptions = Apollo.BaseMutationOptions<GetLoginTokenFromCredentialsMutation, GetLoginTokenFromCredentialsMutationVariables>;
-export const GetLoginTokenFromEmailVerificationTokenDocument = gql`
-    mutation GetLoginTokenFromEmailVerificationToken($emailVerificationToken: String!, $email: String!, $captchaToken: String, $origin: String!) {
-  getLoginTokenFromEmailVerificationToken(
-    emailVerificationToken: $emailVerificationToken
-    email: $email
-    captchaToken: $captchaToken
-    origin: $origin
-  ) {
-    loginToken {
-      ...AuthTokenFragment
-    }
-    workspaceUrls {
-      ...WorkspaceUrlsFragment
-    }
-  }
-}
-    ${AuthTokenFragmentFragmentDoc}
-${WorkspaceUrlsFragmentFragmentDoc}`;
-export type GetLoginTokenFromEmailVerificationTokenMutationFn = Apollo.MutationFunction<GetLoginTokenFromEmailVerificationTokenMutation, GetLoginTokenFromEmailVerificationTokenMutationVariables>;
-
-/**
- * __useGetLoginTokenFromEmailVerificationTokenMutation__
- *
- * To run a mutation, you first call `useGetLoginTokenFromEmailVerificationTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGetLoginTokenFromEmailVerificationTokenMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [getLoginTokenFromEmailVerificationTokenMutation, { data, loading, error }] = useGetLoginTokenFromEmailVerificationTokenMutation({
- *   variables: {
- *      emailVerificationToken: // value for 'emailVerificationToken'
- *      email: // value for 'email'
- *      captchaToken: // value for 'captchaToken'
- *      origin: // value for 'origin'
- *   },
- * });
- */
-export function useGetLoginTokenFromEmailVerificationTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetLoginTokenFromEmailVerificationTokenMutation, GetLoginTokenFromEmailVerificationTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GetLoginTokenFromEmailVerificationTokenMutation, GetLoginTokenFromEmailVerificationTokenMutationVariables>(GetLoginTokenFromEmailVerificationTokenDocument, options);
-      }
-export type GetLoginTokenFromEmailVerificationTokenMutationHookResult = ReturnType<typeof useGetLoginTokenFromEmailVerificationTokenMutation>;
-export type GetLoginTokenFromEmailVerificationTokenMutationResult = Apollo.MutationResult<GetLoginTokenFromEmailVerificationTokenMutation>;
-export type GetLoginTokenFromEmailVerificationTokenMutationOptions = Apollo.BaseMutationOptions<GetLoginTokenFromEmailVerificationTokenMutation, GetLoginTokenFromEmailVerificationTokenMutationVariables>;
-export const GetWorkspaceAgnosticTokenFromEmailVerificationTokenDocument = gql`
-    mutation GetWorkspaceAgnosticTokenFromEmailVerificationToken($emailVerificationToken: String!, $email: String!, $captchaToken: String) {
-  getWorkspaceAgnosticTokenFromEmailVerificationToken(
-    emailVerificationToken: $emailVerificationToken
-    email: $email
-    captchaToken: $captchaToken
-  ) {
-    availableWorkspaces {
-      ...AvailableWorkspacesFragment
-    }
-    tokens {
-      ...AuthTokenPairFragment
-    }
-  }
-}
-    ${AvailableWorkspacesFragmentFragmentDoc}
-${AuthTokenPairFragmentFragmentDoc}`;
-export type GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutationFn = Apollo.MutationFunction<GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation, GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutationVariables>;
-
-/**
- * __useGetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation__
- *
- * To run a mutation, you first call `useGetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [getWorkspaceAgnosticTokenFromEmailVerificationTokenMutation, { data, loading, error }] = useGetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation({
- *   variables: {
- *      emailVerificationToken: // value for 'emailVerificationToken'
- *      email: // value for 'email'
- *      captchaToken: // value for 'captchaToken'
- *   },
- * });
- */
-export function useGetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation, GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation, GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutationVariables>(GetWorkspaceAgnosticTokenFromEmailVerificationTokenDocument, options);
-      }
-export type GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutationHookResult = ReturnType<typeof useGetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation>;
-export type GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutationResult = Apollo.MutationResult<GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation>;
-export type GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutationOptions = Apollo.BaseMutationOptions<GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation, GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutationVariables>;
 export const ImpersonateDocument = gql`
     mutation Impersonate($userId: UUID!, $workspaceId: UUID!) {
   impersonate(userId: $userId, workspaceId: $workspaceId) {
@@ -8607,6 +8595,98 @@ export function useUpdatePasswordViaResetTokenMutation(baseOptions?: Apollo.Muta
 export type UpdatePasswordViaResetTokenMutationHookResult = ReturnType<typeof useUpdatePasswordViaResetTokenMutation>;
 export type UpdatePasswordViaResetTokenMutationResult = Apollo.MutationResult<UpdatePasswordViaResetTokenMutation>;
 export type UpdatePasswordViaResetTokenMutationOptions = Apollo.BaseMutationOptions<UpdatePasswordViaResetTokenMutation, UpdatePasswordViaResetTokenMutationVariables>;
+export const VerifyEmailAndGetLoginTokenDocument = gql`
+    mutation VerifyEmailAndGetLoginToken($emailVerificationToken: String!, $email: String!, $captchaToken: String, $origin: String!) {
+  verifyEmailAndGetLoginToken(
+    emailVerificationToken: $emailVerificationToken
+    email: $email
+    captchaToken: $captchaToken
+    origin: $origin
+  ) {
+    loginToken {
+      ...AuthTokenFragment
+    }
+    workspaceUrls {
+      ...WorkspaceUrlsFragment
+    }
+  }
+}
+    ${AuthTokenFragmentFragmentDoc}
+${WorkspaceUrlsFragmentFragmentDoc}`;
+export type VerifyEmailAndGetLoginTokenMutationFn = Apollo.MutationFunction<VerifyEmailAndGetLoginTokenMutation, VerifyEmailAndGetLoginTokenMutationVariables>;
+
+/**
+ * __useVerifyEmailAndGetLoginTokenMutation__
+ *
+ * To run a mutation, you first call `useVerifyEmailAndGetLoginTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVerifyEmailAndGetLoginTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [verifyEmailAndGetLoginTokenMutation, { data, loading, error }] = useVerifyEmailAndGetLoginTokenMutation({
+ *   variables: {
+ *      emailVerificationToken: // value for 'emailVerificationToken'
+ *      email: // value for 'email'
+ *      captchaToken: // value for 'captchaToken'
+ *      origin: // value for 'origin'
+ *   },
+ * });
+ */
+export function useVerifyEmailAndGetLoginTokenMutation(baseOptions?: Apollo.MutationHookOptions<VerifyEmailAndGetLoginTokenMutation, VerifyEmailAndGetLoginTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VerifyEmailAndGetLoginTokenMutation, VerifyEmailAndGetLoginTokenMutationVariables>(VerifyEmailAndGetLoginTokenDocument, options);
+      }
+export type VerifyEmailAndGetLoginTokenMutationHookResult = ReturnType<typeof useVerifyEmailAndGetLoginTokenMutation>;
+export type VerifyEmailAndGetLoginTokenMutationResult = Apollo.MutationResult<VerifyEmailAndGetLoginTokenMutation>;
+export type VerifyEmailAndGetLoginTokenMutationOptions = Apollo.BaseMutationOptions<VerifyEmailAndGetLoginTokenMutation, VerifyEmailAndGetLoginTokenMutationVariables>;
+export const VerifyEmailAndGetWorkspaceAgnosticTokenDocument = gql`
+    mutation VerifyEmailAndGetWorkspaceAgnosticToken($emailVerificationToken: String!, $email: String!, $captchaToken: String) {
+  verifyEmailAndGetWorkspaceAgnosticToken(
+    emailVerificationToken: $emailVerificationToken
+    email: $email
+    captchaToken: $captchaToken
+  ) {
+    availableWorkspaces {
+      ...AvailableWorkspacesFragment
+    }
+    tokens {
+      ...AuthTokenPairFragment
+    }
+  }
+}
+    ${AvailableWorkspacesFragmentFragmentDoc}
+${AuthTokenPairFragmentFragmentDoc}`;
+export type VerifyEmailAndGetWorkspaceAgnosticTokenMutationFn = Apollo.MutationFunction<VerifyEmailAndGetWorkspaceAgnosticTokenMutation, VerifyEmailAndGetWorkspaceAgnosticTokenMutationVariables>;
+
+/**
+ * __useVerifyEmailAndGetWorkspaceAgnosticTokenMutation__
+ *
+ * To run a mutation, you first call `useVerifyEmailAndGetWorkspaceAgnosticTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVerifyEmailAndGetWorkspaceAgnosticTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [verifyEmailAndGetWorkspaceAgnosticTokenMutation, { data, loading, error }] = useVerifyEmailAndGetWorkspaceAgnosticTokenMutation({
+ *   variables: {
+ *      emailVerificationToken: // value for 'emailVerificationToken'
+ *      email: // value for 'email'
+ *      captchaToken: // value for 'captchaToken'
+ *   },
+ * });
+ */
+export function useVerifyEmailAndGetWorkspaceAgnosticTokenMutation(baseOptions?: Apollo.MutationHookOptions<VerifyEmailAndGetWorkspaceAgnosticTokenMutation, VerifyEmailAndGetWorkspaceAgnosticTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VerifyEmailAndGetWorkspaceAgnosticTokenMutation, VerifyEmailAndGetWorkspaceAgnosticTokenMutationVariables>(VerifyEmailAndGetWorkspaceAgnosticTokenDocument, options);
+      }
+export type VerifyEmailAndGetWorkspaceAgnosticTokenMutationHookResult = ReturnType<typeof useVerifyEmailAndGetWorkspaceAgnosticTokenMutation>;
+export type VerifyEmailAndGetWorkspaceAgnosticTokenMutationResult = Apollo.MutationResult<VerifyEmailAndGetWorkspaceAgnosticTokenMutation>;
+export type VerifyEmailAndGetWorkspaceAgnosticTokenMutationOptions = Apollo.BaseMutationOptions<VerifyEmailAndGetWorkspaceAgnosticTokenMutation, VerifyEmailAndGetWorkspaceAgnosticTokenMutationVariables>;
 export const CheckUserExistsDocument = gql`
     query CheckUserExists($email: String!, $captchaToken: String) {
   checkUserExists(email: $email, captchaToken: $captchaToken) {
@@ -8708,6 +8788,7 @@ export const ValidatePasswordResetTokenDocument = gql`
   validatePasswordResetToken(passwordResetToken: $token) {
     id
     email
+    hasPassword
   }
 }
     `;
@@ -11393,6 +11474,41 @@ export function useUpdateLabPublicFeatureFlagMutation(baseOptions?: Apollo.Mutat
 export type UpdateLabPublicFeatureFlagMutationHookResult = ReturnType<typeof useUpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationResult = Apollo.MutationResult<UpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationOptions = Apollo.BaseMutationOptions<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
+export const UpdateUserEmailDocument = gql`
+    mutation UpdateUserEmail($newEmail: String!, $verifyEmailRedirectPath: String) {
+  updateUserEmail(
+    newEmail: $newEmail
+    verifyEmailRedirectPath: $verifyEmailRedirectPath
+  )
+}
+    `;
+export type UpdateUserEmailMutationFn = Apollo.MutationFunction<UpdateUserEmailMutation, UpdateUserEmailMutationVariables>;
+
+/**
+ * __useUpdateUserEmailMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserEmailMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserEmailMutation, { data, loading, error }] = useUpdateUserEmailMutation({
+ *   variables: {
+ *      newEmail: // value for 'newEmail'
+ *      verifyEmailRedirectPath: // value for 'verifyEmailRedirectPath'
+ *   },
+ * });
+ */
+export function useUpdateUserEmailMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserEmailMutation, UpdateUserEmailMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateUserEmailMutation, UpdateUserEmailMutationVariables>(UpdateUserEmailDocument, options);
+      }
+export type UpdateUserEmailMutationHookResult = ReturnType<typeof useUpdateUserEmailMutation>;
+export type UpdateUserEmailMutationResult = Apollo.MutationResult<UpdateUserEmailMutation>;
+export type UpdateUserEmailMutationOptions = Apollo.BaseMutationOptions<UpdateUserEmailMutation, UpdateUserEmailMutationVariables>;
 export const CreateOneRoleDocument = gql`
     mutation CreateOneRole($createRoleInput: CreateRoleInput!) {
   createOneRole(createRoleInput: $createRoleInput) {
@@ -12383,6 +12499,39 @@ export function useDeleteUserAccountMutation(baseOptions?: Apollo.MutationHookOp
 export type DeleteUserAccountMutationHookResult = ReturnType<typeof useDeleteUserAccountMutation>;
 export type DeleteUserAccountMutationResult = Apollo.MutationResult<DeleteUserAccountMutation>;
 export type DeleteUserAccountMutationOptions = Apollo.BaseMutationOptions<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>;
+export const DeleteUserWorkspaceDocument = gql`
+    mutation DeleteUserWorkspace($workspaceMemberIdToDelete: String!) {
+  deleteUserFromWorkspace(workspaceMemberIdToDelete: $workspaceMemberIdToDelete) {
+    id
+  }
+}
+    `;
+export type DeleteUserWorkspaceMutationFn = Apollo.MutationFunction<DeleteUserWorkspaceMutation, DeleteUserWorkspaceMutationVariables>;
+
+/**
+ * __useDeleteUserWorkspaceMutation__
+ *
+ * To run a mutation, you first call `useDeleteUserWorkspaceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteUserWorkspaceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteUserWorkspaceMutation, { data, loading, error }] = useDeleteUserWorkspaceMutation({
+ *   variables: {
+ *      workspaceMemberIdToDelete: // value for 'workspaceMemberIdToDelete'
+ *   },
+ * });
+ */
+export function useDeleteUserWorkspaceMutation(baseOptions?: Apollo.MutationHookOptions<DeleteUserWorkspaceMutation, DeleteUserWorkspaceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteUserWorkspaceMutation, DeleteUserWorkspaceMutationVariables>(DeleteUserWorkspaceDocument, options);
+      }
+export type DeleteUserWorkspaceMutationHookResult = ReturnType<typeof useDeleteUserWorkspaceMutation>;
+export type DeleteUserWorkspaceMutationResult = Apollo.MutationResult<DeleteUserWorkspaceMutation>;
+export type DeleteUserWorkspaceMutationOptions = Apollo.BaseMutationOptions<DeleteUserWorkspaceMutation, DeleteUserWorkspaceMutationVariables>;
 export const UploadProfilePictureDocument = gql`
     mutation UploadProfilePicture($file: Upload!) {
   uploadProfilePicture(file: $file) {
@@ -14018,6 +14167,46 @@ export function useDeleteWorkflowVersionStepMutation(baseOptions?: Apollo.Mutati
 export type DeleteWorkflowVersionStepMutationHookResult = ReturnType<typeof useDeleteWorkflowVersionStepMutation>;
 export type DeleteWorkflowVersionStepMutationResult = Apollo.MutationResult<DeleteWorkflowVersionStepMutation>;
 export type DeleteWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>;
+export const DuplicateWorkflowDocument = gql`
+    mutation DuplicateWorkflow($input: DuplicateWorkflowInput!) {
+  duplicateWorkflow(input: $input) {
+    id
+    name
+    status
+    trigger
+    steps
+    createdAt
+    updatedAt
+    workflowId
+  }
+}
+    `;
+export type DuplicateWorkflowMutationFn = Apollo.MutationFunction<DuplicateWorkflowMutation, DuplicateWorkflowMutationVariables>;
+
+/**
+ * __useDuplicateWorkflowMutation__
+ *
+ * To run a mutation, you first call `useDuplicateWorkflowMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDuplicateWorkflowMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [duplicateWorkflowMutation, { data, loading, error }] = useDuplicateWorkflowMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDuplicateWorkflowMutation(baseOptions?: Apollo.MutationHookOptions<DuplicateWorkflowMutation, DuplicateWorkflowMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DuplicateWorkflowMutation, DuplicateWorkflowMutationVariables>(DuplicateWorkflowDocument, options);
+      }
+export type DuplicateWorkflowMutationHookResult = ReturnType<typeof useDuplicateWorkflowMutation>;
+export type DuplicateWorkflowMutationResult = Apollo.MutationResult<DuplicateWorkflowMutation>;
+export type DuplicateWorkflowMutationOptions = Apollo.BaseMutationOptions<DuplicateWorkflowMutation, DuplicateWorkflowMutationVariables>;
 export const DuplicateWorkflowVersionStepDocument = gql`
     mutation DuplicateWorkflowVersionStep($input: DuplicateWorkflowVersionStepInput!) {
   duplicateWorkflowVersionStep(input: $input) {

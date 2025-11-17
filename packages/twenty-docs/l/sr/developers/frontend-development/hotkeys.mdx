@@ -1,0 +1,183 @@
+---
+title: Пречице
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+## Увод
+
+Када треба да слушате пречицу, обично користите `onKeyDown` слушач догађаја.
+
+Међутим, у `twenty-front`, можете имати сукобе између истих пречица које се користе у различитим компонентама, постављеним истовремено.
+
+На пример, ако имате страну која слуша тастер Enter, и модал који слуша тастер Enter, са Select компонентом унутар тог модала која такође слуша тастер Enter, можете имати сукоб када се све покрену истовремено.
+
+## `useScopedHotkeys` хук
+
+Да бисте управљали овим проблемом, имамо прилагођени хук који омогућава слушање пречица без било каквог сукоба.
+
+Поставите га у компоненту и он ће слушати пречице само када је компонента монтирана И када је одређени **обим пречица** активан.
+
+## Како у пракси слушати пречице?
+
+У подешавању слушања пречица учествују два корака:
+
+1. Подесите [обим пречица](#what-is-a-hotkey-scope-) који ће слушати пречице
+2. Користите `useScopedHotkeys` хук за слушање пречица
+
+Постављање обима пречица је потребно чак и на једноставним страницама, јер остали UI елементи попут левог менија или командног менија такође могу слушати пречице.
+
+## Случајеви коришћења пречица
+
+Генерално, имаћете два случаја коришћења који захтевају пречице:
+
+1. На страници или компоненти која је постављена на страници
+2. У модал-типу компоненте која преузима фокус услед акције корисника
+
+Други случај коришћења може се десити рекурзивно: падајући мени у модалу на пример.
+
+### Слушање пречица на страници
+
+Пример :
+
+```tsx
+const PageListeningEnter = () => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  // 1. Set the hotkey scope in a useEffect
+  useEffect(() => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleEnterPage,
+    );
+
+    // Revert to the previous hotkey scope when the component is unmounted
+    return () => {
+      goBackToPreviousHotkeyScope();
+    };
+  }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
+
+  // 2. Use the useScopedHotkeys hook
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      // Some logic executed on this page when the user presses Enter
+      // ...
+    },
+    ExampleHotkeyScopes.ExampleEnterPage,
+  );
+
+  return <div>My page that listens for Enter</div>;
+};
+```
+
+### Слушање пречица у модал-типу компоненте
+
+За овај пример ће се користити модална компонента која слуша тастер Escape да обавести родитеља да га затвори.
+
+Овде интеракција корисника мења обим.
+
+```tsx
+const ExamplePageWithModal = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  const handleOpenModalClick = () => {
+    // 1. Set the hotkey scope when user opens the modal
+    setShowModal(true);
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleModal,
+    );
+  };
+
+  const handleModalClose = () => {
+    // 1. Revert to the previous hotkey scope when the modal is closed
+    setShowModal(false);
+    goBackToPreviousHotkeyScope();
+  };
+
+  return <div>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
+    {showModal && <MyModalComponent onClose={handleModalClose} />}
+  </div>;
+};
+```
+
+Затим у модалној компоненти:
+
+```tsx
+const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onClose()
+    },
+    ExampleHotkeyScopes.ExampleModal,
+  );
+
+  return <div>My modal component</div>;
+};
+```
+
+Важно је користити овај образац када нисте сигурни да је само користити useEffect са монт/димонт довољно да се избегну сукоби.
+
+Ти сукоби могу бити тешки за дебаговање и може се десити чешће него не са useEffects.
+
+## Шта је то обим пречица?
+
+Обим пречица је низ који представља контекст у којем су пречице активне. Обично је кодирано као енум.
+
+Када промените обим пречица, пречице које прислушкују овај обим ће бити омогућене, а пречице које прислушкују друге обиме ће бити онемогућене.
+
+Можете поставити само један обим у исто време.
+
+Као пример, обими пречица за сваку страницу су дефинисани у `PageHotkeyScope` enum:
+
+```tsx
+export enum PageHotkeyScope {
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
+}
+```
+
+Унутрашње, тренутно изабрани обим је сачуван у Recoil стању које се дели у целој апликацији:
+
+```tsx
+export const currentHotkeyScopeState = createState<HotkeyScope>({
+  key: 'currentHotkeyScopeState',
+  defaultValue: INITIAL_HOTKEYS_SCOPE,
+});
+```
+
+Али овим Recoil стањем се никада не треба управљати мануелно! Видећемо како га користити у следећем одељку.
+
+## Како функционише изнутра?
+
+Направили смо танак омот преко [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) који га чини ефикаснијим и избегава непотребна рендеровања.
+
+Такође креирамо Recoil стање за управљање стањем обима пречица и чинимо га доступним свуда у апликацији.

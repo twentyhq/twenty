@@ -8,6 +8,7 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateCronTriggerInput } from 'src/engine/metadata-modules/cron-trigger/dtos/create-cron-trigger.input';
 import { CronTriggerIdInput } from 'src/engine/metadata-modules/cron-trigger/dtos/cron-trigger-id.input';
@@ -16,8 +17,12 @@ import { UpdateCronTriggerInput } from 'src/engine/metadata-modules/cron-trigger
 import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
 import { cronTriggerGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/cron-trigger/utils/cron-trigger-graphql-api-exception-handler.util';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  WorkspaceAuthGuard,
+  SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
+)
 @Resolver()
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)

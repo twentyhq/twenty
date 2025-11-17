@@ -1,0 +1,227 @@
+---
+title: Resolució de problemes
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Resolució de problemes
+
+If you encounter any problem while setting up environment for development, upgrading your instance or self-hosting,
+here are some solutions for common problems.
+
+### Autohostatge
+
+#### La primera instal·lació resulta en `no ha estat possible autenticar la contrasenya per a l'usuari "postgres"`
+
+🚨 **IMPORTANT: Aquesta solució és NOMÉS per a instal·lacions noves** 🚨
+Si ja teniu una instància de Twenty amb dades en producció, **NO** seguiu aquests passos ja que esborraran permanentment la vostra base de dades!
+
+Durant la primera instal·lació de Twenty, potser voldreu canviar la contrasenya de la base de dades per defecte.
+La contrasenya establerta durant la primera instal·lació queda emmagatzemada permanentment al volum de la base de dades. Si més endavant intentes canviar aquesta contrasenya en la teva configuració sense eliminar el volum antic, et trobaràs amb errors d'autenticació perquè la base de dades encara utilitza la contrasenya original.
+
+⚠️ AVÍS: Seguint els passos següents ESBORRARÀ PERMANENTMENT totes les dades de la base de dades! ⚠️
+Només continueu si aquesta és una nova instal·lació sense dades importants.
+
+Per actualitzar el `PG_DATABASE_PASSWORD` necessites:
+
+```sh
+# Update the PG_DATABASE_PASSWORD in .env
+docker compose down --volumes
+docker compose up -d
+```
+
+#### CR line breaks found [Windows]
+
+Això és causat pels caràcters de salt de línia de Windows i la configuració de git. Intenta executar:
+
+```
+git config --global core.autocrlf false
+```
+
+Després elimina el repositori i clona'l de nou.
+
+#### Missing metadata schema
+
+Durant la instal·lació de Twenty, has de proveir la teva base de dades postgres amb els esquemes, extensions i usuaris adequats.
+Si aconsegueixes executar aquest aprovisionament, hauríeu de tenir els esquemes `default` i `metadata` a la teva base de dades.
+Si no, assegura't de no tenir més d'una instància de postgres executant-se al teu ordinador.
+
+#### No es pot trobar el mòdul 'twenty-emails' o les seves declaracions de tipus corresponents.
+
+Has de construir el paquet `twenty-emails` abans d'executar la inicialització de la base de dades amb `npx nx run twenty-emails:build`
+
+#### Paquet twenty-x faltant
+
+Assegureu-vos d'executar yarn en el directori arrel i després executar `npx nx server:dev twenty-server`. Si això encara no funciona, prova de construir manualment el paquet que falta.
+
+#### El Lint al desar no funciona
+
+Això hauria de funcionar de forma nativa amb l'extensió d'eslint instal·lada. Si això no funciona, proveu d'afegir això a la configuració de vscode (en l'àmbit del contenidor de desenvolupament):
+
+```
+"editor.codeActionsOnSave": {
+
+  "source.fixAll.eslint": "explicit"
+
+}
+```
+
+#### Mentre s'executa `npx nx start` o `npx nx start twenty-front`, es genera un error de falta de memòria
+
+A `packages/twenty-front/.env` descomenta `VITE_DISABLE_TYPESCRIPT_CHECKER=true` i `VITE_DISABLE_ESLINT_CHECKER=true` per desactivar les comprovacions en segon pla, reduint així la quantitat de RAM necessària.
+
+**Si no funciona:**  
+Executa només els serveis que necessites, en lloc de `npx nx start`. For instance, if you work on the server, run only `npx nx worker twenty-server`
+
+**Si no funciona:**  
+Si heu provat d'executar només `npx nx run twenty-server:start` en WSL i està fallant amb l'error de memòria següent:
+
+`FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
+
+La solució alternativa és executar la següent comanda al terminal o afegir-la al perfil .bashrc per configurar-la automàticament:
+
+`export NODE_OPTIONS="--max-old-space-size=8192"`
+
+La bandera --max-old-space-size=8192 estableix un límit superior de 8GB per a la heap de Node.js; l'ús escala amb la demanda de l'aplicació.
+Referència: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
+
+**Si no funciona:**  
+Investiga quins processos estan ocupant més la RAM de la teva màquina. A Twenty, vam notar que algunes extensions VScode ocupaven molta RAM, així que les deshabilitem temporalment.
+
+**Si no funciona:**  
+Reiniciar la teva màquina ajuda a netejar els processos fantasma.
+
+#### Mentre s'executa `npx nx start` hi ha estranys [0] i [1] en els registres
+
+Això s'espera ja que la comanda `npx nx start` està executant més ordres sota el capó
+
+#### No s'envien correus electrònics
+
+La majoria de les vegades, és perquè el `worker` no s'està executant en segon pla. Prova d'executar
+
+```
+npx nx worker twenty-server
+```
+
+#### No puc connectar el meu compte de Microsoft 365
+
+La majoria de les vegades, és perquè el teu administrador no ha habilitat la llicència de Microsoft 365 per al teu compte. Verifiqueu [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).
+
+Si tens un codi d'error `AADSTS50020`, probablement vol dir que estàs utilitzant un compte personal de Microsoft. Això encara no està suportat. Més informació [aquí](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
+
+#### Mentre s'executa `yarn` apareixen avisos a la consola
+
+Els avisos estan informant sobre la descàrrega de dependències addicionals que no estan explícitament indicades en `package.json`, per la qual cosa, sempre que no aparegui cap error irrecuperable, tot hauria de funcionar segons s'espera.
+
+#### Quan l'usuari accedeix a la pàgina de login, apareix un error sobre un usuari no autoritzat intentant accedir al espai de treball als registres
+
+Això s'espera perquè l'usuari no està autoritzat quan està desconnectat ja que la seva identitat no està verificada.
+
+#### How to check if your worker is running?
+
+- Ves a [webhook-test.com](https://webhook-test.com/) i copia **L'URL únic del teu webhook**.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Webhook test" />
+</div>
+- Obre la teva aplicació Twenty, ves a `/settings` i activa l'interruptor **Avançat** a la part inferior esquerra de la pantalla.
+- Crea un nou webhook.
+- Enganxa **L'URL únic del teu webhook** al camp **Endpoint Url** a Twenty. Defineix els **Filtres** a `Companies` i `Created`.
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Webhook settings" />
+</div>
+- Ves a `/objects/companies` i crea un nou registre d'empresa.
+- Return to [webhook-test.com](https://webhook-test.com/) and check if a new **POST request** has been received.
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Webhook test result" />
+</div>
+- Si s'ha rebut una **sol·licitud POST**, el teu treballador està funcionant amb èxit. En cas contrari, necessites solucionar problemes del teu treballador.
+
+#### La interfície d'administració falla a l'inici i retorna l'error TS5042: L'opció 'project' no pot combinar-se amb fitxers font a la línia d'ordres
+
+Comenti el connector del verificador a `packages/twenty-ui/vite-config.ts` com en l'exemple següent
+
+```
+plugins: [
+      react({ jsxImportSource: '@emotion/react' }),
+      tsconfigPaths(),
+      svgr(),
+      dts(dtsConfig),
+      // checker(checkersConfig),
+      wyw({
+        include: [
+          '**/OverflowingTextWithTooltip.tsx',
+          '**/Chip.tsx',
+          '**/Tag.tsx',
+          '**/Avatar.tsx',
+          '**/AvatarChip.tsx',
+        ],
+        babelOptions: {
+          presets: ['@babel/preset-typescript', '@babel/preset-react'],
+        },
+      }),
+    ],
+```
+
+#### No es pot accedir al panell d'administració
+
+Executa `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` al contenidor de la base de dades per obtenir accés al panell d'administració.
+
+### Docker compose en 1 clic
+
+#### No es pot iniciar la sessió
+
+Si no pots iniciar la sessió després de la configuració:
+
+1. Executeu les següents comandes:
+   ```bash
+   docker exec -it twenty-server-1 yarn
+   docker exec -it twenty-server-1 npx nx database:reset  --configuration=no-seed
+   ```
+2. Reinicia els contenidors de Docker:
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+Nota que l'ordre database:reset esborrarà completament la teva base de dades i la recrearà des de zero.
+
+#### Problemes de connexió darrere d'un proxy invers
+
+Si estàs executant Twenty darrere d'un proxy invers i experimentant problemes de connexió:
+
+1. **Verifica SERVER_URL:**
+
+   Assegura't que `SERVER_URL` al teu fitxer `.env` coincideix amb la teva URL d'accés externa, incloent `https` si SSL està habilitat.
+
+2. **Check Reverse Proxy Settings:**
+
+   - Confirm that your reverse proxy is correctly forwarding requests to the Twenty server.
+   - Assegura't que les capçaleres com `X-Forwarded-For` i `X-Forwarded-Proto` estiguin configurades correctament.
+
+3. **Reiniciar Serveis:**
+
+   Després de fer canvis, reinicia tant el proxy invers com els contenidors de Twenty.
+
+#### Error al penjar una imatge - permís denegat
+
+Canviar la propietat de la carpeta de dades a l'amfitrió d'arrel a un altre usuari i grup resol aquest problema.
+
+## Obtenció d'Ajuda
+
+Si trobeu problemes no tractats en aquesta guia:
+
+- Revisa els registres:
+
+  Visualitza els registres dels contenidors per missatges d'error:
+
+  ```bash
+  docker compose logs
+  ```
+
+- Suport Comunitari:
+
+  Contacta amb la [comunitat Twenty](https://github.com/twentyhq/twenty/issues) o els [canals de suport](https://discord.gg/cx5n4Jzs57) per obtenir ajuda.

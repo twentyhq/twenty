@@ -1,0 +1,45 @@
+---
+title: Anpassade objekt
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+Objekt är strukturer som tillåter dig att lagra data (poster, attribut, och värden) specifikt för en organisation. Twenty tillhandahåller både standard- och anpassade objekt.
+
+Standardobjekt är inbyggda objekt med ett antal attribut tillgängliga för alla användare. Exempel på standardobjekt i Twenty inkluderar Företag och Person. Standardobjekt har standardfält som också är tillgängliga för alla Twenty-användare, som Företag.displayName.
+
+Anpassade objekt är objekt som du kan skapa för att lagra information som är unik för din organisation. De är inte inbyggda; medlemmar av ditt arbetsutrymme kan skapa och anpassa anpassade objekt för att hålla information som standardobjekt inte lämpar sig för.
+
+## High-level schema
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/custom-object-schema.png" alt="High level schema" />
+</div>
+
+<br/>
+
+## Hur det fungerar
+
+Custom objects come from metadata tables that determine the shape, name, and type of the objects. All this information is present in the metadata schema database, consisting of tables:
+
+- **DataSource**: Detaljer där datan finns.
+- **Objekt**: Beskriver objektet och länkar till en DataSource.
+- **Field**: Outlines an Object's fields and connects to the Object.
+
+To add a custom object, the workspaceMember will query the /metadata API. This updates the metadata accordingly and computes a GraphQL schema based on the metadata, storing it in a GQL cache for later use.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/add-custom-objects.jpeg" alt="Query the /metadata API to add custom objects" />
+</div>
+
+<br/>
+
+To fetch data, the process involves making queries through the /graphql endpoint and passing them through the Query Resolver.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/custom-object-schema.png" alt="Query the /graphql endpoint to fetch data" />
+</div>
+

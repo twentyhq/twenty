@@ -3,6 +3,12 @@ import {
   type FieldMetadataMultiItemSettings,
   type FieldMetadataType,
   type NullablePartial,
+  type AllFieldMetadataSettings,
+  type FieldMetadataDateSettings,
+  type FieldMetadataDateTimeSettings,
+  type FieldMetadataNumberSettings,
+  type FieldMetadataRelationSettings,
+  type FieldMetadataTextSettings,
 } from 'twenty-shared/types';
 import { type Relation as TypeOrmRelation } from 'typeorm';
 
@@ -10,14 +16,6 @@ import {
   type FieldMetadataDefaultValueForAnyType,
   type FieldMetadataDefaultValueForType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
-import {
-  type AllFieldMetadataSettings,
-  type FieldMetadataDateSettings,
-  type FieldMetadataDateTimeSettings,
-  type FieldMetadataNumberSettings,
-  type FieldMetadataRelationSettings,
-  type FieldMetadataTextSettings,
-} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import {
   type FieldMetadataComplexOption,

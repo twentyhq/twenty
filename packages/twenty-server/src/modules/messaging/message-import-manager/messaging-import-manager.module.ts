@@ -14,14 +14,19 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingMessageCleanerModule } from 'src/modules/messaging/message-cleaner/messaging-message-cleaner.module';
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
-import { MessagingRelaunchFailedMessageChannelsCommand } from 'src/modules/messaging/message-import-manager/commands/messaging-relaunch-failed-message-channels.command';
 import { MessagingSingleMessageImportCommand } from 'src/modules/messaging/message-import-manager/commands/messaging-single-message-import.command';
 import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-message-list-fetch.cron.command';
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
 import { MessagingOngoingStaleCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-ongoing-stale.cron.command';
+import { MessagingProcessFolderActionsCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-process-folder-actions.cron.command';
+import { MessagingProcessGroupEmailActionsCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-process-group-email-actions.cron.command';
+import { MessagingRelaunchFailedMessageChannelsCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-relaunch-failed-message-channels.cron.command';
 import { MessagingMessageListFetchCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-message-list-fetch.cron.job';
 import { MessagingMessagesImportCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-messages-import.cron.job';
 import { MessagingOngoingStaleCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-ongoing-stale.cron.job';
+import { MessagingProcessFolderActionsCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-process-folder-actions.cron.job';
+import { MessagingProcessGroupEmailActionsCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-process-group-email-actions.cron.job';
+import { MessagingRelaunchFailedMessageChannelsCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-relaunch-failed-message-channels.cron.job';
 import { MessagingGmailDriverModule } from 'src/modules/messaging/message-import-manager/drivers/gmail/messaging-gmail-driver.module';
 import { MessagingIMAPDriverModule } from 'src/modules/messaging/message-import-manager/drivers/imap/messaging-imap-driver.module';
 import { MessagingMicrosoftDriverModule } from 'src/modules/messaging/message-import-manager/drivers/microsoft/messaging-microsoft-driver.module';
@@ -31,15 +36,23 @@ import { MessagingCleanCacheJob } from 'src/modules/messaging/message-import-man
 import { MessagingMessageListFetchJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 import { MessagingMessagesImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
 import { MessagingOngoingStaleJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
+import { MessagingProcessFolderActionsJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-process-folder-actions.job';
+import { MessagingProcessGroupEmailActionsJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-process-group-email-actions.job';
+import { MessagingRelaunchFailedMessageChannelJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-relaunch-failed-message-channel.job';
 import { MessagingMessageImportManagerMessageChannelListener } from 'src/modules/messaging/message-import-manager/listeners/messaging-import-manager-message-channel.listener';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
+import { MessagingClearCursorsModule } from 'src/modules/messaging/message-import-manager/services/messaging-clear-cursors.module';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
+import { MessagingDeleteFolderMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-folder-messages.service';
+import { MessagingDeleteGroupEmailMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-group-email-messages.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
+import { MessagingProcessFolderActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
+import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
@@ -63,6 +76,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     FeatureFlagModule,
     MessageParticipantManagerModule,
     MessagingFolderSyncManagerModule,
+    MessagingClearCursorsModule,
     MessagingMonitoringModule,
     MessagingMessageCleanerModule,
     WorkspaceEventEmitterModule,
@@ -72,14 +86,22 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingMessageListFetchCronCommand,
     MessagingMessagesImportCronCommand,
     MessagingOngoingStaleCronCommand,
+    MessagingProcessFolderActionsCronCommand,
+    MessagingProcessGroupEmailActionsCronCommand,
+    MessagingRelaunchFailedMessageChannelsCronCommand,
     MessagingSingleMessageImportCommand,
-    MessagingRelaunchFailedMessageChannelsCommand,
     MessagingMessageListFetchJob,
     MessagingMessagesImportJob,
     MessagingOngoingStaleJob,
+    MessagingProcessFolderActionsJob,
+    MessagingProcessGroupEmailActionsJob,
+    MessagingRelaunchFailedMessageChannelJob,
     MessagingMessageListFetchCronJob,
     MessagingMessagesImportCronJob,
     MessagingOngoingStaleCronJob,
+    MessagingProcessFolderActionsCronJob,
+    MessagingProcessGroupEmailActionsCronJob,
+    MessagingRelaunchFailedMessageChannelsCronJob,
     MessagingAddSingleMessageToCacheForImportJob,
     MessagingMessageImportManagerMessageChannelListener,
     MessagingCleanCacheJob,
@@ -93,12 +115,18 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingCursorService,
     MessagingSendMessageService,
     MessagingAccountAuthenticationService,
+    MessagingProcessFolderActionsService,
+    MessagingProcessGroupEmailActionsService,
+    MessagingDeleteFolderMessagesService,
+    MessagingDeleteGroupEmailMessagesService,
   ],
   exports: [
     MessagingSendMessageService,
     MessagingMessageListFetchCronCommand,
     MessagingMessagesImportCronCommand,
     MessagingOngoingStaleCronCommand,
+    MessagingRelaunchFailedMessageChannelsCronCommand,
+    MessagingProcessGroupEmailActionsService,
   ],
 })
 export class MessagingImportManagerModule {}

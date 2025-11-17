@@ -4,7 +4,7 @@ export class ProfileSection {
   private readonly firstNameField: Locator;
   private readonly lastNameField: Locator;
   private readonly emailField: Locator;
-  private readonly changePasswordButton: Locator;
+  private readonly passwordLinkButton: Locator;
   private readonly deleteAccountButton: Locator;
 
   constructor(public readonly page: Page) {
@@ -12,8 +12,8 @@ export class ProfileSection {
     this.firstNameField = page.getByPlaceholder('Tim');
     this.lastNameField = page.getByPlaceholder('Cook');
     this.emailField = page.getByRole('textbox').nth(2);
-    this.changePasswordButton = page.getByRole('button', {
-      name: 'Change Password',
+    this.passwordLinkButton = page.getByRole('button', {
+      name: /Change Password|Set Password/,
     });
     this.deleteAccountButton = page.getByRole('button', {
       name: 'Delete account',
@@ -34,8 +34,8 @@ export class ProfileSection {
     await this.emailField.textContent();
   }
 
-  async sendChangePasswordEmail() {
-    await this.changePasswordButton.click();
+  async sendPasswordSetOrChangeEmail() {
+    await this.passwordLinkButton.click();
   }
 
   async deleteAccount() {

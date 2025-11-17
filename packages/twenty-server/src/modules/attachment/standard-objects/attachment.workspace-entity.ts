@@ -1,11 +1,13 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  ActorMetadata,
+} from 'twenty-shared/types';
 
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
@@ -30,6 +32,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.attachment,
+
   namePlural: 'attachments',
   labelSingular: msg`Attachment`,
   labelPlural: msg`Attachments`,

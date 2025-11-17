@@ -1,0 +1,47 @@
+---
+title: "Besked K\x0f8"
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+Køer muliggør asynkrone operationer. De kan bruges til at udf�0F8re baggrundsopgaver, som for eksempel at sende en velkomstmail ved registrering.
+Hver anvendelsestilf�0E6lde vil have sin egen k�0F8klasse, der udvides fra `MessageQueueServiceBase`.
+
+I �F8jeblikket st�0Ftter vi kun `bull-mq`[bull-mq](https://bullmq.io/) som k�0F�1F er-driver.
+
+## Trin til at oprette og bruge en ny kø
+
+1. Tilf�0Fj et k�0F�F8navn til din nye k�0F�F8 under enum `MESSAGE_QUEUES`.
+2. Provide the factory implementation of the queue with the queue name as the dependency token.
+3. Inject the queue that you created in the required module/service with the queue name as the dependency token.
+4. Add worker class with token based injection just like producer.
+
+### Eksempel p�0E5 anvendelse
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```
+

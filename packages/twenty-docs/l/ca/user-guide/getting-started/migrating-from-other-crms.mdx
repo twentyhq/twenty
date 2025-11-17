@@ -1,0 +1,91 @@
+---
+title: Migració des d'altres CRMs
+info: Guia pas a pas per migrar dades i processos d'altres sistemes CRM a Twenty.
+image: /images/user-guide/what-is-twenty/migrating_crm.png
+sectionInfo: Una guia breu per comprendre els conceptes bàsics de Twenty
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/migrating_crm.png" alt="Header" />
+</Frame>
+
+## Abans de començar
+
+### 1. Audit Your Current Data
+
+- **Selecciona els pocs objectes i camps per migrar**: aquesta migració és una oportunitat per a un nou començament
+- **Exporta aquestes dades** del teu CRM actual
+- **Elimina duplicats** i registres obsolets
+- **Llista fluxos de treball actius** i automatitzacions
+
+### 2. Crea el teu nou model de dades
+
+Segueix la nostra [guia de model de dades](/l/ca/user-guide/data-model/customize-your-data-model) per a:
+
+- **Dissenya el model de dades** que necessites
+- **Mapeja els camps existents** al estàndard d'objectes / camps de Twenty
+- **Identifica els objectes / camps personalitzats** que necessitaràs
+- **Crea'ls** a Configuració → Model de dades
+
+## Procés de migració
+
+### 1. Import Your Data
+
+**Ordre recomanat:**
+
+1. **Empreses** primer (com a registres bàsics)
+2. **Persones** segon (enllaçat a empreses)
+3. **Oportunitats** tercer (enllaçat a persones/empreses)
+
+Utilitza l'importació CSV a través del menú de comandes `Cmd + K` (Mac) o `Ctrl + K` (Windows). Consulta la nostra [guia d'importació de dades](/l/ca/user-guide/getting-started/import-export-data) per a instruccions detallades.
+
+### 2. Recrea fluxos de treball
+
+- **Comença senzill** - recrea les teves automatitzacions més crítiques primer
+- **Utilitza el constructor de fluxos de treball de Twenty** per reemplaçar les automatitzacions existents
+
+## Reptes comuns
+
+### Problemes de formatació de dades
+
+- **Adreces de correu electrònic** - elimina duplicats (requisit de l'objecte Persones)
+- **Domini** - elimina duplicats (requisit de l'objecte Empreses)
+
+<Warning>
+Please note that domain URLs created by the synchronization with your mailbox and calendar have the following format ```https://domain.com```
+</Warning>
+
+- **Formats de data** - assegura't d'un format consistent (AAAA-MM-DD) o edita aquest format a Configuració → Experiència
+- **Números de telèfon** - utilitza el format internacional (+1234567890)
+
+### Mapatge de relacions
+
+Per importar relacions entre registres utilitzant la funció d'importació de CSV, pot utilitzar els següents camps
+
+- **Utilitza els IDs de Twenty** per a relacions complexes
+- **Utilitza adreces de correu electrònic** per enllaçar registres de Persones
+- **Utilitza noms de domini** per enllaçar registres d'Empreses
+- **Utilitza qualsevol altre camp que hagis establert com a únic**, que es pot fer a la secció Model de dades.
+  Llegeix la nostra [guia d'importació-exportació de dades](/l/ca/user-guide/getting-started/import-export-data) per a instruccions detallades sobre la creació de relacions durant la importació de CSV.
+
+## Ajuda professional
+
+### Els nostres serveis
+
+- **Paquets d'acollida de 4 hores** per a la migració guiada
+- **Socis d'implementació** per a projectes més avançats
+
+Descobreix els nostres [serveis d'implementació](/l/ca/user-guide/getting-started/implementation-services).
+
+## Migració de la solució autogestionada al núvol
+
+Si estàs passant de Twenty autogestionat a Twenty Cloud:
+
+1. **Exporta les teves dades** de la teva instància autogestionada
+2. **Segueix el procés de migració estàndard** anterior
+3. **Podem oferir assistència en la migració**, contacta amb el nostre equip
+
+## Llista de comprovació post-migració
+
+<input type="checkbox" /> All data imported successfully <input type="checkbox" /> Custom fields working correctly <input type="checkbox" /> User permissions configured <input type="checkbox" /> Email/calendar sync connected <input type="checkbox" /> Critical workflows recreated and tested <input type="checkbox" /> Team trained on new system
+

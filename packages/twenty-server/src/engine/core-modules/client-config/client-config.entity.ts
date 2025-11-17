@@ -20,7 +20,7 @@ registerEnumType(ModelProvider, {
 });
 
 @ObjectType()
-class NativeModelCapabilities {
+export class NativeModelCapabilities {
   @Field(() => Boolean, { nullable: true })
   webSearch?: boolean;
 
@@ -50,7 +50,7 @@ export class ClientAIModelConfig {
 }
 
 @ObjectType()
-class Billing {
+export class Billing {
   @Field(() => Boolean)
   isBillingEnabled: boolean;
 
@@ -62,7 +62,7 @@ class Billing {
 }
 
 @ObjectType()
-class Support {
+export class Support {
   @Field(() => SupportDriver)
   supportDriver: SupportDriver;
 
@@ -71,7 +71,7 @@ class Support {
 }
 
 @ObjectType()
-class Sentry {
+export class Sentry {
   @Field(() => String, { nullable: true })
   environment?: string;
 
@@ -83,7 +83,7 @@ class Sentry {
 }
 
 @ObjectType()
-class Captcha {
+export class Captcha {
   @Field(() => CaptchaDriverType, { nullable: true })
   provider: CaptchaDriverType | undefined;
 
@@ -92,13 +92,13 @@ class Captcha {
 }
 
 @ObjectType()
-class ApiConfig {
+export class ApiConfig {
   @Field(() => Number, { nullable: false })
   mutationMaximumAffectedRecords: number;
 }
 
 @ObjectType()
-class PublicFeatureFlagMetadata {
+export class PublicFeatureFlagMetadata {
   @Field(() => String)
   label: string;
 
@@ -110,7 +110,7 @@ class PublicFeatureFlagMetadata {
 }
 
 @ObjectType()
-class PublicFeatureFlag {
+export class PublicFeatureFlag {
   @Field(() => FeatureFlagKey)
   key: FeatureFlagKey;
 
@@ -146,9 +146,6 @@ export class ClientConfig {
 
   @Field(() => String)
   frontDomain: string;
-
-  @Field(() => Boolean)
-  debugMode: boolean;
 
   @Field(() => Boolean)
   analyticsEnabled: boolean;

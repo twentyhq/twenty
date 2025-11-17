@@ -1,0 +1,42 @@
+---
+title: Afbeeldingsinvoer
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import imageInputCode from '!!raw-loader!@site/src/ui/input/components/imageInputCode.js'
+
+Hiermee kunnen gebruikers een afbeelding uploaden en verwijderen.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ImageInput } from "@/ui/input/components/ImageInput";
+
+export const MyComponent = () => {
+  return <ImageInput/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props            | Soort      | Beschrijving                                                                                                                                       |
+| ---------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| afbeelding       | tekenreeks | De afbeeldingsbron-URL                                                                                                                             |
+| bijUpload        | functie    | De functie die wordt aangeroepen wanneer een gebruiker een nieuwe afbeelding uploadt. It receives the `File` object as a parameter |
+| bijVerwijderen   | functie    | De functie die wordt aangeroepen wanneer de gebruiker op de verwijderknop klikt.                                                   |
+| bijAfbreken      | functie    | De functie die wordt aangeroepen wanneer een gebruiker op de afbreekknop klikt tijdens het uploaden van een afbeelding.            |
+| isAanHetUploaden | booleaan   | Geeft aan of er momenteel een afbeelding wordt geüpload                                                                                            |
+| foutmelding      | tekenreeks | Een optionele foutmelding om onder de afbeeldingsinvoer te tonen                                                                                   |
+| uitgeschakeld    | booleaan   | Als `waar`, is de volledige invoer uitgeschakeld en zijn de knoppen niet klikbaar                                                                  |
+
+</Tab>
+</Tabs>

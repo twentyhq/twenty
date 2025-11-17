@@ -1,0 +1,96 @@
+---
+title: Kommandon för Frontend
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
+</Frame>
+
+## Användbara kommandon
+
+### Starta appen
+
+```bash
+npx nx start twenty-front
+```
+
+### Återskapa graphql-schema baserat på API graphql-schema
+
+```bash
+npx nx run twenty-front:graphql:generate --configuration=metadata
+```
+
+ELLER
+
+```bash
+npx nx run twenty-front:graphql:generate
+```
+
+### Lint
+
+```bash
+npx nx run twenty-front:lint # pass --fix to fix lint errors
+```
+
+## Översättningar
+
+```bash
+npx nx run twenty-front:lingui:extract
+npx nx run twenty-front:lingui:compile
+```
+
+### Testa
+
+```bash
+npx nx run twenty-front:test # run jest tests
+npx nx run twenty-front:storybook:serve:dev # run storybook
+npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve:dev to be running)
+npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
+```
+
+## Teknisk stack
+
+The project has a clean and simple stack, with minimal boilerplate code.
+
+**App**
+
+- [React](https://react.dev/)
+- [Apollo](https://www.apollographql.com/docs/)
+- [GraphQL Codegen](https://the-guild.dev/graphql/codegen)
+- [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
+- [TypeScript](https://www.typescriptlang.org/)
+
+**Testning**
+
+- [Jest](https://jestjs.io/)
+- [Storybook](https://storybook.js.org/)
+
+**Verktyg**
+
+- [Yarn](https://yarnpkg.com/)
+- [Craco](https://craco.js.org/docs/)
+- [ESLint](https://eslint.org/)
+
+## Arkitektur
+
+### Routing
+
+[React Router](https://reactrouter.com/) hanterar routingen.
+
+För att undvika onödiga [om-renderingar](/l/sv/developers/frontend-development/best-practices-front#managing-re-renders) ligger all routinglogik i en `useEffect` i `PageChangeEffect`.
+
+### Tillståndshantering
+
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) hanterar tillståndshantering.
+
+Se [bästa praxis](/l/sv/developers/frontend-development/best-practices-front#state-management) för mer information om tillståndshantering.
+
+## Testning
+
+[Jest](https://jestjs.io/) fungerar som verktyget för enhetstestning medan [Storybook](https://storybook.js.org/) är för komponenttestning.
+
+Jest är främst för att testa hjälpfunktioner, och inte komponenterna själva.
+
+Storybook är för att testa beteendet hos isolerade komponenter, samt för att visa designsystemet.
+

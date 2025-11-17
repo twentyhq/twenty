@@ -1,0 +1,106 @@
+---
+title: Tillatelser
+info: "Lær hvordan du kontrollerer tilgang: tilordne roller og sette tillatelser."
+image: /images/user-guide/permissions/permissions.png
+sectionInfo: Konfigurer innstillinger og preferanser for Twenty-arbeidsområde.
+---
+
+<Frame>
+  <img src="/images/user-guide/permissions/permissions.png" alt="Header" />
+</Frame>
+
+Twenty sitt tillatelsessystem lar deg kontrollere tilgang til tre hovedområder:
+
+- **Objekter og Felt**: Kontroller hvem som kan se, redigere eller slette oppføringer og individuelle felter
+- **Innstillinger**: Administrer tilgang til arbeidsområdekonfigurasjon og administrative funksjoner
+- **Handlinger**: Kontroller generelle arbeidsområdehandlinger som å importere data eller sende e-poster
+
+## Create a Role
+
+For å opprette en ny rolle:
+
+1. Gå til **Innstillinger → Roller**
+2. Under **Alle Roller**, klikk på **+ Opprett Rolle**
+3. Skriv inn et rollenavn
+4. I fanen for standard **Tillatelser**, konfigurer tillatelsene
+5. Klikk **Lagre** for å fullføre
+
+## Delete a Role
+
+For å slette en rolle:
+
+1. Gå til **Innstillinger → Roller**
+2. Klikk på rollen du vil fjerne
+3. Åpne fanen **Innstillinger**, klikk deretter på **Slett Rolle**
+4. Klikk **Bekreft** i modalvinduet
+
+Merk: Hvis en rolle slettes, blir alle arbeidsområdemedlemmer som er tildelt rollen automatisk tildelt standardrollen. Alle unntatt **Admin**-rollen kan slettes. Det må alltid være minst ett medlem tildelt **Admin**-rollen.
+
+## Tilordne Roller til Medlemmer
+
+### Se Nåværende Tildelinger
+
+- Gå til **Innstillinger → Roller**
+- Se alle roller og hvor mange medlemmer som er tildelt hver
+- Se hvilke medlemmer som har hvilke roller
+
+### Tilordne en Rolle til et Medlem
+
+1. Gå til **Innstillinger → Roller**
+2. Klikk på rollen du vil tilordne
+3. Åpne fanen **Tildeling**
+4. Klikk **+ Tilordne til medlem**
+5. Velg arbeidsområdemedlemmet fra listen
+6. Bekreft tildelingen
+
+### Sett Standardrolle
+
+1. Gå til **Innstillinger → Roller**
+2. I **Alternativer**-delen, finn **Standardrolle**
+3. Velg hvilken rolle nye medlemmer automatisk skal motta
+4. Nye arbeidsområdemedlemmer vil bli tildelt denne rollen når de blir med
+
+**Merk**: Du kan bare tildele roller til eksisterende arbeidsområdemedlemmer. For å invitere nye medlemmer, bruk [Medlemshåndtering](/l/no/user-guide/settings/member-management).
+
+## Tilpass Tillatelser
+
+Tillatelser bestemmer hva hver rolle kan få tilgang til eller endre innenfor ditt arbeidsområde, inkludert arbeidsområdeobjekter, innstillinger og handlinger.
+
+### Objekt- og Felt Tillatelser
+
+Kontroller tilgang til oppføringer og individuelle felt:
+
+#### Objektnivå-tillatelser
+
+- Under **Alle Objekter**, bruk tillatelser som **Se Oppføring**, **Rediger Oppføringer**, **Slett Oppføringer**, eller **Ødelegg Oppføringer** til alle objekter
+- Under **Objektnivå Tillatelser**, konfigurer unntak for individuelle objekter. Disse overstyrer innstillingene fra **Alle Objekter**
+
+#### Feltenivå Tillatelser
+
+- Konfigurer tillatelser for individuelle felt innenfor hvert objekt
+- Kontroller hvem som kan **Se Felt**, **Redigere Felt**, eller ikke har **Tilgang** til spesifikke felt
+- Felt tillatelser fungerer på samme måte som objekttillatelser med arv og overstyringer
+
+#### Administrere Tillatelses Overstyringer
+
+For å overstyre overordnede tillatelser og anvende strengere regler:
+
+- Klikk **X** for å fjerne den arvede regelen
+- Velg spesifikke tillatelser for det valgte objektet eller feltet
+- Klikk på den oransje **Angre**-ikonet (sirkulær pil) for å tilbakestille endringer
+
+Når du er ferdig, klikk **Fullfør**, deretter **Lagre** når du er omdirigert til rolesiden.
+
+### Tillatelser for Arbeidsområdeinnstillinger
+
+Kontroller tilgang til arbeidsområdeinnstillinger på to måter:
+
+- Slå på **Innstillinger Full Tilgang** for å gi full tilgang
+- Eller aktiver spesifikke tillatelser (f.eks. API-nøkkeloppretting, arbeidsområdepreferanser, rolletildeling, datakonfigurasjon, sikkerhetsinnstillinger og arbeidsflytstyring)
+
+### Tillatelser for Arbeidsområdehandlinger
+
+Kontroller tilgang til generelle arbeidsområdehandlinger:
+
+- Sveip på **Applikasjon Full Tilgang** for å gi full tillatelser
+- Or enable individual actions such as **Send Email**, **Import CSV**, and **Export CSV**

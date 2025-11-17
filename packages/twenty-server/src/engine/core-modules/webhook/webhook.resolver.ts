@@ -10,13 +10,18 @@ import { UpdateWebhookInput } from 'src/engine/core-modules/webhook/dtos/update-
 import { webhookGraphqlApiExceptionHandler } from 'src/engine/core-modules/webhook/utils/webhook-graphql-api-exception-handler.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 import { WebhookEntity } from './webhook.entity';
 import { WebhookService } from './webhook.service';
 
 @Resolver(() => WebhookEntity)
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  WorkspaceAuthGuard,
+  SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+)
 export class WebhookResolver {
   constructor(private readonly webhookService: WebhookService) {}
 

@@ -1,0 +1,251 @@
+---
+title: 설정
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+import OptionTable from '@site/src/theme/OptionTable'
+
+# 구성 관리
+
+<Warning>
+**First time installing?** Follow the [Docker Compose installation guide](https://docs.twenty.com/l/ko/developers/self-hosting/docker-compose) to get Twenty running, then return here for configuration.
+</Warning>
+
+Twenty는 다른 배포 요구에 맞추기 위해 **두 가지 구성 모드**를 제공합니다:
+
+**관리자 패널 접근:** 관리자 권한이 있는 사용자만 (`canAccessFullAdminPanel: true`) 구성 인터페이스에 접근할 수 있습니다.
+
+## 1. 관리자 패널 구성 (기본값)
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
+```
+
+설치 후 **대부분의 구성은 UI를 통해 이루어집니다:**
+
+1. Twenty 인스턴스에 접근하십시오 (보통 `http://localhost:3000`)
+2. **설정 / 관리자 패널 / 구성 변수**로 이동하세요
+3. 통합, 이메일, 저장소 등을 구성하세요
+4. 변경 사항은 즉시 적용됩니다 (멀티 컨테이너 배포의 경우 15초 이내)
+
+<Warning>
+**멀티 컨테이너 배포:** 데이터베이스 구성을 사용할 때 (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), 서버와 작업자 컨테이너 모두 동일한 데이터베이스에서 읽습니다. 관리자 패널의 변경은 둘 다 자동으로 영향을 미쳐 환경 변수를 컨테이너 간에 복제할 필요가 없습니다 (인프라 변수 제외).
+</Warning>
+
+**관리자 패널에서 구성할 수 있는 내용:**
+
+- **인증** - Google/Microsoft OAuth, 비밀번호 설정
+- **이메일** - SMTP 설정, 템플릿, 확인
+- **저장소** - S3 구성, 로컬 저장 경로
+- **통합** - Gmail, Google 캘린더, Microsoft 서비스
+- **워크플로우 및 속도 제한** - 실행 제한, API 스로틀링
+- **그리고 훨씬 더...**
+
+![관리자 패널 구성 변수](/images/user-guide/setup/admin-panel-config-variables.png)
+
+<Warning>
+각 변수는 **설정 → 관리자 패널 → 구성 변수**의 관리자 패널에 설명과 함께 문서화되어 있습니다.
+데이터베이스 연결 (`PG_DATABASE_URL`), 서버 URL (`SERVER_URL`), 앱 비밀 (`APP_SECRET`)과 같은 일부 인프라 설정은 `.env` 파일을 통해서만 구성할 수 있습니다.
+
+[Complete technical reference →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) </Warning>
+
+## 2. 환경 전용 구성
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
+```
+
+**모든 구성이 `.env` 파일을 통해 관리됩니다:**
+
+1. `.env` 파일에서 `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`로 설정하세요
+2. 모든 구성 변수를 `.env` 파일에 추가하세요
+3. 변경 사항이 적용되도록 컨테이너를 재시작하세요
+4. 관리자 패널에서는 현재 값을 표시하며 수정할 수 없습니다
+
+## Gmail & Google 캘린더 통합
+
+### Google 클라우드 프로젝트 생성
+
+1. [Google Cloud Console](https://console.cloud.google.com/)로 이동하세요
+2. 새 프로젝트를 생성하거나 기존 프로젝트를 선택하세요
+3. 이 API들을 활성화하세요:
+
+- [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+- [Google 캘린더 API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+- [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+
+### OAuth 구성
+
+1. [자격 증명](https://console.cloud.google.com/apis/credentials)으로 이동하세요
+2. OAuth 2.0 클라이언트 ID를 생성하세요
+3. 이러한 리디렉션 URI를 추가하세요:
+   - `https://{your-domain}/auth/google/redirect` (for SSO)
+   - `https://{your-domain}/auth/google-apis/get-access-token` (for integrations)
+
+### Twenty에서 구성하기
+
+1. **설정 → 관리자 패널 → 구성 변수**로 이동하세요
+2. **Google 인증** 섹션을 찾으세요
+3. 다음 변수를 설정하세요:
+   - `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   - `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   - `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   - `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   - `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   - `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>
+
+**필요한 범위** (자동 구성됨):
+[관련 소스 코드 보기](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
+
+- `https://www.googleapis.com/auth/calendar.events`
+- `https://www.googleapis.com/auth/gmail.readonly`
+- `https://www.googleapis.com/auth/profile.emails.read`
+
+### 앱이 테스트 모드인 경우
+
+앱이 테스트 모드인 경우, 프로젝트에 테스트 사용자를 추가해야 합니다.
+
+[OAuth 승인 화면](https://console.cloud.google.com/apis/credentials/consent)에서 "테스트 사용자" 섹션에 테스트 사용자를 추가하세요.
+
+## Microsoft 365 통합
+
+<Warning>
+사용자는 캘린더 및 메시징 API를 사용하려면 [Microsoft 365 라이선스](https://admin.microsoft.com/Adminportal/Home)를 보유해야 합니다. 없이는 Twenty에서 계정을 동기화할 수 없습니다.
+</Warning>
+
+### Microsoft Azure에 프로젝트 생성
+
+[Microsoft Azure](https://portal.azure.com/#view/Microsoft_AAD_IAM/AppGalleryBladeV2)에서 프로젝트를 생성하고 자격 증명을 확보해야 합니다.
+
+### API 활성화
+
+Microsoft Azure 콘솔에서 "권한"에서 다음 API를 활성화하세요:
+
+- Microsoft Graph: Mail.ReadWrite
+- Microsoft Graph: Mail.Send
+- Microsoft Graph: Calendars.Read
+- Microsoft Graph: User.Read
+- Microsoft Graph: openid
+- Microsoft Graph: email
+- Microsoft Graph: profile
+- Microsoft Graph: offline_access
+
+참고: "Mail.ReadWrite"와 "Mail.Send"는 워크플로우 작업을 통해 이메일을 보내려면 필수입니다. 수신 이메일만 원하시면 "Mail.Read"를 사용하실 수 있습니다.
+
+### 인가된 리디렉션 URI
+
+프로젝트에 다음 리디렉션 URI를 추가해야 합니다:
+
+- `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
+- `https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+### Twenty에서 구성하기
+
+1. **설정 → 관리자 패널 → 구성 변수**로 이동하세요
+2. **Microsoft 인증** 섹션을 찾으세요
+3. 다음 변수를 설정하세요:
+   - `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   - `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   - `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   - `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>
+
+### 범위 구성
+
+[관련 소스 코드 보기](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+
+- 'openid'
+- '이메일'
+- '프로필'
+- 'offline_access'
+- 'Mail.ReadWrite'
+- 'Mail.Send'
+- 'Calendars.Read'
+
+### 앱이 테스트 모드인 경우
+
+앱이 테스트 모드인 경우, 프로젝트에 테스트 사용자를 추가해야 합니다.
+
+"사용자 및 그룹" 섹션에 테스트 사용자를 추가하세요.
+
+## 캘린더 및 메시징을 위한 배경 작업
+
+Gmail, Google 캘린더 또는 Microsoft 365 통합을 구성한 후, 데이터를 동기화하는 배경 작업을 시작해야 합니다.
+
+작업자 컨테이너에 다음 주기 작업을 등록하세요:
+
+```bash
+# from your worker container
+yarn command:prod cron:messaging:messages-import
+yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:calendar:calendar-events-import
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
+yarn command:prod cron:workflow:automated-cron-trigger
+```
+
+## 이메일 구성
+
+1. **설정 → 관리자 패널 → 구성 변수**로 이동하세요
+2. **이메일** 섹션을 찾으세요
+3. SMTP 설정을 구성하세요:
+
+<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+
+  <ArticleTab>
+
+[App Password](https://support.google.com/accounts/answer/185833)를 프로비저닝해야 합니다.
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.gmail.com
+- EMAIL_SMTP_PORT=465
+- EMAIL_SMTP_USER=gmail_email_address
+- EMAIL_SMTP_PASSWORD='gmail_app_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+2단계 인증을 사용 중인 경우, [앱 비밀번호](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9)를 발급받아야 합니다.
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.office365.com
+- EMAIL_SMTP_PORT=587
+- EMAIL_SMTP_USER=office365_email_address
+- EMAIL_SMTP_PASSWORD='office365_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+**smtp4dev**는 개발 및 테스트를 위한 가상의 SMTP 이메일 서버입니다.
+
+- smtp4dev 이미지를 실행하세요: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+- smtp4dev UI에 여기에 접근하세요: [http://localhost:8090](http://localhost:8090)
+- 다음 변수를 설정하세요:
+  - EMAIL_DRIVER=smtp
+  - EMAIL_SMTP_HOST=localhost
+  - EMAIL_SMTP_PORT=2525
+
+  </ArticleTab>
+
+</ArticleTabs>
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>

@@ -126,13 +126,13 @@ jobs:
           npx nx run twenty-front:graphql:generate
           npx nx run twenty-front:graphql:generate --configuration=metadata
 
-          # Check if any files were modified
-          if ! git diff --quiet; then
+          # Check if GraphQL generated files were modified
+          if ! git diff --quiet -- packages/twenty-front/src/generated packages/twenty-front/src/generated-metadata; then
             echo "::error::GraphQL schema changes detected. Please run 'npx nx run twenty-front:graphql:generate' and 'npx nx run twenty-front:graphql:generate --configuration=metadata' and commit the changes."
             echo ""
             echo "The following GraphQL schema changes were detected:"
             echo "==================================================="
-            git diff
+            git diff -- packages/twenty-front/src/generated packages/twenty-front/src/generated-metadata
             echo "==================================================="
             echo ""
             echo "Please run 'npx nx run twenty-front:graphql:generate' and 'npx nx run twenty-front:graphql:generate --configuration=metadata' and commit the changes."

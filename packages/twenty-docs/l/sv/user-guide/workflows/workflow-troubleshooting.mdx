@@ -1,0 +1,131 @@
+---
+title: Felsökning av arbetsflöde
+info: Debugga och optimera dina arbetsflöden med felsökningstekniker och prestandaoptimeringstips.
+image: /images/user-guide/what-is-twenty/20.png
+sectionInfo: Automatisera processer och integrera med externa verktyg
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Debugga med arbetsflödeskörningar
+
+Använd **Arbetsflödeskörningar** gränssnittet för att felsöka problem:
+
+- Få åtkomst via **Körningar** panelen i arbetsflödesredigeraren
+- Klicka på enskilda körningar för att se in- och utmatningsdata för varje steg
+- Kontrollera körstatus, felmeddelanden och dataflöde mellan steg
+
+## Vanliga problem och lösningar
+
+### Workflow Not Triggering
+
+**Problem**: Arbetsflödet körs inte som förväntat.
+
+**Lösningar**:
+
+- Kontrollera att arbetsflödet är **Aktivt** (inte i utkastläge)
+- Kontrollera att utlösarkonfigurationen matchar din datastruktur
+- För postutlösare, säkerställ att rätt objekt och fält är valda
+- För webhook-utlösare, verifiera URL och förväntat dataformat
+- För schemalagda utlösare, kontrollera tidsinställningen
+
+### Formulär inte tillgängliga
+
+**Problem**: Formuläråtgärder är svåra att hitta eller nå i automatiserade arbetsflöden.
+
+<Warning>
+Formulär är för närvarande utformade för endast manuella utlösare. För arbetsflöden med andra utlösare (post skapad, uppdaterad, etc.), är formulär endast tillgängliga via arbetsflödeskörningsgränssnittet, vilket inte är den förväntade användarupplevelsen. Ett meddelandecenter kommer att släppas 2026 för att korrekt stödja formulär i automatiserade arbetsflöden.
+</Warning>
+
+**Lösning**: Använd manuella utlösare när formulär krävs, eller omstrukturer arbetsflöden för att undvika formulär i automatiserade flöden.
+
+### Hög kreditanvändning
+
+**Problem**: Arbetsflöden konsumerar mer krediter än förväntat.
+
+**Vanliga orsaker & lösningar**:
+
+- **Ineffektiva API-anrop**: Batcha API-anrop när det är möjligt istället för enskilda förfrågningar
+- **Felaktig manuell utlösarkonfiguration**: Använd `Bulk` tillgänglighet istället för `Single` för att behandla flera poster i en arbetsflödeskörning
+- **Saknade filter**: Lägg till villkorlig logik för att stoppa arbetsflöden när kriterier inte är uppfyllda
+- **Onödiga steg**: Ta bort redundanta åtgärder och optimera arbetsflödeslogik
+- **Realtid kontra Schema**: Använd schemalagda arbetsflöden för mindre brådskande processer
+
+### Samtidiga arbetsflödesgränser
+
+**Problem**: Når gränsen för 100 samtidiga arbetsflöden per arbetsyta.
+
+<Warning>
+You cannot run more than 100 workflows in parallel at any given time per workspace.
+</Warning>
+
+**Lösningar**:
+
+- Använd `Bulk` tillgänglighet för manuella utlösare för att bearbeta flera poster i en körning
+- Implementera fördröjningar mellan arbetsflödeskörningar med schemalagda utlösare
+- Optimera arbetsflöden för att köra snabbare och minska samtidig körningstid
+- Överväg batchbearbetning under lågtrafik
+
+### API-hastighetsbegränsning
+
+**Problem**: Externa API-anrop misslyckas på grund av hastighetsbegränsningar.
+
+**Lösningar**:
+
+- Använd schemalagda arbetsflöden istället för realtidstriggers när det är möjligt
+- Implementera fördröjningar mellan API-anrop i kodåtgärder
+- Batcha API-förfrågningar när den externa tjänsten stödjer det
+- Övervaka arbetsflödeskörningar för hastighetsgränsfel och justera tidsinställning
+
+### Iteratorproblem
+
+**Problem**: Iterator-åtgärder fungerar inte som förväntat.
+
+**Lösningar**:
+
+- **Obs**: Iterator är för närvarande i beta. Aktivera den under Inställningar → Utsläpp → Lab
+- Verifiera att inmatningen är en array av poster från ett tidigare steg
+- Kontrollera att åtgärder inom iteratorn är korrekt konfigurerade
+- Använd iterator med manuella `Bulk`-triggers för optimal prestanda
+
+### Saknade behörigheter
+
+**Problem**: Kan inte komma åt arbetsflödessektionen.
+
+<Warning>
+Om du inte ser arbetsflödessektionen är det på grund av ett behörighetsproblem. Kontakta din arbetsytas administratör för att ge dig åtkomst till arbetsflöden.
+</Warning>
+
+## Optimeringstips
+
+### Prestandabäst praxis
+
+- **Börja enkelt** och öka gradvis komplexiteten
+- **Använd `Bulk` tillgänglighet** för manuella utlösare för att bearbeta flera poster effektivt
+- **Lägg till filter tidigt** för att stoppa arbetsflöden när kriterier inte uppfylls
+- **Batcha API-anrop** och använd schemalagda arbetsflöden för icke-brådskande processer
+- **Dölj arbetsflödeskörningar** på sidor som visar alla arbetsflöden för att förbättra laddningsprestanda
+- **Övervaka kreditanvändning** regelbundet i Inställningar → Fakturering
+
+### Felprevention
+
+- **Testa i utkastläge** innan du aktiverar arbetsflöden
+- **Validera API-svar** och implementera fallback-åtgärder
+- **Använd beskrivande stegnamn** för enklare underhåll
+- **Dokumentera komplex logik** för teammedlemmar
+
+## Söka hjälp
+
+### Självbetjäningsresurser
+
+- Granska [Arbetsflödefunktioner](/l/sv/user-guide/workflows/workflow-features) för tekniska detaljer
+- Kontrollera [Arbetsflödeskrediter](/l/sv/user-guide/workflows/workflow-credits) för optimeringstips
+- Utforska [Interna automationer](/l/sv/user-guide/workflows/internal-automations) och [Integration av externa verktyg](/l/sv/user-guide/workflows/external-tool-integration) för exempel
+
+### Professionellt stöd
+
+- Kontakta våra [Professionella tjänster](/l/sv/user-guide/workflows/professional-services) för komplex felsökning
+- Nå ut till support via contact@twenty.com för teknisk hjälp
+

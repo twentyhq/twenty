@@ -90,13 +90,18 @@ msgstr "Hyväksy kutsu"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
 msgstr "Vahvista sähköpostiosoitteesi"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr "Kiitos, että rekisteröidyit Twenty:n käyttäjäksi! Ennen kuin aloitamme, meidän täytyy vahvistaa, että kyseessä on sinä. Klikkaa alla vahvistaaksesi sähköpostiosoitteesi."
+msgid "Confirm new email"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -130,13 +135,23 @@ msgstr "Nollaa salasanasi 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "Tämä linkki on voimassa vain seuraavat {duration}. Jos linkki ei toimi, voit käyttää suoraan kirjautumisen varmennuslinkkiä:"
+msgid "Set your password 🗝"
+msgstr "Aseta salasana 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
 msgstr "Nollaa"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set"
+msgstr "Aseta"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "Tämä linkki on voimassa vain seuraavat {duration}. Jos linkki ei toimi, voit käyttää suoraan kirjautumisen varmennuslinkkiä:"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx

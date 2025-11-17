@@ -1,0 +1,56 @@
+---
+title: 图标选择器
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+一个基于下拉菜单的图标选择器，允许用户从列表中选择图标。
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import React, { useState } from "react";
+import { IconPicker } from "@/ui/input/components/IconPicker";
+
+export const MyComponent = () => {
+
+   const [selectedIcon, setSelectedIcon] = useState("");
+   const handleIconChange = ({ iconKey, Icon }) => {
+     console.log("Selected Icon:", iconKey);
+     setSelectedIcon(iconKey);
+   };
+
+  return (
+    <RecoilRoot>
+      <IconPicker
+        disabled={false}
+        onChange={handleIconChange}
+        selectedIconKey={selectedIcon}
+        variant="primary"
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 属性              | 类型       | 描述                                                     |
+| --------------- | -------- | ------------------------------------------------------ |
+| disabled        | 布尔值      | 如果设置为 `true`，则禁用图标选择器                                  |
+| onChange        | 函数       | 当用户选择图标时触发的回调函数。 它接收一个具有 `iconKey` 和 `Icon` 属性的对象      |
+| selectedIconKey | 字符串      | 初始选中的图标键                                               |
+| onClickOutside  | 函数       | 当用户点击下拉菜单外部时触发的回调函数                                    |
+| onClose         | 函数       | 当下拉菜单关闭时触发的回调函数                                        |
+| onOpen          | function | 当下拉菜单打开时触发的回调函数                                        |
+| 变体              | 字符串      | 可点击图标的视觉风格变体。 可选项包括：`primary`、`secondary` 和 `tertiary` |
+
+</Tab>
+</Tabs>

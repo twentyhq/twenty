@@ -1,15 +1,17 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  ActorMetadata,
+  AddressMetadata,
+  LinksMetadata,
+  type CurrencyMetadata,
+} from 'twenty-shared/types';
 
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
-import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { AddressMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/address.composite-type';
-import { type CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
-import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/workspace-duplicate-criteria.decorator';
@@ -50,6 +52,7 @@ export const SEARCH_FIELDS_FOR_COMPANY: FieldTypeAndNameMetadata[] = [
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.company,
+
   namePlural: 'companies',
   labelSingular: msg`Company`,
   labelPlural: msg`Companies`,
@@ -76,6 +79,9 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Domain Name`,
     description: msg`The company website URL. We use this url to fetch the company icon`,
     icon: 'IconLink',
+    settings: {
+      maxNumberOfValues: 1,
+    },
   })
   @WorkspaceIsUnique()
   domainName: LinksMetadata;

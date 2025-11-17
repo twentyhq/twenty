@@ -33,17 +33,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"AI Meeting Transcript@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "AI Meeting Transcript@workspace:."
-  dependencies:
-    "@types/node": "npm:^24.7.2"
-    axios: "npm:^1.12.2"
-    openai: "npm:^4.28.0"
-    twenty-sdk: "npm:^0.0.2"
-  languageName: unknown
-  linkType: soft
-
 "abort-controller@npm:^3.0.0":
   version: 3.0.0
   resolution: "abort-controller@npm:3.0.0"
@@ -61,6 +50,17 @@ __metadata:
   checksum: 10c0/235c182432f75046835b05f239708107138a40103deee23b6a08caee5136873709155753b394ec212e49e60e94a378189562cb01347765515cff61b692c69187
   languageName: node
   linkType: hard
+
+"ai-meeting-transcript@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "ai-meeting-transcript@workspace:."
+  dependencies:
+    "@types/node": "npm:^24.7.2"
+    axios: "npm:^1.12.2"
+    openai: "npm:^4.28.0"
+    twenty-sdk: "npm:^0.0.2"
+  languageName: unknown
+  linkType: soft
 
 "async-function@npm:^1.0.0":
   version: 1.0.0

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 
-import { main as runRollups } from '../serverlessFunctions/calculaterollups/src/index.ts';
+import { main as runRollups } from '../serverlessFunctions/calculaterollups/src/index';
 
 type Json = Record<string, unknown>;
 
@@ -48,7 +48,7 @@ const jsonResponse = (data: Json | Json[]) =>
   });
 
 global.fetch = async (
-  rawUrl: string | URL,
+  rawUrl: any,
   init?: { method?: string; body?: unknown },
 ): Promise<any> => {
   const url = typeof rawUrl === 'string' ? new URL(rawUrl) : rawUrl;
@@ -62,7 +62,9 @@ global.fetch = async (
   if (url.pathname.endsWith('/opportunities') && method === 'GET') {
     const companyId = url.searchParams.get('filter[companyId]');
     const items = companyId
-      ? mockOpportunities.filter((opportunity) => opportunity.companyId === companyId)
+      ? mockOpportunities.filter(
+          (opportunity) => opportunity.companyId === companyId,
+        )
       : mockOpportunities;
     return jsonResponse({
       data: {
@@ -81,10 +83,12 @@ global.fetch = async (
     return jsonResponse({ data: { companies: [{ id, ...payload }] } });
   }
 
-  throw new Error(`Unhandled request in mock fetch: ${method} ${url.toString()}`);
+  throw new Error(
+    `Unhandled request in mock fetch: ${method} ${url.toString()}`,
+  );
 };
 
-function safeParse(body: unknown) {
+const safeParse = (body: unknown) => {
   if (!body) {
     return undefined;
   }
@@ -97,9 +101,9 @@ function safeParse(body: unknown) {
     }
   }
   return undefined;
-}
+};
 
-async function main() {
+const main = async () => {
   process.env.TWENTY_API_KEY = 'mock-api-key';
   process.env.TWENTY_API_BASE_URL = 'https://mock.twenty/api';
 
@@ -123,15 +127,22 @@ async function main() {
     lastOpportunityCloseDate: `${currentYear.toString().padStart(4, '0')}-03-05`,
   };
 
-  const companyUpdate = updatePayloads.find((payload) => payload.id === 'company-1');
+  const companyUpdate = updatePayloads.find(
+    (payload) => payload.id === 'company-1',
+  );
   assert(companyUpdate, 'expected a PATCH payload for company-1');
   assert.deepStrictEqual(companyUpdate.payload, expectedPayload);
 
   const opportunitiesRequest = requestLog.find(
     (entry) => entry.method === 'GET' && entry.url.includes('/opportunities'),
   );
-  assert(opportunitiesRequest, 'expected at least one GET request for /opportunities');
-  const filterParams = new URL(opportunitiesRequest.url).searchParams.getAll('filter');
+  assert(
+    opportunitiesRequest,
+    'expected at least one GET request for /opportunities',
+  );
+  const filterParams = new URL(opportunitiesRequest.url).searchParams.getAll(
+    'filter',
+  );
   assert.deepStrictEqual(
     filterParams,
     ['companyId[eq]:"company-1"'],
@@ -146,7 +157,7 @@ async function main() {
 
   console.log('\n--- Requests made ---');
   console.dir(requestLog, { depth: null });
-}
+};
 
 main().catch((error) => {
   console.error('Smoke test failed', error);

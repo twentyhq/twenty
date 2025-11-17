@@ -9,12 +9,14 @@ import { CronTriggerResolver } from 'src/engine/metadata-modules/cron-trigger/re
 import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
 import { WorkspaceFlatCronTriggerMapCacheService } from 'src/engine/metadata-modules/cron-trigger/services/workspace-flat-cron-trigger-map-cache.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([WorkspaceEntity, CronTriggerEntity]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    PermissionsModule,
     WorkspaceMigrationV2Module,
   ],
   providers: [

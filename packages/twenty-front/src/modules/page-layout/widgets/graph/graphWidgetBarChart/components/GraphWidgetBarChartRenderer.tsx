@@ -1,7 +1,10 @@
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
-import { GraphWidgetBarChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChartHasTooManyGroupsEffect';
+import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
-import { lazy, Suspense, useMemo } from 'react';
+import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
+import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
+import { lazy, Suspense } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   type BarChartConfiguration,
   type PageLayoutWidget,
@@ -37,17 +40,19 @@ export const GraphWidgetBarChartRenderer = ({
   });
 
   const configuration = widget.configuration as BarChartConfiguration;
-  const groupMode =
-    configuration.groupMode === 'GROUPED' ? 'grouped' : 'stacked';
 
-  const filterStateKey = useMemo(
-    () =>
-      `${configuration.rangeMin ?? ''}-${configuration.rangeMax ?? ''}-${configuration.omitNullValues ?? ''}`,
-    [
-      configuration.rangeMin,
-      configuration.rangeMax,
-      configuration.omitNullValues,
-    ],
+  const hasGroupByOnSecondaryAxis = isDefined(
+    configuration.secondaryAxisGroupByFieldMetadataId,
+  );
+  const groupMode = getEffectiveGroupMode(
+    configuration.groupMode,
+    hasGroupByOnSecondaryAxis,
+  );
+
+  const chartFilterKey = generateChartAggregateFilterKey(
+    configuration.rangeMin,
+    configuration.rangeMax,
+    configuration.omitNullValues,
   );
 
   if (loading) {
@@ -56,12 +61,12 @@ export const GraphWidgetBarChartRenderer = ({
 
   return (
     <>
-      <GraphWidgetBarChartHasTooManyGroupsEffect
+      <GraphWidgetChartHasTooManyGroupsEffect
         hasTooManyGroups={hasTooManyGroups}
       />
       <Suspense fallback={<ChartSkeletonLoader />}>
         <GraphWidgetBarChart
-          key={filterStateKey}
+          key={chartFilterKey}
           data={data}
           series={series}
           indexBy={indexBy}

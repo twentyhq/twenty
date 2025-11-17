@@ -166,6 +166,11 @@ msgstr "Çalışma alanının silinmesini önlemek için eylem gerekli"
 msgid "Action Needed to Reset Password"
 msgstr "Şifreyi sıfırlamak için eylem gerekli"
 
+#. js-lingui-id: 8Q5bRY
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Set Password"
+msgstr "Şifre Oluşturmak için Eylem Gerekli"
+
 #. js-lingui-id: 52fA3U
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Active fields cannot be deleted"
@@ -584,10 +589,10 @@ msgstr "{connectFieldName} ile bağlantı yapılamıyor. Koşula uygun benzersiz
 msgid "Can't impersonate user via api key"
 msgstr "Kullanıcı api anahtarı üzerinden taklit edilemiyor"
 
-#. js-lingui-id: 874/Xl
+#. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-deactivated version"
-msgstr ""
+msgid "Cannot activate non-draft or non-last-published version"
+msgstr "Taslak ya da son yayımlanan olmayan bir sürümü etkinleştiremezsiniz"
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -620,10 +625,15 @@ msgstr "Aktif olmayan iş akışı sürümü devre dışı bırakılamaz."
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "Mevcut yinelenen değerler nedeniyle benzersizlik etkinleştirilemiyor. Lütfen öncelikle verilerinizi (soft silinmiş kayıtlar dahil) gözden geçirip düzeltin."
 
+#. js-lingui-id: IDMgr/
+#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
+msgid "Cannot have more than one active workflow version"
+msgstr "Birden fazla aktif iş akışı sürümü olamaz."
+
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
 msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
-msgstr ""
+msgstr "Mesaj kanalı, eşzamanlama devam ederken güncellenemez. Lütfen eşzamanlamanın tamamlanmasını bekleyin."
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -984,10 +994,20 @@ msgstr "Bitiş Tarihi"
 msgid "Duplicated option {field}"
 msgstr "Çift seçenek {field}"
 
+#. js-lingui-id: AcnTuz
+#: src/engine/core-modules/user/services/user.service.ts
+msgid "Email already in use"
+msgstr ""
+
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Email already verified."
 msgstr "E-posta zaten doğrulandı."
+
+#. js-lingui-id: LT5dFi
+#: src/engine/core-modules/user/services/user.service.ts
+msgid "Email can only be updated when you belong to a single workspace."
+msgstr ""
 
 #. js-lingui-id: xw6iqb
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
@@ -1417,11 +1437,6 @@ msgstr "Güncellenecek alan bulunamadı"
 msgid "Field used for full-text search"
 msgstr "Tam Metin Araması için Kullanılan Alan"
 
-#. js-lingui-id: s3HtdT
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "FieldMetadataId is required"
-msgstr "FieldMetadataId gereklidir"
-
 #. js-lingui-id: Sof2+k
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "FieldMetadataId is required to create a view field."
@@ -1690,16 +1705,6 @@ msgstr "Geçersiz UUID {id}"
 msgid "Invalid verification code. Please try again."
 msgstr "Geçersiz doğrulama kodu. Lütfen tekrar deneyin."
 
-#. js-lingui-id: 8xkULN
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "Invalid view sort data"
-msgstr "Geçersiz görünüm sıralama verisi"
-
-#. js-lingui-id: I0OzaR
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "Invalid view sort data for view sort id: {id}"
-msgstr "Görünüm sıralama id'si için geçersiz sıralama verisi: {id}"
-
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1838,6 +1843,12 @@ msgstr "Etiket virgül içeremez"
 msgid "Language"
 msgstr "Dil"
 
+#. js-lingui-id: hHtzNQ
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+msgid "Last credentials refreshed at"
+msgstr "Kimlik bilgileri en son şu tarihte yenilendi:"
+
 #. js-lingui-id: WvYp6o
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Last published Version Id"
@@ -1915,7 +1926,7 @@ msgstr "Mart"
 #. js-lingui-id: hw7Mwk
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
 msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
-msgstr ""
+msgstr "Güncellenecek maksimum kayıt sayısı {QUERY_MAX_RECORDS}."
 
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -1967,7 +1978,7 @@ msgstr "Mesaj Kanalı Mesaj İlişkilendirmeleri"
 #. js-lingui-id: LOU3x5
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
-msgstr ""
+msgstr "Mesaj kanalı bulunamadı"
 
 #. js-lingui-id: k7LXPQ
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -2111,11 +2122,6 @@ msgstr "Morf ilişkisi oluşturma yükleri yalnızca diğer nesne meta verilerin
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
 msgstr "Morph ilişki oluşturma taşıyıcıları yalnızca aynı nesne meta verilerine sahip ilişki içermelidir"
 
-#. js-lingui-id: DsdcRG
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
-msgid "Morph relation fields are disabled for your workspace"
-msgstr "Çalışma alanınız için morf ilişki alanları devre dışı bırakıldı"
-
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
@@ -2207,6 +2213,11 @@ msgstr "İsim camelCase olmalı"
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Names are not synced with labels"
 msgstr "İsimler, etiketlerle senkronize değil"
+
+#. js-lingui-id: TYhxR+
+#: src/engine/core-modules/user/services/user.service.ts
+msgid "New email must be different from current email"
+msgstr ""
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2577,7 +2588,7 @@ msgstr "Sayfa Düzeni Kimliği"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Parent Folder ID"
-msgstr ""
+msgstr "Ana Klasör Kimliği"
 
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -2587,22 +2598,22 @@ msgstr "Şifre çok zayıf"
 #. js-lingui-id: l6qKfi
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Pending action for folder sync"
-msgstr ""
+msgstr "Klasör senkronizasyonu için bekleyen eylem"
 
 #. js-lingui-id: ttZgHv
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Pending action for group emails"
-msgstr ""
+msgstr "Grup e-postaları için bekleyen eylem"
 
 #. js-lingui-id: 5aGQev
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Pending group emails action"
-msgstr ""
+msgstr "Bekleyen grup e-posta işlemi"
 
 #. js-lingui-id: 6jM9pB
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Pending Sync Action"
-msgstr ""
+msgstr "Bekleyen Senkronizasyon İşlemi"
 
 #. js-lingui-id: 1wdjme
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -2648,6 +2659,11 @@ msgstr "Telefonlar"
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "Please check your connection settings. Make sure the server host, port, and password are correct."
 msgstr "Bağlantı ayarlarınızı kontrol edin. Sunucu ana bilgisayarının, portun ve şifrenin doğru olduğundan emin olun."
+
+#. js-lingui-id: mqzu5F
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Please confirm your updated email"
+msgstr ""
 
 #. js-lingui-id: v0iiWr
 #: src/engine/core-modules/webhook/webhook.service.ts
@@ -2995,16 +3011,6 @@ msgstr "Konu"
 msgid "Sunday"
 msgstr "Pazar"
 
-#. js-lingui-id: VuvnTL
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Sync all folders"
-msgstr ""
-
-#. js-lingui-id: 9PsZjo
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Sync all folders including new ones"
-msgstr ""
-
 #. js-lingui-id: oyJYg7
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -3237,6 +3243,11 @@ msgstr "Bu çalışma alanı için varsayılan rol bulunamadı. Yardım için de
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "The executor of the workflow"
 msgstr "İş akışını yürüten kişi"
+
+#. js-lingui-id: o6DGfJ
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "The field \"{field}\" cannot be updated. Please contact your workspace administrator."
+msgstr "\"{field}\" alanı güncellenemez. Lütfen çalışma alanı yöneticiniz ile iletişime geçin."
 
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -3524,11 +3535,6 @@ msgstr "Benzersiz alan varsayılan bir değere sahip olamaz"
 msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
 msgstr "{fieldType} türünde {fieldName} alanı için benzersiz indeks oluşturulamadı"
 
-#. js-lingui-id: rtir7c
-#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
-msgid "unknown"
-msgstr ""
-
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
@@ -3575,6 +3581,12 @@ msgstr "Kullanıcı E-postası"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Id"
 msgstr "Kullanıcı Kimliği"
+
+#. js-lingui-id: pMOjQa
+#: src/engine/core-modules/auth/token/services/access-token.service.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "User is not a member of the workspace."
+msgstr "Kullanıcı çalışma alanının bir üyesi değildir."
 
 #. js-lingui-id: B43Kks
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -3812,16 +3824,6 @@ msgstr "Kanban toplu alanı meta verileri bulunamadı."
 msgid "View not found"
 msgstr "Görünüm bulunamadı"
 
-#. js-lingui-id: znNExx
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "View sort (id: {id}) not found"
-msgstr "Görünüm sıralama (id: {id}) bulunamadı"
-
-#. js-lingui-id: 3zMs+f
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "View sort not found"
-msgstr "Görünüm sıralama bulunamadı"
-
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
 msgid "View to delete not found"
@@ -3847,11 +3849,6 @@ msgstr "Aynı ID'ye sahip görünüm zaten mevcut"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "ViewId"
 msgstr "GörünümId"
-
-#. js-lingui-id: kpQRY2
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "ViewId is required"
-msgstr "ViewId gereklidir"
 
 #. js-lingui-id: l88nXn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -4130,11 +4127,6 @@ msgstr "Çalışma alanı üyesi pozisyonu"
 msgid "Workspace Members"
 msgstr "Çalışma Alanı Üyeleri"
 
-#. js-lingui-id: bBr+RW
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "WorkspaceId is required"
-msgstr "WorkspaceId gereklidir"
-
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
@@ -4210,24 +4202,34 @@ msgid "You cannot set permissions on system objects as they are managed by the p
 msgstr "Sistem nesneleri üzerinde izinler ayarlanamaz, çünkü platform tarafından yönetilmektedirler."
 
 #. js-lingui-id: EFQeXU
-#: src/engine/guards/settings-permissions.guard.ts
+#: src/engine/guards/settings-permission.guard.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "Bu özelliğe erişim izniniz yok. Erişim için çalışma alanı yöneticinizle iletişime geçin."
+
+#. js-lingui-id: P69VwK
+#: src/engine/core-modules/user/user.resolver.ts
+msgid "You do not have permission to delete this user from the workspace. Please contact your workspace administrator for access."
+msgstr "Bu kullanıcıyı çalışma alanından silme izniniz yok. Erişim için lütfen çalışma alanı yöneticinizle iletişime geçin."
 
 #. js-lingui-id: +2vVRB
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Kullanıcıları taklit etmek için izniniz yok. Erişim için çalışma alanı yöneticinizle iletişime geçin."
 
-#. js-lingui-id: k7P8yU
+#. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "You do not have permission to manage security settings. Please contact your workspace administrator."
-msgstr "Güvenlik ayarlarını yönetmek için izniniz yok. Lütfen çalışma alanı yöneticinizle iletişime geçin."
+msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
+msgstr "{fieldsList} alanlarını güncelleme izniniz yoktur. Lütfen çalışma alanı yöneticiniz ile iletişime geçin."
 
-#. js-lingui-id: svchJc
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "You do not have permission to manage workspace settings. Please contact your workspace administrator."
-msgstr "Çalışma alanı ayarlarını yönetmek için izniniz yok. Lütfen çalışma alanı yöneticinizle iletişime geçin."
+#. js-lingui-id: M1he8p
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+msgid "You don't have permission to create workspace-level views."
+msgstr ""
+
+#. js-lingui-id: QmL9y9
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+msgid "You don't have permission to modify this view."
+msgstr ""
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts

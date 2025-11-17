@@ -46,6 +46,7 @@ import {
   IconHeart,
   IconHeartOff,
   IconLayout,
+  IconLayoutDashboard,
   IconPlus,
   IconRefresh,
   IconRotate2,
@@ -160,6 +161,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isDefined(selectedRecord) && !selectedRecord.isRemote,
     availableOn: [ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION],
     component: <ExportMultipleRecordsAction />,
+    requiredPermissionFlag: PermissionFlagType.EXPORT_CSV,
   },
   [SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW]: {
     type: ActionType.Standard,
@@ -474,8 +476,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     type: ActionType.Navigation,
     scope: ActionScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_WORKFLOWS,
-    label: msg`Go to workflows`,
-    shortLabel: msg`See workflows`,
+    label: msg`Go to Workflows`,
+    shortLabel: msg`See Workflows`,
     position: 20,
     Icon: IconSettingsAutomation,
     accent: 'default',
@@ -485,7 +487,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       viewType,
       getTargetObjectReadPermission,
     }) =>
-      getTargetObjectReadPermission(CoreObjectNameSingular.Workflow) === true &&
+      getTargetObjectReadPermission(CoreObjectNameSingular.Workflow) &&
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Workflow ||
         viewType === ActionViewType.SHOW_PAGE),
     availableOn: [
@@ -522,7 +524,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       viewType,
       getTargetObjectReadPermission,
     }) =>
-      getTargetObjectReadPermission(CoreObjectNameSingular.Person) === true &&
+      getTargetObjectReadPermission(CoreObjectNameSingular.Person) &&
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Person ||
         viewType === ActionViewType.SHOW_PAGE),
     component: (
@@ -553,7 +555,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       viewType,
       getTargetObjectReadPermission,
     }) =>
-      getTargetObjectReadPermission(CoreObjectNameSingular.Company) === true &&
+      getTargetObjectReadPermission(CoreObjectNameSingular.Company) &&
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Company ||
         viewType === ActionViewType.SHOW_PAGE),
     component: (
@@ -563,6 +565,37 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       />
     ),
     hotKeys: ['G', 'C'],
+  },
+  [NoSelectionRecordActionKeys.GO_TO_DASHBOARDS]: {
+    type: ActionType.Navigation,
+    scope: ActionScope.Global,
+    key: NoSelectionRecordActionKeys.GO_TO_DASHBOARDS,
+    label: msg`Go to Dashboards`,
+    shortLabel: msg`Dashboards`,
+    position: 24,
+    Icon: IconLayoutDashboard,
+    isPinned: false,
+    availableOn: [
+      ActionViewType.INDEX_PAGE_NO_SELECTION,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.INDEX_PAGE_BULK_SELECTION,
+      ActionViewType.SHOW_PAGE,
+    ],
+    shouldBeRegistered: ({
+      objectMetadataItem,
+      viewType,
+      getTargetObjectReadPermission,
+    }) =>
+      getTargetObjectReadPermission(CoreObjectNameSingular.Dashboard) &&
+      (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard ||
+        viewType === ActionViewType.SHOW_PAGE),
+    component: (
+      <ActionLink
+        to={AppPath.RecordIndexPage}
+        params={{ objectNamePlural: CoreObjectNamePlural.Dashboard }}
+      />
+    ),
+    hotKeys: ['G', 'D'],
   },
   [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
     type: ActionType.Navigation,
@@ -584,8 +617,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       viewType,
       getTargetObjectReadPermission,
     }) =>
-      getTargetObjectReadPermission(CoreObjectNameSingular.Opportunity) ===
-        true &&
+      getTargetObjectReadPermission(CoreObjectNameSingular.Opportunity) &&
       (objectMetadataItem?.nameSingular !==
         CoreObjectNameSingular.Opportunity ||
         viewType === ActionViewType.SHOW_PAGE),
@@ -603,7 +635,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_SETTINGS,
     label: msg`Go to Settings`,
     shortLabel: msg`Settings`,
-    position: 24,
+    position: 25,
     Icon: IconSettings,
     isPinned: false,
     availableOn: [
@@ -629,7 +661,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_TASKS,
     label: msg`Go to Tasks`,
     shortLabel: msg`Tasks`,
-    position: 25,
+    position: 26,
     Icon: IconCheckbox,
     isPinned: false,
     availableOn: [
@@ -643,7 +675,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       viewType,
       getTargetObjectReadPermission,
     }) =>
-      getTargetObjectReadPermission(CoreObjectNameSingular.Task) === true &&
+      getTargetObjectReadPermission(CoreObjectNameSingular.Task) &&
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Task ||
         viewType === ActionViewType.SHOW_PAGE),
     component: (
@@ -660,7 +692,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_NOTES,
     label: msg`Go to Notes`,
     shortLabel: msg`Notes`,
-    position: 26,
+    position: 27,
     Icon: IconCheckbox,
     isPinned: false,
     availableOn: [
@@ -674,7 +706,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       viewType,
       getTargetObjectReadPermission,
     }) =>
-      getTargetObjectReadPermission(CoreObjectNameSingular.Note) === true &&
+      getTargetObjectReadPermission(CoreObjectNameSingular.Note) &&
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Note ||
         viewType === ActionViewType.SHOW_PAGE),
     component: (

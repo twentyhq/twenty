@@ -4,12 +4,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
+import { type ActorMetadata } from 'twenty-shared/types';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {

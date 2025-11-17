@@ -33,7 +33,6 @@ import { AvailableWorkspacesAndAccessTokensOutput } from 'src/engine/core-module
 import { GetAuthTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-auth-token-from-email-verification-token.input';
 import { GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
 import { GetAuthorizationUrlForSSOOutput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.output';
-import { GetLoginTokenFromEmailVerificationTokenOutput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.output';
 import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
@@ -51,6 +50,7 @@ import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { CaptchaGraphqlApiExceptionFilter } from 'src/engine/core-modules/captcha/filters/captcha-graphql-api-exception.filter';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
+import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -68,19 +68,21 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { VerifyEmailAndGetLoginTokenOutput } from 'src/engine/core-modules/auth/dto/verify-email-and-get-login-token.output';
 
+import { ApiKeyToken } from './dto/api-key-token.dto';
+import { AuthTokens } from './dto/auth-tokens.dto';
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { LoginTokenOutput } from './dto/login-token.dto';
 import { SignUpInput } from './dto/sign-up.input';
-import { ApiKeyToken } from './dto/api-key-token.dto';
-import { AuthTokens } from './dto/auth-tokens.dto';
 import { UserCredentialsInput } from './dto/user-credentials.input';
 import { CheckUserExistOutput } from './dto/user-exists.dto';
 import { EmailAndCaptchaInput } from './dto/user-exists.input';
@@ -124,7 +126,7 @@ export class AuthResolver {
     private readonly permissionsService: PermissionsService,
   ) {}
 
-  @UseGuards(CaptchaGuard, PublicEndpointGuard)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   @Query(() => CheckUserExistOutput)
   async checkUserExists(
     @Args() checkUserExistsInput: EmailAndCaptchaInput,
@@ -135,7 +137,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => GetAuthorizationUrlForSSOOutput)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getAuthorizationUrlForSSO(
     @Args('input') params: GetAuthorizationUrlForSSOInput,
   ) {
@@ -146,7 +148,7 @@ export class AuthResolver {
   }
 
   @Query(() => WorkspaceInviteHashValidOutput)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async checkWorkspaceInviteHashIsValid(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
   ): Promise<WorkspaceInviteHashValidOutput> {
@@ -156,7 +158,7 @@ export class AuthResolver {
   }
 
   @Query(() => WorkspaceEntity)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async findWorkspaceFromInviteHash(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
   ): Promise<WorkspaceEntity> {
@@ -166,7 +168,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => LoginTokenOutput)
-  @UseGuards(CaptchaGuard, PublicEndpointGuard)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async getLoginTokenFromCredentials(
     @Args()
     getLoginTokenFromCredentialsInput: UserCredentialsInput,
@@ -201,7 +203,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensOutput)
-  @UseGuards(CaptchaGuard, PublicEndpointGuard)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async signIn(
     @Args()
     userCredentials: UserCredentialsInput,
@@ -238,9 +240,9 @@ export class AuthResolver {
     };
   }
 
-  @Mutation(() => GetLoginTokenFromEmailVerificationTokenOutput)
-  @UseGuards(PublicEndpointGuard)
-  async getLoginTokenFromEmailVerificationToken(
+  @Mutation(() => VerifyEmailAndGetLoginTokenOutput)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  async verifyEmailAndGetLoginToken(
     @Args()
     getAuthTokenFromEmailVerificationTokenInput: GetAuthTokenFromEmailVerificationTokenInput,
     @Args('origin') origin: string,
@@ -251,19 +253,25 @@ export class AuthResolver {
         getAuthTokenFromEmailVerificationTokenInput,
       );
 
+    if (appToken.context && appToken.context.email !== appToken.user.email) {
+      await this.userService.updateEmailFromVerificationToken(
+        appToken.user.id,
+        appToken.context.email,
+      );
+    }
+
+    const user = await this.userService.markEmailAsVerified(appToken.user.id);
+
+    await this.appTokenRepository.remove(appToken);
+
     const workspace =
       (await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       )) ??
-      (await this.userWorkspaceService.findFirstWorkspaceByUserId(
-        appToken.user.id,
-      ));
-
-    await this.userService.markEmailAsVerified(appToken.user.id);
-    await this.appTokenRepository.remove(appToken);
+      (await this.userWorkspaceService.findFirstWorkspaceByUserId(user.id));
 
     const loginToken = await this.loginTokenService.generateLoginToken(
-      appToken.user.email,
+      user.email,
       workspace.id,
       authProvider,
     );
@@ -275,8 +283,8 @@ export class AuthResolver {
   }
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensOutput)
-  @UseGuards(PublicEndpointGuard)
-  async getWorkspaceAgnosticTokenFromEmailVerificationToken(
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  async verifyEmailAndGetWorkspaceAgnosticToken(
     @Args()
     getAuthTokenFromEmailVerificationTokenInput: GetAuthTokenFromEmailVerificationTokenInput,
     @AuthProvider() authProvider: AuthProviderEnum,
@@ -286,31 +294,39 @@ export class AuthResolver {
         getAuthTokenFromEmailVerificationTokenInput,
       );
 
-    await this.userService.markEmailAsVerified(appToken.user.id);
+    if (appToken.context && appToken.context.email !== appToken.user.email) {
+      await this.userService.updateEmailFromVerificationToken(
+        appToken.user.id,
+        appToken.context.email,
+      );
+    }
+
+    const user = await this.userService.markEmailAsVerified(appToken.user.id);
+
     await this.appTokenRepository.remove(appToken);
 
     const availableWorkspaces =
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(
-        appToken.user.email,
+        user.email,
       );
 
     return {
       availableWorkspaces:
         await this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
           availableWorkspaces,
-          appToken.user,
+          user,
           authProvider,
         ),
       tokens: {
         accessOrWorkspaceAgnosticToken:
           await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
             {
-              userId: appToken.user.id,
+              userId: user.id,
               authProvider: AuthProviderEnum.Password,
             },
           ),
         refreshToken: await this.refreshTokenService.generateRefreshToken({
-          userId: appToken.user.id,
+          userId: user.id,
           authProvider: AuthProviderEnum.Password,
           targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
         }),
@@ -319,7 +335,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthTokens)
-  @UseGuards(CaptchaGuard, PublicEndpointGuard)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async getAuthTokensFromOTP(
     @Args()
     twoFactorAuthenticationVerificationInput: TwoFactorAuthenticationVerificationInput,
@@ -357,7 +373,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensOutput)
-  @UseGuards(CaptchaGuard, PublicEndpointGuard)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async signUp(
     @Args() signUpInput: UserCredentialsInput,
   ): Promise<AvailableWorkspacesAndAccessTokensOutput> {
@@ -376,13 +392,14 @@ export class AuthResolver {
         user.email,
       );
 
-    await this.emailVerificationService.sendVerificationEmail(
-      user.id,
-      user.email,
-      undefined,
-      signUpInput.locale ?? SOURCE_LOCALE,
-      signUpInput.verifyEmailRedirectPath,
-    );
+    await this.emailVerificationService.sendVerificationEmail({
+      userId: user.id,
+      email: user.email,
+      workspace: undefined,
+      locale: signUpInput.locale ?? SOURCE_LOCALE,
+      verifyEmailRedirectPath: signUpInput.verifyEmailRedirectPath,
+      verificationTrigger: EmailVerificationTrigger.SIGN_UP,
+    });
 
     return {
       availableWorkspaces:
@@ -409,7 +426,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => SignUpOutput)
-  @UseGuards(CaptchaGuard, PublicEndpointGuard)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async signUpInWorkspace(
     @Args() signUpInput: SignUpInput,
     @AuthProvider() authProvider: AuthProviderEnum,
@@ -458,13 +475,14 @@ export class AuthResolver {
       },
     });
 
-    await this.emailVerificationService.sendVerificationEmail(
-      user.id,
-      user.email,
+    await this.emailVerificationService.sendVerificationEmail({
+      userId: user.id,
+      email: user.email,
       workspace,
-      signUpInput.locale ?? SOURCE_LOCALE,
-      signUpInput.verifyEmailRedirectPath,
-    );
+      locale: signUpInput.locale ?? SOURCE_LOCALE,
+      verifyEmailRedirectPath: signUpInput.verifyEmailRedirectPath,
+      verificationTrigger: EmailVerificationTrigger.SIGN_UP,
+    });
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
@@ -482,7 +500,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => SignUpOutput)
-  @UseGuards(UserAuthGuard)
+  @UseGuards(UserAuthGuard, NoPermissionGuard)
   async signUpInNewWorkspace(
     @AuthUser() currentUser: UserEntity,
     @AuthProvider() authProvider: AuthProviderEnum,
@@ -511,7 +529,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => TransientTokenOutput)
-  @UseGuards(UserAuthGuard)
+  @UseGuards(UserAuthGuard, NoPermissionGuard)
   async generateTransientToken(
     @AuthUser() user: UserEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -535,7 +553,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthTokens)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getAuthTokensFromLoginToken(
     @Args() getAuthTokensFromLoginTokenInput: GetAuthTokensFromLoginTokenInput,
     @Args('origin') origin: string,
@@ -757,7 +775,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthorizeAppOutput)
-  @UseGuards(UserAuthGuard)
+  @UseGuards(UserAuthGuard, NoPermissionGuard)
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
     @AuthUser() user: UserEntity,
@@ -771,7 +789,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthTokens)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async renewToken(@Args() args: AppTokenInput): Promise<AuthTokens> {
     const tokens = await this.renewTokenService.generateTokensFromRefreshToken(
       args.appToken,
@@ -782,7 +800,7 @@ export class AuthResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
   @Mutation(() => ApiKeyToken)
   async generateApiKeyToken(
@@ -797,7 +815,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => EmailPasswordResetLinkOutput)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async emailPasswordResetLink(
     @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
     @Context() context: I18nContext,
@@ -816,7 +834,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => InvalidatePasswordOutput)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async updatePasswordViaResetToken(
     @Args()
     { passwordResetToken, newPassword }: UpdatePasswordViaResetTokenInput,
@@ -832,7 +850,7 @@ export class AuthResolver {
   }
 
   @Query(() => ValidatePasswordResetTokenOutput)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async validatePasswordResetToken(
     @Args() args: ValidatePasswordResetTokenInput,
   ): Promise<ValidatePasswordResetTokenOutput> {

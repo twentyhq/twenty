@@ -2,9 +2,15 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { type Repository } from 'typeorm';
+import { type Repository, type UpdateResult } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
@@ -40,11 +46,28 @@ describe('UserService', () => {
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
+            softDelete: jest.fn(),
+            update: jest.fn(),
           },
         },
         {
           provide: WorkspaceService,
           useValue: { deleteWorkspace: jest.fn() },
+        },
+        {
+          provide: WorkspaceDomainsService,
+          useValue: {
+            getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain:
+              jest.fn(),
+          },
+        },
+        {
+          provide: EmailVerificationService,
+          useValue: { sendVerificationEmail: jest.fn() },
+        },
+        {
+          provide: `MESSAGE_QUEUE_${MessageQueue.workspaceQueue}`,
+          useValue: { add: jest.fn() },
         },
         {
           provide: TwentyORMGlobalManager,
@@ -57,6 +80,16 @@ describe('UserService', () => {
           useValue: {
             validateUserWorkspaceIsNotUniqueAdminOrThrow: jest.fn(),
           },
+        },
+        {
+          provide: UserWorkspaceService,
+          useValue: {
+            deleteUserWorkspace: jest.fn(),
+          },
+        },
+        {
+          provide: ApplicationService,
+          useValue: {},
         },
       ],
     }).compile();
@@ -311,9 +344,14 @@ describe('UserService', () => {
     });
 
     it('deletes workspace member and workspace when user is sole member', async () => {
+      const mockedUserWorkspace = {
+        id: 'uw2',
+        workspaceId: 'w2',
+      } as UserWorkspaceEntity;
+
       (userRepository.findOne as jest.Mock).mockResolvedValue({
         id: 'u2',
-        userWorkspaces: [{ id: 'uw2', workspaceId: 'w2' }],
+        userWorkspaces: [mockedUserWorkspace],
       });
 
       jest
@@ -323,11 +361,14 @@ describe('UserService', () => {
         .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
         .mockResolvedValue(mockWorkspaceMemberRepo);
 
+      (userRepository.softDelete as jest.Mock).mockResolvedValue({
+        affected: 1,
+        raw: [],
+        generatedMaps: [],
+      } as UpdateResult);
+
       const res = await service.deleteUser('u2');
 
-      expect(mockWorkspaceMemberRepo.delete).toHaveBeenCalledWith({
-        userId: 'u2',
-      });
       expect(workspaceService.deleteWorkspace).toHaveBeenCalledWith('w2');
       expect(res).toMatchObject({ id: 'u2' });
     });

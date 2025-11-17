@@ -1,0 +1,91 @@
+---
+title: Migreren van andere CRM's
+info: Stapsgewijze handleiding voor het migreren van gegevens en processen van andere CRM-systemen naar Twenty.
+image: /images/user-guide/what-is-twenty/migrating_crm.png
+sectionInfo: Een korte gids om de basis van Twenty te begrijpen
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/migrating_crm.png" alt="Header" />
+</Frame>
+
+## Voordat u begint
+
+### 1. Voer een controle uit van uw huidige gegevens
+
+- **Selecteer de weinige objecten en velden om te migreren**: deze migratie is de kans op een nieuwe start
+- **Exporteer deze gegevens** vanuit uw huidige CRM
+- **Verwijder duplicaten** en verouderde records
+- **List active workflows** and automations
+
+### 2. Creëer uw nieuwe datamodel
+
+Volg onze [datamodelgids](/l/nl/user-guide/data-model/customize-your-data-model) om:
+
+- **Ontwerp het datamodel** dat u nodig heeft
+- **Koppel bestaande velden** aan Twenty's standaardobjecten/velden
+- **Identificeer de aangepaste objecten/velden** die u nodig heeft
+- **Maak ze aan** onder Instellingen → Datamodel
+
+## Migratieproces
+
+### 1. Importeer uw gegevens
+
+**Aanbevolen volgorde:**
+
+1. **Bedrijven** eerst (als basisgegevens)
+2. **Mensen** als tweede (gekoppeld aan bedrijven)
+3. **Kansen** als derde (gekoppeld aan mensen/bedrijven)
+
+Gebruik de CSV-import via het Command Menu  `Cmd + K` (Mac) of `Ctrl + K` (Windows). Bekijk onze [gegevensimportgids](/l/nl/user-guide/getting-started/import-export-data) voor gedetailleerde instructies.
+
+### 2. Recreate Workflows
+
+- **Start simple** - recreate your most critical automations first
+- **Gebruik Twenty's workflow builder** om bestaande automatiseringen te vervangen
+
+## Veelvoorkomende uitdagingen
+
+### Gegevens opmaakproblemen
+
+- **E-mailadressen** - verwijder duplicaten (vereiste voor Persoonsobject)
+- **Domein** - verwijder duplicaten (vereiste voor Bedrijfobject)
+
+<Warning>
+Please note that domain URLs created by the synchronization with your mailbox and calendar have the following format ```https://domain.com```
+</Warning>
+
+- **Datumformaten** - zorg voor consistente opmaak (JJJJ-MM-DD) of bewerk dit formaat onder Instellingen → Ervaring
+- **Telefoonnummers** - gebruik internationaal formaat (+1234567890)
+
+### Relatie mapping
+
+Om relaties tussen records te importeren via de csv-importfunctie, kunt u de volgende velden gebruiken
+
+- **Gebruik Twenty-ID's** voor complexe relaties
+- **Gebruik e-mailadressen** om Persoonsrecords te koppelen
+- **Gebruik domeinnamen** om Bedrijfsrecords te koppelen
+- **Gebruik elk ander veld dat u als uniek instelt**, wat kan worden gedaan in de Datamodel sectie.
+  Lees onze [import-export gegevensgids](/l/nl/user-guide/getting-started/import-export-data) voor gedetailleerde instructies over het maken van relaties tijdens CSV-import.
+
+## Professionele hulp
+
+### Onze diensten
+
+- **4-uur onboarding pakketten** voor begeleide migratie
+- **Implementatiepartners** voor complexere projecten
+
+Ontdek onze [implementatiediensten](/l/nl/user-guide/getting-started/implementation-services).
+
+## Migreren van self-hosted naar Cloud
+
+Als u overstapt van Twenty self-hosted naar Twenty Cloud:
+
+1. **Exporteer uw gegevens** van uw self-hosted instantie
+2. **Volg het standaardmigratieproces** hierboven
+3. **We kunnen migratieondersteuning bieden**, neem contact op met ons team
+
+## Controlelijst na migratie
+
+<input type="checkbox" /> All data imported successfully <input type="checkbox" /> Custom fields working correctly <input type="checkbox" /> User permissions configured <input type="checkbox" /> Email/calendar sync connected <input type="checkbox" /> Critical workflows recreated and tested <input type="checkbox" /> Team trained on new system
+

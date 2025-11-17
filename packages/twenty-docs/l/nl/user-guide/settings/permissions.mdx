@@ -1,0 +1,106 @@
+---
+title: Permissies
+info: "Leer hoe u de toegang kunt beheren: wijs rollen toe en stel machtigingen in."
+image: /images/user-guide/permissions/permissions.png
+sectionInfo: Configureer uw Twenty-werkruimte-instellingen en voorkeuren
+---
+
+<Frame>
+  <img src="/images/user-guide/permissions/permissions.png" alt="Header" />
+</Frame>
+
+Het machtigingssysteem van Twenty stelt je in staat om toegang te beheren tot drie hoofdgebieden:
+
+- **Objecten en Velden**: Beheer wie records en individuele velden kan bekijken, bewerken of verwijderen
+- **Instellingen**: Beheer toegang tot werkruimteconfiguratie en administratieve functies
+- **Acties**: Beheer algemene werkruimteacties zoals gegevens importeren of e-mails verzenden
+
+## Maak een Rol
+
+Om een nieuwe rol te maken:
+
+1. Ga naar **Instellingen → Rollen**
+2. Klik onder **Alle Rollen** op **+ Rol maken**
+3. Voer een rolnaam in
+4. Configureer machtigingen op het standaard tabblad **Machtigingen**
+5. Klik op **Opslaan** om te voltooien
+
+## Verwijder een Rol
+
+Om een rol te verwijderen:
+
+1. Ga naar **Instellingen → Rollen**
+2. Klik op de rol die je wilt verwijderen
+3. Open het tabblad **Instellingen**, klik vervolgens op **Rol verwijderen**
+4. Klik op **Bevestigen** in de pop-up
+
+Opmerking: Als een rol wordt verwijderd, wordt elk werkruimtelid dat eraan is toegewezen automatisch opnieuw toegewezen aan de standaardrol. Alleen de rol **Admin** kan niet worden verwijderd. Er moet altijd minimaal één lid zijn toegewezen aan de rol **Admin**.
+
+## Rollen Toewijzen aan Leden
+
+### Huidige Toewijzingen Bekijken
+
+- Ga naar **Instellingen → Rollen**
+- Zie alle rollen en hoeveel leden aan elke rol zijn toegewezen
+- Bekijk welke leden welke rollen hebben
+
+### Wijs een Rol toe aan een Lid
+
+1. Ga naar **Instellingen → Rollen**
+2. Klik op de rol die je wilt toewijzen
+3. Open het tabblad **Toewijzing**
+4. Klik op **+ Toevoegen aan lid**
+5. Selecteer het werkruimtelid uit de lijst
+6. Bevestig de toewijzing
+
+### Stel Standaard Rol In
+
+1. Ga naar **Instellingen → Rollen**
+2. Zoek in de sectie **Opties** naar **Standaard Rol**
+3. Selecteer welke rol nieuwe leden automatisch moeten ontvangen
+4. Nieuwe werkruimteleden krijgen deze rol toegewezen als ze zich aansluiten
+
+**Opmerking**: U kunt alleen rollen toewijzen aan bestaande werkruimteleden. Om nieuwe leden uit te nodigen, gebruik [Ledenbeheer](/l/nl/user-guide/settings/member-management).
+
+## Pas Machtigingen aan
+
+Machtigingen bepalen wat elke rol kan benaderen of wijzigen binnen je werkruimte, inclusief werkruimte-objecten, instellingen en acties.
+
+### Object- en Veldmachtigingen
+
+Beheer toegang tot records en individuele velden:
+
+#### Objectniveau-permissies
+
+- Pas onder **Alle Objecten** machtigingen toe zoals **Bekijk Record**, **Bewerk Records**, **Verwijder Records**, of **Vernietig Records** op alle objecten
+- Configureer uitzonderingen voor individuele objecten onder **Objectniveau Machtigingen**. Deze overschrijven de instellingen van **Alle Objecten**
+
+#### Veldniveau Machtigingen
+
+- Configureer machtigingen voor individuele velden binnen elk object
+- Control who can **See Field**, **Edit Field**, or have **No Access** to specific fields
+- Veldmachtigingen werken hetzelfde als objectmachtigingen met overerving en overschrijvingen
+
+#### Beheer Machtiging Overschrijvingen
+
+Om hoofdmachtigingen te overschrijven en strengere regels toe te passen:
+
+- Klik op **X** om de overgeërfde regel te verwijderen
+- Selecteer de specifieke machtigingen voor het geselecteerde object of veld
+- Klik op het oranje **Ongedaan maken** icoon (ronde pijl) om wijzigingen ongedaan te maken
+
+Wanneer klaar, klik op **Voltooien**, en klik vervolgens op **Opslaan** zodra je naar de rolpagina wordt omgeleid.
+
+### Werkruimte Instellingen Machtigingen
+
+Beheer toegang tot werkruimte-instellingen op twee manieren:
+
+- Schakel **Volledige Toegang tot Instellingen** in om volledige toegang te verlenen
+- Of schakel specifieke machtigingen in (bijv. API-sleutelgeneratie, werkruimtevoorkeuren, roltoewijzing, gegevensmodelconfiguratie, beveiligingsinstellingen en workflowbeheer)
+
+### Werkruimte Actie Machtigingen
+
+Beheer toegang tot algemene werkruimteacties:
+
+- Schakel **Volledige Toegang tot Applicatie** in om volledige rechten te verlenen
+- Of activeer individuele acties zoals **E-mail Verzenden**, **CSV Importeren**, en **CSV Exporteren**

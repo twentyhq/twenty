@@ -239,15 +239,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"Rollup engine@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "Rollup engine@workspace:."
-  dependencies:
-    dotenv: "npm:^16.4.5"
-    tsx: "npm:^4.20.6"
-  languageName: unknown
-  linkType: soft
-
 "abbrev@npm:^3.0.0":
   version: 3.0.1
   resolution: "abbrev@npm:3.0.1"
@@ -911,6 +902,15 @@ __metadata:
   checksum: 10c0/59933e8501727ba13ad73ef4a04d5280b3717fd650408460c987392efe9d7be2040778ed8ebe933c5cbd63da3dcc37919c141ef8af0a54a6e4fca5a2af177bfe
   languageName: node
   linkType: hard
+
+"rollup-engine@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "rollup-engine@workspace:."
+  dependencies:
+    dotenv: "npm:^16.4.5"
+    tsx: "npm:^4.20.6"
+  languageName: unknown
+  linkType: soft
 
 "safer-buffer@npm:>= 2.1.2 < 3.0.0":
   version: 2.1.2

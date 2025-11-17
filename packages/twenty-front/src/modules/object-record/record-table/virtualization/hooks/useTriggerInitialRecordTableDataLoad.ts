@@ -104,7 +104,9 @@ export const useTriggerInitialRecordTableDataLoad = () => {
 
   const triggerInitialRecordTableDataLoad = useRecoilCallback(
     ({ snapshot, set }) =>
-      async () => {
+      async ({
+        shouldScrollToStart = true,
+      }: { shouldScrollToStart?: boolean } = {}) => {
         const isInitializingVirtualTableDataLoading = getSnapshotValue(
           snapshot,
           isInitializingVirtualTableDataLoadingCallbackState,
@@ -189,11 +191,14 @@ export const useTriggerInitialRecordTableDataLoad = () => {
 
         setIsRecordTableScrolledHorizontally(false);
         setIsRecordTableScrolledVertically(false);
+        resetTableFocuses();
 
-        scrollTableToPosition({
-          horizontalScrollInPx: 0,
-          verticalScrollInPx: 0,
-        });
+        if (shouldScrollToStart) {
+          scrollTableToPosition({
+            horizontalScrollInPx: 0,
+            verticalScrollInPx: 0,
+          });
+        }
       },
     [
       isInitializingVirtualTableDataLoadingCallbackState,

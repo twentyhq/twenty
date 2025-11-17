@@ -28,18 +28,27 @@ const aggregationTypes = new Set<AggregationConfig['type']>([
 const isObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 
-export const validateRollupConfig = (config: unknown): asserts config is RollupConfig => {
+export const validateRollupConfig = (config: any): RollupConfig | void => {
   if (!Array.isArray(config)) {
-    throw new Error('Rollup configuration must contain an array of rollup definitions');
+    throw new Error(
+      'Rollup configuration must contain an array of rollup definitions',
+    );
   }
 
   config.forEach((definition, definitionIndex) => {
     if (!isObject(definition)) {
-      throw new Error(`Definition at index ${definitionIndex} must be an object`);
+      throw new Error(
+        `Definition at index ${definitionIndex} must be an object`,
+      );
     }
 
-    const { parentObject, childObject, relationField, childFilters, aggregations } =
-      definition as Partial<RollupDefinition>;
+    const {
+      parentObject,
+      childObject,
+      relationField,
+      childFilters,
+      aggregations,
+    } = definition as Partial<RollupDefinition>;
 
     if (typeof parentObject !== 'string' || parentObject.trim().length === 0) {
       throw new Error(`Definition ${definitionIndex} missing parentObject`);
@@ -47,11 +56,16 @@ export const validateRollupConfig = (config: unknown): asserts config is RollupC
     if (typeof childObject !== 'string' || childObject.trim().length === 0) {
       throw new Error(`Definition ${definitionIndex} missing childObject`);
     }
-    if (typeof relationField !== 'string' || relationField.trim().length === 0) {
+    if (
+      typeof relationField !== 'string' ||
+      relationField.trim().length === 0
+    ) {
       throw new Error(`Definition ${definitionIndex} missing relationField`);
     }
     if (!Array.isArray(aggregations) || aggregations.length === 0) {
-      throw new Error(`Definition ${definitionIndex} must declare at least one aggregation`);
+      throw new Error(
+        `Definition ${definitionIndex} must declare at least one aggregation`,
+      );
     }
 
     const filtersToValidate = [
@@ -63,7 +77,8 @@ export const validateRollupConfig = (config: unknown): asserts config is RollupC
           );
         }
 
-        const { type, parentField, childField, filters } = aggregation as AggregationConfig;
+        const { type, parentField, childField, filters } =
+          aggregation as AggregationConfig;
 
         if (!aggregationTypes.has(type)) {
           throw new Error(
@@ -71,13 +86,19 @@ export const validateRollupConfig = (config: unknown): asserts config is RollupC
           );
         }
 
-        if (typeof parentField !== 'string' || parentField.trim().length === 0) {
+        if (
+          typeof parentField !== 'string' ||
+          parentField.trim().length === 0
+        ) {
           throw new Error(
             `Aggregation ${aggregationIndex} in definition ${definitionIndex} missing parentField`,
           );
         }
 
-        if (type !== 'COUNT' && (typeof childField !== 'string' || childField.length === 0)) {
+        if (
+          type !== 'COUNT' &&
+          (typeof childField !== 'string' || childField.length === 0)
+        ) {
           throw new Error(
             `Aggregation ${aggregationIndex} in definition ${definitionIndex} with type ${type} requires childField`,
           );
@@ -132,7 +153,11 @@ const collectValuesByKey = (
   }
 
   Object.entries(value).forEach(([currentKey, entryValue]) => {
-    if (currentKey === key && typeof entryValue === 'string' && entryValue.trim().length > 0) {
+    if (
+      currentKey === key &&
+      typeof entryValue === 'string' &&
+      entryValue.trim().length > 0
+    ) {
       result.add(entryValue);
       return;
     }
@@ -160,11 +185,17 @@ export const resolveRollupConfig = (): RollupConfig => {
     try {
       const parsed = JSON.parse(override) as unknown;
       validateRollupConfig(parsed);
-      return parsed;
+      return parsed as RollupConfig;
     } catch (error) {
       const reason =
-        error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
-      throw new Error(`Unable to parse rollup configuration override (reason: ${reason})`);
+        error instanceof Error
+          ? error.message
+          : typeof error === 'string'
+            ? error
+            : 'Unknown error';
+      throw new Error(
+        `Unable to parse rollup configuration override (reason: ${reason})`,
+      );
     }
   }
 

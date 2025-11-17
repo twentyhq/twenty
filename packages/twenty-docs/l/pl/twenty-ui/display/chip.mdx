@@ -1,0 +1,148 @@
+---
+title: Chip
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+Element wizualny, który można używać jako klikalny lub nieklikalny kontener z etykietą, opcjonalnymi komponentami po lewej i prawej stronie oraz różnymi opcjami stylizacji do wyświetlania etykiet i tagów.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+    <Chip
+      size="large"
+      label="Clickable Chip"
+      clickable={true}
+      variant="highlighted"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+    />
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Właściwości (Props) | Typ                      | Opis                                                                                                                  |
+| -------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| linkDoJednostki                        | ciąg znaków              | Link do jednostki                                                                                                     |
+| entityId                               | ciąg znaków              | Unikalny identyfikator dla jednostki                                                                                  |
+| nazwa                                  | ciąg znaków              | Nazwa jednostki                                                                                                       |
+| urlObrazka                             | ciąg znaków              | s picture",                                                                                                           |
+| typAwatara                             | Typ Awatara              | Typ awatara, który chcesz wyświetlić. Ma dwie opcje: `zaokrąglony` i `kwadratowy`     |
+| wariant                                | Enum `EntityChipVariant` | Wariant jednostki, który chcesz wyświetlić. Ma dwie opcje: `zwykły` i `transparentny` |
+| LewaIkona                              | KomponentIkony           | Komponent React przedstawiający ikonę. Wyświetlany z lewej strony elementu chip                       |
+
+</Tab>
+</Tabs>
+
+## Przykłady
+
+### Przezroczysty Wyłączony Chip
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Transparent Disabled Chip"
+      clickable={false}
+      variant="rounded"
+      accent="text-secondary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+
+```
+
+<br/>
+
+### Wyłączony Chip z Podpowiedzią
+
+```jsx
+import { Chip } from "twenty-ui/components";
+  
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Disabled chip that triggers a tooltip when overflowing."
+      clickable={false}
+      variant="regular"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+```
+
+## Jednostkowy Chip
+
+Element podobny do chipu do wyświetlania informacji o jednostce.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+import { IconTwentyStar } from 'twenty-ui/display';
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <Chip
+        linkToEntity="/entity-link"
+        entityId="entityTest"
+        name="Entity name"
+        pictureUrl=""
+        avatarType="rounded"
+        variant="regular"
+        LeftIcon={IconTwentyStar}
+      />
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Właściwości (Props) | Typ                      | Opis                                                                                                                  |
+| -------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| linkDoJednostki                        | ciąg znaków              | Link do jednostki                                                                                                     |
+| entityId                               | ciąg znaków              | Unikalny identyfikator dla jednostki                                                                                  |
+| nazwa                                  | ciąg znaków              | Nazwa jednostki                                                                                                       |
+| urlObrazka                             | ciąg znaków              | s picture",                                                                                                           |
+| typAwatara                             | Typ Awatara              | Typ awatara, który chcesz wyświetlić. Ma dwie opcje: `zaokrąglony` i `kwadratowy`     |
+| wariant                                | Enum `EntityChipVariant` | Wariant jednostki, który chcesz wyświetlić. Ma dwie opcje: `zwykły` i `transparentny` |
+| LewaIkona                              | KomponentIkony           | Komponent React przedstawiający ikonę. Wyświetlany z lewej strony elementu chip                       |
+
+</Tab>
+</Tabs>

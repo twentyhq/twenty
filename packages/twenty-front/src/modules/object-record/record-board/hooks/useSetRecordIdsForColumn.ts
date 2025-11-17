@@ -1,5 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
+import { emptyRecordGroupByIdComponentFamilyState } from '@/object-record/record-group/states/emptyRecordGroupByIdComponentFamilyState';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
@@ -20,6 +21,10 @@ export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
       recordIndexRecordIdsByGroupComponentFamilyState,
       recordBoardId,
     );
+
+  const emptyRecordGroupByIdCallbackState = useRecoilComponentCallbackState(
+    emptyRecordGroupByIdComponentFamilyState,
+  );
 
   const setRecordIdsForColumn = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -56,8 +61,26 @@ export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
             recordGroupRowIds,
           );
         }
+
+        const isEmptyRecordGroup = getSnapshotValue(
+          snapshot,
+          emptyRecordGroupByIdCallbackState(currentRecordGroupId),
+        );
+
+        const computedIsEmptyRecordGroup = recordGroupRowIds.length === 0;
+
+        if (computedIsEmptyRecordGroup !== isEmptyRecordGroup) {
+          set(
+            emptyRecordGroupByIdCallbackState(currentRecordGroupId),
+            computedIsEmptyRecordGroup,
+          );
+        }
       },
-    [recordIndexRecordIdsByGroupFamilyState, recordGroupFieldMetadataState],
+    [
+      recordIndexRecordIdsByGroupFamilyState,
+      recordGroupFieldMetadataState,
+      emptyRecordGroupByIdCallbackState,
+    ],
   );
 
   return {

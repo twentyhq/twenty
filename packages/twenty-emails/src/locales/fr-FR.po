@@ -90,13 +90,18 @@ msgstr "Accepter l'invitation"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
 msgstr "Confirmez votre adresse e-mail"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr "Merci de vous être inscrit pour un compte sur Twenty ! Avant de commencer, nous devons confirmer votre identité. Cliquez ci-dessous pour vérifier votre adresse e-mail."
+msgid "Confirm new email"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -130,13 +135,23 @@ msgstr "Réinitialisez votre mot de passe 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "Ce lien n'est valable que pour les {duration} suivants. Si le lien ne fonctionne pas, vous pouvez utiliser directement le lien de vérification de connexion :"
+msgid "Set your password 🗝"
+msgstr "Définir votre mot de passe 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
 msgstr "Réinitialiser"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set"
+msgstr "Définir"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "Ce lien n'est valable que pour les {duration} suivants. Si le lien ne fonctionne pas, vous pouvez utiliser directement le lien de vérification de connexion :"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx

@@ -15,6 +15,7 @@ export const CHART_CONFIGURATION_SETTING_LABELS = {
   EACH_SLICE_REPRESENTS: msg`Each slice represents`,
   AXIS_NAME: msg`Axis name`,
   STACKED_BARS: msg`Stacked bars`,
+  STACKED_LINES: msg`Stacked lines`,
   OMIT_NULL_VALUES: msg`Omit zero values`,
   MIN_RANGE: msg`Min range`,
   MAX_RANGE: msg`Max range`,

@@ -1,0 +1,42 @@
+---
+title: Image Input
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import imageInputCode from '!!raw-loader!@site/src/ui/input/components/imageInputCode.js'
+
+Pozwala użytkownikom przesyłać i usuwać obraz.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ImageInput } from "@/ui/input/components/ImageInput";
+
+export const MyComponent = () => {
+  return <ImageInput/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Właściwości (Props) | Typ         | Opis                                                                                                          |
+| -------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------- |
+| zdjęcie                                | ciąg znaków | Adres URL źródła obrazu                                                                                       |
+| onUpload                               | funkcja     | Funkcja wywoływana, gdy użytkownik przesyła nowy obraz. Otrzymuje obiekt `File` jako parametr |
+| onRemove                               | funkcja     | Funkcja wywoływana, gdy użytkownik kliknie przycisk usuwania                                                  |
+| onAbort                                | funkcja     | Funkcja wywoływana, gdy użytkownik kliknie przycisk przerwania podczas przesyłania obrazu                     |
+| isUploading                            | boolean     | Wskazuje, czy obraz jest aktualnie przesyłany                                                                 |
+| errorMessage                           | ciąg znaków | An optional error message to display below the image input                                                    |
+| wyłączony                              | boolean     | Jeśli `true`, całe wejście jest wyłączone, a przyciski są nieklikalne                                         |
+
+</Tab>
+</Tabs>

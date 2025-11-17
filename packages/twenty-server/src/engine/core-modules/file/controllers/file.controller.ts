@@ -23,6 +23,7 @@ import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/fil
 import { FilePathGuard } from 'src/engine/core-modules/file/guards/file-path-guard';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { extractFileInfoFromRequest } from 'src/engine/core-modules/file/utils/extract-file-info-from-request.utils';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('files')
@@ -31,8 +32,8 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  @Get('*/:filename')
-  @UseGuards(PublicEndpointGuard)
+  @Get('*path/:filename')
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getFile(
     @Param() _params: string[],
     @Res() res: Response,

@@ -1,0 +1,54 @@
+---
+title: 选择
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+允许用户从预定义选项列表中选择一个值。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from 'recoil';
+import { IconTwentyStar } from 'twenty-ui/display';
+
+import { Select } from '@/ui/input/components/Select';
+
+export const MyComponent = () => {
+
+  return (
+    <RecoilRoot>
+      <Select
+        className
+        disabled={false}
+        label="Select an option"
+        options={[
+          { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
+          { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
+        ]}
+        value="option1"
+      />
+    </RecoilRoot>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| 属性       | 类型       | 描述                                                               |
+| -------- | -------- | ---------------------------------------------------------------- |
+| 类名       | 字符串      | 用于额外样式的可选 CSS 类                                                  |
+| disabled | 布尔值      | 当设置为`true`时，禁用用户与组件的交互                                           |
+| 标签       | 字符串      | 描述`选择`组件用途的标签                                                    |
+| onChange | function | 当所选值更改时调用的函数                                                     |
+| 选项       | 数组       | 表示`选择`组件的可用选项。 它是一个对象数组，每个对象具有一个`值`（唯一标识符）、`标签`（唯一标识符）和一个可选的`图标` |
+| 值        | 字符串      | 表示当前选择的值。 它应匹配`选项`数组中的一个`值`属性                                    |
+
+</Tab>
+</Tabs>

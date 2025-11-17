@@ -1,0 +1,168 @@
+---
+title: Länkar
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Contact Link
+
+En stiliserad länkkomponent för att visa kontaktinformation.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+
+import { ContactLink } from 'twenty-ui/navigation';
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log('Contact link clicked!', event);
+  };
+
+  return (
+    <Router>
+      <ContactLink
+        className
+        href="mailto:example@example.com"
+        onClick={handleLinkClick}
+      >
+        example@example.com
+      </ContactLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaper | Typ               | Beskrivning                                           |
+| ---------- | ----------------- | ----------------------------------------------------- |
+| klassNamn  | string            | Valfritt namn för ytterligare styling                 |
+| href       | string            | Mål-URL eller -väg för länken                         |
+| onClick    | funktion          | Callback-funktion som ska användas när länken klickas |
+| barn       | `React.ReactNode` | Innehållet som ska visas inuti länken                 |
+
+</Tab>
+
+</Tabs>
+
+## Raw Link
+
+En stiliserad länkkomponent för att visa länkar.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RawLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RawLink className href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RawLink>
+    </Router>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaper | Typ               | Beskrivning                                           |
+| ---------- | ----------------- | ----------------------------------------------------- |
+| className  | string            | Valfritt namn för ytterligare styling                 |
+| href       | string            | Mål-URL eller -väg för länken                         |
+| onClick    | funktion          | Callback-funktion som ska användas när länken klickas |
+| barn       | `React.ReactNode` | Innehållet som ska visas inuti länken                 |
+
+</Tab>
+</Tabs>
+
+## Rounded Link
+
+En rundad stiliserad länk med en Chip-komponent för länkar.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RoundedLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RoundedLink href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RoundedLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Egenskaper | Typ               | Beskrivning                                           |
+| ---------- | ----------------- | ----------------------------------------------------- |
+| href       | string            | Mål-URL eller -väg för länken                         |
+| barn       | `React.ReactNode` | Innehållet som ska visas inuti länken                 |
+| onClick    | funktion          | Callback-funktion som ska användas när länken klickas |
+
+</Tab>
+</Tabs>
+
+## Social Link
+
+Stiliserade sociala länkar med stöd för olika sociala länkar, såsom URL:er, LinkedIn och X (eller Twitter).
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { SocialLink } from "twenty-ui/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <SocialLink
+        type="twitter"
+        href="https://twitter.com/twentycrm"
+      ></SocialLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaper | Typ               | Beskrivning                                                                                                     |
+| ---------- | ----------------- | --------------------------------------------------------------------------------------------------------------- |
+| href       | string            | Mål-URL eller -väg för länken                                                                                   |
+| barn       | `React.ReactNode` | Innehållet som ska visas inuti länken                                                                           |
+| typ        | string            | Typen av sociala länkar. Alternativ inkluderar: `url`, `LinkedIn` och `Twitter` |
+| onClick    | funktion          | Callback-funktion som ska användas när länken klickas                                                           |
+
+</Tab>
+</Tabs>

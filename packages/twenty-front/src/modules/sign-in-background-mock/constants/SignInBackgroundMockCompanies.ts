@@ -41,8 +41,7 @@ const baseMock = [
             __typename: 'Person',
             id: '240da2ec-2d40-4e49-8df4-9c6a049190df',
             email: 'bertrand.voulzy@google.com',
-            avatarUrl:
-              'person-picture/original/7e4d491e-5482-4c9f-a490-a4d1b62da10f.38',
+            avatarUrl: null,
             phone: '+33788901234',
             createdAt: '2024-11-23T15:38:03.700Z',
             companyId: '04b2e9f5-0713-40a5-8216-82802401d33e',

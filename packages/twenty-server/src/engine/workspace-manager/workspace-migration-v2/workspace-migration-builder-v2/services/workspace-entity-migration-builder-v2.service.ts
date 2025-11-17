@@ -20,6 +20,7 @@ import { deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow } from 'src/en
 import { flatEntityDeletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-entity-deleted-created-updated-matrix-dispatcher.util';
 import { getMetadataEmptyWorkspaceMigrationActionRecord } from 'src/engine/workspace-manager/workspace-migration-v2/utils/get-metadata-empty-workspace-migration-action-record.util';
 import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
+import { shouldInferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration-v2/utils/should-infer-deletion-from-missing-entities.util';
 import { FailedFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/failed-flat-entity-validate-and-build.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
@@ -161,10 +162,14 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       deletedFlatEntityMaps,
     );
 
-    for (const flatEntityToDeleteId in buildOptions
-      .inferDeletionFromMissingEntities?.[this.metadataName]
-      ? deletedFlatEntityMaps.byId
-      : {}) {
+    const flatEntityToDeleteIds = shouldInferDeletionFromMissingEntities({
+      buildOptions,
+      metadataName: this.metadataName,
+    })
+      ? Object.keys(deletedFlatEntityMaps.byId)
+      : [];
+
+    for (const flatEntityToDeleteId of flatEntityToDeleteIds) {
       const flatEntityToDelete =
         deletedFlatEntityMaps.byId[flatEntityToDeleteId];
 

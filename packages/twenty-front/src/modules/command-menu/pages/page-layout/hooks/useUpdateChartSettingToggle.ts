@@ -41,7 +41,19 @@ export const useUpdateChartSettingToggle = ({
       return;
     }
 
+    if (settingId === CHART_CONFIGURATION_SETTING_IDS.STACKED_LINES) {
+      const isCurrentlyStacked = getChartSettingsValues(settingId);
+
+      updateCurrentWidgetConfig({
+        configToUpdate: {
+          isStacked: !isCurrentlyStacked,
+        },
+      });
+      return;
+    }
+
     const newValue = !getChartSettingsValues(settingId);
+
     updateCurrentWidgetConfig({
       configToUpdate: {
         [configKey]: newValue,

@@ -116,7 +116,7 @@ export const FormAdvancedTextFieldInput = ({
 
   const editor = useAdvancedTextEditor(
     {
-      placeholder: placeholder ?? 'Enter text',
+      placeholder: placeholder,
       readonly,
       defaultValue,
       onUpdate: (editor) => {
@@ -140,6 +140,7 @@ export const FormAdvancedTextFieldInput = ({
       },
       onImageUpload,
       onImageUploadError,
+      enableSlashCommand: true,
     },
     [isFullScreen],
   );

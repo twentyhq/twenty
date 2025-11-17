@@ -1,0 +1,60 @@
+---
+title: Objekter
+info: "Lær om standardobjekter og hvordan du lager egendefinerte objekter for dine forretningsbehov."
+image: /images/user-guide/objects/objects_orange.png
+sectionInfo: Fleksibel datamodell designet for å støtte dine unike forretningsprosesser
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/objects/objects_orange.png" alt="Header" />
+</Frame>
+
+## Standard Objects
+
+Standardobjekter er forhåndsdefinerte enheter i arbeidsområdet ditt for å hjelpe deg i gang. De er en del av en delt datamodell tilgjengelig for alle brukere av Twenty. Du kan bruke dem som de er, tilpasse dem eller deaktivere dem.
+
+<img src="/images/user-guide/objects/standard-objects.png"style={{width:'100%'}}/>
+
+### Personer
+
+`Personer`-objektet lagrer kontaktene dine. It includes contact details and interaction history, so you can see all your customer interactions in one place.
+
+### Selskap
+
+The `Companies` object stores your business accounts. Det inkluderer detaljer som bransje, størrelse og beliggenhet. Bedrifter kobles til både `Personer` og `Muligheter`-objektene.
+
+### Muligheter
+
+The `Opportunities` object stores deal-related data. Det registrerer fremdriften av potensielle salg, fra prospektering til avslutning, og noterer stadier, avtalestørrelser, tilhørende konto og forventet avslutningsdato. Du kan se salgspipelinen din i et kanban-oppsett.
+
+## Tilpassede objekter
+
+Custom objects let you store information that's unique to your organization and that standard objects can't handle. For eksempel, hvis du er SpaceX, kan du opprette et egendefinert objekt for Raketter og Oppskytninger.
+
+<img src="/images/user-guide/objects/custom-objects.png"style={{width:'100%'}}/>
+
+### Opprette et nytt egendefinert objekt
+
+For å opprette et nytt egendefinert objekt:
+
+1. Gå til Innstillinger i sidepanelet til venstre.
+2. Under Arbeidsområde, gå til Datamodell. Her vil du kunne se en oversikt over alle eksisterende standard- og egendefinerte objekter (både aktive og deaktiverte).
+
+<VimeoEmbed videoId="926288174" title="Video demonstration" />
+
+3. Klikk på `+ Nytt objekt` øverst. Skriv inn navnet (både entall og flertall), velg et ikon, legg til en beskrivelse for ditt egendefinerte objekt og trykk Lagre (øverst til høyre). Bruke Oppføring som et eksempel på et egendefinert objekt, ville entallet være "oppføring" og flertall "oppføringer" sammen med en beskrivelse som "Oppføringer som verter opprettet for å vise fram eiendommene sine."
+
+<Warning>
+Navnene i entall og flertall må være forskjellige. Dette er nødvendig for at vår GraphQL API skal fungere riktig.
+</Warning>
+
+<VimeoEmbed videoId="926293493" title="Video demonstration" />
+
+4. Når du har opprettet ditt egendefinerte objekt, vil du kunne administrere det. Du kan redigere navnet, ikonet og beskrivelsen, se de ulike feltene, og legge til flere felt.
+
+<img src="/images/user-guide/objects/customize-fields.png"style={{width:'100%'}}/>
+
+**Merk:** Hvis du ikke er sikker på om et nytt objekt eller felt er nødvendig, sjekk [denne artikkelen](/l/no/user-guide/data-model/customize-your-data-model) for veiledning om design av datamodellen din.
+

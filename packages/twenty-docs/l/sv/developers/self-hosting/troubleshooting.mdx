@@ -1,0 +1,227 @@
+---
+title: Felsökning
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Felsökning
+
+If you encounter any problem while setting up environment for development, upgrading your instance or self-hosting,
+here are some solutions for common problems.
+
+### Självhostning
+
+#### First install results in `password authentication failed for user "postgres"`
+
+🚨 **VIKTIGT: Denna lösning är ENDAST för nya installationer** 🚨
+Om du har en befintlig Twenty-instans med produktionsdata, **FÖLJ INTE** dessa steg då de permanent raderar din databas!
+
+När du installerar Twenty för första gången kan du vilja ändra standardlösenordet för databasen.
+Det lösenord du ställer in under den första installationen lagras permanent i databasvolymen. Om du senare försöker ändra detta lösenord i din konfiguration utan att ta bort den gamla volymen får du autentiseringsfel eftersom databasen fortfarande använder det ursprungliga lösenordet.
+
+⚠️ VARNING: Följande steg kommer att PERMANENT RADERA all databasdata! ⚠️
+Fortsätt endast om detta är en ny installation utan viktig data.
+
+För att uppdatera `PG_DATABASE_PASSWORD` behöver du:
+
+```sh
+# Update the PG_DATABASE_PASSWORD in .env
+docker compose down --volumes
+docker compose up -d
+```
+
+#### CR radbrytningar hittade [Windows]
+
+Detta beror på radbrytningskaraktärerna i Windows och git-konfigurationen. Prova att köra:
+
+```
+git config --global core.autocrlf false
+```
+
+Radera därefter förvaret och klona det igen.
+
+#### Saknas metadata-schema
+
+Under installation av Twenty måste du förse din postgresdatabas med rätt scheman, tillägg och användare.
+Om du lyckas köra denna provisioning bör du ha `default` och `metadata` scheman i din databas.
+Om du inte gör det, kontrollera att du inte har fler än en postgresinstans körande på din dator.
+
+#### Kan inte hitta modulen 'twenty-emails' eller dess motsvarande typdeklarationer.
+
+Du måste bygga paketet `twenty-emails` innan du kör initieringen av databasen med `npx nx run twenty-emails:build`
+
+#### Missing twenty-x package
+
+Se till att köra yarn i rotkatalogen och kör sedan `npx nx server:dev twenty-server`. Om det fortfarande inte fungerar, försök att bygga det saknade paketet manuellt.
+
+#### Lint på spara fungerar inte
+
+Detta bör fungera direkt med eslint-tillägget installerat. Om detta inte fungerar, försök lägga till detta i dina vscode-inställningar (i utvecklarconfigurationsområdet):
+
+```
+"editor.codeActionsOnSave": {
+
+  "source.fixAll.eslint": "explicit"
+
+}
+```
+
+#### Vid körning av `npx nx start` eller `npx nx start twenty-front`, får jag ett Minnesfel
+
+I `packages/twenty-front/.env` avkommentera `VITE_DISABLE_TYPESCRIPT_CHECKER=true` och `VITE_DISABLE_ESLINT_CHECKER=true` för att inaktivera bakgrundskontroller och således minska mängden behövt RAM.
+
+**Om det inte fungerar:**  
+Kör endast de tjänster du behöver, istället för `npx nx start`. Till exempel, om du arbetar på servern, kör endast `npx nx worker twenty-server`
+
+**Om det inte fungerar:**  
+Om du försökte köra endast `npx nx run twenty-server:start` i WSL och det misslyckades med minnesfel nedan:
+
+`FATAL ERROR: Ineffektiv mark-kompaktering nära heapgränsen Misslyckad tilldelning - JavaScript heap ur minne`
+
+Ett workaround är att utföra nedan kommando i terminalen eller lägga till det i .bashrc-profilen för att sätta upp det automatiskt:
+
+`export NODE_OPTIONS="--max-old-space-size=8192"`
+
+Flaggan --max-old-space-size=8192 sätter en övre gräns på 8GB för Node.js heap; användningen skalar med applikationens efterfrågan.
+Referens: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
+
+**Om det inte fungerar:**  
+Undersök vilka processer som tar upp mest av ditt systems RAM. Hos Twenty märkte vi att några VScode-tillägg tog mycket RAM, så vi inaktiverade dem tillfälligt.
+
+**Om det inte fungerar:**  
+Att starta om datorn hjälper till att rensa bort spökprocesser.
+
+#### Vid körning av `npx nx start` finns konstiga [0] och [1] i loggar
+
+Det är förväntat eftersom kommandot `npx nx start` kör fler kommandon under ytan.
+
+#### Inga e-postmeddelanden skickas
+
+Oftast beror det på att `worker` inte körs i bakgrunden. Försök att köra
+
+```
+npx nx worker twenty-server
+```
+
+#### Kan inte ansluta mitt Microsoft 365-konto
+
+Oftast beror det på att din administratör inte har aktiverat Microsoft 365-licensen för ditt konto. Kontrollera [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).
+
+Om du har en felkod `AADSTS50020`, betyder det antagligen att du använder ett personligt Microsoft-konto. Detta stöds inte ännu. Mer information [här](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
+
+#### Vid körning av `yarn` visas varningar i konsolen
+
+Varningarna informerar om att ytterligare beroenden dras som inte uttryckligen angivits i `package.json`, så länge inga brutna fel uppstår bör allt fungera som förväntat.
+
+#### När användaren går in på inloggningssidan visas fel om obehörig användare som försöker komma åt arbetsytan i loggar
+
+Det är förväntat eftersom användaren är obehörig när den är utloggad då dess identitet inte är verifierad.
+
+#### Hur kontrollerar du om din worker körs?
+
+- Gå till [webhook-test.com](https://webhook-test.com/) och kopiera **Din unika Webhook-URL**.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Webhook test" />
+</div>
+- Öppna din Twenty-app, navigera till `/settings`, och aktivera **Avancerat**-växeln längst ner till vänster på skärmen.
+- Skapa en ny webhook.
+- Klistra in **Din unika Webhook-URL** i fältet **Endpoint URL** i Twenty. Ställ in **Filter** till `Companies` och `Created`.
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Webhook settings" />
+</div>
+- Gå till `/objects/companies` och skapa en ny företagsregistrering.
+- Återvänd till [webhook-test.com](https://webhook-test.com/) och kontrollera om en ny **POST-förfrågan** har mottagits.
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Webhook test result" />
+</div>
+- Om en **POST-förfrågan** mottas, kör din worker korrekt. Annars behöver du felsöka din worker.
+
+#### Frontend misslyckas att starta och återvänder fel TS5042: Option 'projekt' kan inte mixas med källfiler i en kommandorad
+
+Kommentera kontrollplugin i `packages/twenty-ui/vite-config.ts` som i exemplet nedan
+
+```
+plugins: [
+      react({ jsxImportSource: '@emotion/react' }),
+      tsconfigPaths(),
+      svgr(),
+      dts(dtsConfig),
+      // checker(checkersConfig),
+      wyw({
+        include: [
+          '**/OverflowingTextWithTooltip.tsx',
+          '**/Chip.tsx',
+          '**/Tag.tsx',
+          '**/Avatar.tsx',
+          '**/AvatarChip.tsx',
+        ],
+        babelOptions: {
+          presets: ['@babel/preset-typescript', '@babel/preset-react'],
+        },
+      }),
+    ],
+```
+
+#### Administrationspanelen inte åtkomlig
+
+Kör `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'du@dindomän.com';` i databaskonfigurationsbehållaren för att få tillgång till administrationspanelen.
+
+### 1-klick Docker compose
+
+#### Det går inte att logga in
+
+Om du inte kan logga in efter installationen:
+
+1. Kör följande kommandon:
+   ```bash
+   docker exec -it twenty-server-1 yarn
+   docker exec -it twenty-server-1 npx nx database:reset  --configuration=no-seed
+   ```
+2. Starta om Docker-behållarna:
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+Observera att database:reset kommandot kommer att helt radera din databas och återskapa den från grunden.
+
+#### Anslutningsproblem bakom en omvänd proxy
+
+Om du kör Twenty bakom en omvänd proxy och upplever anslutningsproblem:
+
+1. **Verifiera SERVER_URL:**
+
+   Se till att `SERVER_URL` i din `.env` fil matchar din externa åtkomst-URL, inklusive `https` om SSL är aktiverat.
+
+2. **Kontrollera omvända proxyinställningar:**
+
+   - Bekräfta att din omvända proxy vidarebefordrar förfrågningar korrekt till Twenty-servern.
+   - Säkerställ att rubriker som `X-Forwarded-For` och `X-Forwarded-Proto` är korrekt inställda.
+
+3. **Starta om tjänster:**
+
+   Efter att ha gjort förändringar, starta om både den omvända proxyn och Twenty-behållarna.
+
+#### Fel vid uppladdning av en bild - åtkomst nekas
+
+Att byta datamappsägande på värdmaskinen från root till en annan användare och grupp löser detta problem.
+
+## Att få hjälp
+
+Om du stöter på problem som inte omfattas av denna guide:
+
+- Kontrollera loggar:
+
+  Visa behållarloggar för felmeddelanden:
+
+  ```bash
+  docker compose logs
+  ```
+
+- Communitysupport:
+
+  Kontakta [Twenty-gemenskapen](https://github.com/twentyhq/twenty/issues) eller [supportkanaler](https://discord.gg/cx5n4Jzs57) för hjälp.

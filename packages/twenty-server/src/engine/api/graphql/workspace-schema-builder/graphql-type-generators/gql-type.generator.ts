@@ -1,6 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+import {
+  type CompositeType,
+  compositeTypeDefinitions,
+} from 'twenty-shared/types';
 
 import { CompositeFieldMetadataGqlEnumTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/enum-types/composite-field-metadata-gql-enum-type.generator';
 import { EnumFieldMetadataGqlEnumTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/enum-types/enum-field-metadata-gql-enum-type.generator';
@@ -18,7 +21,6 @@ import { MutationTypeGenerator } from 'src/engine/api/graphql/workspace-schema-b
 import { QueryTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/query-type.generator';
 import { objectContainsMorphRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-morph-relation-field.util';
 import { objectContainsRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-relation-field';
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 @Injectable()

@@ -1,0 +1,47 @@
+---
+title: Valintaruutu
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Käytetään, kun käyttäjän tulee valita useita arvoja eri vaihtoehdoista.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Checkbox } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+    <Checkbox
+      checked={true}
+      indeterminate={false}
+      onChange={() => console.log("onChange function fired")}
+      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      variant="primary"
+      size="small"
+      shape="squared"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Rekvisiitat     | Tyyppi     | Kuvaus                                                                                                                            |
+| --------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| valittu         | boolean    | Ilmaisee, onko valintaruutu valittuna                                                                                             |
+| indeterminate   | looginen   | Indicates whether the checkbox is in an indeterminate state (neither checked nor unchecked)                    |
+| onChange        | toiminto   | The callback function you want to trigger when the checkbox state changes                                                         |
+| onCheckedChange | funktio    | The callback function you want to trigger when the `checked` state changes                                                        |
+| variantti       | string     | The visual style variant of the box. Vaihtoehdot sisältävät: `primary`, `secondary` ja `tertiary` |
+| koko            | string     | Valintaruudun koko. Has two options: `small` and `large`                                          |
+| muoto           | merkkijono | Valintaruudun muoto. Kaksi vaihtoehtoa: `squared` ja `rounded`                                    |
+
+</Tab>
+</Tabs>

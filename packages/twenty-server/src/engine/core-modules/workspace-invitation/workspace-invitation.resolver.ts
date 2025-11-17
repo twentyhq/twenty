@@ -11,7 +11,7 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -23,7 +23,7 @@ import { SendInvitationsInput } from './dtos/send-invitations.input';
 
 @UseGuards(
   WorkspaceAuthGuard,
-  SettingsPermissionsGuard(PermissionFlagType.WORKSPACE_MEMBERS),
+  SettingsPermissionGuard(PermissionFlagType.WORKSPACE_MEMBERS),
 )
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
@@ -88,15 +88,6 @@ export class WorkspaceInvitationResolver {
     @AuthUser() user: UserEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendInvitationsOutput> {
-    let workspaceLogoWithToken = '';
-
-    if (workspace.logo) {
-      workspaceLogoWithToken = this.fileService.signFileUrl({
-        url: workspace.logo,
-        workspaceId: workspace.id,
-      });
-    }
-
     const workspaceMemberRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspace.id,
@@ -112,7 +103,7 @@ export class WorkspaceInvitationResolver {
 
     return await this.workspaceInvitationService.sendInvitations(
       sendInviteLinkInput.emails,
-      { ...workspace, logo: workspaceLogoWithToken },
+      workspace,
       workspaceMember,
     );
   }

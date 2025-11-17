@@ -74,6 +74,8 @@ jobs:
           upload_sources: false
           upload_translations: false
           download_translations: true
+          source: '**/en.po'
+          translation: '%original_path%/%locale%.po'
           export_only_approved: false
           localization_branch_name: i18n
           base_url: 'https://twenty.api.crowdin.com'
@@ -91,7 +93,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           CROWDIN_PROJECT_ID: '1'
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
-      
+
       # As the files are extracted from a Docker container, they belong to root:root
       # We need to fix this before the next steps
       - name: Fix file permissions
@@ -103,7 +105,7 @@ jobs:
         # if: inputs.force_pull || steps.compile_translations_strict.outcome == 'failure'
         run: |
           npx nx run twenty-server:lingui:compile
-          npx nx run twenty-emails:lingui:compile 
+          npx nx run twenty-emails:lingui:compile
           npx nx run twenty-front:lingui:compile
           git status
           git config --global user.name 'github-actions'

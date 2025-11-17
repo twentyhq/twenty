@@ -1,6 +1,8 @@
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
 import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
+import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
+import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
@@ -21,6 +23,15 @@ export const PageLayoutLeftPanel = ({
     return null;
   }
 
+  const pinnedTab = currentPageLayout.tabs.find(
+    (tab) => tab.id === pinnedLeftTabId,
+  );
+
+  const layoutMode = getTabLayoutMode({
+    tab: pinnedTab,
+    pageLayoutType: currentPageLayout.type,
+  });
+
   return (
     <ShowPageLeftContainer>
       <SummaryCard
@@ -29,7 +40,14 @@ export const PageLayoutLeftPanel = ({
         isInRightDrawer={isInRightDrawer}
       />
 
-      <PageLayoutContent tabId={pinnedLeftTabId} />
+      <PageLayoutContentProvider
+        value={{
+          tabId: pinnedLeftTabId,
+          layoutMode,
+        }}
+      >
+        <PageLayoutContent />
+      </PageLayoutContentProvider>
     </ShowPageLeftContainer>
   );
 };

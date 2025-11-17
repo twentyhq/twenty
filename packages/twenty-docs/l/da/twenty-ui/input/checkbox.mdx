@@ -1,0 +1,47 @@
+---
+title: Afkrydsningsfeltet
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Bruges, når en bruger skal vælge flere værdier fra adskillige muligheder.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Checkbox } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+    <Checkbox
+      checked={true}
+      indeterminate={false}
+      onChange={() => console.log("onChange function fired")}
+      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      variant="primary"
+      size="small"
+      shape="squared"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaber      | Type     | Beskrivelse                                                                                                                     |
+| --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| markeret        | boolean  | Indikerer, om afkrydsningsfeltet er markeret                                                                                    |
+| Ubestemt        | boolean  | Indikerer, om afkrydsningsfeltet er i en ubestemt tilstand (hverken markeret eller ikke-markeret)            |
+| onChange        | funktion | Callback-funktionen, du ønsker at udløse, når tilstanden af afkrydsningsfeltet ændres                                           |
+| onCheckedChange | funktion | The callback function you want to trigger when the `checked` state changes                                                      |
+| variant         | streng   | Den visuelle stilvariant af boksen. Muligheder inkluderer: `primary`, `secondary` og `tertiary` |
+| størrelse       | streng   | Størrelsen af afkrydsningsfeltet. Has two options: `small` and `large`                          |
+| form            | string   | Formen af afkrydsningsfeltet. Har to muligheder: `squared` og `rounded`                         |
+
+</Tab>
+</Tabs>
