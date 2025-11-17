@@ -28,4 +28,4 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
     MakeSyncableEntitiesUniversalIdentifierAndApplicationIdNonNullableMigration,
   ],
 })
-export class V1_11_UpgradeVersionCommandModule {}
+export class V1_12_UpgradeVersionCommandModule {}
