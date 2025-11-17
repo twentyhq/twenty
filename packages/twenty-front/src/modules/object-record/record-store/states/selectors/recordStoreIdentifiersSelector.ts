@@ -2,6 +2,7 @@ import { selectorFamily } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
+import { mergePreviewRecordFamilyState } from '@/object-record/record-merge/states/mergePreviewRecordFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isDefined, uncapitalize } from 'twenty-shared/utils';
 
@@ -14,7 +15,10 @@ export const recordStoreIdentifiersFamilySelector = selectorFamily({
 
       return recordIds
         .map((recordId) => {
-          const recordFromStore = get(recordStoreFamilyState(recordId));
+          const previewRecord = get(mergePreviewRecordFamilyState(recordId));
+          const recordFromStore = isDefined(previewRecord)
+            ? previewRecord
+            : get(recordStoreFamilyState(recordId));
           const objectNameSingular = uncapitalize(
             recordFromStore?.__typename ?? '',
           );

@@ -3,6 +3,7 @@ import { selectorFamily } from 'recoil';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+import { mergePreviewRecordFamilyState } from '@/object-record/record-merge/states/mergePreviewRecordFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { RelationType, type ObjectRecord } from 'twenty-shared/types';
 import {
@@ -27,7 +28,12 @@ export const recordStoreFieldValueSelector = selectorFamily({
       >;
     }) =>
     ({ get }) => {
+      const previewRecord = get(mergePreviewRecordFamilyState(recordId));
+
       if (!isFieldMorphRelation(fieldDefinition)) {
+        if (isDefined(previewRecord)) {
+          return previewRecord[fieldName];
+        }
         return get(recordStoreFamilyState(recordId))?.[fieldName];
       }
 
@@ -40,6 +46,10 @@ export const recordStoreFieldValueSelector = selectorFamily({
         );
       }
 
+      const baseRecord = isDefined(previewRecord)
+        ? previewRecord
+        : get(recordStoreFamilyState(recordId));
+
       const morphValuesWithObjectName = morphRelations.map((morphRelation) => {
         const computedFieldName = computeMorphRelationFieldName({
           fieldName: morphRelation.sourceFieldMetadata.name,
@@ -51,7 +61,7 @@ export const recordStoreFieldValueSelector = selectorFamily({
         });
         return {
           objectNameSingular: morphRelation.targetObjectMetadata.nameSingular,
-          value: get(recordStoreFamilyState(recordId))?.[computedFieldName],
+          value: baseRecord?.[computedFieldName],
         };
       });
 
