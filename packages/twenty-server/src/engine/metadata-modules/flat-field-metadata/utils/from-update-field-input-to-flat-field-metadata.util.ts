@@ -125,9 +125,11 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
           ...mergeUpdateInExistingRecord({
             existing: fromFlatFieldMetadata,
             properties:
-              FLAT_FIELD_METADATA_EDITABLE_PROPERTIES[
-                isStandardField ? 'standard' : 'custom'
-              ],
+              existingFlatFieldMetadataToUpdate.id === fromFlatFieldMetadata.id
+                ? FLAT_FIELD_METADATA_EDITABLE_PROPERTIES[
+                    isStandardField ? 'standard' : 'custom'
+                  ]
+                : ['isActive'],
             update: updatedEditableFieldProperties,
           }),
           standardOverrides,
