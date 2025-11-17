@@ -13,7 +13,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
-  name: 'upgrade:1-11:create-workspace-custom-application',
+  name: 'upgrade:1-12:create-workspace-custom-application',
   description:
     'Create workspace-custom application for workspaces that do not have them',
 })

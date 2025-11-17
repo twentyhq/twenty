@@ -12,7 +12,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
-  name: '1-11-make-syncable-entities-universal-identifier-and-application-id-non-nullable-migration',
+  name: '1-12-make-syncable-entities-universal-identifier-and-application-id-non-nullable-migration',
   description:
     'Make syncable entities universalIdentifier and applicationId non nullable migration to run once',
 })

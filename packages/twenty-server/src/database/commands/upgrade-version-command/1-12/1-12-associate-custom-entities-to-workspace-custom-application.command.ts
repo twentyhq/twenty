@@ -1,7 +1,6 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { DataSource, IsNull, Repository } from 'typeorm';
 import {
   ALL_METADATA_NAME,
   AllMetadataName,
@@ -9,6 +8,7 @@ import {
   NotV2YetAllMetadataName,
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
+import { DataSource, IsNull, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
@@ -26,7 +26,7 @@ const ALL_METADATA_NAME_TO_MIGRATE = [
 ] as (AllMetadataName | NotV2YetAllMetadataName)[];
 
 @Command({
-  name: 'upgrade:1-11:associate-custom-entities-to-workspace-custom-application',
+  name: 'upgrade:1-12:associate-custom-entities-to-workspace-custom-application',
   description:
     'Will scan all workspace custom entities and associate it to the workspace-custom app and set a universal identifier',
 })

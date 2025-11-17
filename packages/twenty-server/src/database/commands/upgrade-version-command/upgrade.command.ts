@@ -18,13 +18,13 @@ import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands
 import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-type-to-file-category.command';
 import { MigrateChannelPartialFullSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-channel-partial-full-sync-stages.command';
 import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-search-vectors.command';
-import { AssociateCustomEntitiesToWorkspaceCustomApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-associate-custom-entities-to-workspace-custom-application.command';
-import { AssociateStandardEntitiesToTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-associate-standard-entities-to-twenty-standard-application.command';
 import { CleanOrphanedRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-role-targets.command';
 import { CleanOrphanedUserWorkspacesCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-user-workspaces.command';
 import { CreateTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-create-twenty-standard-application.command';
-import { CreateWorkspaceCustomApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-create-workspace-custom-application.command';
-import { MakeSyncableEntitiesUniversalIdentifierAndApplicationIdNonNullableMigration } from 'src/database/commands/upgrade-version-command/1-11/1-11-make-syncable-entities-universal-identifier-and-application-id-non-nullable-migration.command';
+import { AssociateCustomEntitiesToWorkspaceCustomApplicationCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-associate-custom-entities-to-workspace-custom-application.command';
+import { AssociateStandardEntitiesToTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-associate-standard-entities-to-twenty-standard-application.command';
+import { CreateWorkspaceCustomApplicationCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-create-workspace-custom-application.command';
+import { MakeSyncableEntitiesUniversalIdentifierAndApplicationIdNonNullableMigration } from 'src/database/commands/upgrade-version-command/1-12/1-12-make-syncable-entities-universal-identifier-and-application-id-non-nullable-migration.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
 import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-deduplicate-unique-fields.command';
@@ -79,6 +79,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly cleanOrphanedUserWorkspacesCommand: CleanOrphanedUserWorkspacesCommand,
     protected readonly cleanOrphanedRoleTargetsCommand: CleanOrphanedRoleTargetsCommand,
     protected readonly createTwentyStandardApplicationCommand: CreateTwentyStandardApplicationCommand,
+
+    // 1.12 Commands
     protected readonly associateStandardEntitiesToTwentyStandardApplicationCommand: AssociateStandardEntitiesToTwentyStandardApplicationCommand,
     protected readonly associateCustomEntitiesToWorkspaceCustomApplicationCommand: AssociateCustomEntitiesToWorkspaceCustomApplicationCommand,
     protected readonly createWorkspaceCustomApplicationCommand: CreateWorkspaceCustomApplicationCommand,
@@ -131,15 +133,20 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_1110: VersionCommands = {
+      beforeSyncMetadata: [this.createTwentyStandardApplicationCommand],
+      afterSyncMetadata: [
+        this.cleanOrphanedUserWorkspacesCommand,
+        this.cleanOrphanedRoleTargetsCommand,
+      ],
+    };
+
+    const commands_1120: VersionCommands = {
       beforeSyncMetadata: [
-        this.createTwentyStandardApplicationCommand,
         this.associateStandardEntitiesToTwentyStandardApplicationCommand, // Also partially done in sync metadata
         this.createWorkspaceCustomApplicationCommand,
         this.associateCustomEntitiesToWorkspaceCustomApplicationCommand,
       ],
       afterSyncMetadata: [
-        this.cleanOrphanedUserWorkspacesCommand,
-        this.cleanOrphanedRoleTargetsCommand,
         this
           .makeSyncableEntitiesUniversalIdentifierAndApplicationIdNonNullableMigration,
       ],
@@ -151,6 +158,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '1.8.0': commands_180,
       '1.10.0': commands_1100,
       '1.11.0': commands_1110,
+      '1.12.0': commands_1120,
     };
   }
 

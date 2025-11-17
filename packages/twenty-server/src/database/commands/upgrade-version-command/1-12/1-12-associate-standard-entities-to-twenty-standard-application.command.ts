@@ -27,7 +27,7 @@ const ALL_METADATA_NAME_TO_MIGRATE = [
 ] as (AllMetadataName | NotV2YetAllMetadataName)[];
 
 @Command({
-  name: 'upgrade:1-11:associate-standard-entities-to-twenty-standard-application',
+  name: 'upgrade:1-12:associate-standard-entities-to-twenty-standard-application',
   description:
     'Will scan all workspace standard entities and associate it to the twenty-standard app and set a universal identifier',
 })
