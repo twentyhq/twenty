@@ -80,10 +80,6 @@ export const SidePanelHeader = ({
 
   const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
 
-  const handleSyncTitle = (newTitle: string) => {
-    setTitle(newTitle);
-  };
-
   const handleChange = (newTitle: string) => {
     setTitle(newTitle);
   };
@@ -102,7 +98,7 @@ export const SidePanelHeader = ({
     <>
       <SidePanelHeaderTitleSyncEffect
         initialTitle={initialTitle}
-        onSync={handleSyncTitle}
+        setTitle={setTitle}
       />
       <StyledHeader data-testid="side-panel-header">
         <StyledHeaderIconContainer id={tooltipId}>

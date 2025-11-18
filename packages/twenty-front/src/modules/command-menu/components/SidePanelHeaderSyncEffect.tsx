@@ -2,16 +2,16 @@ import { useEffect } from 'react';
 
 type SidePanelHeaderTitleSyncEffectProps = {
   initialTitle: string;
-  onSync: (title: string) => void;
+  setTitle: (title: string) => void;
 };
 
 export const SidePanelHeaderTitleSyncEffect = ({
   initialTitle,
-  onSync,
+  setTitle,
 }: SidePanelHeaderTitleSyncEffectProps) => {
   useEffect(() => {
-    onSync(initialTitle);
-  }, [initialTitle, onSync]);
+    setTitle(initialTitle);
+  }, [initialTitle, setTitle]);
 
   return null;
 };
