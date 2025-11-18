@@ -101,4 +101,5 @@ export const ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY = {
       flatEntityForeignKeyAggregator: 'viewFilterIds',
     },
   },
+  role: {},
 } as const satisfies MetadataNameAndRelations;

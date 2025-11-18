@@ -15,5 +15,11 @@ export const ADMIN_ROLE: StandardRoleDefinition = {
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: false,
   canBeAssignedToApiKeys: true,
-  applicationId: null, // TODO: Replace with Twenty application ID
+  applicationId: null,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  roleTargetIds: [],
+  objectPermissionIds: [],
+  permissionFlagIds: [],
+  fieldPermissionIds: [],
 };
