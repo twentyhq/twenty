@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const computeBarChartStackedLabels = (
   bars: readonly ComputedBarDatum<BarChartDataItem>[],
 ): BarChartLabelData[] => {
-  const groupTotals = new Map<
+  const stackData = new Map<
     string,
     {
       total: number;
@@ -23,7 +23,7 @@ export const computeBarChartStackedLabels = (
     const barTopY = bar.y;
     const barBottomY = bar.y + bar.height;
     const barRightX = bar.x + bar.width;
-    const existingGroup = groupTotals.get(groupKey);
+    const existingGroup = stackData.get(groupKey);
 
     if (isDefined(existingGroup)) {
       existingGroup.total += value;
@@ -41,7 +41,7 @@ export const computeBarChartStackedLabels = (
       );
       existingGroup.bars.push(bar);
     } else {
-      groupTotals.set(groupKey, {
+      stackData.set(groupKey, {
         total: value,
         minimumYPosition: barTopY,
         maximumBottomYPosition: barBottomY,
@@ -51,7 +51,7 @@ export const computeBarChartStackedLabels = (
     }
   }
 
-  const groupedEntries = Array.from(groupTotals.entries());
+  const groupedEntries = Array.from(stackData.entries());
 
   const labels: BarChartLabelData[] = groupedEntries.map(
     ([

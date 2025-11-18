@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const computeLineChartStackedLabels = (
   points: readonly Point<LineSeries>[],
 ): GraphLabelData[] => {
-  const groupTotals = new Map<
+  const stackData = new Map<
     string,
     {
       total: number;
@@ -17,7 +17,7 @@ export const computeLineChartStackedLabels = (
 
   for (const point of points) {
     const groupKey = String(point.data.x);
-    const existingGroup = groupTotals.get(groupKey);
+    const existingGroup = stackData.get(groupKey);
 
     if (isDefined(existingGroup)) {
       existingGroup.total += Number(point.data.y);
@@ -30,7 +30,7 @@ export const computeLineChartStackedLabels = (
         point.y,
       );
     } else {
-      groupTotals.set(groupKey, {
+      stackData.set(groupKey, {
         total: Number(point.data.y),
         minimumYPosition: point.y,
         maximumYPosition: point.y,
@@ -39,7 +39,7 @@ export const computeLineChartStackedLabels = (
     }
   }
 
-  const groupedEntries = Array.from(groupTotals.entries());
+  const groupedEntries = Array.from(stackData.entries());
 
   const labels: GraphLabelData[] = groupedEntries.map(
     ([groupKey, { total, minimumYPosition, maximumYPosition, xPosition }]) => {

@@ -20,21 +20,21 @@ export const CustomPointLabelsLayer = ({
   groupMode,
   omitNullValues = false,
 }: CustomPointLabelsLayerProps) => {
-  const labels =
+  const lineChartLabels =
     groupMode === 'stacked'
       ? computeLineChartStackedLabels(points)
       : computeLineChartGroupedLabels(points);
 
-  const labelsToRender = omitNullValues
-    ? labels.filter((label) => label.value !== 0)
-    : labels;
+  const lineChartLabelsToRender = omitNullValues
+    ? lineChartLabels.filter((label) => label.value !== 0)
+    : lineChartLabels;
 
   return (
     <>
-      {labelsToRender.map((label) => (
+      {lineChartLabelsToRender.map((lineChartLabel) => (
         <GraphDataLabel
-          key={label.key}
-          label={label}
+          key={lineChartLabel.key}
+          label={lineChartLabel}
           formatValue={formatValue}
           offset={offset}
           isVerticalLayout={true}

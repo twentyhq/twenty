@@ -46,13 +46,13 @@ export const CustomTotalsLayer = ({
       ? computeBarChartStackedLabels(bars)
       : computeBarChartGroupedLabels(bars);
 
-  const labelsToRender = omitNullValues
+  const barChartLabelsToRender = omitNullValues
     ? barChartLabels.filter((label) => label.value !== 0)
     : barChartLabels;
 
   return (
     <>
-      {labelsToRender.map((barChartLabel) => {
+      {barChartLabelsToRender.map((barChartLabel) => {
         const graphLabel = convertToGraphLabelData(
           barChartLabel,
           isVerticalLayout,
