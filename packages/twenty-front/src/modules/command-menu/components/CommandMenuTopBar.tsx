@@ -152,6 +152,7 @@ export const CommandMenuTopBar = () => {
           commandMenuPage === CommandMenuPages.SearchRecords) && (
           <>
             <StyledInput
+              data-testid="command-menu-search-input"
               ref={inputRef}
               value={commandMenuSearch}
               placeholder={t`Type anything...`}

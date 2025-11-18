@@ -146,7 +146,7 @@ export const LimitedPermissions: Story = {
 export const MatchingNavigate: Story = {
   play: async () => {
     const canvas = within(document.body);
-    const searchInput = await canvas.findByPlaceholderText('Type anything...');
+    const searchInput = await canvas.findByTestId('command-menu-search-input');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'ta');
     expect(await canvas.findByText('Go to Tasks')).toBeVisible();
@@ -156,7 +156,7 @@ export const MatchingNavigate: Story = {
 export const MatchingNavigateShortcuts: Story = {
   play: async () => {
     const canvas = within(document.body);
-    const searchInput = await canvas.findByPlaceholderText('Type anything...');
+    const searchInput = await canvas.findByTestId('command-menu-search-input');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'gp');
     expect(await canvas.findByText('Go to People')).toBeVisible();
@@ -181,7 +181,7 @@ export const MatchingNavigateShortcuts: Story = {
 export const NoResultsSearchFallback: Story = {
   play: async () => {
     const canvas = within(document.body);
-    const searchInput = await canvas.findByPlaceholderText('Type anything...');
+    const searchInput = await canvas.findByTestId('command-menu-search-input');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'input without results');
     expect(await canvas.findByText('No results found')).toBeVisible();
@@ -191,6 +191,7 @@ export const NoResultsSearchFallback: Story = {
   parameters: {
     msw: {
       handlers: [
+        ...graphqlMocks.handlers,
         graphql.query('Search', () => {
           return HttpResponse.json({
             data: {
