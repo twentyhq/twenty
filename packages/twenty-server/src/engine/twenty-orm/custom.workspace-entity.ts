@@ -18,7 +18,6 @@ import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/wor
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import {
   type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
@@ -28,6 +27,7 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { v4 } from 'uuid';
 
 export const SEARCH_FIELDS_FOR_CUSTOM_OBJECT: FieldTypeAndNameMetadata[] = [
   {
@@ -37,13 +37,14 @@ export const SEARCH_FIELDS_FOR_CUSTOM_OBJECT: FieldTypeAndNameMetadata[] = [
 ];
 @WorkspaceCustomEntity()
 export class CustomWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: CUSTOM_OBJECT_STANDARD_FIELD_IDS.id,
-  createdAt: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: CUSTOM_OBJECT_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: CUSTOM_OBJECT_STANDARD_FIELD_IDS.deletedAt,
+  // TODO prastoin they should be deterministic still but not predictable
+  id: v4(),
+  createdAt: v4(),
+  updatedAt: v4(),
+  deletedAt: v4(),
 }) {
   @WorkspaceField({
-    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
+    universalIdentifier: v4(),
     label: msg`Name`,
     description: msg`Name`,
     type: FieldMetadataType.TEXT,
@@ -52,7 +53,7 @@ export class CustomWorkspaceEntity extends createBaseWorkspaceEntity({
   name: string;
 
   @WorkspaceField({
-    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.position,
+    universalIdentifier: v4(),
     label: msg`Position`,
     description: msg`Position`,
     type: FieldMetadataType.POSITION,
@@ -64,7 +65,7 @@ export class CustomWorkspaceEntity extends createBaseWorkspaceEntity({
   position: number;
 
   @WorkspaceField({
-    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
+    universalIdentifier: v4(),
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',
@@ -74,7 +75,7 @@ export class CustomWorkspaceEntity extends createBaseWorkspaceEntity({
   createdBy: ActorMetadata;
 
   @WorkspaceRelation({
-    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.noteTargets,
+    universalIdentifier: v4(),
     label: msg`Notes`,
     type: RelationType.ONE_TO_MANY,
     description: (objectMetadata) => {
@@ -90,7 +91,7 @@ export class CustomWorkspaceEntity extends createBaseWorkspaceEntity({
   noteTargets: NoteTargetWorkspaceEntity[];
 
   @WorkspaceRelation({
-    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.taskTargets,
+    universalIdentifier: v4(),
     label: msg`Tasks`,
     type: RelationType.ONE_TO_MANY,
     description: (objectMetadata) => {
@@ -106,7 +107,7 @@ export class CustomWorkspaceEntity extends createBaseWorkspaceEntity({
   taskTargets: TaskTargetWorkspaceEntity[];
 
   @WorkspaceRelation({
-    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.favorites,
+    universalIdentifier: v4(),
     label: msg`Favorites`,
     type: RelationType.ONE_TO_MANY,
     description: (objectMetadata) => {
@@ -123,7 +124,7 @@ export class CustomWorkspaceEntity extends createBaseWorkspaceEntity({
   favorites: FavoriteWorkspaceEntity[];
 
   @WorkspaceRelation({
-    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.attachments,
+    universalIdentifier: v4(),
     label: msg`Attachments`,
     type: RelationType.ONE_TO_MANY,
     description: (objectMetadata) => {
@@ -140,7 +141,7 @@ export class CustomWorkspaceEntity extends createBaseWorkspaceEntity({
   attachments: AttachmentWorkspaceEntity[];
 
   @WorkspaceRelation({
-    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.timelineActivities,
+    universalIdentifier: v4(),
     label: msg`Timeline Activities`,
     type: RelationType.ONE_TO_MANY,
     description: (objectMetadata) => {
@@ -157,7 +158,7 @@ export class CustomWorkspaceEntity extends createBaseWorkspaceEntity({
   timelineActivities: TimelineActivityWorkspaceEntity[];
 
   @WorkspaceField({
-    universalIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,
+    universalIdentifier: v4(),
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
     description: SEARCH_VECTOR_FIELD.description,

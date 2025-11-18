@@ -13,6 +13,7 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 
 interface WorkspaceRelationMinimumBaseOptions<TClass> {
   universalIdentifier: string;
+  standardId?: string;
   label: MessageDescriptor;
   description?:
     | MessageDescriptor
@@ -106,7 +107,7 @@ export function WorkspaceRelation<TClass extends object>(
 
     metadataArgsStorage.addRelations({
       target: object.constructor,
-      standardId: options.universalIdentifier,
+      standardId: options.standardId ?? options.universalIdentifier,
       name,
       label,
       type: options.type,

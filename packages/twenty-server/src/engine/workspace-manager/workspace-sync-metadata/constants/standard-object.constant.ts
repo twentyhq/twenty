@@ -731,7 +731,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: MESSAGE_FOLDER_STANDARD_FIELD_IDS.parentFolderId,
       },
       messageChannel: {
-        universalIdentifier: MESSAGE_FOLDER_STANDARD_FIELD_IDS.messageChannel,
+        universalIdentifier: '20202020-c9f8-43db-a3e7-7f2e8b5d9c1a',
       },
       syncCursor: {
         universalIdentifier: MESSAGE_FOLDER_STANDARD_FIELD_IDS.syncCursor,
@@ -1384,7 +1384,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.dashboard,
       },
       custom: {
-        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.custom,
+        universalIdentifier: '20202020-a9b2-4f85-b3c7-6d8e9f1a4c2b',
       },
       linkedRecordCachedName: {
         universalIdentifier:
