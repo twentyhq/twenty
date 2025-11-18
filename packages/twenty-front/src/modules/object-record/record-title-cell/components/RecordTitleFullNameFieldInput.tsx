@@ -9,7 +9,7 @@ import { useContext } from 'react';
 import { RecordTitleDoubleTextInput } from './RecordTitleDoubleTextInput';
 
 type RecordTitleFullNameFieldInputProps = {
-  sizeVariant?: 'xs' | 'md';
+  sizeVariant?: 'xs' | 'sm' | 'md';
 };
 
 export const RecordTitleFullNameFieldInput = ({

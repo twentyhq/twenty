@@ -147,7 +147,7 @@ export const CommandMenuRecordInfo = ({
           }}
         >
           <RecordTitleCell
-            sizeVariant="xs"
+            sizeVariant="sm"
             containerType={RecordTitleCellContainerType.PageHeader}
           />
         </FieldContext.Provider>
