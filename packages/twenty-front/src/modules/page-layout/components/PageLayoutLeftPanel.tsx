@@ -56,20 +56,20 @@ export const PageLayoutLeftPanel = ({
         isInRightDrawer={isInRightDrawer}
       />
 
-      <StyledScrollWrapper
-        componentInstanceId={`page-layout-left-panel-${pinnedLeftTabId}`}
-        defaultEnableXScroll={false}
-        defaultEnableYScroll={true}
+      <PageLayoutContentProvider
+        value={{
+          tabId: pinnedLeftTabId,
+          layoutMode,
+        }}
       >
-        <PageLayoutContentProvider
-          value={{
-            tabId: pinnedLeftTabId,
-            layoutMode,
-          }}
+        <StyledScrollWrapper
+          componentInstanceId={`page-layout-left-panel-${pinnedLeftTabId}`}
+          defaultEnableXScroll={false}
+          defaultEnableYScroll={true}
         >
           <PageLayoutContent />
-        </PageLayoutContentProvider>
-      </StyledScrollWrapper>
+        </StyledScrollWrapper>
+      </PageLayoutContentProvider>
     </StyledContainer>
   );
 };
