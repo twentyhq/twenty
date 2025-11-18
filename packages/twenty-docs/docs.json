@@ -1922,7 +1922,7 @@
             "tab": "User Guide",
             "groups": [
               {
-                "group": "Getting Started",
+                "group": "시작하기",
                 "icon": "rocket",
                 "pages": [
                   "l/ko/user-guide/introduction",
@@ -1936,7 +1936,7 @@
                 ]
               },
               {
-                "group": "Data Model",
+                "group": "데이터 모델",
                 "icon": "database",
                 "pages": [
                   "l/ko/user-guide/data-model/customize-your-data-model",
@@ -1948,7 +1948,7 @@
                 ]
               },
               {
-                "group": "CRM Essentials",
+                "group": "CRM 필수 요소",
                 "icon": "users",
                 "pages": [
                   "l/ko/user-guide/crm-essentials/contact-and-account-management",
@@ -1958,7 +1958,7 @@
                 ]
               },
               {
-                "group": "Views",
+                "group": "보기들",
                 "icon": "table",
                 "pages": [
                   "l/ko/user-guide/views/kanban-views",
@@ -1979,7 +1979,7 @@
                 ]
               },
               {
-                "group": "Collaboration",
+                "group": "협업",
                 "icon": "envelope",
                 "pages": [
                   "l/ko/user-guide/collaboration/emails-and-calendars",
@@ -2004,7 +2004,7 @@
                 ]
               },
               {
-                "group": "Settings",
+                "group": "설정",
                 "icon": "gear",
                 "pages": [
                   "l/ko/user-guide/settings/profile-settings",
@@ -2019,14 +2019,14 @@
                 ]
               },
               {
-                "group": "Pricing",
+                "group": "가격",
                 "icon": "credit-card",
                 "pages": [
                   "l/ko/user-guide/pricing/billing-and-pricing-faq"
                 ]
               },
               {
-                "group": "Resources",
+                "group": "자료",
                 "icon": "book-open",
                 "pages": [
                   "l/ko/user-guide/resources/glossary",
@@ -2036,20 +2036,20 @@
             ]
           },
           {
-            "tab": "Developers",
+            "tab": "개발자",
             "groups": [
               {
-                "group": "Developers",
+                "group": "개발자",
                 "pages": []
               },
               {
-                "group": "Getting Started",
+                "group": "시작하기",
                 "icon": "rocket",
                 "pages": [
                   "l/ko/developers/introduction",
                   "l/ko/developers/local-setup",
                   {
-                    "group": "Self-Hosting",
+                    "group": "셀프 호스팅",
                     "pages": [
                       "l/ko/developers/self-hosting/docker-compose",
                       "l/ko/developers/self-hosting/setup",
@@ -2059,7 +2059,7 @@
                     ]
                   },
                   {
-                    "group": "API and Webhooks",
+                    "group": "API 및 웹훅",
                     "pages": [
                       "l/ko/developers/api-and-webhooks/api",
                       "l/ko/developers/api-and-webhooks/webhooks"
@@ -2068,12 +2068,12 @@
                 ]
               },
               {
-                "group": "Contributing",
+                "group": "기여",
                 "icon": "code-branch",
                 "pages": [
                   "l/ko/developers/bug-and-requests",
                   {
-                    "group": "Frontend Development",
+                    "group": "프론트엔드 개발",
                     "pages": [
                       "l/ko/developers/frontend-development/storybook",
                       {
@@ -2081,7 +2081,7 @@
                         "pages": [
                           "l/ko/twenty-ui/introduction",
                           {
-                            "group": "Display",
+                            "group": "표시",
                             "pages": [
                               "l/ko/twenty-ui/display/checkmark",
                               "l/ko/twenty-ui/display/chip",
@@ -2092,13 +2092,13 @@
                             ]
                           },
                           {
-                            "group": "Feedback",
+                            "group": "피드백",
                             "pages": [
                               "l/ko/twenty-ui/progress-bar"
                             ]
                           },
                           {
-                            "group": "Input",
+                            "group": "입력",
                             "pages": [
                               "l/ko/twenty-ui/input/buttons",
                               "l/ko/twenty-ui/input/color-scheme",
@@ -2113,7 +2113,7 @@
                             ]
                           },
                           {
-                            "group": "Navigation",
+                            "group": "네비게이션",
                             "pages": [
                               "l/ko/twenty-ui/navigation",
                               "l/ko/twenty-ui/navigation/breadcrumb",
@@ -2134,7 +2134,7 @@
                     ]
                   },
                   {
-                    "group": "Backend Development",
+                    "group": "백엔드 개발",
                     "pages": [
                       "l/ko/developers/backend-development/server-commands",
                       "l/ko/developers/backend-development/feature-flags",
@@ -2880,7 +2880,7 @@
                 ]
               },
               {
-                "group": "Data Model",
+                "group": "Veri modeli",
                 "icon": "database",
                 "pages": [
                   "l/tr/user-guide/data-model/customize-your-data-model",
@@ -2892,7 +2892,7 @@
                 ]
               },
               {
-                "group": "CRM Essentials",
+                "group": "CRM Temelleri",
                 "icon": "users",
                 "pages": [
                   "l/tr/user-guide/crm-essentials/contact-and-account-management",
@@ -2902,7 +2902,7 @@
                 ]
               },
               {
-                "group": "Views",
+                "group": "Görünümler",
                 "icon": "table",
                 "pages": [
                   "l/tr/user-guide/views/kanban-views",
@@ -2910,7 +2910,7 @@
                 ]
               },
               {
-                "group": "Workflows",
+                "group": "İş Akışları",
                 "icon": "bolt",
                 "pages": [
                   "l/tr/user-guide/workflows/getting-started-workflows",
@@ -2923,7 +2923,7 @@
                 ]
               },
               {
-                "group": "Collaboration",
+                "group": "İşbirliği",
                 "icon": "envelope",
                 "pages": [
                   "l/tr/user-guide/collaboration/emails-and-calendars",
@@ -2941,14 +2941,14 @@
                 ]
               },
               {
-                "group": "Reporting",
+                "group": "Raporlama",
                 "icon": "chart-bar",
                 "pages": [
                   "l/tr/user-guide/reporting/reporting-overview"
                 ]
               },
               {
-                "group": "Settings",
+                "group": "Ayarlar",
                 "icon": "gear",
                 "pages": [
                   "l/tr/user-guide/settings/profile-settings",
@@ -2963,14 +2963,14 @@
                 ]
               },
               {
-                "group": "Pricing",
+                "group": "Fiyatlandırma",
                 "icon": "credit-card",
                 "pages": [
                   "l/tr/user-guide/pricing/billing-and-pricing-faq"
                 ]
               },
               {
-                "group": "Resources",
+                "group": "Kaynaklar",
                 "icon": "book-open",
                 "pages": [
                   "l/tr/user-guide/resources/glossary",
@@ -2980,10 +2980,10 @@
             ]
           },
           {
-            "tab": "Developers",
+            "tab": "Geliştiriciler",
             "groups": [
               {
-                "group": "Developers",
+                "group": "Geliştiriciler",
                 "pages": []
               },
               {
@@ -3012,12 +3012,12 @@
                 ]
               },
               {
-                "group": "Contributing",
+                "group": "Katkıda Bulunma",
                 "icon": "code-branch",
                 "pages": [
                   "l/tr/developers/bug-and-requests",
                   {
-                    "group": "Frontend Development",
+                    "group": "Frontend Geliştirme",
                     "pages": [
                       "l/tr/developers/frontend-development/storybook",
                       {
@@ -3025,7 +3025,7 @@
                         "pages": [
                           "l/tr/twenty-ui/introduction",
                           {
-                            "group": "Display",
+                            "group": "Görüntüle",
                             "pages": [
                               "l/tr/twenty-ui/display/checkmark",
                               "l/tr/twenty-ui/display/chip",
@@ -3036,13 +3036,13 @@
                             ]
                           },
                           {
-                            "group": "Feedback",
+                            "group": "Geri Bildirim",
                             "pages": [
                               "l/tr/twenty-ui/progress-bar"
                             ]
                           },
                           {
-                            "group": "Input",
+                            "group": "Girdi",
                             "pages": [
                               "l/tr/twenty-ui/input/buttons",
                               "l/tr/twenty-ui/input/color-scheme",
@@ -3057,7 +3057,7 @@
                             ]
                           },
                           {
-                            "group": "Navigation",
+                            "group": "Gezinme",
                             "pages": [
                               "l/tr/twenty-ui/navigation",
                               "l/tr/twenty-ui/navigation/breadcrumb",
@@ -3078,7 +3078,7 @@
                     ]
                   },
                   {
-                    "group": "Backend Development",
+                    "group": "Backend Geliştirme",
                     "pages": [
                       "l/tr/developers/backend-development/server-commands",
                       "l/tr/developers/backend-development/feature-flags",
@@ -3099,10 +3099,10 @@
         "language": "zh",
         "tabs": [
           {
-            "tab": "用户指南",
+            "tab": "User Guide",
             "groups": [
               {
-                "group": "正在开始",
+                "group": "Getting Started",
                 "icon": "rocket",
                 "pages": [
                   "l/zh/user-guide/introduction",
@@ -3116,7 +3116,7 @@
                 ]
               },
               {
-                "group": "数据模型",
+                "group": "數據模型",
                 "icon": "database",
                 "pages": [
                   "l/zh/user-guide/data-model/customize-your-data-model",
@@ -3128,7 +3128,7 @@
                 ]
               },
               {
-                "group": "CRM要点",
+                "group": "CRM 基礎知識",
                 "icon": "users",
                 "pages": [
                   "l/zh/user-guide/crm-essentials/contact-and-account-management",
@@ -3138,7 +3138,7 @@
                 ]
               },
               {
-                "group": "视图",
+                "group": "視圖",
                 "icon": "table",
                 "pages": [
                   "l/zh/user-guide/views/kanban-views",
@@ -3146,7 +3146,7 @@
                 ]
               },
               {
-                "group": "工作流",
+                "group": "Workflow",
                 "icon": "bolt",
                 "pages": [
                   "l/zh/user-guide/workflows/getting-started-workflows",
@@ -3159,7 +3159,7 @@
                 ]
               },
               {
-                "group": "协作",
+                "group": "協作",
                 "icon": "envelope",
                 "pages": [
                   "l/zh/user-guide/collaboration/emails-and-calendars",
@@ -3168,7 +3168,7 @@
                 ]
               },
               {
-                "group": "集成和 API",
+                "group": "Integrations & API",
                 "icon": "plug",
                 "pages": [
                   "l/zh/user-guide/integrations-api/apis-overview",
@@ -3177,14 +3177,14 @@
                 ]
               },
               {
-                "group": "报告",
+                "group": "報告",
                 "icon": "chart-bar",
                 "pages": [
                   "l/zh/user-guide/reporting/reporting-overview"
                 ]
               },
               {
-                "group": "设置",
+                "group": "設置",
                 "icon": "gear",
                 "pages": [
                   "l/zh/user-guide/settings/profile-settings",
@@ -3199,14 +3199,14 @@
                 ]
               },
               {
-                "group": "定价",
+                "group": "定價",
                 "icon": "credit-card",
                 "pages": [
                   "l/zh/user-guide/pricing/billing-and-pricing-faq"
                 ]
               },
               {
-                "group": "资源",
+                "group": "資源",
                 "icon": "book-open",
                 "pages": [
                   "l/zh/user-guide/resources/glossary",
@@ -3216,20 +3216,20 @@
             ]
           },
           {
-            "tab": "开发者",
+            "tab": "開發人員",
             "groups": [
               {
-                "group": "开发者",
+                "group": "開發人員",
                 "pages": []
               },
               {
-                "group": "正在开始",
+                "group": "Getting Started",
                 "icon": "rocket",
                 "pages": [
                   "l/zh/developers/introduction",
                   "l/zh/developers/local-setup",
                   {
-                    "group": "自我主机",
+                    "group": "Self-Hosting",
                     "pages": [
                       "l/zh/developers/self-hosting/docker-compose",
                       "l/zh/developers/self-hosting/setup",
@@ -3248,12 +3248,12 @@
                 ]
               },
               {
-                "group": "贡献中",
+                "group": "貢獻",
                 "icon": "code-branch",
                 "pages": [
                   "l/zh/developers/bug-and-requests",
                   {
-                    "group": "前端开发",
+                    "group": "前端開發",
                     "pages": [
                       "l/zh/developers/frontend-development/storybook",
                       {
@@ -3261,7 +3261,7 @@
                         "pages": [
                           "l/zh/twenty-ui/introduction",
                           {
-                            "group": "显示",
+                            "group": "顯示",
                             "pages": [
                               "l/zh/twenty-ui/display/checkmark",
                               "l/zh/twenty-ui/display/chip",
@@ -3272,13 +3272,13 @@
                             ]
                           },
                           {
-                            "group": "反馈",
+                            "group": "反饋",
                             "pages": [
                               "l/zh/twenty-ui/progress-bar"
                             ]
                           },
                           {
-                            "group": "Input",
+                            "group": "輸入",
                             "pages": [
                               "l/zh/twenty-ui/input/buttons",
                               "l/zh/twenty-ui/input/color-scheme",
@@ -3293,7 +3293,7 @@
                             ]
                           },
                           {
-                            "group": "Navigation",
+                            "group": "導航",
                             "pages": [
                               "l/zh/twenty-ui/navigation",
                               "l/zh/twenty-ui/navigation/breadcrumb",
@@ -3314,7 +3314,7 @@
                     ]
                   },
                   {
-                    "group": "后端开发",
+                    "group": "後端開發",
                     "pages": [
                       "l/zh/developers/backend-development/server-commands",
                       "l/zh/developers/backend-development/feature-flags",
