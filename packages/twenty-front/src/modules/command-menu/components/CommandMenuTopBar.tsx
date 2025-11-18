@@ -4,9 +4,11 @@ import { CommandMenuTopBarInputFocusEffect } from '@/command-menu/components/Com
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuContextChips';
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
@@ -20,7 +22,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, IconSparkles } from 'twenty-ui/display';
+import { IconChevronLeft, IconSparkles, IconX } from 'twenty-ui/display';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { FeatureFlagKey } from '~/generated/graphql';
 
@@ -74,13 +76,13 @@ const StyledContentContainer = styled.div`
   overflow: hidden;
 `;
 
-const StyledBackIcon = styled(IconChevronLeft)`
+const StyledNavigationIcon = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
   cursor: pointer;
   display: flex;
   justify-content: center;
   margin-right: ${({ theme }) => theme.spacing(1)};
+  color: ${({ theme }) => theme.font.color.secondary};
 `;
 
 const StyledIconSparkles = styled(IconSparkles)`
@@ -105,6 +107,8 @@ export const CommandMenuTopBar = () => {
 
   const { goBackFromCommandMenu } = useCommandMenuHistory();
 
+  const { closeCommandMenu } = useCommandMenu();
+
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
 
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
@@ -116,28 +120,56 @@ export const CommandMenuTopBar = () => {
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);
 
+  const commandMenuNavigationStack = useRecoilValue(
+    commandMenuNavigationStackState,
+  );
+
   const theme = useTheme();
 
   const { contextChips } = useCommandMenuContextChips();
 
+  const canGoBack = commandMenuNavigationStack.length > 1;
+
+  const isOnRootPage = commandMenuPage === CommandMenuPages.Root;
+
+  const shouldShowCloseButton =
+    commandMenuNavigationStack.length === 1 && !isOnRootPage;
+
+  const shouldShowBackButton = canGoBack;
+
   const backButtonAnimationDuration =
-    contextChips.length > 0 ? theme.animation.duration.instant : 0;
+    (shouldShowBackButton || shouldShowCloseButton) && contextChips.length > 0
+      ? theme.animation.duration.instant
+      : 0;
 
   return (
     <StyledInputContainer>
       <StyledContentContainer>
         <AnimatePresence>
-          <motion.div
-            exit={{ opacity: 0, width: 0 }}
-            transition={{
-              duration: backButtonAnimationDuration,
-            }}
-          >
-            <StyledBackIcon
-              onClick={goBackFromCommandMenu}
-              size={theme.icon.size.md}
-            />
-          </motion.div>
+          {shouldShowBackButton && (
+            <motion.div
+              exit={{ opacity: 0, width: 0 }}
+              transition={{
+                duration: backButtonAnimationDuration,
+              }}
+            >
+              <StyledNavigationIcon onClick={goBackFromCommandMenu}>
+                <IconChevronLeft size={theme.icon.size.md} />
+              </StyledNavigationIcon>
+            </motion.div>
+          )}
+          {shouldShowCloseButton && (
+            <motion.div
+              exit={{ opacity: 0, width: 0 }}
+              transition={{
+                duration: backButtonAnimationDuration,
+              }}
+            >
+              <StyledNavigationIcon onClick={closeCommandMenu}>
+                <IconX size={theme.icon.size.md} />
+              </StyledNavigationIcon>
+            </motion.div>
+          )}
         </AnimatePresence>
         {isDefined(contextStoreCurrentObjectMetadataItemId) &&
         commandMenuPage !== CommandMenuPages.SearchRecords ? (
