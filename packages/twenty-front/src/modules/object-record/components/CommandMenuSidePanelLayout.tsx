@@ -79,13 +79,15 @@ export const CommandMenuSidePanelLayout = ({
 
   const shouldShowContent = resolvedIsSidePanelOpen || shouldRenderContent;
 
-  if (resolvedIsSidePanelOpen && !shouldRenderContent) {
-    setShouldRenderContent(true);
-  }
-
   const handleAnimationComplete = () => {
     if (!resolvedIsSidePanelOpen) {
       setShouldRenderContent(false);
+    }
+  };
+
+  const handleAnimationStart = () => {
+    if (resolvedIsSidePanelOpen && !shouldRenderContent) {
+      setShouldRenderContent(true);
     }
   };
 
@@ -111,6 +113,7 @@ export const CommandMenuSidePanelLayout = ({
         transition={{
           duration: theme.animation.duration.normal,
         }}
+        onAnimationStart={handleAnimationStart}
         onAnimationComplete={handleAnimationComplete}
       >
         <StyledSidePanel>
