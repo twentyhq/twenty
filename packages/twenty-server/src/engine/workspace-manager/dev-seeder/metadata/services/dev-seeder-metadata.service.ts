@@ -4,6 +4,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
+import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
@@ -85,9 +86,11 @@ export class DevSeederMetadataService {
     dataSourceMetadata,
     workspaceId,
     featureFlags,
+    twentyStandardFlatApplication,
   }: {
     dataSourceMetadata: DataSourceEntity;
     workspaceId: string;
+    twentyStandardFlatApplication: FlatApplication;
     featureFlags?: Record<string, boolean>;
   }) {
     const config = this.workspaceConfigs[workspaceId];
@@ -98,6 +101,7 @@ export class DevSeederMetadataService {
       );
     }
 
+    // TODO get
     for (const obj of config.objects) {
       await this.seedCustomObject({
         dataSourceId: dataSourceMetadata.id,
@@ -126,6 +130,7 @@ export class DevSeederMetadataService {
       workspaceId,
       dataSourceMetadata,
       featureFlags,
+      twentyStandardFlatApplication,
     });
   }
 
@@ -181,10 +186,12 @@ export class DevSeederMetadataService {
     workspaceId,
     dataSourceMetadata,
     featureFlags,
+    twentyStandardFlatApplication,
   }: {
     workspaceId: string;
     dataSourceMetadata: DataSourceEntity;
     featureFlags?: Record<string, boolean>;
+    twentyStandardFlatApplication: FlatApplication;
   }): Promise<void> {
     const createdObjectMetadata =
       await this.objectMetadataServiceV2.findManyWithinWorkspace(workspaceId);
@@ -195,6 +202,7 @@ export class DevSeederMetadataService {
       objectMetadataItems: createdObjectMetadata,
       workspaceSchemaName: dataSourceMetadata.schema,
       featureFlags,
+      twentyStandardFlatApplication,
     });
   }
 

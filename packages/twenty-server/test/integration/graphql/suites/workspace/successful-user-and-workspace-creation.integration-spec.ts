@@ -1,3 +1,4 @@
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/core-modules/application/constants/twenty-standard-applications';
 import { activateWorkspace } from 'test/integration/graphql/utils/activate-workspace.util';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
@@ -9,8 +10,6 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 describe('Successful user and workspace creation', () => {
   let createdUserAccessToken: string | undefined;

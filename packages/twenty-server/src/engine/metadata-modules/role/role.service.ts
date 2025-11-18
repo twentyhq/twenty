@@ -3,7 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
 import {
@@ -29,6 +31,7 @@ export class RoleService {
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly userRoleService: UserRoleService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   public async getWorkspaceRoles(workspaceId: string): Promise<RoleEntity[]> {
@@ -70,10 +73,18 @@ export class RoleService {
     input: CreateRoleInput;
     workspaceId: string;
   }): Promise<RoleEntity> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     await this.validateRoleInputOrThrow({ input, workspaceId });
 
+    const id = input.id ?? v4();
     const role = await this.roleRepository.save({
-      id: input.id,
+      id,
       label: input.label,
       description: input.description,
       icon: input.icon,
@@ -88,6 +99,8 @@ export class RoleService {
       canBeAssignedToApiKeys: input.canBeAssignedToApiKeys,
       isEditable: true,
       workspaceId,
+      applicationId: workspaceCustomFlatApplication.id,
+      universalIdentifier: id,
     });
 
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
@@ -198,9 +211,13 @@ export class RoleService {
 
   public async createMemberRole({
     workspaceId,
+    applicationId,
   }: {
+    applicationId: string;
     workspaceId: string;
   }): Promise<RoleEntity> {
+    const id = v4();
+
     return this.roleRepository.save({
       label: MEMBER_ROLE_LABEL,
       description: 'Member role',
@@ -216,15 +233,22 @@ export class RoleService {
       canBeAssignedToApiKeys: false,
       isEditable: true,
       workspaceId,
+      applicationId,
+      id,
+      universalIdentifier: id,
     });
   }
 
   // Only used for dev seeding and testing
   public async createGuestRole({
     workspaceId,
+    applicationId,
   }: {
     workspaceId: string;
+    applicationId: string;
   }): Promise<RoleEntity> {
+    const id = v4();
+
     return this.roleRepository.save({
       label: 'Guest',
       description: 'Guest role',
@@ -240,6 +264,9 @@ export class RoleService {
       canBeAssignedToApiKeys: false,
       isEditable: false,
       workspaceId,
+      applicationId,
+      id,
+      universalIdentifier: id,
     });
   }
 
