@@ -21,16 +21,17 @@ test('Create workflow', async ({ page }) => {
   await createWorkflowButton.click();
 
   const [createWorkflowResponse] = await Promise.all([
-    page.waitForResponse((response) => {
-      if (!response.url().endsWith('/graphql')) return false;
-      if (response.request().method() !== 'POST') return false; // exclut les SSE/websocket
-      try {
-        const body = response.request().postDataJSON();
-        return body?.operationName === 'CreateOneWorkflow';
-      } catch {
+    page.waitForResponse(async (response) => {
+      if (!response.url().endsWith('/graphql')) {
         return false;
       }
+
+      const requestBody = response.request().postDataJSON();
+
+      return requestBody.operationName === 'CreateOneWorkflow';
     }),
+
+    createWorkflowButton.click()
   ]);
 
   const recordName = page.getByTestId('top-bar-title').getByText('Untitled');
