@@ -16,6 +16,7 @@ type CustomTotalsLayerProps = Pick<
   layout?: BarChartLayout;
   groupMode?: 'grouped' | 'stacked';
   omitNullValues?: boolean;
+  showValues: boolean;
 };
 
 const convertToGraphLabelData = (
@@ -38,7 +39,12 @@ export const CustomTotalsLayer = ({
   layout = BarChartLayout.VERTICAL,
   groupMode = 'grouped',
   omitNullValues = false,
+  showValues,
 }: CustomTotalsLayerProps) => {
+  if (!showValues) {
+    return null;
+  }
+
   const isVerticalLayout = layout === BarChartLayout.VERTICAL;
 
   const barChartLabels =

@@ -11,6 +11,7 @@ type CustomPointLabelsLayerProps = Pick<
   offset?: number;
   groupMode?: 'stacked';
   omitNullValues?: boolean;
+  enablePointLabel: boolean;
 };
 
 export const CustomPointLabelsLayer = ({
@@ -19,7 +20,12 @@ export const CustomPointLabelsLayer = ({
   offset = 0,
   groupMode,
   omitNullValues = false,
+  enablePointLabel,
 }: CustomPointLabelsLayerProps) => {
+  if (!enablePointLabel) {
+    return null;
+  }
+
   const lineChartLabels =
     groupMode === 'stacked'
       ? computeLineChartStackedLabels(points)

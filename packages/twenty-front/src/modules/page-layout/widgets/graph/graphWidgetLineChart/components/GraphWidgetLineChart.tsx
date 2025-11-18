@@ -175,17 +175,14 @@ export const GraphWidgetLineChart = ({
   );
 
   const PointLabelsLayer = (layerProps: PointLabelsLayerProps) => (
-    <>
-      {enablePointLabel && (
-        <CustomPointLabelsLayer
-          points={layerProps.points}
-          formatValue={(value) => formatGraphValue(value, formatOptions)}
-          offset={theme.spacingMultiplicator * 2}
-          groupMode={groupMode}
-          omitNullValues={_omitNullValues}
-        />
-      )}
-    </>
+    <CustomPointLabelsLayer
+      points={layerProps.points}
+      formatValue={(value) => formatGraphValue(value, formatOptions)}
+      offset={theme.spacingMultiplicator * 2}
+      groupMode={groupMode}
+      omitNullValues={_omitNullValues}
+      enablePointLabel={enablePointLabel}
+    />
   );
 
   const CrosshairLayer = (layerProps: CrosshairLayerProps) => (
@@ -198,6 +195,7 @@ export const GraphWidgetLineChart = ({
       onRectLeave={() => debouncedHideTooltip()}
     />
   );
+
   const axisBottomConfig = getLineChartAxisBottomConfig(
     xAxisLabel,
     chartWidth,
