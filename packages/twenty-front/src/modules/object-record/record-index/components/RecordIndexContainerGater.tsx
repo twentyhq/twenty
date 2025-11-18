@@ -3,8 +3,8 @@ import { RecordIndexContextProvider } from '@/object-record/record-index/context
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { CommandMenuSidePanelLayout } from '@/object-record/components/CommandMenuSidePanelLayout';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { RecordPageSidePanelLayout } from '@/object-record/components/RecordPageSidePanelLayout';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
@@ -98,14 +98,14 @@ export const RecordIndexContainerGater = () => {
             >
               <PageTitle title={objectMetadataItem.labelPlural} />
               <RecordIndexPageHeader />
-              <RecordPageSidePanelLayout>
+              <CommandMenuSidePanelLayout>
                 <StyledIndexContainer
                   className={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
                 >
                   <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
                   <RecordIndexContainer />
                 </StyledIndexContainer>
-              </RecordPageSidePanelLayout>
+              </CommandMenuSidePanelLayout>
             </ActionMenuComponentInstanceContext.Provider>
           </RecordComponentInstanceContextsWrapper>
           <RecordIndexLoadBaseOnContextStoreEffect />

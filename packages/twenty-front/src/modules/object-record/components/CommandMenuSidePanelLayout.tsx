@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { type ReactNode, useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
-type RecordPageSidePanelLayoutProps = {
+type CommandMenuSidePanelLayoutProps = {
   children: ReactNode;
   isSidePanelOpen?: boolean;
 };
@@ -60,10 +60,10 @@ const StyledModalContainer = styled.div`
   z-index: 1;
 `;
 
-export const RecordPageSidePanelLayout = ({
+export const CommandMenuSidePanelLayout = ({
   children,
   isSidePanelOpen,
-}: RecordPageSidePanelLayoutProps) => {
+}: CommandMenuSidePanelLayoutProps) => {
   const theme = useTheme();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [modalContainer, setModalContainer] = useState<HTMLDivElement | null>(

@@ -5,8 +5,8 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { CommandMenuSidePanelLayout } from '@/object-record/components/CommandMenuSidePanelLayout';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { RecordPageSidePanelLayout } from '@/object-record/components/RecordPageSidePanelLayout';
 import { PageLayoutDispatcher } from '@/object-record/record-show/components/PageLayoutDispatcher';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
@@ -51,7 +51,7 @@ export const RecordShowPage = () => {
               <RecordShowActionMenu />
               <PageHeaderToggleCommandMenuButton />
             </RecordShowPageHeader>
-            <RecordPageSidePanelLayout>
+            <CommandMenuSidePanelLayout>
               <TimelineActivityContext.Provider
                 value={{
                   recordId: objectRecordId,
@@ -64,7 +64,7 @@ export const RecordShowPage = () => {
                   }}
                 />
               </TimelineActivityContext.Provider>
-            </RecordPageSidePanelLayout>
+            </CommandMenuSidePanelLayout>
           </PageContainer>
         </ActionMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
