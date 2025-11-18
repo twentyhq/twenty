@@ -6,6 +6,7 @@ import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/wor
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsPrimaryField } from 'src/engine/twenty-orm/decorators/workspace-is-primary-field.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 export type BaseWorkspaceEntityFieldIds = {
   id: string;
@@ -27,6 +28,7 @@ export function createBaseWorkspaceEntity(
       description: msg`Id`,
       defaultValue: 'uuid',
       icon: 'Icon123',
+      standardId: BASE_OBJECT_STANDARD_FIELD_IDS.id,
     })
     @WorkspaceIsPrimaryField()
     @WorkspaceIsFieldUIReadOnly()
@@ -43,6 +45,7 @@ export function createBaseWorkspaceEntity(
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
       },
+      standardId: BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
     })
     @WorkspaceIsFieldUIReadOnly()
     createdAt: string;
@@ -57,6 +60,7 @@ export function createBaseWorkspaceEntity(
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
       },
+      standardId: BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
     })
     @WorkspaceIsFieldUIReadOnly()
     updatedAt: string;
@@ -70,6 +74,7 @@ export function createBaseWorkspaceEntity(
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
       },
+      standardId: BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
     })
     @WorkspaceIsNullable()
     @WorkspaceIsFieldUIReadOnly()
