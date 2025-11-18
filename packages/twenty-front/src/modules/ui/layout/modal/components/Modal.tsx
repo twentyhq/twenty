@@ -124,7 +124,7 @@ const StyledFooter = styled.div`
 
 const StyledBackDrop = styled(motion.div)<{
   modalVariant: ModalVariants;
-  isInContainer: boolean;
+  isInContainer?: boolean;
 }>`
   align-items: center;
   background: ${({ theme, modalVariant, isInContainer }) =>
