@@ -11,10 +11,12 @@ export const fromCreateViewInputToFlatViewToCreate = ({
   createViewInput: rawCreateViewInput,
   workspaceId,
   createdByUserWorkspaceId,
+  workspaceCustomApplicationId,
 }: {
   createViewInput: CreateViewInput;
   workspaceId: string;
   createdByUserWorkspaceId?: string;
+  workspaceCustomApplicationId: string;
 }): FlatView => {
   const { objectMetadataId, ...createViewInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -52,6 +54,6 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     viewFieldIds: [],
     viewFilterIds: [],
     viewGroupIds: [],
-    applicationId: createViewInput.applicationId ?? null,
+    applicationId: workspaceCustomApplicationId,
   };
 };

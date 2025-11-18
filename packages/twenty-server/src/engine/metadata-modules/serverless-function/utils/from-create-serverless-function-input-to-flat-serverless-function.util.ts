@@ -14,11 +14,13 @@ export type FromCreateServerlessFunctionInputToFlatServerlessFunctionArgs = {
     serverlessFunctionLayerId: string;
   };
   workspaceId: string;
+  workspaceCustomApplicationId: string;
 };
 
 export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
   createServerlessFunctionInput: rawCreateServerlessFunctionInput,
   workspaceId,
+  workspaceCustomApplicationId,
 }: FromCreateServerlessFunctionInputToFlatServerlessFunctionArgs): FlatServerlessFunction => {
   const id = v4();
   const currentDate = new Date();
@@ -35,13 +37,13 @@ export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
     handlerName:
       rawCreateServerlessFunctionInput.handlerName ?? DEFAULT_HANDLER_NAME,
     universalIdentifier:
-      rawCreateServerlessFunctionInput.universalIdentifier ?? v4(),
+      rawCreateServerlessFunctionInput.universalIdentifier ?? id,
     createdAt: currentDate,
     updatedAt: currentDate,
     deletedAt: null,
     latestVersion: null,
     publishedVersions: [],
-    applicationId: rawCreateServerlessFunctionInput.applicationId ?? null,
+    applicationId: workspaceCustomApplicationId,
     runtime: ServerlessFunctionRuntime.NODE22,
     timeoutSeconds: rawCreateServerlessFunctionInput.timeoutSeconds ?? 300,
     serverlessFunctionLayerId:

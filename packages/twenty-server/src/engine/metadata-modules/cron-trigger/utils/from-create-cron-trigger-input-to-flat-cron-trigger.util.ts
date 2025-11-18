@@ -6,18 +6,21 @@ import { type FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/t
 export const fromCreateCronTriggerInputToFlatCronTrigger = ({
   createCronTriggerInput,
   workspaceId,
+  workspaceCustomApplicationId,
 }: {
   createCronTriggerInput: CreateCronTriggerInput;
   workspaceId: string;
+  workspaceCustomApplicationId: string;
 }): FlatCronTrigger => {
   const now = new Date();
+  const id = v4();
 
   return {
-    id: v4(),
-    universalIdentifier: createCronTriggerInput.universalIdentifier ?? v4(),
+    id,
+    universalIdentifier: createCronTriggerInput.universalIdentifier ?? id,
     settings: createCronTriggerInput.settings,
     serverlessFunctionId: createCronTriggerInput.serverlessFunctionId,
-    applicationId: createCronTriggerInput.applicationId ?? null,
+    applicationId: workspaceCustomApplicationId,
     workspaceId,
     createdAt: now,
     updatedAt: now,
