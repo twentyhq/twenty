@@ -45,12 +45,19 @@ const StyledTabList = styled(TabList)`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
+const StyledContentContainer = styled.div<{
+  isInCommandMenu: boolean;
+}>`
+  background: ${({ theme, isInCommandMenu }) =>
+    isInCommandMenu ? theme.background.secondary : theme.background.primary};
+  border: ${({ theme, isInCommandMenu }) =>
+    isInCommandMenu ? `1px solid ${theme.border.color.light}` : 'none'};
+  border-radius: ${({ theme, isInCommandMenu }) =>
+    isInCommandMenu ? theme.border.radius.md : '0'};
   flex: 1;
+  margin: ${({ theme, isInCommandMenu }) =>
+    isInCommandMenu ? theme.spacing(3) : '0'};
   overflow-y: auto;
-  background: ${({ theme }) => theme.background.primary};
-  padding-bottom: ${({ theme, isInRightDrawer }) =>
-    isInRightDrawer ? theme.spacing(16) : 0};
 `;
 
 type ShowPageSubContainerProps = {
@@ -136,7 +143,7 @@ export const ShowPageSubContainer = ({
           />
         </StyledTabListContainer>
         {(isMobile || isInRightDrawer) && !isInCommandMenu && summaryCard}
-        <StyledContentContainer isInRightDrawer={isInRightDrawer}>
+        <StyledContentContainer isInCommandMenu={isInCommandMenu}>
           {renderActiveTabContent()}
         </StyledContentContainer>
         {isInRightDrawer && (
