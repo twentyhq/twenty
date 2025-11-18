@@ -4497,7 +4497,7 @@ msgstr "اذهب إلى الشركات"
 #. js-lingui-id: dvMw7T
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Dashboards"
-msgstr ""
+msgstr "اذهب إلى لوحات المعلومات"
 
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -8977,7 +8977,7 @@ msgstr "لا يمكن التراجع عن هذا الإجراء. سيؤدي ذل
 #. js-lingui-id: fTuKde
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently remove this member from this workspace and remove them from all their assignments."
-msgstr ""
+msgstr "لا يمكن التراجع عن هذا الإجراء. سيؤدي ذلك إلى إزالة العضو نهائياً من مساحة العمل وجميع مسؤولياتهم."
 
 #. js-lingui-id: Ik52hF
 #: src/modules/settings/profile/components/DeleteAccount.tsx

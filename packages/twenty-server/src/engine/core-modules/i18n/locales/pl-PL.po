@@ -169,7 +169,7 @@ msgstr "Wymagana akcja do zresetowania hasła"
 #. js-lingui-id: 8Q5bRY
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "Action Needed to Set Password"
-msgstr ""
+msgstr "Wymagana akcja ustawienia hasła"
 
 #. js-lingui-id: 52fA3U
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -4209,7 +4209,7 @@ msgstr "Nie masz uprawnień do dostępu do tej funkcji. Skontaktuj się z admini
 #. js-lingui-id: P69VwK
 #: src/engine/core-modules/user/user.resolver.ts
 msgid "You do not have permission to delete this user from the workspace. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "Nie masz uprawnień do usunięcia tego użytkownika z obszaru roboczego. Skontaktuj się z administratorem środowiska pracy, aby uzyskać dostęp."
 
 #. js-lingui-id: +2vVRB
 #: src/engine/guards/impersonate-permission.guard.ts
