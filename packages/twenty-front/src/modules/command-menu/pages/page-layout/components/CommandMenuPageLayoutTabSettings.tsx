@@ -36,6 +36,7 @@ export const CommandMenuPageLayoutTabSettings = () => {
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
+
   const [openTabId, setOpenTabId] = useRecoilComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,

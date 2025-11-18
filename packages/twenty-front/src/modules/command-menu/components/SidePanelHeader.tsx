@@ -1,3 +1,4 @@
+import { SidePanelHeaderTitleSyncEffect } from '@/command-menu/components/SidePanelHeaderSyncEffect';
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useTheme } from '@emotion/react';
@@ -79,6 +80,10 @@ export const SidePanelHeader = ({
 
   const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
 
+  const handleSyncTitle = (newTitle: string) => {
+    setTitle(newTitle);
+  };
+
   const handleChange = (newTitle: string) => {
     setTitle(newTitle);
   };
@@ -94,41 +99,47 @@ export const SidePanelHeader = ({
   const tooltipId = `side-panel-icon-tooltip-${headerType.replace(/\s+/g, '-')}`;
 
   return (
-    <StyledHeader data-testid="side-panel-header">
-      <StyledHeaderIconContainer id={tooltipId}>
-        <Icon
-          color={iconColor}
-          stroke={theme.icon.stroke.sm}
-          size={theme.icon.size.lg}
-        />
-      </StyledHeaderIconContainer>
-      {iconTooltip && (
-        <AppTooltip
-          anchorSelect={`#${tooltipId}`}
-          content={iconTooltip}
-          place="top"
-        />
-      )}
-      <StyledHeaderInfo>
-        <StyledHeaderTitle>
-          <TitleInput
-            instanceId="side-panel-title-input"
-            disabled={disabled}
-            sizeVariant="md"
-            value={title}
-            onChange={handleChange}
-            placeholder={headerType}
-            onEnter={saveTitle}
-            onEscape={() => {
-              setTitle(initialTitle);
-            }}
-            onClickOutside={saveTitle}
-            onTab={saveTitle}
-            onShiftTab={saveTitle}
+    <>
+      <SidePanelHeaderTitleSyncEffect
+        initialTitle={initialTitle}
+        onSync={handleSyncTitle}
+      />
+      <StyledHeader data-testid="side-panel-header">
+        <StyledHeaderIconContainer id={tooltipId}>
+          <Icon
+            color={iconColor}
+            stroke={theme.icon.stroke.sm}
+            size={theme.icon.size.lg}
           />
-        </StyledHeaderTitle>
-        <StyledHeaderType>{headerType}</StyledHeaderType>
-      </StyledHeaderInfo>
-    </StyledHeader>
+        </StyledHeaderIconContainer>
+        {iconTooltip && (
+          <AppTooltip
+            anchorSelect={`#${tooltipId}`}
+            content={iconTooltip}
+            place="top"
+          />
+        )}
+        <StyledHeaderInfo>
+          <StyledHeaderTitle>
+            <TitleInput
+              instanceId="side-panel-title-input"
+              disabled={disabled}
+              sizeVariant="md"
+              value={title}
+              onChange={handleChange}
+              placeholder={headerType}
+              onEnter={saveTitle}
+              onEscape={() => {
+                setTitle(initialTitle);
+              }}
+              onClickOutside={saveTitle}
+              onTab={saveTitle}
+              onShiftTab={saveTitle}
+            />
+          </StyledHeaderTitle>
+          <StyledHeaderType>{headerType}</StyledHeaderType>
+        </StyledHeaderInfo>
+      </StyledHeader>
+    </>
   );
 };

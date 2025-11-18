@@ -11,6 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { pageLayoutCurrentLayoutsComponentState } from '../states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
+import { pageLayoutTabSettingsOpenTabIdComponentState } from '../states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutTab } from '../types/PageLayoutTab';
 
 export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
@@ -33,6 +34,11 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
   const setActiveTabId = useSetRecoilComponentState(
     activeTabIdComponentState,
     tabListInstanceId,
+  );
+
+  const setTabSettingsOpenTabId = useSetRecoilComponentState(
+    pageLayoutTabSettingsOpenTabIdComponentState,
+    pageLayoutId,
   );
 
   const duplicateTab = useRecoilCallback(
@@ -111,9 +117,16 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
 
         setActiveTabId(newTabId);
 
+        setTabSettingsOpenTabId(newTabId);
+
         return newTabId;
       },
-    [pageLayoutCurrentLayoutsState, pageLayoutDraftState, setActiveTabId],
+    [
+      pageLayoutCurrentLayoutsState,
+      pageLayoutDraftState,
+      setActiveTabId,
+      setTabSettingsOpenTabId,
+    ],
   );
 
   return { duplicateTab };
