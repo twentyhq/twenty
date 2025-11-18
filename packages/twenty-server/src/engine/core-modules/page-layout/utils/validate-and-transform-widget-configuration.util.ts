@@ -61,7 +61,7 @@ const validateGraphConfiguration = ({
       }
 
       if (
-        instance.secondaryAxisGroupByFieldMetadataId &&
+        isDefined(instance.secondaryAxisGroupByFieldMetadataId) &&
         !isDefined(instance.groupMode)
       ) {
         instance.groupMode = BarChartGroupMode.STACKED;
@@ -85,7 +85,7 @@ const validateGraphConfiguration = ({
       }
 
       if (
-        instance.secondaryAxisGroupByFieldMetadataId &&
+        isDefined(instance.secondaryAxisGroupByFieldMetadataId) &&
         !isDefined(instance.isStacked)
       ) {
         instance.isStacked = true;
