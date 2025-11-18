@@ -15,17 +15,12 @@ type RecordPageSidePanelLayoutProps = {
 };
 
 const DEFAULT_SIDE_PANEL_WIDTH = 400;
-const DEFAULT_LAYOUT_PADDING_RIGHT = 16;
-const DEFAULT_LAYOUT_PADDING_BOTTOM = 12;
 
-const StyledLayout = styled.div<{
-  paddingBottom: number;
-  paddingRight: number;
-}>`
+const StyledLayout = styled.div`
   display: flex;
   flex: 1;
   min-height: 0;
-  padding-bottom: ${({ paddingBottom }) => `${paddingBottom}px`};
+  padding-bottom: ${({ theme }) => theme.spacing(3)};
   padding-right: ${({ theme }) => theme.spacing(3)};
 `;
 
@@ -104,10 +99,7 @@ export const RecordPageSidePanelLayout = ({
   useCommandMenuHotKeys();
 
   return (
-    <StyledLayout
-      paddingBottom={DEFAULT_LAYOUT_PADDING_BOTTOM}
-      paddingRight={DEFAULT_LAYOUT_PADDING_RIGHT}
-    >
+    <StyledLayout>
       <StyledPageBody>{children}</StyledPageBody>
 
       <StyledSidePanelWrapper
