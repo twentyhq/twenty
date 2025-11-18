@@ -61,7 +61,7 @@ export class SeedDashboardViewCommand extends ActiveOrSuspendedWorkspacesMigrati
       );
     }
 
-    const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
+    const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
