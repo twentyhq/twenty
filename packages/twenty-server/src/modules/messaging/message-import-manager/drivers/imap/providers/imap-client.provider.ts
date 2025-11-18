@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { ImapFlow } from 'imapflow';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -88,7 +89,9 @@ export class ImapClientProvider {
         port: connectionParameters.IMAP?.port || 993,
         secure: connectionParameters.IMAP?.secure,
         auth: {
-          user: connectedAccount.handle,
+          user: isNonEmptyString(connectionParameters.IMAP?.username)
+            ? connectionParameters.IMAP?.username
+            : connectedAccount.handle,
           pass: connectionParameters.IMAP?.password || '',
         },
         logger: false,
