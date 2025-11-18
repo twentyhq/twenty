@@ -1,3 +1,6 @@
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
@@ -40,6 +43,10 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
+
+  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
+
+  const { closeCommandMenu } = useCommandMenu();
 
   const duplicateTab = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -115,13 +122,23 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
           tabs: [...prev.tabs, newTab],
         }));
 
+        closeCommandMenu();
+
         setActiveTabId(newTabId);
 
         setTabSettingsOpenTabId(newTabId);
 
+        navigatePageLayoutCommandMenu({
+          commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
+          pageTitle: newTab.title,
+          focusTitleInput: true,
+        });
+
         return newTabId;
       },
     [
+      closeCommandMenu,
+      navigatePageLayoutCommandMenu,
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       setActiveTabId,

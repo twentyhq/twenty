@@ -1,6 +1,8 @@
 import { SidePanelHeaderTitleSyncEffect } from '@/command-menu/components/SidePanelHeaderSyncEffect';
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
+import { commandMenuShouldFocusTitleInputComponentState } from '@/command-menu/states/commandMenuShouldFocusTitleInputComponentState';
 import { TitleInput } from '@/ui/input/components/TitleInput';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
@@ -74,6 +76,9 @@ export const SidePanelHeader = ({
   onTitleChange,
   iconTooltip,
 }: SidePanelHeaderProps) => {
+  const [shouldFocusTitleInput, setShouldFocusTitleInput] =
+    useRecoilComponentState(commandMenuShouldFocusTitleInputComponentState);
+
   const theme = useTheme();
 
   const [title, setTitle] = useState(initialTitle);
@@ -131,6 +136,8 @@ export const SidePanelHeader = ({
               onClickOutside={saveTitle}
               onTab={saveTitle}
               onShiftTab={saveTitle}
+              shouldOpen={shouldFocusTitleInput}
+              onOpen={() => setShouldFocusTitleInput(false)}
             />
           </StyledHeaderTitle>
           <StyledHeaderType>{headerType}</StyledHeaderType>
