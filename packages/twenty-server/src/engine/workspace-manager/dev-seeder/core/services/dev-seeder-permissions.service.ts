@@ -4,6 +4,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { DataSource, Repository } from 'typeorm';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
@@ -41,7 +42,13 @@ export class DevSeederPermissionsService {
     private readonly coreDataSource: DataSource,
   ) {}
 
-  public async initPermissions(workspaceId: string) {
+  public async initPermissions({
+    twentyStandardApplication,
+    workspaceId,
+  }: {
+    workspaceId: string;
+    twentyStandardApplication: ApplicationEntity;
+  }) {
     const adminRole = await this.roleRepository.findOne({
       where: {
         standardId: ADMIN_ROLE.standardId,
@@ -100,6 +107,7 @@ export class DevSeederPermissionsService {
 
       const guestRole = await this.roleService.createGuestRole({
         workspaceId,
+        applicationId: twentyStandardApplication.id,
       });
 
       await this.userRoleService.assignRoleToUserWorkspace({
@@ -135,6 +143,7 @@ export class DevSeederPermissionsService {
 
     const memberRole = await this.roleService.createMemberRole({
       workspaceId,
+      applicationId: twentyStandardApplication.id,
     });
 
     await this.coreDataSource

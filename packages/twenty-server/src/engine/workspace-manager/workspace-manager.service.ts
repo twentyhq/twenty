@@ -4,6 +4,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -79,9 +80,10 @@ export class WorkspaceManagerService {
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    await this.applicationService.createTwentyStandardApplication({
-      workspaceId,
-    });
+    const twentyStandardApplication =
+      await this.applicationService.createTwentyStandardApplication({
+        workspaceId,
+      });
 
     // TODO later replace by twenty-standard installation aka workspaceMigration run
     await this.workspaceSyncMetadataService.synchronize({
@@ -96,7 +98,18 @@ export class WorkspaceManagerService {
       `Metadata creation took ${dataSourceMetadataCreationEnd - dataSourceMetadataCreationStart}ms`,
     );
 
-    await this.setupDefaultRoles(workspaceId, userId);
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
+    await this.setupDefaultRoles({
+      workspaceId,
+      userId,
+      workspaceCustomFlatApplication,
+    });
 
     const prefillStandardObjectsStart = performance.now();
 
@@ -104,6 +117,7 @@ export class WorkspaceManagerService {
       dataSourceMetadata,
       workspaceId,
       featureFlags,
+      twentyStandardApplication,
     );
 
     const prefillStandardObjectsEnd = performance.now();
@@ -117,6 +131,7 @@ export class WorkspaceManagerService {
     dataSourceMetadata: DataSourceEntity,
     workspaceId: string,
     featureFlags: Record<string, boolean>,
+    twentyStandardFlatApplication: FlatApplication,
   ) {
     const createdObjectMetadata =
       await this.objectMetadataServiceV2.findManyWithinWorkspace(workspaceId);
@@ -128,6 +143,7 @@ export class WorkspaceManagerService {
     );
 
     await prefillCoreViews({
+      twentyStandardFlatApplication,
       coreDataSource: this.coreDataSource,
       workspaceId,
       objectMetadataItems: createdObjectMetadata,
@@ -155,10 +171,15 @@ export class WorkspaceManagerService {
     await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspaceId);
   }
 
-  private async setupDefaultRoles(
-    workspaceId: string,
-    userId: string,
-  ): Promise<void> {
+  private async setupDefaultRoles({
+    userId,
+    workspaceId,
+    workspaceCustomFlatApplication,
+  }: {
+    workspaceId: string;
+    userId: string;
+    workspaceCustomFlatApplication: FlatApplication;
+  }): Promise<void> {
     const adminRole = await this.roleRepository.findOne({
       where: {
         standardId: ADMIN_ROLE.standardId,
@@ -180,6 +201,7 @@ export class WorkspaceManagerService {
 
     const memberRole = await this.roleService.createMemberRole({
       workspaceId,
+      applicationId: workspaceCustomFlatApplication.id,
     });
 
     await this.workspaceRepository.update(workspaceId, {
