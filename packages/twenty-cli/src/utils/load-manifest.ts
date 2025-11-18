@@ -162,8 +162,7 @@ const collectObjects = (program: Program) => {
               const fieldDec = getDecorators(member)?.find(
                 (d) =>
                   isDecoratorNamed(d, 'FieldMetadata') ||
-                  isDecoratorNamed(d, 'Field') ||
-                  isDecoratorNamed(d, 'Relation'),
+                  isDecoratorNamed(d, 'Field'),
               );
 
               if (!fieldDec) {
