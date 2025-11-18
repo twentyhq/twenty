@@ -26,7 +26,7 @@ export class CacheLockService {
     key: string,
     options?: CacheLockOptions,
   ): Promise<T> {
-    const { ms = 50, maxRetries = 20, ttl = 500 } = options || {};
+    const { ms = 50, maxRetries = 40, ttl = 10_000 } = options || {};
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       const acquired = await this.cacheStorageService.acquireLock(key, ttl);
