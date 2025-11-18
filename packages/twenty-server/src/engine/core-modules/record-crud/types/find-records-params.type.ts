@@ -13,6 +13,6 @@ export type FindRecordsParams = FindRecordsInput &
       | Record<string, unknown>[]
       | Partial<ObjectRecordFilter>
       | Partial<ObjectRecordFilter>[];
-    orderBy?: ObjectRecordOrderBy;
+    orderBy?: Partial<ObjectRecordOrderBy>;
     offset?: number;
   };
