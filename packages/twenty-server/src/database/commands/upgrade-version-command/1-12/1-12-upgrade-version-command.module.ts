@@ -13,7 +13,13 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
     WorkspaceSchemaManagerModule,
     ApplicationModule,
   ],
-  providers: [SetStandardApplicationNotUninstallableCommand],
-  exports: [CreateWorkspaceCustomApplicationCommand, SetStandardApplicationNotUninstallableCommand],
+  providers: [
+    CreateWorkspaceCustomApplicationCommand,
+    SetStandardApplicationNotUninstallableCommand,
+  ],
+  exports: [
+    CreateWorkspaceCustomApplicationCommand,
+    SetStandardApplicationNotUninstallableCommand,
+  ],
 })
 export class V1_12_UpgradeVersionCommandModule {}
