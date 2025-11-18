@@ -46,17 +46,17 @@ const StyledTabList = styled(TabList)`
 `;
 
 const StyledContentContainer = styled.div<{
-  isInCommandMenu: boolean;
+  isInRightDrawer: boolean;
 }>`
-  background: ${({ theme, isInCommandMenu }) =>
-    isInCommandMenu ? theme.background.secondary : theme.background.primary};
-  border: ${({ theme, isInCommandMenu }) =>
-    isInCommandMenu ? `1px solid ${theme.border.color.light}` : 'none'};
-  border-radius: ${({ theme, isInCommandMenu }) =>
-    isInCommandMenu ? theme.border.radius.md : '0'};
+  background: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? theme.background.secondary : theme.background.primary};
+  border: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? `1px solid ${theme.border.color.light}` : 'none'};
+  border-radius: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? theme.border.radius.md : '0'};
   flex: 1;
-  margin: ${({ theme, isInCommandMenu }) =>
-    isInCommandMenu ? theme.spacing(3) : '0'};
+  margin: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? theme.spacing(3) : '0'};
   overflow-y: auto;
 `;
 
@@ -143,7 +143,7 @@ export const ShowPageSubContainer = ({
           />
         </StyledTabListContainer>
         {(isMobile || isInRightDrawer) && !isInCommandMenu && summaryCard}
-        <StyledContentContainer isInCommandMenu={isInCommandMenu}>
+        <StyledContentContainer isInRightDrawer={isInRightDrawer}>
           {renderActiveTabContent()}
         </StyledContentContainer>
         {isInRightDrawer && (
