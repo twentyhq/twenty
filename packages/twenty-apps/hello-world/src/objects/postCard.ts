@@ -9,7 +9,7 @@ import {
   Relation,
   RelationType,
   OnDeleteAction,
-  UNIVERSAL_OBJECT_IDS,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/application';
 
 enum PostCardStatus {
@@ -94,7 +94,8 @@ export class PostCard {
     type: RelationType.ONE_TO_MANY,
     label: 'Notes',
     icon: 'IconComment',
-    inverseSideTargetUniversalIdentifier: UNIVERSAL_OBJECT_IDS.note,
+    inverseSideTargetUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
     onDelete: OnDeleteAction.CASCADE,
   })
   notes: Note[];
