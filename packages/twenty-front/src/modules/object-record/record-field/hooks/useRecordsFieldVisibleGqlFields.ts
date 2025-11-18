@@ -53,8 +53,6 @@ export const useRecordsFieldVisibleGqlFields = ({
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Note ||
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Task;
 
-  const activityTargetDepth = isObjectAnActivity ? 1 : 0;
-
   return {
     id: true,
     ...(isDefined(additionalFieldMetadataItem)
@@ -73,15 +71,13 @@ export const useRecordsFieldVisibleGqlFields = ({
     deletedAt: true,
     noteTargets: generateActivityTargetGqlFields({
       activityObjectNameSingular: CoreObjectNameSingular.Note,
-      depth: activityTargetDepth,
       objectMetadataItems,
-      shouldOnlyLoadActivityIdentifiers: true,
+      loadRelations: isObjectAnActivity ? 'relations' : 'activity',
     }),
     taskTargets: generateActivityTargetGqlFields({
       activityObjectNameSingular: CoreObjectNameSingular.Task,
-      depth: activityTargetDepth,
       objectMetadataItems,
-      shouldOnlyLoadActivityIdentifiers: true,
+      loadRelations: isObjectAnActivity ? 'relations' : 'activity',
     }),
   };
 };
