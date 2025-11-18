@@ -14,7 +14,7 @@ import { PageLayoutType } from '~/generated/graphql';
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   border-bottom-left-radius: 8px;
-  border-right: ${({ theme }) => css`1px solid ${theme.border.color.medium}`};
+  border-right: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
   border-top-left-radius: 8px;
   display: grid;
   grid-template-rows: auto 1fr;
