@@ -1,5 +1,3 @@
-import console from 'console';
-
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 
 export const camelToSnakeCase = (str: string) =>
