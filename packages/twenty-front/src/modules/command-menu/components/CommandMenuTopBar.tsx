@@ -1,19 +1,15 @@
-import { CommandMenuContextChipGroups } from '@/command-menu/components/CommandMenuContextChipGroups';
-import { CommandMenuContextChipGroupsWithRecordSelection } from '@/command-menu/components/CommandMenuContextChipGroupsWithRecordSelection';
+import { CommandMenuBackButton } from '@/command-menu/components/CommandMenuBackButton';
+import { CommandMenuPageInfo } from '@/command-menu/components/CommandMenuPageInfo';
 import { CommandMenuTopBarInputFocusEffect } from '@/command-menu/components/CommandMenuTopBarInputFocusEffect';
-import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuContextChips';
-import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -21,8 +17,7 @@ import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, IconSparkles, IconX } from 'twenty-ui/display';
+import { IconSparkles, IconX } from 'twenty-ui/display';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { FeatureFlagKey } from '~/generated/graphql';
 
@@ -105,18 +100,11 @@ export const CommandMenuTopBar = () => {
 
   const isMobile = useIsMobile();
 
-  const { goBackFromCommandMenu } = useCommandMenuHistory();
-
   const { closeCommandMenu } = useCommandMenu();
 
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
 
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
-
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-    COMMAND_MENU_COMPONENT_INSTANCE_ID,
-  );
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);
 
@@ -130,17 +118,11 @@ export const CommandMenuTopBar = () => {
 
   const canGoBack = commandMenuNavigationStack.length > 1;
 
-  const isOnRootPage = commandMenuPage === CommandMenuPages.Root;
-
-  const shouldShowCloseButton =
-    commandMenuNavigationStack.length === 1 && !isOnRootPage;
+  const shouldShowCloseButton = commandMenuNavigationStack.length === 1;
 
   const shouldShowBackButton = canGoBack;
 
-  const backButtonAnimationDuration =
-    (shouldShowBackButton || shouldShowCloseButton) && contextChips.length > 0
-      ? theme.animation.duration.instant
-      : 0;
+  const lastChip = contextChips.at(-1);
 
   return (
     <StyledInputContainer>
@@ -150,19 +132,17 @@ export const CommandMenuTopBar = () => {
             <motion.div
               exit={{ opacity: 0, width: 0 }}
               transition={{
-                duration: backButtonAnimationDuration,
+                duration: theme.animation.duration.instant,
               }}
             >
-              <StyledNavigationIcon onClick={goBackFromCommandMenu}>
-                <IconChevronLeft size={theme.icon.size.md} />
-              </StyledNavigationIcon>
+              <CommandMenuBackButton />
             </motion.div>
           )}
           {shouldShowCloseButton && (
             <motion.div
               exit={{ opacity: 0, width: 0 }}
               transition={{
-                duration: backButtonAnimationDuration,
+                duration: theme.animation.duration.instant,
               }}
             >
               <StyledNavigationIcon onClick={closeCommandMenu}>
@@ -171,15 +151,11 @@ export const CommandMenuTopBar = () => {
             </motion.div>
           )}
         </AnimatePresence>
-        {isDefined(contextStoreCurrentObjectMetadataItemId) &&
-        commandMenuPage !== CommandMenuPages.SearchRecords ? (
-          <CommandMenuContextChipGroupsWithRecordSelection
-            contextChips={contextChips}
-            objectMetadataItemId={contextStoreCurrentObjectMetadataItemId}
-          />
-        ) : (
-          <CommandMenuContextChipGroups contextChips={contextChips} />
-        )}
+        {lastChip &&
+          commandMenuPage !== CommandMenuPages.Root &&
+          commandMenuPage !== CommandMenuPages.SearchRecords && (
+            <CommandMenuPageInfo pageChip={lastChip} />
+          )}
         {(commandMenuPage === CommandMenuPages.Root ||
           commandMenuPage === CommandMenuPages.SearchRecords) && (
           <>

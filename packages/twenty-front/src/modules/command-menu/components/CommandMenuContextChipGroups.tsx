@@ -1,4 +1,4 @@
-import { CommandMenuLastContextChip } from '@/command-menu/components/CommandMenuLastContextChip';
+import { CommandMenuPageInfo } from '@/command-menu/components/CommandMenuPageInfo';
 import { COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/command-menu/constants/CommandMenuContextChipGroupsDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -36,7 +36,7 @@ export const CommandMenuContextChipGroups = ({
             text={chip.text}
           />
         ))}
-        <CommandMenuLastContextChip lastChip={lastChip} />
+        <CommandMenuPageInfo pageChip={lastChip} />
       </>
     );
   }
@@ -77,7 +77,7 @@ export const CommandMenuContextChipGroups = ({
           dropdownPlacement="bottom-start"
         />
       )}
-      <CommandMenuLastContextChip lastChip={lastChip} />
+      <CommandMenuPageInfo pageChip={lastChip} />
     </>
   );
 };
