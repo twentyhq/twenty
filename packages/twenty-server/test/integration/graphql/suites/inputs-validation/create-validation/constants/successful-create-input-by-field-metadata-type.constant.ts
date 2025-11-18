@@ -161,6 +161,16 @@ export const successfulCreateInputByFieldMetadataType: {
     },
     {
       input: {
+        arrayField: 'item1',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return (
+          record.arrayField.length === 1 && record.arrayField.includes('item1')
+        );
+      },
+    },
+    {
+      input: {
         arrayField: [],
       },
       validateInput: (record: Record<string, any>) => {
