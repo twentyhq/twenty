@@ -7,7 +7,6 @@ import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { PageLayoutType } from '~/generated/graphql';
 
