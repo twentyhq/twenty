@@ -71,7 +71,7 @@ const processUserData = (
 ## Comments
 ```typescript
 // ✅ Use short-form comments, NOT JSDoc blocks
-// ✅ Explain business logic and non-obvious intentions
+// ✅ Explain business logic and non-obvious intentions (WHY, not WHAT)
 // Apply 15% discount for premium users with orders > $100
 const discount = isPremiumUser && orderTotal > 100 ? 0.15 : 0;
 
@@ -85,11 +85,34 @@ const calculateTotalPrice = (basePrice: number): number => {
   // Implementation
 };
 
+// ❌ AVOID obvious comments that just describe what code does
+// Bad: Get all inline fields dynamically
+const { inlineFieldMetadataItems } = useFieldListFieldMetadataItems({...});
+
+// Bad: Define standard fields in display order
+const standardFieldOrder = ['startsAt', 'endsAt', 'conferenceLink'];
+
+// Bad: Split fields into standard and custom
+const standardFields = standardFieldOrder.map(...)
+
+// ✅ GOOD: Only comment if explaining non-obvious business logic
+// Calendar events display standard fields first, then custom fields after participants
+// to maintain consistency with the legacy UI behavior
+const standardFields = standardFieldOrder.map(...)
+
 // ❌ AVOID JSDoc blocks - use short comments instead
 /**
  * This style is NOT preferred in this codebase
  */
 ```
+
+**Comment Guidelines:**
+- **DO** comment complex business rules or domain-specific logic
+- **DO** comment non-obvious algorithmic decisions
+- **DO** add TODOs for future improvements
+- **DON'T** comment obvious variable declarations or function calls
+- **DON'T** comment what is already clear from well-named variables/functions
+- **DON'T** add comments that just repeat what the code says
 
 ## Security Patterns
 ```typescript
