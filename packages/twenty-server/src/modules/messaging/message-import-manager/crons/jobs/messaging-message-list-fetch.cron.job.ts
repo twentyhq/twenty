@@ -49,7 +49,7 @@ export class MessagingMessageListFetchCronJob {
         const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
         const messageChannels = await this.coreDataSource.query(
-          `SELECT * FROM ${schemaName}."messageChannel" WHERE "isSyncEnabled" = true AND "syncStage" IN ('${MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING}')`,
+          `UPDATE ${schemaName}."messageChannel" SET "syncStage" = '${MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED}', "syncStageStartedAt" = now() WHERE "isSyncEnabled" = true AND "syncStage" = '${MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING}' RETURNING id`,
         );
 
         for (const messageChannel of messageChannels) {

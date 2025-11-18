@@ -72,7 +72,7 @@ export class ChannelSyncService {
       );
 
       await messageChannelRepository.update(messageChannel.id, {
-        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
         syncStatus: MessageChannelSyncStatus.ONGOING,
       });
     }

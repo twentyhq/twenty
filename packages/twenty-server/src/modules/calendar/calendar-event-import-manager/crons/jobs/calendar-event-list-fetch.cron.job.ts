@@ -51,7 +51,7 @@ export class CalendarEventListFetchCronJob {
         const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
         const calendarChannels = await this.coreDataSource.query(
-          `SELECT * FROM ${schemaName}."calendarChannel" WHERE "isSyncEnabled" = true AND "syncStage" IN ('${CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING}')`,
+          `UPDATE ${schemaName}."calendarChannel" SET "syncStage" = '${CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED}', "syncStageStartedAt" = now() WHERE "isSyncEnabled" = true AND "syncStage" = '${CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING}' RETURNING id`,
         );
 
         for (const calendarChannel of calendarChannels) {
