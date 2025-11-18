@@ -6,17 +6,31 @@ import {
 import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { createRelationDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
+import {
+  createDeterministicUuid,
+  createRelationDeterministicUuid,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
-export const computeStandardFields = (
-  context: WorkspaceSyncContext,
+type ComputeStandardFieldsArgs = {
+  context: WorkspaceSyncContext;
   standardFieldMetadataCollection: (
     | PartialFieldMetadata
     | PartialComputedFieldMetadata
-  )[],
-  originalObjectMetadata: ObjectMetadataEntity,
-  customObjectMetadataCollection: ObjectMetadataEntity[] = [],
-): Omit<ComputedPartialFieldMetadata, 'createdAt' | 'updatedAt'>[] => {
+  )[];
+  originalObjectMetadata: ObjectMetadataEntity;
+  customObjectMetadataCollection: ObjectMetadataEntity[];
+  isCustomObjectBaseFields?: boolean;
+};
+export const computeStandardFields = ({
+  context,
+  standardFieldMetadataCollection,
+  originalObjectMetadata,
+  customObjectMetadataCollection = [],
+  isCustomObjectBaseFields = false,
+}: ComputeStandardFieldsArgs): Omit<
+  ComputedPartialFieldMetadata,
+  'createdAt' | 'updatedAt'
+>[] => {
   const fields: Omit<
     ComputedPartialFieldMetadata,
     'createdAt' | 'updatedAt'
@@ -63,7 +77,7 @@ export const computeStandardFields = (
         });
       }
     } else {
-      // Relation from standard object to standard object
+      // Regular field or relation from standard object to standard object
       const labelText =
         typeof partialFieldMetadata.label === 'function'
           ? partialFieldMetadata.label(originalObjectMetadata)
@@ -73,10 +87,21 @@ export const computeStandardFields = (
           ? partialFieldMetadata.description(originalObjectMetadata)
           : partialFieldMetadata.description;
 
+      // For CustomWorkspaceEntity base fields, generate deterministic universalIdentifier
+      // based on objectId + standardId (each custom object gets unique field UUIDs)
+      const universalIdentifier =
+        isCustomObjectBaseFields && partialFieldMetadata.standardId
+          ? createDeterministicUuid([
+              originalObjectMetadata.id,
+              partialFieldMetadata.standardId,
+            ])
+          : partialFieldMetadata.universalIdentifier;
+
       fields.push({
         ...partialFieldMetadata,
         label: labelText,
         description: descriptionText,
+        universalIdentifier,
       });
     }
   }

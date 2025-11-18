@@ -138,13 +138,13 @@ export class WorkspaceSyncFieldMetadataService {
       const originalObjectMetadata =
         originalObjectMetadataMap[standardObjectId];
 
-      const computedStandardFieldMetadataCollection = computeStandardFields(
+      const computedStandardFieldMetadataCollection = computeStandardFields({
         context,
         standardFieldMetadataCollection,
         originalObjectMetadata,
         // We need to provide this for generated relations with custom objects
         customObjectMetadataCollection,
-      );
+      });
 
       const fieldComparatorResults = this.workspaceFieldComparator.compare(
         originalObjectMetadata.id,
@@ -164,11 +164,14 @@ export class WorkspaceSyncFieldMetadataService {
     const customObjectStandardFieldMetadataCollection =
       this.standardFieldFactory.create(CustomWorkspaceEntity, context);
 
-    const standardFieldMetadataCollection = computeStandardFields(
+    const standardFieldMetadataCollection = computeStandardFields({
       context,
-      customObjectStandardFieldMetadataCollection,
-      customObjectMetadata,
-    );
+      standardFieldMetadataCollection:
+        customObjectStandardFieldMetadataCollection,
+      originalObjectMetadata: customObjectMetadata,
+      customObjectMetadataCollection: [],
+      isCustomObjectBaseFields: true,
+    });
 
     /**
      * COMPARE FIELD METADATA
@@ -194,11 +197,14 @@ export class WorkspaceSyncFieldMetadataService {
     // Loop over all custom objects from the DB and compare their fields with standard fields
     for (const customObjectMetadata of customObjectMetadataCollection) {
       // Also, maybe it's better to refactor a bit and move generation part into a separate module ?
-      const standardFieldMetadataCollection = computeStandardFields(
+      const standardFieldMetadataCollection = computeStandardFields({
         context,
-        customObjectStandardFieldMetadataCollection,
-        customObjectMetadata,
-      );
+        standardFieldMetadataCollection:
+          customObjectStandardFieldMetadataCollection,
+        originalObjectMetadata: customObjectMetadata,
+        customObjectMetadataCollection: [],
+        isCustomObjectBaseFields: true,
+      });
 
       /**
        * COMPARE FIELD METADATA
