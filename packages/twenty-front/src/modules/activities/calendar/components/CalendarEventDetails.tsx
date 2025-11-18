@@ -1,6 +1,5 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared';
 
 import { CalendarEventParticipantsResponseStatus } from '@/activities/calendar/components/CalendarEventParticipantsResponseStatus';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
@@ -15,6 +14,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { isDefined } from 'twenty-shared/utils';
 import { Chip, ChipAccent, ChipSize, ChipVariant } from 'twenty-ui/components';
 import { IconCalendarEvent } from 'twenty-ui/display';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';

@@ -128,8 +128,9 @@ const standardFields = standardFieldOrder.map(...)
 
 ## Utility Helpers
 ```typescript
-// ✅ Use existing utility helpers from twenty-shared instead of manual checks
-import { isDefined, isNonEmptyString, isNonEmptyArray } from 'twenty-shared';
+// ✅ Use existing utility helpers instead of manual checks
+import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString, isNonEmptyArray } from '@sniptt/guards';
 
 // ❌ Manual type guards
 const validItems = items.filter((item): item is Item => item !== undefined);
