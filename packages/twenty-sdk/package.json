@@ -20,8 +20,7 @@
     "vite-tsconfig-paths": "^4.2.1"
   },
   "dependencies": {
-    "twenty-shared": "workspace:*",
-    "typeorm": "^0.3.20"
+    "twenty-shared": "workspace:*"
   },
   "exports": {
     ".": {

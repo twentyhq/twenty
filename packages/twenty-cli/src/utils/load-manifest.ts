@@ -163,7 +163,8 @@ const collectObjects = (program: Program) => {
               const fieldDec = getDecorators(member)?.find(
                 (d) =>
                   isDecoratorNamed(d, 'FieldMetadata') ||
-                  isDecoratorNamed(d, 'Field'),
+                  isDecoratorNamed(d, 'Field') ||
+                  isDecoratorNamed(d, 'Relation'),
               );
 
               if (!fieldDec) {
@@ -448,7 +449,7 @@ export const extractTwentyAppConfig = (program: Program): Application => {
   throw new Error('Could not find default exported ApplicationConfig');
 };
 
-const isTwentyClientUsedInProgram = (program: Program): boolean => {
+const isGeneratedModuleUsedInProgram = (program: Program): boolean => {
   for (const sf of program.getSourceFiles()) {
     if (sf.isDeclarationFile) continue;
 
@@ -468,24 +469,9 @@ const isTwentyClientUsedInProgram = (program: Program): boolean => {
             moduleText === GENERATED_FOLDER_NAME ||
             moduleText.endsWith(`/${GENERATED_FOLDER_NAME}`);
 
-          if (
-            isGeneratedModule &&
-            node.importClause &&
-            node.importClause.namedBindings &&
-            node.importClause.namedBindings.kind === SyntaxKind.NamedImports
-          ) {
-            const namedImports = node.importClause
-              .namedBindings as NamedImports;
-
-            for (const element of namedImports.elements) {
-              const importedName =
-                element.propertyName?.text ?? element.name.text;
-
-              if (importedName === 'createClient') {
-                found = true;
-                return;
-              }
-            }
+          if (isGeneratedModule && node.importClause) {
+            found = true;
+            return;
           }
         }
       }
@@ -507,7 +493,7 @@ export const loadManifest = async (
   packageJson: PackageJson;
   yarnLock: string;
   manifest: AppManifest;
-  isTwentyClientUsed: boolean;
+  shouldGenerate: boolean;
 }> => {
   const packageJson = await parseJsoncFile(
     await findPathFile(appPath, 'package.json'),
@@ -532,7 +518,7 @@ export const loadManifest = async (
     await loadFolderContentIntoJson(program, appPath),
   ];
 
-  const isTwentyClientUsed = isTwentyClientUsedInProgram(program);
+  const shouldGenerate = isGeneratedModuleUsedInProgram(program);
 
   return {
     packageJson,
@@ -543,6 +529,6 @@ export const loadManifest = async (
       serverlessFunctions,
       sources,
     },
-    isTwentyClientUsed,
+    shouldGenerate,
   };
 };
