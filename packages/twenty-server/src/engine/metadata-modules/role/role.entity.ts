@@ -18,12 +18,12 @@ import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets
 
 @Entity('role')
 @Unique('IDX_ROLE_LABEL_WORKSPACE_ID_UNIQUE', ['label', 'workspaceId'])
-export class RoleEntity extends SyncableEntity {
+export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: true, type: 'uuid' })
-  standardId?: string;
+  standardId: string;
 
   @Column({ nullable: false })
   label: string;

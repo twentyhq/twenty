@@ -28,6 +28,7 @@ export const fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseE
         invalidRouteTrigger: 0,
         invalidFieldMetadata: 0,
         invalidViewGroup: 0,
+        invalidRole: 0,
         totalErrors: 0,
       },
       errors: translatedReport,

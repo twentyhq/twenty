@@ -165,12 +165,12 @@ export class RoleResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
   ): Promise<string> {
-    const deletedRoleId = await this.roleService.deleteRole(
+    const deletedRole = await this.roleService.deleteRole({
       roleId,
-      workspace.id,
-    );
+      workspaceId: workspace.id,
+    });
 
-    return deletedRoleId;
+    return deletedRole.id;
   }
 
   @Mutation(() => [ObjectPermissionDTO])

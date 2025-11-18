@@ -4,7 +4,7 @@ import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 export const fromRoleEntityToFlatRole = (role: RoleEntity): FlatRole => {
   return {
     id: role.id,
-    standardId: role.standardId,
+    standardId: role.standardId ?? '',
     label: role.label,
     description: role.description,
     icon: role.icon,
@@ -19,7 +19,13 @@ export const fromRoleEntityToFlatRole = (role: RoleEntity): FlatRole => {
     canBeAssignedToAgents: role.canBeAssignedToAgents,
     canBeAssignedToApiKeys: role.canBeAssignedToApiKeys,
     workspaceId: role.workspaceId,
-    universalIdentifier: role.standardId || role.id,
+    createdAt: role.createdAt,
+    updatedAt: role.updatedAt,
+    universalIdentifier: role.universalIdentifier ?? role.standardId ?? role.id,
     applicationId: role.applicationId ?? null,
+    roleTargetIds: role.roleTargets?.map((rt) => rt.id) ?? [],
+    objectPermissionIds: role.objectPermissions?.map((op) => op.id) ?? [],
+    permissionFlagIds: role.permissionFlags?.map((pf) => pf.id) ?? [],
+    fieldPermissionIds: role.fieldPermissions?.map((fp) => fp.id) ?? [],
   };
 };

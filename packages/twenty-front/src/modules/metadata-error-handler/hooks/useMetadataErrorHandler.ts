@@ -23,6 +23,7 @@ export const useMetadataErrorHandler = () => {
     cronTrigger: t`cron trigger`,
     databaseEventTrigger: t`database trigger`,
     routeTrigger: t`route trigger`,
+    role: t`role`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = useCallback(

@@ -7,6 +7,7 @@ import { FlatDatabaseEventTriggerValidatorService } from 'src/engine/workspace-m
 import { FlatFieldMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service';
 import { FlatIndexValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service';
 import { FlatObjectMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service';
+import { FlatRoleValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service';
 import { FlatRouteTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service';
 import { FlatServerlessFunctionValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service';
 import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service';
@@ -29,6 +30,7 @@ import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace
     FlatCronTriggerValidatorService,
     FlatFieldMetadataTypeValidatorService,
     FlatRouteTriggerValidatorService,
+    FlatRoleValidatorService,
   ],
   exports: [
     FlatViewValidatorService,
@@ -43,6 +45,7 @@ import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace
     FlatCronTriggerValidatorService,
     FlatFieldMetadataTypeValidatorService,
     FlatRouteTriggerValidatorService,
+    FlatRoleValidatorService,
   ],
 })
 export class WorkspaceMigrationBuilderValidatorsModule {}
