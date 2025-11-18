@@ -60,6 +60,52 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           deletedAt: null,
+          conditionalDisplay: {
+            and: [
+              {
+                '===': [{ var: 'device' }, 'MOBILE'],
+              },
+            ],
+          },
+        },
+      ],
+    },
+    {
+      __typename: 'PageLayoutTab',
+      id: 'note-tab-note',
+      title: 'Note',
+      position: 150,
+      layoutMode: 'vertical-list',
+      pageLayoutId: DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      deletedAt: null,
+      widgets: [
+        {
+          __typename: 'PageLayoutWidget',
+          id: 'note-widget-note',
+          pageLayoutTabId: 'note-tab-note',
+          title: 'Note',
+          type: WidgetType.RICH_TEXT,
+          objectMetadataId: null,
+          gridPosition: {
+            __typename: 'GridPosition',
+            row: 12,
+            column: 0,
+            rowSpan: 6,
+            columnSpan: 12,
+          },
+          configuration: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          deletedAt: null,
+          conditionalDisplay: {
+            and: [
+              {
+                '===': [{ var: 'device' }, 'DESKTOP'],
+              },
+            ],
+          },
         },
       ],
     },

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { type gmail_v1 as gmailV1 } from 'googleapis';
+import { google, type gmail_v1 as gmailV1 } from 'googleapis';
 import { isDefined } from 'twenty-shared/utils';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
@@ -42,7 +42,10 @@ export class GmailGetMessageListService {
       await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
         connectedAccount,
       );
-    const gmailClient = oAuth2Client.gmail({ version: 'v1' });
+    const gmailClient = google.gmail({
+      version: 'v1',
+      auth: oAuth2Client,
+    });
 
     let pageToken: string | undefined;
     let hasMoreMessages = true;
@@ -143,7 +146,10 @@ export class GmailGetMessageListService {
       await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
         connectedAccount,
       );
-    const gmailClient = oAuth2Client.gmail({ version: 'v1' });
+    const gmailClient = google.gmail({
+      version: 'v1',
+      auth: oAuth2Client,
+    });
 
     if (!isNonEmptyString(messageChannel.syncCursor)) {
       return this.getMessageListWithoutCursor(connectedAccount, messageFolders);

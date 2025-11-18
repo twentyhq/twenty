@@ -4,6 +4,7 @@ import { RECORD_PAGE_LAYOUT_ACTIONS_CONFIG } from '@/action-menu/actions/record-
 import { WORKFLOW_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkflowActionsConfig';
 import { WORKFLOW_RUNS_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig';
 import { WORKFLOW_VERSIONS_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig';
+import { WORKSPACE_MEMBERS_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig';
 import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -32,6 +33,9 @@ export const getActionConfig = ({
     }
     case CoreObjectNameSingular.WorkflowRun: {
       return WORKFLOW_RUNS_ACTIONS_CONFIG;
+    }
+    case CoreObjectNameSingular.WorkspaceMember: {
+      return WORKSPACE_MEMBERS_ACTIONS_CONFIG;
     }
     case CoreObjectNameSingular.Company: {
       if (isRecordPageLayoutEnabled) {

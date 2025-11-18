@@ -80,6 +80,7 @@ export const SEARCH_FIELDS_FOR_WORKFLOW_VERSIONS: FieldTypeAndNameMetadata[] = [
   icon: STANDARD_OBJECT_ICONS.workflowVersion,
   labelIdentifierStandardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.name,
 })
+@WorkspaceIsSystem()
 @WorkspaceIsObjectUIReadOnly()
 export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
