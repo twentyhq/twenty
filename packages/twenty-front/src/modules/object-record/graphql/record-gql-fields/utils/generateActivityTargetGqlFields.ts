@@ -45,15 +45,33 @@ export const generateActivityTargetGqlFields = ({
     const activityLabelIdentifierFieldMetadataItem =
       getLabelIdentifierFieldMetadataItem(activityObjectMetadataItem);
 
-    return {
-      id: true,
-      [activityObjectNameSingular]: {
+    if (depth === 0) {
+      return {
         id: true,
-        ...(isDefined(activityLabelIdentifierFieldMetadataItem)
-          ? { [activityLabelIdentifierFieldMetadataItem.name]: true }
-          : {}),
-      },
-    };
+        [activityObjectNameSingular]: {
+          id: true,
+          ...(isDefined(activityLabelIdentifierFieldMetadataItem)
+            ? { [activityLabelIdentifierFieldMetadataItem.name]: true }
+            : {}),
+        },
+      };
+    } else {
+      return {
+        id: true,
+        [activityObjectNameSingular]: {
+          id: true,
+          ...(isDefined(activityLabelIdentifierFieldMetadataItem)
+            ? { [activityLabelIdentifierFieldMetadataItem.name]: true }
+            : {}),
+        },
+        ...generateDepthRecordGqlFieldsFromFields({
+          depth,
+          fields: activityTargetObjectMetadataItem.fields,
+          objectMetadataItems,
+          shouldOnlyLoadRelationIdentifiers: true,
+        }),
+      };
+    }
   } else {
     return {
       ...generateDepthRecordGqlFieldsFromFields({
