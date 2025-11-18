@@ -4,7 +4,6 @@ import {
   type ButtonSize,
   type ButtonVariant,
 } from '@ui/input';
-import { GRAY_SCALE_LIGHT } from '@ui/theme';
 import { getOsShortcutSeparator } from '@ui/utilities';
 
 const StyledSeparator = styled.div<{
@@ -14,7 +13,7 @@ const StyledSeparator = styled.div<{
   background: ${({ theme, accent }) => {
     switch (accent) {
       case 'blue':
-        return GRAY_SCALE_LIGHT.gray7;
+        return theme.buttons.secondaryTextColor;
       case 'danger':
         return theme.border.color.danger;
       default:
@@ -34,7 +33,7 @@ const StyledShortcutLabel = styled.div<{
   color: ${({ theme, variant, accent }) => {
     switch (accent) {
       case 'blue':
-        return GRAY_SCALE_LIGHT.gray7;
+        return theme.buttons.secondaryTextColor;
       case 'danger':
         return variant === 'primary'
           ? theme.border.color.danger
