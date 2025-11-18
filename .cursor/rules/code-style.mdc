@@ -30,6 +30,18 @@ type ButtonProps = {}; // Component props suffix with 'Props'
 // ✅ Files and directories - kebab-case
 // user-profile.component.tsx
 // user-profile.styles.ts
+
+// ❌ NEVER use abbreviations in variable names
+// Bad
+const users = data.map((u) => u.name);
+const field = items.find((f) => f.id === id);
+
+// Good
+const users = data.map((user) => user.name);
+const field = items.find((item) => item.id === id);
+const fieldMetadata = inlineFields.find(
+  (fieldMetadataItem) => fieldMetadataItem.name === fieldName,
+);
 ```
 
 ## Import Organization
@@ -59,11 +71,11 @@ const processUserData = (
 ): ProcessedUser => {
   const processedUser = transformUserData(user);
   applyOptions(processedUser, options);
-  
+
   if (callback) {
     callback(processedUser);
   }
-  
+
   return processedUser;
 };
 ```
@@ -113,6 +125,25 @@ const standardFields = standardFieldOrder.map(...)
 - **DON'T** comment obvious variable declarations or function calls
 - **DON'T** comment what is already clear from well-named variables/functions
 - **DON'T** add comments that just repeat what the code says
+
+## Utility Helpers
+```typescript
+// ✅ Use existing utility helpers from twenty-shared instead of manual checks
+import { isDefined, isNonEmptyString, isNonEmptyArray } from 'twenty-shared';
+
+// ❌ Manual type guards
+const validItems = items.filter((item): item is Item => item !== undefined);
+const hasValue = value !== null && value !== undefined;
+
+// ✅ Use utility helpers
+const validItems = items.filter(isDefined);
+const hasValue = isDefined(value);
+
+// Other useful helpers:
+// - isDefined(value) - checks !== null && !== undefined
+// - isNonEmptyString(value) - checks string is defined and not empty
+// - isNonEmptyArray(value) - checks array is defined and has items
+```
 
 ## Security Patterns
 ```typescript

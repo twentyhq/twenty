@@ -1,5 +1,6 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared';
 
 import { CalendarEventParticipantsResponseStatus } from '@/activities/calendar/components/CalendarEventParticipantsResponseStatus';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
@@ -97,9 +98,11 @@ export const CalendarEventDetails = ({
 
   const standardFields = standardFieldOrder
     .map((fieldName) =>
-      inlineFieldMetadataItems.find((f) => f.name === fieldName),
+      inlineFieldMetadataItems.find(
+        (fieldMetadataItem) => fieldMetadataItem.name === fieldName,
+      ),
     )
-    .filter((f): f is FieldMetadataItem => f !== undefined);
+    .filter(isDefined);
 
   const customFields = inlineFieldMetadataItems.filter(
     (field) => field.isCustom && !standardFieldOrder.includes(field.name),
