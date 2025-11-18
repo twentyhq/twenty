@@ -12,6 +12,7 @@ import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-
 import { BulkDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/bulk-delete-tool.zod-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
 import { SoftDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/soft-delete-tool.zod-schema';
+import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-related-object.util';
 import {
   type ToolHints,
@@ -44,7 +45,6 @@ export class ToolService {
     rolePermissionConfig: RolePermissionConfig,
     workspaceId: string,
     actorContext?: ActorMetadata,
-    userWorkspaceId?: string,
     toolHints?: ToolHints,
   ): Promise<ToolSet> {
     const tools: ToolSet = {};
@@ -150,7 +150,20 @@ export class ToolService {
               offset,
               workspaceId,
               rolePermissionConfig,
-              userWorkspaceId,
+            });
+          },
+        };
+
+        tools[`find_one_${objectMetadata.nameSingular}`] = {
+          description: `Retrieve a single ${objectMetadata.labelSingular} record by its unique ID. Use this when you know the exact record ID and need the complete record data. Returns the full record or an error if not found.`,
+          inputSchema: FindOneToolInputSchema,
+          execute: async (parameters) => {
+            return this.findRecordsService.execute({
+              objectName: objectMetadata.nameSingular,
+              filter: { id: { eq: parameters.input.id } },
+              limit: 1,
+              workspaceId,
+              rolePermissionConfig,
             });
           },
         };
@@ -171,7 +184,6 @@ export class ToolService {
                 workspaceId,
                 rolePermissionConfig,
                 createdBy: actorContext,
-                userWorkspaceId,
               });
             },
           };
@@ -199,7 +211,6 @@ export class ToolService {
                 objectRecord,
                 workspaceId,
                 rolePermissionConfig,
-                userWorkspaceId,
               });
             },
           };
@@ -217,7 +228,6 @@ export class ToolService {
               workspaceId,
               rolePermissionConfig,
               soft: true,
-              userWorkspaceId,
             });
           },
         };
