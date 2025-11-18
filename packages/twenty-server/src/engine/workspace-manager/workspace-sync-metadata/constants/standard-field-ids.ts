@@ -510,6 +510,19 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   calendarStartDay: '20202020-92d0-1d7f-a126-25ededa6b142',
   numberFormat: '20202020-7f40-4e7f-b126-11c0eda6b141',
 } as const;
+export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
+  name: '20202020-ba07-4ffd-ba63-009491f5749c',
+  position: '20202020-c2bd-4e16-bb9a-c8b0411bf49d',
+  createdBy: '20202020-be0e-4971-865b-32ca87cbb315',
+  // TODO: check if activityTargets field can be deleted
+  activityTargets: '20202020-7f42-40ae-b96c-c8a61acc83bf',
+  noteTargets: '20202020-01fd-4f37-99dc-9427a444018a',
+  taskTargets: '20202020-0860-4566-b865-bff3c626c303',
+  favorites: '20202020-a4a7-4686-b296-1c6c3482ee21',
+  attachments: '20202020-8d59-46ca-b7b2-73d167712134',
+  timelineActivities: '20202020-f1ef-4ba4-8f33-1a4577afa477',
+  searchVector: '70e56537-18ef-4811-b1c7-0a444006b815',
+} as const;
 
 export const DASHBOARD_STANDARD_FIELD_IDS = {
   title: '20202020-20ee-4091-95dc-44b57eda3a89',
