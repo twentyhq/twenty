@@ -105,6 +105,49 @@ describe('group-by resolver (integration)', () => {
       expect(groupWithCityB.totalCount).toEqual(2);
     });
 
+    it('limits the number of groups when limit argument is provided', async () => {
+      const cityA = 'City A';
+      const cityB = 'City B';
+      const cityC = 'City C';
+
+      await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: PERSON_GQL_FIELDS,
+          data: { id: testPersonId, city: cityA },
+        }),
+      );
+      await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: PERSON_GQL_FIELDS,
+          data: { id: testPerson2Id, city: cityB },
+        }),
+      );
+      await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: PERSON_GQL_FIELDS,
+          data: { id: testPerson3Id, city: cityC },
+        }),
+      );
+
+      const response = await makeGraphqlAPIRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          groupBy: [{ city: true }],
+          limit: 2,
+        }),
+      );
+
+      const groups = response.body.data.peopleGroupBy;
+
+      expect(groups).toBeDefined();
+      expect(Array.isArray(groups)).toBe(true);
+      expect(groups).toHaveLength(2);
+    });
+
     it('computes aggregated metrics on date time field', async () => {
       const cityA = 'City A';
       const cityB = 'City B';
