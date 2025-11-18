@@ -31,7 +31,6 @@ import {
   isTemplateExpression,
   isVariableStatement,
   isImportDeclaration,
-  NamedImports,
 } from 'typescript';
 import {
   AppManifest,
