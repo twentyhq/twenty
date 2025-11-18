@@ -3,8 +3,8 @@ import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pag
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
+import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
@@ -18,10 +18,8 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
     pageLayoutIdFromProps,
   );
 
-  const tabListComponentInstanceId = useAvailableComponentInstanceIdOrThrow(
-    TabListComponentInstanceContext,
-    componentInstanceId,
-  );
+  const tabListComponentInstanceId =
+    getTabListInstanceIdFromPageLayoutId(componentInstanceId);
 
   const pageLayoutDraftState = useRecoilComponentCallbackState(
     pageLayoutDraftComponentState,
