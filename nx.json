@@ -280,7 +280,7 @@
     }
   },
   "installation": {
-    "version": "21.3.11"
+    "version": "22.0.3"
   },
   "generators": {
     "@nx/react": {

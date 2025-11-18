@@ -1,54 +1,54 @@
 {
   "tabs": {
     "userGuide": {
-      "label": "用户指南",
+      "label": "User Guide",
       "groups": {
         "gettingStarted": {
-          "label": "正在开始"
+          "label": "Getting Started"
         },
         "dataModel": {
-          "label": "数据模型"
+          "label": "數據模型"
         },
         "crmEssentials": {
-          "label": "CRM要点"
+          "label": "CRM 基礎知識"
         },
         "views": {
-          "label": "视图"
+          "label": "視圖"
         },
         "workflows": {
-          "label": "工作流"
+          "label": "Workflow"
         },
         "collaboration": {
-          "label": "协作"
+          "label": "協作"
         },
         "integrationsApi": {
-          "label": "集成和 API"
+          "label": "Integrations & API"
         },
         "reporting": {
-          "label": "报告"
+          "label": "報告"
         },
         "settings": {
-          "label": "设置"
+          "label": "設置"
         },
         "pricing": {
-          "label": "定价"
+          "label": "定價"
         },
         "resources": {
-          "label": "资源"
+          "label": "資源"
         }
       }
     },
     "developers": {
-      "label": "开发者",
+      "label": "開發人員",
       "groups": {
         "developersGroup": {
-          "label": "开发者"
+          "label": "開發人員"
         },
         "devGettingStarted": {
-          "label": "正在开始",
+          "label": "Getting Started",
           "groups": {
             "selfHosting": {
-              "label": "自我主机"
+              "label": "Self-Hosting"
             },
             "apiAndWebhooks": {
               "label": "API 和 Webhooks"
@@ -56,32 +56,32 @@
           }
         },
         "contributing": {
-          "label": "贡献中",
+          "label": "貢獻",
           "groups": {
             "frontendDevelopment": {
-              "label": "前端开发",
+              "label": "前端開發",
               "groups": {
                 "twentyUi": {
                   "label": "Twenty UI",
                   "groups": {
                     "display": {
-                      "label": "显示"
+                      "label": "顯示"
                     },
                     "feedback": {
-                      "label": "反馈"
+                      "label": "反饋"
                     },
                     "input": {
-                      "label": "Input"
+                      "label": "輸入"
                     },
                     "navigation": {
-                      "label": "Navigation"
+                      "label": "導航"
                     }
                   }
                 }
               }
             },
             "backendDevelopment": {
-              "label": "后端开发"
+              "label": "後端開發"
             }
           }
         }

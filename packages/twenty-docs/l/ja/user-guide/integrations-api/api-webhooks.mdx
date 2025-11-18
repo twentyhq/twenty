@@ -28,7 +28,9 @@ APIキーにより、CRMデータへの自動アクセスが可能となり、�
 作成後、APIキーはカスタムAPIドキュメントおよびプレイグラウンドへのアクセスを提供し、実際のデータモデルでエンドポイントをテストできます。
 
 <Warning>
+
 APIキーは機密情報へのアクセスを提供するため、完全に信頼できないサービスと共有すべきではありません。 漏洩した場合、不正に使用される可能性があります。 APIキーのセキュリティが侵害された場合、直ちに無効化し、新しいキーを生成してください。
+ 漏洩した場合、不正に使用される可能性があります。 APIキーのセキュリティが侵害された場合、直ちに無効化し、新しいキーを生成してください。
 </Warning>
 <VimeoEmbed videoId="928786722" title="Creating API key" />
 
@@ -51,7 +53,7 @@ APIキーは機密情報へのアクセスを提供するため、完全に信�
 
 Webhooksは顧客データに関連する変更またはイベントを指定したURLに即時に通知します。
 
-例として、商談が「Closed Won」に移動した際に、Webhooksが自動で請求書作成を会計システムで起動できます。 Note that this type of automation can also be achieved using Twenty's in-app [Workflows feature](/l/ja/user-guide/workflows/getting-started-workflows), which offers triggers based on field updates for internal automation.
+例として、商談が「Closed Won」に移動した際に、Webhooksが自動で請求書作成を会計システムで起動できます。 例として、商談が「Closed Won」に移動した際に、Webhooksが自動で請求書作成を会計システムで起動できます。 Note that this type of automation can also be achieved using Twenty's in-app [Workflows feature](/l/ja/user-guide/workflows/getting-started-workflows), which offers triggers based on field updates for internal automation.
 
 Webhooksは外部システムとの統合に最適で、ワークフロー機能は内部自動化と外部ツール接続をWebhookトリガー、コードノード、HTTPノードでサポートします。
 

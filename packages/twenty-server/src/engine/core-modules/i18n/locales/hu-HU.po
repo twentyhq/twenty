@@ -208,6 +208,7 @@ msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "Összesített/szűrt események, amelyek a cronológiaon jelennek meg"
 
 #. js-lingui-id: pdOYzu
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workspace-members-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
@@ -215,9 +216,12 @@ msgstr "Összesített/szűrt események, amelyek a cronológiaon jelennek meg"
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/messages-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/message-threads-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/calendar-events-all.view.ts
 msgid "All {objectLabelPlural}"
 msgstr "Minden {objectLabelPlural}"
 
@@ -302,6 +306,11 @@ msgstr "Felelős"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated User Id"
 msgstr "Kapcsolódó Felhasználó Azonosítója"
+
+#. js-lingui-id: scLx/y
+#: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
+msgid "At least one folder must be synced."
+msgstr ""
 
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -611,7 +620,6 @@ msgstr "Nem törölhető a fiók: Ön az egyetlen adminisztrátor. Kérjük, ren
 
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Nem törölhető, először frissítse a címkeazonosító mezőt"
 
@@ -1847,7 +1855,7 @@ msgstr "Nyelv"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Last credentials refreshed at"
-msgstr ""
+msgstr "Az utolsó hitelesítési adatok frissítve:"
 
 #. js-lingui-id: WvYp6o
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -2009,6 +2017,11 @@ msgstr "Üzenetmappa"
 msgid "Message folder import policy"
 msgstr "Üzenetmappa importálási beállítás"
 
+#. js-lingui-id: aIgrkW
+#: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
+msgid "Message folder not found"
+msgstr ""
+
 #. js-lingui-id: p4ANpY
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -2162,11 +2175,6 @@ msgstr "A név \"{flatFieldMetadataName}\" nem elérhető"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
 msgstr "A név \"{flatFieldMetadataName}\" nem elérhető, mivel már egy másik mező használja"
-
-#. js-lingui-id: Q2loDF
-#: src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service.ts
-msgid "Name \"{name}\" is not available."
-msgstr "A név \"{name}\" nem elérhető."
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2758,17 +2766,6 @@ msgstr "A nyilvános domain URL nincs meghatározva. Kérjük, állítsa be a PU
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Received At"
 msgstr "Fogadás ideje"
-
-#. js-lingui-id: x93onj
-#: src/engine/metadata-modules/view-field/services/view-field.service.ts
-#: src/engine/metadata-modules/view-field/services/view-field.service.ts
-msgid "Record text must be in first position of the view."
-msgstr "A rekord szövegének a nézet első helyén kell lennie."
-
-#. js-lingui-id: KGmwY/
-#: src/engine/metadata-modules/view-field/services/view-field.service.ts
-msgid "Record text must stay visible."
-msgstr "A rekord szövegének láthatónak kell maradnia."
 
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -3522,12 +3519,6 @@ msgstr "Típus"
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Type (deprecated)"
 msgstr "Típus (elavult)"
-
-#. js-lingui-id: RBJNRI
-#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
-msgid "Unique field cannot have a default value"
-msgstr "Egyedi mező nem tartalmazhat alapértelmezett értéket"
 
 #. js-lingui-id: WWSSTx
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
