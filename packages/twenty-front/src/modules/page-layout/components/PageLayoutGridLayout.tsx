@@ -7,8 +7,8 @@ import {
   PAGE_LAYOUT_CONFIG,
   type PageLayoutBreakpoint,
 } from '@/page-layout/constants/PageLayoutBreakpoints';
-import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
+import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/pageLayoutCurrentBreakpointComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
@@ -110,11 +110,9 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
     pageLayoutDraggedAreaComponentState,
   );
 
-  const { currentPageLayout } = useCurrentPageLayout();
+  const activeTab = usePageLayoutTabWithVisibleWidgetsOrThrow(tabId);
 
-  const activeTab = currentPageLayout?.tabs.find((tab) => tab.id === tabId);
-
-  const activeTabWidgets = activeTab?.widgets;
+  const activeTabWidgets = activeTab.widgets;
 
   const isLayoutEmpty =
     !isDefined(activeTabWidgets) || activeTabWidgets.length === 0;
@@ -137,10 +135,6 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
       ),
     [activeTabWidgets, hasPendingPlaceholder],
   );
-
-  if (!isDefined(currentPageLayout) || !isDefined(activeTab)) {
-    return null;
-  }
 
   return (
     <>

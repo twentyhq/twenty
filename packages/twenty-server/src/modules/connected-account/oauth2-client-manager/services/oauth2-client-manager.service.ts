@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type Client } from '@microsoft/microsoft-graph-client';
-import { GoogleApis } from 'googleapis';
+import { type Auth } from 'googleapis';
 
 import { GoogleOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client-manager.service';
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
@@ -19,7 +19,7 @@ export class OAuth2ClientManagerService {
       ConnectedAccountWorkspaceEntity,
       'provider' | 'refreshToken'
     >,
-  ): Promise<GoogleApis> {
+  ): Promise<Auth.OAuth2Client> {
     return this.googleOAuth2ClientManagerService.getOAuth2Client(
       connectedAccount.refreshToken,
     );

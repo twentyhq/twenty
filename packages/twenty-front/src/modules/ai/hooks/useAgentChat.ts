@@ -12,7 +12,6 @@ import { tokenPairState } from '@/auth/states/tokenPairState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useGetObjectMetadataItemById } from '@/object-metadata/hooks/useGetObjectMetadataItemById';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
@@ -45,11 +44,6 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
 
   const [agentChatInput, setAgentChatInput] =
     useRecoilState(agentChatInputState);
-
-  const scrollWrapperId = `scroll-wrapper-ai-chat-${currentAIChatThread}`;
-
-  const { scrollWrapperHTMLElement } =
-    useScrollWrapperHTMLElement(scrollWrapperId);
 
   const retryFetchWithRenewedToken = async (
     input: RequestInfo | URL,
@@ -120,13 +114,6 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
 
   const isStreaming = status === 'streaming';
 
-  const scrollToBottom = () => {
-    scrollWrapperHTMLElement?.scroll({
-      top: scrollWrapperHTMLElement.scrollHeight,
-      behavior: 'smooth',
-    });
-  };
-
   const isLoading =
     !currentAIChatThread || isStreaming || agentChatSelectedFiles.length > 0;
 
@@ -165,9 +152,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
         },
       },
     );
-
     setAgentChatUploadedFiles([]);
-    setTimeout(scrollToBottom, 100);
   };
 
   return {
@@ -176,7 +161,6 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
     input: agentChatInput,
     handleSendMessage,
     isLoading,
-    scrollWrapperId,
     isStreaming,
     error,
     handleRetry: regenerate,

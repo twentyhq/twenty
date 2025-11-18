@@ -35,7 +35,7 @@ export type FindRecordsInput = {
   orderBy?: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recordSorts?: any;
-    gqlOperationOrderBy?: ObjectRecordOrderBy;
+    gqlOperationOrderBy?: Partial<ObjectRecordOrderBy>;
   };
   limit?: number;
 };

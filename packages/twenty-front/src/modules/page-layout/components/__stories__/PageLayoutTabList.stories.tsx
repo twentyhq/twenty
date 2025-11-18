@@ -3,7 +3,6 @@ import { type DropResult, type ResponderProvided } from '@hello-pangea/dnd';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useMemo, useState } from 'react';
 import { RecoilRoot } from 'recoil';
-import { IconPlus } from 'twenty-ui/display';
 import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
 
 import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
@@ -11,7 +10,7 @@ import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
-import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 
 const StyledContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.strong};
@@ -19,14 +18,41 @@ const StyledContainer = styled.div`
   width: 720px;
 `;
 
-type PageLayoutTab = SingleTabProps & {
-  position: number;
-};
-
 const createInitialTabs = (): PageLayoutTab[] => [
-  { id: 'overview', title: 'Overview', position: 0, Icon: IconPlus },
-  { id: 'revenue', title: 'Revenue', position: 1 },
-  { id: 'forecasts', title: 'Forecasts', position: 2 },
+  {
+    __typename: 'PageLayoutTab',
+    id: 'overview',
+    title: 'Overview',
+    position: 0,
+    icon: 'IconPlus',
+    pageLayoutId: 'test-layout',
+    widgets: [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    deletedAt: null,
+  },
+  {
+    __typename: 'PageLayoutTab',
+    id: 'revenue',
+    title: 'Revenue',
+    position: 1,
+    pageLayoutId: 'test-layout',
+    widgets: [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    deletedAt: null,
+  },
+  {
+    __typename: 'PageLayoutTab',
+    id: 'forecasts',
+    title: 'Forecasts',
+    position: 2,
+    pageLayoutId: 'test-layout',
+    widgets: [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    deletedAt: null,
+  },
 ];
 
 const PageLayoutTabListPlayground = ({
@@ -45,9 +71,15 @@ const PageLayoutTabListPlayground = ({
     setTabs((prev) => [
       ...prev,
       {
+        __typename: 'PageLayoutTab',
         id: `new-tab-${nextIndex}`,
         title: `New Tab ${nextIndex}`,
         position: nextIndex,
+        pageLayoutId: 'test-layout',
+        widgets: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        deletedAt: null,
       },
     ]);
     setNextIndex((value) => value + 1);

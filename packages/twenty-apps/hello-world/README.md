@@ -18,7 +18,7 @@ This example will gradually gain complexity and capabilities as the twenty-cli m
 cp .env.example .env
 ```
 
-- replace `<SET_YOUR_TWENTY_API>` with your apiKey
+- replace `<SET_YOUR_TWENTY_API_KEY>` and `<SET_YOUR_TWENTY_API_URL>` accordingly
 
 ```bash
 twenty auth login

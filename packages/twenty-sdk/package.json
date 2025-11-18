@@ -13,9 +13,15 @@
     "build": "vite build"
   },
   "devDependencies": {
+    "@types/node": "^24.0.0",
     "typescript": "5.9.2",
     "vite": "^7.0.0",
-    "vite-plugin-dts": "3.8.1"
+    "vite-plugin-dts": "3.8.1",
+    "vite-tsconfig-paths": "^4.2.1"
+  },
+  "dependencies": {
+    "glob": "^11.1.0",
+    "twenty-shared": "workspace:*"
   },
   "exports": {
     ".": {

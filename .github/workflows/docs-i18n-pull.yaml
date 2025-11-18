@@ -52,6 +52,16 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+          cache-dependency-path: 'yarn.lock'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
       - name: Setup i18n branch
         if: github.event_name != 'pull_request'
         run: |
@@ -76,7 +86,6 @@ jobs:
           upload_sources: false
           upload_translations: false
           download_translations: true
-          download_language: fr
           source: 'packages/twenty-docs/**/*.mdx'
           translation: 'packages/twenty-docs/l/%two_letters_code%/**/%original_file_name%'
           export_only_approved: false

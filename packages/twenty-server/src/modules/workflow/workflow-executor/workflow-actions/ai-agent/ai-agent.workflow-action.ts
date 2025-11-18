@@ -86,7 +86,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
             ? executionContext.initiator
             : undefined,
           rolePermissionConfig: executionContext.rolePermissionConfig,
-          userWorkspaceId: executionContext.userWorkspaceId,
         },
       );
 

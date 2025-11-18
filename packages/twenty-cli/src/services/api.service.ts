@@ -6,6 +6,11 @@ import {
   type PackageJson,
 } from '../types/config.types';
 import { ConfigService } from './config.service';
+import {
+  buildClientSchema,
+  getIntrospectionQuery,
+  printSchema,
+} from 'graphql/index';
 
 export class ApiService {
   private client: AxiosInstance;
@@ -183,6 +188,50 @@ export class ApiService {
         return {
           success: false,
           error: error.response.data?.errors?.[0]?.message || error.message,
+        };
+      }
+      throw error;
+    }
+  }
+
+  async getSchema(): Promise<ApiResponse<string>> {
+    try {
+      const introspectionQuery = getIntrospectionQuery();
+
+      const response = await this.client.post(
+        '/graphql',
+        {
+          query: introspectionQuery,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: `GraphQL introspection errors: ${JSON.stringify(response.data.errors)}`,
+        };
+      }
+
+      const schema = buildClientSchema(response.data.data);
+
+      return {
+        success: true,
+        data: printSchema(schema),
+        message: 'Successfully load schema',
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return {
+          success: false,
+          error:
+            error.response.data.errors[0]?.message ||
+            'Failed to load graphql Schema',
         };
       }
       throw error;
