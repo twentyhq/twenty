@@ -6,8 +6,26 @@ import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/u
 import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import { PageLayoutType } from '~/generated/graphql';
+
+const StyledContainer = styled.div`
+  background: ${({ theme }) => theme.background.secondary};
+  border-bottom-left-radius: 8px;
+  border-right: ${({ theme }) => css`1px solid ${theme.border.color.medium}`};
+  border-top-left-radius: 8px;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  width: 348px;
+  height: 100%;
+  box-sizing: border-box;
+`;
+
+const StyledScrollWrapper = styled(ScrollWrapper)`
+  background: ${({ theme }) => theme.background.secondary};
+`;
 
 type PageLayoutLeftPanelProps = {
   pinnedLeftTabId: string;
@@ -31,21 +49,27 @@ export const PageLayoutLeftPanel = ({
   });
 
   return (
-    <ShowPageLeftContainer>
+    <StyledContainer>
       <SummaryCard
         objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
         objectRecordId={targetRecordIdentifier.id}
         isInRightDrawer={isInRightDrawer}
       />
 
-      <PageLayoutContentProvider
-        value={{
-          tabId: pinnedLeftTabId,
-          layoutMode,
-        }}
+      <StyledScrollWrapper
+        componentInstanceId={`page-layout-left-panel-${pinnedLeftTabId}`}
+        defaultEnableXScroll={false}
+        defaultEnableYScroll={true}
       >
-        <PageLayoutContent />
-      </PageLayoutContentProvider>
-    </ShowPageLeftContainer>
+        <PageLayoutContentProvider
+          value={{
+            tabId: pinnedLeftTabId,
+            layoutMode,
+          }}
+        >
+          <PageLayoutContent />
+        </PageLayoutContentProvider>
+      </StyledScrollWrapper>
+    </StyledContainer>
   );
 };
