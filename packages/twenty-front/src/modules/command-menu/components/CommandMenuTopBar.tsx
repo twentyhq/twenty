@@ -4,26 +4,25 @@ import { CommandMenuTopBarInputFocusEffect } from '@/command-menu/components/Com
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuContextChips';
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
+import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
-import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { AppBasePath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, IconX } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
+import { IconChevronLeft, IconSparkles } from 'twenty-ui/display';
+import { useIsMobile } from 'twenty-ui/utilities';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -40,10 +39,12 @@ const StyledInputContainer = styled.div`
   margin: 0;
   outline: none;
   position: relative;
+  overflow: hidden;
 
   padding: 0 ${({ theme }) => theme.spacing(COMMAND_MENU_SEARCH_BAR_PADDING)};
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(4)};
   flex-shrink: 0;
+  justify-content: space-between;
 `;
 
 const StyledInput = styled.input`
@@ -69,10 +70,8 @@ const StyledContentContainer = styled.div`
   display: flex;
   flex: 1;
   gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledCloseButtonWrapper = styled.div<{ isVisible: boolean }>`
-  visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
+  min-width: 0;
+  overflow: hidden;
 `;
 
 const StyledBackIcon = styled(IconChevronLeft)`
@@ -82,6 +81,12 @@ const StyledBackIcon = styled(IconChevronLeft)`
   display: flex;
   justify-content: center;
   margin-right: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledIconSparkles = styled(IconSparkles)`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.secondary};
+  cursor: pointer;
 `;
 
 export const CommandMenuTopBar = () => {
@@ -98,9 +103,11 @@ export const CommandMenuTopBar = () => {
 
   const isMobile = useIsMobile();
 
-  const { closeCommandMenu } = useCommandMenu();
-
   const { goBackFromCommandMenu } = useCommandMenuHistory();
+
+  const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
+
+  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -112,11 +119,6 @@ export const CommandMenuTopBar = () => {
   const theme = useTheme();
 
   const { contextChips } = useCommandMenuContextChips();
-
-  const location = useLocation();
-  const isButtonVisible =
-    !location.pathname.startsWith(`${AppBasePath.Root}objects/`) &&
-    !location.pathname.startsWith(`${AppBasePath.Root}object/`);
 
   const backButtonAnimationDuration =
     contextChips.length > 0 ? theme.animation.duration.instant : 0;
@@ -159,20 +161,14 @@ export const CommandMenuTopBar = () => {
           </>
         )}
       </StyledContentContainer>
-      {!isMobile && (
-        <StyledCloseButtonWrapper isVisible={isButtonVisible}>
-          <Button
-            Icon={IconX}
-            dataTestId="page-header-close-command-menu-button"
-            size="small"
-            variant="secondary"
-            accent="default"
-            hotkeys={[getOsControlSymbol(), 'K']}
-            ariaLabel="Close command menu"
-            onClick={closeCommandMenu}
+      {!isMobile &&
+        isAiEnabled &&
+        commandMenuPage !== CommandMenuPages.AskAI && (
+          <StyledIconSparkles
+            onClick={() => openAskAIPage()}
+            size={theme.icon.size.md}
           />
-        </StyledCloseButtonWrapper>
-      )}
+        )}
     </StyledInputContainer>
   );
 };
