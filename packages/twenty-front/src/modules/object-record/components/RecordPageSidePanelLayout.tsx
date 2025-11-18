@@ -1,6 +1,7 @@
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { ModalContainerContext } from '@/ui/layout/modal/contexts/ModalContainerContext';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -49,8 +50,19 @@ const StyledSidePanel = styled.aside`
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  position: relative;
   width: 100%;
   box-sizing: border-box;
+`;
+
+const StyledModalContainer = styled.div`
+  height: 100%;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 1;
 `;
 
 export const RecordPageSidePanelLayout = ({
@@ -59,6 +71,9 @@ export const RecordPageSidePanelLayout = ({
 }: RecordPageSidePanelLayoutProps) => {
   const theme = useTheme();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
+  const [modalContainer, setModalContainer] = useState<HTMLDivElement | null>(
+    null,
+  );
 
   const resolvedIsSidePanelOpen =
     isSidePanelOpen ?? isCommandMenuOpened ?? false;
@@ -77,6 +92,10 @@ export const RecordPageSidePanelLayout = ({
     if (!resolvedIsSidePanelOpen) {
       setShouldRenderContent(false);
     }
+  };
+
+  const handleModalContainerRef = (element: HTMLDivElement | null) => {
+    setModalContainer(element);
   };
 
   useCommandMenuHotKeys();
@@ -100,7 +119,10 @@ export const RecordPageSidePanelLayout = ({
         onAnimationComplete={handleAnimationComplete}
       >
         <StyledSidePanel>
-          {shouldShowContent && <CommandMenuRouter />}
+          <StyledModalContainer ref={handleModalContainerRef} />
+          <ModalContainerContext.Provider value={{ container: modalContainer }}>
+            {shouldShowContent && <CommandMenuRouter />}
+          </ModalContainerContext.Provider>
         </StyledSidePanel>
       </StyledSidePanelWrapper>
     </StyledLayout>
