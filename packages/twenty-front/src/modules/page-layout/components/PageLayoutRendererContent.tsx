@@ -30,7 +30,6 @@ const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
   grid-template-rows: minmax(0, 1fr);
   height: 100%;
   width: 100%;
-  min-height: 0;
 `;
 
 const StyledTabsAndDashboardContainer = styled.div`
