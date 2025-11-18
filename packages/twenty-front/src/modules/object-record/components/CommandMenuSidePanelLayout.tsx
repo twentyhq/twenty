@@ -1,13 +1,14 @@
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { ModalContainerContext } from '@/ui/layout/modal/contexts/ModalContainerContext';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { type ReactNode, useCallback, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 type CommandMenuSidePanelLayoutProps = {
   children: ReactNode;
@@ -70,6 +71,10 @@ export const CommandMenuSidePanelLayout = ({
     null,
   );
 
+  const setTableWidthResizeIsActive = useSetRecoilState(
+    tableWidthResizeIsActiveState,
+  );
+
   const resolvedIsSidePanelOpen =
     isSidePanelOpen ?? isCommandMenuOpened ?? false;
 
@@ -83,12 +88,16 @@ export const CommandMenuSidePanelLayout = ({
     if (!resolvedIsSidePanelOpen) {
       setShouldRenderContent(false);
     }
+
+    setTableWidthResizeIsActive(true);
   };
 
   const handleAnimationStart = () => {
     if (resolvedIsSidePanelOpen && !shouldRenderContent) {
       setShouldRenderContent(true);
     }
+
+    setTableWidthResizeIsActive(false);
   };
 
   const handleModalContainerRef = useCallback(
