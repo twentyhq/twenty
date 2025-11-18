@@ -23,7 +23,7 @@ import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledInputContainer = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  background-color: ${({ theme }) => theme.background.secondary};
   border: none;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: 0;
