@@ -126,11 +126,11 @@ export const CommandMenuRecordInfo = ({
       {recordIdentifier && (
         <StyledRecordAvatar>
           <Avatar
-            avatarUrl={recordIdentifier.avatarUrl ?? ''}
-            placeholder={recordIdentifier.name ?? ''}
+            avatarUrl={recordIdentifier.avatarUrl}
+            placeholder={recordIdentifier.name}
             placeholderColorSeed={objectRecordId}
             size="md"
-            type={recordIdentifier.avatarType ?? 'rounded'}
+            type={recordIdentifier.avatarType}
           />
         </StyledRecordAvatar>
       )}
