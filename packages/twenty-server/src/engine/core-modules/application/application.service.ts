@@ -220,7 +220,7 @@ export class ApplicationService {
       return queryRunner.manager.save(ApplicationEntity, application);
     }
 
-    const savedApplication = this.applicationRepository.save(application);
+    const savedApplication = await this.applicationRepository.save(application);
 
     await this.workspaceFlatApplicationMapCacheService.invalidateCache({
       workspaceId: data.workspaceId,
