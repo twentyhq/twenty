@@ -24283,6 +24283,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/json-logic-js@npm:^2":
+  version: 2.0.8
+  resolution: "@types/json-logic-js@npm:2.0.8"
+  checksum: 10c0/b1fc0b39242b8f1f939c86f47bfda213e1eb57686ee4dfbe11057df88fad0dbe0abc3582b72429975e8fb07b0267959d98341e5079ba945345931973538d2f43
+  languageName: node
+  linkType: hard
+
 "@types/json-schema@npm:*, @types/json-schema@npm:^7.0.11, @types/json-schema@npm:^7.0.12, @types/json-schema@npm:^7.0.15, @types/json-schema@npm:^7.0.4, @types/json-schema@npm:^7.0.5, @types/json-schema@npm:^7.0.7, @types/json-schema@npm:^7.0.8, @types/json-schema@npm:^7.0.9":
   version: 7.0.15
   resolution: "@types/json-schema@npm:7.0.15"
@@ -41345,6 +41352,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"json-logic-js@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "json-logic-js@npm:2.0.5"
+  checksum: 10c0/c80d96a9f704dac2f4488c7119d9c94cbf67adbd93cb47eaa5b7eadc4947f18ed6d62fd5555f245cc2f87525f9e8d7bd5f70bd9e7fba2c70366e63bd68010f23
+  languageName: node
+  linkType: hard
+
 "json-parse-even-better-errors@npm:^2.3.0, json-parse-even-better-errors@npm:^2.3.1":
   version: 2.3.1
   resolution: "json-parse-even-better-errors@npm:2.3.1"
@@ -55176,6 +55190,7 @@ __metadata:
     "@types/apollo-upload-client": "npm:^17.0.2"
     "@types/file-saver": "npm:^2.0.7"
     "@types/js-cookie": "npm:^3.0.3"
+    "@types/json-logic-js": "npm:^2"
     "@types/react-grid-layout": "npm:^1"
     "@typescript-eslint/eslint-plugin": "npm:^8.39.0"
     "@typescript-eslint/parser": "npm:^8.39.0"
@@ -55210,6 +55225,7 @@ __metadata:
     input-otp: "npm:^1.4.2"
     js-cookie: "npm:^3.0.5"
     json-2-csv: "npm:^5.4.0"
+    json-logic-js: "npm:^2.0.5"
     jwt-decode: "npm:^4.0.0"
     monaco-editor: "npm:^0.51.0"
     monaco-editor-auto-typings: "npm:^0.4.5"
