@@ -17,6 +17,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { MESSAGE_FOLDER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 export enum MessageFolderPendingSyncAction {
@@ -40,10 +41,13 @@ registerEnumType(MessageFolderPendingSyncAction, {
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
 export class MessageFolderWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: MESSAGE_FOLDER_STANDARD_FIELD_IDS.id,
-  createdAt: MESSAGE_FOLDER_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: MESSAGE_FOLDER_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: MESSAGE_FOLDER_STANDARD_FIELD_IDS.deletedAt,
+  id: STANDARD_OBJECTS.messageFolder.fields.id.universalIdentifier,
+  createdAt:
+    STANDARD_OBJECTS.messageFolder.fields.createdAt.universalIdentifier,
+  updatedAt:
+    STANDARD_OBJECTS.messageFolder.fields.updatedAt.universalIdentifier,
+  deletedAt:
+    STANDARD_OBJECTS.messageFolder.fields.deletedAt.universalIdentifier,
 }) {
   @WorkspaceField({
     universalIdentifier: MESSAGE_FOLDER_STANDARD_FIELD_IDS.name,

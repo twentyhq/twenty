@@ -15,6 +15,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -41,10 +42,16 @@ export enum CalendarEventParticipantResponseStatus {
 @WorkspaceIsNotAuditLogged()
 export class CalendarEventParticipantWorkspaceEntity extends createBaseWorkspaceEntity(
   {
-    id: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.id,
-    createdAt: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.createdAt,
-    updatedAt: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.updatedAt,
-    deletedAt: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.deletedAt,
+    id: STANDARD_OBJECTS.calendarEventParticipant.fields.id.universalIdentifier,
+    createdAt:
+      STANDARD_OBJECTS.calendarEventParticipant.fields.createdAt
+        .universalIdentifier,
+    updatedAt:
+      STANDARD_OBJECTS.calendarEventParticipant.fields.updatedAt
+        .universalIdentifier,
+    deletedAt:
+      STANDARD_OBJECTS.calendarEventParticipant.fields.deletedAt
+        .universalIdentifier,
   },
 ) {
   @WorkspaceField({

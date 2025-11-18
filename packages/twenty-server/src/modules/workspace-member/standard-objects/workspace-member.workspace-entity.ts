@@ -26,6 +26,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { WORKSPACE_MEMBER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
 import {
   type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
@@ -99,10 +100,13 @@ export const SEARCH_FIELDS_FOR_WORKSPACE_MEMBER: FieldTypeAndNameMetadata[] = [
 @WorkspaceIsSystem()
 @WorkspaceIsSearchable()
 export class WorkspaceMemberWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.id,
-  createdAt: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.deletedAt,
+  id: STANDARD_OBJECTS.workspaceMember.fields.id.universalIdentifier,
+  createdAt:
+    STANDARD_OBJECTS.workspaceMember.fields.createdAt.universalIdentifier,
+  updatedAt:
+    STANDARD_OBJECTS.workspaceMember.fields.updatedAt.universalIdentifier,
+  deletedAt:
+    STANDARD_OBJECTS.workspaceMember.fields.deletedAt.universalIdentifier,
 }) {
   @WorkspaceField({
     universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.position,

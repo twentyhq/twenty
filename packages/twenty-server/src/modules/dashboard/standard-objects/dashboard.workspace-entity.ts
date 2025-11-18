@@ -22,6 +22,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { DASHBOARD_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
 import {
   type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
@@ -49,10 +50,10 @@ export const SEARCH_FIELDS_FOR_DASHBOARD: FieldTypeAndNameMetadata[] = [
 })
 @WorkspaceIsSearchable()
 export class DashboardWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: DASHBOARD_STANDARD_FIELD_IDS.id,
-  createdAt: DASHBOARD_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: DASHBOARD_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: DASHBOARD_STANDARD_FIELD_IDS.deletedAt,
+  id: STANDARD_OBJECTS.dashboard.fields.id.universalIdentifier,
+  createdAt: STANDARD_OBJECTS.dashboard.fields.createdAt.universalIdentifier,
+  updatedAt: STANDARD_OBJECTS.dashboard.fields.updatedAt.universalIdentifier,
+  deletedAt: STANDARD_OBJECTS.dashboard.fields.deletedAt.universalIdentifier,
 }) {
   @WorkspaceField({
     universalIdentifier: DASHBOARD_STANDARD_FIELD_IDS.title,

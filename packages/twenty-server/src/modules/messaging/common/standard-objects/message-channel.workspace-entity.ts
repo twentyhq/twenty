@@ -17,6 +17,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { MESSAGE_CHANNEL_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
@@ -109,10 +110,13 @@ registerEnumType(MessageChannelPendingGroupEmailsAction, {
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
 export class MessageChannelWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.id,
-  createdAt: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.deletedAt,
+  id: STANDARD_OBJECTS.messageChannel.fields.id.universalIdentifier,
+  createdAt:
+    STANDARD_OBJECTS.messageChannel.fields.createdAt.universalIdentifier,
+  updatedAt:
+    STANDARD_OBJECTS.messageChannel.fields.updatedAt.universalIdentifier,
+  deletedAt:
+    STANDARD_OBJECTS.messageChannel.fields.deletedAt.universalIdentifier,
 }) {
   @WorkspaceField({
     universalIdentifier: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.visibility,

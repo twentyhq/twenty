@@ -109,13 +109,11 @@ export const notesAllView = ({
       TODO: Add later, since we don't have real-time it probably doesn't work well?
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.note].fields[
-            BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt
+          objectMetadataMap[STANDARD_OBJECT_IDS.note].fields[.updatedAt
           ],
         position: 0,
         isVisible: true,
-        size: 210,
-      },
+        size: 210},
       */
     ],
   };

@@ -25,6 +25,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
 import {
   type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
@@ -56,10 +57,10 @@ export const SEARCH_FIELDS_FOR_OPPORTUNITY: FieldTypeAndNameMetadata[] = [
 })
 @WorkspaceIsSearchable()
 export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: OPPORTUNITY_STANDARD_FIELD_IDS.id,
-  createdAt: OPPORTUNITY_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: OPPORTUNITY_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: OPPORTUNITY_STANDARD_FIELD_IDS.deletedAt,
+  id: STANDARD_OBJECTS.opportunity.fields.id.universalIdentifier,
+  createdAt: STANDARD_OBJECTS.opportunity.fields.createdAt.universalIdentifier,
+  updatedAt: STANDARD_OBJECTS.opportunity.fields.updatedAt.universalIdentifier,
+  deletedAt: STANDARD_OBJECTS.opportunity.fields.deletedAt.universalIdentifier,
 }) {
   @WorkspaceField({
     universalIdentifier: OPPORTUNITY_STANDARD_FIELD_IDS.name,

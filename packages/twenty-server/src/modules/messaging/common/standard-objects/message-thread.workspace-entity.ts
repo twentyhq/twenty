@@ -13,6 +13,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { MESSAGE_THREAD_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
 @WorkspaceEntity({
@@ -27,10 +28,13 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
 export class MessageThreadWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: MESSAGE_THREAD_STANDARD_FIELD_IDS.id,
-  createdAt: MESSAGE_THREAD_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: MESSAGE_THREAD_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: MESSAGE_THREAD_STANDARD_FIELD_IDS.deletedAt,
+  id: STANDARD_OBJECTS.messageThread.fields.id.universalIdentifier,
+  createdAt:
+    STANDARD_OBJECTS.messageThread.fields.createdAt.universalIdentifier,
+  updatedAt:
+    STANDARD_OBJECTS.messageThread.fields.updatedAt.universalIdentifier,
+  deletedAt:
+    STANDARD_OBJECTS.messageThread.fields.deletedAt.universalIdentifier,
 }) {
   @WorkspaceRelation({
     universalIdentifier: MESSAGE_THREAD_STANDARD_FIELD_IDS.messages,

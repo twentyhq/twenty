@@ -19,6 +19,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
@@ -41,10 +42,17 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 })
 export class MessageChannelMessageAssociationWorkspaceEntity extends createBaseWorkspaceEntity(
   {
-    id: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.id,
-    createdAt: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.createdAt,
-    updatedAt: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.updatedAt,
-    deletedAt: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.deletedAt,
+    id: STANDARD_OBJECTS.messageChannelMessageAssociation.fields.id
+      .universalIdentifier,
+    createdAt:
+      STANDARD_OBJECTS.messageChannelMessageAssociation.fields.createdAt
+        .universalIdentifier,
+    updatedAt:
+      STANDARD_OBJECTS.messageChannelMessageAssociation.fields.updatedAt
+        .universalIdentifier,
+    deletedAt:
+      STANDARD_OBJECTS.messageChannelMessageAssociation.fields.deletedAt
+        .universalIdentifier,
   },
 ) {
   @WorkspaceField({

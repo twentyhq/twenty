@@ -53,8 +53,7 @@ export const tasksByStatusView = ({
           ],
         displayValue: 'Task',
         operand: 'is',
-        value: '["TASK"]',
-      },
+        value: '["TASK"]'},
     ],*/,
     fields: [
       {
@@ -122,13 +121,11 @@ export const tasksByStatusView = ({
       TODO: Add later, since we don't have real-time it probably doesn't work well?
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.task].fields[
-            BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt
+          objectMetadataMap[STANDARD_OBJECT_IDS.task].fields[.updatedAt
           ],
         position: 0,
         isVisible: true,
-        size: 210,
-      },
+        size: 210},
       */
     ],
     groups: [

@@ -21,6 +21,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { ATTACHMENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
@@ -42,10 +43,10 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 })
 @WorkspaceIsSystem()
 export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: ATTACHMENT_STANDARD_FIELD_IDS.id,
-  createdAt: ATTACHMENT_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: ATTACHMENT_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: ATTACHMENT_STANDARD_FIELD_IDS.deletedAt,
+  id: STANDARD_OBJECTS.attachment.fields.id.universalIdentifier,
+  createdAt: STANDARD_OBJECTS.attachment.fields.createdAt.universalIdentifier,
+  updatedAt: STANDARD_OBJECTS.attachment.fields.updatedAt.universalIdentifier,
+  deletedAt: STANDARD_OBJECTS.attachment.fields.deletedAt.universalIdentifier,
 }) {
   @WorkspaceField({
     type: FieldMetadataType.TEXT,

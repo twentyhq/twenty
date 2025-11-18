@@ -80,8 +80,7 @@ export const tasksAssignedToMeView = ({
           ],
         position: 2,
         isVisible: true,
-        size: 150,
-      },*/
+        size: 150},*/
       {
         fieldMetadataId:
           taskObjectMetadata.fields.find(

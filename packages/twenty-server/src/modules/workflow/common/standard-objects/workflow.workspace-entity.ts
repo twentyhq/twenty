@@ -22,6 +22,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { WORKFLOW_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
 import {
   type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
@@ -78,10 +79,10 @@ export const SEARCH_FIELDS_FOR_WORKFLOWS: FieldTypeAndNameMetadata[] = [
   labelIdentifierStandardId: WORKFLOW_STANDARD_FIELD_IDS.name,
 })
 export class WorkflowWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: WORKFLOW_STANDARD_FIELD_IDS.id,
-  createdAt: WORKFLOW_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: WORKFLOW_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: WORKFLOW_STANDARD_FIELD_IDS.deletedAt,
+  id: STANDARD_OBJECTS.workflow.fields.id.universalIdentifier,
+  createdAt: STANDARD_OBJECTS.workflow.fields.createdAt.universalIdentifier,
+  updatedAt: STANDARD_OBJECTS.workflow.fields.updatedAt.universalIdentifier,
+  deletedAt: STANDARD_OBJECTS.workflow.fields.deletedAt.universalIdentifier,
 }) {
   @WorkspaceField({
     universalIdentifier: WORKFLOW_STANDARD_FIELD_IDS.name,

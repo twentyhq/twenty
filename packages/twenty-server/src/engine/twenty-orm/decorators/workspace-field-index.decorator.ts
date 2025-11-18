@@ -40,6 +40,7 @@ export function WorkspaceFieldIndex(
       isUnique: options?.isUnique ?? false,
       whereClause: options?.indexWhereClause ?? null,
       type: options?.indexType,
+      // TODO prastoin
     });
   };
 }

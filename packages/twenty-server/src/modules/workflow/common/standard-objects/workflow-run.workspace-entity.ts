@@ -26,6 +26,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { WORKFLOW_RUN_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
 import {
   type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
@@ -96,10 +97,10 @@ export const SEARCH_FIELDS_FOR_WORKFLOW_RUNS: FieldTypeAndNameMetadata[] = [
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsObjectUIReadOnly()
 export class WorkflowRunWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: WORKFLOW_RUN_STANDARD_FIELD_IDS.id,
-  createdAt: WORKFLOW_RUN_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: WORKFLOW_RUN_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: WORKFLOW_RUN_STANDARD_FIELD_IDS.deletedAt,
+  id: STANDARD_OBJECTS.workflowRun.fields.id.universalIdentifier,
+  createdAt: STANDARD_OBJECTS.workflowRun.fields.createdAt.universalIdentifier,
+  updatedAt: STANDARD_OBJECTS.workflowRun.fields.updatedAt.universalIdentifier,
+  deletedAt: STANDARD_OBJECTS.workflowRun.fields.deletedAt.universalIdentifier,
 }) {
   @WorkspaceField({
     universalIdentifier: WORKFLOW_RUN_STANDARD_FIELD_IDS.name,

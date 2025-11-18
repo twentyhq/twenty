@@ -23,6 +23,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { NOTE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
 import {
   type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
@@ -53,10 +54,10 @@ export const SEARCH_FIELDS_FOR_NOTES: FieldTypeAndNameMetadata[] = [
 })
 @WorkspaceIsSearchable()
 export class NoteWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: NOTE_STANDARD_FIELD_IDS.id,
-  createdAt: NOTE_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: NOTE_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: NOTE_STANDARD_FIELD_IDS.deletedAt,
+  id: STANDARD_OBJECTS.note.fields.id.universalIdentifier,
+  createdAt: STANDARD_OBJECTS.note.fields.createdAt.universalIdentifier,
+  updatedAt: STANDARD_OBJECTS.note.fields.updatedAt.universalIdentifier,
+  deletedAt: STANDARD_OBJECTS.note.fields.deletedAt.universalIdentifier,
 }) {
   @WorkspaceField({
     universalIdentifier: NOTE_STANDARD_FIELD_IDS.position,

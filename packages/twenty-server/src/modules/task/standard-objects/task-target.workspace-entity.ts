@@ -15,6 +15,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { TASK_TARGET_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -31,10 +32,10 @@ import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.work
 })
 @WorkspaceIsSystem()
 export class TaskTargetWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: TASK_TARGET_STANDARD_FIELD_IDS.id,
-  createdAt: TASK_TARGET_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: TASK_TARGET_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: TASK_TARGET_STANDARD_FIELD_IDS.deletedAt,
+  id: STANDARD_OBJECTS.taskTarget.fields.id.universalIdentifier,
+  createdAt: STANDARD_OBJECTS.taskTarget.fields.createdAt.universalIdentifier,
+  updatedAt: STANDARD_OBJECTS.taskTarget.fields.updatedAt.universalIdentifier,
+  deletedAt: STANDARD_OBJECTS.taskTarget.fields.deletedAt.universalIdentifier,
 }) {
   @WorkspaceRelation({
     universalIdentifier: TASK_TARGET_STANDARD_FIELD_IDS.task,

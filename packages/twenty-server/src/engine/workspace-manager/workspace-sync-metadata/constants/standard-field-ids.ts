@@ -47,7 +47,12 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   custom: '20202020-302d-43b3-9aea-aa4f89282a9f',
 } as const;
 
-export const BASE_OBJECT_STANDARD_FIELD_IDS = {} as const;
+export const BASE_OBJECT_STANDARD_FIELD_IDS = {
+  id: '20202020-cd1a-41c1-8ac1-cdefabcdefab',
+  createdAt: '20202020-cd1b-41c2-9bc2-defabcdefabc',
+  updatedAt: '20202020-cd1c-41c3-8cc3-efabcdefabcd',
+  deletedAt: '20202020-cd1d-41c4-9dc4-fabcdefabcde',
+} as const;
 
 export const BLOCKLIST_STANDARD_FIELD_IDS = {
   handle: '20202020-eef3-44ed-aa32-4641d7fd4a3e',
@@ -534,6 +539,10 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
 } as const;
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
+  id: '20202020-cd1a-41c1-8ac1-cdefabcdefab',
+  createdAt: '20202020-cd1b-41c2-9bc2-defabcdefabc',
+  updatedAt: '20202020-cd1c-41c3-8cc3-efabcdefabcd',
+  deletedAt: '20202020-cd1d-41c4-9dc4-fabcdefabcde',
   name: '20202020-ba07-4ffd-ba63-009491f5749c',
   position: '20202020-c2bd-4e16-bb9a-c8b0411bf49d',
   createdBy: '20202020-be0e-4971-865b-32ca87cbb315',

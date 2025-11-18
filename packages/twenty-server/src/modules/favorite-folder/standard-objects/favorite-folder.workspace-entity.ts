@@ -11,6 +11,7 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { FAVORITE_FOLDER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 
 @WorkspaceEntity({
@@ -24,10 +25,13 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 })
 @WorkspaceIsSystem()
 export class FavoriteFolderWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: FAVORITE_FOLDER_STANDARD_FIELD_IDS.id,
-  createdAt: FAVORITE_FOLDER_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: FAVORITE_FOLDER_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: FAVORITE_FOLDER_STANDARD_FIELD_IDS.deletedAt,
+  id: STANDARD_OBJECTS.favoriteFolder.fields.id.universalIdentifier,
+  createdAt:
+    STANDARD_OBJECTS.favoriteFolder.fields.createdAt.universalIdentifier,
+  updatedAt:
+    STANDARD_OBJECTS.favoriteFolder.fields.updatedAt.universalIdentifier,
+  deletedAt:
+    STANDARD_OBJECTS.favoriteFolder.fields.deletedAt.universalIdentifier,
 }) {
   @WorkspaceField({
     universalIdentifier: FAVORITE_FOLDER_STANDARD_FIELD_IDS.position,

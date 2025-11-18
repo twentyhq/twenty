@@ -331,9 +331,15 @@ export const STANDARD_OBJECTS = {
     universalIdentifier: STANDARD_OBJECT_IDS.company,
     fields: {
       id: { universalIdentifier: '20202020-c05a-4061-8a61-1e2f3a4b5c6d' },
-      createdAt: { universalIdentifier: '20202020-c05b-4062-9b62-2f3a4b5c6d7e' },
-      updatedAt: { universalIdentifier: '20202020-c05c-4063-8c63-3a4b5c6d7e8f' },
-      deletedAt: { universalIdentifier: '20202020-c05d-4064-9d64-4b5c6d7e8f9a' },
+      createdAt: {
+        universalIdentifier: '20202020-c05b-4062-9b62-2f3a4b5c6d7e',
+      },
+      updatedAt: {
+        universalIdentifier: '20202020-c05c-4063-8c63-3a4b5c6d7e8f',
+      },
+      deletedAt: {
+        universalIdentifier: '20202020-c05d-4064-9d64-4b5c6d7e8f9a',
+      },
       name: { universalIdentifier: COMPANY_STANDARD_FIELD_IDS.name },
       domainName: {
         universalIdentifier: COMPANY_STANDARD_FIELD_IDS.domainName,
@@ -888,9 +894,15 @@ export const STANDARD_OBJECTS = {
     universalIdentifier: STANDARD_OBJECT_IDS.note,
     fields: {
       id: { universalIdentifier: '20202020-c01a-4111-8a11-dfabcddeef12' },
-      createdAt: { universalIdentifier: '20202020-c01b-4112-9b12-fabcddefe123' },
-      updatedAt: { universalIdentifier: '20202020-c01c-4113-8c13-abcddeef1234' },
-      deletedAt: { universalIdentifier: '20202020-c01d-4114-9d14-bcddeef12345' },
+      createdAt: {
+        universalIdentifier: '20202020-c01b-4112-9b12-fabcddefe123',
+      },
+      updatedAt: {
+        universalIdentifier: '20202020-c01c-4113-8c13-abcddeef1234',
+      },
+      deletedAt: {
+        universalIdentifier: '20202020-c01d-4114-9d14-bcddeef12345',
+      },
       position: { universalIdentifier: NOTE_STANDARD_FIELD_IDS.position },
       title: { universalIdentifier: NOTE_STANDARD_FIELD_IDS.title },
       body: { universalIdentifier: NOTE_STANDARD_FIELD_IDS.body },
@@ -1070,9 +1082,15 @@ export const STANDARD_OBJECTS = {
     universalIdentifier: STANDARD_OBJECT_IDS.person,
     fields: {
       id: { universalIdentifier: '20202020-e01a-4141-8a41-456789abcdef' },
-      createdAt: { universalIdentifier: '20202020-e01b-4142-9b42-56789abcdefa' },
-      updatedAt: { universalIdentifier: '20202020-e01c-4143-8c43-6789abcdefab' },
-      deletedAt: { universalIdentifier: '20202020-e01d-4144-9d44-789abcdefabc' },
+      createdAt: {
+        universalIdentifier: '20202020-e01b-4142-9b42-56789abcdefa',
+      },
+      updatedAt: {
+        universalIdentifier: '20202020-e01c-4143-8c43-6789abcdefab',
+      },
+      deletedAt: {
+        universalIdentifier: '20202020-e01d-4144-9d44-789abcdefabc',
+      },
       name: { universalIdentifier: PERSON_STANDARD_FIELD_IDS.name },
       email: { universalIdentifier: PERSON_STANDARD_FIELD_IDS.email },
       emails: { universalIdentifier: PERSON_STANDARD_FIELD_IDS.emails },
@@ -1158,9 +1176,15 @@ export const STANDARD_OBJECTS = {
     universalIdentifier: STANDARD_OBJECT_IDS.task,
     fields: {
       id: { universalIdentifier: '20202020-a02a-4151-8a51-89abcdefabcd' },
-      createdAt: { universalIdentifier: '20202020-a02b-4152-9b52-9abcdefabcde' },
-      updatedAt: { universalIdentifier: '20202020-a02c-4153-8c53-abcdefabcdef' },
-      deletedAt: { universalIdentifier: '20202020-a02d-4154-9d54-bcdefabcdefa' },
+      createdAt: {
+        universalIdentifier: '20202020-a02b-4152-9b52-9abcdefabcde',
+      },
+      updatedAt: {
+        universalIdentifier: '20202020-a02c-4153-8c53-abcdefabcdef',
+      },
+      deletedAt: {
+        universalIdentifier: '20202020-a02d-4154-9d54-bcdefabcdefa',
+      },
       position: { universalIdentifier: TASK_STANDARD_FIELD_IDS.position },
       title: { universalIdentifier: TASK_STANDARD_FIELD_IDS.title },
       body: { universalIdentifier: TASK_STANDARD_FIELD_IDS.body },

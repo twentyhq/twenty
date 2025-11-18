@@ -13,6 +13,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { BLOCKLIST_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceEntity({
@@ -27,10 +28,10 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 })
 @WorkspaceIsSystem()
 export class BlocklistWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: BLOCKLIST_STANDARD_FIELD_IDS.id,
-  createdAt: BLOCKLIST_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: BLOCKLIST_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: BLOCKLIST_STANDARD_FIELD_IDS.deletedAt,
+  id: STANDARD_OBJECTS.blocklist.fields.id.universalIdentifier,
+  createdAt: STANDARD_OBJECTS.blocklist.fields.createdAt.universalIdentifier,
+  updatedAt: STANDARD_OBJECTS.blocklist.fields.updatedAt.universalIdentifier,
+  deletedAt: STANDARD_OBJECTS.blocklist.fields.deletedAt.universalIdentifier,
 }) {
   @WorkspaceField({
     universalIdentifier: BLOCKLIST_STANDARD_FIELD_IDS.handle,

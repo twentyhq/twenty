@@ -19,6 +19,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { CONNECTED_ACCOUNT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -35,10 +36,13 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 })
 @WorkspaceIsSystem()
 export class ConnectedAccountWorkspaceEntity extends createBaseWorkspaceEntity({
-  id: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.id,
-  createdAt: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.createdAt,
-  updatedAt: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.updatedAt,
-  deletedAt: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.deletedAt,
+  id: STANDARD_OBJECTS.connectedAccount.fields.id.universalIdentifier,
+  createdAt:
+    STANDARD_OBJECTS.connectedAccount.fields.createdAt.universalIdentifier,
+  updatedAt:
+    STANDARD_OBJECTS.connectedAccount.fields.updatedAt.universalIdentifier,
+  deletedAt:
+    STANDARD_OBJECTS.connectedAccount.fields.deletedAt.universalIdentifier,
 }) {
   @WorkspaceField({
     universalIdentifier: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handle,
