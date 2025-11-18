@@ -10,6 +10,7 @@ type GroupByOperationFactoryParams = {
   orderBy?: object[];
   viewId?: string;
   gqlFields?: string;
+  limit?: number;
 };
 
 export const groupByOperationFactory = ({
@@ -21,10 +22,11 @@ export const groupByOperationFactory = ({
   orderByForRecords = [],
   viewId,
   gqlFields,
+  limit,
 }: GroupByOperationFactoryParams) => ({
   query: gql`
-    query ${capitalize(objectMetadataPluralName)}GroupBy($groupBy: [${capitalize(objectMetadataSingularName)}GroupByInput!]!, $filter: ${capitalize(objectMetadataSingularName)}FilterInput, $orderBy: [${capitalize(objectMetadataSingularName)}OrderByWithGroupByInput!], $viewId: UUID) {
-      ${objectMetadataPluralName}GroupBy(groupBy: $groupBy, filter: $filter, orderBy: $orderBy, viewId: $viewId) {
+    query ${capitalize(objectMetadataPluralName)}GroupBy($groupBy: [${capitalize(objectMetadataSingularName)}GroupByInput!]!, $filter: ${capitalize(objectMetadataSingularName)}FilterInput, $orderBy: [${capitalize(objectMetadataSingularName)}OrderByWithGroupByInput!], $viewId: UUID, $limit: Int) {
+      ${objectMetadataPluralName}GroupBy(groupBy: $groupBy, filter: $filter, orderBy: $orderBy, viewId: $viewId, limit: $limit) {
         ${gqlFields ? gqlFields : ''}
         groupByDimensionValues
         totalCount
@@ -36,6 +38,7 @@ export const groupByOperationFactory = ({
     filter,
     orderBy,
     orderByForRecords,
+    limit,
     ...(viewId && { viewId }),
   },
 });
