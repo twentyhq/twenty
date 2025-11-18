@@ -23,7 +23,7 @@ import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 const StyledRecordInfoContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 const StyledRecordAvatar = styled.div`

@@ -76,7 +76,7 @@ const StyledNavigationIcon = styled.div`
   cursor: pointer;
   display: flex;
   justify-content: center;
-  margin-right: ${({ theme }) => theme.spacing(1)};
+  margin-right: ${({ theme }) => theme.spacing(0.5)};
   color: ${({ theme }) => theme.font.color.secondary};
 `;
 
