@@ -6,6 +6,7 @@ import { IsNull, Not, type EntityManager, type Repository } from 'typeorm';
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
+import { FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { fromRoleEntityToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/from-role-entity-to-flat-role.util';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -85,6 +86,8 @@ export class WorkspaceSyncRoleService {
           const flatRoleData = removePropertiesFromRecord(roleToUpdate, [
             'id',
             'workspaceId',
+            // Sync metadata does not handle one to many relation update through parent relation side
+            'permissionFlags' as unknown as keyof FlatRole,
           ]);
 
           await roleRepository.update({ id: roleToUpdate.id }, flatRoleData);

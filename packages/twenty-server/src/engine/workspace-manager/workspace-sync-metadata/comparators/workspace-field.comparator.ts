@@ -70,6 +70,7 @@ export class WorkspaceFieldComparator {
     // Double security to only compare non-custom fields
     const filteredOriginalFieldCollection =
       originalFieldMetadataCollection.filter((field) => !field.isCustom);
+
     const originalFieldMetadataMap = transformMetadataForComparison(
       filteredOriginalFieldCollection,
       {

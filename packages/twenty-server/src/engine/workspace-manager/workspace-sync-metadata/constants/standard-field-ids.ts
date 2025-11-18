@@ -48,10 +48,10 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
 } as const;
 
 export const BASE_OBJECT_STANDARD_FIELD_IDS = {
-  id: '20202020-cd1a-41c1-8ac1-cdefabcdefab',
-  createdAt: '20202020-cd1b-41c2-9bc2-defabcdefabc',
-  updatedAt: '20202020-cd1c-41c3-8cc3-efabcdefabcd',
-  deletedAt: '20202020-cd1d-41c4-9dc4-fabcdefabcde',
+  id: '20202020-eda0-4cee-9577-3eb357e3c22b',
+  createdAt: '20202020-66ac-4502-9975-e4d959c50311',
+  updatedAt: '20202020-d767-4622-bdcf-d8a084834d86',
+  deletedAt: '20202020-b9a7-48d8-8387-b9a3090a50ec',
 } as const;
 
 export const BLOCKLIST_STANDARD_FIELD_IDS = {
