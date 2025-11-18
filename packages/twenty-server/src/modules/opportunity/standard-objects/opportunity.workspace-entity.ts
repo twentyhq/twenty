@@ -111,7 +111,9 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
     ],
     defaultValue: "'NEW'",
   })
-  @WorkspaceFieldIndex()
+  @WorkspaceFieldIndex({
+    universalIdentifier: '20202020-d436-419c-85e1-88f917e09491',
+  })
   stage: string;
 
   @WorkspaceField({
@@ -148,7 +150,10 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   pointOfContact: Relation<PersonWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('pointOfContact')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'pointOfContact',
+    universalIdentifier: 'f60c8755-e2a3-560e-b0ce-151361d94f2e',
+  })
   pointOfContactId: string | null;
 
   @WorkspaceRelation({
@@ -164,7 +169,10 @@ export class OpportunityWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   company: Relation<CompanyWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('company')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'company',
+    universalIdentifier: 'b1c810b5-f461-537c-b9a5-a2ab9fe3cd02',
+  })
   companyId: string | null;
 
   @WorkspaceRelation({

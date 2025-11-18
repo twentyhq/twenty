@@ -89,6 +89,9 @@ export class WorkflowAutomatedTriggerWorkspaceEntity extends createBaseWorkspace
   })
   workflow: Relation<WorkflowWorkspaceEntity>;
 
-  @WorkspaceJoinColumn('workflow')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'workflow',
+    universalIdentifier: 'bf681c88-18cf-52f1-b565-5ec0d883cf9d',
+  })
   workflowId: string;
 }

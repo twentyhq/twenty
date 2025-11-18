@@ -335,7 +335,10 @@ export class CalendarChannelWorkspaceEntity extends createBaseWorkspaceEntity({
   })
   connectedAccount: Relation<ConnectedAccountWorkspaceEntity>;
 
-  @WorkspaceJoinColumn('connectedAccount')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'connectedAccount',
+    universalIdentifier: 'd6ec2594-b78e-57a4-aa38-6d545e3be9e1',
+  })
   connectedAccountId: string;
 
   @WorkspaceRelation({

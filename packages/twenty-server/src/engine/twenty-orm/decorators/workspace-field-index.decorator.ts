@@ -6,7 +6,7 @@ import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manag
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 export function WorkspaceFieldIndex(
-  options?: WorkspaceIndexOptions,
+  options: WorkspaceIndexOptions,
 ): PropertyDecorator {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (target: any, propertyKey: string | symbol) => {
@@ -40,7 +40,7 @@ export function WorkspaceFieldIndex(
       isUnique: options?.isUnique ?? false,
       whereClause: options?.indexWhereClause ?? null,
       type: options?.indexType,
-      // TODO prastoin
+      universalIdentifier: options?.universalIdentifier,
     });
   };
 }

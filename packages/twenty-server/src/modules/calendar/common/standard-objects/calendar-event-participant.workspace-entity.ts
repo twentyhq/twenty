@@ -134,7 +134,10 @@ export class CalendarEventParticipantWorkspaceEntity extends createBaseWorkspace
   })
   calendarEvent: Relation<CalendarEventWorkspaceEntity>;
 
-  @WorkspaceJoinColumn('calendarEvent')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'calendarEvent',
+    universalIdentifier: 'ccef46db-96d8-55de-88e3-d14f801e2638',
+  })
   calendarEventId: string;
 
   @WorkspaceRelation({
@@ -150,7 +153,10 @@ export class CalendarEventParticipantWorkspaceEntity extends createBaseWorkspace
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('person')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'person',
+    universalIdentifier: 'bc97887d-6e66-5f93-a73c-41d2ffdd65c9',
+  })
   personId: string | null;
 
   @WorkspaceRelation({
@@ -167,6 +173,9 @@ export class CalendarEventParticipantWorkspaceEntity extends createBaseWorkspace
   @WorkspaceIsNullable()
   workspaceMember: Relation<WorkspaceMemberWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('workspaceMember')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'workspaceMember',
+    universalIdentifier: '9d48f6a5-7aa6-5ce1-9287-da21c0ccb16c',
+  })
   workspaceMemberId: string | null;
 }

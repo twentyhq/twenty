@@ -22,6 +22,7 @@ import { ATTACHMENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/work
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
+import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
@@ -160,7 +161,10 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   author: Relation<WorkspaceMemberWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('author')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'author',
+    universalIdentifier: '902dbcb9-27d4-566d-8217-9278d9c94654',
+  })
   authorId: string | null;
 
   @WorkspaceRelation({
@@ -176,7 +180,10 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   task: Relation<TaskWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('task')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'task',
+    universalIdentifier: '6b41beb7-206b-5924-b096-5e8f8e4a47cf',
+  })
   taskId: string | null;
 
   @WorkspaceRelation({
@@ -192,7 +199,10 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   note: Relation<NoteWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('note')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'note',
+    universalIdentifier: '699deb98-0cd7-5c6d-b373-1cb083369a36',
+  })
   noteId: string | null;
 
   @WorkspaceRelation({
@@ -208,7 +218,10 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('person')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'person',
+    universalIdentifier: '0cb7fd66-b85e-5a5a-b386-df8af27366af',
+  })
   personId: string | null;
 
   @WorkspaceRelation({
@@ -224,7 +237,10 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   company: Relation<CompanyWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('company')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'company',
+    universalIdentifier: '21a753e2-4c99-5c2f-9fa1-55a13eb86973',
+  })
   companyId: string | null;
 
   @WorkspaceRelation({
@@ -240,7 +256,10 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   opportunity: Relation<OpportunityWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('opportunity')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'opportunity',
+    universalIdentifier: '53824a3d-15d7-5f34-aafc-8a9686667415',
+  })
   opportunityId: string | null;
 
   @WorkspaceRelation({
@@ -256,7 +275,10 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   dashboard: Relation<DashboardWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('dashboard')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'dashboard',
+    universalIdentifier: '92b0917a-88bb-5a74-94fb-573fb7410072',
+  })
   dashboardId: string | null;
 
   @WorkspaceRelation({
@@ -272,7 +294,10 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   workflow: Relation<WorkflowWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('workflow')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'workflow',
+    universalIdentifier: 'aeaacb3f-59ae-5d67-8615-c62ca20e9ba6',
+  })
   workflowId: string | null;
 
   @WorkspaceDynamicRelation({
@@ -284,6 +309,10 @@ export class AttachmentWorkspaceEntity extends createBaseWorkspaceEntity({
       description: `Attachment ${oppositeObjectMetadata.labelSingular}`,
       joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
       icon: 'IconBuildingSkyscraper',
+      universalIdentifier: createDeterministicUuid([
+        STANDARD_OBJECTS.attachment.universalIdentifier,
+        oppositeObjectMetadata.universalIdentifier,
+      ]),
     }),
     inverseSideTarget: () => CustomWorkspaceEntity,
     inverseSideFieldKey: 'attachments',

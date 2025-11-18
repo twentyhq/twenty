@@ -201,7 +201,10 @@ export class CompanyWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   accountOwner: Relation<WorkspaceMemberWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('accountOwner')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'accountOwner',
+    universalIdentifier: '44a79ea0-c068-5f17-b3a6-c7edca8a051c',
+  })
   accountOwnerId: string | null;
 
   @WorkspaceRelation({

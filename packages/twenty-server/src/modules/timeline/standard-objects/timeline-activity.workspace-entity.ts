@@ -18,6 +18,7 @@ import { TIMELINE_ACTIVITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manag
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
+import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
@@ -124,7 +125,10 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   workspaceMember: Relation<WorkspaceMemberWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('workspaceMember')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'workspaceMember',
+    universalIdentifier: 'a799a897-6a4e-5511-a6be-d017c9f6142b',
+  })
   workspaceMemberId: string | null;
 
   @WorkspaceRelation({
@@ -140,7 +144,10 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('person')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'person',
+    universalIdentifier: 'fa892c8a-859b-52ab-9542-6b260bb001c5',
+  })
   personId: string | null;
 
   @WorkspaceRelation({
@@ -156,7 +163,10 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   company: Relation<CompanyWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('company')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'company',
+    universalIdentifier: '01d35527-17fb-559a-8f90-d6bb5e3f2ddf',
+  })
   companyId: string | null;
 
   @WorkspaceRelation({
@@ -172,7 +182,10 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   opportunity: Relation<OpportunityWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('opportunity')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'opportunity',
+    universalIdentifier: '7cad985f-905a-5e1f-b693-6a924030c2f9',
+  })
   opportunityId: string | null;
 
   @WorkspaceRelation({
@@ -188,7 +201,10 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   note: Relation<NoteWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('note')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'note',
+    universalIdentifier: '62684e56-5c8b-571d-a2f1-bf48fabc6fe6',
+  })
   noteId: string | null;
 
   @WorkspaceRelation({
@@ -204,7 +220,10 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   task: Relation<TaskWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('task')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'task',
+    universalIdentifier: 'b27f5aa0-9465-5a11-aed9-c995799c81a1',
+  })
   taskId: string | null;
 
   @WorkspaceRelation({
@@ -220,7 +239,10 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   workflow: Relation<WorkflowWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('workflow')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'workflow',
+    universalIdentifier: 'c8b16a0b-e6de-5912-bc86-028ae7d16fe7',
+  })
   workflowId: string | null;
 
   @WorkspaceRelation({
@@ -236,7 +258,10 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   workflowVersion: Relation<WorkflowVersionWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('workflowVersion')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'workflowVersion',
+    universalIdentifier: '1f3d5365-1759-5d97-894f-3a10c87d75b3',
+  })
   workflowVersionId: string | null;
 
   @WorkspaceRelation({
@@ -252,7 +277,10 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   workflowRun: Relation<WorkflowRunWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('workflowRun')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'workflowRun',
+    universalIdentifier: '83d191e8-387e-5fa7-b3a8-761e1a8f40e9',
+  })
   workflowRunId: string | null;
 
   @WorkspaceRelation({
@@ -268,7 +296,10 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   dashboard: Relation<DashboardWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('dashboard')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'dashboard',
+    universalIdentifier: '9372377c-b02d-55db-a115-6cab5f47361c',
+  })
   dashboardId: string | null;
 
   @WorkspaceDynamicRelation({
@@ -280,6 +311,10 @@ export class TimelineActivityWorkspaceEntity extends createBaseWorkspaceEntity({
       description: `Timeline Activity ${oppositeObjectMetadata.labelSingular}`,
       joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
       icon: 'IconTimeline',
+      universalIdentifier: createDeterministicUuid([
+        STANDARD_OBJECTS.timelineActivity.universalIdentifier,
+        oppositeObjectMetadata.universalIdentifier,
+      ]),
     }),
     inverseSideTarget: () => CustomWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',

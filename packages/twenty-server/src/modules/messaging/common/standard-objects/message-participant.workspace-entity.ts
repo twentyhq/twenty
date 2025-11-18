@@ -89,7 +89,10 @@ export class MessageParticipantWorkspaceEntity extends createBaseWorkspaceEntity
   })
   message: Relation<MessageWorkspaceEntity>;
 
-  @WorkspaceJoinColumn('message')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'message',
+    universalIdentifier: 'f7f0bd75-0fd7-5b69-9ca0-22ce04c09f9a',
+  })
   messageId: string;
 
   @WorkspaceRelation({
@@ -105,7 +108,10 @@ export class MessageParticipantWorkspaceEntity extends createBaseWorkspaceEntity
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('person')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'person',
+    universalIdentifier: 'e43a6019-0b25-5ed5-9b7e-abb3d87ba670',
+  })
   personId: string | null;
 
   @WorkspaceRelation({
@@ -121,6 +127,9 @@ export class MessageParticipantWorkspaceEntity extends createBaseWorkspaceEntity
   @WorkspaceIsNullable()
   workspaceMember: Relation<WorkspaceMemberWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('workspaceMember')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'workspaceMember',
+    universalIdentifier: '73e91fad-ace1-536a-a246-492567fe8372',
+  })
   workspaceMemberId: string | null;
 }

@@ -152,7 +152,10 @@ export class ConnectedAccountWorkspaceEntity extends createBaseWorkspaceEntity({
   })
   accountOwner: Relation<WorkspaceMemberWorkspaceEntity>;
 
-  @WorkspaceJoinColumn('accountOwner')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'accountOwner',
+    universalIdentifier: '7af8152d-98dd-5c14-b149-a7fa09ea1507',
+  })
   accountOwnerId: string;
 
   @WorkspaceRelation({

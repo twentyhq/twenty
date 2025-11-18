@@ -82,7 +82,10 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends createBaseWo
   })
   calendarChannel: Relation<CalendarChannelWorkspaceEntity>;
 
-  @WorkspaceJoinColumn('calendarChannel')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'calendarChannel',
+    universalIdentifier: 'ddb3b66f-c7f8-5130-b17c-51e2d319815f',
+  })
   calendarChannelId: string;
 
   @WorkspaceRelation({
@@ -98,6 +101,9 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends createBaseWo
   })
   calendarEvent: Relation<CalendarEventWorkspaceEntity>;
 
-  @WorkspaceJoinColumn('calendarEvent')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'calendarEvent',
+    universalIdentifier: '26ae0b8f-b868-5459-a8fc-c9a74233f55c',
+  })
   calendarEventId: string;
 }

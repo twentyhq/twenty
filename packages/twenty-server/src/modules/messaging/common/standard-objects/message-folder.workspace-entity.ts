@@ -145,6 +145,9 @@ export class MessageFolderWorkspaceEntity extends createBaseWorkspaceEntity({
   })
   pendingSyncAction: MessageFolderPendingSyncAction;
 
-  @WorkspaceJoinColumn('messageChannel')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'messageChannel',
+    universalIdentifier: '7c32590f-395f-5278-99a7-3283135e5b39',
+  })
   messageChannelId: string;
 }

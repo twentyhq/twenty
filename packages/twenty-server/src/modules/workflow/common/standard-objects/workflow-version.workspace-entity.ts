@@ -176,7 +176,10 @@ export class WorkflowVersionWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   workflow: Relation<WorkflowWorkspaceEntity>;
 
-  @WorkspaceJoinColumn('workflow')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'workflow',
+    universalIdentifier: '7681bf94-855c-59a0-b6d8-15d2bc879fa5',
+  })
   workflowId: string;
 
   @WorkspaceRelation({

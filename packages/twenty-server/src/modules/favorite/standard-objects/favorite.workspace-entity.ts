@@ -17,6 +17,7 @@ import { FAVORITE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/worksp
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object.constant';
+import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
@@ -70,7 +71,10 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   forWorkspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
 
-  @WorkspaceJoinColumn('forWorkspaceMember')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'forWorkspaceMember',
+    universalIdentifier: '36ed0eb0-2f88-508d-a11e-9260355c600c',
+  })
   forWorkspaceMemberId: string;
 
   @WorkspaceRelation({
@@ -86,7 +90,10 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('person')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'person',
+    universalIdentifier: 'ba35569f-fe72-50e1-900c-b30d05791c05',
+  })
   personId: string;
 
   @WorkspaceRelation({
@@ -102,7 +109,10 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   company: Relation<CompanyWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('company')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'company',
+    universalIdentifier: '6ccff7cf-66a9-5df5-97f7-bc62ff3d4692',
+  })
   companyId: string;
 
   @WorkspaceRelation({
@@ -118,7 +128,10 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   favoriteFolder: Relation<FavoriteFolderWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('favoriteFolder')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'favoriteFolder',
+    universalIdentifier: '4f836e9c-34d0-585a-8a11-19107ea30991',
+  })
   favoriteFolderId: string;
 
   @WorkspaceRelation({
@@ -134,7 +147,10 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   opportunity: Relation<OpportunityWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('opportunity')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'opportunity',
+    universalIdentifier: '41d6a9e5-1449-5bbd-ab7b-31909dac63cc',
+  })
   opportunityId: string;
 
   @WorkspaceRelation({
@@ -150,7 +166,10 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   workflow: Relation<WorkflowWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('workflow')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'workflow',
+    universalIdentifier: '9fb5981c-a9b3-5ccb-a815-0eb9293c92c1',
+  })
   workflowId: string;
 
   @WorkspaceRelation({
@@ -166,7 +185,10 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   workflowVersion: Relation<WorkflowVersionWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('workflowVersion')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'workflowVersion',
+    universalIdentifier: '3ecf4d57-c7a5-5b4b-a70c-77a30636fa98',
+  })
   workflowVersionId: string;
 
   @WorkspaceRelation({
@@ -182,7 +204,10 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   workflowRun: Relation<WorkflowRunWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('workflowRun')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'workflowRun',
+    universalIdentifier: '3944a212-2e0d-5c5f-b4d7-124fc72e6ae4',
+  })
   workflowRunId: string;
 
   @WorkspaceRelation({
@@ -198,7 +223,10 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   task: Relation<TaskWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('task')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'task',
+    universalIdentifier: '519dadc5-4e25-57f0-a297-947160ebd1b7',
+  })
   taskId: string;
 
   @WorkspaceRelation({
@@ -214,7 +242,10 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   note: Relation<NoteWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('note')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'note',
+    universalIdentifier: '61b6abcd-a1c0-5c34-9263-7bb7568bb50f',
+  })
   noteId: string;
 
   @WorkspaceRelation({
@@ -230,7 +261,10 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   dashboard: Relation<DashboardWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('dashboard')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'dashboard',
+    universalIdentifier: '746a84bb-fd5a-5c40-8bf4-488941b22a3a',
+  })
   dashboardId: string;
 
   @WorkspaceField({
@@ -252,6 +286,10 @@ export class FavoriteWorkspaceEntity extends createBaseWorkspaceEntity({
       description: `Favorite ${oppositeObjectMetadata.labelSingular}`,
       joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
       icon: 'IconHeart',
+      universalIdentifier: createDeterministicUuid([
+        STANDARD_OBJECTS.favorite.universalIdentifier,
+        oppositeObjectMetadata.universalIdentifier,
+      ]),
     }),
     inverseSideTarget: () => CustomWorkspaceEntity,
     inverseSideFieldKey: 'favorites',

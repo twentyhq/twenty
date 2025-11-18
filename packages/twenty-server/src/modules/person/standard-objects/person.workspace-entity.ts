@@ -211,7 +211,10 @@ export class PersonWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   company: Relation<CompanyWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('company')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'company',
+    universalIdentifier: '18ced861-7d80-55d2-b1f4-f5df58b8c72a',
+  })
   companyId: string | null;
 
   @WorkspaceRelation({

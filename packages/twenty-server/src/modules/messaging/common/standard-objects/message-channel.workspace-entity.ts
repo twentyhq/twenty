@@ -465,7 +465,10 @@ export class MessageChannelWorkspaceEntity extends createBaseWorkspaceEntity({
   })
   connectedAccount: Relation<ConnectedAccountWorkspaceEntity>;
 
-  @WorkspaceJoinColumn('connectedAccount')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'connectedAccount',
+    universalIdentifier: '021de027-c082-52b8-aaa2-af374d7689b7',
+  })
   connectedAccountId: string;
 
   @WorkspaceRelation({

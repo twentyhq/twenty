@@ -256,7 +256,10 @@ export class WorkflowRunWorkspaceEntity extends createBaseWorkspaceEntity({
   })
   workflowVersion: Relation<WorkflowVersionWorkspaceEntity>;
 
-  @WorkspaceJoinColumn('workflowVersion')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'workflowVersion',
+    universalIdentifier: '044d040b-c4f5-5eac-8592-34f9cf974644',
+  })
   workflowVersionId: string;
 
   @WorkspaceRelation({
@@ -271,7 +274,10 @@ export class WorkflowRunWorkspaceEntity extends createBaseWorkspaceEntity({
   })
   workflow: Relation<WorkflowWorkspaceEntity>;
 
-  @WorkspaceJoinColumn('workflow')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'workflow',
+    universalIdentifier: '45094183-e126-5b40-afaf-d1bb105533a6',
+  })
   workflowId: string;
 
   @WorkspaceRelation({

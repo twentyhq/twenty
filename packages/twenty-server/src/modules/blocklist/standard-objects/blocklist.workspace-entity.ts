@@ -54,6 +54,9 @@ export class BlocklistWorkspaceEntity extends createBaseWorkspaceEntity({
   })
   workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
 
-  @WorkspaceJoinColumn('workspaceMember')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'workspaceMember',
+    universalIdentifier: '775567c6-31a4-5f44-87c0-179322b0c760',
+  })
   workspaceMemberId: string;
 }

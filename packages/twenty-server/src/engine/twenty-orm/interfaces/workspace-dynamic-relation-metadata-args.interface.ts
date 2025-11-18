@@ -1,5 +1,5 @@
-import { type ObjectType } from 'typeorm';
 import { type RelationOnDeleteAction } from 'twenty-shared/types';
+import { type ObjectType } from 'typeorm';
 
 import { type RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
@@ -38,6 +38,8 @@ export type WorkspaceDynamicRelationMetadataArgsFactory = (
    * Relation join column.
    */
   readonly joinColumn?: string;
+
+  universalIdentifier: string;
 };
 
 export interface WorkspaceDynamicRelationMetadataArgs {

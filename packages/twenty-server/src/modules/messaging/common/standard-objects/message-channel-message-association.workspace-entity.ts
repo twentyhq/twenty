@@ -115,7 +115,10 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends createBaseW
   @WorkspaceIsNullable()
   messageChannel: Relation<MessageChannelWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('messageChannel')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'messageChannel',
+    universalIdentifier: 'e8fed8e9-7f4c-5a14-bfd7-42339ff3859b',
+  })
   messageChannelId: string;
 
   @WorkspaceRelation({
@@ -132,6 +135,9 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends createBaseW
   @WorkspaceIsNullable()
   message: Relation<MessageWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('message')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'message',
+    universalIdentifier: '2e08ce0e-cad1-5290-8af0-44a375ae5af9',
+  })
   messageId: string;
 }

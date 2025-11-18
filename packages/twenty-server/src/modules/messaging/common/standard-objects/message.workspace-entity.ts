@@ -88,7 +88,10 @@ export class MessageWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   messageThread: Relation<MessageThreadWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('messageThread')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'messageThread',
+    universalIdentifier: '2c83cc07-a867-542d-8457-2e99249695cf',
+  })
   messageThreadId: string | null;
 
   @WorkspaceRelation({

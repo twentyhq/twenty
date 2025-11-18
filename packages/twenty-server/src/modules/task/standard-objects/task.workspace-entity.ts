@@ -177,7 +177,10 @@ export class TaskWorkspaceEntity extends createBaseWorkspaceEntity({
   @WorkspaceIsNullable()
   assignee: Relation<WorkspaceMemberWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('assignee')
+  @WorkspaceJoinColumn({
+    relationPropertyKey: 'assignee',
+    universalIdentifier: '095e768c-91c0-5849-8850-955557bda9b2',
+  })
   assigneeId: string | null;
 
   @WorkspaceRelation({
