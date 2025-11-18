@@ -1,7 +1,6 @@
 import { type Note } from '../../generated';
 
 import {
-  BaseObject,
   Field,
   Object,
   FieldType,
@@ -29,7 +28,7 @@ enum PostCardStatus {
   description: ' A post card object',
   icon: 'IconMail',
 })
-export class PostCard extends BaseObject {
+export class PostCard {
   @Field({
     universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
     type: FieldType.TEXT,

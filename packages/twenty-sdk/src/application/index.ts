@@ -23,7 +23,6 @@ export { Field } from './field-metadata/field.decorator';
 export { OnDeleteAction } from './field-metadata/on-delete-action';
 export { RelationType } from './field-metadata/relation-type';
 export { Relation } from './field-metadata/relation.decorator';
-export { BaseObject } from './object-metadata/base-object';
 export { Object } from './object-metadata/object.decorator';
 export { STANDARD_OBJECT_IDS } from './object-metadata/standard-object-ids';
 export type { ServerlessFunctionConfig } from './serverless-function-config';
