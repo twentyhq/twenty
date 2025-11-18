@@ -47,7 +47,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     SeedDashboardViewCommand,
     CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand,
     FlushCacheCommand,
-    ApplicationService
+    ApplicationService,
   ],
   exports: [
     MigrateAttachmentAuthorToCreatedByCommand,
