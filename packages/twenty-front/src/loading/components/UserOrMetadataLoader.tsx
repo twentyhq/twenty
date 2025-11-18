@@ -29,9 +29,7 @@ export const UserOrMetadataLoader = () => {
 
   return (
     <StyledContainer>
-      {showAuthModal && (
-        <Modal.Backdrop modalVariant="primary" isInContainer={false} />
-      )}
+      {showAuthModal && <Modal.Backdrop modalVariant="primary" />}
       <LeftPanelSkeletonLoader />
       <RightPanelSkeletonLoader />
     </StyledContainer>
