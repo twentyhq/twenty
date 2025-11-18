@@ -10,11 +10,15 @@ const CronExpressionHelperComponent = lazy(() =>
 type CronExpressionHelperLazyProps = {
   trigger: WorkflowCronTrigger;
   isVisible?: boolean;
+  isScheduleVisible?: boolean;
+  isUpcomingExecutionVisible?: boolean;
 };
 
 export const CronExpressionHelperLazy = ({
   trigger,
   isVisible = true,
+  isScheduleVisible = true,
+  isUpcomingExecutionVisible = true,
 }: CronExpressionHelperLazyProps) => {
   if (!isVisible) {
     return null;
@@ -22,7 +26,12 @@ export const CronExpressionHelperLazy = ({
 
   return (
     <Suspense fallback={null}>
-      <CronExpressionHelperComponent trigger={trigger} isVisible={isVisible} />
+      <CronExpressionHelperComponent
+        trigger={trigger}
+        isVisible={isVisible}
+        isScheduleVisible={isScheduleVisible}
+        isUpcomingExecutionVisible={isUpcomingExecutionVisible}
+      />
     </Suspense>
   );
 };
