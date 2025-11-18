@@ -15,7 +15,7 @@ import { buildDefaultRelationFlatFieldMetadatasForCustomObject } from 'src/engin
 
 type FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs =
   {
-    createObjectInput: Omit<CreateObjectInput, 'workspaceId'>;
+    createObjectInput: CreateObjectInput;
     workspaceId: string;
   } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>;
 export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate =

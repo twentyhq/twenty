@@ -852,7 +852,7 @@ export type CreateOneFieldMetadataInput = {
 };
 
 export type CreateOneObjectInput = {
-  /** The record to create */
+  /** The object to create */
   object: CreateObjectInput;
 };
 

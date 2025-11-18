@@ -5,6 +5,7 @@ import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -117,5 +118,129 @@ describe('Successful user and workspace creation', () => {
     expect(workpsaceCustomApplication.universalIdentifier).toEqual(
       workpsaceCustomApplication.id,
     );
+  });
+
+  it('should delete workspace and related metadata entities when last user is deleted', async () => {
+    const { data } = await signUp({
+      input: {
+        email: `test-delete-5678@example.com`,
+        password: 'Test123!@#',
+      },
+      expectToFail: false,
+    });
+
+    createdUserAccessToken =
+      data.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
+
+    const {
+      data: { signUpInNewWorkspace: signUpInNewWorkspaceData },
+    } = await signUpInNewWorkspace({
+      accessToken: createdUserAccessToken,
+      expectToFail: false,
+    });
+
+    const workspaceId = signUpInNewWorkspaceData.workspace.id;
+
+    const {
+      data: { getAuthTokensFromLoginToken: authTokensData },
+    } = await getAuthTokensFromLoginToken({
+      origin: signUpInNewWorkspaceData.workspace.workspaceUrls.subdomainUrl,
+      loginToken: signUpInNewWorkspaceData.loginToken.token,
+      expectToFail: false,
+    });
+
+    const newWorkspaceAccessToken =
+      authTokensData.tokens.accessOrWorkspaceAgnosticToken.token;
+
+    await activateWorkspace({
+      accessToken: newWorkspaceAccessToken,
+      displayName: 'Test Workspace for Deletion',
+      expectToFail: false,
+    });
+
+    await createOneObjectMetadata({
+      input: {
+        nameSingular: 'workspaceEviction',
+        namePlural: 'workspaceEvictions',
+        labelPlural: 'whatevers',
+        labelSingular: 'whatever',
+        isLabelSyncedWithName: false,
+      },
+      token: newWorkspaceAccessToken,
+      expectToFail: false,
+    });
+
+    const workspaceBeforeDeletion = await testDataSource.query(
+      'SELECT * FROM core.workspace WHERE id = $1',
+      [workspaceId],
+    );
+
+    expect(workspaceBeforeDeletion).toHaveLength(1);
+
+    const tablesToVerify = [
+      'dataSource',
+      'objectMetadata',
+      'fieldMetadata',
+      'indexMetadata',
+      'searchFieldMetadata',
+      'workspaceMigration',
+      'role',
+      'roleTargets',
+      'objectPermission',
+      'fieldPermission',
+      'permissionFlag',
+      'serverlessFunction',
+      'serverlessFunctionLayer',
+      'agent',
+      'agentHandoff',
+      'remoteServer',
+      'remoteTable',
+      'databaseEventTrigger',
+      'view',
+      'viewField',
+      'viewFilter',
+      'viewFilterGroup',
+      'viewGroup',
+      'viewSort',
+      'cronTrigger',
+      'routeTrigger',
+    ];
+
+    let totalRecordsBefore = 0;
+
+    for (const table of tablesToVerify) {
+      const result = await testDataSource.query(
+        `SELECT COUNT(*) as count FROM core."${table}" WHERE "workspaceId" = $1`,
+        [workspaceId],
+      );
+
+      totalRecordsBefore += parseInt(result[0].count);
+    }
+
+    expect(totalRecordsBefore).toBeGreaterThan(0);
+
+    await deleteUser({
+      accessToken: createdUserAccessToken,
+      expectToFail: false,
+    });
+
+    createdUserAccessToken = undefined;
+
+    const workspaceAfterDeletion = await testDataSource.query(
+      'SELECT * FROM core.workspace WHERE id = $1',
+      [workspaceId],
+    );
+
+    expect(workspaceAfterDeletion).toHaveLength(0);
+
+    for (const table of tablesToVerify) {
+      const result = await testDataSource.query(
+        `SELECT COUNT(*) as count FROM core."${table}" WHERE "workspaceId" = $1`,
+        [workspaceId],
+      );
+      const count = parseInt(result[0].count);
+
+      expect({ count, table }).toEqual({ count: 0, table });
+    }
   });
 });

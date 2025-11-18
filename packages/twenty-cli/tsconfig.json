@@ -3,6 +3,6 @@
   "compilerOptions": {
     "composite": true
   },
-  "include": ["src/**/*"],
+  "include": ["src"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts", "**/*.e2e-spec.ts", "**/__tests__/**"]
 }

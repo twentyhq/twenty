@@ -10,10 +10,9 @@ import { useLingui } from '@lingui/react/macro';
 export const NavigationDrawerOpenedSection = () => {
   const { t } = useLingui();
 
-  const { activeNonSystemObjectMetadataItems } =
-    useFilteredObjectMetadataItems();
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const filteredActiveNonSystemObjectMetadataItems =
-    activeNonSystemObjectMetadataItems.filter((item) => !item.isRemote);
+    activeObjectMetadataItems.filter((item) => !item.isRemote);
 
   const loading = useIsPrefetchLoading();
 

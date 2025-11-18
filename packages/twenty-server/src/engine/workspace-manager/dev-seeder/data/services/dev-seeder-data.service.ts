@@ -8,8 +8,8 @@ import { DataSource } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import {
@@ -265,7 +265,7 @@ export class DevSeederDataService {
   constructor(
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
-    private readonly objectMetadataService: ObjectMetadataService,
+    private readonly objectMetadataService: ObjectMetadataServiceV2,
     private readonly timelineActivitySeederService: TimelineActivitySeederService,
     private readonly fileStorageService: FileStorageService,
   ) {}
@@ -379,7 +379,7 @@ export class DevSeederDataService {
     const sampleFilesDir = IS_BUILT
       ? join(
           __dirname,
-          '../../../../../../assets/engine/workspace-manager/dev-seeder/data/sample-files',
+          '../../../../../assets/engine/workspace-manager/dev-seeder/data/sample-files',
         )
       : join(__dirname, '../sample-files');
 

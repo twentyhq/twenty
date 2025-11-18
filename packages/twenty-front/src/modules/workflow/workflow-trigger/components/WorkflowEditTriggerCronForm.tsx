@@ -1,25 +1,30 @@
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
+import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { Select } from '@/ui/input/components/Select';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { type WorkflowCronTrigger } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { CronExpressionHelperLazy } from '@/workflow/workflow-trigger/components/CronExpressionHelperLazy';
-import { CRON_TRIGGER_INTERVAL_OPTIONS } from '@/workflow/workflow-trigger/constants/CronTriggerIntervalOptions';
+import {
+  CRON_TRIGGER_INTERVAL_OPTIONS,
+  type CronTriggerInterval,
+} from '@/workflow/workflow-trigger/constants/CronTriggerIntervalOptions';
 import { getCronTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getCronTriggerDefaultSettings';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
+import { getTriggerScheduleDescription } from '@/workflow/workflow-trigger/utils/getTriggerScheduleDescription';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { isNumber } from '@sniptt/guards';
 import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 type WorkflowEditTriggerCronFormProps = {
   trigger: WorkflowCronTrigger;
@@ -51,6 +56,7 @@ export const WorkflowEditTriggerCronForm = ({
   const theme = useTheme();
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
   const [errorMessagesVisible, setErrorMessagesVisible] = useState(false);
+  const dateLocale = useRecoilValue(dateLocaleState);
 
   const { getIcon } = useIcons();
 
@@ -59,6 +65,11 @@ export const WorkflowEditTriggerCronForm = ({
   const defaultLabel = getTriggerDefaultLabel(trigger);
   const headerTitle = trigger.name ?? defaultLabel;
   const headerType = getTriggerHeaderType(trigger);
+
+  const customDescription = getTriggerScheduleDescription(
+    trigger,
+    dateLocale.localeCatalog,
+  );
 
   const onBlur = () => {
     setErrorMessagesVisible(true);
@@ -85,30 +96,30 @@ export const WorkflowEditTriggerCronForm = ({
         iconTooltip={getTriggerDefaultLabel(trigger)}
       />
       <WorkflowStepBody>
-        <Select
-          dropdownId="workflow-edit-cron-trigger-interval"
+        <FormSelectFieldInput
           label={t`Trigger interval`}
-          fullWidth
-          disabled={triggerOptions.readonly}
-          value={trigger.settings.type}
+          hint={t`Cron will be triggered at UTC time`}
+          defaultValue={trigger.settings.type}
           options={CRON_TRIGGER_INTERVAL_OPTIONS}
+          readonly={triggerOptions.readonly}
           onChange={(newTriggerType) => {
             if (triggerOptions.readonly === true) {
               return;
             }
-
+            if (!newTriggerType) {
+              return;
+            }
             setErrorMessages({});
 
             setErrorMessagesVisible(false);
 
             triggerOptions.onTriggerUpdate({
               ...trigger,
-              settings: getCronTriggerDefaultSettings(newTriggerType),
+              settings: getCronTriggerDefaultSettings(
+                newTriggerType as CronTriggerInterval,
+              ),
             });
           }}
-          withSearchInput
-          dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
-          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
         {trigger.settings.type === 'CUSTOM' && (
           <>
@@ -117,7 +128,7 @@ export const WorkflowEditTriggerCronForm = ({
               placeholder="0 */1 * * *"
               error={errorMessagesVisible ? errorMessages.CUSTOM : undefined}
               onBlur={onBlur}
-              hint={t`Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]`}
+              hint={customDescription ?? ''}
               readonly={triggerOptions.readonly}
               defaultValue={trigger.settings.pattern}
               onChange={async (newPattern: string) => {
@@ -154,6 +165,7 @@ export const WorkflowEditTriggerCronForm = ({
             <CronExpressionHelperLazy
               trigger={trigger}
               isVisible={!!trigger.settings.pattern && !errorMessages.CUSTOM}
+              isScheduleVisible={false}
             />
           </>
         )}

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
-import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -15,31 +15,35 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util';
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
-import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
-export class FieldMetadataServiceV2 {
+export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEntity> {
   constructor(
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
-  ) {}
+  ) {
+    super(fieldMetadataRepository);
+  }
 
-  async createOne({
+  async createOneField({
     createFieldInput,
     workspaceId,
   }: {
     createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
     workspaceId: string;
-  }): Promise<FieldMetadataEntity> {
-    const [createdFieldMetadata] = await this.createMany({
+  }): Promise<FlatFieldMetadata> {
+    const [createdFieldMetadata] = await this.createManyFields({
       workspaceId,
       createFieldInputs: [createFieldInput],
     });
@@ -54,7 +58,7 @@ export class FieldMetadataServiceV2 {
     return createdFieldMetadata;
   }
 
-  public async deleteOneField({
+  async deleteOneField({
     deleteOneFieldInput,
     workspaceId,
     isSystemBuild = false,
@@ -62,7 +66,7 @@ export class FieldMetadataServiceV2 {
     deleteOneFieldInput: DeleteOneFieldInput;
     workspaceId: string;
     isSystemBuild?: boolean;
-  }): Promise<FieldMetadataDTO> {
+  }): Promise<FlatFieldMetadata> {
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatIndexMaps: existingFlatIndexMaps,
@@ -127,18 +131,16 @@ export class FieldMetadataServiceV2 {
       );
     }
 
-    return fromFlatFieldMetadataToFieldMetadataDto(
-      flatFieldMetadatasToDelete[0],
-    );
+    return flatFieldMetadatasToDelete[0];
   }
 
-  async updateOne({
+  async updateOneField({
     updateFieldInput,
     workspaceId,
   }: {
     updateFieldInput: Omit<UpdateFieldInput, 'workspaceId'>;
     workspaceId: string;
-  }): Promise<FieldMetadataEntity> {
+  }): Promise<FlatFieldMetadata> {
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatIndexMaps: existingFlatIndexMaps,
@@ -264,21 +266,27 @@ export class FieldMetadataServiceV2 {
       );
     }
 
-    return this.fieldMetadataRepository.findOneOrFail({
-      where: {
-        id: flatFieldMetadatasToUpdate[0].id,
-        workspaceId,
-      },
+    const { flatFieldMetadataMaps: recomputedFlatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatFieldMetadataMaps'],
+        },
+      );
+
+    return findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatFieldMetadatasToUpdate[0].id,
+      flatEntityMaps: recomputedFlatFieldMetadataMaps,
     });
   }
 
-  async createMany({
+  async createManyFields({
     createFieldInputs,
     workspaceId,
   }: {
     createFieldInputs: Omit<CreateFieldInput, 'workspaceId'>[];
     workspaceId: string;
-  }): Promise<FieldMetadataEntity[]> {
+  }): Promise<FlatFieldMetadata[]> {
     if (createFieldInputs.length === 0) {
       return [];
     }
@@ -365,15 +373,34 @@ export class FieldMetadataServiceV2 {
       );
     }
 
-    return this.fieldMetadataRepository.find({
+    const { flatFieldMetadataMaps: recomputedFlatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatFieldMetadataMaps'],
+        },
+      );
+
+    return findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityIds: allTranspiledTranspilationInputs.map(
+        ({ result: { flatFieldMetadatas } }) => flatFieldMetadatas[0].id,
+      ),
+      flatEntityMaps: recomputedFlatFieldMetadataMaps,
+    });
+  }
+
+  public async findOneWithinWorkspace(
+    workspaceId: string,
+    options: FindOneOptions<FieldMetadataEntity>,
+  ) {
+    const [fieldMetadata] = await this.fieldMetadataRepository.find({
+      ...options,
       where: {
-        id: In(
-          allTranspiledTranspilationInputs.map(
-            ({ result: { flatFieldMetadatas } }) => flatFieldMetadatas[0].id,
-          ),
-        ),
+        ...options.where,
         workspaceId,
       },
     });
+
+    return fieldMetadata;
   }
 }

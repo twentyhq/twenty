@@ -32,7 +32,7 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  @Get('*/:filename')
+  @Get('*path/:filename')
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getFile(
     @Param() _params: string[],
