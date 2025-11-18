@@ -1,7 +1,7 @@
 import {
   FieldMetadataType,
-  RelationType,
   RelationOnDeleteAction,
+  RelationType,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
@@ -46,6 +46,7 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
     > & { type: MorphOrRelationFieldMetadataType };
   workspaceId: string;
   morphId?: string | null;
+  workspaceCustomApplicationId: string;
 };
 
 export type SourceTargetMorphOrRelationFlatFieldAndFlatIndex = {
@@ -58,6 +59,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   sourceFlatObjectMetadata,
   targetFlatObjectMetadata,
   workspaceId,
+  workspaceCustomApplicationId,
   sourceFlatObjectMetadataJoinColumnName,
   morphId = null,
 }: GenerateMorphOrRelationFlatFieldMetadataPairArgs): SourceTargetMorphOrRelationFlatFieldAndFlatIndex => {
@@ -78,6 +80,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
       createFieldInput,
       workspaceId,
       fieldMetadataId: sourceRelationTargetFieldMetadataId,
+      workspaceCustomApplicationId,
     }),
     morphId,
     objectMetadataId: sourceFlatObjectMetadata.id,
@@ -116,6 +119,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
         createFieldInput: targetCreateFieldInput,
         workspaceId,
         fieldMetadataId: targetRelationTargetFieldMetadataId,
+        workspaceCustomApplicationId,
       }),
       type: FieldMetadataType.RELATION,
       defaultValue: null,

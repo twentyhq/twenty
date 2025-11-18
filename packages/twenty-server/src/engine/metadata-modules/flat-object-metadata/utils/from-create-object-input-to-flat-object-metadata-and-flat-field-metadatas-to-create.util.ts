@@ -17,11 +17,13 @@ type FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs 
   {
     createObjectInput: CreateObjectInput;
     workspaceId: string;
+    workspaceCustomApplicationId: string;
   } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>;
 export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate =
   ({
     createObjectInput: rawCreateObjectInput,
     workspaceId,
+    workspaceCustomApplicationId,
     flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
   }: FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs): {
     flatObjectMetadataToCreate: FlatObjectMetadata;
@@ -48,7 +50,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       buildDefaultFlatFieldMetadatasForCustomObject({
         flatObjectMetadata: {
           id: objectMetadataId,
-          applicationId: createObjectInput.applicationId ?? null,
+          applicationId: workspaceCustomApplicationId,
         },
         workspaceId,
       });
@@ -81,7 +83,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       shortcut: createObjectInput.shortcut ?? null,
       standardId: createObjectInput.standardId ?? null,
       standardOverrides: null,
-      applicationId: createObjectInput.applicationId ?? null,
+      applicationId: workspaceCustomApplicationId,
       universalIdentifier: objectMetadataId,
       targetTableName: 'DEPRECATED',
       workspaceId,

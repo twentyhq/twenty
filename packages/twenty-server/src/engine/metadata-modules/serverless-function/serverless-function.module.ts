@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -35,6 +36,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     ]),
     FileModule,
     ThrottlerModule,
+    ApplicationModule,
     AuditModule,
     FeatureFlagModule,
     PermissionsModule,

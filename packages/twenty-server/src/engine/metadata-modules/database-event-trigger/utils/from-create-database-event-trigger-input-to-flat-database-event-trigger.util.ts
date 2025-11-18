@@ -6,21 +6,24 @@ import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/datab
 export const fromCreateDatabaseEventTriggerInputToFlatDatabaseEventTrigger = ({
   createDatabaseEventTriggerInput,
   workspaceId,
+  workspaceCustomApplicationId,
 }: {
   createDatabaseEventTriggerInput: CreateDatabaseEventTriggerInput;
   workspaceId: string;
+  workspaceCustomApplicationId: string;
 }): FlatDatabaseEventTrigger => {
   const now = new Date();
+  const id = uuidV4();
 
   return {
-    id: uuidV4(),
+    id,
     universalIdentifier:
-      createDatabaseEventTriggerInput.universalIdentifier ?? uuidV4(),
+      createDatabaseEventTriggerInput.universalIdentifier ?? id,
     settings: createDatabaseEventTriggerInput.settings,
     serverlessFunctionId: createDatabaseEventTriggerInput.serverlessFunctionId,
     workspaceId,
     createdAt: now,
     updatedAt: now,
-    applicationId: createDatabaseEventTriggerInput.applicationId ?? null,
+    applicationId: workspaceCustomApplicationId,
   };
 };
