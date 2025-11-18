@@ -4,14 +4,12 @@ import {
   type RelationOnDeleteAction,
   type RelationType,
 } from 'twenty-shared/types';
-import { type ObjectType } from 'typeorm';
 
 interface WorkspaceRelationMinimumBaseOptions<TClass> {
-  standardId: string;
   label: string;
   description?: string;
   icon?: string;
-  inverseSideTarget: () => ObjectType<TClass>;
+  inverseSideTargetUniversalIdentifier: string;
   inverseSideFieldKey?: keyof TClass;
   onDelete?: RelationOnDeleteAction;
 }

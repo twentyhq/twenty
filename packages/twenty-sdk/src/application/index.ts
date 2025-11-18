@@ -20,6 +20,7 @@ export type {
 } from './field-metadata/composite-fields';
 export { FieldType } from './field-metadata/field-type';
 export { Field } from './field-metadata/field.decorator';
+export { OnDeleteAction } from './field-metadata/on-delete-action';
 export { RelationType } from './field-metadata/relation-type';
 export { Relation } from './field-metadata/relation.decorator';
 export { BaseObject } from './object-metadata/base-object';

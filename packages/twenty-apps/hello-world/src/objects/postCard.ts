@@ -1,3 +1,5 @@
+import { type Note } from '../../generated';
+
 import {
   BaseObject,
   Field,
@@ -5,6 +7,9 @@ import {
   FieldType,
   type FullNameField,
   type AddressField,
+  Relation,
+  RelationType,
+  OnDeleteAction,
 } from 'twenty-sdk/application';
 
 enum PostCardStatus {
@@ -84,7 +89,16 @@ export class PostCard extends BaseObject {
   })
   status: PostCardStatus;
 
-  //  notes?: string // optional internal notes or comments
+  @Relation({
+    universalIdentifier: 'c9e2b4f4-b9ad-4427-9b42-9971b785edfe',
+    type: RelationType.ONE_TO_MANY,
+    label: 'Notes',
+    icon: 'IconComment',
+    inverseSideTargetUniversalIdentifier:
+      '20202020-0b00-45cd-b6f6-6cd806fc6804',
+    onDelete: OnDeleteAction.CASCADE,
+  })
+  notes: Note[];
 
   @Field({
     universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
