@@ -9,7 +9,6 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
-import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
@@ -51,7 +50,6 @@ import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
-  private readonly featureLookUpKey = BillingEntitlementKey.CUSTOM_DOMAIN;
   protected readonly logger = new Logger(WorkspaceService.name);
 
   private readonly WORKSPACE_FIELD_PERMISSIONS: Record<

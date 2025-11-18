@@ -1,4 +1,4 @@
-export {
+export type {
   ActorMetadata as ActorField,
   AddressMetadata as AddressField,
   CurrencyMetadata as CurrencyField,
@@ -6,5 +6,6 @@ export {
   FullNameMetadata as FullNameField,
   LinksMetadata as LinksField,
   PhonesMetadata as PhonesField,
-  RichTextV2Metadata as RichTextField,
+  RichTextV2Metadata as RichTextField
 } from 'twenty-shared/types';
+

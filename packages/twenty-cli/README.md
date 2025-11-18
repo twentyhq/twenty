@@ -36,7 +36,7 @@ yarn add axios
 # Start dev mode: automatically syncs changes to your Twenty workspace, so you can test new functions/objects instantly.
 twenty app dev
 
-# Or use one time sync
+# Or use one time sync (also generates SDK automatically)
 twenty app sync
 
 # List all available commands
@@ -82,5 +82,5 @@ Our team reviews contributions for quality, security, and reusability before mer
 
 ## Contributing
 
-- see our [Hacktoberfest 2025 notion page](https://twentycrm.notion.site/Hacktoberfest-27711d8417038037a149d4638a9cc510) 
+- see our [Hacktoberfest 2025 notion page](https://twentycrm.notion.site/Hacktoberfest-27711d8417038037a149d4638a9cc510)
 - our [Discord](https://discord.gg/cx5n4Jzs57)
