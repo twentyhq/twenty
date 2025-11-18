@@ -1,6 +1,6 @@
 import prettier from '@prettier/sync';
 import * as fs from 'fs';
-import glob from 'glob';
+import { globSync } from 'glob';
 import * as path from 'path';
 import ts from 'typescript';
 const prettierConfigFile = prettier.resolveConfigFile();
@@ -82,7 +82,7 @@ function getTypeScriptFiles(
   includeIndex: boolean = false,
 ): string[] {
   const pattern = path.join(directoryPath, '**/*.{ts,tsx}');
-  const files = glob.sync(pattern);
+  const files = globSync(pattern);
 
   return files.filter(
     (file) =>
