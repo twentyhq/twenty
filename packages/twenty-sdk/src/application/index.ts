@@ -25,5 +25,6 @@ export { RelationType } from './field-metadata/relation-type';
 export { Relation } from './field-metadata/relation.decorator';
 export { BaseObject } from './object-metadata/base-object';
 export { Object } from './object-metadata/object.decorator';
+export { STANDARD_OBJECT_IDS } from './object-metadata/standard-object-ids';
 export type { ServerlessFunctionConfig } from './serverless-function-config';
 export type { SyncableEntityOptions } from './syncable-entity-options.type';

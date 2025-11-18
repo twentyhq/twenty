@@ -10,6 +10,7 @@ import {
   Relation,
   RelationType,
   OnDeleteAction,
+  STANDARD_OBJECT_IDS,
 } from 'twenty-sdk/application';
 
 enum PostCardStatus {
@@ -94,8 +95,7 @@ export class PostCard extends BaseObject {
     type: RelationType.ONE_TO_MANY,
     label: 'Notes',
     icon: 'IconComment',
-    inverseSideTargetUniversalIdentifier:
-      '20202020-0b00-45cd-b6f6-6cd806fc6804',
+    inverseSideTargetUniversalIdentifier: STANDARD_OBJECT_IDS.note,
     onDelete: OnDeleteAction.CASCADE,
   })
   notes: Note[];

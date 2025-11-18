@@ -1,6 +1,7 @@
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-related-object.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 describe('isWorkflowRelatedObject', () => {
   it('should return true for workflow-related objects', () => {

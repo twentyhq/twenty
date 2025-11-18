@@ -1,6 +1,7 @@
 import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { type STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -20,7 +21,6 @@ import {
   STANDARD_OBJECT_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
-import { type STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
   createDeterministicUuid,
   createRelationDeterministicUuid,
