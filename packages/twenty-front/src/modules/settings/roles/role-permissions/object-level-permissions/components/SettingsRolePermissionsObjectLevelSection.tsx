@@ -29,6 +29,7 @@ const StyledTableRows = styled.div`
 type SettingsRolePermissionsObjectLevelSectionProps = {
   roleId: string;
   isEditable: boolean;
+  fromAgentId?: string;
 };
 
 const StyledNoOverride = styled(TableCell)`
@@ -38,6 +39,7 @@ const StyledNoOverride = styled(TableCell)`
 export const SettingsRolePermissionsObjectLevelSection = ({
   roleId,
   isEditable,
+  fromAgentId,
 }: SettingsRolePermissionsObjectLevelSectionProps) => {
   const navigateSettings = useNavigateSettings();
 
@@ -59,9 +61,11 @@ export const SettingsRolePermissionsObjectLevelSection = ({
     objectMetadataItemsThatCanHavePermission.length;
 
   const handleAddRule = () => {
-    navigateSettings(SettingsPath.RoleAddObjectLevel, {
-      roleId,
-    });
+    navigateSettings(
+      SettingsPath.RoleAddObjectLevel,
+      { roleId },
+      fromAgentId ? { fromAgent: fromAgentId } : undefined,
+    );
   };
 
   const hasObjectPermissions =
@@ -82,6 +86,8 @@ export const SettingsRolePermissionsObjectLevelSection = ({
                   key={objectMetadataItem.id}
                   objectMetadataItem={objectMetadataItem}
                   roleId={roleId}
+                  fromAgentId={fromAgentId}
+                  isEditable={isEditable}
                 />
               ),
             )

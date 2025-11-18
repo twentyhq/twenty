@@ -8,7 +8,6 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilValue } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   useCreateOneRoleMutation,
@@ -18,7 +17,6 @@ import {
   useUpsertPermissionFlagsMutation,
 } from '~/generated-metadata/graphql';
 import { type Role } from '~/generated/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getDirtyFields } from '~/utils/getDirtyFields';
 
 const ROLE_BASIC_KEYS: Array<keyof Role> = [
@@ -51,7 +49,6 @@ export const useSaveDraftRoleToDB = ({
   const { addWorkspaceMembersToRole } = useUpdateWorkspaceMemberRole(roleId);
   const { addAgentsToRole } = useUpdateAgentRole(roleId);
   const { addApiKeysToRole } = useUpdateApiKeyRole(roleId);
-  const navigateSettings = useNavigateSettings();
 
   const settingsPersistedRole = useRecoilValue(
     settingsPersistedRoleFamilyState(roleId),
@@ -231,10 +228,6 @@ export const useSaveDraftRoleToDB = ({
           apiKeyIds: settingsDraftRole.apiKeys.map((apiKey) => apiKey.id),
         });
       }
-
-      navigateSettings(SettingsPath.RoleDetail, {
-        roleId: data.createOneRole.id,
-      });
     } else {
       if (isDefined(dirtyFields.permissionFlags)) {
         await upsertPermissionFlags({

@@ -29,11 +29,15 @@ const StyledNameLabel = styled.div`
 type SettingsRolePermissionsObjectLevelTableRowProps = {
   objectMetadataItem: ObjectMetadataItem;
   roleId: string;
+  fromAgentId?: string;
+  isEditable: boolean;
 };
 
 export const SettingsRolePermissionsObjectLevelTableRow = ({
   objectMetadataItem,
   roleId,
+  fromAgentId,
+  isEditable,
 }: SettingsRolePermissionsObjectLevelTableRowProps) => {
   const { getIcon } = useIcons();
   const theme = useTheme();
@@ -42,12 +46,18 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
 
   const objectLabelPlural = objectMetadataItem.labelPlural;
 
+  const navigationPath = getSettingsPath(SettingsPath.RoleObjectLevel, {
+    roleId: roleId,
+    objectMetadataId: objectMetadataItem.id,
+  });
+
+  const navigationUrl = fromAgentId
+    ? `${navigationPath}?fromAgent=${fromAgentId}`
+    : navigationPath;
+
   return (
     <TableRow
-      to={getSettingsPath(SettingsPath.RoleObjectLevel, {
-        roleId: roleId,
-        objectMetadataId: objectMetadataItem.id,
-      })}
+      to={isEditable ? navigationUrl : undefined}
       gridAutoColumns={OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS}
     >
       <StyledNameTableCell>
@@ -82,10 +92,12 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
         />
       </TableCell>
       <TableCell align="right">
-        <IconChevronRight
-          size={theme.icon.size.md}
-          color={theme.font.color.tertiary}
-        />
+        {isEditable && (
+          <IconChevronRight
+            size={theme.icon.size.md}
+            color={theme.font.color.tertiary}
+          />
+        )}
       </TableCell>
     </TableRow>
   );

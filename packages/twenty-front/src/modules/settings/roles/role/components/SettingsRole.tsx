@@ -20,7 +20,7 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
-import { isDefined, getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui/display';
 
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -114,6 +114,10 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
       await saveDraftRoleToDB();
       await loadCurrentUser();
       await refreshObjectMetadataItems();
+
+      if (isCreateMode) {
+        navigateSettings(SettingsPath.RoleDetail, { roleId });
+      }
     } finally {
       setIsSaving(false);
     }
