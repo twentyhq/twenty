@@ -4,14 +4,22 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 
 export const useContextStoreObjectMetadataItemOrThrow = (
   contextStoreInstanceId?: string,
+  canFallbackToDefault?: boolean,
 ) => {
-  const objectMetadataItemId = useRecoilComponentValue(
+  const objectMetadataItemIdFromContextStoreInstance = useRecoilComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     contextStoreInstanceId,
   );
 
+  const defaultObjectMetadataItemId = useRecoilComponentValue(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+  );
+
   const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: objectMetadataItemId ?? '',
+    objectId:
+      objectMetadataItemIdFromContextStoreInstance ??
+      (canFallbackToDefault ? defaultObjectMetadataItemId : '') ??
+      '',
   });
 
   if (!objectMetadataItem) {

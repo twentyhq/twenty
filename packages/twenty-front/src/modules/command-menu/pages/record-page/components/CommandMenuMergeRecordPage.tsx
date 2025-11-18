@@ -20,11 +20,16 @@ const StyledRightDrawerRecord = styled.div<{
 export const CommandMenuMergeRecordPage = () => {
   const isMobile = useIsMobile();
 
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
-
   const commandMenuPageInstanceId = useComponentInstanceStateContext(
     CommandMenuPageComponentInstanceContext,
   )?.instanceId;
+
+  const canDefaultToDefaultObjectMetadataItem = true;
+
+  const objectMetadataItem = useContextStoreObjectMetadataItemOrThrow(
+    commandMenuPageInstanceId,
+    canDefaultToDefaultObjectMetadataItem,
+  ).objectMetadataItem;
 
   if (!commandMenuPageInstanceId) {
     throw new Error('Command menu page instance id is not defined');
