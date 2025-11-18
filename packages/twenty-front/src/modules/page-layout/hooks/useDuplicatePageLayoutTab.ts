@@ -93,7 +93,9 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         const newTab: PageLayoutTab = {
           ...sourceTab,
           id: newTabId,
-          title: `${sourceTab.title} (Copy)`,
+          title: sourceTab.title.endsWith('(Copy)')
+            ? sourceTab.title
+            : `${sourceTab.title} (Copy)`,
           position: newTabPosition,
           widgets: clonedWidgets,
           createdAt: new Date().toISOString(),
