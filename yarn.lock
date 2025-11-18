@@ -55281,6 +55281,7 @@ __metadata:
   resolution: "twenty-sdk@workspace:packages/twenty-sdk"
   dependencies:
     "@types/node": "npm:^24.0.0"
+    glob: "npm:^11.1.0"
     twenty-shared: "workspace:*"
     typescript: "npm:5.9.2"
     vite: "npm:^7.0.0"
@@ -55415,7 +55416,6 @@ __metadata:
     express-session: "npm:^1.18.2"
     file-type: "npm:16.5.4"
     gaxios: "npm:5.1.3"
-    glob: "npm:^11.1.0"
     google-auth-library: "npm:8.9.0"
     googleapis: "npm:105.0.0"
     graphql: "npm:16.8.1"
