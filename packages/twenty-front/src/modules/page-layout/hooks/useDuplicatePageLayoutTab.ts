@@ -102,7 +102,11 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
           updatedAt: new Date().toISOString(),
         };
 
-        const sourceLayouts = allTabLayouts[tabId];
+        const sourceLayouts = allTabLayouts[tabId] ?? {
+          desktop: [],
+          mobile: [],
+        };
+
         const newLayouts = {
           desktop: sourceLayouts.desktop.map((layout) => ({
             ...layout,
