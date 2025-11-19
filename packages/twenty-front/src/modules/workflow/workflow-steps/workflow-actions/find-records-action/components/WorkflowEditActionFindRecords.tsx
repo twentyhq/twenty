@@ -1,8 +1,18 @@
-import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { Select } from '@/ui/input/components/Select';
+import { SelectControl } from '@/ui/input/components/SelectControl';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type WorkflowFindRecordsAction } from '@/workflow/types/Workflow';
-import { useEffect, useState } from 'react';
+import { useTheme } from '@emotion/react';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
@@ -15,19 +25,24 @@ import { RecordIndexContextProvider } from '@/object-record/record-index/context
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { FIND_RECORDS_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/FindRecordsAction';
 import { WorkflowFindRecordsFilters } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFilters';
 import { WorkflowFindRecordsFiltersEffect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFiltersEffect';
 import { WorkflowFindRecordsSorts } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts';
-import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
-import { useLingui } from '@lingui/react/macro';
+import styled from '@emotion/styled';
 import { isNumber } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
-import { type SelectOption } from 'twenty-ui/input';
+import {
+  HorizontalSeparator,
+  IconChevronLeft,
+  IconSettings,
+  useIcons,
+} from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -61,22 +76,51 @@ export type FindRecordsActionOrderBy = {
   gqlOperationOrderBy?: JsonValue;
 };
 
+const StyledSelectContainer = styled.div<{ fullWidth?: boolean }>`
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
+`;
+
+const filterOptionsBySearch = <T extends { label: string }>(
+  options: T[],
+  searchValue: string,
+): T[] => {
+  if (!searchValue) return options;
+  return options.filter((option) =>
+    option.label.toLowerCase().includes(searchValue.toLowerCase()),
+  );
+};
+
 export const WorkflowEditActionFindRecords = ({
   action,
   actionOptions,
 }: WorkflowEditActionFindRecordsProps) => {
+  const theme = useTheme();
   const { getIcon } = useIcons();
   const { t } = useLingui();
   const maxRecordsFormatted = QUERY_MAX_RECORDS.toLocaleString();
 
-  const { activeNonSystemObjectMetadataItems } =
-    useFilteredObjectMetadataItems();
+  const [searchInputValue, setSearchInputValue] = useState('');
+  const [isSystemObjectsOpen, setIsSystemObjectsOpen] = useState(false);
+  const dropdownId = 'workflow-edit-action-record-find-records-object-name';
 
-  const availableMetadata: Array<SelectOption<string>> =
-    activeNonSystemObjectMetadataItems.map((item) => ({
-      Icon: getIcon(item.icon),
+  const { closeDropdown } = useCloseDropdown();
+
+  const { objectMetadataItems } = useFilteredObjectMetadataItems();
+
+  const regularObjects = objectMetadataItems
+    .filter((item) => item.isActive && !item.isSystem)
+    .map((item) => ({
       label: item.labelPlural,
       value: item.nameSingular,
+      Icon: getIcon(item.icon),
+    }));
+
+  const systemObjects = objectMetadataItems
+    .filter((item) => item.isActive && item.isSystem)
+    .map((item) => ({
+      label: item.labelPlural,
+      value: item.nameSingular,
+      Icon: getIcon(item.icon),
     }));
 
   const [formData, setFormData] = useState<FindRecordsFormData>(() => ({
@@ -89,16 +133,35 @@ export const WorkflowEditActionFindRecords = ({
     filter: action.settings.input.filter as FindRecordsActionFilter,
     orderBy: action.settings.input.orderBy as FindRecordsActionOrderBy,
   }));
+
+  const filteredRegularObjects = useMemo(
+    () =>
+      filterOptionsBySearch(
+        searchInputValue
+          ? [...regularObjects, ...systemObjects]
+          : regularObjects,
+        searchInputValue,
+      ),
+    [regularObjects, systemObjects, searchInputValue],
+  );
+
+  const filteredSystemObjects = useMemo(
+    () => filterOptionsBySearch(systemObjects, searchInputValue),
+    [systemObjects, searchInputValue],
+  );
+
   const [limitError, setLimitError] = useState<string | undefined>(undefined);
   const isFormDisabled = actionOptions.readonly ?? false;
   const instanceId = `workflow-edit-action-record-find-records-${action.id}-${formData.objectNameSingular}`;
 
-  const selectedObjectMetadataItem = activeNonSystemObjectMetadataItems.find(
+  const selectedOption =
+    [...regularObjects, ...systemObjects].find(
+      (option) => option.value === formData.objectNameSingular,
+    ) || regularObjects[0];
+
+  const selectedObjectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === formData.objectNameSingular,
   );
-
-  const selectedObjectMetadataItemNameSingular =
-    selectedObjectMetadataItem?.nameSingular ?? '';
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
@@ -147,53 +210,178 @@ export const WorkflowEditActionFindRecords = ({
     };
   }, [saveAction]);
 
-  const { headerTitle, headerIcon, headerIconColor, headerType } =
-    useWorkflowActionHeader({
-      action,
-      defaultTitle: FIND_RECORDS_ACTION.defaultLabel,
-    });
+  const handleOptionClick = (value: string) => {
+    if (isFormDisabled) {
+      return;
+    }
+
+    const newFormData: FindRecordsFormData = {
+      objectNameSingular: value,
+      limit: 1,
+    };
+
+    setFormData(newFormData);
+    saveAction(newFormData);
+    closeDropdown(dropdownId);
+  };
+
+  const handleSystemObjectsClick = () => {
+    setIsSystemObjectsOpen(true);
+    setSearchInputValue('');
+  };
+
+  const handleBack = () => {
+    setIsSystemObjectsOpen(false);
+    setSearchInputValue('');
+  };
+
+  const handleSearchInputChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchInputValue(event.target.value);
+    },
+    [],
+  );
 
   return (
     <>
-      <SidePanelHeader
-        onTitleChange={(newName: string) => {
-          if (actionOptions.readonly === true) {
-            return;
-          }
-
-          actionOptions.onActionUpdate({
-            ...action,
-            name: newName,
-          });
-        }}
-        Icon={getIcon(headerIcon)}
-        iconColor={headerIconColor}
-        initialTitle={headerTitle}
-        headerType={headerType}
-        disabled={isFormDisabled}
-        iconTooltip={FIND_RECORDS_ACTION.defaultLabel}
-      />
       <WorkflowStepBody>
-        <Select
-          dropdownId="workflow-edit-action-record-find-records-object-name"
-          label="Object"
-          fullWidth
-          disabled={isFormDisabled}
-          value={selectedObjectMetadataItemNameSingular}
-          emptyOption={{ label: 'Select an option', value: '' }}
-          options={availableMetadata}
-          onChange={(objectNameSingular) => {
-            const newFormData: FindRecordsFormData = {
-              objectNameSingular,
-              limit: 1,
-            };
-
-            setFormData(newFormData);
-
-            saveAction(newFormData);
-          }}
-          withSearchInput
-        />
+        <StyledSelectContainer fullWidth>
+          <InputLabel>Object</InputLabel>
+          <Dropdown
+            dropdownId={dropdownId}
+            dropdownPlacement="bottom-start"
+            clickableComponent={
+              <SelectControl
+                isDisabled={isFormDisabled}
+                selectedOption={selectedOption}
+              />
+            }
+            dropdownComponents={
+              <>
+                {!isFormDisabled &&
+                  (isSystemObjectsOpen ? (
+                    <DropdownContent
+                      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+                    >
+                      <DropdownMenuHeader
+                        StartComponent={
+                          <DropdownMenuHeaderLeftComponent
+                            onClick={handleBack}
+                            Icon={IconChevronLeft}
+                          />
+                        }
+                      >
+                        <Trans>Advanced</Trans>
+                      </DropdownMenuHeader>
+                      <DropdownMenuSearchInput
+                        autoFocus
+                        value={searchInputValue}
+                        onChange={handleSearchInputChange}
+                      />
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItemsContainer hasMaxHeight>
+                        <SelectableList
+                          selectableListInstanceId={dropdownId}
+                          focusId={dropdownId}
+                          selectableItemIdArray={filteredSystemObjects.map(
+                            (option) => option.value,
+                          )}
+                        >
+                          {filteredSystemObjects.map((option) => (
+                            <SelectableListItem
+                              key={option.value}
+                              itemId={option.value}
+                              onEnter={() => handleOptionClick(option.value)}
+                            >
+                              <MenuItem
+                                LeftIcon={option.Icon}
+                                text={option.label}
+                                onClick={() => handleOptionClick(option.value)}
+                              />
+                            </SelectableListItem>
+                          ))}
+                        </SelectableList>
+                      </DropdownMenuItemsContainer>
+                    </DropdownContent>
+                  ) : (
+                    <DropdownContent
+                      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+                    >
+                      <DropdownMenuSearchInput
+                        autoFocus
+                        value={searchInputValue}
+                        onChange={handleSearchInputChange}
+                      />
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItemsContainer hasMaxHeight>
+                        <SelectableList
+                          selectableListInstanceId={dropdownId}
+                          focusId={dropdownId}
+                          selectableItemIdArray={[
+                            ...filteredRegularObjects.map(
+                              (option) => option.value,
+                            ),
+                            ...(searchInputValue
+                              ? filteredSystemObjects.map(
+                                  (option) => option.value,
+                                )
+                              : ['advanced']),
+                          ]}
+                        >
+                          {filteredRegularObjects.map((option) => (
+                            <SelectableListItem
+                              key={option.value}
+                              itemId={option.value}
+                              onEnter={() => handleOptionClick(option.value)}
+                            >
+                              <MenuItem
+                                LeftIcon={option.Icon}
+                                text={option.label}
+                                onClick={() => handleOptionClick(option.value)}
+                              />
+                            </SelectableListItem>
+                          ))}
+                          {!!searchInputValue &&
+                            filteredSystemObjects.map((option) => (
+                              <SelectableListItem
+                                key={option.value}
+                                itemId={option.value}
+                                onEnter={() => handleOptionClick(option.value)}
+                              >
+                                <MenuItem
+                                  LeftIcon={option.Icon}
+                                  text={option.label}
+                                  onClick={() =>
+                                    handleOptionClick(option.value)
+                                  }
+                                />
+                              </SelectableListItem>
+                            ))}
+                          {(!searchInputValue ||
+                            'advanced'.includes(
+                              searchInputValue.toLowerCase(),
+                            )) && (
+                            <SelectableListItem
+                              itemId="advanced"
+                              onEnter={handleSystemObjectsClick}
+                            >
+                              <MenuItem
+                                text="Advanced"
+                                LeftIcon={IconSettings}
+                                onClick={handleSystemObjectsClick}
+                                hasSubMenu
+                              />
+                            </SelectableListItem>
+                          )}
+                        </SelectableList>
+                      </DropdownMenuItemsContainer>
+                    </DropdownContent>
+                  ))}
+              </>
+            }
+            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+          />
+        </StyledSelectContainer>
 
         <HorizontalSeparator noMargin />
         {isDefined(selectedObjectMetadataItem) && (
