@@ -91,10 +91,11 @@ export const validateFlatFieldMetadataNameAvailability = ({
     ),
   );
 
-  // Does not make sense for name isn't it ?
-  const collidingNameFieldId =
-    objectFieldNamesAndJoinColumnNames.fieldIdByName[flatFieldMetadata.name];
-  if (collidingNameFieldId !== flatFieldMetadata.id) {
+  if (
+    objectFieldNamesAndJoinColumnNames.fieldNames.includes(
+      flatFieldMetadata.name,
+    )
+  ) {
     errors.push({
       code: FieldMetadataExceptionCode.NOT_AVAILABLE,
       value: flatFieldMetadataName,
@@ -108,9 +109,11 @@ export const validateFlatFieldMetadataNameAvailability = ({
       flatFieldMetadata.name
     ];
   if (
-    !isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) ||
-    collidingJoinColumnNameFieldId !==
-      flatFieldMetadata.relationTargetFieldMetadataId
+    (!isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
+      isDefined(collidingJoinColumnNameFieldId)) ||
+    (isDefined(collidingJoinColumnNameFieldId) &&
+      collidingJoinColumnNameFieldId !==
+        flatFieldMetadata.relationTargetFieldMetadataId)
   ) {
     errors.push({
       code: FieldMetadataExceptionCode.NOT_AVAILABLE,

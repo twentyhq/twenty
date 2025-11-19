@@ -9,7 +9,7 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type ObjectFieldNamesAndJoinColumnNames = {
-  fieldIdByName: Record<string, string>;
+  fieldNames: string[];
   relationTargetFieldIdByJoinColumnName: Record<string, string>;
 };
 export const getObjectFieldNamesAndJoinColumnNames = ({
@@ -29,7 +29,7 @@ export const getObjectFieldNamesAndJoinColumnNames = ({
     });
   const initialAccumulator: ObjectFieldNamesAndJoinColumnNames = {
     relationTargetFieldIdByJoinColumnName: {},
-    fieldIdByName: {},
+    fieldNames: [],
   };
 
   const objectFieldNamesAndJoinColumnNames = objectFlatFieldMetadatas.reduce(
@@ -41,10 +41,7 @@ export const getObjectFieldNamesAndJoinColumnNames = ({
       if (!shouldSearchForJoinColumnName) {
         return {
           ...acc,
-          fieldIdByName: {
-            ...acc.fieldIdByName,
-            [flatFieldMetadata.name]: flatFieldMetadata.id,
-          },
+          fieldNames: [...acc.fieldNames, flatFieldMetadata.name],
         };
       }
 
@@ -60,19 +57,13 @@ export const getObjectFieldNamesAndJoinColumnNames = ({
       ) {
         return {
           ...acc,
-          fieldIdByName: {
-            ...acc.fieldIdByName,
-            [flatFieldMetadata.name]: flatFieldMetadata.id,
-          },
+          fieldNames: [...acc.fieldNames, flatFieldMetadata.name],
         };
       }
 
       return {
         ...acc,
-        fieldIdByName: {
-          ...acc.fieldIdByName,
-          [flatFieldMetadata.name]: flatFieldMetadata.id,
-        },
+        fieldNames: [...acc.fieldNames, flatFieldMetadata.name],
         relationTargetFieldIdByJoinColumnName: {
           ...acc.relationTargetFieldIdByJoinColumnName,
           [targetFlatFieldMetadata.settings.joinColumnName]:
