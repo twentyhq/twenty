@@ -7,14 +7,13 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
-import { IconSparkles } from 'twenty-ui/display';
+import { IconHandMove, IconSparkles } from 'twenty-ui/display';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { FeatureFlagKey } from '~/generated/graphql';
 
-const StyledIconContainer = styled.div<{ iconColor?: string }>`
+const StyledIconContainer = styled.div`
   align-items: center;
-  color: ${({ iconColor, theme }) => iconColor ?? theme.font.color.secondary};
+  color: ${({ theme }) => theme.font.color.secondary};
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -63,20 +62,9 @@ export const CommandMenuTopBarRightCornerIcon = () => {
     return null;
   }
 
-  const previousPageItem = commandMenuNavigationStack.at(-2);
-  const PreviousPageIcon = previousPageItem?.pageIcon;
-  const previousPageIconColor = previousPageItem?.pageIconColor;
-
-  if (!isDefined(PreviousPageIcon)) {
-    return null;
-  }
-
   return (
-    <StyledIconContainer
-      iconColor={previousPageIconColor}
-      onClick={goBackFromCommandMenu}
-    >
-      <PreviousPageIcon size={theme.icon.size.md} />
+    <StyledIconContainer onClick={goBackFromCommandMenu}>
+      <IconHandMove size={theme.icon.size.md} />
     </StyledIconContainer>
   );
 };
