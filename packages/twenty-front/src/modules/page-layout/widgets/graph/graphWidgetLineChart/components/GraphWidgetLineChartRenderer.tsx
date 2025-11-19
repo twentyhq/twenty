@@ -30,6 +30,7 @@ export const GraphWidgetLineChartRenderer = ({
     showDataLabels,
     hasTooManyGroups,
     loading,
+    objectMetadataItem,
   } = useGraphLineChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration as LineChartConfiguration,
@@ -74,6 +75,8 @@ export const GraphWidgetLineChartRenderer = ({
         omitNullValues={configuration.omitNullValues ?? false}
         groupMode={groupMode}
         displayType="shortNumber"
+        objectMetadataItem={objectMetadataItem}
+        configuration={configuration}
       />
     </Suspense>
   );

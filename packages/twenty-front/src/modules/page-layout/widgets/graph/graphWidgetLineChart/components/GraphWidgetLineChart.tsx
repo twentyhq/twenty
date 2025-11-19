@@ -1,3 +1,4 @@
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { CHART_LEGEND_ITEM_THRESHOLD } from '@/page-layout/widgets/graph/constants/ChartLegendItemThreshold';
@@ -6,6 +7,7 @@ import {
   type SliceHoverData,
 } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomCrosshairLayer';
 import { GraphLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphLineChartTooltip';
+import { handleLineChartPointClick } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/handleLineChartPointClick';
 import { LINE_CHART_MARGIN_BOTTOM } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginBottom';
 import { LINE_CHART_MARGIN_LEFT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginLeft';
 import { LINE_CHART_MARGIN_RIGHT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginRight';
@@ -34,7 +36,10 @@ import {
   type SliceTooltipProps,
 } from '@nivo/line';
 import { useCallback, useId, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
+import { type LineChartConfiguration } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type CrosshairLayerProps = LineCustomSvgLayerProps<LineSeries>;
 
@@ -51,6 +56,8 @@ type GraphWidgetLineChartProps = {
   rangeMax?: number;
   omitNullValues?: boolean;
   groupMode?: 'stacked';
+  objectMetadataItem?: ObjectMetadataItem;
+  configuration?: LineChartConfiguration;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -80,9 +87,12 @@ export const GraphWidgetLineChart = ({
   prefix,
   suffix,
   customFormatter,
+  objectMetadataItem,
+  configuration,
 }: GraphWidgetLineChartProps) => {
   const theme = useTheme();
   const instanceId = useId();
+  const navigate = useNavigate();
   const colorRegistry = createGraphColorRegistry(theme);
   const chartTheme = useLineChartTheme();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -172,6 +182,23 @@ export const GraphWidgetLineChart = ({
     [dataMap, debouncedHideTooltip, setActiveLineTooltip, setCrosshairX],
   );
 
+  const handleSliceClick = useCallback(
+    (sliceData: SliceHoverData) => {
+      if (!isDefined(objectMetadataItem) || !isDefined(configuration)) {
+        return;
+      }
+
+      handleLineChartPointClick(
+        sliceData.closestPoint,
+        dataMap,
+        objectMetadataItem,
+        configuration,
+        navigate,
+      );
+    },
+    [dataMap, objectMetadataItem, configuration, navigate],
+  );
+
   const CrosshairLayer = (layerProps: CrosshairLayerProps) => (
     <CustomCrosshairLayer
       key="custom-crosshair-layer"
@@ -179,6 +206,7 @@ export const GraphWidgetLineChart = ({
       innerHeight={layerProps.innerHeight}
       innerWidth={layerProps.innerWidth}
       onSliceHover={handleSliceHover}
+      onSliceClick={handleSliceClick}
       onRectLeave={() => debouncedHideTooltip()}
     />
   );

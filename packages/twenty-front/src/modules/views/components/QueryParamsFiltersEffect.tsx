@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 
 import { useFiltersFromQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
+import { useHasFiltersInQueryParams } from '@/views/hooks/internal/useHasFiltersInQueryParams';
+import { useObjectMetadataFromRoute } from '@/views/hooks/internal/useObjectMetadataFromRoute';
 import { useApplyViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyViewFiltersToCurrentRecordFilters';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 
 export const QueryParamsFiltersEffect = () => {
-  const {
-    hasFiltersQueryParams,
-    getFiltersFromQueryParams,
-    objectMetadataItem,
-  } = useFiltersFromQueryParams();
+  const { getFiltersFromQueryParams } = useFiltersFromQueryParams();
+  const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
+  const { objectMetadataItem } = useObjectMetadataFromRoute();
 
   const { currentView } = useGetCurrentViewOnly();
 

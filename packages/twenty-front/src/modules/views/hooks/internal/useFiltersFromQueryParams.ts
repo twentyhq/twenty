@@ -1,26 +1,26 @@
 import { isNonEmptyString, isObject } from '@sniptt/guards';
 import qs from 'qs';
 import { useMemo } from 'react';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
+import { logError } from '~/utils/logError';
 import z from 'zod';
 
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import { useObjectMetadataFromRoute } from '@/views/hooks/internal/useObjectMetadataFromRoute';
 import { type ViewFilter } from '@/views/types/ViewFilter';
-import { ViewFilterOperand } from 'twenty-shared/types';
+import { type ObjectPermissions, ViewFilterOperand } from 'twenty-shared/types';
 import {
   isDefined,
   relationFilterValueSchemaObject,
 } from 'twenty-shared/utils';
 
 const filterQueryParamsSchema = z.object({
-  viewId: z.string().optional(),
   filter: z
     .record(
       z.string(),
@@ -38,10 +38,6 @@ export const useFiltersFromQueryParams = () => {
   const apolloCoreClient = useApolloCoreClient();
   const { searchParams, objectMetadataItem } = useObjectMetadataFromRoute();
 
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
   const queryParamsValidation = filterQueryParamsSchema.safeParse(
     qs.parse(searchParams.toString()),
   );
@@ -51,22 +47,40 @@ export const useFiltersFromQueryParams = () => {
       queryParamsValidation.success ? queryParamsValidation.data.filter : {},
     [queryParamsValidation],
   );
-  const viewIdQueryParam = useMemo(
-    () =>
-      queryParamsValidation.success
-        ? queryParamsValidation.data.viewId
-        : undefined,
-    [queryParamsValidation],
-  );
 
   const hasFiltersQueryParams =
     isDefined(filterQueryParams) &&
     Object.entries(filterQueryParams).length > 0;
 
   const getFiltersFromQueryParams = useRecoilCallback(
-    ({ snapshot }) =>
-      async () => {
+    ({ snapshot }) => {
+      const fetchFiltersFromQueryParams = async (): Promise<ViewFilter[]> => {
         if (!hasFiltersQueryParams) return [];
+
+        const objectMetadataItems = snapshot
+          .getLoadable(objectMetadataItemsState)
+          .getValue();
+
+        const currentUserWorkspace = snapshot
+          .getLoadable(currentUserWorkspaceState)
+          .getValue();
+
+        const objectsPermissions = currentUserWorkspace?.objectsPermissions;
+
+        const objectPermissionsByObjectMetadataId =
+          objectsPermissions?.reduce(
+            (
+              accumulator: Record<
+                string,
+                ObjectPermissions & { objectMetadataId: string }
+              >,
+              objectPermission,
+            ) => {
+              accumulator[objectPermission.objectMetadataId] = objectPermission;
+              return accumulator;
+            },
+            {},
+          ) ?? {};
 
         const promises: Promise<ViewFilter | null>[] = [];
 
@@ -115,40 +129,46 @@ export const useFiltersFromQueryParams = () => {
                 (Array.isArray(filterValueFromURL) ||
                   satisfiesRelationFilterSchema)
               ) {
-                const queryResult = await apolloCoreClient.query<
-                  Record<string, { edges: { node: ObjectRecord }[] }>
-                >({
-                  query: generateFindManyRecordsQuery({
-                    objectMetadataItem: relationObjectMetadataItem,
-                    objectMetadataItems,
-                    objectPermissionsByObjectMetadataId,
-                  }),
-                  variables: {
-                    filter: {
-                      id: {
-                        in: satisfiesRelationFilterSchema
-                          ? (
-                              filterValueFromURL as {
-                                selectedRecordIds: string[];
-                              }
-                            )?.selectedRecordIds
-                          : filterValueFromURL,
+                try {
+                  const queryResult = await apolloCoreClient.query<
+                    Record<string, { edges: { node: ObjectRecord }[] }>
+                  >({
+                    query: generateFindManyRecordsQuery({
+                      objectMetadataItem: relationObjectMetadataItem,
+                      objectMetadataItems,
+                      objectPermissionsByObjectMetadataId,
+                    }),
+                    variables: {
+                      filter: {
+                        id: {
+                          in: satisfiesRelationFilterSchema
+                            ? (
+                                filterValueFromURL as {
+                                  selectedRecordIds: string[];
+                                }
+                              )?.selectedRecordIds
+                            : filterValueFromURL,
+                        },
                       },
                     },
-                  },
-                });
+                  });
 
-                const relationRecordNamesFromQuery = queryResult.data?.[
-                  relationObjectMetadataNamePlural
-                ]?.edges.map(
-                  ({ node: record }) =>
-                    getObjectRecordIdentifier({
-                      objectMetadataItem: relationObjectMetadataItem,
-                      record,
-                    }).name,
-                );
+                  const relationRecordNamesFromQuery = queryResult.data?.[
+                    relationObjectMetadataNamePlural
+                  ]?.edges.map(
+                    ({ node: record }) =>
+                      getObjectRecordIdentifier({
+                        objectMetadataItem: relationObjectMetadataItem,
+                        record,
+                      }).name,
+                  );
 
-                relationRecordNames.push(...relationRecordNamesFromQuery);
+                  relationRecordNames.push(...relationRecordNamesFromQuery);
+                } catch (error) {
+                  logError(
+                    `useFiltersFromQueryParams: Failed to fetch relation records for filter - ${error}`,
+                  );
+                }
               }
 
               const filterValueAsString =
@@ -177,21 +197,19 @@ export const useFiltersFromQueryParams = () => {
         }
 
         return (await Promise.all(promises)).filter(isDefined);
-      },
+      };
+
+      return fetchFiltersFromQueryParams;
+    },
     [
       apolloCoreClient,
       filterQueryParams,
       hasFiltersQueryParams,
       objectMetadataItem.fields,
-      objectMetadataItems,
-      objectPermissionsByObjectMetadataId,
     ],
   );
 
   return {
-    viewIdQueryParam,
-    hasFiltersQueryParams,
     getFiltersFromQueryParams,
-    objectMetadataItem,
   };
 };

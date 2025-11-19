@@ -9,7 +9,7 @@ import { AdvancedFilterDropdownButton } from '@/views/components/AdvancedFilterD
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarDetailsAddFilterButton } from '@/views/components/ViewBarDetailsAddFilterButton';
-import { useFiltersFromQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
+import { useHasFiltersInQueryParams } from '@/views/hooks/internal/useHasFiltersInQueryParams';
 
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -109,7 +109,7 @@ export const ViewBarDetails = ({
     isViewBarExpandedComponentState,
   );
 
-  const { hasFiltersQueryParams } = useFiltersFromQueryParams();
+  const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
 
   const currentRecordFilterGroups = useRecoilComponentValue(
     currentRecordFilterGroupsComponentState,

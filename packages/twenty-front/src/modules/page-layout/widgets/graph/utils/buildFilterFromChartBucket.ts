@@ -1,15 +1,12 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { buildDateFilterForDayGranularity } from '@/page-layout/widgets/graph/utils/buildDateFilterForDayGranularity';
+import { buildDateRangeFiltersForGranularity } from '@/page-layout/widgets/graph/utils/buildDateRangeFiltersForGranularity';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   ObjectRecordGroupByDateGranularity,
   ViewFilterOperand,
 } from 'twenty-shared/types';
-import {
-  getEndUnitOfDateTime,
-  getPlainDateFromDate,
-  getStartUnitOfDateTime,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type ChartFilter = {
@@ -89,7 +86,11 @@ export const buildFilterFromChartBucket = ({
     ];
   }
 
-  const date = new Date(String(bucketRawValue));
+  const parsedBucketDate = new Date(String(bucketRawValue));
+
+  if (isNaN(parsedBucketDate.getTime())) {
+    return [];
+  }
 
   if (
     dateGranularity === ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK ||
@@ -104,82 +105,20 @@ export const buildFilterFromChartBucket = ({
     dateGranularity === ObjectRecordGroupByDateGranularity.DAY ||
     dateGranularity === ObjectRecordGroupByDateGranularity.NONE
   ) {
-    if (fieldMetadataItem.type === FieldMetadataType.DATE) {
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.IS,
-          value: getPlainDateFromDate(date),
-        },
-      ];
-    }
-
-    if (fieldMetadataItem.type === FieldMetadataType.DATE_TIME) {
-      const startOfDayDate = getStartUnitOfDateTime(date, 'DAY');
-      const endOfDayDate = getEndUnitOfDateTime(date, 'DAY');
-
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.IS_AFTER,
-          value: startOfDayDate.toISOString(),
-        },
-        {
-          fieldName,
-          operand: ViewFilterOperand.IS_BEFORE,
-          value: endOfDayDate.toISOString(),
-        },
-      ];
-    }
+    return buildDateFilterForDayGranularity(
+      parsedBucketDate,
+      fieldMetadataItem.type,
+      fieldName,
+    );
   }
 
   if (isTimeRangeDateGranularity(dateGranularity)) {
-    let start: Date;
-    let end: Date;
-
-    if (dateGranularity === ObjectRecordGroupByDateGranularity.MONTH) {
-      start = getStartUnitOfDateTime(date, 'MONTH');
-      end = getEndUnitOfDateTime(date, 'MONTH');
-    } else if (dateGranularity === ObjectRecordGroupByDateGranularity.QUARTER) {
-      const quarterStartMonth = Math.floor(date.getMonth() / 3) * 3;
-      start = new Date(date.getFullYear(), quarterStartMonth, 1);
-      const quarterEndMonth = quarterStartMonth + 2;
-      end = getEndUnitOfDateTime(
-        new Date(date.getFullYear(), quarterEndMonth, 1),
-        'MONTH',
-      );
-    } else {
-      start = getStartUnitOfDateTime(date, 'YEAR');
-      end = getEndUnitOfDateTime(date, 'YEAR');
-    }
-
-    if (fieldMetadataItem.type === FieldMetadataType.DATE_TIME) {
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.IS_AFTER,
-          value: start.toISOString(),
-        },
-        {
-          fieldName,
-          operand: ViewFilterOperand.IS_BEFORE,
-          value: end.toISOString(),
-        },
-      ];
-    }
-
-    return [
-      {
-        fieldName,
-        operand: ViewFilterOperand.IS_AFTER,
-        value: getPlainDateFromDate(start),
-      },
-      {
-        fieldName,
-        operand: ViewFilterOperand.IS_BEFORE,
-        value: getPlainDateFromDate(end),
-      },
-    ];
+    return buildDateRangeFiltersForGranularity(
+      parsedBucketDate,
+      dateGranularity,
+      fieldMetadataItem.type,
+      fieldName,
+    );
   }
 
   return [];

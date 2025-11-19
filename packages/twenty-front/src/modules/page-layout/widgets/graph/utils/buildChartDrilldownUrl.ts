@@ -10,7 +10,7 @@ export const buildChartDrilldownUrl = ({
   configuration,
   clickedData,
 }: BuildChartDrilldownUrlParams): string => {
-  const params = new URLSearchParams();
+  const drilldownQueryParams = new URLSearchParams();
 
   const primaryField = objectMetadataItem.fields.find(
     (field) => field.id === configuration.primaryAxisGroupByFieldMetadataId,
@@ -25,7 +25,7 @@ export const buildChartDrilldownUrl = ({
     });
 
     primaryFilters.forEach((filter) => {
-      params.append(
+      drilldownQueryParams.append(
         `filter[${filter.fieldName}][${filter.operand}]`,
         filter.value,
       );
@@ -51,7 +51,7 @@ export const buildChartDrilldownUrl = ({
       });
 
       secondaryFilters.forEach((filter) => {
-        params.append(
+        drilldownQueryParams.append(
           `filter[${filter.fieldName}][${filter.operand}]`,
           filter.value,
         );
@@ -65,7 +65,7 @@ export const buildChartDrilldownUrl = ({
   });
 
   sorts.forEach((sort) => {
-    params.append(`sort[${sort.fieldName}]`, sort.direction);
+    drilldownQueryParams.append(`sort[${sort.fieldName}]`, sort.direction);
   });
 
   const groups = buildGroupsFromChartConfig({
@@ -74,10 +74,10 @@ export const buildChartDrilldownUrl = ({
   });
 
   groups.forEach((group) => {
-    params.append(`group[${group.fieldName}]`, group.fieldValue);
+    drilldownQueryParams.append(`group[${group.fieldName}]`, group.fieldValue);
   });
 
-  const finalUrl = `/objects/${objectMetadataItem.namePlural}?${params.toString()}`;
+  const drilldownUrl = `/objects/${objectMetadataItem.namePlural}?${drilldownQueryParams.toString()}`;
 
-  return finalUrl;
+  return drilldownUrl;
 };

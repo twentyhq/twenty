@@ -18,6 +18,9 @@ type UseGraphLineChartWidgetDataResult = {
   hasTooManyGroups: boolean;
   loading: boolean;
   error?: Error;
+  objectMetadataItem: ReturnType<
+    typeof useObjectMetadataItemById
+  >['objectMetadataItem'];
 };
 
 export const useGraphLineChartWidgetData = ({
@@ -53,5 +56,6 @@ export const useGraphLineChartWidgetData = ({
     ...transformedData,
     loading,
     error,
+    objectMetadataItem,
   };
 };
