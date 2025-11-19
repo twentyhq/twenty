@@ -112,3 +112,4 @@ describe('transformTwoDimensionalGroupByToBarChartData', () => {
     });
   });
 });
+

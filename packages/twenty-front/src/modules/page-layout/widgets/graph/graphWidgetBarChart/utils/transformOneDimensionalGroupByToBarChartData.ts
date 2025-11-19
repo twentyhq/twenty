@@ -98,3 +98,4 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     hasTooManyGroups: rawResults.length > BAR_CHART_MAXIMUM_NUMBER_OF_BARS,
   };
 };
+
