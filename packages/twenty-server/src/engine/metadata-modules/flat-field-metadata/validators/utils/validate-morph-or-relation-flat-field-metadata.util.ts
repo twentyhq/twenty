@@ -61,6 +61,8 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
       message: 'Relation target object metadata not found',
       userFriendlyMessage: msg`Object targeted by the relation not found`,
     });
+
+    return errors;
   }
 
   if (!isDefined(targetFlatFieldMetadata)) {
@@ -71,44 +73,23 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
         : 'Relation field target metadata not found',
       userFriendlyMessage: msg`Relation field target metadata not found`,
     });
-
-    return errors;
-  }
-
-  if (!isMorphOrRelationFlatFieldMetadata(targetFlatFieldMetadata)) {
+  } else if (!isMorphOrRelationFlatFieldMetadata(targetFlatFieldMetadata)) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       message:
         'A relation field can only target a MORPH_RELATION or another RELATION field',
       userFriendlyMessage: msg`Invalid relation field target`,
     });
-
-    return errors;
   }
 
   if (
-    targetFlatFieldMetadata.settings.relationType !== RelationType.MANY_TO_ONE
+    flatFieldMetadataToValidate.settings.relationType !==
+    RelationType.MANY_TO_ONE
   ) {
     return errors;
   }
 
-  const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: flatFieldMetadataToValidate.objectMetadataId,
-    flatEntityMaps: flatObjectMetadataMaps,
-  });
-
-  // Note: Should never occur typecheck
-  if (!isDefined(flatObjectMetadata)) {
-    errors.push({
-      code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-      message: 'Field metadata object metadata not found',
-      userFriendlyMessage: msg`Field parent object not found`,
-    });
-
-    return errors;
-  }
-
-  if (!isDefined(targetFlatFieldMetadata.settings.joinColumnName)) {
+  if (!isDefined(flatFieldMetadataToValidate.settings.joinColumnName)) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       message:
@@ -121,9 +102,9 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
 
   errors.push(
     ...validateFlatFieldMetadataNameAvailability({
-      name: targetFlatFieldMetadata.settings.joinColumnName,
+      name: flatFieldMetadataToValidate.settings.joinColumnName,
       flatFieldMetadataMaps,
-      flatObjectMetadata,
+      flatObjectMetadata: targetFlatObjectMetadata,
     }),
   );
 
