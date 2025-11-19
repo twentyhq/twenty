@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { ObjectSortDropdownButton } from '@/object-record/object-sort-dropdown/components/ObjectSortDropdownButton';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { TopBar } from '@/ui/layout/top-bar/components/TopBar';
+import { QueryParamsCleanupEffect } from '@/views/components/QueryParamsCleanupEffect';
 import { QueryParamsFiltersEffect } from '@/views/components/QueryParamsFiltersEffect';
 import { QueryParamsSortsEffect } from '@/views/components/QueryParamsSortsEffect';
 import { ViewBarPageTitle } from '@/views/components/ViewBarPageTitle';
@@ -52,6 +53,7 @@ export const ViewBar = ({
       <ViewBarRecordSortEffect />
       <QueryParamsFiltersEffect />
       <QueryParamsSortsEffect />
+      <QueryParamsCleanupEffect />
       <ViewBarPageTitle />
       <TopBar
         className={className}

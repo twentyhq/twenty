@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
 
 import { useFiltersFromQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
 import { useHasFiltersInQueryParams } from '@/views/hooks/internal/useHasFiltersInQueryParams';
@@ -17,60 +16,20 @@ export const QueryParamsFiltersEffect = () => {
   const { applyViewFiltersToCurrentRecordFilters } =
     useApplyViewFiltersToCurrentRecordFilters();
 
-  const [, setSearchParams] = useSearchParams();
-
   const currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem =
     currentView?.objectMetadataId !== objectMetadataItem.id;
 
   useEffect(() => {
-    console.log('[QueryParamsFiltersEffect] Effect triggered', {
-      hasFiltersQueryParams,
-      currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem,
-    });
-
     if (
       !hasFiltersQueryParams ||
       currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem
     ) {
-      console.log('[QueryParamsFiltersEffect] Early return');
       return;
     }
 
-    console.log('[QueryParamsFiltersEffect] Getting filters from params');
     getFiltersFromQueryParams().then((filtersFromParams) => {
-      console.log(
-        '[QueryParamsFiltersEffect] Filters from params:',
-        JSON.stringify(filtersFromParams),
-      );
-
       if (Array.isArray(filtersFromParams)) {
-        console.log('[QueryParamsFiltersEffect] Applying filters to state');
         applyViewFiltersToCurrentRecordFilters(filtersFromParams);
-
-        console.log('[QueryParamsFiltersEffect] Clearing filter params from URL');
-        setSearchParams(
-          (currentParams) => {
-            console.log(
-              '[QueryParamsFiltersEffect] Current params before clear:',
-              currentParams.toString(),
-            );
-            const newParams = new URLSearchParams(currentParams);
-
-            // Delete all keys starting with 'filter['
-            Array.from(newParams.keys()).forEach((key) => {
-              if (key.startsWith('filter[')) {
-                newParams.delete(key);
-              }
-            });
-
-            console.log(
-              '[QueryParamsFiltersEffect] New params after clear:',
-              newParams.toString(),
-            );
-            return newParams;
-          },
-          { replace: true },
-        );
       }
     });
   }, [
@@ -78,7 +37,6 @@ export const QueryParamsFiltersEffect = () => {
     applyViewFiltersToCurrentRecordFilters,
     getFiltersFromQueryParams,
     hasFiltersQueryParams,
-    setSearchParams,
   ]);
 
   return <></>;
