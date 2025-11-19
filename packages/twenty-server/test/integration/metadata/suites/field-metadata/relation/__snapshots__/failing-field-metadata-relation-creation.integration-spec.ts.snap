@@ -483,12 +483,6 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
               "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
               "value": "fieldNameBisId",
             },
-            {
-              "code": "NOT_AVAILABLE",
-              "message": "Name "fieldNameBisId" is not available as it is already used by another field",
-              "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
-              "value": "fieldNameBisId",
-            },
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
@@ -636,12 +630,6 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
                 "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
                 "value": "fieldNameBisId",
               },
-              {
-                "code": "NOT_AVAILABLE",
-                "message": "Name "fieldNameBisId" is not available as it is already used by another field",
-                "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
-                "value": "fieldNameBisId",
-              },
             ],
             "flatEntityMinimalInformation": {
               "id": Any<String>,
@@ -711,12 +699,6 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "NOT_AVAILABLE",
-                "message": "Name "fieldName" is not available as it is already used by another field",
-                "userFriendlyMessage": "Name "fieldName" is not available as it is already used by another field",
-                "value": "fieldName",
-              },
               {
                 "code": "NOT_AVAILABLE",
                 "message": "Name "fieldName" is not available as it is already used by another field",
@@ -1417,12 +1399,6 @@ exports[`Field metadata relation creation should fail should fail when creating 
               "userFriendlyMessage": "Name "manager" is not available as it is already used by another field",
               "value": "manager",
             },
-            {
-              "code": "NOT_AVAILABLE",
-              "message": "Name "manager" is not available as it is already used by another field",
-              "userFriendlyMessage": "Name "manager" is not available as it is already used by another field",
-              "value": "manager",
-            },
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
@@ -1490,12 +1466,6 @@ exports[`Field metadata relation creation should fail should fail when creating 
       "fieldMetadata": [
         {
           "errors": [
-            {
-              "code": "NOT_AVAILABLE",
-              "message": "Name "fieldName" is not available as it is already used by another field",
-              "userFriendlyMessage": "Name "fieldName" is not available as it is already used by another field",
-              "value": "fieldName",
-            },
             {
               "code": "NOT_AVAILABLE",
               "message": "Name "fieldName" is not available as it is already used by another field",

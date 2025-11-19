@@ -91,19 +91,34 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
             'Many to one field metadata should carry the join column name in its settings',
           userFriendlyMessage: msg`A many to one relation field should always declare a join column`,
         });
-      } else {
-        errors.push(
-          ...validateFlatFieldMetadataNameAvailability({
-            remainingFlatEntityMapsToValidate,
-            flatFieldMetadata: {
-              ...flatFieldMetadataToValidate,
-              name: flatFieldMetadataToValidate.settings.joinColumnName,
-            },
-            flatFieldMetadataMaps,
-            flatObjectMetadata: targetFlatObjectMetadata,
-          }),
-        );
+        return errors;
       }
+
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: flatFieldMetadataToValidate.objectMetadataId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
+
+      if (!isDefined(flatObjectMetadata)) {
+        errors.push({
+          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          message: 'Could not find relation field parent flat object',
+          userFriendlyMessage: msg`Could not find relation field parent flat object`,
+        });
+        return errors;
+      }
+
+      errors.push(
+        ...validateFlatFieldMetadataNameAvailability({
+          remainingFlatEntityMapsToValidate,
+          flatFieldMetadata: {
+            ...flatFieldMetadataToValidate,
+            name: flatFieldMetadataToValidate.settings.joinColumnName,
+          },
+          flatFieldMetadataMaps,
+          flatObjectMetadata,
+        }),
+      );
       break;
     }
     case RelationType.ONE_TO_MANY: {

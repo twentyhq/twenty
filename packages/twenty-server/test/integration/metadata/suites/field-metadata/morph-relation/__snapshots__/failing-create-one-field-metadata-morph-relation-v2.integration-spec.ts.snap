@@ -16,12 +16,6 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
               "userFriendlyMessage": "Name "toto" is not available as it is already used by another field",
               "value": "toto",
             },
-            {
-              "code": "NOT_AVAILABLE",
-              "message": "Name "toto" is not available as it is already used by another field join column name",
-              "userFriendlyMessage": "Name "toto" is not available as it is already used by another field",
-              "value": "toto",
-            },
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
@@ -36,12 +30,6 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
             {
               "code": "NOT_AVAILABLE",
               "message": "Name "tata" is not available as it is already used by another field",
-              "userFriendlyMessage": "Name "tata" is not available as it is already used by another field",
-              "value": "tata",
-            },
-            {
-              "code": "NOT_AVAILABLE",
-              "message": "Name "tata" is not available as it is already used by another field join column name",
               "userFriendlyMessage": "Name "tata" is not available as it is already used by another field",
               "value": "tata",
             },
@@ -129,8 +117,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
           "errors": [
             {
               "code": "NOT_AVAILABLE",
-              "message": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by another field join column name",
-              "userFriendlyMessage": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by another field",
+              "message": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by another join column name",
+              "userFriendlyMessage": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by join column name",
               "value": "fieldNamePersonForMorphRelationSecondId",
             },
           ],
