@@ -74,6 +74,7 @@ export const transformOneDimensionalGroupByToLineChartData = ({
       return {
         x: xValue,
         y: aggregateValue,
+        __bucketRawValue: dimensionValues?.[0],
       };
     })
     .filter((point) => isDefined(point));

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
+import { useFiltersFromQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
 import { useApplyViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyViewFiltersToCurrentRecordFilters';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 
@@ -9,7 +9,7 @@ export const QueryParamsFiltersEffect = () => {
     hasFiltersQueryParams,
     getFiltersFromQueryParams,
     objectMetadataItem,
-  } = useViewFromQueryParams();
+  } = useFiltersFromQueryParams();
 
   const { currentView } = useGetCurrentViewOnly();
 

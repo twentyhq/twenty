@@ -1,5 +1,9 @@
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
+import { type BarChartConfiguration } from '~/generated/graphql';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
+import { handleBarItemClick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/handleBarItemClick';
+import { useNavigate } from 'react-router-dom';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
 import { GraphBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphBarChartTooltip';
@@ -54,6 +58,8 @@ type GraphWidgetBarChartProps = {
   rangeMin?: number;
   rangeMax?: number;
   omitNullValues?: boolean;
+  objectMetadataItem?: ObjectMetadataItem;
+  configuration?: BarChartConfiguration;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -87,9 +93,12 @@ export const GraphWidgetBarChart = ({
   prefix,
   suffix,
   customFormatter,
+  objectMetadataItem,
+  configuration,
 }: GraphWidgetBarChartProps) => {
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
+  const navigate = useNavigate();
 
   // Chart dimensions
   const [chartWidth, setChartWidth] = useState<number>(0);
@@ -147,6 +156,26 @@ export const GraphWidgetBarChart = ({
   const handleBarLeave = useCallback(() => {
     debouncedHideTooltip();
   }, [debouncedHideTooltip]);
+
+  const handleBarClick = useCallback(
+    (
+      datum: ComputedDatum<BarChartDataItem> & { color: string },
+      _event: MouseEvent<SVGRectElement>,
+    ) => {
+      if (!isDefined(objectMetadataItem) || !isDefined(configuration)) {
+        return;
+      }
+
+      handleBarItemClick(
+        datum,
+        series,
+        objectMetadataItem,
+        configuration,
+        navigate,
+      );
+    },
+    [series, objectMetadataItem, configuration, navigate],
+  );
 
   const areThereTooManyKeys = keys.length > CHART_LEGEND_ITEM_THRESHOLD;
 
@@ -280,6 +309,7 @@ export const GraphWidgetBarChart = ({
           tooltip={() => null}
           onMouseEnter={handleBarEnter}
           onMouseLeave={handleBarLeave}
+          onClick={handleBarClick}
           theme={chartTheme}
           borderRadius={parseInt(theme.border.radius.sm)}
         />

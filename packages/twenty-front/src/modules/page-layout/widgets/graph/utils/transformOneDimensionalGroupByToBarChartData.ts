@@ -79,7 +79,8 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     return {
       [indexByKey]: xValue,
       [aggregateValueKey]: aggregateValue,
-    };
+      __bucketRawValue: dimensionValues[0],
+    } as BarChartDataItem;
   });
 
   const series: BarChartSeries[] = [

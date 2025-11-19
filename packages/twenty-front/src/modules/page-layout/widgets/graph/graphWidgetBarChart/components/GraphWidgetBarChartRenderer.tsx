@@ -34,6 +34,7 @@ export const GraphWidgetBarChartRenderer = ({
     layout,
     loading,
     hasTooManyGroups,
+    objectMetadataItem,
   } = useGraphBarChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration as BarChartConfiguration,
@@ -81,6 +82,8 @@ export const GraphWidgetBarChartRenderer = ({
           rangeMin={configuration.rangeMin ?? undefined}
           rangeMax={configuration.rangeMax ?? undefined}
           omitNullValues={configuration.omitNullValues ?? false}
+          objectMetadataItem={objectMetadataItem}
+          configuration={configuration}
         />
       </Suspense>
     </>

@@ -42,6 +42,8 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
   const seriesMap = new Map<string, Map<string, number>>();
   const allXValues: string[] = [];
   const xValueSet = new Set<string>();
+  const xValueToRawMap = new Map<string, unknown>();
+  const seriesKeyToRawValueMap = new Map<string, unknown>();
   let hasTooManyGroups = false;
 
   rawResults.forEach((result) => {
@@ -69,10 +71,13 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
     if (isNewX) {
       xValueSet.add(xValue);
       allXValues.push(xValue);
+      xValueToRawMap.set(xValue, dimensionValues[0]);
     }
 
+    const seriesRawValue = dimensionValues[1];
+
     const seriesKey = formatDimensionValue({
-      value: dimensionValues[1],
+      value: seriesRawValue,
       fieldMetadata: groupByFieldY,
       dateGranularity:
         configuration.secondaryAxisGroupByDateGranularity ?? undefined,
@@ -92,6 +97,7 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
 
     if (!seriesMap.has(seriesKey)) {
       seriesMap.set(seriesKey, new Map());
+      seriesKeyToRawValueMap.set(seriesKey, seriesRawValue);
     }
 
     seriesMap.get(seriesKey)!.set(xValue, aggregateValue);
@@ -102,6 +108,7 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
       const unsortedData: LineChartDataPoint[] = allXValues.map((xValue) => ({
         x: xValue,
         y: xToYMap.get(xValue) ?? 0,
+        __bucketRawValue: xValueToRawMap.get(xValue),
       }));
 
       const data = sortLineChartDataPoints({
@@ -114,6 +121,7 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
         label: seriesKey,
         color: configuration.color as GraphColor,
         data,
+        rawValue: seriesKeyToRawValueMap.get(seriesKey),
       };
     },
   );

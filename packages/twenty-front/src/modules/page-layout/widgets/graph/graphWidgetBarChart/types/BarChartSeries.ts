@@ -4,4 +4,5 @@ export type BarChartSeries = {
   key: string;
   label?: string;
   color?: GraphColor;
+  rawValue?: unknown;
 };

@@ -54,6 +54,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
   const dataMap = new Map<string, BarChartDataItem>();
   const xValues = new Set<string>();
   const yValues = new Set<string>();
+  const yFormattedToRawMap = new Map<string, unknown>();
 
   let hasTooManyGroups = false;
 
@@ -74,6 +75,9 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
         configuration.secondaryAxisGroupByDateGranularity ?? undefined,
       subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
     });
+
+    // Store mapping from formatted label to raw value for secondary dimension
+    yFormattedToRawMap.set(yValue, dimensionValues[1]);
 
     // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)
     const isNewX = !xValues.has(xValue);
@@ -117,7 +121,8 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     if (!dataMap.has(xValue)) {
       dataMap.set(xValue, {
         [indexByKey]: xValue,
-      });
+        __bucketRawValue: dimensionValues[0],
+      } as BarChartDataItem);
     }
 
     const dataItem = dataMap.get(xValue)!;
@@ -134,6 +139,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     key,
     label: key,
     color: configuration.color as GraphColor,
+    rawValue: yFormattedToRawMap.get(key),
   }));
 
   const unsortedData = Array.from(dataMap.values());
