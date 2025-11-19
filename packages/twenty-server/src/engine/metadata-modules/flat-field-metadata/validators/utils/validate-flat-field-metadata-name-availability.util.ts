@@ -41,13 +41,11 @@ const getReservedCompositeFieldNames = (
 export const validateFlatFieldMetadataNameAvailability = ({
   flatFieldMetadata,
   flatFieldMetadataMaps,
-  remainingFlatEntityMapsToValidate,
   flatObjectMetadata,
 }: {
   flatFieldMetadata: Pick<FlatFieldMetadata, 'name' | 'type'>;
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  remainingFlatEntityMapsToValidate?: FlatEntityMaps<FlatFieldMetadata>;
 }): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
   const objectFlatFieldMetadatas =
@@ -60,6 +58,7 @@ export const validateFlatFieldMetadataNameAvailability = ({
   );
 
   const flatFieldMetadataName = flatFieldMetadata.name;
+
   if (reservedCompositeFieldsNames.includes(flatFieldMetadataName)) {
     errors.push({
       code: FieldMetadataExceptionCode.RESERVED_KEYWORD,
@@ -77,7 +76,6 @@ export const validateFlatFieldMetadataNameAvailability = ({
     getObjectFieldNamesAndJoinColumnNames({
       flatFieldMetadataMaps,
       flatObjectMetadata,
-      remainingFlatEntityMapsToValidate,
     });
 
   if (

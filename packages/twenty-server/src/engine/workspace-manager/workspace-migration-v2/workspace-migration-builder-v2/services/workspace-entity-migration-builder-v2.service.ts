@@ -117,17 +117,17 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         );
       }
 
+      deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow({
+        entityToDeleteId: flatEntityToCreateId,
+        flatEntityMapsToMutate: remainingFlatEntityMapsToCreate,
+      });
+
       const validationResult = await this.validateFlatEntityCreation({
         flatEntityToValidate: flatEntityToCreate,
         workspaceId,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
         remainingFlatEntityMapsToValidate: remainingFlatEntityMapsToCreate,
         buildOptions,
-      });
-
-      deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow({
-        entityToDeleteId: flatEntityToCreateId,
-        flatEntityMapsToMutate: remainingFlatEntityMapsToCreate,
       });
 
       if (validationResult.status === 'fail') {
@@ -180,17 +180,17 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         );
       }
 
+      deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow({
+        entityToDeleteId: flatEntityToDeleteId,
+        flatEntityMapsToMutate: remainingFlatEntityMapsToDelete,
+      });
+
       const validationResult = await this.validateFlatEntityDeletion({
         flatEntityToValidate: flatEntityToDelete,
         workspaceId,
         remainingFlatEntityMapsToValidate: remainingFlatEntityMapsToDelete,
         buildOptions,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-      });
-
-      deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow({
-        entityToDeleteId: flatEntityToDeleteId,
-        flatEntityMapsToMutate: remainingFlatEntityMapsToDelete,
       });
 
       if (validationResult.status === 'fail') {

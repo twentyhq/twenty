@@ -17,7 +17,6 @@ export const getObjectFieldNamesAndJoinColumnNames = ({
 }: {
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  remainingFlatEntityMapsToValidate?: FlatEntityMaps<FlatFieldMetadata>;
 }): {
   objectFieldNamesAndJoinColumnNames: ObjectFieldNamesAndJoinColumnNames;
 } => {

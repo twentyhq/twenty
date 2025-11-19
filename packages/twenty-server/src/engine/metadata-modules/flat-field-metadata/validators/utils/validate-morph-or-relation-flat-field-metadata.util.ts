@@ -91,6 +91,7 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
             'Many to one field metadata should carry the join column name in its settings',
           userFriendlyMessage: msg`A many to one relation field should always declare a join column`,
         });
+
         return errors;
       }
 
@@ -105,12 +106,12 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
           message: 'Could not find relation field parent flat object',
           userFriendlyMessage: msg`Could not find relation field parent flat object`,
         });
+
         return errors;
       }
 
       errors.push(
         ...validateFlatFieldMetadataNameAvailability({
-          remainingFlatEntityMapsToValidate,
           flatFieldMetadata: {
             name: flatFieldMetadataToValidate.settings.joinColumnName,
             type: flatFieldMetadataToValidate.type,

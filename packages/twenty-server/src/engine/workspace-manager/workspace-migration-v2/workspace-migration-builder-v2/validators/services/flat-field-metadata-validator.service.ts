@@ -321,7 +321,6 @@ export class FlatFieldMetadataValidatorService {
             type: flatFieldMetadataToValidate.type,
           },
           flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
-          remainingFlatEntityMapsToValidate,
           flatObjectMetadata: parentFlatObjectMetadata,
         }),
       );
