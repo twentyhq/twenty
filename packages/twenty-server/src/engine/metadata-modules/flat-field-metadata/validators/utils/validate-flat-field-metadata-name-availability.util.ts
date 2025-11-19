@@ -67,6 +67,7 @@ export const validateFlatFieldMetadataNameAvailability = ({
     });
 
   const flatFieldMetadataName = flatFieldMetadata.name;
+
   if (flatFieldMetadata.type !== FieldMetadataType.MORPH_RELATION) {
     if (
       objectFieldNamesAndJoinColumnNames.names.includes(flatFieldMetadataName)

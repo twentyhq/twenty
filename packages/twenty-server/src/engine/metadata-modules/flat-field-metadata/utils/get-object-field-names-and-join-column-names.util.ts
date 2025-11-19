@@ -1,4 +1,3 @@
-
 import { RelationType } from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -54,7 +53,6 @@ export const getObjectFieldNamesAndJoinColumnNames = ({
           flatEntityId: flatFieldMetadata.relationTargetFieldMetadataId,
           flatEntityMaps: flatFieldMetadataMaps,
         });
-
 
       return {
         ...acc,
