@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { RelationType } from 'twenty-shared/types';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
@@ -8,7 +9,6 @@ import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-mo
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
-import { RelationType } from 'twenty-shared/types';
 
 export const validateMorphOrRelationFlatFieldMetadata = async ({
   flatEntityToValidate: flatFieldMetadataToValidate,
