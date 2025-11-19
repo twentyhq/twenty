@@ -1,5 +1,3 @@
-import console from 'console';
-
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 
 import { performQuery } from './utils';
@@ -13,8 +11,8 @@ async function dropSchemasSequentially() {
       (await performQuery<{ schema_name: string }[]>(
         `
       SELECT n.nspname AS "schema_name"
-      FROM pg_catalog.pg_namespace n 
-      WHERE n.nspname !~ '^pg_' 
+      FROM pg_catalog.pg_namespace n
+      WHERE n.nspname !~ '^pg_'
         AND n.nspname <> 'information_schema'
         AND n.nspname NOT IN ('metric_helpers', 'user_management', 'public')
     `,
@@ -35,9 +33,10 @@ async function dropSchemasSequentially() {
         ),
       );
     }
-
+    // eslint-disable-next-line no-console
     console.log('All schemas dropped successfully.');
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.error('Error during schema dropping:', err);
   }
 }
