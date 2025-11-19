@@ -2,11 +2,16 @@ import { CommandMenuPageLayoutInfo } from '@/command-menu/components/CommandMenu
 import { CommandMenuRecordInfo } from '@/command-menu/components/CommandMenuRecordInfo';
 import { CommandMenuWorkflowStepInfo } from '@/command-menu/components/CommandMenuWorkflowStepInfo';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  CommandMenuContextChip,
-  type CommandMenuContextChipProps,
-} from './CommandMenuContextChip';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { type CommandMenuContextChipProps } from './CommandMenuContextChip';
+
+const StyledPageTitle = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+`;
 
 type CommandMenuPageInfoProps = {
   pageChip: CommandMenuContextChipProps | undefined;
@@ -56,11 +61,8 @@ export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
   }
 
   return (
-    <CommandMenuContextChip
-      Icons={pageChip.Icons}
-      maxWidth="180px"
-      onClick={pageChip.onClick}
-      text={pageChip.text}
-    />
+    <StyledPageTitle>
+      <OverflowingTextWithTooltip text={pageChip.text ?? ''} />
+    </StyledPageTitle>
   );
 };
