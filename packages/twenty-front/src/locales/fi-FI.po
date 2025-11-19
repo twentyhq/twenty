@@ -520,7 +520,6 @@ msgstr "Aktivoi työnkulku"
 
 #. js-lingui-id: F6pfE9
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -725,7 +724,7 @@ msgstr "Lisää näkymä"
 #. js-lingui-id: 8sZiWP
 #: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
 msgid "Add widget"
-msgstr ""
+msgstr "Lisää pienoisohjelma"
 
 #. js-lingui-id: iRpDWj
 #: src/modules/page-layout/widgets/widget-card/components/WidgetCardHeader.tsx
@@ -788,7 +787,7 @@ msgstr "Edistynyt"
 #. js-lingui-id: +uqBul
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectIndexes.tsx
 msgid "Advanced feature to improve the performance of queries and to enforce unicity constraints."
-msgstr ""
+msgstr "Edistynyt ominaisuus tiedusteluiden suorituskyvyn parantamiseksi ja ainutlaatuisuusrajoitusten toimeenpanemiseksi."
 
 #. js-lingui-id: tMFFwF
 #: src/modules/views/components/ViewBarFilterDropdownAdvancedFilterButton.tsx
@@ -970,7 +969,7 @@ msgstr "Salli tietojen vienti CSV-tiedostoihin"
 #. js-lingui-id: q/pgyN
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Allow Google-based login for users with SSO bypass permissions."
-msgstr ""
+msgstr "Salli Google-pohjaisen kirjautumisen käyttäjille, joilla on SSO ohitus oikeudet."
 
 #. js-lingui-id: gCnKdT
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
@@ -990,7 +989,7 @@ msgstr "Salli kirjautumiset Microsoftin yksittäisen kirjautumisen toiminnolla."
 #. js-lingui-id: pf6MGm
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
-msgstr ""
+msgstr "Salli Microsoft-pohjaisen kirjautumisen käyttäjille, joilla on SSO ohitus oikeudet."
 
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ToggleImpersonate.tsx
@@ -1005,7 +1004,7 @@ msgstr "Salli uusien käyttäjien kutsuminen jakamalla kutsulinkki."
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Allow uploading files and attachments"
-msgstr ""
+msgstr "Salli tiedostojen ja liitteiden lataaminen"
 
 #. js-lingui-id: vHeVg5
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -2309,7 +2308,7 @@ msgstr "Kopioi tämä avain, sillä se ei ole enää nähtävissä"
 #. js-lingui-id: 4Tb3Ry
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Copy view link"
-msgstr ""
+msgstr "Kopioi näkymän linkki"
 
 #. js-lingui-id: SGsgDO
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -2556,6 +2555,11 @@ msgstr "Ajastin"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "cron trigger"
 msgstr "cron-laukaisin"
+
+#. js-lingui-id: zovbHa
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Cron will be triggered at UTC time"
+msgstr ""
 
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -2849,6 +2853,7 @@ msgstr "Poista työnkulku käytöstä"
 
 #. js-lingui-id: yAT3be
 #: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "Deactivated"
 msgstr "Poistettu käytöstä"
@@ -3294,7 +3299,7 @@ msgstr "Lataa tiedosto"
 #. js-lingui-id: IDPv1P
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Download Files"
-msgstr ""
+msgstr "Lataa tiedostoja"
 
 #. js-lingui-id: wrT4hq
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -3944,7 +3949,7 @@ msgstr "joka minuutti"
 #. js-lingui-id: PsQmAw
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Everyone"
-msgstr ""
+msgstr "Jokainen"
 
 #. js-lingui-id: wqF3jl
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -4075,6 +4080,17 @@ msgstr "Vie CSV"
 msgid "Export dashboard"
 msgstr "Vie hallintapaneeli"
 
+#. js-lingui-id: wVUjld
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+msgid "Export member"
+msgstr ""
+
+#. js-lingui-id: D0b3Ip
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+msgid "Export members"
+msgstr ""
+
 #. js-lingui-id: G5DJkP
 #: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 msgid "Export record"
@@ -4113,6 +4129,7 @@ msgid "Export versions"
 msgstr "Vie versiot"
 
 #. js-lingui-id: DaGxE0
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4315,6 +4332,7 @@ msgid "File \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "Tiedosto \"{fileName}\" ylittää {maxUploadSize}"
 
 #. js-lingui-id: o7J4JM
+#: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
@@ -4410,7 +4428,6 @@ msgid "Format e.g. d-MMM-y (qqq''yy)"
 msgstr "Muoto esim. p-kkk-v (qqq''vv)"
 
 #. js-lingui-id: xMJhWJ
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 msgid "Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
 msgstr "Muoto: [Minuutti] [Tunti] [Kuukauden päivä] [Kuukausi] [Viikonpäivä]"
@@ -4497,7 +4514,7 @@ msgstr "Mene Yrityksiin"
 #. js-lingui-id: dvMw7T
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Dashboards"
-msgstr ""
+msgstr "Siirry hallintapaneeleihin"
 
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -4603,7 +4620,7 @@ msgstr "Ryhmittäin"
 #. js-lingui-id: 6JlTu+
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
 msgid "Group sorting"
-msgstr ""
+msgstr "Lajitteluryhmä"
 
 #. js-lingui-id: eKiSkN
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -4688,6 +4705,11 @@ msgstr "Piilota"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Hide deleted"
 msgstr "Piilota poistetut"
+
+#. js-lingui-id: OTmbll
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+msgid "Hide deleted members"
+msgstr ""
 
 #. js-lingui-id: FHhlye
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4815,7 +4837,7 @@ msgstr "iFrame-asetukset"
 #. js-lingui-id: mO+Bte
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 msgid "iFrame Widget"
-msgstr ""
+msgstr "iFrame-pienoisohjelma"
 
 #. js-lingui-id: YdCuhS
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
@@ -4846,6 +4868,11 @@ msgstr "IMAP-portti"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "IMAP Server"
 msgstr "IMAP-palvelin"
+
+#. js-lingui-id: atF3YG
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "IMAP Username (Optional)"
+msgstr ""
 
 #. js-lingui-id: +8jOVa
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -4916,7 +4943,6 @@ msgid "In {dateDiff}"
 msgstr "{dateDiff} kuluttua"
 
 #. js-lingui-id: NoNwIX
-#: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Inactive"
@@ -5009,7 +5035,7 @@ msgstr "Virheellinen API-avain"
 #. js-lingui-id: 9TgH9p
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Invalid auth bypass provider"
-msgstr ""
+msgstr "Virheellinen autentikointipalvelu"
 
 #. js-lingui-id: NtFk/Z
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -5017,7 +5043,7 @@ msgid "Invalid auth provider"
 msgstr "Virheellinen autentikointipalvelu"
 
 #. js-lingui-id: ER/0YT
-#: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
+#: src/modules/workflow/workflow-trigger/utils/getTriggerScheduleDescription.ts
 msgid "Invalid cron expression"
 msgstr "Virheellinen aikaväli"
 
@@ -5262,6 +5288,7 @@ msgid "Jobs"
 msgstr "Työpaikat"
 
 #. js-lingui-id: C5FAaq
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "john.doe"
@@ -5586,10 +5613,20 @@ msgstr "Hallinnoi laskutustietoja"
 msgid "Manage favorite"
 msgstr "Hallitse suosikkia"
 
+#. js-lingui-id: 8XlVuA
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+msgid "Manage in settings"
+msgstr ""
+
 #. js-lingui-id: T6YjCk
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Manage Members"
 msgstr "Hallitse jäseniä"
+
+#. js-lingui-id: 5hEFxA
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+msgid "Manage members in settings"
+msgstr ""
 
 #. js-lingui-id: eGGH1l
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -5609,7 +5646,7 @@ msgstr "Hallinnoi työtilasi jäseniä täällä"
 #. js-lingui-id: /berfj
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Manage Views"
-msgstr ""
+msgstr "Hallitse näkymiä"
 
 #. js-lingui-id: fEqDWx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -6919,7 +6956,7 @@ msgstr "Tuhotaan tietue pysyvästi"
 #: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
 #: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
 msgid "Permanently Destroy Record"
-msgstr ""
+msgstr "Tuhota tiedosto pysyvästi"
 
 #. js-lingui-id: xjWlSJ
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -7223,7 +7260,7 @@ msgstr "Jono: {queueName}"
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Receive an email containing password set link"
-msgstr ""
+msgstr "Vastaanota sähköposti sisältäen salasanan asetusalinkin"
 
 #. js-lingui-id: v3xM25
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -7657,11 +7694,6 @@ msgstr "Tallenna asettelu"
 msgid "Schedule"
 msgstr "Aikataulu"
 
-#. js-lingui-id: Qp0P63
-#: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
-msgid "Schedule runs in UTC timezone."
-msgstr "Aikataulu on UTC-aikavyöhykkeessä."
-
 #. js-lingui-id: QJ8HBJ
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Schema"
@@ -7893,6 +7925,11 @@ msgstr "Näytä {objectLabelPlural}"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See active version"
 msgstr "Näytä aktiivinen versio"
+
+#. js-lingui-id: 8O9AJI
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+msgid "See deleted members"
+msgstr ""
 
 #. js-lingui-id: BxIUpp
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -8686,6 +8723,11 @@ msgstr "Synkronoi objektien nimilaput ja API-nimet"
 msgid "System"
 msgstr "Järjestelmä"
 
+#. js-lingui-id: 0apULK
+#: src/pages/settings/data-model/SettingsObjectTable.tsx
+msgid "System objects"
+msgstr ""
+
 #. js-lingui-id: FHPe8O
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
@@ -9315,10 +9357,10 @@ msgstr "Nimetön rooli"
 msgid "Untitled Workflow"
 msgstr "Nimetön työnkulku"
 
-#. js-lingui-id: b26MvX
+#. js-lingui-id: hmc//6
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
-msgid "Upcoming execution times ({timeZone})"
-msgstr "Seuraavat suoritusajat ({timeZone})"
+msgid "Upcoming execution time ({timeZone})"
+msgstr ""
 
 #. js-lingui-id: Y8zko3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -9622,7 +9664,7 @@ msgstr "Näkyvät ryhmät"
 #. js-lingui-id: i1PB0P
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Visible to you"
-msgstr ""
+msgstr "Näkyvissä vain sinulle"
 
 #. js-lingui-id: 6n7jtr
 #: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx

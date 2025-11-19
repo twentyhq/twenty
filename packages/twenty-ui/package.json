@@ -29,7 +29,7 @@
     "@tabler/icons-react": "^3.31.0",
     "date-fns": "^2.30.0",
     "framer-motion": "^11.18.0",
-    "glob": "^11.0.1",
+    "glob": "^11.1.0",
     "hex-rgb": "^5.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

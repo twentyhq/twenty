@@ -208,6 +208,7 @@ msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "타임라인에 표시할 집계/필터링된 이벤트"
 
 #. js-lingui-id: pdOYzu
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workspace-members-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
@@ -215,9 +216,12 @@ msgstr "타임라인에 표시할 집계/필터링된 이벤트"
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/messages-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/message-threads-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/calendar-events-all.view.ts
 msgid "All {objectLabelPlural}"
 msgstr "전체 {objectLabelPlural}"
 
@@ -302,6 +306,11 @@ msgstr "담당자"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated User Id"
 msgstr "연결된 사용자 ID"
+
+#. js-lingui-id: scLx/y
+#: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
+msgid "At least one folder must be synced."
+msgstr ""
 
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -611,7 +620,6 @@ msgstr "계정을 삭제할 수 없습니다: 귀하는 유일한 관리자입�
 
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "삭제할 수 없습니다. 먼저 레이블 식별자 필드를 업데이트하십시오"
 
@@ -2009,6 +2017,11 @@ msgstr "메시지 폴더"
 msgid "Message folder import policy"
 msgstr "메시지 폴더 가져오기 정책"
 
+#. js-lingui-id: aIgrkW
+#: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
+msgid "Message folder not found"
+msgstr ""
+
 #. js-lingui-id: p4ANpY
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -2162,11 +2175,6 @@ msgstr "이름 \"{flatFieldMetadataName}\"을 사용할 수 없습니다."
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
 msgstr "이름 \"{flatFieldMetadataName}\"은(는) 다른 필드에 이미 사용되었기 때문에 사용할 수 없습니다."
-
-#. js-lingui-id: Q2loDF
-#: src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service.ts
-msgid "Name \"{name}\" is not available."
-msgstr "이름 \"{name}\"을 사용할 수 없습니다."
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2758,17 +2766,6 @@ msgstr "공용 도메인 URL이 정의되지 않았습니다. PUBLIC_DOMAIN_URL 
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Received At"
 msgstr "수신 시간"
-
-#. js-lingui-id: x93onj
-#: src/engine/metadata-modules/view-field/services/view-field.service.ts
-#: src/engine/metadata-modules/view-field/services/view-field.service.ts
-msgid "Record text must be in first position of the view."
-msgstr "레코드 텍스트는 뷰의 첫 번째 위치에 있어야 합니다."
-
-#. js-lingui-id: KGmwY/
-#: src/engine/metadata-modules/view-field/services/view-field.service.ts
-msgid "Record text must stay visible."
-msgstr "레코드 텍스트는 항상 표시되어야 합니다."
 
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -3522,12 +3519,6 @@ msgstr "유형"
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Type (deprecated)"
 msgstr "유형 (사용 중단됨)"
-
-#. js-lingui-id: RBJNRI
-#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
-msgid "Unique field cannot have a default value"
-msgstr "고유 필드는 기본값을 가질 수 없습니다."
 
 #. js-lingui-id: WWSSTx
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts

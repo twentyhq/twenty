@@ -16,26 +16,23 @@ export const summariseTaskCreation = async (date: string) => {
     return '- No Tasks were added'
   }
 
+  const presentDateISOString = new Date().toISOString()
   const workspaceMemberIdsDueDateCounter: Record<string, number> = {}
   let workspaceMembers = []
-  const completedTasks: Task[] = []
 
-  const pendingTasksWithPastDueDates = tasks.reduce((collection: Task[], task) => {
+  tasks.forEach((task) => {
     if (task.status === 'DONE') {
-      completedTasks.push(task)
-      return collection
+      return
     }
 
-    if (new Date().toISOString() > task.dueAt) {
+    if (presentDateISOString >= task.dueAt) {
       if (!workspaceMemberIdsDueDateCounter[task.createdBy.workspaceMemberId]) {
         workspaceMemberIdsDueDateCounter[task.createdBy.workspaceMemberId] = 0
       }
 
       workspaceMemberIdsDueDateCounter[task.createdBy.workspaceMemberId] += 1
-      collection.push(task)
     }
-    return collection
-  }, [])
+  })
 
   for (const { userId, count } of findMaxIncompleteKeys(workspaceMemberIdsDueDateCounter)) {
     const data = await request(`workspaceMembers/${userId}`)
@@ -61,8 +58,17 @@ export const summariseTaskCreation = async (date: string) => {
     }
   }, '') : 'No one was caught slacking!'
 
-  const taskCompletionPercentage = pendingTasksWithPastDueDates.length > 0 ? 100 - (100 - ((pendingTasksWithPastDueDates.length / (tasks.length - completedTasks.length)) * 100)) : NaN
-  const taskCompletionMessage = isNaN(taskCompletionPercentage) ? 'No Tasks to be completed' : `${taskCompletionPercentage.toFixed(2)}% Tasks were completed on time`
+  const tasksCompletedOnTime = tasks.filter(
+    task => task.status === 'DONE' && task.dueAt >= presentDateISOString
+  )
+
+  const taskCompletionPercentage = tasksCompletedOnTime.length > 0
+    ? (tasksCompletedOnTime.length / tasks.length) * 100
+    : NaN
+
+  const taskCompletionMessage = isNaN(taskCompletionPercentage)
+    ? 'No completed Tasks yet'
+    : `${taskCompletionPercentage.toFixed(2)}% of Tasks were completed on time`
 
   return `- ${tasks.length} Tasks were created
 - ${taskCompletionMessage}

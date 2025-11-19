@@ -33,7 +33,9 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 4. 変更はすぐに（マルチコンテナ展開の場合、15秒以内に）効果が出ます。
 
 <Warning>
+
 **マルチコンテナ展開:** データベース構成を使用する場合 (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`)、サーバーとワーカーコンテナの両方が同じデータベースから読み込みます。 管理パネルの変更は両方に自動的に影響し、コンテナ間で環境変数を重複させる必要がなくなります（インフラストラクチャの変数を除く）。
+ 管理パネルの変更は両方に自動的に影響し、コンテナ間で環境変数を重複させる必要がなくなります（インフラストラクチャの変数を除く）。
 </Warning>
 
 **管理パネルを通じて構成できること:**
@@ -48,6 +50,8 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 ![管理パネル構成変数](/images/user-guide/setup/admin-panel-config-variables.png)
 
 <Warning>
+各変数は、**設定 → 管理パネル → 構成変数** で説明付きでドキュメント化されています。
+
 各変数は、**設定 → 管理パネル → 構成変数** で説明付きでドキュメント化されています。
 データベース接続 (`PG_DATABASE_URL`)、サーバーURL (`SERVER_URL`)、アプリの秘密キー (`APP_SECRET`) など、一部のインフラ設定は `.env` ファイルを介してのみ構成可能です。
 
@@ -118,7 +122,9 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
 ## Microsoft 365 統合
 
 <Warning>
+
 カレンダーおよびメッセージングAPIを使用するためには、[Microsoft 365 ライセンス](https://admin.microsoft.com/Adminportal/Home)が必要です。 They will not be able to sync their account on Twenty without one.
+ They will not be able to sync their account on Twenty without one.
 </Warning>
 
 ### Microsoft Azureでプロジェクトを作成
@@ -138,7 +144,7 @@ Microsoft Azureコンソールで"権限"の欄で以下のAPIを有効にしま
 - Microsoft Graph: profile
 - Microsoft Graph: offline_access
 
-注: "Mail.ReadWrite" と "Mail.Send" は、ワークフローアクションを使用してメールを送信する場合に必須です。 メールを受信するだけの場合は、"Mail.Read"を使用できます。
+注: "Mail.ReadWrite" と "Mail.Send" は、ワークフローアクションを使用してメールを送信する場合に必須です。 メールを受信するだけの場合は、"Mail.Read"を使用できます。 メールを受信するだけの場合は、"Mail.Read"を使用できます。
 
 ### 認証されたリダイレクトURI
 

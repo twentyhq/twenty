@@ -77,7 +77,7 @@ export const sendToSlack = async (params: {
   });
 
   return {
-    formattedMesage: slackMessage,
+    formattedMessage: slackMessage,
     webhookStatus: response.status,
   };
 };
@@ -92,7 +92,7 @@ export const sendToDiscord = async (params: {
     opportunityCreationSummary,
     taskCreationSummary,
   } = params;
-  const formattedMesage = `Bonjour! 🥖 Je m'appelle Kylian Mbaguette. Over the last ${process.env.DAYS_AGO} days:
+  const formattedMessage = `Bonjour! 🥖 Je m'appelle Kylian Mbaguette. Over the last ${process.env.DAYS_AGO} days:
 
 **🧑‍💻 People & Companies**
 ${peopleCreationSummary}
@@ -105,7 +105,7 @@ ${taskCreationSummary}`;
 
   const body = {
     username: 'Twenty Bot',
-    content: formattedMesage,
+    content: formattedMessage,
   };
 
   const response = await fetch(process.env.DISCORD_WEBHOOK_URL ?? '', {
@@ -115,7 +115,7 @@ ${taskCreationSummary}`;
   });
 
   return {
-    formattedMesage,
+    formattedMessage,
     webhookStatus: response.status,
   };
 };
@@ -130,7 +130,7 @@ export const sendToWhatsApp = async (params: {
     opportunityCreationSummary,
     taskCreationSummary,
   } = params;
-  const formattedMesage = `Bonjour! 🥖 Je m'appelle Kylian Mbaguette. Over the last ${process.env.DAYS_AGO} days:
+  const formattedMessage = `Bonjour! 🥖 Je m'appelle Kylian Mbaguette. Over the last ${process.env.DAYS_AGO} days:
 
 *🧑‍💻 People & Companies*
 ${peopleCreationSummary}
@@ -156,7 +156,7 @@ ${taskCreationSummary}`;
         type: 'text',
         text: {
           preview_url: true,
-          body: formattedMesage,
+          body: formattedMessage,
         },
       }),
     },
@@ -165,7 +165,7 @@ ${taskCreationSummary}`;
   const responseBody = await response.json();
 
   return {
-    formattedMesage,
+    formattedMessage,
     webhookStatus: response.status,
     webhookResponse: responseBody,
   };

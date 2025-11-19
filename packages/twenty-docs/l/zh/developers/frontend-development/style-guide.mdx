@@ -88,7 +88,7 @@ const EmailField = ({ value }: EmailFieldProps) => (
 
 #### JSX元素中無單一變量參數展開
 
-避免在JSX元件中使用單一變量展開，例如 `{...props}`。 此做法通常導致代碼可讀性降低，維護難度增加，因為不清楚組件接收了哪些參數。
+避免在JSX元件中使用單一變量展開，例如 `{...props}`。 此做法通常導致代碼可讀性降低，維護難度增加，因為不清楚組件接收了哪些參數。 此做法通常導致代碼可讀性降低，維護難度增加，因為不清楚組件接收了哪些參數。
 
 ```tsx
 /* ❌ - Bad, spreads a single variable prop into the underlying component
@@ -155,7 +155,7 @@ type MyType = {
 
 ### 使用字符串字面值替代枚舉
 
-[字符串字面值](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types)是TypeScript中處理類枚舉值的首選方法。 這些內容更容易擴展，并且在使用Pick和Omit時提供更好的開發體驗，尤其是在代碼完成方面。
+[字符串字面值](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types)是TypeScript中處理類枚舉值的首選方法。 這些內容更容易擴展，并且在使用Pick和Omit時提供更好的開發體驗，尤其是在代碼完成方面。 這些內容更容易擴展，并且在使用Pick和Omit時提供更好的開發體驗，尤其是在代碼完成方面。
 
 你可以在[這裡](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums)看到TypeScript為何建議避免使用枚舉。
 
@@ -235,11 +235,11 @@ const StyledTitle = styled.div`
 
 #### 計量單位
 
-避免在樣式組件中直接使用`px`或`rem`值。 所需的值通常在主題中已經定義了，因此建議利用主題來達到這些目的。
+避免在樣式組件中直接使用`px`或`rem`值。 所需的值通常在主題中已經定義了，因此建議利用主題來達到這些目的。 所需的值通常在主題中已經定義了，因此建議利用主題來達到這些目的。
 
 #### 顏色
 
-避免引入新顏色；相反地，使用來自主題的現有調色板。 如果有調色板不對應的情況，請留下評論以便團隊解決。
+避免引入新顏色；相反地，使用來自主題的現有調色板。 如果有調色板不對應的情況，請留下評論以便團隊解決。 如果有調色板不對應的情況，請留下評論以便團隊解決。
 
 ```tsx
 // ❌ Bad, directly specifies style values without utilizing the theme
@@ -282,7 +282,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 - **一致性**：通過避免類型導入並對類型和值導入使用單一方法，代碼庫在其模塊導入風格上保持一致。
 
-- **可讀性**：不使用類型導入提高了代碼可讀性，因為它清楚地表明您何時正在導入值或類型。 This reduces ambiguity and makes it easier to understand the purpose of imported symbols.
+- **可讀性**：不使用類型導入提高了代碼可讀性，因為它清楚地表明您何時正在導入值或類型。 This reduces ambiguity and makes it easier to understand the purpose of imported symbols. This reduces ambiguity and makes it easier to understand the purpose of imported symbols.
 
 - **Maintainability**: It enhances codebase maintainability because developers can identify and locate type-only imports when reviewing or modifying code.
 
