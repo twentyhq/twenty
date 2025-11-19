@@ -18,6 +18,7 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 
 const StyledWorkflowStepInfoContainer = styled.div`
@@ -89,13 +90,17 @@ export const CommandMenuWorkflowStepInfo = ({
     id: undefined,
   };
 
+  const isTriggerStep = workflowStepId === TRIGGER_STEP_ID;
+
   const stepDefinition =
-    isDefined(workflowStepId) && isDefined(trigger) && isDefined(steps)
-      ? getStepDefinitionOrThrow({
-          stepId: workflowStepId,
-          trigger,
-          steps,
-        })
+    isDefined(workflowStepId) && isDefined(trigger)
+      ? isTriggerStep || isDefined(steps)
+        ? getStepDefinitionOrThrow({
+            stepId: workflowStepId,
+            trigger,
+            steps,
+          })
+        : undefined
       : undefined;
 
   const isTrigger = stepDefinition?.type === 'trigger';
