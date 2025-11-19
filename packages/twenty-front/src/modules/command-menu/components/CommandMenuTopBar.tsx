@@ -3,6 +3,7 @@ import { CommandMenuPageInfo } from '@/command-menu/components/CommandMenuPageIn
 import { CommandMenuTopBarInputFocusEffect } from '@/command-menu/components/CommandMenuTopBarInputFocusEffect';
 import { CommandMenuTopBarRightCornerIcon } from '@/command-menu/components/CommandMenuTopBarRightCornerIcon';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
+import { COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE } from '@/command-menu/constants/CommandMenuSearchBarHeightMobile';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuContextChips';
@@ -17,8 +18,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { IconX } from 'twenty-ui/display';
+import { useIsMobile } from 'twenty-ui/utilities';
 
-const StyledInputContainer = styled.div`
+const StyledInputContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.secondary};
   border: none;
@@ -29,7 +31,10 @@ const StyledInputContainer = styled.div`
   display: flex;
   justify-content: space-between;
   font-size: ${({ theme }) => theme.font.size.lg};
-  height: ${COMMAND_MENU_SEARCH_BAR_HEIGHT}px;
+  height: ${({ isMobile }) =>
+    isMobile
+      ? COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE
+      : COMMAND_MENU_SEARCH_BAR_HEIGHT}px;
   margin: 0;
   outline: none;
   position: relative;
@@ -89,6 +94,8 @@ export const CommandMenuTopBar = () => {
     setCommandMenuSearch(event.target.value);
   };
 
+  const isMobile = useIsMobile();
+
   const { closeCommandMenu } = useCommandMenu();
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);
@@ -103,14 +110,15 @@ export const CommandMenuTopBar = () => {
 
   const canGoBack = commandMenuNavigationStack.length > 1;
 
-  const shouldShowCloseButton = commandMenuNavigationStack.length === 1;
+  const shouldShowCloseButton =
+    !isMobile && commandMenuNavigationStack.length === 1;
 
   const shouldShowBackButton = canGoBack;
 
   const lastChip = contextChips.at(-1);
 
   return (
-    <StyledInputContainer>
+    <StyledInputContainer isMobile={isMobile}>
       <StyledContentContainer>
         <AnimatePresence>
           {shouldShowBackButton && (

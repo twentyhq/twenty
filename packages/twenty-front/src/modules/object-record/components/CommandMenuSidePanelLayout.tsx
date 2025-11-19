@@ -9,6 +9,7 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { type ReactNode, useCallback, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 type CommandMenuSidePanelLayoutProps = {
   children: ReactNode;
@@ -66,6 +67,7 @@ export const CommandMenuSidePanelLayout = ({
   isSidePanelOpen,
 }: CommandMenuSidePanelLayoutProps) => {
   const theme = useTheme();
+  const isMobile = useIsMobile();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [modalContainer, setModalContainer] = useState<HTMLDivElement | null>(
     null,
@@ -108,6 +110,10 @@ export const CommandMenuSidePanelLayout = ({
   );
 
   useCommandMenuHotKeys();
+
+  if (isMobile) {
+    return <>{children}</>;
+  }
 
   return (
     <StyledLayout>

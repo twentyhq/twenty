@@ -1,4 +1,7 @@
 import { AuthModal } from '@/auth/components/AuthModal';
+import { CommandMenuOpenContainer } from '@/command-menu/components/CommandMenuOpenContainer';
+import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFallback';
@@ -18,6 +21,7 @@ import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { useScreenSize } from 'twenty-ui/utilities';
 
 const StyledLayout = styled.div`
@@ -63,6 +67,7 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
+  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
 
   return (
     <>
@@ -119,6 +124,15 @@ export const DefaultLayout = () => {
             )}
           </StyledPageContainer>
           {isMobile && !showAuthModal && <MobileNavigationBar />}
+          {isMobile && (
+            <AnimatePresence>
+              {isCommandMenuOpened && (
+                <CommandMenuOpenContainer>
+                  <CommandMenuRouter />
+                </CommandMenuOpenContainer>
+              )}
+            </AnimatePresence>
+          )}
         </AppErrorBoundary>
       </StyledLayout>
     </>
