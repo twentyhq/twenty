@@ -4,6 +4,14 @@ import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupBy
 import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+type DimensionValue = string | Date | number | null;
+
+type SupportedDateGranularity =
+  | ObjectRecordGroupByDateGranularity.DAY
+  | ObjectRecordGroupByDateGranularity.MONTH
+  | ObjectRecordGroupByDateGranularity.QUARTER
+  | ObjectRecordGroupByDateGranularity.YEAR;
+
 type FillDateGapsParams = {
   data: GroupByRawResult[];
   keys: string[];
@@ -14,17 +22,13 @@ type FillDateGapsParams = {
 type OneDimensionalFillParams = {
   data: GroupByRawResult[];
   keys: string[];
-  dateGranularity: ObjectRecordGroupByDateGranularity;
+  dateGranularity: SupportedDateGranularity;
 };
 
-type TwoDimensionalFillParams = {
-  data: GroupByRawResult[];
-  keys: string[];
-  dateGranularity: ObjectRecordGroupByDateGranularity;
-};
+type TwoDimensionalFillParams = OneDimensionalFillParams;
 
 const createFilledItem = (
-  dimensionValues: unknown[],
+  dimensionValues: DimensionValue[],
   keys: string[],
 ): GroupByRawResult => {
   const newItem: GroupByRawResult = {
@@ -42,24 +46,16 @@ const createFilledItem = (
 
 const getDateRangeFromData = (
   parsedDates: Date[],
-  dateGranularity: ObjectRecordGroupByDateGranularity,
+  dateGranularity: SupportedDateGranularity,
 ): Date[] => {
-  const { minDate, maxDate } = parsedDates.reduce(
-    (acc, date) => ({
-      minDate: date < acc.minDate ? date : acc.minDate,
-      maxDate: date > acc.maxDate ? date : acc.maxDate,
-    }),
-    { minDate: parsedDates[0], maxDate: parsedDates[0] },
-  );
+  const timestamps = parsedDates.map((date) => date.getTime());
+  const minDate = new Date(Math.min(...timestamps));
+  const maxDate = new Date(Math.max(...timestamps));
 
   return generateDateRange({
     startDate: minDate,
     endDate: maxDate,
-    granularity: dateGranularity as
-      | ObjectRecordGroupByDateGranularity.DAY
-      | ObjectRecordGroupByDateGranularity.MONTH
-      | ObjectRecordGroupByDateGranularity.QUARTER
-      | ObjectRecordGroupByDateGranularity.YEAR,
+    granularity: dateGranularity,
   });
 };
 
@@ -109,7 +105,7 @@ const fillDateGapsInTwoDimensionalBarChartData = ({
 }: TwoDimensionalFillParams): GroupByRawResult[] => {
   const existingDataMap = new Map<string, GroupByRawResult>();
   const parsedDates: Date[] = [];
-  const uniqueSecondDimensionValues = new Set<unknown>();
+  const uniqueSecondDimensionValues = new Set<DimensionValue>();
 
   for (const item of data) {
     const dateValue = item.groupByDimensionValues?.[0];
@@ -127,7 +123,8 @@ const fillDateGapsInTwoDimensionalBarChartData = ({
     parsedDates.push(parsedDate);
 
     if (isDefined(item.groupByDimensionValues?.[1])) {
-      const secondDimensionValue = item.groupByDimensionValues[1];
+      const secondDimensionValue = item
+        .groupByDimensionValues[1] as DimensionValue;
       uniqueSecondDimensionValues.add(secondDimensionValue);
 
       const key = `${parsedDate.toISOString()}_${String(secondDimensionValue)}`;
@@ -171,13 +168,13 @@ export const fillDateGapsInBarChartData = ({
     return fillDateGapsInTwoDimensionalBarChartData({
       data,
       keys,
-      dateGranularity,
+      dateGranularity: dateGranularity as SupportedDateGranularity,
     });
   }
 
   return fillDateGapsInOneDimensionalBarChartData({
     data,
     keys,
-    dateGranularity,
+    dateGranularity: dateGranularity as SupportedDateGranularity,
   });
 };
