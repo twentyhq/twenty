@@ -13,6 +13,7 @@ export const performQuery = async <T = unknown>(
     const result = await rawDataSource.query<T>(query);
 
     if (withLog) {
+      // eslint-disable-next-line no-console
       console.log(`Performed '${consoleDescription}' successfully`);
     }
 
@@ -26,6 +27,7 @@ export const performQuery = async <T = unknown>(
       message = `Failed to perform '${consoleDescription}': ${err}`;
     }
     if (withLog) {
+      // eslint-disable-next-line no-console
       console.error(message);
     }
   }

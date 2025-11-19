@@ -82,6 +82,7 @@ $$;`,
     }
   })
   .catch((err) => {
+    // eslint-disable-next-line no-console
     console.error('Error during Data Source initialization:', err);
   });
 
