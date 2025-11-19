@@ -118,7 +118,7 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
       break;
     }
     default: {
-      assertUnreachable;
+      assertUnreachable(flatFieldMetadataToValidate.settings.relationType);
     }
   }
 
