@@ -108,7 +108,7 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
     return errors;
   }
 
-  if (!isDefined(flatFieldMetadataToValidate.settings.joinColumnName)) {
+  if (!isDefined(targetFlatFieldMetadata.settings.joinColumnName)) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       message:
@@ -121,7 +121,7 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
 
   errors.push(
     ...validateFlatFieldMetadataNameAvailability({
-      name: flatFieldMetadataToValidate.settings.joinColumnName,
+      name: targetFlatFieldMetadata.settings.joinColumnName,
       flatFieldMetadataMaps,
       flatObjectMetadata,
     }),
