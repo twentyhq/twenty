@@ -1,4 +1,4 @@
-import { useAiAgentOutputSchema } from '@/ai/hooks/useAiAgentOutputSchema';
+import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
@@ -8,14 +8,18 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { AI_AGENT_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/AiAgentAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { type AiAgentOutputSchema } from '@/workflow/workflow-variables/types/AiAgentOutputSchema';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
-import { useFindManyAgentsQuery } from '~/generated-metadata/graphql';
+import {
+  useFindManyAgentsQuery,
+  useUpdateOneAgentMutation,
+} from '~/generated-metadata/graphql';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
-import { WorkflowOutputSchemaBuilder } from './WorkflowOutputSchemaBuilder';
+import { SettingsAgentResponseFormat } from '~/pages/settings/ai/components/SettingsAgentResponseFormat';
 
 const StyledErrorMessage = styled.div`
   color: ${({ theme }) => theme.font.color.danger};
@@ -45,14 +49,9 @@ export const WorkflowEditActionAiAgent = ({
       defaultTitle: AI_AGENT_ACTION.defaultLabel,
     });
 
-  const { handleOutputSchemaChange, outputFields } = useAiAgentOutputSchema(
-    action.settings.outputSchema as AiAgentOutputSchema,
-    actionOptions.readonly === true ? undefined : actionOptions.onActionUpdate,
-    action,
-    actionOptions.readonly,
-  );
-
   const { data: agentsData, loading: agentsLoading } = useFindManyAgentsQuery();
+  const [updateAgent] = useUpdateOneAgentMutation();
+  const aiModelOptions = useAiModelOptions();
 
   const agentOptions = (agentsData?.findManyAgents || []).reduce<
     SelectOption<string>[]
@@ -73,6 +72,11 @@ export const WorkflowEditActionAiAgent = ({
     ],
   );
 
+  const selectedAgentId = action.settings.input.agentId;
+  const selectedAgent = (agentsData?.findManyAgents || []).find(
+    (agent) => agent.id === selectedAgentId,
+  );
+
   const noAgentsAvailable = agentOptions.length === 0;
 
   const handleFieldChange = (field: 'agentId' | 'prompt', value: string) => {
@@ -88,6 +92,56 @@ export const WorkflowEditActionAiAgent = ({
           [field]: value,
         },
       },
+    });
+  };
+
+  const handleAgentModelChange = async (modelId: string) => {
+    if (
+      actionOptions.readonly === true ||
+      !selectedAgent ||
+      !isDefined(selectedAgent)
+    ) {
+      return;
+    }
+
+    await updateAgent({
+      variables: {
+        input: {
+          id: selectedAgent.id,
+          label: selectedAgent.label,
+          name: selectedAgent.name,
+          prompt: selectedAgent.prompt,
+          modelId,
+        },
+      },
+      refetchQueries: ['FindManyAgents'],
+    });
+  };
+
+  const handleAgentResponseFormatChange = async (format: {
+    type: 'text' | 'json';
+    schema?: BaseOutputSchemaV2;
+  }) => {
+    if (
+      actionOptions.readonly === true ||
+      !selectedAgent ||
+      !isDefined(selectedAgent)
+    ) {
+      return;
+    }
+
+    await updateAgent({
+      variables: {
+        input: {
+          id: selectedAgent.id,
+          label: selectedAgent.label,
+          name: selectedAgent.name,
+          prompt: selectedAgent.prompt,
+          modelId: selectedAgent.modelId,
+          responseFormat: format.type === 'text' ? null : format,
+        },
+      },
+      refetchQueries: ['FindManyAgents'],
     });
   };
 
@@ -137,11 +191,26 @@ export const WorkflowEditActionAiAgent = ({
           readonly={actionOptions.readonly}
         />
 
-        <WorkflowOutputSchemaBuilder
-          fields={outputFields}
-          onChange={handleOutputSchemaChange}
-          readonly={actionOptions.readonly}
-        />
+        {selectedAgent && isDefined(selectedAgent) && (
+          <>
+            <Select
+              dropdownId="select-agent-model"
+              label={t`AI Model`}
+              options={aiModelOptions}
+              value={selectedAgent.modelId}
+              onChange={handleAgentModelChange}
+              disabled={actionOptions.readonly}
+            />
+
+            <SettingsAgentResponseFormat
+              responseFormat={
+                selectedAgent.responseFormat || { type: 'text', schema: {} }
+              }
+              onResponseFormatChange={handleAgentResponseFormatChange}
+              disabled={actionOptions.readonly}
+            />
+          </>
+        )}
       </WorkflowStepBody>
       {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
     </>

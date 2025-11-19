@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isString } from '@sniptt/guards';
+import { Repository } from 'typeorm';
 import { isDefined, isValidVariable } from 'twenty-shared/utils';
 import {
   BaseOutputSchemaV2,
@@ -14,6 +16,7 @@ import {
 
 import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
+import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { DEFAULT_ITERATOR_CURRENT_ITEM } from 'src/modules/workflow/workflow-builder/workflow-schema/constants/default-iterator-current-item.const';
@@ -42,6 +45,8 @@ import {
 export class WorkflowSchemaWorkspaceService {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    @InjectRepository(AgentEntity)
+    private readonly agentRepository: Repository<AgentEntity>,
   ) {}
 
   async computeStepOutputSchema({
@@ -121,6 +126,27 @@ export class WorkflowSchemaWorkspaceService {
             value: false,
           },
         };
+      }
+      case WorkflowActionType.AI_AGENT: {
+        const agentId = step.settings.input.agentId;
+
+        if (!isDefined(agentId) || agentId === '') {
+          return {};
+        }
+
+        const agent = await this.agentRepository.findOne({
+          where: { id: agentId, workspaceId },
+        });
+
+        if (
+          !isDefined(agent) ||
+          agent.responseFormat?.type !== 'json' ||
+          !isDefined(agent.responseFormat.schema)
+        ) {
+          return {};
+        }
+
+        return agent.responseFormat.schema;
       }
       case WorkflowActionType.CODE: // StepOutput schema is computed on serverlessFunction draft execution
       default:

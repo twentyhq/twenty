@@ -121,7 +121,15 @@ export class AiAgentExecutorService {
         experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 
-      if (Object.keys(schema).length === 0) {
+      // Determine which schema to use: workflow-provided schema takes precedence over agent's responseFormat
+      const effectiveSchema =
+        Object.keys(schema).length > 0
+          ? schema
+          : agent?.responseFormat?.type === 'json'
+            ? agent.responseFormat.schema || {}
+            : {};
+
+      if (Object.keys(effectiveSchema).length === 0) {
         return {
           result: { response: textResponse.text },
           usage: textResponse.usage,
@@ -135,7 +143,7 @@ export class AiAgentExecutorService {
                  Execution Results: ${textResponse.text}
 
                  Please generate the structured output based on the execution results and context above.`,
-        schema: convertOutputSchemaToZod(schema),
+        schema: convertOutputSchemaToZod(effectiveSchema),
         experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 

@@ -14,7 +14,7 @@ export const updateAgentOperation = ({
   description?: string;
   prompt?: string;
   modelId?: string;
-  responseFormat?: object;
+  responseFormat?: object | null;
 }) => ({
   query: gql`
     mutation UpdateOneAgent($input: UpdateAgentInput!) {
@@ -30,7 +30,7 @@ export const updateAgentOperation = ({
       ...(description && { description }),
       ...(prompt && { prompt }),
       ...(modelId && { modelId }),
-      ...(responseFormat && { responseFormat }),
+      ...(responseFormat !== undefined && { responseFormat }),
     },
   },
 });

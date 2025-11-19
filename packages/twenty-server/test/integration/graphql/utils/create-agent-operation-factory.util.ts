@@ -12,7 +12,7 @@ export const createAgentOperation = ({
   description?: string;
   prompt: string;
   modelId: string;
-  responseFormat?: object;
+  responseFormat?: object | null;
 }) => ({
   query: gql`
     mutation CreateOneAgent($input: CreateAgentInput!) {
@@ -27,7 +27,7 @@ export const createAgentOperation = ({
       description,
       prompt,
       modelId,
-      responseFormat,
+      ...(responseFormat !== undefined && { responseFormat }),
     },
   },
 });

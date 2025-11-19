@@ -92,6 +92,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           prompt: agent.prompt,
           isCustom: agent.isCustom,
           modelConfiguration: agent.modelConfiguration || {},
+          responseFormat: agent.responseFormat || { type: 'text', schema: {} },
         });
       } else {
         enqueueErrorSnackBar({
@@ -190,6 +191,10 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           roleId: formValues.role,
           prompt: formValues.prompt,
           modelConfiguration: formValues.modelConfiguration,
+          responseFormat:
+            formValues.responseFormat?.type === 'text'
+              ? null
+              : formValues.responseFormat,
         };
 
         await createAgent({
@@ -215,6 +220,10 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
             roleId: formValues.role,
             prompt: formValues.prompt,
             modelConfiguration: formValues.modelConfiguration,
+            responseFormat:
+              formValues.responseFormat?.type === 'text'
+                ? null
+                : formValues.responseFormat,
           },
         },
       });
