@@ -18,7 +18,7 @@ export const validateRawJsonFieldOrThrow = (
       JSON.parse(value);
     } catch {
       throw new CommonQueryRunnerException(
-        `Invalid JSON string value ${inspect(value)} for field "${fieldName}"`,
+        `Invalid object value ${inspect(value)} for field "${fieldName}"`,
         CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
       );
     }
