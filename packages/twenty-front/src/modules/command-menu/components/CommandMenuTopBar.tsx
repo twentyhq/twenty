@@ -174,7 +174,7 @@ export const CommandMenuTopBar = () => {
         isAiEnabled &&
         commandMenuPage !== CommandMenuPages.AskAI && (
           <StyledIconSparkles
-            onClick={() => openAskAIPage()}
+            onClick={() => openAskAIPage({ resetNavigationStack: false })}
             size={theme.icon.size.md}
           />
         )}

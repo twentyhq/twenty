@@ -10,13 +10,24 @@ export const useOpenAskAIPageInCommandMenu = () => {
   const { navigateCommandMenu } = useCommandMenu();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
 
-  const openAskAIPage = (pageTitle?: string | null) => {
+  const openAskAIPage = ({
+    pageTitle,
+    resetNavigationStack,
+  }: {
+    pageTitle?: string | null;
+    resetNavigationStack?: boolean;
+  } = {}) => {
+    const shouldReset =
+      resetNavigationStack !== undefined
+        ? resetNavigationStack
+        : isCommandMenuOpened;
+
     navigateCommandMenu({
       page: CommandMenuPages.AskAI,
       pageTitle: pageTitle ?? t`Ask AI`,
       pageIcon: IconSparkles,
       pageId: v4(),
-      resetNavigationStack: isCommandMenuOpened,
+      resetNavigationStack: shouldReset,
     });
   };
 
