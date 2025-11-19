@@ -318,7 +318,7 @@ export const WorkflowEditActionSendEmail = ({
                 href: '#',
               },
               {
-                children: headerTitle,
+                children: isDefined(action.name) ? action.name : t`Send Email`,
                 href: '#',
               },
               {
