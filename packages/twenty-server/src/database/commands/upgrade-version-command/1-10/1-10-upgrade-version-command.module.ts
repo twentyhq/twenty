@@ -11,10 +11,12 @@ import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/command
 import { MigrateChannelPartialFullSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-channel-partial-full-sync-stages.command';
 import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-search-vectors.command';
 import { SeedDashboardViewCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-seed-dashboard-view.command';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -31,10 +33,13 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
       IndexMetadataEntity,
       ViewEntity,
       DataSourceEntity,
+      ApplicationEntity,
     ]),
     WorkspaceSchemaManagerModule,
     WorkspaceCacheStorageModule,
     ObjectMetadataModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    ApplicationModule,
   ],
   providers: [
     MigrateChannelPartialFullSyncStagesCommand,
@@ -47,7 +52,6 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     SeedDashboardViewCommand,
     CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand,
     FlushCacheCommand,
-    ApplicationService,
   ],
   exports: [
     MigrateAttachmentAuthorToCreatedByCommand,
