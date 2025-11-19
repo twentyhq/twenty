@@ -1,19 +1,12 @@
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { SelectControl } from '@/ui/input/components/SelectControl';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { type WorkflowFindRecordsAction } from '@/workflow/types/Workflow';
+import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { isNumber } from '@sniptt/guards';
+import { type JsonValue } from 'type-fest';
+import { useDebouncedCallback } from 'use-debounce';
 
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
@@ -25,6 +18,16 @@ import { RecordIndexContextProvider } from '@/object-record/record-index/context
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { SelectControl } from '@/ui/input/components/SelectControl';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -35,8 +38,7 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { WorkflowFindRecordsFilters } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFilters';
 import { WorkflowFindRecordsFiltersEffect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFiltersEffect';
 import { WorkflowFindRecordsSorts } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts';
-import styled from '@emotion/styled';
-import { isNumber } from '@sniptt/guards';
+import { type WorkflowFindRecordsAction } from '@/workflow/types/Workflow';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -46,8 +48,6 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
-import { type JsonValue } from 'type-fest';
-import { useDebouncedCallback } from 'use-debounce';
 
 type WorkflowEditActionFindRecordsProps = {
   action: WorkflowFindRecordsAction;
@@ -111,19 +111,25 @@ export const WorkflowEditActionFindRecords = ({
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
 
   const regularObjects = objectMetadataItems
-    .filter((item) => item.isActive && !item.isSystem)
-    .map((item) => ({
-      label: item.labelPlural,
-      value: item.nameSingular,
-      Icon: getIcon(item.icon),
+    .filter(
+      (objectMetadataItem) =>
+        objectMetadataItem.isActive && !objectMetadataItem.isSystem,
+    )
+    .map((objectMetadataItem) => ({
+      label: objectMetadataItem.labelPlural,
+      value: objectMetadataItem.nameSingular,
+      Icon: getIcon(objectMetadataItem.icon),
     }));
 
   const systemObjects = objectMetadataItems
-    .filter((item) => item.isActive && item.isSystem)
-    .map((item) => ({
-      label: item.labelPlural,
-      value: item.nameSingular,
-      Icon: getIcon(item.icon),
+    .filter(
+      (objectMetadataItem) =>
+        objectMetadataItem.isActive && objectMetadataItem.isSystem,
+    )
+    .map((objectMetadataItem) => ({
+      label: objectMetadataItem.labelPlural,
+      value: objectMetadataItem.nameSingular,
+      Icon: getIcon(objectMetadataItem.icon),
     }));
 
   const [formData, setFormData] = useState<FindRecordsFormData>(() => ({
@@ -163,7 +169,8 @@ export const WorkflowEditActionFindRecords = ({
     ) || regularObjects[0];
 
   const selectedObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.nameSingular === formData.objectNameSingular,
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular === formData.objectNameSingular,
   );
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -199,7 +206,7 @@ export const WorkflowEditActionFindRecords = ({
             objectName: updatedObjectName,
             limit: updatedLimit ?? 1,
             filter: updatedFilter,
-            orderBy: updatedOrderBy as Record<string, any[]> | undefined,
+            orderBy: updatedOrderBy as Record<string, JsonValue[]> | undefined,
           },
         },
       });
