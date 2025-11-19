@@ -157,7 +157,7 @@ export const transformGroupByDataToBarChartData = ({
         fillValue: 0,
         hasSecondDimension: isDefined(groupByFieldY),
       })
-    : rawResults;
+    : filteredResults;
 
   const baseResult = isDefined(groupByFieldY)
     ? transformTwoDimensionalGroupByToBarChartData({
