@@ -1,25 +1,22 @@
 import { CommandMenuBackButton } from '@/command-menu/components/CommandMenuBackButton';
 import { CommandMenuPageInfo } from '@/command-menu/components/CommandMenuPageInfo';
 import { CommandMenuTopBarInputFocusEffect } from '@/command-menu/components/CommandMenuTopBarInputFocusEffect';
+import { CommandMenuTopBarRightCornerIcon } from '@/command-menu/components/CommandMenuTopBarRightCornerIcon';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuContextChips';
-import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IconSparkles, IconX } from 'twenty-ui/display';
-import { useIsMobile } from 'twenty-ui/utilities';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { IconX } from 'twenty-ui/display';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -80,12 +77,6 @@ const StyledNavigationIcon = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
 `;
 
-const StyledIconSparkles = styled(IconSparkles)`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
-  cursor: pointer;
-`;
-
 export const CommandMenuTopBar = () => {
   const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
     commandMenuSearchState,
@@ -98,13 +89,7 @@ export const CommandMenuTopBar = () => {
     setCommandMenuSearch(event.target.value);
   };
 
-  const isMobile = useIsMobile();
-
   const { closeCommandMenu } = useCommandMenu();
-
-  const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
-
-  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);
 
@@ -170,17 +155,7 @@ export const CommandMenuTopBar = () => {
           </>
         )}
       </StyledContentContainer>
-      {!isMobile &&
-        isAiEnabled &&
-        ![
-          CommandMenuPages.AskAI,
-          CommandMenuPages.ViewPreviousAIChats,
-        ].includes(commandMenuPage) && (
-          <StyledIconSparkles
-            onClick={() => openAskAIPage({ resetNavigationStack: false })}
-            size={theme.icon.size.md}
-          />
-        )}
+      <CommandMenuTopBarRightCornerIcon />
     </StyledInputContainer>
   );
 };
