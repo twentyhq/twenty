@@ -10,7 +10,13 @@ import {
 import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
-const propertiesToIgnore = ['createdAt', 'updatedAt', 'indexFieldMetadatas'];
+const propertiesToIgnore = [
+  'createdAt',
+  'updatedAt',
+  'indexFieldMetadatas',
+  'universalIdentifier',
+  'applicationId',
+];
 
 @Injectable()
 export class WorkspaceIndexComparator {

@@ -18,7 +18,14 @@ type AgentComparatorResult = {
 
 type WorkspaceAgentComparatorArgs = FromTo<FlatAgent[], 'FlatAgents'>;
 
-const agentPropertiesToIgnore = ['id', 'createdAt', 'updatedAt', 'workspaceId'];
+const agentPropertiesToIgnore = [
+  'id',
+  'createdAt',
+  'updatedAt',
+  'workspaceId',
+  'universalIdentifier',
+  'applicationId',
+];
 
 @Injectable()
 export class WorkspaceAgentComparator {

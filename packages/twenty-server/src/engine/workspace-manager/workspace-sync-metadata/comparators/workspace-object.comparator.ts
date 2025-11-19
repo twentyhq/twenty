@@ -20,6 +20,8 @@ const objectPropertiesToIgnore = [
   'imageIdentifierFieldMetadataId',
   'isActive',
   'fields',
+  'universalIdentifier',
+  'applicationId',
 ];
 
 @Injectable()
