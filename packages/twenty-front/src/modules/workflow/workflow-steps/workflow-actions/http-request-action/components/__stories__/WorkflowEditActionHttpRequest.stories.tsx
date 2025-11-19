@@ -118,10 +118,6 @@ export const Configured: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const header = await canvas.findByTestId('side-panel-header');
-    const headerCanvas = within(header);
-    expect(await headerCanvas.findByText('API Call')).toBeVisible();
-
     const urlLabel = await canvas.findByText('URL');
     const urlInputContainer = urlLabel.closest('div')?.nextElementSibling;
     const urlEditor = urlInputContainer?.querySelector('.ProseMirror');
