@@ -9,6 +9,5 @@ export type BuildChartDrilldownUrlParams = {
   configuration: BarChartConfiguration | LineChartConfiguration;
   clickedData: {
     primaryBucketRawValue: unknown;
-    secondaryBucketValue?: string;
   };
 };

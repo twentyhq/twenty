@@ -5,7 +5,6 @@ import { ObjectSortDropdownButton } from '@/object-record/object-sort-dropdown/c
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { TopBar } from '@/ui/layout/top-bar/components/TopBar';
 import { QueryParamsFiltersEffect } from '@/views/components/QueryParamsFiltersEffect';
-import { QueryParamsGroupsEffect } from '@/views/components/QueryParamsGroupsEffect';
 import { QueryParamsSortsEffect } from '@/views/components/QueryParamsSortsEffect';
 import { ViewBarPageTitle } from '@/views/components/ViewBarPageTitle';
 import { ViewBarSkeletonLoader } from '@/views/components/ViewBarSkeletonLoader';
@@ -53,7 +52,6 @@ export const ViewBar = ({
       <ViewBarRecordSortEffect />
       <QueryParamsFiltersEffect />
       <QueryParamsSortsEffect />
-      <QueryParamsGroupsEffect />
       <ViewBarPageTitle />
       <TopBar
         className={className}

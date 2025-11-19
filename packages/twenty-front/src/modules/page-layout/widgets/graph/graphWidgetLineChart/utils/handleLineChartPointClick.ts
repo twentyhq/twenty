@@ -19,22 +19,11 @@ export const handleLineChartPointClick = (
   const dataPoint = series.data[point.indexInSeries];
   if (!isDefined(dataPoint)) return;
 
-  const hasSecondaryDimension = isDefined(
-    configuration.secondaryAxisGroupByFieldMetadataId,
-  );
-
-  const secondaryBucketRawValue = series.rawValue;
-
   const url = buildChartDrilldownUrl({
     objectMetadataItem,
     configuration,
     clickedData: {
       primaryBucketRawValue: dataPoint.__bucketRawValue ?? dataPoint.x,
-      secondaryBucketValue: hasSecondaryDimension
-        ? isDefined(secondaryBucketRawValue)
-          ? String(secondaryBucketRawValue)
-          : String(point.seriesId)
-        : undefined,
     },
   });
 

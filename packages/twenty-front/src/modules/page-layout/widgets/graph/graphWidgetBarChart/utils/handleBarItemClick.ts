@@ -5,10 +5,7 @@ import { buildChartDrilldownUrl } from '@/page-layout/widgets/graph/utils/buildC
 import { type ComputedDatum } from '@nivo/bar';
 import { type NavigateFunction } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  BarChartGroupMode,
-  type BarChartConfiguration,
-} from '~/generated/graphql';
+import { type BarChartConfiguration } from '~/generated/graphql';
 
 export const handleBarItemClick = (
   datum: ComputedDatum<BarChartDataItem>,
@@ -23,23 +20,11 @@ export const handleBarItemClick = (
 
   if (!isDefined(bucketRawValue)) return;
 
-  const hasSecondaryDimension = isDefined(
-    configuration.secondaryAxisGroupByFieldMetadataId,
-  );
-
-  const seriesItem = series?.find((s) => s.key === String(datum.id));
-  const secondaryBucketRawValue = seriesItem?.rawValue ?? datum.id;
-
   const url = buildChartDrilldownUrl({
     objectMetadataItem,
     configuration,
     clickedData: {
       primaryBucketRawValue: bucketRawValue,
-      secondaryBucketValue:
-        hasSecondaryDimension &&
-        configuration.groupMode !== BarChartGroupMode.STACKED
-          ? String(secondaryBucketRawValue)
-          : undefined,
     },
   });
 
