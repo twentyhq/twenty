@@ -42,8 +42,6 @@ type twentyObject = {
   namePlural: string;
 }
 
-const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1);
-
 const fetchAllObjects = async (): Promise<twentyObject[]> => {
   const options = {
     method: 'GET',
@@ -106,7 +104,7 @@ const createUpdatedByField = async (
   const variables = {
     input: {
       field: {
-        description: '',
+        description: 'Shows the person behind newest update',
         icon: 'IconRelationOneToMany',
         label: 'Updated by',
         name: 'updatedBy',
@@ -147,66 +145,24 @@ const createUpdatedByField = async (
 };
 
 const updateUpdatedByField = async (
-  objectSingularName: string, // first letter must be capitalized
-  userId: string,
-  recordId: string,
-): Promise<boolean> => {
-  const graphQLQuery = `mutation UpdateOne${objectSingularName}($idToUpdate: UUID!, $input: ${objectSingularName}UpdateInput!) {
-  update${objectSingularName}(id: $idToUpdate, data: $input) {
-    id
-  }
-}`;
-  const variables = {
-    "idToUpdate": recordId,
-    "input": {
-      "updatedById": userId,
-    }
-  }; // TODO: find a root cause and fix the request
-  const options = {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${TWENTY_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    url: `${TWENTY_API_URL}/graphql`,
-    data: {
-      query: graphQLQuery,
-      variables: variables,
-    }
-  };
-  try {
-    console.log(graphQLQuery, variables);
-    const response = await axios.request(options);
-    console.log(response.data);
-    return response.data.errors === undefined;
-  }
-  catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw error;
-    }
-    throw error;
-  }
-}
-
-/*
-const updateUpdatedByField = async (
   objectName: string,
-  userId: string,
+  workspaceMemberId: string,
   recordId: string,
 ): Promise<boolean> => {
   const options = {
-    method: 'PATCH',
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${TWENTY_API_KEY}`,
     },
     url: `${TWENTY_API_URL}/rest/${objectName}/${recordId}`,
     data: {
-      updatedBy: `${userId}`,
+      updatedById: workspaceMemberId,
     },
   };
   try {
     const response = await axios.request(options);
+    console.log(response.data);
     return response.status === 200;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -215,7 +171,6 @@ const updateUpdatedByField = async (
     throw error;
   }
 };
-*/
 
 const helperFinderObjectName = async (
   objectName: string,
@@ -259,15 +214,15 @@ const findObjectName = async (
 export const main = async (params: {
   properties: Record<string, any>;
   recordId: string;
-  userId: string;
+  workspaceMemberId: string;
 }): Promise<object> => {
   if (TWENTY_API_KEY === '') {
     console.error('You must specify a valid TWENTY_API_KEY');
     return {};
   }
   try {
-    const { properties, recordId, userId } = params;
-    if (!userId) {
+    const { properties, recordId, workspaceMemberId } = params;
+    if (!workspaceMemberId) {
       console.log("Exited as last update was done via API");
       return {};
     }
@@ -295,11 +250,9 @@ export const main = async (params: {
       }
     }
 
-    // @ts-expect-error object exists but compiler doesn't know
-    const objectSingularName: string = twentyObjects.find((object) => object.namePlural === objectPluralName).nameSingular;
     const isObjectUpdated: boolean = await updateUpdatedByField(
-      capitalizeFirstLetter(objectSingularName),
-      userId,
+      objectPluralName,
+      workspaceMemberId,
       recordId,
     );
 
@@ -313,7 +266,7 @@ export const main = async (params: {
   } catch (error) {
     console.error('Exiting because of error');
     if (axios.isAxiosError(error)) {
-      console.error(error.message);
+      console.error(error.response?.data.messages);
     } else {
       console.error(error);
     }
