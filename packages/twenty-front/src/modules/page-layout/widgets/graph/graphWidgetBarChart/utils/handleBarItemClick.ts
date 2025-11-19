@@ -26,6 +26,7 @@ export const handleBarItemClick = (
     clickedData: {
       primaryBucketRawValue: bucketRawValue,
     },
+    timezone: configuration.timezone ?? undefined,
   });
 
   navigate(url);

@@ -10,4 +10,5 @@ export type BuildChartDrilldownUrlParams = {
   clickedData: {
     primaryBucketRawValue: unknown;
   };
+  timezone?: string;
 };

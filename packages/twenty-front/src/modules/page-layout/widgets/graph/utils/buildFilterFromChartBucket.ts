@@ -20,6 +20,7 @@ type BuildFilterFromChartBucketParams = {
   bucketRawValue: unknown;
   dateGranularity?: ObjectRecordGroupByDateGranularity | null;
   subFieldName?: string | null;
+  timezone?: string;
 };
 
 const isTimeRangeDateGranularity = (
@@ -38,6 +39,7 @@ export const buildFilterFromChartBucket = ({
   bucketRawValue,
   dateGranularity,
   subFieldName,
+  timezone,
 }: BuildFilterFromChartBucketParams): ChartFilter[] => {
   const fieldName = isNonEmptyString(subFieldName)
     ? `${fieldMetadataItem.name}.${subFieldName}`
@@ -109,6 +111,7 @@ export const buildFilterFromChartBucket = ({
       parsedBucketDate,
       fieldMetadataItem.type,
       fieldName,
+      timezone,
     );
   }
 
@@ -118,6 +121,7 @@ export const buildFilterFromChartBucket = ({
       dateGranularity,
       fieldMetadataItem.type,
       fieldName,
+      timezone,
     );
   }
 

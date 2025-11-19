@@ -6,6 +6,11 @@ export const normalizeGroupByDimensionValue = (
 ): string => {
   if (typeof fieldConfig === 'object' && isDefined(fieldConfig.granularity)) {
     const dateValue = new Date(value);
+
+    if (isNaN(dateValue.getTime())) {
+      return String(value);
+    }
+
     const granularity = fieldConfig.granularity;
 
     // TODO: to remove once backend properly returns DATE without time

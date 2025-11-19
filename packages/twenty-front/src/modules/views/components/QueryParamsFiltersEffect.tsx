@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { useFiltersFromQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
 import { useHasFiltersInQueryParams } from '@/views/hooks/internal/useHasFiltersInQueryParams';
@@ -16,6 +17,8 @@ export const QueryParamsFiltersEffect = () => {
   const { applyViewFiltersToCurrentRecordFilters } =
     useApplyViewFiltersToCurrentRecordFilters();
 
+  const [, setSearchParams] = useSearchParams();
+
   const currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem =
     currentView?.objectMetadataId !== objectMetadataItem.id;
 
@@ -30,6 +33,15 @@ export const QueryParamsFiltersEffect = () => {
     getFiltersFromQueryParams().then((filtersFromParams) => {
       if (Array.isArray(filtersFromParams)) {
         applyViewFiltersToCurrentRecordFilters(filtersFromParams);
+
+        setSearchParams(
+          (currentParams) => {
+            const newParams = new URLSearchParams(currentParams);
+            newParams.delete('filter');
+            return newParams;
+          },
+          { replace: true },
+        );
       }
     });
   }, [
@@ -37,6 +49,7 @@ export const QueryParamsFiltersEffect = () => {
     applyViewFiltersToCurrentRecordFilters,
     getFiltersFromQueryParams,
     hasFiltersQueryParams,
+    setSearchParams,
   ]);
 
   return <></>;

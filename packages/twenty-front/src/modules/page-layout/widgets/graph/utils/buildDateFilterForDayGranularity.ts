@@ -1,3 +1,4 @@
+import { TZDate } from '@date-fns/tz';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import {
   getEndUnitOfDateTime,
@@ -16,6 +17,7 @@ export const buildDateFilterForDayGranularity = (
   parsedBucketDate: Date,
   fieldType: FieldMetadataType,
   fieldName: string,
+  timezone?: string,
 ): ChartFilter[] => {
   if (fieldType === FieldMetadataType.DATE) {
     return [
@@ -28,8 +30,12 @@ export const buildDateFilterForDayGranularity = (
   }
 
   if (fieldType === FieldMetadataType.DATE_TIME) {
-    const startOfDayDate = getStartUnitOfDateTime(parsedBucketDate, 'DAY');
-    const endOfDayDate = getEndUnitOfDateTime(parsedBucketDate, 'DAY');
+    const dateInTimezone = timezone
+      ? new TZDate(parsedBucketDate, timezone)
+      : parsedBucketDate;
+
+    const startOfDayDate = getStartUnitOfDateTime(dateInTimezone, 'DAY');
+    const endOfDayDate = getEndUnitOfDateTime(dateInTimezone, 'DAY');
 
     return [
       {

@@ -25,6 +25,7 @@ export const handleLineChartPointClick = (
     clickedData: {
       primaryBucketRawValue: dataPoint.__bucketRawValue ?? dataPoint.x,
     },
+    timezone: configuration.timezone ?? undefined,
   });
 
   navigate(url);

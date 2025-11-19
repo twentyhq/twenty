@@ -7,6 +7,7 @@ export const buildChartDrilldownUrl = ({
   objectMetadataItem,
   configuration,
   clickedData,
+  timezone,
 }: BuildChartDrilldownUrlParams): string => {
   const drilldownQueryParams = new URLSearchParams();
 
@@ -20,6 +21,7 @@ export const buildChartDrilldownUrl = ({
       bucketRawValue: clickedData.primaryBucketRawValue,
       dateGranularity: configuration.primaryAxisDateGranularity,
       subFieldName: configuration.primaryAxisGroupBySubFieldName,
+      timezone,
     });
 
     primaryFilters.forEach((filter) => {

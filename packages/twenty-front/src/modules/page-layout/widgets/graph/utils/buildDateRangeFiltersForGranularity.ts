@@ -1,3 +1,4 @@
+import { TZDate } from '@date-fns/tz';
 import {
   ObjectRecordGroupByDateGranularity,
   ViewFilterOperand,
@@ -21,20 +22,26 @@ export const buildDateRangeFiltersForGranularity = (
   dateGranularity: ObjectRecordGroupByDateGranularity,
   fieldType: FieldMetadataType,
   fieldName: string,
+  timezone?: string,
 ): ChartFilter[] => {
+  const dateInTimezone =
+    fieldType === FieldMetadataType.DATE_TIME && timezone
+      ? new TZDate(parsedBucketDate, timezone)
+      : parsedBucketDate;
+
   let rangeStartDate: Date;
   let rangeEndDate: Date;
 
   if (dateGranularity === ObjectRecordGroupByDateGranularity.MONTH) {
-    rangeStartDate = getStartUnitOfDateTime(parsedBucketDate, 'MONTH');
-    rangeEndDate = getEndUnitOfDateTime(parsedBucketDate, 'MONTH');
+    rangeStartDate = getStartUnitOfDateTime(dateInTimezone, 'MONTH');
+    rangeEndDate = getEndUnitOfDateTime(dateInTimezone, 'MONTH');
   } else if (dateGranularity === ObjectRecordGroupByDateGranularity.QUARTER) {
-    const quarterRange = calculateQuarterDateRange(parsedBucketDate);
+    const quarterRange = calculateQuarterDateRange(dateInTimezone, timezone);
     rangeStartDate = quarterRange.rangeStartDate;
     rangeEndDate = quarterRange.rangeEndDate;
   } else {
-    rangeStartDate = getStartUnitOfDateTime(parsedBucketDate, 'YEAR');
-    rangeEndDate = getEndUnitOfDateTime(parsedBucketDate, 'YEAR');
+    rangeStartDate = getStartUnitOfDateTime(dateInTimezone, 'YEAR');
+    rangeEndDate = getEndUnitOfDateTime(dateInTimezone, 'YEAR');
   }
 
   if (fieldType === FieldMetadataType.DATE_TIME) {

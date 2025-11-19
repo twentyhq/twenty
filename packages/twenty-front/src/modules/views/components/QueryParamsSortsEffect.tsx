@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { useSortsFromQueryParams } from '@/views/hooks/internal/useSortsFromQueryParams';
 import { useApplyViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyViewSortsToCurrentRecordSorts';
@@ -12,6 +13,8 @@ export const QueryParamsSortsEffect = () => {
 
   const { applyViewSortsToCurrentRecordSorts } =
     useApplyViewSortsToCurrentRecordSorts();
+
+  const [, setSearchParams] = useSearchParams();
 
   const currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem =
     currentView?.objectMetadataId !== objectMetadataItem.id;
@@ -32,6 +35,15 @@ export const QueryParamsSortsEffect = () => {
       }));
 
       applyViewSortsToCurrentRecordSorts(viewSorts);
+
+      setSearchParams(
+        (currentParams) => {
+          const newParams = new URLSearchParams(currentParams);
+          newParams.delete('sort');
+          return newParams;
+        },
+        { replace: true },
+      );
     }
   }, [
     hasSortsQueryParams,
@@ -39,6 +51,7 @@ export const QueryParamsSortsEffect = () => {
     applyViewSortsToCurrentRecordSorts,
     currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem,
     currentView?.id,
+    setSearchParams,
   ]);
 
   return <></>;
