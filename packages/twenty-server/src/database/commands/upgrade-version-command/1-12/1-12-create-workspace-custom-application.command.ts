@@ -60,6 +60,6 @@ export class CreateWorkspaceCustomApplicationCommand extends ActiveOrSuspendedWo
       workspaceCustomApplicationId: customWorkspaceApplication.id,
     });
 
-    this.logger.log(`Successfully create workpsace custom application`);
+    this.logger.log(`Successfully create workspace custom application`);
   }
 }
