@@ -37,6 +37,8 @@ const rolePropertiesToIgnore = [
   'permissionFlags',
   'objectPermissions',
   'fieldPermissions',
+  'universalIdentifier',
+  'applicationId',
 ];
 
 @Injectable()
