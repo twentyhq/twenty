@@ -151,6 +151,19 @@ describe('Field metadata relation creation should fail', () => {
           },
         },
       },
+      {
+        title:
+          'when joinColumn name conflicts with an existing field on target object',
+        context: ({ collisionFieldNameWithId }) => ({
+          input: {
+            name: collisionFieldNameWithId.replace('Id', ''),
+            relationCreationPayload: {
+              type: RelationType.MANY_TO_ONE,
+              targetFieldLabel: 'Target Field Label',
+            },
+          },
+        }),
+      },
     ];
 
   beforeAll(async () => {
