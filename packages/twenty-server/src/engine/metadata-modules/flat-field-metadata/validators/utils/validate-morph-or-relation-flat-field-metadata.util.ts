@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { RelationType } from 'twenty-shared/types';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
@@ -48,10 +48,12 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
     flatEntityMaps: flatObjectMetadataMaps,
   });
 
-  const targetFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: relationTargetFieldMetadataId,
-    flatEntityMaps: flatFieldMetadataMaps,
-  });
+  const targetFlatFieldMetadata =
+    remainingFlatEntityMapsToValidate?.byId[relationTargetFieldMetadataId] ??
+    findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: relationTargetFieldMetadataId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
 
   if (!isDefined(targetFlatObjectMetadata)) {
     errors.push({
