@@ -124,14 +124,12 @@ const fillDateGapsInTwoDimensionalBarChartData = ({
 
     parsedDates.push(parsedDate);
 
-    if (isDefined(item.groupByDimensionValues?.[1])) {
-      const secondDimensionValue = item
-        .groupByDimensionValues[1] as DimensionValue;
-      uniqueSecondDimensionValues.add(secondDimensionValue);
+    const secondDimensionValue = (item.groupByDimensionValues?.[1] ??
+      null) as DimensionValue;
+    uniqueSecondDimensionValues.add(secondDimensionValue);
 
-      const key = `${parsedDate.toISOString()}_${String(secondDimensionValue)}`;
-      existingDateGroupsMap.set(key, item);
-    }
+    const key = `${parsedDate.toISOString()}_${String(secondDimensionValue)}`;
+    existingDateGroupsMap.set(key, item);
   }
 
   if (parsedDates.length === 0) {
