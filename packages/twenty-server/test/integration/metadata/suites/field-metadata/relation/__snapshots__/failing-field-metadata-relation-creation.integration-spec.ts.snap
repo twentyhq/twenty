@@ -1557,8 +1557,8 @@ exports[`Field metadata relation creation should fail should fail when creating 
           "errors": [
             {
               "code": "NOT_AVAILABLE",
-              "message": "Name "companyId" is not available as it is already used by another field join column name",
-              "userFriendlyMessage": "Name "companyId" is not available as it is already used by another field",
+              "message": "Name "companyId" is not available as it is already used by another join column name",
+              "userFriendlyMessage": "Name "companyId" is not available as it is already used by join column name",
               "value": "companyId",
             },
           ],
