@@ -8,24 +8,24 @@ import { t } from '@lingui/core/macro';
 import { SettingsRolesTableHeader } from '@/settings/roles/components/SettingsRolesTableHeader';
 import { SettingsRolesTableRow } from '@/settings/roles/components/SettingsRolesTableRow';
 import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   H2Title,
-  IconPlus,
-  IconSearch,
   IconFilter,
-  IconRobot,
   IconKey,
+  IconPlus,
+  IconRobot,
+  IconSearch,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useState } from 'react';
 
 const StyledCreateRoleSection = styled(Section)`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
@@ -68,13 +68,11 @@ export const SettingsRolesList = () => {
   );
 
   const filteredRoles = sortedSettingsAllRoles.filter((role) => {
-    // Filter by role type (always show user roles)
     const matchesType =
       role.canBeAssignedToUsers ||
       (showAgentRoles && role.canBeAssignedToAgents) ||
       (showApiKeyRoles && role.canBeAssignedToApiKeys);
 
-    // Filter by search term
     const matchesSearch = role.label
       ?.toLowerCase()
       .includes(searchTerm.toLowerCase());

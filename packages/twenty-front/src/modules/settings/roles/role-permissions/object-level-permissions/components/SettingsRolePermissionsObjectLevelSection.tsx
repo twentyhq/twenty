@@ -2,10 +2,12 @@ import { SettingsRolePermissionsObjectLevelTableHeader } from '@/settings/roles/
 import { SettingsRolePermissionsObjectLevelTableRow } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRow';
 import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
+import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
@@ -28,7 +30,6 @@ const StyledTableRows = styled.div`
 
 type SettingsRolePermissionsObjectLevelSectionProps = {
   roleId: string;
-  isEditable: boolean;
   fromAgentId?: string;
 };
 
@@ -38,10 +39,13 @@ const StyledNoOverride = styled(TableCell)`
 
 export const SettingsRolePermissionsObjectLevelSection = ({
   roleId,
-  isEditable,
   fromAgentId,
 }: SettingsRolePermissionsObjectLevelSectionProps) => {
   const navigateSettings = useNavigateSettings();
+
+  const settingsDraftRole = useRecoilValue(
+    settingsDraftRoleFamilyState(roleId),
+  );
 
   const { objectMetadataItemsThatCanHavePermission } =
     useObjectMetadataItemsThatCanHavePermission();
@@ -87,7 +91,6 @@ export const SettingsRolePermissionsObjectLevelSection = ({
                   objectMetadataItem={objectMetadataItem}
                   roleId={roleId}
                   fromAgentId={fromAgentId}
-                  isEditable={isEditable}
                 />
               ),
             )
@@ -104,7 +107,9 @@ export const SettingsRolePermissionsObjectLevelSection = ({
           title={t`Add rule`}
           variant="secondary"
           size="small"
-          disabled={!isEditable || allObjectsHaveSetPermission}
+          disabled={
+            !settingsDraftRole.isEditable || allObjectsHaveSetPermission
+          }
           onClick={handleAddRule}
         />
       </StyledCreateObjectOverrideSection>

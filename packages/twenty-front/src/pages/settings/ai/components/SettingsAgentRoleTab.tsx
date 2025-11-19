@@ -58,10 +58,8 @@ export const SettingsAgentRoleTab = ({
     (role) => role.id === formValues.role,
   );
 
-  // Check if agentId is valid (not empty string)
   const hasValidAgentId = isNonEmptyString(agentId);
 
-  // Check if role is assigned to multiple entities
   const isRoleShared = selectedRole
     ? (selectedRole.workspaceMembers?.length || 0) +
         (selectedRole.agents?.length || 0) +
@@ -69,25 +67,24 @@ export const SettingsAgentRoleTab = ({
       1
     : false;
 
-  // Role is only editable if:
-  // 1. It's assigned exclusively to this agent (edit mode)
-  // 2. OR it's a new agent being created (create mode) and role was just created
-  const isRoleExclusiveToThisAgent = hasValidAgentId
-    ? selectedRole &&
-      selectedRole.agents?.length === 1 &&
-      selectedRole.agents[0].id === agentId &&
-      (selectedRole.workspaceMembers?.length || 0) === 0 &&
-      (selectedRole.apiKeys?.length || 0) === 0
-    : selectedRole &&
-      (selectedRole.agents?.length || 0) === 0 &&
-      (selectedRole.workspaceMembers?.length || 0) === 0 &&
-      (selectedRole.apiKeys?.length || 0) === 0;
+  // Role is only editable if it's not shared and either:
+  // 1. Assigned exclusively to this agent (edit mode)
+  // 2. Not yet assigned to anyone (create mode)
+  const isRoleExclusiveToThisAgent =
+    !isRoleShared &&
+    selectedRole &&
+    (selectedRole.workspaceMembers?.length || 0) === 0 &&
+    (selectedRole.apiKeys?.length || 0) === 0 &&
+    (hasValidAgentId
+      ? selectedRole.agents?.length === 1 &&
+        selectedRole.agents[0].id === agentId
+      : (selectedRole.agents?.length || 0) === 0);
 
   const handleCreateRole = async () => {
     setIsCreatingRole(true);
     try {
       const roleId = v4();
-      const roleName = `${agentLabel} Role`;
+      const roleName = `${agentLabel} Agent Role`;
 
       const { data } = await createRole({
         variables: {
@@ -113,7 +110,6 @@ export const SettingsAgentRoleTab = ({
       if (isDefined(data?.createOneRole)) {
         onFieldChange('role', data.createOneRole.id);
 
-        // If editing existing agent (has valid agentId), assign role immediately
         if (hasValidAgentId) {
           await assignRoleToAgent({
             variables: {

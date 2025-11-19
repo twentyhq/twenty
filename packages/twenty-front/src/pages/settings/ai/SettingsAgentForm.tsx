@@ -113,7 +113,6 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
   const agent = data?.findOneAgent;
 
-  // Role state management
   const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(formValues.role || ''),
   );
@@ -170,8 +169,10 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
               apolloError: error,
             });
           } else {
+            const errorMessage =
+              error instanceof Error ? error.message : String(error);
             enqueueErrorSnackBar({
-              message: t`Failed to save role permissions`,
+              message: t`Failed to save role permissions: ${errorMessage}`,
             });
           }
           setIsSubmitting(false);

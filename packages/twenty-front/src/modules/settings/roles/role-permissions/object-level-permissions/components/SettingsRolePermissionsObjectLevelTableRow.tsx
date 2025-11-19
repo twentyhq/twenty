@@ -30,14 +30,12 @@ type SettingsRolePermissionsObjectLevelTableRowProps = {
   objectMetadataItem: ObjectMetadataItem;
   roleId: string;
   fromAgentId?: string;
-  isEditable: boolean;
 };
 
 export const SettingsRolePermissionsObjectLevelTableRow = ({
   objectMetadataItem,
   roleId,
   fromAgentId,
-  isEditable,
 }: SettingsRolePermissionsObjectLevelTableRowProps) => {
   const { getIcon } = useIcons();
   const theme = useTheme();
@@ -57,7 +55,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
 
   return (
     <TableRow
-      to={isEditable ? navigationUrl : undefined}
+      to={navigationUrl}
       gridAutoColumns={OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS}
     >
       <StyledNameTableCell>
@@ -92,12 +90,10 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
         />
       </TableCell>
       <TableCell align="right">
-        {isEditable && (
-          <IconChevronRight
-            size={theme.icon.size.md}
-            color={theme.font.color.tertiary}
-          />
-        )}
+        <IconChevronRight
+          size={theme.icon.size.md}
+          color={theme.font.color.tertiary}
+        />
       </TableCell>
     </TableRow>
   );

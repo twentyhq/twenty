@@ -18,7 +18,7 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { IconSearch, IconFilter, IconArchive } from 'twenty-ui/display';
+import { IconArchive, IconFilter, IconSearch } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
@@ -125,14 +125,13 @@ export const SettingsObjectFieldTable = ({
     setSettingsObjectFields(objectMetadataItem.fields);
   }, [objectMetadataItem, setSettingsObjectFields]);
 
-  const activeObjectSettingsDetailItems = useMemo(() => {
-    const activeMetadataFields = settingsObjectFields?.filter(
-      (fieldMetadataItem) =>
-        fieldMetadataItem.isActive && !fieldMetadataItem.isSystem,
+  const allObjectSettingsDetailItems = useMemo(() => {
+    const nonSystemFields = settingsObjectFields?.filter(
+      (fieldMetadataItem) => !fieldMetadataItem.isSystem,
     );
 
     return (
-      activeMetadataFields?.map(
+      nonSystemFields?.map(
         mapFieldMetadataItemToSettingsObjectDetailTableItem,
       ) ?? []
     );
@@ -141,55 +140,25 @@ export const SettingsObjectFieldTable = ({
     mapFieldMetadataItemToSettingsObjectDetailTableItem,
   ]);
 
-  const disabledObjectSettingsDetailItems = useMemo(() => {
-    const disabledFieldMetadataItems = settingsObjectFields?.filter(
-      (fieldMetadataItem) =>
-        !fieldMetadataItem.isActive && !fieldMetadataItem.isSystem,
-    );
-
-    return (
-      disabledFieldMetadataItems?.map(
-        mapFieldMetadataItemToSettingsObjectDetailTableItem,
-      ) ?? []
-    );
-  }, [
-    settingsObjectFields,
-    mapFieldMetadataItemToSettingsObjectDetailTableItem,
-  ]);
-
-  const sortedActiveObjectSettingsDetailItems = useSortedArray(
-    activeObjectSettingsDetailItems,
-    tableMetadata,
-  );
-
-  const sortedDisabledObjectSettingsDetailItems = useSortedArray(
-    disabledObjectSettingsDetailItems,
+  const sortedAllObjectSettingsDetailItems = useSortedArray(
+    allObjectSettingsDetailItems,
     tableMetadata,
   );
 
   const filteredItems = useMemo(() => {
     const searchNormalized = normalizeSearchText(searchTerm);
 
-    // Combine active and inactive items based on toggle state
-    const itemsToDisplay = showInactive
-      ? [
-          ...sortedActiveObjectSettingsDetailItems,
-          ...sortedDisabledObjectSettingsDetailItems,
-        ]
-      : sortedActiveObjectSettingsDetailItems;
+    return sortedAllObjectSettingsDetailItems.filter((item) => {
+      const matchesActiveFilter =
+        showInactive || item.fieldMetadataItem.isActive;
 
-    return itemsToDisplay.filter((item) => {
-      return (
+      const matchesSearch =
         normalizeSearchText(item.label).includes(searchNormalized) ||
-        normalizeSearchText(item.dataType).includes(searchNormalized)
-      );
+        normalizeSearchText(item.dataType).includes(searchNormalized);
+
+      return matchesActiveFilter && matchesSearch;
     });
-  }, [
-    sortedActiveObjectSettingsDetailItems,
-    sortedDisabledObjectSettingsDetailItems,
-    searchTerm,
-    showInactive,
-  ]);
+  }, [sortedAllObjectSettingsDetailItems, searchTerm, showInactive]);
 
   return (
     <>
