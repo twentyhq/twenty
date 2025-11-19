@@ -1,0 +1,155 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generateActivityTargetGqlFields snapshot tests should match snapshot for Note with loadRelations="activity" 1`] = `
+{
+  "id": true,
+  "note": {
+    "id": true,
+    "title": true,
+  },
+}
+`;
+
+exports[`generateActivityTargetGqlFields snapshot tests should match snapshot for Note with loadRelations="both" 1`] = `
+{
+  "company": {
+    "domainName": true,
+    "id": true,
+    "name": true,
+  },
+  "companyId": true,
+  "createdAt": true,
+  "deletedAt": true,
+  "id": true,
+  "note": {
+    "id": true,
+    "title": true,
+  },
+  "noteId": true,
+  "opportunity": {
+    "id": true,
+    "name": true,
+  },
+  "opportunityId": true,
+  "person": {
+    "avatarUrl": true,
+    "id": true,
+    "name": true,
+  },
+  "personId": true,
+  "pet": {
+    "id": true,
+    "name": true,
+  },
+  "petId": true,
+  "rocket": {
+    "id": true,
+    "name": true,
+  },
+  "rocketId": true,
+  "surveyResult": {
+    "id": true,
+    "name": true,
+  },
+  "surveyResultId": true,
+  "updatedAt": true,
+}
+`;
+
+exports[`generateActivityTargetGqlFields snapshot tests should match snapshot for Note with loadRelations="relations" 1`] = `
+{
+  "company": true,
+  "companyId": true,
+  "createdAt": true,
+  "deletedAt": true,
+  "id": true,
+  "opportunity": true,
+  "opportunityId": true,
+  "person": true,
+  "personId": true,
+  "pet": true,
+  "petId": true,
+  "rocket": true,
+  "rocketId": true,
+  "surveyResult": true,
+  "surveyResultId": true,
+  "updatedAt": true,
+}
+`;
+
+exports[`generateActivityTargetGqlFields snapshot tests should match snapshot for Task with loadRelations="activity" 1`] = `
+{
+  "id": true,
+  "task": {
+    "id": true,
+    "title": true,
+  },
+}
+`;
+
+exports[`generateActivityTargetGqlFields snapshot tests should match snapshot for Task with loadRelations="both" 1`] = `
+{
+  "company": {
+    "domainName": true,
+    "id": true,
+    "name": true,
+  },
+  "companyId": true,
+  "createdAt": true,
+  "deletedAt": true,
+  "id": true,
+  "opportunity": {
+    "id": true,
+    "name": true,
+  },
+  "opportunityId": true,
+  "person": {
+    "avatarUrl": true,
+    "id": true,
+    "name": true,
+  },
+  "personId": true,
+  "pet": {
+    "id": true,
+    "name": true,
+  },
+  "petId": true,
+  "rocket": {
+    "id": true,
+    "name": true,
+  },
+  "rocketId": true,
+  "surveyResult": {
+    "id": true,
+    "name": true,
+  },
+  "surveyResultId": true,
+  "task": {
+    "id": true,
+    "title": true,
+  },
+  "taskId": true,
+  "updatedAt": true,
+}
+`;
+
+exports[`generateActivityTargetGqlFields snapshot tests should match snapshot for Task with loadRelations="relations" 1`] = `
+{
+  "company": true,
+  "companyId": true,
+  "createdAt": true,
+  "deletedAt": true,
+  "id": true,
+  "opportunity": true,
+  "opportunityId": true,
+  "person": true,
+  "personId": true,
+  "pet": true,
+  "petId": true,
+  "rocket": true,
+  "rocketId": true,
+  "surveyResult": true,
+  "surveyResultId": true,
+  "updatedAt": true,
+}
+`;

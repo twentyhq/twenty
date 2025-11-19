@@ -6,6 +6,7 @@ import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generate
 import { generateGroupByQueryVariablesFromChartConfiguration } from '@/page-layout/widgets/graph/utils/generateGroupByQueryVariablesFromChartConfiguration';
 import { useQuery } from '@apollo/client';
 import { useMemo } from 'react';
+import { DEFAULT_NUMBER_OF_GROUPS_LIMIT } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useGraphWidgetGroupByQuery = ({
@@ -52,6 +53,7 @@ export const useGraphWidgetGroupByQuery = ({
   const variables = {
     ...groupByQueryVariables,
     filter: gqlOperationFilter,
+    limit: DEFAULT_NUMBER_OF_GROUPS_LIMIT,
   };
 
   const query = generateGroupByQuery({

@@ -11,7 +11,7 @@ sectionInfo: 靈活的數據模型設計來支持您的獨特業務流程
 
 ## 什麼是數據模型？
 
-數據模型是定義信息如何在您的CRM中組織的結構。 It determines what objects exist (like companies, people, or opportunities), what properties they have (those are the fields), and how they relate to each other. 您可以將其視為客戶數據的地圖。
+數據模型是定義信息如何在您的CRM中組織的結構。 It determines what objects exist (like companies, people, or opportunities), what properties they have (those are the fields), and how they relate to each other. It determines what objects exist (like companies, people, or opportunities), what properties they have (those are the fields), and how they relate to each other. 您可以將其視為客戶數據的地圖。
 
 ## Why should you customize your data model?
 
@@ -27,7 +27,7 @@ There is rarely only one way to build a data model. Below are a few tips to help
 例子：Stripe 需要一個對象`訂閱`，Airbnb 需要一個對象`旅行`，創業加速器需要一個對象`批次`。
 
 **2. 使用字段表示變化，而不是新對象。**  
-如果某物只是現有對象的一個特徵（例如公司的`行業`，或機會的`狀態`），請將其作為一個字段。 字段最適合用於類別、標籤和屬性。
+如果某物只是現有對象的一個特徵（例如公司的`行業`，或機會的`狀態`），請將其作為一個字段。 字段最適合用於類別、標籤和屬性。 字段最適合用於類別、標籤和屬性。
 
 **3. Create a new object when it stands on its own.**  
 If the concept has its own lifecycle, properties, or relationships, it usually deserves an object. 例如：
@@ -42,6 +42,7 @@ If the concept has its own lifecycle, properties, or relationships, it usually d
 如果某物可以多次連結，甚至不確定會有多少次，則其更好作為自己的對象。 例如，與其創建“產品1”、“產品2”等字段，不如定義一個“產品”對象並將其與原始記錄關聯。 這樣您可以在不改變模型的情況下，將一、兩百乃至更多的產品支持到系統中。
 
 **5. 保持簡單。**  
+從字段開始。 保持簡單。\*\*  
 從字段開始。 只有當您感到限制時才移動到新對象：太多字段、重複記錄或不適合的關係。
 
 ### 關於人員、公司與機會的特別說明
