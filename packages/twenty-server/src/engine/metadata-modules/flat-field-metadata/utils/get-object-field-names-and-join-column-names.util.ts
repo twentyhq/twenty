@@ -1,4 +1,6 @@
+
 import { RelationType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -53,6 +55,16 @@ export const getObjectFieldNamesAndJoinColumnNames = ({
           flatEntityId: flatFieldMetadata.relationTargetFieldMetadataId,
           flatEntityMaps: flatFieldMetadataMaps,
         });
+
+      if (
+        !isMorphOrRelationFlatFieldMetadata(targetFlatFieldMetadata) ||
+        !isDefined(targetFlatFieldMetadata.settings.joinColumnName)
+      ) {
+        return {
+          ...acc,
+          names: [...acc.names, flatFieldMetadata.name],
+        };
+      }
 
       return {
         ...acc,
