@@ -11,8 +11,6 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import { type WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
@@ -236,27 +234,14 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                       />
                       <DropdownMenuSeparator />
                       <DropdownMenuItemsContainer hasMaxHeight>
-                        <SelectableList
-                          selectableListInstanceId={dropdownId}
-                          focusId={dropdownId}
-                          selectableItemIdArray={filteredSystemObjects.map(
-                            (option) => option.value,
-                          )}
-                        >
-                          {filteredSystemObjects.map((option) => (
-                            <SelectableListItem
-                              key={option.value}
-                              itemId={option.value}
-                              onEnter={() => handleOptionClick(option.value)}
-                            >
-                              <MenuItem
-                                LeftIcon={option.Icon}
-                                text={option.label}
-                                onClick={() => handleOptionClick(option.value)}
-                              />
-                            </SelectableListItem>
-                          ))}
-                        </SelectableList>
+                        {filteredSystemObjects.map((option) => (
+                          <MenuItem
+                            key={option.value}
+                            LeftIcon={option.Icon}
+                            text={option.label}
+                            onClick={() => handleOptionClick(option.value)}
+                          />
+                        ))}
                       </DropdownMenuItemsContainer>
                     </DropdownContent>
                   ) : (
@@ -270,60 +255,34 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                       />
                       <DropdownMenuSeparator />
                       <DropdownMenuItemsContainer hasMaxHeight>
-                        <SelectableList
-                          selectableListInstanceId={dropdownId}
-                          focusId={dropdownId}
-                          selectableItemIdArray={[
-                            ...filteredRegularObjects.map((option) => option.value),
-                            ...(searchInputValue
-                              ? filteredSystemObjects.map((option) => option.value)
-                              : ['advanced']),
-                          ]}
-                        >
-                          {filteredRegularObjects.map((option) => (
-                            <SelectableListItem
+                        {filteredRegularObjects.map((option) => (
+                          <MenuItem
+                            key={option.value}
+                            LeftIcon={option.Icon}
+                            text={option.label}
+                            onClick={() => handleOptionClick(option.value)}
+                          />
+                        ))}
+                        {!!searchInputValue &&
+                          filteredSystemObjects.map((option) => (
+                            <MenuItem
                               key={option.value}
-                              itemId={option.value}
-                              onEnter={() => handleOptionClick(option.value)}
-                            >
-                              <MenuItem
-                                LeftIcon={option.Icon}
-                                text={option.label}
-                                onClick={() => handleOptionClick(option.value)}
-                              />
-                            </SelectableListItem>
+                              LeftIcon={option.Icon}
+                              text={option.label}
+                              onClick={() => handleOptionClick(option.value)}
+                            />
                           ))}
-                          {!!searchInputValue &&
-                            filteredSystemObjects.map((option) => (
-                              <SelectableListItem
-                                key={option.value}
-                                itemId={option.value}
-                                onEnter={() => handleOptionClick(option.value)}
-                              >
-                                <MenuItem
-                                  LeftIcon={option.Icon}
-                                  text={option.label}
-                                  onClick={() => handleOptionClick(option.value)}
-                                />
-                              </SelectableListItem>
-                            ))}
-                          {(!searchInputValue ||
-                            'advanced'.includes(
-                              searchInputValue.toLowerCase(),
-                            )) && (
-                            <SelectableListItem
-                              itemId="advanced"
-                              onEnter={handleSystemObjectsClick}
-                            >
-                              <MenuItem
-                                text="Advanced"
-                                LeftIcon={IconSettings}
-                                onClick={handleSystemObjectsClick}
-                                hasSubMenu
-                              />
-                            </SelectableListItem>
-                          )}
-                        </SelectableList>
+                        {(!searchInputValue ||
+                          'advanced'.includes(
+                            searchInputValue.toLowerCase(),
+                          )) && (
+                          <MenuItem
+                            text="Advanced"
+                            LeftIcon={IconSettings}
+                            onClick={handleSystemObjectsClick}
+                            hasSubMenu
+                          />
+                        )}
                       </DropdownMenuItemsContainer>
                     </DropdownContent>
                   ))}

@@ -25,8 +25,6 @@ import { RecordIndexContextProvider } from '@/object-record/record-index/context
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowFindRecordsFilters } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFilters';
@@ -280,27 +278,14 @@ export const WorkflowEditActionFindRecords = ({
                       />
                       <DropdownMenuSeparator />
                       <DropdownMenuItemsContainer hasMaxHeight>
-                        <SelectableList
-                          selectableListInstanceId={dropdownId}
-                          focusId={dropdownId}
-                          selectableItemIdArray={filteredSystemObjects.map(
-                            (option) => option.value,
-                          )}
-                        >
-                          {filteredSystemObjects.map((option) => (
-                            <SelectableListItem
-                              key={option.value}
-                              itemId={option.value}
-                              onEnter={() => handleOptionClick(option.value)}
-                            >
-                              <MenuItem
-                                LeftIcon={option.Icon}
-                                text={option.label}
-                                onClick={() => handleOptionClick(option.value)}
-                              />
-                            </SelectableListItem>
-                          ))}
-                        </SelectableList>
+                        {filteredSystemObjects.map((option) => (
+                          <MenuItem
+                            key={option.value}
+                            LeftIcon={option.Icon}
+                            text={option.label}
+                            onClick={() => handleOptionClick(option.value)}
+                          />
+                        ))}
                       </DropdownMenuItemsContainer>
                     </DropdownContent>
                   ) : (
@@ -314,66 +299,34 @@ export const WorkflowEditActionFindRecords = ({
                       />
                       <DropdownMenuSeparator />
                       <DropdownMenuItemsContainer hasMaxHeight>
-                        <SelectableList
-                          selectableListInstanceId={dropdownId}
-                          focusId={dropdownId}
-                          selectableItemIdArray={[
-                            ...filteredRegularObjects.map(
-                              (option) => option.value,
-                            ),
-                            ...(searchInputValue
-                              ? filteredSystemObjects.map(
-                                  (option) => option.value,
-                                )
-                              : ['advanced']),
-                          ]}
-                        >
-                          {filteredRegularObjects.map((option) => (
-                            <SelectableListItem
+                        {filteredRegularObjects.map((option) => (
+                          <MenuItem
+                            key={option.value}
+                            LeftIcon={option.Icon}
+                            text={option.label}
+                            onClick={() => handleOptionClick(option.value)}
+                          />
+                        ))}
+                        {!!searchInputValue &&
+                          filteredSystemObjects.map((option) => (
+                            <MenuItem
                               key={option.value}
-                              itemId={option.value}
-                              onEnter={() => handleOptionClick(option.value)}
-                            >
-                              <MenuItem
-                                LeftIcon={option.Icon}
-                                text={option.label}
-                                onClick={() => handleOptionClick(option.value)}
-                              />
-                            </SelectableListItem>
+                              LeftIcon={option.Icon}
+                              text={option.label}
+                              onClick={() => handleOptionClick(option.value)}
+                            />
                           ))}
-                          {!!searchInputValue &&
-                            filteredSystemObjects.map((option) => (
-                              <SelectableListItem
-                                key={option.value}
-                                itemId={option.value}
-                                onEnter={() => handleOptionClick(option.value)}
-                              >
-                                <MenuItem
-                                  LeftIcon={option.Icon}
-                                  text={option.label}
-                                  onClick={() =>
-                                    handleOptionClick(option.value)
-                                  }
-                                />
-                              </SelectableListItem>
-                            ))}
-                          {(!searchInputValue ||
-                            'advanced'.includes(
-                              searchInputValue.toLowerCase(),
-                            )) && (
-                            <SelectableListItem
-                              itemId="advanced"
-                              onEnter={handleSystemObjectsClick}
-                            >
-                              <MenuItem
-                                text="Advanced"
-                                LeftIcon={IconSettings}
-                                onClick={handleSystemObjectsClick}
-                                hasSubMenu
-                              />
-                            </SelectableListItem>
-                          )}
-                        </SelectableList>
+                        {(!searchInputValue ||
+                          'advanced'.includes(
+                            searchInputValue.toLowerCase(),
+                          )) && (
+                          <MenuItem
+                            text="Advanced"
+                            LeftIcon={IconSettings}
+                            onClick={handleSystemObjectsClick}
+                            hasSubMenu
+                          />
+                        )}
                       </DropdownMenuItemsContainer>
                     </DropdownContent>
                   ))}
