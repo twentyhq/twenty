@@ -2,6 +2,7 @@ import { request } from "./utils"
 
 type Person = {
   companyId: string
+  company: Company
 }
 
 type Company = {
@@ -11,7 +12,7 @@ type Company = {
 
 export const summarisePeopleCreation = async (date: string) => {
   const { people }: { people: Person[] } = await request(
-    `people?filter=createdAt[gte]:${date}`,
+    `people?depth=1&filter=createdAt[gte]:${date}`,
   )
 
   if (people.length === 0) {
@@ -24,12 +25,9 @@ export const summarisePeopleCreation = async (date: string) => {
   for (const person of people) {
     const isCompanyTracked = createdForCompanies[person.companyId]
     if (person.companyId && !isCompanyTracked) {
-      const { company }: { company: Company } = await request(
-        `companies/${person.companyId}`,
-      )
-      createdForCompanies[company.id] = company
+      createdForCompanies[person.company.id] = person.company
 
-      if (!company.accountOwnerId) {
+      if (!person?.company?.accountOwnerId) {
         numberOfAccountOwnerlessCompanies += 1
       }
     }

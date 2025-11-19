@@ -994,10 +994,20 @@ msgstr "crwdns1073:0crwdne1073:0"
 msgid "Duplicated option {field}"
 msgstr "crwdns6920:0{field}crwdne6920:0"
 
+#. js-lingui-id: AcnTuz
+#: src/engine/core-modules/user/services/user.service.ts
+msgid "Email already in use"
+msgstr "crwdns64318:0crwdne64318:0"
+
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Email already verified."
 msgstr "crwdns6490:0crwdne6490:0"
+
+#. js-lingui-id: LT5dFi
+#: src/engine/core-modules/user/services/user.service.ts
+msgid "Email can only be updated when you belong to a single workspace."
+msgstr "crwdns64320:0crwdne64320:0"
 
 #. js-lingui-id: xw6iqb
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
@@ -2112,11 +2122,6 @@ msgstr "crwdns7498:0crwdne7498:0"
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
 msgstr "crwdns7376:0crwdne7376:0"
 
-#. js-lingui-id: DsdcRG
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
-msgid "Morph relation fields are disabled for your workspace"
-msgstr "crwdns7282:0crwdne7282:0"
-
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
@@ -2208,6 +2213,11 @@ msgstr "crwdns7164:0crwdne7164:0"
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Names are not synced with labels"
 msgstr "crwdns7216:0crwdne7216:0"
+
+#. js-lingui-id: TYhxR+
+#: src/engine/core-modules/user/services/user.service.ts
+msgid "New email must be different from current email"
+msgstr "crwdns64334:0crwdne64334:0"
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2650,6 +2660,11 @@ msgstr "crwdns1427:0crwdne1427:0"
 msgid "Please check your connection settings. Make sure the server host, port, and password are correct."
 msgstr "crwdns8432:0crwdne8432:0"
 
+#. js-lingui-id: mqzu5F
+#: src/engine/core-modules/email-verification/services/email-verification.service.ts
+msgid "Please confirm your updated email"
+msgstr "crwdns64338:0crwdne64338:0"
+
 #. js-lingui-id: v0iiWr
 #: src/engine/core-modules/webhook/webhook.service.ts
 #: src/engine/core-modules/webhook/webhook.service.ts
@@ -2995,16 +3010,6 @@ msgstr "crwdns1483:0crwdne1483:0"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Sunday"
 msgstr "crwdns8348:0crwdne8348:0"
-
-#. js-lingui-id: VuvnTL
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Sync all folders"
-msgstr "crwdns8858:0crwdne8858:0"
-
-#. js-lingui-id: 9PsZjo
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-msgid "Sync all folders including new ones"
-msgstr "crwdns8860:0crwdne8860:0"
 
 #. js-lingui-id: oyJYg7
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts

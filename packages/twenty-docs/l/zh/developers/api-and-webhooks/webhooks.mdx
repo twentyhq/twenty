@@ -10,7 +10,7 @@ info: 了解如何使用我們的 Webhooks。
 
 ## 概覽
 
-Twenty 中的 Webhooks 補充了 API，當 CRM 中發生某些事件時，能夠向您的應用程式發送**即時通知**。 Instead of continuously polling the API for changes, you can set up webhooks to have Twenty **push** data to your system whenever specific events occur (for example, when a new record is created or an existing record is updated). 這有助於即時且有效地將外部系統與 Twenty 保持同步。
+Twenty 中的 Webhooks 補充了 API，當 CRM 中發生某些事件時，能夠向您的應用程式發送**即時通知**。 Twenty 中的 Webhooks 補充了 API，當 CRM 中發生某些事件時，能夠向您的應用程式發送**即時通知**。 Instead of continuously polling the API for changes, you can set up webhooks to have Twenty **push** data to your system whenever specific events occur (for example, when a new record is created or an existing record is updated). 這有助於即時且有效地將外部系統與 Twenty 保持同步。
 
 With webhooks, Twenty will send an HTTP POST request to a URL you specify, containing details about the event. You can then handle that data in your application (e.g., to update your external database, trigger workflows, or send alerts).
 
@@ -20,14 +20,14 @@ With webhooks, Twenty will send an HTTP POST request to a URL you specify, conta
 
 1. **導航至設定：** 在您的 Twenty 應用程式中，進入 **設定 → APIs & Webhooks**。
 2. **創建 Webhook：** 在 **Webhooks** 下，點擊 **+ 創建 webhook**。
-3. **輸入 URL：** 提供在您的伺服器上希望 Twenty 發送 webhook 請求的端點 URL。 這應該是一個可以處理 POST 請求的公開訪問的 URL。
-4. **保存：** 點擊 **保存** 來創建 webhook。 新的 webhook 將立即生效。
+3. **輸入 URL：** 提供在您的伺服器上希望 Twenty 發送 webhook 請求的端點 URL。 這應該是一個可以處理 POST 請求的公開訪問的 URL。 這應該是一個可以處理 POST 請求的公開訪問的 URL。
+4. **保存：** 點擊 **保存** 來創建 webhook。 新的 webhook 將立即生效。 新的 webhook 將立即生效。
 
-如果需要通過不同的端點發送不同的事件，可以創建多個 webhook。 每一個 webhook 本質上都是對所有相關事件的訂閱（目前，Twenty 將所有事件類型發送到給定的 URL；在 UI 中可能配置過濾特定事件類型）。 如果需要刪除某個 webhook，您可以從相同的設置頁面刪除它（選擇 webhook，然後選擇刪除）。
+如果需要通過不同的端點發送不同的事件，可以創建多個 webhook。 如果需要通過不同的端點發送不同的事件，可以創建多個 webhook。 每一個 webhook 本質上都是對所有相關事件的訂閱（目前，Twenty 將所有事件類型發送到給定的 URL；在 UI 中可能配置過濾特定事件類型）。 如果需要刪除某個 webhook，您可以從相同的設置頁面刪除它（選擇 webhook，然後選擇刪除）。 如果需要刪除某個 webhook，您可以從相同的設置頁面刪除它（選擇 webhook，然後選擇刪除）。
 
 ## Events and Payloads
 
-設置好 webhook 後，當您的 CRM 數據中發生觸發事件時，Twenty 會向您指定的 URL 發送 HTTP POST 請求。 常見的觸發 webhook 的事件包括：
+設置好 webhook 後，當您的 CRM 數據中發生觸發事件時，Twenty 會向您指定的 URL 發送 HTTP POST 請求。 常見的觸發 webhook 的事件包括： 常見的觸發 webhook 的事件包括：
 
 - **紀錄創建：** 例如新增人員 (`person.created`)，創建新公司 (`company.created`)，創建備註 (`note.created`) 等。
 - **紀錄更新：** 例如更新現有的人員信息 (`person.updated`)，編輯公司紀錄 (`company.updated`) 等。
@@ -59,7 +59,7 @@ The webhook POST request contains a JSON payload in its body. The payload will g
 
 Your endpoint should be prepared to receive such JSON data via POST. Typically, you'll parse the JSON, look at the `"event"` type to understand what happened, and then use the `"data"` accordingly (e.g., create a new contact in your system, or update an existing one).
 
-**注意：** 從您的 webhook 端點響應 **2xx HTTP 狀態** 以確認已成功接收很重要。 If the Twenty webhook sender does not get a 2xx response, it may consider the delivery failed. （未來的重試邏輯可能會嘗試重新發送失敗的 webhooks，因此處理完數據後儘量快速返回 200 OK）。
+**注意：** 從您的 webhook 端點響應 **2xx HTTP 狀態** 以確認已成功接收很重要。 If the Twenty webhook sender does not get a 2xx response, it may consider the delivery failed. If the Twenty webhook sender does not get a 2xx response, it may consider the delivery failed. （未來的重試邏輯可能會嘗試重新發送失敗的 webhooks，因此處理完數據後儘量快速返回 200 OK）。
 
 ## Webhook 驗証
 
