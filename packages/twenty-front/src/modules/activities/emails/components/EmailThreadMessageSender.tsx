@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
-import { useState } from 'react';
+import { AppTooltip, TooltipPosition } from 'twenty-ui/display';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import {
   beautifyPastDateRelativeToNow,
@@ -23,9 +23,8 @@ const StyledThreadMessageSentAt = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
   &:hover {
     background-color: ${({ theme }) => theme.background.transparent.light};
-    border-radius: ${({ theme }) => theme.border.radius.md};
+    border-radius: ${({ theme }) => theme.border.radius.sm};
   }
-  user-select: none;
 `;
 
 type EmailThreadMessageSenderProps = {
@@ -38,26 +37,19 @@ export const EmailThreadMessageSender = ({
   sentAt,
 }: EmailThreadMessageSenderProps) => {
   const { localeCatalog } = useRecoilValue(dateLocaleState);
-  const [dateFormat, setDateFormat] = useState<'relative' | 'absolute'>(
-    'relative',
-  );
-  const relativeDate = beautifyPastDateRelativeToNow(sentAt, localeCatalog);
-  const absoluteDate = formatToHumanReadableDate(sentAt);
-  const flipDateFormat = () => {
-    setDateFormat((cur) => (cur === 'absolute' ? 'relative' : 'absolute'));
-  };
+  const tooltipId = `date-tooltip-${sentAt.replace(/[^a-zA-Z0-9]/g, '-')}`;
 
   return (
     <StyledEmailThreadMessageSender>
       <ParticipantChip participant={sender} variant="bold" />
-      <StyledThreadMessageSentAt
-        onClick={(event) => {
-          event.stopPropagation();
-          flipDateFormat();
-        }}
-      >
-        {dateFormat === 'absolute' ? absoluteDate : relativeDate}
+      <StyledThreadMessageSentAt id={tooltipId}>
+        {beautifyPastDateRelativeToNow(sentAt, localeCatalog)}
       </StyledThreadMessageSentAt>
+      <AppTooltip
+        anchorSelect={`#${tooltipId}`}
+        content={formatToHumanReadableDate(sentAt)}
+        place={TooltipPosition.Top}
+      />
     </StyledEmailThreadMessageSender>
   );
 };
