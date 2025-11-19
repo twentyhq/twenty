@@ -172,7 +172,10 @@ export const CommandMenuTopBar = () => {
       </StyledContentContainer>
       {!isMobile &&
         isAiEnabled &&
-        commandMenuPage !== CommandMenuPages.AskAI && (
+        ![
+          CommandMenuPages.AskAI,
+          CommandMenuPages.ViewPreviousAIChats,
+        ].includes(commandMenuPage) && (
           <StyledIconSparkles
             onClick={() => openAskAIPage({ resetNavigationStack: false })}
             size={theme.icon.size.md}
