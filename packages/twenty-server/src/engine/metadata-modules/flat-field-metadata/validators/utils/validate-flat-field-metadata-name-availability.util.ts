@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { writeFileSync } from 'fs';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -13,6 +14,7 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metada
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getObjectFieldNamesAndJoinColumnNames } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-object-field-names-and-join-column-names.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 const getReservedCompositeFieldNames = (
@@ -44,7 +46,7 @@ export const validateFlatFieldMetadataNameAvailability = ({
   remainingFlatEntityMapsToValidate,
   flatObjectMetadata,
 }: {
-  flatFieldMetadata: Pick<FlatFieldMetadata, 'type' | 'name'>;
+  flatFieldMetadata: FlatFieldMetadata;
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   remainingFlatEntityMapsToValidate?: FlatEntityMaps<FlatFieldMetadata>;
@@ -59,15 +61,7 @@ export const validateFlatFieldMetadataNameAvailability = ({
     objectFlatFieldMetadatas,
   );
 
-  const { objectFieldNamesAndJoinColumnNames } =
-    getObjectFieldNamesAndJoinColumnNames({
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
-      remainingFlatEntityMapsToValidate,
-    });
-
   const flatFieldMetadataName = flatFieldMetadata.name;
-
   if (reservedCompositeFieldsNames.includes(flatFieldMetadataName)) {
     errors.push({
       code: FieldMetadataExceptionCode.RESERVED_KEYWORD,
@@ -81,9 +75,26 @@ export const validateFlatFieldMetadataNameAvailability = ({
     return errors;
   }
 
-  if (
-    objectFieldNamesAndJoinColumnNames.names.includes(flatFieldMetadataName)
-  ) {
+  const { objectFieldNamesAndJoinColumnNames } =
+    getObjectFieldNamesAndJoinColumnNames({
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+      remainingFlatEntityMapsToValidate,
+    });
+
+  writeFileSync(
+    `${Date.now()}-prastoin.json`,
+    JSON.stringify(
+      { objectFieldNamesAndJoinColumnNames, flatFieldMetadata },
+      null,
+      2,
+    ),
+  );
+
+  // Does not make sense for name isn't it ?
+  const collidingNameFieldId =
+    objectFieldNamesAndJoinColumnNames.fieldIdByName[flatFieldMetadata.name];
+  if (collidingNameFieldId !== flatFieldMetadata.id) {
     errors.push({
       code: FieldMetadataExceptionCode.NOT_AVAILABLE,
       value: flatFieldMetadataName,
@@ -92,16 +103,20 @@ export const validateFlatFieldMetadataNameAvailability = ({
     });
   }
 
+  const collidingJoinColumnNameFieldId =
+    objectFieldNamesAndJoinColumnNames.relationTargetFieldIdByJoinColumnName[
+      flatFieldMetadata.name
+    ];
   if (
-    objectFieldNamesAndJoinColumnNames.joinColumnNames.includes(
-      flatFieldMetadataName,
-    )
+    !isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) ||
+    collidingJoinColumnNameFieldId !==
+      flatFieldMetadata.relationTargetFieldMetadataId
   ) {
     errors.push({
       code: FieldMetadataExceptionCode.NOT_AVAILABLE,
       value: flatFieldMetadataName,
-      message: `Name "${flatFieldMetadataName}" is not available as it is already used by another field join column name`,
-      userFriendlyMessage: msg`Name "${flatFieldMetadataName}" is not available as it is already used by another field`,
+      message: `Name "${flatFieldMetadataName}" is not available as it is already used by another join column name`,
+      userFriendlyMessage: msg`Name "${flatFieldMetadataName}" is not available as it is already used by join column name`,
     });
   }
 
