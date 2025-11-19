@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 
 import {
-  DEFAULT_LANGUAGE,
-  SUPPORTED_LANGUAGES,
+    DEFAULT_LANGUAGE,
+    SUPPORTED_LANGUAGES,
 } from '../navigation/supported-languages';
 
 type BasePage = string | BaseGroup;
@@ -60,7 +60,7 @@ type GeneratedGroup = {
 
 const baseStructurePath = path.resolve(
   __dirname,
-  '../navigation/navigation-schema.json',
+  '../navigation/base-structure.json',
 );
 const docsPath = path.resolve(__dirname, '../docs.json');
 const localesRoot = path.resolve(__dirname, '../l');

@@ -7,7 +7,10 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 export type GenerateDepthRecordGqlFieldsFromFields = {
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: Pick<
+    ObjectMetadataItem,
+    'id' | 'fields' | 'labelIdentifierFieldMetadataId' | 'nameSingular'
+  >[];
   fields: Pick<
     FieldMetadataItem,
     'name' | 'type' | 'settings' | 'morphRelations' | 'relation'

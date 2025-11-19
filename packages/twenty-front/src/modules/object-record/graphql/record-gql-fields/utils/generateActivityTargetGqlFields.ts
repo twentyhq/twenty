@@ -5,19 +5,20 @@ import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/
 import { isDefined } from 'twenty-shared/utils';
 
 export type GenerateDepthRecordGqlFields = {
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: Pick<
+    ObjectMetadataItem,
+    'id' | 'nameSingular' | 'fields' | 'labelIdentifierFieldMetadataId'
+  >[];
   activityObjectNameSingular:
     | CoreObjectNameSingular.Note
     | CoreObjectNameSingular.Task;
-  depth: 0 | 1;
-  shouldOnlyLoadActivityIdentifiers?: boolean;
+  loadRelations?: 'activity' | 'relations' | 'both';
 };
 
 export const generateActivityTargetGqlFields = ({
   objectMetadataItems,
   activityObjectNameSingular,
-  depth,
-  shouldOnlyLoadActivityIdentifiers = true,
+  loadRelations = 'both',
 }: GenerateDepthRecordGqlFields) => {
   const isNote = activityObjectNameSingular === CoreObjectNameSingular.Note;
   const activityTargetNameSingular = isNote
@@ -41,10 +42,10 @@ export const generateActivityTargetGqlFields = ({
     return {};
   }
 
-  if (shouldOnlyLoadActivityIdentifiers) {
-    const activityLabelIdentifierFieldMetadataItem =
-      getLabelIdentifierFieldMetadataItem(activityObjectMetadataItem);
+  const activityLabelIdentifierFieldMetadataItem =
+    getLabelIdentifierFieldMetadataItem(activityObjectMetadataItem);
 
+  if (loadRelations === 'activity') {
     return {
       id: true,
       [activityObjectNameSingular]: {
@@ -54,15 +55,42 @@ export const generateActivityTargetGqlFields = ({
           : {}),
       },
     };
-  } else {
+  }
+
+  if (loadRelations === 'both') {
+    return {
+      id: true,
+      [activityObjectNameSingular]: {
+        id: true,
+        ...(isDefined(activityLabelIdentifierFieldMetadataItem)
+          ? { [activityLabelIdentifierFieldMetadataItem.name]: true }
+          : {}),
+      },
+      ...generateDepthRecordGqlFieldsFromFields({
+        depth: 1,
+        fields: activityTargetObjectMetadataItem.fields,
+        objectMetadataItems,
+        shouldOnlyLoadRelationIdentifiers: true,
+      }),
+    };
+  }
+
+  if (loadRelations === 'relations') {
     return {
       ...generateDepthRecordGqlFieldsFromFields({
-        depth,
-        fields: activityTargetObjectMetadataItem.fields,
+        depth: 1,
+        fields: activityTargetObjectMetadataItem.fields.filter(
+          (fieldMetadataItem) =>
+            fieldMetadataItem.name !== 'task' &&
+            fieldMetadataItem.name !== 'note',
+        ),
         objectMetadataItems,
         shouldOnlyLoadRelationIdentifiers: false,
       }),
-      [activityObjectNameSingular]: true,
     };
   }
+
+  throw new Error(
+    `Invalid loadRelations value: ${loadRelations}. Please use 'activity', 'relations', or 'both'.`,
+  );
 };

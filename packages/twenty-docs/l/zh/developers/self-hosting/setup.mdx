@@ -33,7 +33,9 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 4. Changes take effect immediately (within 15 seconds for multi-container deployments)
 
 <Warning>
+
 **多容器部署：** 使用數據庫配置（`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`）時，服務器和工作器容器從同一數據庫中讀取。 管理面板更改會自動影響兩者，無需在容器之間重複環境變量（基礎設施變量除外）。
+ 管理面板更改會自動影響兩者，無需在容器之間重複環境變量（基礎設施變量除外）。
 </Warning>
 
 **通過管理面板可以配置的內容：**
@@ -118,7 +120,9 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
 ## Microsoft 365 集成
 
 <Warning>
+
 用戶必須擁有 [Microsoft 365 許可](https://admin.microsoft.com/Adminportal/Home) 才能使用日曆和消息 API。 沒有許可，將無法在 Twenty 上同步帳戶。
+ 沒有許可，將無法在 Twenty 上同步帳戶。
 </Warning>
 
 ### 在 Microsoft Azure 中創建項目
@@ -138,7 +142,7 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
 - Microsoft Graph: profile
 - Microsoft Graph: offline_access
 
-注意： "Mail.ReadWrite" 和 "Mail.Send" 只有在希望通過我們的工作流程操作發送電子郵件時才是必需的。 如果只想接收電子郵件，可以改用 "Mail.Read"。
+注意： "Mail.ReadWrite" 和 "Mail.Send" 只有在希望通過我們的工作流程操作發送電子郵件時才是必需的。 如果只想接收電子郵件，可以改用 "Mail.Read"。 如果只想接收電子郵件，可以改用 "Mail.Read"。
 
 ### 授權重定向 URI
 
