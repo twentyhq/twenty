@@ -31,15 +31,7 @@ import {
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import {
-  MessageChannelSyncStage,
-  type MessageChannelVisibility,
-  type MessageChannelWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import {
-  MessagingMessageListFetchJob,
-  type MessagingMessageListFetchJobData,
-} from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { type MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
@@ -99,12 +91,6 @@ export class GoogleAPIsService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarChannelWorkspaceEntity>(
         workspaceId,
         'calendarChannel',
-      );
-
-    const messageChannelRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
-        workspaceId,
-        'messageChannel',
       );
 
     const workspaceDataSource =
@@ -204,29 +190,6 @@ export class GoogleAPIsService {
         }
       },
     );
-
-    if (this.twentyConfigService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
-      const messageChannels = await messageChannelRepository.find({
-        where: {
-          connectedAccountId: newOrExistingConnectedAccountId,
-        },
-      });
-
-      for (const messageChannel of messageChannels) {
-        if (
-          messageChannel.syncStage !==
-          MessageChannelSyncStage.PENDING_CONFIGURATION
-        ) {
-          await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-            MessagingMessageListFetchJob.name,
-            {
-              workspaceId,
-              messageChannelId: messageChannel.id,
-            },
-          );
-        }
-      }
-    }
 
     if (isCalendarEnabled) {
       const calendarChannels = await calendarChannelRepository.find({
