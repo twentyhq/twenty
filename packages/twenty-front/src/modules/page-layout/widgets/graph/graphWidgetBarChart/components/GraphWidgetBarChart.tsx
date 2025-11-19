@@ -1,9 +1,6 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
-import { type BarChartConfiguration } from '~/generated/graphql';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
-import { handleBarItemClick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/handleBarItemClick';
-import { useNavigate } from 'react-router-dom';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
 import { GraphBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphBarChartTooltip';
@@ -18,11 +15,14 @@ import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
+import { handleBarItemClick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/handleBarItemClick';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
+import { useNavigate } from 'react-router-dom';
+import { type BarChartConfiguration } from '~/generated/graphql';
 
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useTheme } from '@emotion/react';
@@ -158,10 +158,7 @@ export const GraphWidgetBarChart = ({
   }, [debouncedHideTooltip]);
 
   const handleBarClick = useCallback(
-    (
-      datum: ComputedDatum<BarChartDataItem> & { color: string },
-      _event: MouseEvent<SVGRectElement>,
-    ) => {
+    (datum: ComputedDatum<BarChartDataItem>) => {
       if (!isDefined(objectMetadataItem) || !isDefined(configuration)) {
         return;
       }

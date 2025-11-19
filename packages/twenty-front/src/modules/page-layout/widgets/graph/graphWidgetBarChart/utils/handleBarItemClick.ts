@@ -1,6 +1,5 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
-import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { buildChartDrilldownUrl } from '@/page-layout/widgets/graph/utils/buildChartDrilldownUrl';
 import { type ComputedDatum } from '@nivo/bar';
 import { type NavigateFunction } from 'react-router-dom';
@@ -9,7 +8,6 @@ import { type BarChartConfiguration } from '~/generated/graphql';
 
 export const handleBarItemClick = (
   datum: ComputedDatum<BarChartDataItem>,
-  series: BarChartSeries[] | undefined,
   objectMetadataItem: ObjectMetadataItem,
   configuration: BarChartConfiguration,
   navigate: NavigateFunction,
