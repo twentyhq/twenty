@@ -33,7 +33,10 @@ import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/
 import { GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.types';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
-import { isGroupByDateField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';
+import {
+  isGroupByDateField,
+  isGroupByRelationField,
+} from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';
 import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/parse-group-by-args.util';
 import { removeQuotes } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/remove-quote.util';
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
@@ -103,26 +106,73 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     const groupByFields = parseGroupByArgs(
       args,
       objectMetadataItemWithFieldMaps,
+      queryRunnerContext.objectMetadataMaps,
     );
 
+    // Process relation fields first to add joins
+    const joinAliasSet = new Set<string>();
+
+    for (const groupByField of groupByFields) {
+      if (isGroupByRelationField(groupByField)) {
+        const joinAlias = groupByField.fieldMetadata.name;
+
+        if (
+          !groupByField.fieldMetadata.settings ||
+          !isFieldMetadataRelationOrMorphRelation(groupByField.fieldMetadata)
+        ) {
+          throw new Error(
+            `Field metadata settings are missing or invalid for field ${groupByField.fieldMetadata.name}`,
+          );
+        }
+
+        const joinColumnName = formatColumnNameForRelationField(
+          groupByField.fieldMetadata.name,
+          groupByField.fieldMetadata.settings,
+        );
+
+        if (!joinAliasSet.has(joinAlias)) {
+          queryBuilder.leftJoin(
+            `${objectMetadataNameSingular}.${joinAlias}`,
+            `${joinAlias}`,
+            `"${objectMetadataNameSingular}"."${joinColumnName}" = "${joinAlias}"."id"`,
+          );
+          joinAliasSet.add(joinAlias);
+        }
+      }
+    }
+
     const groupByDefinitions = groupByFields.map((groupByField) => {
-      const columnName = isFieldMetadataRelationOrMorphRelation(
-        groupByField.fieldMetadata,
-      )
-        ? formatColumnNameForRelationField(
-            groupByField.fieldMetadata.name,
-            groupByField.fieldMetadata.settings,
-          )
-        : formatColumnNamesFromCompositeFieldAndSubfields(
-            groupByField.fieldMetadata.name,
-            groupByField.subFieldName ? [groupByField.subFieldName] : undefined,
+      let columnName: string;
+      let columnNameWithQuotes: string;
+
+      if (isGroupByRelationField(groupByField)) {
+        const joinAlias = groupByField.fieldMetadata.name;
+        const nestedColumnName =
+          formatColumnNamesFromCompositeFieldAndSubfields(
+            groupByField.nestedFieldMetadata.name,
+            groupByField.nestedSubFieldName
+              ? [groupByField.nestedSubFieldName]
+              : undefined,
           )[0];
-      const columnNameWithQuotes = `"${columnName}"`;
+
+        columnNameWithQuotes = `"${joinAlias}"."${nestedColumnName}"`;
+      } else {
+        columnName = formatColumnNamesFromCompositeFieldAndSubfields(
+          groupByField.fieldMetadata.name,
+          groupByField.subFieldName ? [groupByField.subFieldName] : undefined,
+        )[0];
+        columnNameWithQuotes = `"${objectMetadataNameSingular}"."${columnName}"`;
+      }
+
       const alias =
-        removeQuotes(columnNameWithQuotes) +
+        removeQuotes(
+          columnNameWithQuotes.replace(/"/g, '').replace(/\./g, '_'),
+        ) +
         (isGroupByDateField(groupByField)
           ? `_${groupByField.dateGranularity}`
-          : '');
+          : isGroupByRelationField(groupByField) && groupByField.dateGranularity
+            ? `_${groupByField.dateGranularity}`
+            : '');
 
       return {
         columnNameWithQuotes,
@@ -131,9 +181,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
           columnNameWithQuotes,
         }),
         alias,
-        dateGranularity: isGroupByDateField(groupByField)
-          ? groupByField.dateGranularity
-          : undefined,
+        dateGranularity:
+          isGroupByDateField(groupByField) ||
+          isGroupByRelationField(groupByField)
+            ? groupByField.dateGranularity
+            : undefined,
       };
     });
 
@@ -158,6 +210,38 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     if (shouldIncludeRecords) {
       const queryBuilderWithFiltersAndWithoutGroupBy =
         repository.createQueryBuilder(objectMetadataNameSingular);
+
+      const joinAliasSet = new Set<string>();
+
+      for (const groupByField of groupByFields) {
+        // Add the same joins for relation fields to the records query builder
+        if (isGroupByRelationField(groupByField)) {
+          const joinAlias = groupByField.fieldMetadata.name;
+
+          if (
+            !groupByField.fieldMetadata.settings ||
+            !isFieldMetadataRelationOrMorphRelation(groupByField.fieldMetadata)
+          ) {
+            throw new Error(
+              `Field metadata settings are missing or invalid for field ${groupByField.fieldMetadata.name}`,
+            );
+          }
+
+          const joinColumnName = formatColumnNameForRelationField(
+            groupByField.fieldMetadata.name,
+            groupByField.fieldMetadata.settings,
+          );
+
+          if (!joinAliasSet.has(joinAlias)) {
+            queryBuilderWithFiltersAndWithoutGroupBy.leftJoin(
+              `${objectMetadataNameSingular}.${joinAlias}`,
+              `${joinAlias}`,
+              `"${objectMetadataNameSingular}"."${joinColumnName}" = "${joinAlias}"."id"`,
+            );
+            joinAliasSet.add(joinAlias);
+          }
+        }
+      }
 
       await this.addFiltersToQueryBuilder({
         args,

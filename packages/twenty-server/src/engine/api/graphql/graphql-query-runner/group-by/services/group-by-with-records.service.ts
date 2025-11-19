@@ -20,6 +20,7 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 const GROUPS_LIMIT = 50;
 const RECORDS_PER_GROUP_LIMIT = 10;
@@ -152,8 +153,10 @@ export class GroupByWithRecordsService {
       queryBuilderForSubQuery,
     );
 
+    const tableName = computeObjectTargetTable(objectMetadataItemWithFieldMaps);
+
     const recordSelectWithAlias = Object.keys(columnsToSelect)
-      .map((col) => `"${col}" as "${SUB_QUERY_PREFIX}${col}"`)
+      .map((col) => `"${tableName}"."${col}" as "${SUB_QUERY_PREFIX}${col}"`)
       .join(', ');
 
     const groupBySelectWithAlias = groupByDefinitions

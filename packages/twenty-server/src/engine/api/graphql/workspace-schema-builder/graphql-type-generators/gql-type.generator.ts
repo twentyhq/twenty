@@ -92,7 +92,10 @@ export class GqlTypeGenerator {
         objectMetadata,
       );
       this.relationConnectGqlInputTypeGenerator.buildAndStore(objectMetadata);
-      this.objectMetadataGqlInputTypeGenerator.buildAndStore(objectMetadata);
+      this.objectMetadataGqlInputTypeGenerator.buildAndStore(
+        objectMetadata,
+        dynamicObjectMetadataCollection,
+      );
 
       if (
         objectContainsRelationField(objectMetadata) ||

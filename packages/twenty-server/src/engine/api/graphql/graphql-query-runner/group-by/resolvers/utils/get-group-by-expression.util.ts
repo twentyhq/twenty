@@ -1,8 +1,11 @@
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { type GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
-import { isGroupByDateField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';
+import {
+  isGroupByDateField,
+  isGroupByRelationField,
+} from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';
 
 export const getGroupByExpression = ({
   groupByField,
@@ -11,10 +14,16 @@ export const getGroupByExpression = ({
   groupByField: GroupByField;
   columnNameWithQuotes: string;
 }) => {
-  if (!isGroupByDateField(groupByField)) {
+  const dateGranularity =
+    isGroupByDateField(groupByField) || isGroupByRelationField(groupByField)
+      ? groupByField.dateGranularity
+      : undefined;
+
+  if (!isDefined(dateGranularity)) {
     return columnNameWithQuotes;
   }
-  switch (groupByField.dateGranularity) {
+
+  switch (dateGranularity) {
     case ObjectRecordGroupByDateGranularity.NONE:
       return columnNameWithQuotes;
     case ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK:
@@ -27,8 +36,8 @@ export const getGroupByExpression = ({
     case ObjectRecordGroupByDateGranularity.MONTH:
     case ObjectRecordGroupByDateGranularity.QUARTER:
     case ObjectRecordGroupByDateGranularity.YEAR:
-      return `DATE_TRUNC('${groupByField.dateGranularity}', ${columnNameWithQuotes})`;
+      return `DATE_TRUNC('${dateGranularity}', ${columnNameWithQuotes})`;
     default:
-      assertUnreachable(groupByField.dateGranularity);
+      assertUnreachable(dateGranularity);
   }
 };

@@ -11,4 +11,13 @@ export type GroupByDateField = {
   subFieldName?: string;
   dateGranularity: ObjectRecordGroupByDateGranularity;
 };
-export type GroupByField = GroupByRegularField | GroupByDateField;
+export type GroupByRelationField = {
+  fieldMetadata: FieldMetadataEntity;
+  nestedFieldMetadata: FieldMetadataEntity;
+  nestedSubFieldName?: string;
+  dateGranularity?: ObjectRecordGroupByDateGranularity;
+};
+export type GroupByField =
+  | GroupByRegularField
+  | GroupByDateField
+  | GroupByRelationField;

@@ -22,6 +22,8 @@ import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/w
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
 import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
@@ -29,13 +31,26 @@ export class ObjectMetadataGroupByGqlInputTypeGenerator {
   private readonly logger = new Logger(
     ObjectMetadataGroupByGqlInputTypeGenerator.name,
   );
+  private objectMetadataCollection: ObjectMetadataEntity[] = [];
+  private objectMetadataMaps: ObjectMetadataMaps | undefined;
+
   constructor(
     private readonly gqlTypesStorage: GqlTypesStorage,
     private readonly relationFieldMetadataGqlInputTypeGenerator: RelationFieldMetadataGqlInputTypeGenerator,
     private readonly typeMapperService: TypeMapperService,
   ) {}
 
-  public buildAndStore(objectMetadata: ObjectMetadataEntity) {
+  public buildAndStore(
+    objectMetadata: ObjectMetadataEntity,
+    objectMetadataCollection?: ObjectMetadataEntity[],
+  ) {
+    if (isDefined(objectMetadataCollection)) {
+      this.objectMetadataCollection = objectMetadataCollection;
+      this.objectMetadataMaps = generateObjectMetadataMaps(
+        objectMetadataCollection,
+      );
+    }
+
     const inputType = new GraphQLInputObjectType({
       name: `${pascalCase(objectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.GroupBy.toString()}Input`,
       description: objectMetadata.description,
@@ -61,6 +76,7 @@ export class ObjectMetadataGroupByGqlInputTypeGenerator {
       )
         ? this.relationFieldMetadataGqlInputTypeGenerator.generateSimpleRelationFieldGroupByInputType(
             fieldMetadata,
+            this.objectMetadataMaps,
           )
         : this.generateField(fieldMetadata);
 
