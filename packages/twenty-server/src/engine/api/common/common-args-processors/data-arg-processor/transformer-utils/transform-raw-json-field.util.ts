@@ -1,12 +1,19 @@
 import { isNull } from '@sniptt/guards';
 
 export const transformRawJsonField = (
-  value: object | null,
+  value: object | string | null,
   isNullEquivalenceEnabled: boolean = false,
 ): object | null => {
-  return isNullEquivalenceEnabled &&
+  if (
+    isNullEquivalenceEnabled &&
     !isNull(value) &&
     Object.keys(value).length === 0
-    ? null
-    : value;
+  ) {
+    return null;
+  }
+  if (typeof value === 'string') {
+    return JSON.parse(value);
+  }
+
+  return value;
 };
