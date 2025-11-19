@@ -104,7 +104,6 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
           }),
         );
       }
-
       break;
     }
     case RelationType.ONE_TO_MANY: {
@@ -115,9 +114,8 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
             'One to many field metadata should not carry the join column name in its settings',
           userFriendlyMessage: msg`A ont to many relation field should never declare a join column`,
         });
-
-        break;
       }
+      break;
     }
     default: {
       assertUnreachable;
