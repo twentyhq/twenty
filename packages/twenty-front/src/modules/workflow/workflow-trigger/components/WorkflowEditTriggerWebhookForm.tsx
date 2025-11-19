@@ -21,7 +21,7 @@ import {
   buildOutputSchemaFromValue,
   TRIGGER_STEP_ID,
 } from 'twenty-shared/workflow';
-import { IconCopy, useIcons } from 'twenty-ui/display';
+import { IconCopy } from 'twenty-ui/display';
 
 import { useDebouncedCallback } from 'use-debounce';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -55,7 +55,6 @@ export const WorkflowEditTriggerWebhookForm = ({
   const { copyToClipboard } = useCopyToClipboard();
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
   const [errorMessagesVisible, setErrorMessagesVisible] = useState(false);
-  const { getIcon } = useIcons();
   const workflowVisualizerWorkflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
   );

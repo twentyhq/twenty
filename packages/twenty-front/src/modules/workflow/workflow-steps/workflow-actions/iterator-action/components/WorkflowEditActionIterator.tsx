@@ -4,7 +4,6 @@ import { type WorkflowIteratorAction } from '@/workflow/types/Workflow';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { ITERATOR_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/IteratorAction';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useLingui } from '@lingui/react/macro';
 import { isArray, isString } from '@sniptt/guards';

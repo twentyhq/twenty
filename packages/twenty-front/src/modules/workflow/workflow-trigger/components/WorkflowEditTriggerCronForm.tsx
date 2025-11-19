@@ -11,14 +11,12 @@ import {
 } from '@/workflow/workflow-trigger/constants/CronTriggerIntervalOptions';
 import { getCronTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getCronTriggerDefaultSettings';
 import { getTriggerScheduleDescription } from '@/workflow/workflow-trigger/utils/getTriggerScheduleDescription';
-import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { isNumber } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { useIcons } from 'twenty-ui/display';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 type WorkflowEditTriggerCronFormProps = {
@@ -48,7 +46,6 @@ export const WorkflowEditTriggerCronForm = ({
   trigger,
   triggerOptions,
 }: WorkflowEditTriggerCronFormProps) => {
-  const theme = useTheme();
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
   const [errorMessagesVisible, setErrorMessagesVisible] = useState(false);
   const dateLocale = useRecoilValue(dateLocaleState);

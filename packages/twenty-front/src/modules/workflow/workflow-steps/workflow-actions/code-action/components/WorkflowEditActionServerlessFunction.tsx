@@ -45,7 +45,7 @@ import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { buildOutputSchemaFromValue } from 'twenty-shared/workflow';
-import { IconCode, IconPlayerPlay, useIcons } from 'twenty-ui/display';
+import { IconCode, IconPlayerPlay } from 'twenty-ui/display';
 import { CodeEditor } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
@@ -91,7 +91,6 @@ export const WorkflowEditActionServerlessFunction = ({
   action,
   actionOptions,
 }: WorkflowEditActionServerlessFunctionProps) => {
-  const { getIcon } = useIcons();
   const { t } = useLingui();
   const [isFullScreen, setIsFullScreen] = useState(false);
   const isMobile = useIsMobile();
