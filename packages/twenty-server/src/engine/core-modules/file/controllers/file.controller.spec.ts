@@ -40,7 +40,7 @@ describe('FileController', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should extract folder, token and filename from route parameters', async () => {
+  it('should extract folder, token and filename from 3-segment path', async () => {
     const mockStream = new Readable();
 
     mockStream.push('file content');
@@ -50,26 +50,42 @@ describe('FileController', () => {
     jest.spyOn(fileService, 'getFileStream').mockResolvedValue(mockStream);
 
     const mockRequest = {
-      params: {
-        folder: 'attachment',
-        token: 'test-token',
-        filename: 'test-file.csv',
-      },
+      path: '/files/attachment/test-token/test-file.csv',
       workspaceId: 'workspace-id',
     } as any;
 
     const mockResponse = {} as any;
 
-    await controller.getFile(
-      'attachment',
-      'test-file.csv',
-      mockResponse,
-      mockRequest,
-    );
+    await controller.getFile(mockResponse, mockRequest);
 
     expect(fileService.getFileStream).toHaveBeenCalledWith(
       'attachment',
       'test-file.csv',
+      'workspace-id',
+    );
+  });
+
+  it('should extract folder with size, token and filename from 4-segment path', async () => {
+    const mockStream = new Readable();
+
+    mockStream.push('file content');
+    mockStream.push(null);
+    mockStream.pipe = jest.fn();
+
+    jest.spyOn(fileService, 'getFileStream').mockResolvedValue(mockStream);
+
+    const mockRequest = {
+      path: '/files/profile-picture/original/test-token/avatar.jpg',
+      workspaceId: 'workspace-id',
+    } as any;
+
+    const mockResponse = {} as any;
+
+    await controller.getFile(mockResponse, mockRequest);
+
+    expect(fileService.getFileStream).toHaveBeenCalledWith(
+      'profile-picture/original',
+      'avatar.jpg',
       'workspace-id',
     );
   });
