@@ -39,7 +39,7 @@ const StyledSidePanelWrapper = styled(motion.div)`
   overflow: hidden;
 `;
 
-const StyledSidePanel = styled.aside`
+const StyledSidePanel = styled(motion.aside)`
   background: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -48,7 +48,7 @@ const StyledSidePanel = styled.aside`
   height: 100%;
   overflow: hidden;
   position: relative;
-  width: 100%;
+  width: ${DEFAULT_SIDE_PANEL_WIDTH}px;
   box-sizing: border-box;
 `;
 
@@ -131,7 +131,15 @@ export const CommandMenuSidePanelLayout = ({
         onAnimationStart={handleAnimationStart}
         onAnimationComplete={handleAnimationComplete}
       >
-        <StyledSidePanel>
+        <StyledSidePanel
+          initial={false}
+          animate={{
+            x: resolvedIsSidePanelOpen ? 0 : DEFAULT_SIDE_PANEL_WIDTH,
+          }}
+          transition={{
+            duration: theme.animation.duration.normal,
+          }}
+        >
           <StyledModalContainer ref={handleModalContainerRef} />
           <ModalContainerContext.Provider value={{ container: modalContainer }}>
             {shouldShowContent && <CommandMenuRouter />}
