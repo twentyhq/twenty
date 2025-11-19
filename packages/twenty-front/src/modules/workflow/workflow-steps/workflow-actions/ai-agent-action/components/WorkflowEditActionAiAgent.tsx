@@ -1,12 +1,10 @@
 import { useAiAgentOutputSchema } from '@/ai/hooks/useAiAgentOutputSchema';
-import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { AI_AGENT_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/AiAgentAction';
-import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { type AiAgentOutputSchema } from '@/workflow/workflow-variables/types/AiAgentOutputSchema';
 import styled from '@emotion/styled';
@@ -39,11 +37,6 @@ export const WorkflowEditActionAiAgent = ({
   actionOptions,
 }: WorkflowEditActionAiAgentProps) => {
   const { getIcon } = useIcons();
-  const { headerTitle, headerIcon, headerIconColor, headerType } =
-    useWorkflowActionHeader({
-      action,
-      defaultTitle: AI_AGENT_ACTION.defaultLabel,
-    });
 
   const { handleOutputSchemaChange, outputFields } = useAiAgentOutputSchema(
     action.settings.outputSchema as AiAgentOutputSchema,
@@ -95,20 +88,6 @@ export const WorkflowEditActionAiAgent = ({
     <RightDrawerSkeletonLoader />
   ) : (
     <>
-      <SidePanelHeader
-        onTitleChange={(newName: string) => {
-          if (actionOptions.readonly === true) {
-            return;
-          }
-          actionOptions.onActionUpdate?.({ ...action, name: newName });
-        }}
-        Icon={getIcon(headerIcon)}
-        iconColor={headerIconColor}
-        initialTitle={headerTitle}
-        headerType={headerType}
-        disabled={actionOptions.readonly}
-        iconTooltip={AI_AGENT_ACTION.defaultLabel}
-      />
       <WorkflowStepBody>
         <div>
           <Select

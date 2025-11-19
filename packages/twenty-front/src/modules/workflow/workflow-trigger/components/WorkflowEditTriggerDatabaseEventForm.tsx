@@ -1,4 +1,3 @@
-import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SelectControl } from '@/ui/input/components/SelectControl';
@@ -16,10 +15,6 @@ import { type WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
-import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
-import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
-import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
@@ -122,10 +117,6 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     [systemObjects, searchInputValue],
   );
 
-  const defaultLabel = trigger.name ?? getTriggerDefaultLabel(trigger);
-  const headerIcon = getTriggerIcon(trigger);
-  const headerType = getTriggerHeaderType(trigger);
-
   const handleOptionClick = (value: string) => {
     if (triggerOptions.readonly === true) {
       return;
@@ -174,24 +165,6 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
 
   return (
     <>
-      <SidePanelHeader
-        onTitleChange={(newName: string) => {
-          if (triggerOptions.readonly === true) {
-            return;
-          }
-
-          triggerOptions.onTriggerUpdate({
-            ...trigger,
-            name: newName,
-          });
-        }}
-        Icon={getIcon(headerIcon)}
-        iconColor={getTriggerIconColor({ theme, triggerType: trigger.type })}
-        initialTitle={defaultLabel}
-        headerType={headerType}
-        disabled={triggerOptions.readonly}
-        iconTooltip={getTriggerDefaultLabel(trigger)}
-      />
       <WorkflowStepBody>
         <StyledRecordTypeSelectContainer fullWidth>
           <StyledLabel>Record Type</StyledLabel>

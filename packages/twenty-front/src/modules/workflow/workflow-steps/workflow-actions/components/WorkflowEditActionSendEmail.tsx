@@ -4,7 +4,6 @@ import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { WorkflowSendEmailAttachments } from '@/advanced-text-editor/components/WorkflowSendEmailAttachments';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -21,7 +20,6 @@ import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { SEND_EMAIL_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/SendEmailAction';
-import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
@@ -257,12 +255,6 @@ export const WorkflowEditActionSendEmail = ({
     }
   });
 
-  const { headerTitle, headerIcon, headerIconColor, headerType } =
-    useWorkflowActionHeader({
-      action,
-      defaultTitle: SEND_EMAIL_ACTION.defaultLabel,
-    });
-
   const navigate = useNavigateSettings();
 
   const { closeCommandMenu } = useCommandMenu();
@@ -270,24 +262,6 @@ export const WorkflowEditActionSendEmail = ({
   return (
     !loading && (
       <>
-        <SidePanelHeader
-          onTitleChange={(newName: string) => {
-            if (actionOptions.readonly === true) {
-              return;
-            }
-
-            actionOptions.onActionUpdate({
-              ...action,
-              name: newName,
-            });
-          }}
-          Icon={getIcon(headerIcon)}
-          iconColor={headerIconColor}
-          initialTitle={headerTitle}
-          headerType={headerType}
-          disabled={actionOptions.readonly}
-          iconTooltip={SEND_EMAIL_ACTION.defaultLabel}
-        />
         <WorkflowStepBody>
           <Select
             dropdownId="select-connected-account-id"

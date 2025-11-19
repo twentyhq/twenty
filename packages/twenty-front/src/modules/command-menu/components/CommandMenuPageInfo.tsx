@@ -1,4 +1,5 @@
 import { CommandMenuRecordInfo } from '@/command-menu/components/CommandMenuRecordInfo';
+import { CommandMenuWorkflowStepInfo } from '@/command-menu/components/CommandMenuWorkflowStepInfo';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -20,6 +21,19 @@ export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
   if (isRecordPage && isDefined(pageChip.page?.pageId)) {
     return (
       <CommandMenuRecordInfo commandMenuPageInstanceId={pageChip.page.pageId} />
+    );
+  }
+
+  const isWorkflowStepPage =
+    pageChip.page?.page === CommandMenuPages.WorkflowStepEdit ||
+    pageChip.page?.page === CommandMenuPages.WorkflowStepView ||
+    pageChip.page?.page === CommandMenuPages.WorkflowRunStepView;
+
+  if (isWorkflowStepPage && isDefined(pageChip.page?.pageId)) {
+    return (
+      <CommandMenuWorkflowStepInfo
+        commandMenuPageInstanceId={pageChip.page.pageId}
+      />
     );
   }
 

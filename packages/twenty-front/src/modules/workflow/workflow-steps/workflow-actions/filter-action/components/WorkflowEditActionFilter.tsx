@@ -1,14 +1,10 @@
-import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { type WorkflowFilterAction } from '@/workflow/types/Workflow';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { FILTER_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/FilterAction';
 import { WorkflowEditActionFilterBody } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody';
 import { WorkflowEditActionFilterBodyEffect } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBodyEffect';
 import { StepFilterGroupsComponentInstanceContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/StepFilterGroupsComponentInstanceContext';
 import { StepFiltersComponentInstanceContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/StepFiltersComponentInstanceContext';
-import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
-import { useIcons } from 'twenty-ui/display';
 
 type WorkflowEditActionFilterProps = {
   action: WorkflowFilterAction;
@@ -31,34 +27,8 @@ export const WorkflowEditActionFilter = ({
   action,
   actionOptions,
 }: WorkflowEditActionFilterProps) => {
-  const { headerTitle, headerIcon, headerIconColor, headerType } =
-    useWorkflowActionHeader({
-      action,
-      defaultTitle: FILTER_ACTION.defaultLabel,
-    });
-
-  const { getIcon } = useIcons();
-
   return (
     <>
-      <SidePanelHeader
-        onTitleChange={(newName: string) => {
-          if (actionOptions.readonly === true) {
-            return;
-          }
-
-          actionOptions.onActionUpdate({
-            ...action,
-            name: newName,
-          });
-        }}
-        Icon={getIcon(headerIcon)}
-        iconColor={headerIconColor}
-        initialTitle={headerTitle}
-        headerType={headerType}
-        disabled={actionOptions.readonly}
-        iconTooltip={FILTER_ACTION.defaultLabel}
-      />
       <StepFiltersComponentInstanceContext.Provider
         value={{
           instanceId: action.id,
