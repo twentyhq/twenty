@@ -39,7 +39,14 @@ export const QueryParamsSortsEffect = () => {
       setSearchParams(
         (currentParams) => {
           const newParams = new URLSearchParams(currentParams);
-          newParams.delete('sort');
+
+          // Delete all keys starting with 'sort['
+          Array.from(newParams.keys()).forEach((key) => {
+            if (key.startsWith('sort[')) {
+              newParams.delete(key);
+            }
+          });
+
           return newParams;
         },
         { replace: true },

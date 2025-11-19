@@ -23,21 +23,50 @@ export const QueryParamsFiltersEffect = () => {
     currentView?.objectMetadataId !== objectMetadataItem.id;
 
   useEffect(() => {
+    console.log('[QueryParamsFiltersEffect] Effect triggered', {
+      hasFiltersQueryParams,
+      currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem,
+    });
+
     if (
       !hasFiltersQueryParams ||
       currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem
     ) {
+      console.log('[QueryParamsFiltersEffect] Early return');
       return;
     }
 
+    console.log('[QueryParamsFiltersEffect] Getting filters from params');
     getFiltersFromQueryParams().then((filtersFromParams) => {
+      console.log(
+        '[QueryParamsFiltersEffect] Filters from params:',
+        JSON.stringify(filtersFromParams),
+      );
+
       if (Array.isArray(filtersFromParams)) {
+        console.log('[QueryParamsFiltersEffect] Applying filters to state');
         applyViewFiltersToCurrentRecordFilters(filtersFromParams);
 
+        console.log('[QueryParamsFiltersEffect] Clearing filter params from URL');
         setSearchParams(
           (currentParams) => {
+            console.log(
+              '[QueryParamsFiltersEffect] Current params before clear:',
+              currentParams.toString(),
+            );
             const newParams = new URLSearchParams(currentParams);
-            newParams.delete('filter');
+
+            // Delete all keys starting with 'filter['
+            Array.from(newParams.keys()).forEach((key) => {
+              if (key.startsWith('filter[')) {
+                newParams.delete(key);
+              }
+            });
+
+            console.log(
+              '[QueryParamsFiltersEffect] New params after clear:',
+              newParams.toString(),
+            );
             return newParams;
           },
           { replace: true },
