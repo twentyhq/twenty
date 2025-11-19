@@ -15,7 +15,7 @@ export const PageHeaderActionMenuButtons = () => {
   const { actions } = useContext(ActionMenuContext);
   const theme = useTheme();
 
-  const pinnedActions = actions.filter((entry) => entry.isPinned).reverse();
+  const pinnedActions = actions.filter((entry) => entry.isPinned).toReversed();
 
   const actionsWithPositionForAnimation = pinnedActions.map(
     (action, index) => ({
