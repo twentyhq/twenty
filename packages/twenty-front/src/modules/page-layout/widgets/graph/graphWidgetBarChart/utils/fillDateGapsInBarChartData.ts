@@ -27,7 +27,7 @@ type OneDimensionalFillParams = {
 
 type TwoDimensionalFillParams = OneDimensionalFillParams;
 
-const createFilledItem = (
+const createEmptyDateGroup = (
   dimensionValues: DimensionValue[],
   keys: string[],
 ): GroupByRawResult => {
@@ -64,7 +64,7 @@ const fillDateGapsInOneDimensionalBarChartData = ({
   keys,
   dateGranularity,
 }: OneDimensionalFillParams): GroupByRawResult[] => {
-  const existingDataMap = new Map<string, GroupByRawResult>();
+  const existingDateGroupsMap = new Map<string, GroupByRawResult>();
   const parsedDates: Date[] = [];
 
   for (const item of data) {
@@ -76,10 +76,12 @@ const fillDateGapsInOneDimensionalBarChartData = ({
 
     const parsedDate = new Date(String(dateValue));
 
-    if (!isNaN(parsedDate.getTime())) {
-      parsedDates.push(parsedDate);
-      existingDataMap.set(parsedDate.toISOString(), item);
+    if (isNaN(parsedDate.getTime())) {
+      continue;
     }
+
+    parsedDates.push(parsedDate);
+    existingDateGroupsMap.set(parsedDate.toISOString(), item);
   }
 
   if (parsedDates.length === 0) {
@@ -90,11 +92,11 @@ const fillDateGapsInOneDimensionalBarChartData = ({
 
   return allDates.map((date) => {
     const key = date.toISOString();
-    const existingItem = existingDataMap.get(key);
+    const existingDateGroup = existingDateGroupsMap.get(key);
 
-    return isDefined(existingItem)
-      ? existingItem
-      : createFilledItem([date], keys);
+    return isDefined(existingDateGroup)
+      ? existingDateGroup
+      : createEmptyDateGroup([date], keys);
   });
 };
 
@@ -103,7 +105,7 @@ const fillDateGapsInTwoDimensionalBarChartData = ({
   keys,
   dateGranularity,
 }: TwoDimensionalFillParams): GroupByRawResult[] => {
-  const existingDataMap = new Map<string, GroupByRawResult>();
+  const existingDateGroupsMap = new Map<string, GroupByRawResult>();
   const parsedDates: Date[] = [];
   const uniqueSecondDimensionValues = new Set<DimensionValue>();
 
@@ -128,7 +130,7 @@ const fillDateGapsInTwoDimensionalBarChartData = ({
       uniqueSecondDimensionValues.add(secondDimensionValue);
 
       const key = `${parsedDate.toISOString()}_${String(secondDimensionValue)}`;
-      existingDataMap.set(key, item);
+      existingDateGroupsMap.set(key, item);
     }
   }
 
@@ -141,11 +143,11 @@ const fillDateGapsInTwoDimensionalBarChartData = ({
   return allDates.flatMap((date) =>
     Array.from(uniqueSecondDimensionValues).map((secondDimensionValue) => {
       const key = `${date.toISOString()}_${String(secondDimensionValue)}`;
-      const existingItem = existingDataMap.get(key);
+      const existingDateGroup = existingDateGroupsMap.get(key);
 
-      return isDefined(existingItem)
-        ? existingItem
-        : createFilledItem([date, secondDimensionValue], keys);
+      return isDefined(existingDateGroup)
+        ? existingDateGroup
+        : createEmptyDateGroup([date, secondDimensionValue], keys);
     }),
   );
 };
