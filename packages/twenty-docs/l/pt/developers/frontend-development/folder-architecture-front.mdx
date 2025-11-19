@@ -1,6 +1,6 @@
 ---
 title: Arquitetura de Pastas
-info: Uma visão detalhada da nossa arquitetura de pastas
+info: Um olhar detalhado sobre nossa arquitetura de pastas
 image: /images/user-guide/fields/field.png
 ---
 
@@ -8,9 +8,9 @@ image: /images/user-guide/fields/field.png
   <img src="/images/user-guide/fields/field.png" alt="Header" />
 </Frame>
 
-Neste guia, você explorará os detalhes da estrutura de diretórios do projeto e como ela contribui para a organização e manutenção do Twenty.
+Neste guia, você explorará os detalhes da estrutura de diretórios do projeto e como isso contribui para a organização e manutenção do Twenty.
 
-Ao seguir esta convenção de arquitetura de pastas, é mais fácil encontrar os arquivos relacionados a recursos específicos e garantir que o aplicativo seja escalável e de fácil manutenção.
+Seguindo esta convenção de arquitetura de pastas, é mais fácil encontrar os arquivos relacionados a funcionalidades específicas e garantir que a aplicação seja escalável e sustentável.
 
 ```
 front
@@ -29,12 +29,12 @@ front
 
 ## Páginas
 
-Inclui os componentes de nível superior definidos pelas rotas da aplicação. Eles importam mais componentes de baixo nível da pasta de módulos (mais detalhes abaixo).
+Inclui os componentes de nível superior definidos pelas rotas da aplicação. Eles importam componentes mais de baixo nível da pasta de módulos (mais detalhes abaixo).
 
 ## Módulos
 
-Cada módulo representa um recurso ou um grupo de recursos, compreendendo seus componentes específicos, estados e lógica operacional.
-Todos devem seguir a estrutura abaixo. Você pode aninhar módulos dentro de módulos (referido como submódulos) e as mesmas regras se aplicarão.
+Cada módulo representa uma funcionalidade ou um grupo de funcionalidades, compreendendo seus componentes específicos, estados e lógica operacional.
+Todos devem seguir a estrutura abaixo. Você pode aninhar módulos dentro de módulos (referidos como submódulos) e as mesmas regras se aplicarão.
 
 ```
 module1
@@ -57,58 +57,58 @@ module1
 
 ### Contextos
 
-Um contexto é uma forma de passar dados através da árvore de componentes sem precisar passar props manualmente em cada nível.
+Um contexto é uma maneira de passar dados através da árvore de componentes sem ter que passar propriedades manualmente em cada nível.
 
-See [React Context](https://react.dev/reference/react#context-hooks) for more details.
+Veja [React Context](https://react.dev/reference/react#context-hooks) para mais detalhes.
 
-### GraphQL
+### "GraphQL"
 
 Inclui fragmentos, consultas e mutações.
 
-See [GraphQL](https://graphql.org/learn/) for more details.
+Veja [GraphQL](https://graphql.org/learn/) para mais detalhes.
 
 - Fragmentos
 
-Um fragmento é uma parte reutilizável de uma consulta, que pode ser usada em diferentes lugares. Ao usar fragmentos, é mais fácil evitar duplicação de código.
+Um fragmento é uma parte reutilizável de uma consulta, que você pode usar em diferentes lugares. Usando fragmentos, é mais fácil evitar duplicar código.
 
-See [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) for more details.
+Veja [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) para mais detalhes.
 
 - Consultas
 
-See [GraphQL Queries](https://graphql.org/learn/queries/) for more details.
+Veja [GraphQL Queries](https://graphql.org/learn/queries/) para mais detalhes.
 
 - Mutações
 
-See [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) for more details.
+Veja [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) para mais detalhes.
 
 ### Ganchos
 
-See [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) for more details.
+Veja [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) para mais detalhes.
 
 ### Estados
 
-Contém a lógica de gerenciamento de estado. [RecoilJS](https://recoiljs.org) trata disso.
+Contém a lógica de gerenciamento de estado. [RecoilJS](https://recoiljs.org) lida com isso.
 
-- Selectors: See [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) for more details.
+- Seletores: Veja [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) para mais detalhes.
 
-O gerenciamento de estado interno do React ainda controla o estado dentro de um componente.
+O gerenciamento de estado embutido do React ainda lida com o estado dentro de um componente.
 
-### Utils
+### Utilitários
 
-Deve apenas conter funções puras reutilizáveis. Caso contrário, crie ganchos personalizados na pasta `hooks`.
+Deve conter apenas funções puras reutilizáveis. Caso contrário, crie hooks personalizados na pasta `hooks`.
 
 ## UI
 
-Contém todos os componentes de UI reutilizáveis utilizados na aplicação.
+Contém todos os componentes reutilizáveis de UI usados na aplicação.
 
-Esta pasta pode conter subpastas, como `data`, `display`, `feedback` e `input` para tipos específicos de componentes. Cada componente deve ser autônomo e reutilizável, para que você possa usá-lo em diferentes partes da aplicação.
+Esta pasta pode conter subpastas, como `data`, `display`, `feedback` e `input` para tipos específicos de componentes. Cada componente deve ser autocontido e reutilizável, de modo que você possa usá-lo em diferentes partes da aplicação.
 
-Ao separar os componentes de UI dos outros componentes na pasta `modules`, fica mais fácil manter um design consistente e fazer mudanças na UI sem afetar outras partes (lógica de negócios) do código.
+Ao separar os componentes de UI dos outros componentes na pasta `modules`, é mais fácil manter um design consistente e fazer alterações na UI sem afetar outras partes (lógica de negócios) do código.
 
 ## Interface e dependências
 
-Você pode importar código de outros módulos de qualquer módulo, exceto da pasta `ui`. Isso manterá seu código fácil de testar.
+Você pode importar outros códigos de módulo de qualquer módulo, exceto para a pasta `ui`. Isso manterá seu código fácil de testar.
 
 ### Interno
 
-Cada parte (ganchos, estados, ...) de um módulo pode ter uma pasta `interno`, que contém partes usadas apenas dentro do módulo.
+Cada parte (hooks, estados, ...) de um módulo pode ter uma pasta `internal`, que contém partes que são usadas apenas dentro do módulo.

@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Param,
   Req,
   Res,
   UseFilters,
@@ -24,25 +23,19 @@ import { FilePathGuard } from 'src/engine/core-modules/file/guards/file-path-gua
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { extractFileInfoFromRequest } from 'src/engine/core-modules/file/utils/extract-file-info-from-request.utils';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('files')
 @UseFilters(FileApiExceptionFilter)
-@UseGuards(FilePathGuard)
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  @Get('*/:filename')
-  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-  async getFile(
-    @Param() _params: string[],
-    @Res() res: Response,
-    @Req() req: Request,
-  ) {
+  @Get('*')
+  @UseGuards(FilePathGuard, NoPermissionGuard)
+  async getFile(@Res() res: Response, @Req() req: Request) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const workspaceId = (req as any)?.workspaceId;
 
-    const { filename, rawFolder } = extractFileInfoFromRequest(req);
+    const { rawFolder, filename } = extractFileInfoFromRequest(req);
 
     try {
       const fileStream = await this.fileService.getFileStream(

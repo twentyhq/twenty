@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
   workflow_call:
   push:
-    branches: ['main']
+    branches: ['main', 'docs-localized-navigation']
     paths:
       - 'packages/twenty-docs/**/*.mdx'
       - '!packages/twenty-docs/fr/**'
@@ -26,7 +26,33 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ github.token }}
-          ref: main
+          ref: ${{ github.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+          cache-dependency-path: 'yarn.lock'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Generate navigation template for Crowdin
+        run: yarn docs:generate-navigation-template
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+          cache-dependency-path: 'yarn.lock'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Generate navigation template for Crowdin
+        run: yarn docs:generate-navigation-template
 
       - name: Upload docs to Crowdin
         uses: crowdin/github-action@v2

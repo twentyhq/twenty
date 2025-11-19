@@ -8,7 +8,7 @@
  */
 
 export type { ApplicationConfig } from './application-config';
-export {
+export type {
   ActorField,
   AddressField,
   CurrencyField,

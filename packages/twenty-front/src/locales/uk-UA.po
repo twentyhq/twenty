@@ -520,8 +520,6 @@ msgstr "Активувати процеси роботи"
 
 #. js-lingui-id: F6pfE9
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/data-model/SettingsObjectTable.tsx
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Active"
@@ -645,6 +643,7 @@ msgid "Add object"
 msgstr "Додати об'єкт"
 
 #. js-lingui-id: mFtRj8
+#: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
 msgid "Add object permission"
 msgstr "Додати дозвіл на об'єкт"
@@ -788,7 +787,7 @@ msgstr "Розширені"
 #. js-lingui-id: +uqBul
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectIndexes.tsx
 msgid "Advanced feature to improve the performance of queries and to enforce unicity constraints."
-msgstr ""
+msgstr "Розширена функція для покращення продуктивності запитів та забезпечення унікальності обмежень."
 
 #. js-lingui-id: tMFFwF
 #: src/modules/views/components/ViewBarFilterDropdownAdvancedFilterButton.tsx
@@ -832,10 +831,10 @@ msgstr "Передачі агента"
 msgid "Agent not found"
 msgstr "Агента не знайдено"
 
-#. js-lingui-id: jJT5pC
-#: src/modules/settings/roles/components/SettingsRolesContainer.tsx
-msgid "Agent Roles"
-msgstr "Ролі агентів"
+#. js-lingui-id: 77hGcG
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Agent roles"
+msgstr ""
 
 #. js-lingui-id: 8Uv5e6
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -860,11 +859,13 @@ msgid "Aggregate"
 msgstr "Агрегат"
 
 #. js-lingui-id: jsQZMk
+#: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "AI"
@@ -1109,10 +1110,10 @@ msgstr "API-ключ"
 msgid "API Key copied to clipboard"
 msgstr "API-ключ скопійовано в буфер обміну"
 
-#. js-lingui-id: K84VsN
-#: src/modules/settings/roles/components/SettingsRolesContainer.tsx
-msgid "API Key Roles"
-msgstr "Ролі для ключів API"
+#. js-lingui-id: Widx6n
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "API key roles"
+msgstr ""
 
 #. js-lingui-id: 5h8ooz
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
@@ -1293,21 +1294,10 @@ msgstr "Запитати AI"
 msgid "Assign {roleTargetName}?"
 msgstr "Призначити {roleTargetName}?"
 
-#. js-lingui-id: gJL5Xx
+#. js-lingui-id: nerbkq
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
-msgid "Assign roles to specify each agent's access permissions"
-msgstr "Призначте ролі для визначення дозволів доступу кожного агента"
-
-#. js-lingui-id: j95x1l
-#: src/modules/settings/roles/components/SettingsRolesList.tsx
-msgid "Assign roles to specify each API key's access permissions"
-msgstr "Призначте ролі для визначення дозволів доступу кожного API ключа"
-
-#. js-lingui-id: rfYmIr
-#: src/modules/settings/roles/components/SettingsRolesList.tsx
-#: src/modules/settings/roles/components/SettingsRolesList.tsx
-msgid "Assign roles to specify each member's access permissions"
-msgstr "Призначте ролі для визначення дозволів доступу кожного учасника"
+msgid "Assign roles to specify access permissions"
+msgstr ""
 
 #. js-lingui-id: krsgB0
 #: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
@@ -1841,7 +1831,7 @@ msgstr "Чат"
 #. js-lingui-id: UxeiNP
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Chat with AI agents and use AI features"
-msgstr ""
+msgstr "Спілкування з AI агентами та використання AI функцій"
 
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
@@ -1982,7 +1972,7 @@ msgstr "Редактор коду"
 #. js-lingui-id: bKJYIa
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab.tsx
 msgid "Code your function"
-msgstr ""
+msgstr "Закодуйте свою функцію"
 
 #. js-lingui-id: H86f9p
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -2309,7 +2299,7 @@ msgstr "Скопіюйте цей ключ, адже він більше не б
 #. js-lingui-id: 4Tb3Ry
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Copy view link"
-msgstr ""
+msgstr "Копіювати посилання на вигляд"
 
 #. js-lingui-id: SGsgDO
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -2398,10 +2388,10 @@ msgstr "Створити"
 msgid "Create {targetObjectLabelSingular}"
 msgstr "Створити {targetObjectLabelSingular}"
 
-#. js-lingui-id: 7/h1ZC
-#: src/pages/settings/ai/SettingsAgentForm.tsx
-msgid "Create a new AI agent"
-msgstr "Створити нового агента ШІ"
+#. js-lingui-id: ZITKtg
+#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
+msgid "Create a role to define permissions for this agent."
+msgstr ""
 
 #. js-lingui-id: zNoOC2
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
@@ -2465,6 +2455,7 @@ msgid "Create Related Record"
 msgstr "Створити пов'язаний запис"
 
 #. js-lingui-id: RoyYUE
+#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Create Role"
 msgstr "Створити роль"
@@ -2557,6 +2548,11 @@ msgstr "Крон"
 msgid "cron trigger"
 msgstr "cron тригер"
 
+#. js-lingui-id: zovbHa
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Cron will be triggered at UTC time"
+msgstr ""
+
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
@@ -2581,7 +2577,7 @@ msgstr "Поточна версія"
 #. js-lingui-id: 0b3reS
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Current workspace member not found."
-msgstr ""
+msgstr "Поточний учасник робочого простору не знайдений."
 
 #. js-lingui-id: 8Tg/JR
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
@@ -2769,7 +2765,7 @@ msgstr "Формат дати"
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Date granularity"
-msgstr ""
+msgstr "Гранулярність дати"
 
 #. js-lingui-id: dhHZTJ
 #: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
@@ -2849,6 +2845,7 @@ msgstr "Деактивувати процес"
 
 #. js-lingui-id: yAT3be
 #: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "Deactivated"
 msgstr "Деактивовано"
@@ -3294,7 +3291,7 @@ msgstr "Завантажити файл"
 #. js-lingui-id: IDPv1P
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Download Files"
-msgstr ""
+msgstr "Завантажити файл"
 
 #. js-lingui-id: wrT4hq
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -3307,6 +3304,7 @@ msgid "Drop file here..."
 msgstr "Перетягніть файл сюди..."
 
 #. js-lingui-id: euc6Ns
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Duplicate"
 msgstr ""
@@ -3380,11 +3378,6 @@ msgstr "Редагувати {objectLabelPlural}"
 #: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 msgid "Edit Account"
 msgstr "Редагувати обліковий запис"
-
-#. js-lingui-id: CQrc7J
-#: src/pages/settings/ai/SettingsAgentForm.tsx
-msgid "Edit Agent"
-msgstr "Редагувати агента"
 
 #. js-lingui-id: GpnfNN
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
@@ -4075,6 +4068,17 @@ msgstr "Експорт CSV"
 msgid "Export dashboard"
 msgstr "Експортувати інформаційну панель"
 
+#. js-lingui-id: wVUjld
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+msgid "Export member"
+msgstr ""
+
+#. js-lingui-id: D0b3Ip
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+msgid "Export members"
+msgstr ""
+
 #. js-lingui-id: G5DJkP
 #: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 msgid "Export record"
@@ -4113,6 +4117,7 @@ msgid "Export versions"
 msgstr "Експортувати версії"
 
 #. js-lingui-id: DaGxE0
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4196,6 +4201,11 @@ msgstr "Не вдалося видалити перевизначення"
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "Failed to retry jobs. Please try again later."
 msgstr "Не вдалося повторити завдання. Будь ласка, спробуйте пізніше."
+
+#. js-lingui-id: y3HIOa
+#: src/pages/settings/ai/SettingsAgentForm.tsx
+msgid "Failed to save role permissions: {errorMessage}"
+msgstr ""
 
 #. js-lingui-id: HnBqPY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -4315,9 +4325,12 @@ msgid "File \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "Файл \"{fileName}\" перевищує {maxUploadSize}"
 
 #. js-lingui-id: o7J4JM
+#: src/pages/settings/data-model/SettingsObjectTable.tsx
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/command-menu/pages/page-layout/components/ChartFiltersSettings.tsx
@@ -4410,7 +4423,6 @@ msgid "Format e.g. d-MMM-y (qqq''yy)"
 msgstr "Формат, напр. д-MMM-р (qqq''yy)"
 
 #. js-lingui-id: xMJhWJ
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 msgid "Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
 msgstr "Формат: [Хвилина] [Година] [День місяця] [Місяць] [День тижня]"
@@ -4689,6 +4701,11 @@ msgstr "Сховати"
 msgid "Hide deleted"
 msgstr "Сховати видалене"
 
+#. js-lingui-id: OTmbll
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+msgid "Hide deleted members"
+msgstr ""
+
 #. js-lingui-id: FHhlye
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Hide deleted records"
@@ -4847,6 +4864,11 @@ msgstr "IMAP порт"
 msgid "IMAP Server"
 msgstr "IMAP сервер"
 
+#. js-lingui-id: atF3YG
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "IMAP Username (Optional)"
+msgstr ""
+
 #. js-lingui-id: +8jOVa
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "imap.example.com"
@@ -4916,7 +4938,6 @@ msgid "In {dateDiff}"
 msgstr "За {dateDiff}"
 
 #. js-lingui-id: NoNwIX
-#: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Inactive"
@@ -5017,7 +5038,7 @@ msgid "Invalid auth provider"
 msgstr "Недійсний провайдер авторизації"
 
 #. js-lingui-id: ER/0YT
-#: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
+#: src/modules/workflow/workflow-trigger/utils/getTriggerScheduleDescription.ts
 msgid "Invalid cron expression"
 msgstr "Недійсний вираз cron"
 
@@ -5262,6 +5283,7 @@ msgid "Jobs"
 msgstr "Вакансії"
 
 #. js-lingui-id: C5FAaq
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "john.doe"
@@ -5586,10 +5608,20 @@ msgstr "Керування платіжною інформацією"
 msgid "Manage favorite"
 msgstr "Керувати обраними"
 
+#. js-lingui-id: 8XlVuA
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+msgid "Manage in settings"
+msgstr ""
+
 #. js-lingui-id: T6YjCk
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Manage Members"
 msgstr "Управління членами"
+
+#. js-lingui-id: 5hEFxA
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+msgid "Manage members in settings"
+msgstr ""
 
 #. js-lingui-id: eGGH1l
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -6040,7 +6072,6 @@ msgstr "Новий обліковий запис"
 #. js-lingui-id: mJIA0/
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "New Agent"
 msgstr "Новий агент"
@@ -6411,7 +6442,6 @@ msgid "No workflow versions yet"
 msgstr "Версій Workflow поки що немає"
 
 #. js-lingui-id: EdQY6l
-#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
@@ -6690,7 +6720,6 @@ msgid "Only the timestamp & participants will be shared with your team."
 msgstr "Лише відмітка часу та учасники будуть поділені з вашою командою."
 
 #. js-lingui-id: 1TNIig
-#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
 #: src/modules/action-menu/components/RecordShowRightDrawerOpenRecordButton.tsx
 msgid "Open"
 msgstr "Відкрити"
@@ -6919,7 +6948,7 @@ msgstr "Назавжди знищити запис"
 #: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
 #: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
 msgid "Permanently Destroy Record"
-msgstr ""
+msgstr "Назавжди знищити записи"
 
 #. js-lingui-id: xjWlSJ
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -6947,6 +6976,7 @@ msgid "Permissions"
 msgstr "Дозволи"
 
 #. js-lingui-id: KiuPPj
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 msgid "Permissions · {objectLabelSingular}"
 msgstr "Дозволи · {objectLabelSingular}"
@@ -7044,7 +7074,7 @@ msgstr "Будь ласка, введіть \"так\", щоб підтверд�
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Please type in your email to confirm."
-msgstr ""
+msgstr "Будь ласка, введіть свій електронну адресу для підтвердження."
 
 #. js-lingui-id: BPig2P
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -7548,6 +7578,11 @@ msgstr "Скасовано для цього об'єкта"
 msgid "Role"
 msgstr "Роль"
 
+#. js-lingui-id: l2yKTq
+#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
+msgid "Role for {agentLabel} agent"
+msgstr ""
+
 #. js-lingui-id: iSfzXo
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/roles/role/components/SettingsRoleLabelContainer.tsx
@@ -7558,11 +7593,6 @@ msgstr "Назва ролі"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Role name cannot be empty"
 msgstr "Назва ролі не може бути порожньою"
-
-#. js-lingui-id: khTver
-#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
-msgid "Role Permissions"
-msgstr "Дозволи ролей"
 
 #. js-lingui-id: M9SCiK
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -7656,11 +7686,6 @@ msgstr "Зберегти макет"
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Schedule"
 msgstr "Розклад"
-
-#. js-lingui-id: Qp0P63
-#: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
-msgid "Schedule runs in UTC timezone."
-msgstr "Запуск розкладу в часовій зоні UTC."
 
 #. js-lingui-id: QJ8HBJ
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -7893,6 +7918,11 @@ msgstr "Переглянути {objectLabelPlural}"
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "See active version"
 msgstr "Переглянути активну версію"
+
+#. js-lingui-id: 8O9AJI
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+msgid "See deleted members"
+msgstr ""
 
 #. js-lingui-id: BxIUpp
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -8157,7 +8187,7 @@ msgstr "Встановіть назву вашого субдомену"
 #. js-lingui-id: 9HNKkV
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 msgid "Set your application configuration variables"
-msgstr ""
+msgstr "Встановіть змінні конфігурації вашого застосунку"
 
 #. js-lingui-id: dQsqpC
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -8644,7 +8674,7 @@ msgstr "Змінити біллінг на рік"
 #. js-lingui-id: avDJC3
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Sync Account"
-msgstr ""
+msgstr "Синхронізувати обліковий запис"
 
 #. js-lingui-id: MsxItJ
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
@@ -8685,6 +8715,11 @@ msgstr "Синхронізація міток об'єктів та назв API"
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "System"
 msgstr "Система"
+
+#. js-lingui-id: 0apULK
+#: src/pages/settings/data-model/SettingsObjectTable.tsx
+msgid "System objects"
+msgstr ""
 
 #. js-lingui-id: FHPe8O
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
@@ -8809,11 +8844,6 @@ msgstr "Текст скопійовано в буфер обміну"
 #: src/modules/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput.tsx
 msgid "Text Editor"
 msgstr "Текстовий редактор"
-
-#. js-lingui-id: 5Vj6n9
-#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
-msgid "The agent can perform all actions defined by the following role."
-msgstr "Агент може виконувати всі дії, визначені наступною роллю."
 
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
@@ -8958,6 +8988,8 @@ msgid ""
 "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr ""
+"Цю дію не можна відмінити. Це назавжди видалить ваш\n"
+"            весь обліковий запис."
 
 #. js-lingui-id: bNY3MH
 #: src/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal.tsx
@@ -9003,6 +9035,11 @@ msgstr "Ця роль може {humanReadableAction} всі записи"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "This role is assigned to these {roleTargetDisplayName}."
 msgstr "Ця роль призначена цим {roleTargetDisplayName}."
+
+#. js-lingui-id: fp6HUI
+#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
+msgid "This role is shared with other users or agents and cannot be edited here."
+msgstr ""
 
 #. js-lingui-id: C/wr0z
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -9315,10 +9352,10 @@ msgstr "Неназвана роль"
 msgid "Untitled Workflow"
 msgstr "Неназваний робочий процес"
 
-#. js-lingui-id: b26MvX
+#. js-lingui-id: hmc//6
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
-msgid "Upcoming execution times ({timeZone})"
-msgstr "Наступні часи виконання ({timeZone})"
+msgid "Upcoming execution time ({timeZone})"
+msgstr ""
 
 #. js-lingui-id: Y8zko3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -9332,15 +9369,10 @@ msgstr "оновити"
 msgid "Update"
 msgstr "Оновити"
 
-#. js-lingui-id: YT2VWW
-#: src/pages/settings/ai/SettingsAgentForm.tsx
-msgid "Update agent information"
-msgstr "Оновити інформацію про агента"
-
 #. js-lingui-id: DUqztb
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "Update view"
-msgstr ""
+msgstr "Оновити вигляд"
 
 #. js-lingui-id: qbg8VE
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -9393,7 +9425,7 @@ msgstr "URL-адреса"
 #. js-lingui-id: pphDjD
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 msgid "URL to Embed"
-msgstr ""
+msgstr "URL для впровадження"
 
 #. js-lingui-id: DsBeuB
 #: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx
@@ -9448,11 +9480,6 @@ msgstr "Інформація користувача"
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "User is not logged in"
 msgstr "Користувач не увійшов в систему"
-
-#. js-lingui-id: LVecP9
-#: src/modules/settings/roles/components/SettingsRolesContainer.tsx
-msgid "User Roles"
-msgstr "Ролі користувача"
 
 #. js-lingui-id: Sxm8rQ
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -9783,6 +9810,7 @@ msgstr "Робочі процеси"
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
@@ -9807,6 +9835,7 @@ msgstr "Робочі процеси"
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -9861,7 +9890,7 @@ msgstr "Робочі простори"
 #. js-lingui-id: F7iCiM
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
 msgid "Would you like to remove {recordGroupSort} group sorting?"
-msgstr ""
+msgstr "Вам потрібно видалити сортування {recordGroupSort} групи?"
 
 #. js-lingui-id: 5iSD9O
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx

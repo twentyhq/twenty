@@ -98,7 +98,7 @@ export abstract class CommonBaseQueryRunnerService<
 
     if (!isWorkspaceAuthContext(authContext)) {
       throw new CommonQueryRunnerException(
-        `Invalid auth context: ${JSON.stringify(authContext)}`,
+        'Invalid auth context',
         CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
       );
     }

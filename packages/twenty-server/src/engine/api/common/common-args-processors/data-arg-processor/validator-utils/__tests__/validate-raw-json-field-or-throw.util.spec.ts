@@ -28,6 +28,20 @@ describe('validateRawJsonFieldOrThrow', () => {
 
       expect(result).toEqual(jsonArray);
     });
+
+    it('should accept a valid JSON string', () => {
+      const jsonString = '{"key":"value","nested":{"prop":123}}';
+      const result = validateRawJsonFieldOrThrow(jsonString, 'testField');
+
+      expect(result).toBe(jsonString);
+    });
+
+    it('should accept a valid JSON array string', () => {
+      const jsonArrayString = '[1, 2, 3, "test"]';
+      const result = validateRawJsonFieldOrThrow(jsonArrayString, 'testField');
+
+      expect(result).toBe(jsonArrayString);
+    });
   });
 
   describe('invalid inputs', () => {
@@ -51,10 +65,16 @@ describe('validateRawJsonFieldOrThrow', () => {
       );
     });
 
-    it('should throw when value is a string', () => {
+    it('should throw when value is an invalid JSON string', () => {
       expect(() =>
-        validateRawJsonFieldOrThrow('string value', 'testField'),
+        validateRawJsonFieldOrThrow('not valid json', 'testField'),
       ).toThrow(CommonQueryRunnerException);
+    });
+
+    it('should throw when value is a boolean', () => {
+      expect(() => validateRawJsonFieldOrThrow(true, 'testField')).toThrow(
+        CommonQueryRunnerException,
+      );
     });
   });
 });

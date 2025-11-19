@@ -33,7 +33,10 @@ The documentation will be available at `http://localhost:3000`
    - `developers/` - Developer documentation
    - `twenty-ui/` - Component documentation
 
-2. Update `docs.json` to add pages to navigation
+2. Update `navigation/base-structure.json` if you need to change the tab/group hierarchy or add/remove pages. This file stays in the repo and is **not** uploaded to Crowdin.
+3. Keep the translation template (`navigation/navigation.template.json`) in sync by running `yarn docs:generate-navigation-template` after editing the base structure. This template is the only file that should be pushed to Crowdin.
+4. For each translated locale pulled from Crowdin, ensure a `packages/twenty-docs/l/<language>/navigation.json` file exists. These files contain **labels only**; page slugs always come from the base structure.
+5. Run `yarn docs:generate` to rebuild `docs.json` from the base structure + translated labels.
 
 ### MDX Format
 
@@ -62,8 +65,11 @@ Your content here...
 
 ## 🔧 Configuration
 
-- `docs.json` - Main Mintlify configuration (navigation, theme, etc.)
-- `package.json` - Package dependencies and scripts
+- `navigation/base-structure.json` - Source of truth for tabs, groups, icons, and page slugs (English only, not sent to Crowdin).
+- `navigation/navigation.template.json` - Generated translation template (labels only) that is uploaded to Crowdin.
+- `l/<language>/navigation.json` - Locale-specific label files pulled from Crowdin.
+- `docs.json` - Generated Mintlify configuration (always run `yarn docs:generate` after modifying navigation files).
+- `package.json` - Package dependencies and scripts (`docs:generate`, `docs:generate-navigation-template`, …).
 - `project.json` - Nx workspace configuration
 
 ## 📦 Building

@@ -208,6 +208,7 @@ msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "Zaman çizelgesinde gösterilecek toplanmış/filtrelenmiş olay"
 
 #. js-lingui-id: pdOYzu
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workspace-members-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
@@ -215,9 +216,12 @@ msgstr "Zaman çizelgesinde gösterilecek toplanmış/filtrelenmiş olay"
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/messages-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/message-threads-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/calendar-events-all.view.ts
 msgid "All {objectLabelPlural}"
 msgstr "Tüm {objectLabelPlural}"
 
@@ -302,6 +306,11 @@ msgstr "Atanan kişi"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated User Id"
 msgstr "İlişkilendirilmiş Kullanıcı Id"
+
+#. js-lingui-id: scLx/y
+#: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
+msgid "At least one folder must be synced."
+msgstr ""
 
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -611,7 +620,6 @@ msgstr "Hesap silinemiyor: tek yöneticisiniz. Başka bir yönetici atayın veya
 
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Silinemiyor, lütfen önce etiket tanımlayıcı alanını güncelleyin."
 
@@ -2009,6 +2017,11 @@ msgstr "Mesaj Klasörü"
 msgid "Message folder import policy"
 msgstr "Mesaj klasörü içe aktarma politikası"
 
+#. js-lingui-id: aIgrkW
+#: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
+msgid "Message folder not found"
+msgstr ""
+
 #. js-lingui-id: p4ANpY
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -2162,11 +2175,6 @@ msgstr "İsim \"{flatFieldMetadataName}\" mevcut değil"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
 msgstr "İsim \"{flatFieldMetadataName}\" başka bir alan tarafından kullanıldığından mevcut değil"
-
-#. js-lingui-id: Q2loDF
-#: src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service.ts
-msgid "Name \"{name}\" is not available."
-msgstr "İsim \"{name}\" mevcut değil."
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2758,17 +2766,6 @@ msgstr "Genel alan adı URL tanımlı değil. Lütfen PUBLIC_DOMAIN_URL ortam de
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Received At"
 msgstr "Alındığı Zaman"
-
-#. js-lingui-id: x93onj
-#: src/engine/metadata-modules/view-field/services/view-field.service.ts
-#: src/engine/metadata-modules/view-field/services/view-field.service.ts
-msgid "Record text must be in first position of the view."
-msgstr "Kayıt metni görünümün ilk pozisyonunda olmalıdır."
-
-#. js-lingui-id: KGmwY/
-#: src/engine/metadata-modules/view-field/services/view-field.service.ts
-msgid "Record text must stay visible."
-msgstr "Kayıt metni görünür kalmalıdır."
 
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -3523,12 +3520,6 @@ msgstr "Tür"
 msgid "Type (deprecated)"
 msgstr "Tür (kullanım dışı)."
 
-#. js-lingui-id: RBJNRI
-#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
-msgid "Unique field cannot have a default value"
-msgstr "Benzersiz alan varsayılan bir değere sahip olamaz"
-
 #. js-lingui-id: WWSSTx
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
@@ -4224,12 +4215,12 @@ msgstr "{fieldsList} alanlarını güncelleme izniniz yoktur. Lütfen çalışma
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to create workspace-level views."
-msgstr ""
+msgstr "Çalışma alanı seviyesinde görüşler oluşturma izniniz yoktur."
 
 #. js-lingui-id: QmL9y9
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to modify this view."
-msgstr ""
+msgstr "Bu görüşü değiştirme izniniz yok."
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts

@@ -5,6 +5,7 @@ import { WorkspaceQueryBuilderModule } from 'src/engine/api/graphql/workspace-qu
 import { TelemetryListener } from 'src/engine/api/graphql/workspace-query-runner/listeners/telemetry.listener';
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
+import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
@@ -17,6 +18,7 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
 
 @Module({
   imports: [
+    AuthModule,
     WorkspaceQueryBuilderModule,
     WorkspaceDataSourceModule,
     WorkspaceQueryHookModule,

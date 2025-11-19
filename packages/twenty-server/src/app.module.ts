@@ -81,7 +81,16 @@ const MIGRATED_REST_METHODS = [
 export class AppModule {
   private static getConditionalModules(): DynamicModule[] {
     const modules: DynamicModule[] = [];
-    const frontPath = join(__dirname, '..', 'front');
+    const frontPath = join(__dirname, 'front');
+
+    // NestJS DevTools - can be useful for debugging and profiling
+    /* if (process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT) {
+      modules.push(
+        DevtoolsModule.register({
+          http: true,
+        }),
+      );
+    } */
 
     if (existsSync(frontPath)) {
       modules.push(

@@ -52,5 +52,12 @@ files: [
     #
     "source": "packages/twenty-docs/twenty-ui/**/*.mdx",
     "translation": "packages/twenty-docs/l/%two_letters_code%/twenty-ui/**/%original_file_name%",
+  },
+  {
+    #
+    # Navigation labels template - translated into per-locale navigation.json
+    #
+    "source": "packages/twenty-docs/navigation/navigation.template.json",
+    "translation": "packages/twenty-docs/l/%two_letters_code%/navigation.json",
   }
 ]

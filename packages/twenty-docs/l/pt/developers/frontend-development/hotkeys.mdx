@@ -1,5 +1,5 @@
 ---
-title: Atalhos de Teclado
+title: Teclas de atalho
 image: /images/user-guide/table-views/table.png
 ---
 
@@ -9,37 +9,37 @@ image: /images/user-guide/table-views/table.png
 
 ## Introdução
 
-When you need to listen to a hotkey, you would normally use the `onKeyDown` event listener.
+Quando você precisa ouvir uma tecla de atalho, normalmente usaria o listener de evento `onKeyDown`.
 
-No `twenty-front` no entanto, você pode ter conflitos entre as mesmas teclas de atalho que são usadas em diferentes componentes, montados ao mesmo tempo.
+No entanto, em `twenty-front`, você pode ter conflitos entre as mesmas teclas de atalho que são usadas em diferentes componentes, montados ao mesmo tempo.
 
-Por exemplo, se você tiver uma página que escuta a tecla Enter, e um modal que escuta a tecla Enter, com um componente Select dentro desse modal que escuta a tecla Enter, você pode ter um conflito quando todos estão montados ao mesmo tempo.
+Por exemplo, se você tem uma página que escuta a tecla Enter, e um modal que escuta a tecla Enter, com um componente Select dentro desse modal que escuta a tecla Enter, você pode ter um conflito quando todos são montados ao mesmo tempo.
 
-## The `useScopedHotkeys` hook
+## O hook `useScopedHotkeys`
 
-Para lidar com esse problema, temos um gancho personalizado que permite ouvir teclas de atalho sem nenhum conflito.
+Para lidar com esse problema, temos um hook personalizado que permite ouvir as teclas de atalho sem qualquer conflito.
 
-Você o coloca em um componente, e ele só escutará as teclas de atalho quando o componente estiver montado E quando o **escopo de atalho** especificado estiver ativo.
+Você o coloca em um componente, e ele ouvirá as teclas de atalho somente quando o componente estiver montado E quando o **escopo da tecla de atalho** especificado estiver ativo.
 
 ## Como ouvir teclas de atalho na prática?
 
-Há duas etapas envolvidas na configuração da escuta de teclas de atalho:
+Há dois passos envolvidos na configuração da escuta de teclas de atalho :
 
-1. Defina o [escopo de atalho](#what-is-a-hotkey-scope-) que escutará as teclas de atalho
-2. Use the `useScopedHotkeys` hook to listen to hotkeys
+1. Defina o [escopo da tecla de atalho](#what-is-a-hotkey-scope-) que ouvirá as teclas de atalho
+2. Use o hook `useScopedHotkeys` para ouvir as teclas de atalho
 
-Configurar escopos de atalhos é necessário mesmo em páginas simples, porque outros elementos da interface do usuário, como o menu da esquerda ou o menu de comandos, também podem escutar teclas de atalho.
+Configurar escopos de teclas de atalho é necessário mesmo em páginas simples, porque outros elementos de UI como o menu à esquerda ou o menu de comando também podem ouvir teclas de atalho.
 
 ## Casos de uso para teclas de atalho
 
-Geralmente, você terá dois casos de uso que requerem teclas de atalho:
+Em geral, você terá dois casos de uso que requerem teclas de atalho :
 
 1. Em uma página ou um componente montado em uma página
-2. Em um componente do tipo modal que obtém o foco devido a uma ação do usuário
+2. Em um componente do tipo modal que assume o foco devido a uma ação do usuário
 
-O segundo caso de uso pode ocorrer de forma recursiva: um dropdown em um modal, por exemplo.
+O segundo caso de uso pode ocorrer de forma recursiva : um dropdown em um modal, por exemplo.
 
-### Escutando teclas de atalho em uma página
+### Ouvindo teclas de atalho em uma página
 
 Exemplo :
 
@@ -76,9 +76,9 @@ const PageListeningEnter = () => {
 };
 ```
 
-### Escutando teclas de atalho em um componente do tipo modal
+### Ouvindo teclas de atalho em um componente do tipo modal
 
-Para este exemplo, usaremos um componente modal que escuta a tecla Escape para avisar seu pai para fechá-lo.
+Neste exemplo, usaremos um componente modal que ouve a tecla Escape para informar ao pai que feche.
 
 Aqui, a interação do usuário está mudando o escopo.
 
@@ -113,7 +113,7 @@ const ExamplePageWithModal = () => {
 };
 ```
 
-Então, no componente modal:
+Então no componente modal :
 
 ```tsx
 const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
@@ -132,19 +132,19 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
 };
 ```
 
-É importante usar este padrão quando você não tem certeza se apenas usar um useEffect com montagem/desmontagem será suficiente para evitar conflitos.
+É importante usar esse padrão quando você não está seguro de que apenas usar um useEffect com mount/unmount será suficiente para evitar conflitos.
 
 Esses conflitos podem ser difíceis de depurar, e pode acontecer com mais frequência do que o esperado com useEffects.
 
-## O que é um escopo de atalho?
+## O que é um escopo de tecla de atalho?
 
-Um escopo de atalho é uma string que representa um contexto no qual as teclas de atalho estão ativas. É geralmente codificado como um enum.
+Um escopo de tecla de atalho é uma string que representa um contexto no qual as teclas de atalho estão ativas. Geralmente é codificado como um enum.
 
-Quando você muda o escopo de atalho, as teclas de atalho que estão ouvindo esse escopo serão habilitadas e as que estão ouvindo outros escopos serão desabilitadas.
+Quando você altera o escopo da tecla de atalho, as teclas associadas a esse escopo serão ativadas e as teclas associadas a outros escopos serão desativadas.
 
 Você pode definir apenas um escopo por vez.
 
-Como exemplo, os escopos de atalho para cada página são definidos no enum `PageHotkeyScope`:
+Como exemplo, os escopos de tecla de atalho para cada página são definidos no enum `PageHotkeyScope`:
 
 ```tsx
 export enum PageHotkeyScope {
@@ -165,7 +165,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-Internamente, o escopo atualmente selecionado é armazenado em um estado do Recoil que é compartilhado em toda a aplicação:
+Internamente, o escopo atualmente selecionado é armazenado em um estado Recoil que é compartilhado por toda a aplicação :
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -178,6 +178,6 @@ Mas esse estado Recoil nunca deve ser manipulado manualmente! Veremos como usá-
 
 ## Como funciona internamente?
 
-Fizemos um wrapper fino em cima do [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) que o torna mais performático e evita re-renderizações desnecessárias.
+Criamos um wrapper leve em cima de [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) que o torna mais eficiente e evita renderizações desnecessárias.
 
-Também criamos um estado do Recoil para gerenciar o estado do escopo de atalho e torná-lo disponível em toda a aplicação.
+Também criamos um estado Recoil para gerenciar o estado do escopo da tecla de atalho e torná-lo disponível em toda a aplicação.

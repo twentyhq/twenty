@@ -92,6 +92,14 @@ export const computeWebhooks = (
                   type: 'string',
                   example: '872cfcf1-c79f-42bc-877d-5829f06eb3f9',
                 },
+                userId: {
+                  type: 'string',
+                  example: '170ba418-85a2-4f91-8565-9cd714c6703a',
+                },
+                workspaceMemberId: {
+                  type: 'string',
+                  example: '9062a1e3-e066-49ba-8c4a-d869b6a0ca12',
+                },
                 webhookId: {
                   type: 'string',
                   example: '90056586-1228-4e03-a507-70140aa85c05',

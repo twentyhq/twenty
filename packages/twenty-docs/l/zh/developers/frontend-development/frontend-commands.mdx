@@ -7,15 +7,15 @@ image: /images/user-guide/create-workspace/workspace-cover.png
   <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
 </Frame>
 
-## 有用的命令
+## 实用命令
 
-### 啟動應用
+### 启动应用
 
 ```bash
 npx nx start twenty-front
 ```
 
-### Regenerate graphql schema based on API graphql schema
+### 根据API graphql schema重新生成graphql schema
 
 ```bash
 npx nx run twenty-front:graphql:generate --configuration=metadata
@@ -33,14 +33,14 @@ npx nx run twenty-front:graphql:generate
 npx nx run twenty-front:lint # pass --fix to fix lint errors
 ```
 
-## 翻譯
+## 翻译
 
 ```bash
 npx nx run twenty-front:lingui:extract
 npx nx run twenty-front:lingui:compile
 ```
 
-### 測試
+### 测试
 
 ```bash
 npx nx run twenty-front:test # run jest tests
@@ -49,19 +49,19 @@ npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve
 npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
 ```
 
-## 技術棧
+## 技术栈
 
-The project has a clean and simple stack, with minimal boilerplate code.
+项目有一个干净且简单的技术栈，使用最少的样板代码。
 
-**應用**
+**应用**
 
 - [React](https://react.dev/)
 - [Apollo](https://www.apollographql.com/docs/)
-- [GraphQL Codegen](https://the-guild.dev/graphql/codegen)
+- [GraphQL 代码生成](https://the-guild.dev/graphql/codegen)
 - [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
 - [TypeScript](https://www.typescriptlang.org/)
 
-**測試**
+**测试**
 
 - [Jest](https://jestjs.io/)
 - [Storybook](https://storybook.js.org/)
@@ -72,25 +72,25 @@ The project has a clean and simple stack, with minimal boilerplate code.
 - [Craco](https://craco.js.org/docs/)
 - [ESLint](https://eslint.org/)
 
-## 架構
+## 架构
 
 ### 路由
 
-[React Router](https://reactrouter.com/) 負責路由操作。
+[React Router](https://reactrouter.com/) 负责处理路由。
 
-為了避免不必要的[重新渲染](/l/zh/developers/frontend-development/best-practices-front#managing-re-renders)，所有路由邏輯位於 `PageChangeEffect` 的 `useEffect` 中。
+为了避免不必要的[重新渲染](/l/zh/developers/frontend-development/best-practices-front#managing-re-renders)，所有路由逻辑都在 `PageChangeEffect` 的 `useEffect` 中。
 
-### 狀態管理
+### 状态管理
 
-[Recoil](https://recoiljs.org/docs/introduction/core-concepts) 負責狀態管理。
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) 处理状态管理。
 
-查看[最佳實踐](/l/zh/developers/frontend-development/best-practices-front#state-management)，了解有關狀態管理的更多信息。
+查看[最佳实践](/l/zh/developers/frontend-development/best-practices-front#state-management)以获取有关状态管理的更多信息。
 
-## 測試
+## 测试
 
-[Jest](https://jestjs.io/) 用作單元測試工具，而 [Storybook](https://storybook.js.org/) 用於元件測試。
+[Jest](https://jestjs.io/) 用于单元测试，而 [Storybook](https://storybook.js.org/) 用于组件测试。
 
-Jest 主要用於測試實用函數，而不是元件本身。
+Jest 主要用于测试工具函数，而不是组件本身。
 
-Storybook 用於測試隔離元件的行為同時展示設計系統。
+Storybook 用于测试隔离组件的行为，以及展示设计系统。
 

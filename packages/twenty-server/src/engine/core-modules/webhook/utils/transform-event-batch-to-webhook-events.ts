@@ -38,6 +38,8 @@ export const transformEventBatchToWebhookEvents = ({
         workspaceId,
         webhookId,
         eventDate,
+        userId: eventData.userId,
+        workspaceMemberId: eventData.workspaceMemberId,
         record,
         ...(updatedFields && { updatedFields }),
         secret,

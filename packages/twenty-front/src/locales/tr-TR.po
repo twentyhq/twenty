@@ -520,8 +520,6 @@ msgstr "İş Akışını Aktif Et"
 
 #. js-lingui-id: F6pfE9
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/data-model/SettingsObjectTable.tsx
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Active"
@@ -645,6 +643,7 @@ msgid "Add object"
 msgstr "Nesne Ekle"
 
 #. js-lingui-id: mFtRj8
+#: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
 msgid "Add object permission"
 msgstr "Nesne izni ekle"
@@ -832,10 +831,10 @@ msgstr "Temsilci Devirleri"
 msgid "Agent not found"
 msgstr "Temsilci bulunamadı"
 
-#. js-lingui-id: jJT5pC
-#: src/modules/settings/roles/components/SettingsRolesContainer.tsx
-msgid "Agent Roles"
-msgstr "Temsilci Roller"
+#. js-lingui-id: 77hGcG
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Agent roles"
+msgstr ""
 
 #. js-lingui-id: 8Uv5e6
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -860,11 +859,13 @@ msgid "Aggregate"
 msgstr "Topla"
 
 #. js-lingui-id: jsQZMk
+#: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "AI"
@@ -1109,10 +1110,10 @@ msgstr "API Anahtar"
 msgid "API Key copied to clipboard"
 msgstr "API Anahtarı panoya kopyalandı"
 
-#. js-lingui-id: K84VsN
-#: src/modules/settings/roles/components/SettingsRolesContainer.tsx
-msgid "API Key Roles"
-msgstr "API Anahtar Rolleri"
+#. js-lingui-id: Widx6n
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "API key roles"
+msgstr ""
 
 #. js-lingui-id: 5h8ooz
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
@@ -1293,21 +1294,10 @@ msgstr "AI Sor"
 msgid "Assign {roleTargetName}?"
 msgstr "{roleTargetName} atansın mı?"
 
-#. js-lingui-id: gJL5Xx
+#. js-lingui-id: nerbkq
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
-msgid "Assign roles to specify each agent's access permissions"
-msgstr "Her ajanın erişim izinlerini belirtmek için roller atayın"
-
-#. js-lingui-id: j95x1l
-#: src/modules/settings/roles/components/SettingsRolesList.tsx
-msgid "Assign roles to specify each API key's access permissions"
-msgstr "Her API anahtarının erişim izinlerini belirtmek için roller atayın"
-
-#. js-lingui-id: rfYmIr
-#: src/modules/settings/roles/components/SettingsRolesList.tsx
-#: src/modules/settings/roles/components/SettingsRolesList.tsx
-msgid "Assign roles to specify each member's access permissions"
-msgstr "Her üyenin erişim izinlerini belirtmek için roller atayın"
+msgid "Assign roles to specify access permissions"
+msgstr ""
 
 #. js-lingui-id: krsgB0
 #: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
@@ -2398,10 +2388,10 @@ msgstr "Oluştur"
 msgid "Create {targetObjectLabelSingular}"
 msgstr "{targetObjectLabelSingular} oluştur"
 
-#. js-lingui-id: 7/h1ZC
-#: src/pages/settings/ai/SettingsAgentForm.tsx
-msgid "Create a new AI agent"
-msgstr "Yeni bir AI temsilcisi oluştur"
+#. js-lingui-id: ZITKtg
+#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
+msgid "Create a role to define permissions for this agent."
+msgstr ""
 
 #. js-lingui-id: zNoOC2
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
@@ -2465,6 +2455,7 @@ msgid "Create Related Record"
 msgstr "İlişkili Kaydı Oluştur"
 
 #. js-lingui-id: RoyYUE
+#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Create Role"
 msgstr "Rol oluştur"
@@ -2556,6 +2547,11 @@ msgstr "Cron"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "cron trigger"
 msgstr "cron tetikleyici"
+
+#. js-lingui-id: zovbHa
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+msgid "Cron will be triggered at UTC time"
+msgstr ""
 
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -2849,6 +2845,7 @@ msgstr "İş Akışını Devre Dışı Bırak"
 
 #. js-lingui-id: yAT3be
 #: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "Deactivated"
 msgstr "Devre dışı bırakıldı"
@@ -3307,6 +3304,7 @@ msgid "Drop file here..."
 msgstr "Dosyayı buraya bırakın..."
 
 #. js-lingui-id: euc6Ns
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Duplicate"
 msgstr ""
@@ -3380,11 +3378,6 @@ msgstr "{objectLabelPlural} Düzenle"
 #: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 msgid "Edit Account"
 msgstr "Hesap Düzenle"
-
-#. js-lingui-id: CQrc7J
-#: src/pages/settings/ai/SettingsAgentForm.tsx
-msgid "Edit Agent"
-msgstr "Temsilciyi Düzenle"
 
 #. js-lingui-id: GpnfNN
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
@@ -4075,6 +4068,17 @@ msgstr "CSV Dışa Aktar"
 msgid "Export dashboard"
 msgstr "Gösterge Panelini Dışa Aktar"
 
+#. js-lingui-id: wVUjld
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+msgid "Export member"
+msgstr ""
+
+#. js-lingui-id: D0b3Ip
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+msgid "Export members"
+msgstr ""
+
 #. js-lingui-id: G5DJkP
 #: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 msgid "Export record"
@@ -4113,6 +4117,7 @@ msgid "Export versions"
 msgstr "Versiyonları Dışa Aktar"
 
 #. js-lingui-id: DaGxE0
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4196,6 +4201,11 @@ msgstr "Geçersiz kılma kaldırılması başarısız oldu"
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "Failed to retry jobs. Please try again later."
 msgstr "İşleri yeniden deneme başarısız oldu. Lütfen daha sonra tekrar deneyiniz."
+
+#. js-lingui-id: y3HIOa
+#: src/pages/settings/ai/SettingsAgentForm.tsx
+msgid "Failed to save role permissions: {errorMessage}"
+msgstr ""
 
 #. js-lingui-id: HnBqPY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -4315,9 +4325,12 @@ msgid "File \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "Dosya \"{fileName}\" {maxUploadSize} boyutunu aşıyor"
 
 #. js-lingui-id: o7J4JM
+#: src/pages/settings/data-model/SettingsObjectTable.tsx
+#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/command-menu/pages/page-layout/components/ChartFiltersSettings.tsx
@@ -4410,7 +4423,6 @@ msgid "Format e.g. d-MMM-y (qqq''yy)"
 msgstr "Format örn. d-MMM-y (qqq''yy)"
 
 #. js-lingui-id: xMJhWJ
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 msgid "Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
 msgstr "Format: [Dakika] [Saat] [Ayın Günü] [Ay] [Haftanın Günü]"
@@ -4543,7 +4555,7 @@ msgstr "Görevlere Git"
 #. js-lingui-id: 203RqP
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Workflows"
-msgstr ""
+msgstr "İş Akışlarına Git"
 
 #. js-lingui-id: eoe8BR
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -4689,6 +4701,11 @@ msgstr "Gizle"
 msgid "Hide deleted"
 msgstr "Silinenleri gizle"
 
+#. js-lingui-id: OTmbll
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+msgid "Hide deleted members"
+msgstr ""
+
 #. js-lingui-id: FHhlye
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Hide deleted records"
@@ -4805,17 +4822,17 @@ msgstr "Bu anahtarı kaybettiyseniz, yeniden oluşturabilirsiniz ancak bu anahta
 #. js-lingui-id: KDMdBi
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 msgid "iFrame"
-msgstr ""
+msgstr "iÇerik"
 
 #. js-lingui-id: hiXeBh
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "iFrame Settings"
-msgstr ""
+msgstr "iÇerik Ayarları"
 
 #. js-lingui-id: mO+Bte
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 msgid "iFrame Widget"
-msgstr ""
+msgstr "iÇerik Widget’ı"
 
 #. js-lingui-id: YdCuhS
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
@@ -4846,6 +4863,11 @@ msgstr "IMAP Portu"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "IMAP Server"
 msgstr "IMAP Sunucusu"
+
+#. js-lingui-id: atF3YG
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "IMAP Username (Optional)"
+msgstr ""
 
 #. js-lingui-id: +8jOVa
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -4916,7 +4938,6 @@ msgid "In {dateDiff}"
 msgstr "{dateDiff} sonra"
 
 #. js-lingui-id: NoNwIX
-#: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Inactive"
@@ -5009,7 +5030,7 @@ msgstr "Geçersiz API anahtarı"
 #. js-lingui-id: 9TgH9p
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Invalid auth bypass provider"
-msgstr ""
+msgstr "Geçersiz yetkilendirme sağlayıcısı"
 
 #. js-lingui-id: NtFk/Z
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -5017,7 +5038,7 @@ msgid "Invalid auth provider"
 msgstr "Geçersiz yetkilendirme sağlayıcısı"
 
 #. js-lingui-id: ER/0YT
-#: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
+#: src/modules/workflow/workflow-trigger/utils/getTriggerScheduleDescription.ts
 msgid "Invalid cron expression"
 msgstr "Geçersiz cron deyimi"
 
@@ -5262,6 +5283,7 @@ msgid "Jobs"
 msgstr "İş İlanları"
 
 #. js-lingui-id: C5FAaq
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "john.doe"
@@ -5586,10 +5608,20 @@ msgstr "Fatura bilgilerini yönet"
 msgid "Manage favorite"
 msgstr "Sık Kullanılanı Yönet"
 
+#. js-lingui-id: 8XlVuA
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+msgid "Manage in settings"
+msgstr ""
+
 #. js-lingui-id: T6YjCk
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Manage Members"
 msgstr "Üyeleri Yönet"
+
+#. js-lingui-id: 5hEFxA
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+msgid "Manage members in settings"
+msgstr ""
 
 #. js-lingui-id: eGGH1l
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -6040,7 +6072,6 @@ msgstr "Yeni Hesap"
 #. js-lingui-id: mJIA0/
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "New Agent"
 msgstr "Yeni Temsilci"
@@ -6411,7 +6442,6 @@ msgid "No workflow versions yet"
 msgstr "Henüz iş akışı versiyonu yok"
 
 #. js-lingui-id: EdQY6l
-#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
@@ -6690,7 +6720,6 @@ msgid "Only the timestamp & participants will be shared with your team."
 msgstr "Yalnızca zaman damgası ve katılımcılar ekibinizle paylaşılacak."
 
 #. js-lingui-id: 1TNIig
-#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
 #: src/modules/action-menu/components/RecordShowRightDrawerOpenRecordButton.tsx
 msgid "Open"
 msgstr "Aç"
@@ -6947,6 +6976,7 @@ msgid "Permissions"
 msgstr "İzinler"
 
 #. js-lingui-id: KiuPPj
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 msgid "Permissions · {objectLabelSingular}"
 msgstr "İzinler · {objectLabelSingular}"
@@ -7223,7 +7253,7 @@ msgstr "Kuyruk: {queueName}"
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Receive an email containing password set link"
-msgstr ""
+msgstr "Parola ayarlama bağlantısı içeren e-posta al"
 
 #. js-lingui-id: v3xM25
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -7548,6 +7578,11 @@ msgstr "Bu nesne için iptal edildi"
 msgid "Role"
 msgstr "Rol"
 
+#. js-lingui-id: l2yKTq
+#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
+msgid "Role for {agentLabel} agent"
+msgstr ""
+
 #. js-lingui-id: iSfzXo
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/roles/role/components/SettingsRoleLabelContainer.tsx
@@ -7558,11 +7593,6 @@ msgstr "Rol adı"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Role name cannot be empty"
 msgstr "Rol adı boş olamaz"
-
-#. js-lingui-id: khTver
-#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
-msgid "Role Permissions"
-msgstr "Rol İzinleri"
 
 #. js-lingui-id: M9SCiK
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -7656,11 +7686,6 @@ msgstr "Düzeni Kaydet"
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Schedule"
 msgstr "Program"
-
-#. js-lingui-id: Qp0P63
-#: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
-msgid "Schedule runs in UTC timezone."
-msgstr "Program UTC zaman diliminde çalışır."
 
 #. js-lingui-id: QJ8HBJ
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -7894,6 +7919,11 @@ msgstr "{objectLabelPlural} Görüntüle"
 msgid "See active version"
 msgstr "Aktif sürümü gör"
 
+#. js-lingui-id: 8O9AJI
+#: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
+msgid "See deleted members"
+msgstr ""
+
 #. js-lingui-id: BxIUpp
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "See deleted records"
@@ -7958,7 +7988,7 @@ msgstr "İş akışını gör"
 #. js-lingui-id: MVYiTN
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "See Workflows"
-msgstr ""
+msgstr "İş akışlarını gör"
 
 #. js-lingui-id: bP/w4M
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
@@ -8686,6 +8716,11 @@ msgstr "Nesnelerin Etiketlerini ve API Adlarını Senkronize Et"
 msgid "System"
 msgstr "Sistem"
 
+#. js-lingui-id: 0apULK
+#: src/pages/settings/data-model/SettingsObjectTable.tsx
+msgid "System objects"
+msgstr ""
+
 #. js-lingui-id: FHPe8O
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
@@ -8809,11 +8844,6 @@ msgstr "Metin panoya kopyalandı"
 #: src/modules/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput.tsx
 msgid "Text Editor"
 msgstr "Metin Düzenleyici"
-
-#. js-lingui-id: 5Vj6n9
-#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
-msgid "The agent can perform all actions defined by the following role."
-msgstr "Temsilci, aşağıdaki rol tarafından tanımlanan tüm işlemleri gerçekleştirebilir."
 
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
@@ -9003,6 +9033,11 @@ msgstr "Bu rol, tüm kayıtları {humanReadableAction} yapabilir"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "This role is assigned to these {roleTargetDisplayName}."
 msgstr "Bu rol bu {roleTargetDisplayName}'lara atanmıştır."
+
+#. js-lingui-id: fp6HUI
+#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
+msgid "This role is shared with other users or agents and cannot be edited here."
+msgstr ""
 
 #. js-lingui-id: C/wr0z
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -9315,10 +9350,10 @@ msgstr "İsimsiz rol"
 msgid "Untitled Workflow"
 msgstr "İsimsiz İş Akışı"
 
-#. js-lingui-id: b26MvX
+#. js-lingui-id: hmc//6
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
-msgid "Upcoming execution times ({timeZone})"
-msgstr "Yaklaşan yürütme süreleri ({timeZone})"
+msgid "Upcoming execution time ({timeZone})"
+msgstr ""
 
 #. js-lingui-id: Y8zko3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -9331,11 +9366,6 @@ msgstr "güncelle"
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 msgid "Update"
 msgstr "Güncelle"
-
-#. js-lingui-id: YT2VWW
-#: src/pages/settings/ai/SettingsAgentForm.tsx
-msgid "Update agent information"
-msgstr "Temsilci bilgilerini güncelle"
 
 #. js-lingui-id: DUqztb
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
@@ -9448,11 +9478,6 @@ msgstr "Kullanıcı Bilgisi"
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "User is not logged in"
 msgstr "Kullanıcı giriş yapmamış"
-
-#. js-lingui-id: LVecP9
-#: src/modules/settings/roles/components/SettingsRolesContainer.tsx
-msgid "User Roles"
-msgstr "Kullanıcı Rolleri"
 
 #. js-lingui-id: Sxm8rQ
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -9783,6 +9808,7 @@ msgstr "İş Akışları"
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
@@ -9807,6 +9833,7 @@ msgstr "İş Akışları"
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx

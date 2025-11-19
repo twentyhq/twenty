@@ -78,5 +78,5 @@ RUN mkdir -p /app/.local-storage /app/packages/twenty-server/.local-storage && \
 # Use non root user with uid 1000
 USER 1000
 
-CMD ["node", "dist/src/main"]
+CMD ["node", "dist/main"]
 ENTRYPOINT ["/app/entrypoint.sh"]
