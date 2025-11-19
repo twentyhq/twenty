@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { writeFileSync } from 'fs';
 
 import { WorkspaceMigrationV2ExceptionCode } from 'twenty-shared/metadata';
 
@@ -38,11 +37,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         });
 
     if (validateAndBuildResult.status === 'fail') {
-      writeFileSync(
-        `${Date.now()}-failed-validation.json`,
-        JSON.stringify(validateAndBuildResult, null, 2),
-      );
-
       return validateAndBuildResult;
     }
 

@@ -5,7 +5,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { writeFileSync } from 'fs';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -80,15 +79,6 @@ export const validateFlatFieldMetadataNameAvailability = ({
       flatObjectMetadata,
       remainingFlatEntityMapsToValidate,
     });
-
-  writeFileSync(
-    `${Date.now()}-prastoin.json`,
-    JSON.stringify(
-      { objectFieldNamesAndJoinColumnNames, flatFieldMetadata },
-      null,
-      2,
-    ),
-  );
 
   if (
     objectFieldNamesAndJoinColumnNames.fieldNames.includes(
