@@ -60,6 +60,11 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const { saveDraftRoleToDB } = useSaveDraftRoleToDB({
     isCreateMode,
     roleId,
+    onSuccess: async (savedRoleId) => {
+      if (isCreateMode) {
+        navigateSettings(SettingsPath.RoleDetail, { roleId: savedRoleId });
+      }
+    },
   });
 
   const isRoleEditable = settingsDraftRole.isEditable;
@@ -114,10 +119,6 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
       await saveDraftRoleToDB();
       await loadCurrentUser();
       await refreshObjectMetadataItems();
-
-      if (isCreateMode) {
-        navigateSettings(SettingsPath.RoleDetail, { roleId });
-      }
     } finally {
       setIsSaving(false);
     }
