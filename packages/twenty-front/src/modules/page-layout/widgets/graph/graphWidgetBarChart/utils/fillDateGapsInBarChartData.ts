@@ -1,5 +1,5 @@
 import { BAR_CHART_DATE_GRANULARITIES_WITHOUT_GAP_FILLING } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartDateGranularitiesWithoutGapFilling.constant';
-import { generateDateRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/generateDateRange';
+import { generateDateGroupsInRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/generateDateGroupsInRange';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -44,7 +44,7 @@ const createEmptyDateGroup = (
   return newItem;
 };
 
-const getDateRangeFromData = (
+const getDateGroupsFromData = (
   parsedDates: Date[],
   dateGranularity: SupportedDateGranularity,
 ): Date[] => {
@@ -52,7 +52,7 @@ const getDateRangeFromData = (
   const minDate = new Date(Math.min(...timestamps));
   const maxDate = new Date(Math.max(...timestamps));
 
-  return generateDateRange({
+  return generateDateGroupsInRange({
     startDate: minDate,
     endDate: maxDate,
     granularity: dateGranularity,
@@ -88,7 +88,7 @@ const fillDateGapsInOneDimensionalBarChartData = ({
     return data;
   }
 
-  const allDates = getDateRangeFromData(parsedDates, dateGranularity);
+  const allDates = getDateGroupsFromData(parsedDates, dateGranularity);
 
   return allDates.map((date) => {
     const key = date.toISOString();
@@ -138,7 +138,7 @@ const fillDateGapsInTwoDimensionalBarChartData = ({
     return data;
   }
 
-  const allDates = getDateRangeFromData(parsedDates, dateGranularity);
+  const allDates = getDateGroupsFromData(parsedDates, dateGranularity);
 
   return allDates.flatMap((date) =>
     Array.from(uniqueSecondDimensionValues).map((secondDimensionValue) => {

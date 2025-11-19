@@ -12,7 +12,7 @@ type GenerateDateRangeParams = {
     | ObjectRecordGroupByDateGranularity.YEAR;
 };
 
-export const generateDateRange = ({
+export const generateDateGroupsInRange = ({
   startDate,
   endDate,
   granularity,
