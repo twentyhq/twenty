@@ -14,7 +14,6 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metada
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getObjectFieldNamesAndJoinColumnNames } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-object-field-names-and-join-column-names.util';
-import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 const getReservedCompositeFieldNames = (
@@ -46,7 +45,7 @@ export const validateFlatFieldMetadataNameAvailability = ({
   remainingFlatEntityMapsToValidate,
   flatObjectMetadata,
 }: {
-  flatFieldMetadata: FlatFieldMetadata;
+  flatFieldMetadata: Pick<FlatFieldMetadata, 'name' | 'type'>;
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   remainingFlatEntityMapsToValidate?: FlatEntityMaps<FlatFieldMetadata>;
@@ -104,16 +103,10 @@ export const validateFlatFieldMetadataNameAvailability = ({
     });
   }
 
-  const collidingJoinColumnNameFieldId =
-    objectFieldNamesAndJoinColumnNames.relationTargetFieldIdByJoinColumnName[
-      flatFieldMetadata.name
-    ];
   if (
-    (!isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
-      isDefined(collidingJoinColumnNameFieldId)) ||
-    (isDefined(collidingJoinColumnNameFieldId) &&
-      collidingJoinColumnNameFieldId !==
-        flatFieldMetadata.relationTargetFieldMetadataId)
+    objectFieldNamesAndJoinColumnNames.joinColumnNames.includes(
+      flatFieldMetadata.name,
+    )
   ) {
     errors.push({
       code: FieldMetadataExceptionCode.NOT_AVAILABLE,

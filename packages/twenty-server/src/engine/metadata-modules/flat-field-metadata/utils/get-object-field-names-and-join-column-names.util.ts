@@ -9,7 +9,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 type ObjectFieldNamesAndJoinColumnNames = {
   fieldNames: string[];
-  relationTargetFieldIdByJoinColumnName: Record<string, string>;
+  joinColumnNames: string[];
 };
 export const getObjectFieldNamesAndJoinColumnNames = ({
   flatFieldMetadataMaps,
@@ -27,7 +27,7 @@ export const getObjectFieldNamesAndJoinColumnNames = ({
       flatEntityIds: flatObjectMetadata.fieldMetadataIds,
     });
   const initialAccumulator: ObjectFieldNamesAndJoinColumnNames = {
-    relationTargetFieldIdByJoinColumnName: {},
+    joinColumnNames: [],
     fieldNames: [],
   };
 
@@ -41,11 +41,10 @@ export const getObjectFieldNamesAndJoinColumnNames = ({
         return {
           ...acc,
           fieldNames: [...acc.fieldNames, flatFieldMetadata.name],
-          relationTargetFieldIdByJoinColumnName: {
-            ...acc.relationTargetFieldIdByJoinColumnName,
-            [flatFieldMetadata.settings.joinColumnName]:
-              flatFieldMetadata.relationTargetFieldMetadataId,
-          },
+          joinColumnNames: [
+            ...acc.joinColumnNames,
+            flatFieldMetadata.settings.joinColumnName,
+          ],
         };
       }
 
