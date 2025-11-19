@@ -99,12 +99,12 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
 
     return errors;
   }
-
   errors.push(
     ...validateFlatFieldMetadataNameAvailability({
+      remainingFlatEntityMapsToValidate,
       flatFieldMetadata: {
-        ...flatFieldMetadataToValidate,
-        name: flatFieldMetadataToValidate.settings.joinColumnName,
+        name: flatFieldMetadataToValidate.name,
+        type: flatFieldMetadataToValidate.type,
       },
       flatFieldMetadataMaps,
       flatObjectMetadata: targetFlatObjectMetadata,
