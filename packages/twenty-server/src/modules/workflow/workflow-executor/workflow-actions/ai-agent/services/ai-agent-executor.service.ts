@@ -38,7 +38,6 @@ export class AiAgentExecutorService {
     workspaceId: string,
     actorContext?: ActorMetadata,
     rolePermissionConfig?: RolePermissionConfig,
-    userWorkspaceId?: string,
   ): Promise<ToolSet> {
     const roleTarget = await this.roleTargetsRepository.findOne({
       where: {
@@ -77,7 +76,6 @@ export class AiAgentExecutorService {
       effectiveRoleContext,
       workspaceId,
       actorContext,
-      userWorkspaceId,
     );
 
     return {
@@ -92,14 +90,12 @@ export class AiAgentExecutorService {
     userPrompt,
     actorContext,
     rolePermissionConfig,
-    userWorkspaceId,
   }: {
     agent: AgentEntity | null;
     schema: OutputSchema;
     userPrompt: string;
     actorContext?: ActorMetadata;
     rolePermissionConfig?: RolePermissionConfig;
-    userWorkspaceId?: string;
   }): Promise<AgentExecutionResult> {
     try {
       const registeredModel =
@@ -111,7 +107,6 @@ export class AiAgentExecutorService {
             agent.workspaceId,
             actorContext,
             rolePermissionConfig,
-            userWorkspaceId,
           )
         : {};
 

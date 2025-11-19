@@ -12,6 +12,7 @@ import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPag
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
+import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
@@ -73,6 +74,7 @@ export const PageLayoutRendererContent = () => {
         setTabSettingsOpenTabId(newTabId);
         navigatePageLayoutCommandMenu({
           commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
+          focusTitleInput: true,
         });
       }
     : undefined;
@@ -83,8 +85,16 @@ export const PageLayoutRendererContent = () => {
     return null;
   }
 
+  const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
+    tabs: currentPageLayout.tabs,
+    isMobile,
+    isInRightDrawer,
+    isEditMode: isPageLayoutInEditMode,
+  });
+
   const { tabsToRenderInTabList, pinnedLeftTab } = getTabsByDisplayMode({
-    pageLayout: currentPageLayout,
+    tabs: tabsWithVisibleWidgets,
+    pageLayoutType: currentPageLayout.type,
     isMobile,
     isInRightDrawer,
   });

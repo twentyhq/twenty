@@ -36,7 +36,7 @@
       "dependsOn": ["^build"]
     },
     "start": {
-      "cache": true,
+      "cache": false,
       "dependsOn": ["^build"]
     },
     "lint": {
@@ -234,7 +234,7 @@
             "command": "nx storybook:build {projectName}",
             "forwardAllArgs": false
           },
-          "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --storybook-build-dir=storybook-static {args.ci}"
+          "chromatic --storybook-build-dir=storybook-static {args.ci}"
         ],
         "parallel": false
       },
@@ -280,7 +280,7 @@
     }
   },
   "installation": {
-    "version": "21.3.11"
+    "version": "22.0.3"
   },
   "generators": {
     "@nx/react": {

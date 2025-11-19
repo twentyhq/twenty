@@ -1,0 +1,91 @@
+{
+  "tabs": {
+    "userGuide": {
+      "label": "User Guide",
+      "groups": {
+        "gettingStarted": {
+          "label": "Getting Started"
+        },
+        "dataModel": {
+          "label": "數據模型"
+        },
+        "crmEssentials": {
+          "label": "CRM 基礎知識"
+        },
+        "views": {
+          "label": "視圖"
+        },
+        "workflows": {
+          "label": "Workflow"
+        },
+        "collaboration": {
+          "label": "協作"
+        },
+        "integrationsApi": {
+          "label": "Integrations & API"
+        },
+        "reporting": {
+          "label": "報告"
+        },
+        "settings": {
+          "label": "設置"
+        },
+        "pricing": {
+          "label": "定價"
+        },
+        "resources": {
+          "label": "資源"
+        }
+      }
+    },
+    "developers": {
+      "label": "開發人員",
+      "groups": {
+        "developersGroup": {
+          "label": "開發人員"
+        },
+        "devGettingStarted": {
+          "label": "Getting Started",
+          "groups": {
+            "selfHosting": {
+              "label": "Self-Hosting"
+            },
+            "apiAndWebhooks": {
+              "label": "API 和 Webhooks"
+            }
+          }
+        },
+        "contributing": {
+          "label": "貢獻",
+          "groups": {
+            "frontendDevelopment": {
+              "label": "前端開發",
+              "groups": {
+                "twentyUi": {
+                  "label": "Twenty UI",
+                  "groups": {
+                    "display": {
+                      "label": "顯示"
+                    },
+                    "feedback": {
+                      "label": "反饋"
+                    },
+                    "input": {
+                      "label": "輸入"
+                    },
+                    "navigation": {
+                      "label": "導航"
+                    }
+                  }
+                }
+              }
+            },
+            "backendDevelopment": {
+              "label": "後端開發"
+            }
+          }
+        }
+      }
+    }
+  }
+}

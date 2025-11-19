@@ -11,7 +11,6 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -21,20 +20,13 @@ import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
-import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
 import { ObjectMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/object-metadata/interceptors/object-metadata-graphql-api-exception.interceptor';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metadata/object-metadata.resolver';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { ObjectMetadataFieldRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service';
-import { ObjectMetadataMigrationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-migration.service';
-import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-related-records.service';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.module';
-import { SearchVectorModule } from 'src/engine/metadata-modules/search-vector/search-vector.module';
 import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
@@ -63,7 +55,6 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
         WorkspaceMigrationRunnerModule,
         WorkspaceMetadataVersionModule,
         RemoteTableRelationsModule,
-        SearchVectorModule,
         IndexMetadataModule,
         PermissionsModule,
         WorkspacePermissionsCacheModule,
@@ -77,13 +68,9 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
         WorkspaceManyOrAllFlatEntityMapsCacheModule,
       ],
       services: [
-        ObjectMetadataService,
         ObjectMetadataServiceV2,
         FlatFieldMetadataValidatorService,
         FlatFieldMetadataTypeValidatorService,
-        ObjectMetadataMigrationService,
-        ObjectMetadataFieldRelationService,
-        ObjectMetadataRelatedRecordsService,
       ],
       resolvers: [
         {
@@ -91,14 +78,13 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
           DTOClass: ObjectMetadataDTO,
           CreateDTOClass: CreateObjectInput,
           UpdateDTOClass: UpdateObjectPayload,
-          ServiceClass: ObjectMetadataService,
+          ServiceClass: ObjectMetadataServiceV2,
           pagingStrategy: PagingStrategies.CURSOR,
           read: {
             defaultSort: [{ field: 'id', direction: SortDirection.DESC }],
           },
           create: {
-            many: { disabled: true },
-            guards: [SettingsPermissionGuard(PermissionFlagType.DATA_MODEL)],
+            disabled: true,
           },
           update: { disabled: true },
           delete: { disabled: true },
@@ -109,12 +95,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
       ],
     }),
   ],
-  providers: [
-    ObjectMetadataService,
-    ObjectMetadataServiceV2,
-    ObjectMetadataResolver,
-    BeforeUpdateOneObject,
-  ],
-  exports: [ObjectMetadataService, ObjectMetadataServiceV2],
+  providers: [ObjectMetadataServiceV2, ObjectMetadataResolver],
+  exports: [ObjectMetadataServiceV2],
 })
 export class ObjectMetadataModule {}

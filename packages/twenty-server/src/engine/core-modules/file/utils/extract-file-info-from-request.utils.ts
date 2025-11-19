@@ -6,13 +6,15 @@ import { checkFileFolder } from 'src/engine/core-modules/file/utils/check-file-f
 import { checkFilename } from 'src/engine/core-modules/file/utils/check-file-name.utils';
 
 export const extractFileInfoFromRequest = (request: Request) => {
-  const filename = checkFilename(request.params.filename);
+  // Ex: /files/profile-picture/original/TOKEN/file.jpg
+  const pathSegments = request.path.split('/').filter((segment) => segment);
 
-  const parts = request.params[0].split('/');
+  const segments = pathSegments.slice(1);
 
-  const fileSignature = parts.pop();
-
-  const rawFolder = parts.join('/');
+  const filename = checkFilename(segments[segments.length - 1]);
+  const fileSignature = segments[segments.length - 2];
+  const folderSegments = segments.slice(0, segments.length - 2);
+  const rawFolder = folderSegments.join('/');
 
   const fileFolder = checkFileFolder(rawFolder);
 
