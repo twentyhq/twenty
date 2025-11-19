@@ -1,7 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import {
-  compositeTypeDefinitions,
-  FieldMetadataType,
+  compositeTypeDefinitions
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -66,10 +65,6 @@ export const validateFlatFieldMetadataNameAvailability = ({
       value: flatFieldMetadataName,
       userFriendlyMessage: msg`Name "${flatFieldMetadataName}" is not available`,
     });
-  }
-
-  if (flatFieldMetadata.type === FieldMetadataType.MORPH_RELATION) {
-    return errors;
   }
 
   const { objectFieldNamesAndJoinColumnNames } =
