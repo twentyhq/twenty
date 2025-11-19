@@ -11,6 +11,11 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import { type WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
@@ -27,7 +32,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 
 const StyledLabel = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -178,6 +183,26 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     [],
   );
 
+  const selectableItemIdArray = useMemo(() => {
+    if (isSystemObjectsOpen) {
+      return filteredSystemObjects.map((option) => option.label);
+    }
+    return filteredRegularObjects.map((option) => option.label);
+  }, [isSystemObjectsOpen, filteredSystemObjects, filteredRegularObjects]);
+
+  const selectedItemId = useRecoilComponentValue(
+    selectedItemIdComponentState,
+    dropdownId,
+  );
+
+  const { setSelectedItemId } = useSelectableList(dropdownId);
+
+  const handleDropdownOpen = () => {
+    if (isDefined(selectedOption) && !searchInputValue) {
+      setSelectedItemId(selectedOption.label);
+    }
+  };
+
   return (
     <>
       <SidePanelHeader
@@ -204,6 +229,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
           <Dropdown
             dropdownId="workflow-edit-trigger-record-type"
             dropdownPlacement="bottom-start"
+            onOpen={handleDropdownOpen}
             clickableComponent={
               <SelectControl
                 isDisabled={triggerOptions.readonly}
@@ -234,14 +260,27 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                       />
                       <DropdownMenuSeparator />
                       <DropdownMenuItemsContainer hasMaxHeight>
-                        {filteredSystemObjects.map((option) => (
-                          <MenuItem
-                            key={option.value}
-                            LeftIcon={option.Icon}
-                            text={option.label}
-                            onClick={() => handleOptionClick(option.value)}
-                          />
-                        ))}
+                        <SelectableList
+                          selectableListInstanceId={dropdownId}
+                          focusId={dropdownId}
+                          selectableItemIdArray={selectableItemIdArray}
+                        >
+                          {filteredSystemObjects.map((option) => (
+                            <SelectableListItem
+                              key={option.value}
+                              itemId={option.label}
+                              onEnter={() => handleOptionClick(option.value)}
+                            >
+                              <MenuItemSelect
+                                LeftIcon={option.Icon}
+                                text={option.label}
+                                selected={selectedOption.value === option.value}
+                                focused={selectedItemId === option.label}
+                                onClick={() => handleOptionClick(option.value)}
+                              />
+                            </SelectableListItem>
+                          ))}
+                        </SelectableList>
                       </DropdownMenuItemsContainer>
                     </DropdownContent>
                   ) : (
@@ -255,23 +294,47 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                       />
                       <DropdownMenuSeparator />
                       <DropdownMenuItemsContainer hasMaxHeight>
-                        {filteredRegularObjects.map((option) => (
-                          <MenuItem
-                            key={option.value}
-                            LeftIcon={option.Icon}
-                            text={option.label}
-                            onClick={() => handleOptionClick(option.value)}
-                          />
-                        ))}
-                        {!!searchInputValue &&
-                          filteredSystemObjects.map((option) => (
-                            <MenuItem
+                        <SelectableList
+                          selectableListInstanceId={dropdownId}
+                          focusId={dropdownId}
+                          selectableItemIdArray={selectableItemIdArray}
+                        >
+                          {filteredRegularObjects.map((option) => (
+                            <SelectableListItem
                               key={option.value}
-                              LeftIcon={option.Icon}
-                              text={option.label}
-                              onClick={() => handleOptionClick(option.value)}
-                            />
+                              itemId={option.label}
+                              onEnter={() => handleOptionClick(option.value)}
+                            >
+                              <MenuItemSelect
+                                LeftIcon={option.Icon}
+                                text={option.label}
+                                selected={selectedOption.value === option.value}
+                                focused={selectedItemId === option.label}
+                                onClick={() => handleOptionClick(option.value)}
+                              />
+                            </SelectableListItem>
                           ))}
+                          {!!searchInputValue &&
+                            filteredSystemObjects.map((option) => (
+                              <SelectableListItem
+                                key={option.value}
+                                itemId={option.label}
+                                onEnter={() => handleOptionClick(option.value)}
+                              >
+                                <MenuItemSelect
+                                  LeftIcon={option.Icon}
+                                  text={option.label}
+                                  selected={
+                                    selectedOption.value === option.value
+                                  }
+                                  focused={selectedItemId === option.label}
+                                  onClick={() =>
+                                    handleOptionClick(option.value)
+                                  }
+                                />
+                              </SelectableListItem>
+                            ))}
+                        </SelectableList>
                         {(!searchInputValue ||
                           'advanced'.includes(
                             searchInputValue.toLowerCase(),
