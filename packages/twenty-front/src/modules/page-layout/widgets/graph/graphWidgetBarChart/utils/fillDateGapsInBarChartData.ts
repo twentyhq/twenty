@@ -8,20 +8,24 @@ type FillDateGapsParams = {
   data: GroupByRawResult[];
   keys: string[];
   dateGranularity: ObjectRecordGroupByDateGranularity;
-  fillValue?: number;
   hasSecondDimension?: boolean;
 };
 
-const createMapKey = (date: Date, secondDimensionValue?: unknown): string => {
-  return secondDimensionValue !== undefined
-    ? `${date.toISOString()}_${String(secondDimensionValue)}`
-    : date.toISOString();
+type OneDimensionalFillParams = {
+  data: GroupByRawResult[];
+  keys: string[];
+  dateGranularity: ObjectRecordGroupByDateGranularity;
+};
+
+type TwoDimensionalFillParams = {
+  data: GroupByRawResult[];
+  keys: string[];
+  dateGranularity: ObjectRecordGroupByDateGranularity;
 };
 
 const createFilledItem = (
   dimensionValues: unknown[],
   keys: string[],
-  fillValue: number,
 ): GroupByRawResult => {
   const newItem: GroupByRawResult = {
     groupByDimensionValues: dimensionValues.map((value) =>
@@ -30,27 +34,79 @@ const createFilledItem = (
   };
 
   for (const key of keys) {
-    newItem[key] = fillValue;
+    newItem[key] = 0;
   }
 
   return newItem;
 };
 
-export const fillDateGapsInBarChartData = ({
+const getDateRangeFromData = (
+  parsedDates: Date[],
+  dateGranularity: ObjectRecordGroupByDateGranularity,
+): Date[] => {
+  const { minDate, maxDate } = parsedDates.reduce(
+    (acc, date) => ({
+      minDate: date < acc.minDate ? date : acc.minDate,
+      maxDate: date > acc.maxDate ? date : acc.maxDate,
+    }),
+    { minDate: parsedDates[0], maxDate: parsedDates[0] },
+  );
+
+  return generateDateRange({
+    startDate: minDate,
+    endDate: maxDate,
+    granularity: dateGranularity as
+      | ObjectRecordGroupByDateGranularity.DAY
+      | ObjectRecordGroupByDateGranularity.MONTH
+      | ObjectRecordGroupByDateGranularity.QUARTER
+      | ObjectRecordGroupByDateGranularity.YEAR,
+  });
+};
+
+const fillDateGapsInOneDimensionalBarChartData = ({
   data,
   keys,
   dateGranularity,
-  fillValue = 0,
-  hasSecondDimension = false,
-}: FillDateGapsParams): GroupByRawResult[] => {
-  if (data.length === 0) {
+}: OneDimensionalFillParams): GroupByRawResult[] => {
+  const existingDataMap = new Map<string, GroupByRawResult>();
+  const parsedDates: Date[] = [];
+
+  for (const item of data) {
+    const dateValue = item.groupByDimensionValues?.[0];
+
+    if (!isDefined(dateValue)) {
+      continue;
+    }
+
+    const parsedDate = new Date(String(dateValue));
+
+    if (!isNaN(parsedDate.getTime())) {
+      parsedDates.push(parsedDate);
+      existingDataMap.set(parsedDate.toISOString(), item);
+    }
+  }
+
+  if (parsedDates.length === 0) {
     return data;
   }
 
-  if (BAR_CHART_DATE_GRANULARITIES_WITHOUT_GAP_FILLING.has(dateGranularity)) {
-    return data;
-  }
+  const allDates = getDateRangeFromData(parsedDates, dateGranularity);
 
+  return allDates.map((date) => {
+    const key = date.toISOString();
+    const existingItem = existingDataMap.get(key);
+
+    return isDefined(existingItem)
+      ? existingItem
+      : createFilledItem([date], keys);
+  });
+};
+
+const fillDateGapsInTwoDimensionalBarChartData = ({
+  data,
+  keys,
+  dateGranularity,
+}: TwoDimensionalFillParams): GroupByRawResult[] => {
   const existingDataMap = new Map<string, GroupByRawResult>();
   const parsedDates: Date[] = [];
   const uniqueSecondDimensionValues = new Set<unknown>();
@@ -64,18 +120,18 @@ export const fillDateGapsInBarChartData = ({
 
     const parsedDate = new Date(String(dateValue));
 
-    if (!isNaN(parsedDate.getTime())) {
-      parsedDates.push(parsedDate);
+    if (isNaN(parsedDate.getTime())) {
+      continue;
+    }
 
-      if (hasSecondDimension && isDefined(item.groupByDimensionValues?.[1])) {
-        const secondDimensionValue = item.groupByDimensionValues[1];
-        uniqueSecondDimensionValues.add(secondDimensionValue);
+    parsedDates.push(parsedDate);
 
-        const key = createMapKey(parsedDate, secondDimensionValue);
-        existingDataMap.set(key, item);
-      } else {
-        existingDataMap.set(parsedDate.toISOString(), item);
-      }
+    if (isDefined(item.groupByDimensionValues?.[1])) {
+      const secondDimensionValue = item.groupByDimensionValues[1];
+      uniqueSecondDimensionValues.add(secondDimensionValue);
+
+      const key = `${parsedDate.toISOString()}_${String(secondDimensionValue)}`;
+      existingDataMap.set(key, item);
     }
   }
 
@@ -83,50 +139,45 @@ export const fillDateGapsInBarChartData = ({
     return data;
   }
 
-  const { minDate, maxDate } = parsedDates.reduce(
-    (acc, date) => ({
-      minDate: date < acc.minDate ? date : acc.minDate,
-      maxDate: date > acc.maxDate ? date : acc.maxDate,
-    }),
-    { minDate: parsedDates[0], maxDate: parsedDates[0] },
-  );
+  const allDates = getDateRangeFromData(parsedDates, dateGranularity);
 
-  const allDates = generateDateRange({
-    startDate: minDate,
-    endDate: maxDate,
-    granularity: dateGranularity as
-      | ObjectRecordGroupByDateGranularity.DAY
-      | ObjectRecordGroupByDateGranularity.MONTH
-      | ObjectRecordGroupByDateGranularity.QUARTER
-      | ObjectRecordGroupByDateGranularity.YEAR,
-  });
-
-  const filledData: GroupByRawResult[] = [];
-
-  for (const date of allDates) {
-    const dimensionValues = hasSecondDimension
-      ? Array.from(uniqueSecondDimensionValues)
-      : [null];
-
-    for (const secondDimensionValue of dimensionValues) {
-      const key = createMapKey(
-        date,
-        hasSecondDimension ? secondDimensionValue : undefined,
-      );
+  return allDates.flatMap((date) =>
+    Array.from(uniqueSecondDimensionValues).map((secondDimensionValue) => {
+      const key = `${date.toISOString()}_${String(secondDimensionValue)}`;
       const existingItem = existingDataMap.get(key);
 
-      if (isDefined(existingItem)) {
-        filledData.push(existingItem);
-        continue;
-      }
+      return isDefined(existingItem)
+        ? existingItem
+        : createFilledItem([date, secondDimensionValue], keys);
+    }),
+  );
+};
 
-      const newDimensionValues = hasSecondDimension
-        ? [date, secondDimensionValue]
-        : [date];
-
-      filledData.push(createFilledItem(newDimensionValues, keys, fillValue));
-    }
+export const fillDateGapsInBarChartData = ({
+  data,
+  keys,
+  dateGranularity,
+  hasSecondDimension = false,
+}: FillDateGapsParams): GroupByRawResult[] => {
+  if (data.length === 0) {
+    return data;
   }
 
-  return filledData;
+  if (BAR_CHART_DATE_GRANULARITIES_WITHOUT_GAP_FILLING.has(dateGranularity)) {
+    return data;
+  }
+
+  if (hasSecondDimension) {
+    return fillDateGapsInTwoDimensionalBarChartData({
+      data,
+      keys,
+      dateGranularity,
+    });
+  }
+
+  return fillDateGapsInOneDimensionalBarChartData({
+    data,
+    keys,
+    dateGranularity,
+  });
 };

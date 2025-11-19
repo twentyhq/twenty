@@ -154,7 +154,6 @@ export const transformGroupByDataToBarChartData = ({
         dateGranularity:
           configuration.primaryAxisDateGranularity ??
           GRAPH_DEFAULT_DATE_GRANULARITY,
-        fillValue: 0,
         hasSecondDimension: isDefined(groupByFieldY),
       })
     : filteredResults;
