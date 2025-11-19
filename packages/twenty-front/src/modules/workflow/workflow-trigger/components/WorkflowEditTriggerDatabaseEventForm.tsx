@@ -314,26 +314,6 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                               />
                             </SelectableListItem>
                           ))}
-                          {!!searchInputValue &&
-                            filteredSystemObjects.map((option) => (
-                              <SelectableListItem
-                                key={option.value}
-                                itemId={option.label}
-                                onEnter={() => handleOptionClick(option.value)}
-                              >
-                                <MenuItemSelect
-                                  LeftIcon={option.Icon}
-                                  text={option.label}
-                                  selected={
-                                    selectedOption.value === option.value
-                                  }
-                                  focused={selectedItemId === option.label}
-                                  onClick={() =>
-                                    handleOptionClick(option.value)
-                                  }
-                                />
-                              </SelectableListItem>
-                            ))}
                         </SelectableList>
                         {(!searchInputValue ||
                           'advanced'.includes(

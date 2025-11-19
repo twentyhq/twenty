@@ -249,18 +249,8 @@ export const WorkflowEditActionFindRecords = ({
     if (isSystemObjectsOpen) {
       return filteredSystemObjects.map((option) => option.label);
     }
-    return [
-      ...filteredRegularObjects.map((option) => option.label),
-      ...(searchInputValue
-        ? filteredSystemObjects.map((option) => option.label)
-        : []),
-    ];
-  }, [
-    isSystemObjectsOpen,
-    filteredSystemObjects,
-    filteredRegularObjects,
-    searchInputValue,
-  ]);
+    return filteredRegularObjects.map((option) => option.label);
+  }, [isSystemObjectsOpen, filteredSystemObjects, filteredRegularObjects]);
 
   const selectedItemId = useRecoilComponentValue(
     selectedItemIdComponentState,
@@ -368,26 +358,6 @@ export const WorkflowEditActionFindRecords = ({
                               />
                             </SelectableListItem>
                           ))}
-                          {!!searchInputValue &&
-                            filteredSystemObjects.map((option) => (
-                              <SelectableListItem
-                                key={option.value}
-                                itemId={option.label}
-                                onEnter={() => handleOptionClick(option.value)}
-                              >
-                                <MenuItemSelect
-                                  LeftIcon={option.Icon}
-                                  text={option.label}
-                                  selected={
-                                    selectedOption.value === option.value
-                                  }
-                                  focused={selectedItemId === option.label}
-                                  onClick={() =>
-                                    handleOptionClick(option.value)
-                                  }
-                                />
-                              </SelectableListItem>
-                            ))}
                         </SelectableList>
                         {(!searchInputValue ||
                           'advanced'.includes(
