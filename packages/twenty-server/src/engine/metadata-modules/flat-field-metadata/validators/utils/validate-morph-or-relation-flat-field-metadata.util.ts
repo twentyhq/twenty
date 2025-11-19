@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { RelationType } from 'twenty-shared/types';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
@@ -82,34 +82,47 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
     });
   }
 
-  if (
-    flatFieldMetadataToValidate.settings.relationType !==
-    RelationType.MANY_TO_ONE
-  ) {
-    return errors;
-  }
+  switch (flatFieldMetadataToValidate.settings.relationType) {
+    case RelationType.MANY_TO_ONE: {
+      if (!isDefined(flatFieldMetadataToValidate.settings.joinColumnName)) {
+        errors.push({
+          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          message:
+            'Many to one field metadata should carry the join column name in its settings',
+          userFriendlyMessage: msg`A many to one relation field should always declare a join column`,
+        });
+      } else {
+        errors.push(
+          ...validateFlatFieldMetadataNameAvailability({
+            remainingFlatEntityMapsToValidate,
+            flatFieldMetadata: {
+              name: flatFieldMetadataToValidate.name,
+              type: flatFieldMetadataToValidate.type,
+            },
+            flatFieldMetadataMaps,
+            flatObjectMetadata: targetFlatObjectMetadata,
+          }),
+        );
+      }
 
-  if (!isDefined(flatFieldMetadataToValidate.settings.joinColumnName)) {
-    errors.push({
-      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      message:
-        'Many to one field metadata should carry the join column name in its settings',
-      userFriendlyMessage: msg`A many to one field relation should always declare a join column`,
-    });
+      break;
+    }
+    case RelationType.ONE_TO_MANY: {
+      if (isDefined(flatFieldMetadataToValidate.settings.joinColumnName)) {
+        errors.push({
+          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          message:
+            'One to many field metadata should not carry the join column name in its settings',
+          userFriendlyMessage: msg`A ont to many relation field should never declare a join column`,
+        });
 
-    return errors;
+        break;
+      }
+    }
+    default: {
+      assertUnreachable;
+    }
   }
-  errors.push(
-    ...validateFlatFieldMetadataNameAvailability({
-      remainingFlatEntityMapsToValidate,
-      flatFieldMetadata: {
-        name: flatFieldMetadataToValidate.name,
-        type: flatFieldMetadataToValidate.type,
-      },
-      flatFieldMetadataMaps,
-      flatObjectMetadata: targetFlatObjectMetadata,
-    }),
-  );
 
   return errors;
 };

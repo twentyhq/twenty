@@ -68,38 +68,40 @@ export const validateFlatFieldMetadataNameAvailability = ({
 
   const flatFieldMetadataName = flatFieldMetadata.name;
 
-  if (flatFieldMetadata.type !== FieldMetadataType.MORPH_RELATION) {
-    if (
-      objectFieldNamesAndJoinColumnNames.names.includes(flatFieldMetadataName)
-    ) {
-      errors.push({
-        code: FieldMetadataExceptionCode.NOT_AVAILABLE,
-        value: flatFieldMetadataName,
-        message: `Name "${flatFieldMetadataName}" is not available as it is already used by another field`,
-        userFriendlyMessage: msg`Name "${flatFieldMetadataName}" is not available as it is already used by another field`,
-      });
-    }
-
-    if (
-      objectFieldNamesAndJoinColumnNames.joinColumnNames.includes(
-        flatFieldMetadataName,
-      )
-    ) {
-      errors.push({
-        code: FieldMetadataExceptionCode.NOT_AVAILABLE,
-        value: flatFieldMetadataName,
-        message: `Name "${flatFieldMetadataName}" is not available as it is already used by another field join column name`,
-        userFriendlyMessage: msg`Name "${flatFieldMetadataName}" is not available as it is already used by another field`,
-      });
-    }
-  }
-
   if (reservedCompositeFieldsNames.includes(flatFieldMetadataName)) {
     errors.push({
       code: FieldMetadataExceptionCode.RESERVED_KEYWORD,
       message: `Name "${flatFieldMetadataName}" is reserved composite field name`,
       value: flatFieldMetadataName,
       userFriendlyMessage: msg`Name "${flatFieldMetadataName}" is not available`,
+    });
+  }
+
+  if (flatFieldMetadata.type === FieldMetadataType.MORPH_RELATION) {
+    return errors;
+  }
+
+  if (
+    objectFieldNamesAndJoinColumnNames.names.includes(flatFieldMetadataName)
+  ) {
+    errors.push({
+      code: FieldMetadataExceptionCode.NOT_AVAILABLE,
+      value: flatFieldMetadataName,
+      message: `Name "${flatFieldMetadataName}" is not available as it is already used by another field`,
+      userFriendlyMessage: msg`Name "${flatFieldMetadataName}" is not available as it is already used by another field`,
+    });
+  }
+
+  if (
+    objectFieldNamesAndJoinColumnNames.joinColumnNames.includes(
+      flatFieldMetadataName,
+    )
+  ) {
+    errors.push({
+      code: FieldMetadataExceptionCode.NOT_AVAILABLE,
+      value: flatFieldMetadataName,
+      message: `Name "${flatFieldMetadataName}" is not available as it is already used by another field join column name`,
+      userFriendlyMessage: msg`Name "${flatFieldMetadataName}" is not available as it is already used by another field`,
     });
   }
 
