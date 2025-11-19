@@ -149,7 +149,7 @@ export const transformGroupByDataToBarChartData = ({
 
   const filteredResultsWithDateGaps = isDateField
     ? fillDateGapsInBarChartData({
-        data: rawResults,
+        data: filteredResults,
         keys: [aggregateField.name],
         dateGranularity:
           configuration.primaryAxisDateGranularity ??
@@ -193,4 +193,3 @@ export const transformGroupByDataToBarChartData = ({
     layout,
   };
 };
-
