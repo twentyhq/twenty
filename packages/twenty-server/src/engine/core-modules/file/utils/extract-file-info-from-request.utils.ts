@@ -7,12 +7,8 @@ import { checkFilename } from 'src/engine/core-modules/file/utils/check-file-nam
 
 export const extractFileInfoFromRequest = (request: Request) => {
   const filename = checkFilename(request.params.filename);
-
-  const parts = request.params[0].split('/');
-
-  const fileSignature = parts.pop();
-
-  const rawFolder = parts.join('/');
+  const fileSignature = request.params.token;
+  const rawFolder = request.params.folder;
 
   const fileFolder = checkFileFolder(rawFolder);
 
