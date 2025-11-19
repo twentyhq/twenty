@@ -76,7 +76,6 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
     });
 
-    // Store mapping from formatted label to raw value for secondary dimension
     yFormattedToRawMap.set(yValue, dimensionValues[1]);
 
     // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)

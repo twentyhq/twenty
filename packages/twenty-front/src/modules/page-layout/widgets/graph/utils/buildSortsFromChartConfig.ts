@@ -1,10 +1,10 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isDefined } from 'twenty-shared/utils';
 import {
   GraphOrderBy,
   type BarChartConfiguration,
   type LineChartConfiguration,
 } from '~/generated/graphql';
-import { isDefined } from 'twenty-shared/utils';
 
 type ChartSort = {
   fieldName: string;
@@ -16,17 +16,12 @@ type BuildSortsFromChartConfigParams = {
   objectMetadataItem: ObjectMetadataItem;
 };
 
-/**
- * Extracts sorts from chart configuration.
- * Maps primary axis ordering and aggregate value ordering to sort parameters.
- */
 export const buildSortsFromChartConfig = ({
   configuration,
   objectMetadataItem,
 }: BuildSortsFromChartConfigParams): ChartSort[] => {
   const sorts: ChartSort[] = [];
 
-  // Primary axis sort (if configured with FIELD_ASC/FIELD_DESC)
   if (
     configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_ASC ||
     configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC
@@ -46,8 +41,6 @@ export const buildSortsFromChartConfig = ({
     }
   }
 
-  // Aggregate field sort (for VALUE_ASC/VALUE_DESC ordering)
-  // This helps show the most/least significant records first
   if (
     configuration.primaryAxisOrderBy === GraphOrderBy.VALUE_ASC ||
     configuration.primaryAxisOrderBy === GraphOrderBy.VALUE_DESC
