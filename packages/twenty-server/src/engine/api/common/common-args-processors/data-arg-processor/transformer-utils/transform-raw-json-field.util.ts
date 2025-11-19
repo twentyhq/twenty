@@ -1,9 +1,10 @@
+//Json.parse() for RawJsonField is done in formatFieldMetadataValue in ORM
 import { isNull } from '@sniptt/guards';
 
 export const transformRawJsonField = (
-  value: object | null,
+  value: object | string | null,
   isNullEquivalenceEnabled: boolean = false,
-): object | null => {
+): object | string | null => {
   return isNullEquivalenceEnabled &&
     !isNull(value) &&
     Object.keys(value).length === 0
