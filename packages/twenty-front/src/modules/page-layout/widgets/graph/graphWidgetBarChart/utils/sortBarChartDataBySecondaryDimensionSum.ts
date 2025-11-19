@@ -44,4 +44,3 @@ export const sortBarChartDataBySecondaryDimensionSum = ({
     ({ barChartDataItem }) => barChartDataItem,
   );
 };
-

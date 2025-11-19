@@ -142,4 +142,3 @@ describe('sortBarChartDataBySecondaryDimensionSum', () => {
     });
   });
 });
-
