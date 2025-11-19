@@ -5,6 +5,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/command-menu/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useDeletePageLayoutTab } from '@/page-layout/hooks/useDeletePageLayoutTab';
+import { useDuplicatePageLayoutTab } from '@/page-layout/hooks/useDuplicatePageLayoutTab';
 import { useMovePageLayoutTab } from '@/page-layout/hooks/useMovePageLayoutTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
@@ -17,6 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronLeft,
   IconChevronRight,
+  IconCopyPlus,
   IconTrash,
 } from 'twenty-ui/display';
 
@@ -28,6 +30,7 @@ export const CommandMenuPageLayoutTabSettings = () => {
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
+
   const [openTabId, setOpenTabId] = useRecoilComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
@@ -35,6 +38,7 @@ export const CommandMenuPageLayoutTabSettings = () => {
 
   const { moveLeft, moveRight } = useMovePageLayoutTab(pageLayoutId);
   const { deleteTab } = useDeletePageLayoutTab(pageLayoutId);
+  const { duplicateTab } = useDuplicatePageLayoutTab(pageLayoutId);
 
   if (!isDefined(openTabId)) {
     return null;
@@ -85,6 +89,17 @@ export const CommandMenuPageLayoutTabSettings = () => {
               label={t`Move right`}
               onClick={() => moveRight(tab.id)}
               disabled={disableMoveRight}
+            />
+          </SelectableListItem>
+          <SelectableListItem
+            itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.DUPLICATE}
+            onEnter={() => duplicateTab(tab.id)}
+          >
+            <CommandMenuItem
+              id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.DUPLICATE}
+              Icon={IconCopyPlus}
+              label={t`Duplicate`}
+              onClick={() => duplicateTab(tab.id)}
             />
           </SelectableListItem>
           <SelectableListItem

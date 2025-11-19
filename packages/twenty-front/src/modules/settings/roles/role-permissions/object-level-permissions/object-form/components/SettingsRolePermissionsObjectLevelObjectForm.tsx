@@ -5,10 +5,12 @@ import { SettingsRolePermissionsObjectLevelObjectFormObjectLevel } from '@/setti
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { t } from '@lingui/core/macro';
+import { useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
+import { useFindOneAgentQuery } from '~/generated-metadata/graphql';
 
 type SettingsRolePermissionsObjectLevelObjectFormProps = {
   roleId: string;
@@ -19,9 +21,17 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   roleId,
   objectMetadataId,
 }: SettingsRolePermissionsObjectLevelObjectFormProps) => {
+  const [searchParams] = useSearchParams();
+  const fromAgentId = searchParams.get('fromAgent');
+
   const settingsDraftRole = useRecoilValue(
     settingsDraftRoleFamilyState(roleId),
   );
+
+  const { data: agentData } = useFindOneAgentQuery({
+    variables: { id: fromAgentId || '' },
+    skip: !fromAgentId,
+  });
 
   const objectMetadata = useObjectMetadataItemById({
     objectId: objectMetadataId,
@@ -32,37 +42,65 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   const objectLabelSingular = objectMetadataItem.labelSingular;
   const objectLabelPlural = objectMetadataItem.labelPlural;
 
+  const agent = agentData?.findOneAgent;
+
+  const breadcrumbLinks =
+    fromAgentId && isDefined(agent)
+      ? [
+          {
+            children: t`Workspace`,
+            href: getSettingsPath(SettingsPath.Workspace),
+          },
+          {
+            children: t`AI`,
+            href: getSettingsPath(SettingsPath.AI),
+          },
+          {
+            children: agent.label,
+            href: getSettingsPath(SettingsPath.AIAgentDetail, {
+              agentId: agent.id,
+            }),
+          },
+          {
+            children: t`Permissions · ${objectLabelSingular}`,
+          },
+        ]
+      : [
+          {
+            children: t`Workspace`,
+            href: getSettingsPath(SettingsPath.Workspace),
+          },
+          {
+            children: t`Roles`,
+            href: getSettingsPath(SettingsPath.Roles),
+          },
+          {
+            children: settingsDraftRole.label,
+            href: getSettingsPath(SettingsPath.RoleDetail, {
+              roleId,
+            }),
+          },
+          {
+            children: t`Permissions · ${objectLabelSingular}`,
+          },
+        ];
+
+  const finishButtonPath =
+    fromAgentId && isDefined(agent)
+      ? getSettingsPath(SettingsPath.AIAgentDetail, { agentId: agent.id })
+      : getSettingsPath(SettingsPath.RoleDetail, { roleId });
+
   return (
     <SubMenuTopBarContainer
       title={t`2. Set ${objectLabelPlural} permissions`}
-      links={[
-        {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        {
-          children: t`Roles`,
-          href: getSettingsPath(SettingsPath.Roles),
-        },
-        {
-          children: settingsDraftRole.label,
-          href: getSettingsPath(SettingsPath.RoleDetail, {
-            roleId,
-          }),
-        },
-        {
-          children: t`Permissions · ${objectLabelSingular}`,
-        },
-      ]}
+      links={breadcrumbLinks}
       actionButton={
         <Button
           title={t`Finish`}
           variant="secondary"
           size="small"
           accent="blue"
-          to={getSettingsPath(SettingsPath.RoleDetail, {
-            roleId,
-          })}
+          to={finishButtonPath}
         />
       }
     >
