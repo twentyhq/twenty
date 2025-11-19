@@ -5,8 +5,6 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { AutoCompaniesAndContactsCreationCalendarChannelListener } from 'src/modules/contact-creation-manager/listeners/auto-companies-and-contacts-creation-calendar-channel.listener';
-import { AutoCompaniesAndContactsCreationMessageChannelListener } from 'src/modules/contact-creation-manager/listeners/auto-companies-and-contacts-creation-message-channel.listener';
 import { CreateCompanyAndPersonService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
 import { CreateCompanyService } from 'src/modules/contact-creation-manager/services/create-company.service';
 import { CreatePersonService } from 'src/modules/contact-creation-manager/services/create-person.service';
@@ -21,8 +19,6 @@ import { CreatePersonService } from 'src/modules/contact-creation-manager/servic
     CreateCompanyService,
     CreatePersonService,
     CreateCompanyAndPersonService,
-    AutoCompaniesAndContactsCreationMessageChannelListener,
-    AutoCompaniesAndContactsCreationCalendarChannelListener,
   ],
   exports: [CreateCompanyAndPersonService],
 })
