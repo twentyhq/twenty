@@ -45,6 +45,10 @@ const meta: Meta<typeof GraphWidgetLineChart> = {
     enablePointLabel: {
       control: 'boolean',
     },
+    groupMode: {
+      control: 'select',
+      options: ['stacked', undefined],
+    },
     xAxisLabel: {
       control: 'text',
     },
@@ -79,6 +83,7 @@ const renderChart = (args: ChartArgs) => (
       showLegend={args.showLegend}
       showGrid={args.showGrid}
       enablePointLabel={args.enablePointLabel}
+      groupMode={args.groupMode}
       xAxisLabel={args.xAxisLabel}
       yAxisLabel={args.yAxisLabel}
       rangeMin={args.rangeMin}
@@ -182,6 +187,43 @@ export const StackedArea: Story = {
     yAxisLabel: 'Revenue',
     displayType: 'shortNumber',
     prefix: '$',
+    groupMode: 'stacked',
+  },
+};
+
+export const StackedWithNegativeValues: Story = {
+  render: renderChart,
+  args: {
+    id: 'line-chart-stacked-negative',
+    data: [
+      {
+        id: 'series-positive',
+        label: 'Positive Series',
+        color: 'blue',
+        data: [
+          { x: 'Jan', y: 10 },
+          { x: 'Feb', y: -5 },
+          { x: 'Mar', y: 15 },
+        ],
+      },
+      {
+        id: 'series-negative',
+        label: 'Negative Series',
+        color: 'red',
+        data: [
+          { x: 'Jan', y: 5 },
+          { x: 'Feb', y: -10 },
+          { x: 'Mar', y: 5 },
+        ],
+      },
+    ],
+    showLegend: true,
+    showGrid: true,
+    xAxisLabel: 'Month',
+    yAxisLabel: 'Net Value',
+    displayType: 'number',
+    enablePointLabel: true,
+    groupMode: 'stacked',
   },
 };
 

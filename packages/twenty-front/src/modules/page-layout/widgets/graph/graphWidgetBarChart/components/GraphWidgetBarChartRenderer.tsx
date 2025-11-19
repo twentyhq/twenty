@@ -49,7 +49,6 @@ export const GraphWidgetBarChartRenderer = ({
     configuration.groupMode,
     hasGroupByOnSecondaryAxis,
   );
-
   const chartFilterKey = generateChartAggregateFilterKey(
     configuration.rangeMin,
     configuration.rangeMax,
@@ -61,31 +60,29 @@ export const GraphWidgetBarChartRenderer = ({
   }
 
   return (
-    <>
+    <Suspense fallback={<ChartSkeletonLoader />}>
       <GraphWidgetChartHasTooManyGroupsEffect
         hasTooManyGroups={hasTooManyGroups}
       />
-      <Suspense fallback={<ChartSkeletonLoader />}>
-        <GraphWidgetBarChart
-          key={chartFilterKey}
-          data={data}
-          series={series}
-          indexBy={indexBy}
-          keys={keys}
-          xAxisLabel={xAxisLabel}
-          yAxisLabel={yAxisLabel}
-          showValues={showDataLabels}
-          layout={layout}
-          groupMode={groupMode}
-          id={widget.id}
-          displayType="shortNumber"
-          rangeMin={configuration.rangeMin ?? undefined}
-          rangeMax={configuration.rangeMax ?? undefined}
-          omitNullValues={configuration.omitNullValues ?? false}
-          objectMetadataItem={objectMetadataItem}
-          configuration={configuration}
-        />
-      </Suspense>
-    </>
+      <GraphWidgetBarChart
+        key={chartFilterKey}
+        data={data}
+        series={series}
+        indexBy={indexBy}
+        keys={keys}
+        xAxisLabel={xAxisLabel}
+        yAxisLabel={yAxisLabel}
+        showValues={showDataLabels}
+        layout={layout}
+        groupMode={groupMode}
+        id={widget.id}
+        displayType="shortNumber"
+        rangeMin={configuration.rangeMin ?? undefined}
+        rangeMax={configuration.rangeMax ?? undefined}
+        omitNullValues={configuration.omitNullValues ?? false}
+        objectMetadataItem={objectMetadataItem}
+        configuration={configuration}
+      />
+    </Suspense>
   );
 };

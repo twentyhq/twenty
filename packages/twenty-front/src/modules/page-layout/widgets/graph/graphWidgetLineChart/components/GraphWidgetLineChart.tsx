@@ -6,8 +6,8 @@ import {
   CustomCrosshairLayer,
   type SliceHoverData,
 } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomCrosshairLayer';
+import { CustomPointLabelsLayer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomPointLabelsLayer';
 import { GraphLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphLineChartTooltip';
-import { handleLineChartPointClick } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/handleLineChartPointClick';
 import { LINE_CHART_MARGIN_BOTTOM } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginBottom';
 import { LINE_CHART_MARGIN_LEFT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginLeft';
 import { LINE_CHART_MARGIN_RIGHT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginRight';
@@ -20,6 +20,7 @@ import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLin
 import { calculateValueRangeFromLineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/calculateValueRangeFromLineChartSeries';
 import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
 import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
+import { handleLineChartPointClick } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/handleLineChartPointClick';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
   formatGraphValue,
@@ -37,11 +38,12 @@ import {
 } from '@nivo/line';
 import { useCallback, useId, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { type LineChartConfiguration } from '~/generated/graphql';
-import { isDefined } from 'twenty-shared/utils';
 
 type CrosshairLayerProps = LineCustomSvgLayerProps<LineSeries>;
+type PointLabelsLayerProps = LineCustomSvgLayerProps<LineSeries>;
 
 type GraphWidgetLineChartProps = {
   data: LineChartSeries[];
@@ -199,6 +201,17 @@ export const GraphWidgetLineChart = ({
     [dataMap, objectMetadataItem, configuration, navigate],
   );
 
+  const PointLabelsLayer = (layerProps: PointLabelsLayerProps) => (
+    <CustomPointLabelsLayer
+      points={layerProps.points}
+      formatValue={(value) => formatGraphValue(value, formatOptions)}
+      offset={theme.spacingMultiplicator * 2}
+      groupMode={groupMode}
+      omitNullValues={_omitNullValues}
+      enablePointLabel={enablePointLabel}
+    />
+  );
+
   const CrosshairLayer = (layerProps: CrosshairLayerProps) => (
     <CustomCrosshairLayer
       key="custom-crosshair-layer"
@@ -210,6 +223,7 @@ export const GraphWidgetLineChart = ({
       onRectLeave={() => debouncedHideTooltip()}
     />
   );
+
   const axisBottomConfig = getLineChartAxisBottomConfig(
     xAxisLabel,
     chartWidth,
@@ -250,16 +264,13 @@ export const GraphWidgetLineChart = ({
             clamp: true,
           }}
           curve={'monotoneX'}
-          lineWidth={2}
+          lineWidth={1}
           enableArea={enableArea}
           areaBaselineValue={0}
           enablePoints={true}
           pointSize={0}
-          enablePointLabel={enablePointLabel}
+          enablePointLabel={false}
           pointBorderWidth={0}
-          pointLabel={(point) =>
-            formatGraphValue(Number(point.data.y), formatOptions)
-          }
           colors={colors}
           areaBlendMode={'normal'}
           defs={defs}
@@ -281,6 +292,7 @@ export const GraphWidgetLineChart = ({
             'lines',
             CrosshairLayer,
             'points',
+            PointLabelsLayer,
             'legends',
           ]}
           useMesh={true}

@@ -8,7 +8,6 @@ import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
-import { sortLineChartDataPoints } from '@/page-layout/widgets/graph/utils/sortLineChartDataPoints';
 import { sortLineChartSeries } from '@/page-layout/widgets/graph/utils/sortLineChartSeries';
 import { isDefined } from 'twenty-shared/utils';
 import { type LineChartConfiguration } from '~/generated/graphql';
@@ -105,16 +104,11 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
 
   const unsortedSeries: LineChartSeries[] = Array.from(seriesMap.entries()).map(
     ([seriesKey, xToYMap]) => {
-      const unsortedData: LineChartDataPoint[] = allXValues.map((xValue) => ({
+      const data: LineChartDataPoint[] = allXValues.map((xValue) => ({
         x: xValue,
         y: xToYMap.get(xValue) ?? 0,
         __bucketRawValue: xValueToRawMap.get(xValue),
       }));
-
-      const data = sortLineChartDataPoints({
-        dataPoints: unsortedData,
-        orderBy: configuration.primaryAxisOrderBy,
-      });
 
       return {
         id: seriesKey,

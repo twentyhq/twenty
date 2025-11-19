@@ -84,7 +84,6 @@ export class CalendarAccountAuthenticationService {
             error.message,
             CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
           );
-        case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
         case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
         case ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN:
           throw new CalendarEventImportDriverException(
