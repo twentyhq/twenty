@@ -20,11 +20,6 @@ const StyledThreadMessageSentAt = styled.div`
   display: flex;
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.sm};
-  padding: ${({ theme }) => theme.spacing(1)};
-  &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
-    border-radius: ${({ theme }) => theme.border.radius.sm};
-  }
 `;
 
 type EmailThreadMessageSenderProps = {
