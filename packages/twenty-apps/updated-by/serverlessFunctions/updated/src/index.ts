@@ -36,13 +36,12 @@ const objectsNotForUpdate: string[] = [
   'viewGroups',
 ];
 
-type twentyObject = {
+type TwentyObject = {
   id: string;
-  nameSingular: string;
   namePlural: string;
-}
+};
 
-const fetchAllObjects = async (): Promise<twentyObject[]> => {
+const fetchAllObjects = async (): Promise<TwentyObject[]> => {
   const options = {
     method: 'GET',
     headers: {
@@ -50,30 +49,27 @@ const fetchAllObjects = async (): Promise<twentyObject[]> => {
     },
     url: `${TWENTY_API_URL}/rest/metadata/objects`,
   };
-  try {
-    const response = await axios(options);
-    let objects: twentyObject[] = [];
-    const objectsToParse: Record<string, any>[] = response.data.data.objects;
-    objectsToParse.forEach((object) => {
-      objects.push({id: object.id, nameSingular: object.nameSingular, namePlural: object.namePlural} as twentyObject);
-    });
-    return objects;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw error;
-    }
-    throw error;
-  }
+  const response = await axios.request(options);
+  let objects: TwentyObject[] = [];
+  const objectsToParse: Record<string, any>[] = response.data.data.objects;
+  objectsToParse.forEach((object) => {
+    objects.push({ id: object.id, namePlural: object.namePlural });
+  });
+  return objects;
 };
 
 const createUpdatedByField = async (
-  twentyObjects: twentyObject[],
+  twentyObjects: TwentyObject[],
   objectName: string,
-): Promise<boolean> => {
+): Promise<boolean | undefined> => {
   //@ts-expect-error suppress so compiler won't complain
-  const sourceObjectId: string = twentyObjects.find((object: twentyObject) => object.namePlural === objectName).id;
+  const sourceObjectId: string = twentyObjects.find(
+    (object: TwentyObject) => object.namePlural === objectName,
+  ).id;
   // @ts-expect-error object is in array but compiler doesn't know it
-  const targetObjectId: string = twentyObjects.find((object: twentyObject) => object.namePlural === 'workspaceMembers').id;
+  const targetObjectId: string = twentyObjects.find(
+    (object: TwentyObject) => object.namePlural === 'workspaceMembers',
+  ).id;
   // taken directly from Network tab
   const GraphQLQuery: string = `mutation CreateOneFieldMetadataItem($input: CreateOneFieldMetadataInput!) {
   createOneField(input: $input) {
@@ -140,7 +136,6 @@ const createUpdatedByField = async (
     if (axios.isAxiosError(error)) {
       throw error;
     }
-    throw error;
   }
 };
 
@@ -148,9 +143,9 @@ const updateUpdatedByField = async (
   objectName: string,
   workspaceMemberId: string,
   recordId: string,
-): Promise<boolean> => {
+): Promise<boolean | undefined> => {
   const options = {
-    method: 'PUT',
+    method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${TWENTY_API_KEY}`,
@@ -162,13 +157,11 @@ const updateUpdatedByField = async (
   };
   try {
     const response = await axios.request(options);
-    console.log(response.data);
     return response.status === 200;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw error;
     }
-    throw error;
   }
 };
 
@@ -184,31 +177,30 @@ const helperFinderObjectName = async (
     url: `${TWENTY_API_URL}/rest/${objectName}/${objectId}`,
   };
   try {
-  const response = await axios.request(options);
-  return response.status === 200 ? objectName : '';
+    const response = await axios.request(options);
+    return response.status === 200 ? objectName : '';
   } catch (error) {
-    return ""; // throwing error will finish process, it's necessary to do it like this
+    return ''; // throwing error will finish process, it's necessary to do it like this
   }
 };
 
 const findObjectName = async (
-  twentyObjects: twentyObject[],
+  twentyObjects: TwentyObject[],
   objectId: string,
 ): Promise<string> => {
-  const changeable_objects: string[] = [];
-  for (let i = 0; i < twentyObjects.length; i++) {
-    if (!objectsNotForUpdate.includes(twentyObjects[i].namePlural)) {
-      changeable_objects.push(twentyObjects[i].namePlural);
+  const changeableObjects: string[] = twentyObjects
+    .filter((obj) => !objectsNotForUpdate.includes(obj.namePlural))
+    .map((obj) => obj.namePlural);
+
+  const results = await Promise.all(
+    changeableObjects.map((object) => helperFinderObjectName(object, objectId)),
+  );
+  for (let i = 0; i < results.length; i++) {
+    if (results[i] !== '') {
+      return results[i];
     }
   }
-    for (const object of changeable_objects) {
-      const temp: string = await helperFinderObjectName(object, objectId);
-      if (temp !== '') {
-        console.log(temp);
-        return temp;
-      }
-    }
-    return '';
+  throw new Error('No matching object was found');
 };
 
 export const main = async (params: {
@@ -223,7 +215,7 @@ export const main = async (params: {
   try {
     const { properties, recordId, workspaceMemberId } = params;
     if (!workspaceMemberId) {
-      console.log("Exited as last update was done via API");
+      console.log('Exited as last update was done via API');
       return {};
     }
 
@@ -231,16 +223,19 @@ export const main = async (params: {
       properties.updatedFields?.length === 1 &&
       properties.updatedFields.includes('updatedById')
     ) {
-      console.log("Exited as last update was done by serverless function")
+      console.log('Exited as last update was done by serverless function');
       return {}; // if last update was updatedBy field, don't update
     }
-    const twentyObjects: twentyObject[] = await fetchAllObjects();
+    const twentyObjects: TwentyObject[] = await fetchAllObjects();
 
     // const objectName = properties.after; //TODO: uncomment once object type is exposed in properties
-    const objectPluralName: string = await findObjectName(twentyObjects, recordId);
+    const objectPluralName: string = await findObjectName(
+      twentyObjects,
+      recordId,
+    );
 
     if (properties.after.updatedById === undefined) {
-      const isFieldCreated: boolean = await createUpdatedByField(
+      const isFieldCreated: boolean | undefined = await createUpdatedByField(
         twentyObjects,
         objectPluralName,
       );
@@ -250,23 +245,25 @@ export const main = async (params: {
       }
     }
 
-    const isObjectUpdated: boolean = await updateUpdatedByField(
+    const isObjectUpdated: boolean | undefined = await updateUpdatedByField(
       objectPluralName,
       workspaceMemberId,
       recordId,
     );
 
     if (isObjectUpdated) {
-      console.log(`Field updatedBy in object ${objectPluralName} has been updated`);
+      console.log(
+        `Field updatedBy in record ${recordId} in object ${objectPluralName} has been updated`,
+      );
       return {};
     }
-    else {
-      throw new Error(`Update field updatedBy in record ${recordId} in object ${objectPluralName} has failed!`);
-    }
+    throw new Error(
+      `Update field updatedBy in record ${recordId} in object ${objectPluralName} has failed!`,
+    );
   } catch (error) {
     console.error('Exiting because of error');
     if (axios.isAxiosError(error)) {
-      console.error(error.response?.data.messages);
+      console.error(error.message);
     } else {
       console.error(error);
     }
@@ -275,13 +272,13 @@ export const main = async (params: {
 };
 
 export const config: ServerlessFunctionConfig = {
-  universalIdentifier: "47005bbc-ed0d-4d04-b53b-e94f5c38656d",
-  name: "updated-by",
+  universalIdentifier: '47005bbc-ed0d-4d04-b53b-e94f5c38656d',
+  name: 'updated-by',
   triggers: [
     {
-      universalIdentifier: "0b6da7cf-506f-4cb9-b692-a44b08972ba4",
-      type: "databaseEvent",
-      eventName: "*.updated"
-    }
-  ]
-}
+      universalIdentifier: '0b6da7cf-506f-4cb9-b692-a44b08972ba4',
+      type: 'databaseEvent',
+      eventName: '*.updated',
+    },
+  ],
+};

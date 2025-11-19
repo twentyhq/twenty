@@ -20,12 +20,12 @@ twenty app sync
 Go to Settings > Applications > Updated by > Settings and add Twenty API key used to
 send requests to Twenty. 
 
-**If you're using self-hosted, you have to add also URL to your workspace.**
+**If you're using self-hosted instance, you have to add also URL to your workspace.**
 
 ## Flow
 
 1. Check if Twenty API key is added, if not, exit
-2. Check if updated record belongs to an object which shouldn't have a updatedBy field (like blocklists or messages), if yes, exit
+2. Check if updated record belongs to an object which shouldn't have a `updatedBy` field (like blocklists or messages), if yes, exit
 3. Check if updated record has updatedBy field, if not, create it
 4. Check if updated field in record is updatedBy field, if yes, return preemptively
 5. Update record with workspace member ID

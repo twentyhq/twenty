@@ -16,7 +16,7 @@ const config: ApplicationConfig = {
       isSecret: false,
       value: "",
       description: "Optional, defaults to cloud API URL"
-    }
+    },
   },
 }
 
