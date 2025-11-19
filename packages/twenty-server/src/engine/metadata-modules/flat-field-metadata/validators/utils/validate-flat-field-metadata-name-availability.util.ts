@@ -66,38 +66,39 @@ export const validateFlatFieldMetadataNameAvailability = ({
       remainingFlatEntityMapsToValidate,
     });
 
+  const flatFieldMetadataName = flatFieldMetadata.name;
   if (flatFieldMetadata.type !== FieldMetadataType.MORPH_RELATION) {
     if (
-      objectFieldNamesAndJoinColumnNames.names.includes(flatFieldMetadata.name)
+      objectFieldNamesAndJoinColumnNames.names.includes(flatFieldMetadataName)
     ) {
       errors.push({
         code: FieldMetadataExceptionCode.NOT_AVAILABLE,
-        value: flatFieldMetadata.name,
-        message: `Name "${flatFieldMetadata.name}" is not available as it is already used by another field`,
-        userFriendlyMessage: msg`Name "${flatFieldMetadata.name}" is not available as it is already used by another field`,
+        value: flatFieldMetadataName,
+        message: `Name "${flatFieldMetadataName}" is not available as it is already used by another field`,
+        userFriendlyMessage: msg`Name "${flatFieldMetadataName}" is not available as it is already used by another field`,
       });
     }
 
     if (
       objectFieldNamesAndJoinColumnNames.joinColumnNames.includes(
-        flatFieldMetadata.name,
+        flatFieldMetadataName,
       )
     ) {
       errors.push({
         code: FieldMetadataExceptionCode.NOT_AVAILABLE,
-        value: flatFieldMetadata.name,
-        message: `Name "${flatFieldMetadata.name}" is not available as it is already used by another field join column name`,
-        userFriendlyMessage: msg`Name "${flatFieldMetadata.name}" is not available as it is already used by another field`,
+        value: flatFieldMetadataName,
+        message: `Name "${flatFieldMetadataName}" is not available as it is already used by another field join column name`,
+        userFriendlyMessage: msg`Name "${flatFieldMetadataName}" is not available as it is already used by another field`,
       });
     }
   }
 
-  if (reservedCompositeFieldsNames.includes(flatFieldMetadata.name)) {
+  if (reservedCompositeFieldsNames.includes(flatFieldMetadataName)) {
     errors.push({
       code: FieldMetadataExceptionCode.RESERVED_KEYWORD,
-      message: `Name "${flatFieldMetadata.name}" is reserved composite field name`,
-      value: flatFieldMetadata.name,
-      userFriendlyMessage: msg`Name "${flatFieldMetadata.name}" is not available`,
+      message: `Name "${flatFieldMetadataName}" is reserved composite field name`,
+      value: flatFieldMetadataName,
+      userFriendlyMessage: msg`Name "${flatFieldMetadataName}" is not available`,
     });
   }
 
