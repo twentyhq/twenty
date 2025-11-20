@@ -125,10 +125,17 @@ export const WorkflowEditActionFindRecords = ({
     [objectMetadataItems, getIcon],
   );
 
-  const selectedOption =
-    [...activeStandardObjectOptions, ...activeSystemObjectOptions].find(
-      (option) => option.value === action.settings.input.objectName,
-    ) || DEFAULT_SELECTED_OPTION;
+  const selectedOption = useMemo(
+    () =>
+      [...activeStandardObjectOptions, ...activeSystemObjectOptions].find(
+        (option) => option.value === action.settings.input.objectName,
+      ) || DEFAULT_SELECTED_OPTION,
+    [
+      activeStandardObjectOptions,
+      activeSystemObjectOptions,
+      action.settings.input.objectName,
+    ],
+  );
 
   const filteredStandardObjectOptions = useMemo(
     () =>

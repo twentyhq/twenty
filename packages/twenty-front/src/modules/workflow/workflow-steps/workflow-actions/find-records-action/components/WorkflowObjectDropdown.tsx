@@ -40,7 +40,7 @@ export const WorkflowObjectDropdown = ({
   const shouldShowAdvanced =
     showAdvancedOption &&
     (!isNonEmptyString(searchInputValue) ||
-      'advanced'.includes(searchInputValue.toLowerCase()));
+      searchInputValue.toLowerCase().includes('advanced'));
 
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
@@ -73,7 +73,7 @@ export const WorkflowObjectDropdown = ({
         ))}
         {shouldShowAdvanced && onAdvancedClick && (
           <MenuItem
-            text="Advanced"
+            text={<Trans>Advanced</Trans>}
             LeftIcon={IconSettings}
             onClick={onAdvancedClick}
             hasSubMenu
