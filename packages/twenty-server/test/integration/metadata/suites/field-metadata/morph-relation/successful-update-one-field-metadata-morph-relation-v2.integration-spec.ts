@@ -3,15 +3,16 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-
-import { DeepPartial } from 'ai';
-import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
-import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { type DeepPartial } from 'ai';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
+import { type RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
+import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 
 type AggregatedFieldMetadataDto = {
   description: (string | null)[];
@@ -260,6 +261,7 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
       `,
         expectToFail: false,
       })) as { fields: { node: FieldMetadataDTO }[] };
+
       expect(relationFieldsBeforeUpdate.fields.length).toBe(
         allRelationFieldIds.length,
       );
@@ -288,6 +290,7 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
         description: 'new description',
       },
     };
+
     await updateOneFieldMetadata({
       expectToFail: false,
       input,
@@ -352,6 +355,7 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
       `,
         expectToFail: false,
       })) as { fields: { node: FieldMetadataDTO }[] };
+
       expect(relationFieldsBeforeUpdate.fields.length).toBe(
         allRelationFieldIds.length,
       );

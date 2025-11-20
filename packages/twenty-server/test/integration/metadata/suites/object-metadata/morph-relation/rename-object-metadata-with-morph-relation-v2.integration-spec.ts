@@ -7,9 +7,9 @@ import {
   type EachTestingContext,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 
 const allTestsUseCases: EachTestingContext<{
   nameSingular: string;
