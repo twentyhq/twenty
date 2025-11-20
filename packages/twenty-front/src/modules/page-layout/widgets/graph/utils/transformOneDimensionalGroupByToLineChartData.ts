@@ -2,6 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMaximumNumberOfDataPoints.constant';
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
@@ -25,6 +26,7 @@ type TransformOneDimensionalGroupByToLineChartDataParams = {
 type TransformOneDimensionalGroupByToLineChartDataResult = {
   series: LineChartSeries[];
   hasTooManyGroups: boolean;
+  dimensionMetadata: Map<string, RawDimensionValue>;
 };
 
 export const transformOneDimensionalGroupByToLineChartData = ({
@@ -41,6 +43,8 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     0,
     LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
   );
+
+  const dimensionMetadata = new Map<string, RawDimensionValue>();
 
   const data: LineChartDataPoint[] = limitedResults
     .map((result) => {
@@ -70,10 +74,14 @@ export const transformOneDimensionalGroupByToLineChartData = ({
         objectMetadataItem,
       });
 
+      // Store dimension metadata
+      if (isDefined(dimensionValues?.[0])) {
+        dimensionMetadata.set(xValue, dimensionValues[0] as RawDimensionValue);
+      }
+
       return {
         x: xValue,
         y: aggregateValue,
-        __bucketRawValue: dimensionValues?.[0],
       };
     })
     .filter((point) => isDefined(point));
@@ -91,5 +99,6 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     series,
     hasTooManyGroups:
       rawResults.length > LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
+    dimensionMetadata,
   };
 };

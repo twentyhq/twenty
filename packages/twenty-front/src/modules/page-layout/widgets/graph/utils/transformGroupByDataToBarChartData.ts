@@ -7,6 +7,7 @@ import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBa
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGroupByResults';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { transformOneDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/utils/transformOneDimensionalGroupByToBarChartData';
@@ -35,6 +36,7 @@ type TransformGroupByDataToBarChartDataResult = {
   showDataLabels: boolean;
   layout?: BarChartLayout;
   hasTooManyGroups: boolean;
+  dimensionMetadata: Map<string, RawDimensionValue>;
 };
 
 const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
@@ -47,6 +49,7 @@ const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
   showDataLabels: false,
   layout: BarChartLayout.VERTICAL,
   hasTooManyGroups: false,
+  dimensionMetadata: new Map(),
 };
 
 export const transformGroupByDataToBarChartData = ({

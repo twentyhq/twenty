@@ -2,6 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMaximumNumberOfDataPoints.constant';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
@@ -26,6 +27,7 @@ type TransformTwoDimensionalGroupByToLineChartDataParams = {
 type TransformTwoDimensionalGroupByToLineChartDataResult = {
   series: LineChartSeries[];
   hasTooManyGroups: boolean;
+  dimensionMetadata: Map<string, RawDimensionValue>;
 };
 
 export const transformTwoDimensionalGroupByToLineChartData = ({
@@ -41,8 +43,8 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
   const seriesMap = new Map<string, Map<string, number>>();
   const allXValues: string[] = [];
   const xValueSet = new Set<string>();
-  const xValueToRawMap = new Map<string, unknown>();
-  const seriesKeyToRawValueMap = new Map<string, unknown>();
+  const dimensionMetadata = new Map<string, RawDimensionValue>();
+  const seriesKeyToRawValueMap = new Map<string, RawDimensionValue>();
   let hasTooManyGroups = false;
 
   rawResults.forEach((result) => {
@@ -70,7 +72,7 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
     if (isNewX) {
       xValueSet.add(xValue);
       allXValues.push(xValue);
-      xValueToRawMap.set(xValue, dimensionValues[0]);
+      dimensionMetadata.set(xValue, dimensionValues[0] as RawDimensionValue);
     }
 
     const seriesRawValue = dimensionValues[1];
@@ -96,7 +98,7 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
 
     if (!seriesMap.has(seriesKey)) {
       seriesMap.set(seriesKey, new Map());
-      seriesKeyToRawValueMap.set(seriesKey, seriesRawValue);
+      seriesKeyToRawValueMap.set(seriesKey, seriesRawValue as RawDimensionValue);
     }
 
     seriesMap.get(seriesKey)!.set(xValue, aggregateValue);
@@ -107,7 +109,6 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
       const data: LineChartDataPoint[] = allXValues.map((xValue) => ({
         x: xValue,
         y: xToYMap.get(xValue) ?? 0,
-        __bucketRawValue: xValueToRawMap.get(xValue),
       }));
 
       return {
@@ -128,5 +129,6 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
   return {
     series,
     hasTooManyGroups,
+    dimensionMetadata,
   };
 };

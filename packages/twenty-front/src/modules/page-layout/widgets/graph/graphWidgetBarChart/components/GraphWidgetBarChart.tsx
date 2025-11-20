@@ -1,4 +1,3 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
@@ -15,14 +14,11 @@ import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
-import { handleBarItemClick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/handleBarItemClick';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { useNavigate } from 'react-router-dom';
-import { type BarChartConfiguration } from '~/generated/graphql';
 
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useTheme } from '@emotion/react';
@@ -58,8 +54,7 @@ type GraphWidgetBarChartProps = {
   rangeMin?: number;
   rangeMax?: number;
   omitNullValues?: boolean;
-  objectMetadataItem?: ObjectMetadataItem;
-  configuration?: BarChartConfiguration;
+  onClick?: (datum: ComputedDatum<BarChartDataItem>) => void;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -93,12 +88,10 @@ export const GraphWidgetBarChart = ({
   prefix,
   suffix,
   customFormatter,
-  objectMetadataItem,
-  configuration,
+  onClick,
 }: GraphWidgetBarChartProps) => {
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
-  const navigate = useNavigate();
 
   // Chart dimensions
   const [chartWidth, setChartWidth] = useState<number>(0);
@@ -159,19 +152,9 @@ export const GraphWidgetBarChart = ({
 
   const handleBarClick = useCallback(
     (datum: ComputedDatum<BarChartDataItem>) => {
-      if (!isDefined(objectMetadataItem) || !isDefined(configuration)) {
-        return;
-      }
-
-      handleBarItemClick(
-        datum,
-        series,
-        objectMetadataItem,
-        configuration,
-        navigate,
-      );
+      onClick?.(datum);
     },
-    [series, objectMetadataItem, configuration, navigate],
+    [onClick],
   );
 
   const areThereTooManyKeys = keys.length > CHART_LEGEND_ITEM_THRESHOLD;

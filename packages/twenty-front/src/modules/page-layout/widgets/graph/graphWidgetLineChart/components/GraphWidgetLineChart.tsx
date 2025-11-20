@@ -1,4 +1,3 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { CHART_LEGEND_ITEM_THRESHOLD } from '@/page-layout/widgets/graph/constants/ChartLegendItemThreshold';
@@ -20,7 +19,6 @@ import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLin
 import { calculateValueRangeFromLineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/calculateValueRangeFromLineChartSeries';
 import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
 import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
-import { handleLineChartPointClick } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/handleLineChartPointClick';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
   formatGraphValue,
@@ -34,13 +32,11 @@ import {
   ResponsiveLine,
   type LineCustomSvgLayerProps,
   type LineSeries,
+  type Point,
   type SliceTooltipProps,
 } from '@nivo/line';
 import { useCallback, useId, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
-import { type LineChartConfiguration } from '~/generated/graphql';
 
 type CrosshairLayerProps = LineCustomSvgLayerProps<LineSeries>;
 type PointLabelsLayerProps = LineCustomSvgLayerProps<LineSeries>;
@@ -58,8 +54,7 @@ type GraphWidgetLineChartProps = {
   rangeMax?: number;
   omitNullValues?: boolean;
   groupMode?: 'stacked';
-  objectMetadataItem?: ObjectMetadataItem;
-  configuration?: LineChartConfiguration;
+  onClick?: (point: Point<any>) => void;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -89,12 +84,10 @@ export const GraphWidgetLineChart = ({
   prefix,
   suffix,
   customFormatter,
-  objectMetadataItem,
-  configuration,
+  onClick,
 }: GraphWidgetLineChartProps) => {
   const theme = useTheme();
   const instanceId = useId();
-  const navigate = useNavigate();
   const colorRegistry = createGraphColorRegistry(theme);
   const chartTheme = useLineChartTheme();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -186,19 +179,9 @@ export const GraphWidgetLineChart = ({
 
   const handleSliceClick = useCallback(
     (sliceData: SliceHoverData) => {
-      if (!isDefined(objectMetadataItem) || !isDefined(configuration)) {
-        return;
-      }
-
-      handleLineChartPointClick(
-        sliceData.closestPoint,
-        dataMap,
-        objectMetadataItem,
-        configuration,
-        navigate,
-      );
+      onClick?.(sliceData.closestPoint);
     },
-    [dataMap, objectMetadataItem, configuration, navigate],
+    [onClick],
   );
 
   const PointLabelsLayer = (layerProps: PointLabelsLayerProps) => (

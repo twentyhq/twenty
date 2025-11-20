@@ -2,6 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
@@ -29,6 +30,7 @@ type TransformOneDimensionalGroupByToBarChartDataResult = {
   keys: string[];
   series: BarChartSeries[];
   hasTooManyGroups: boolean;
+  dimensionMetadata: Map<string, RawDimensionValue>;
 };
 
 export const transformOneDimensionalGroupByToBarChartData = ({
@@ -53,6 +55,8 @@ export const transformOneDimensionalGroupByToBarChartData = ({
   // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
   const limitedResults = rawResults.slice(0, BAR_CHART_MAXIMUM_NUMBER_OF_BARS);
 
+  const dimensionMetadata = new Map<string, RawDimensionValue>();
+
   const data: BarChartDataItem[] = limitedResults.map((result) => {
     const dimensionValues = result.groupByDimensionValues;
 
@@ -76,11 +80,15 @@ export const transformOneDimensionalGroupByToBarChartData = ({
       objectMetadataItem,
     });
 
+    // Store mapping from formatted value to raw value
+    if (isDefined(dimensionValues?.[0])) {
+      dimensionMetadata.set(xValue, dimensionValues[0] as RawDimensionValue);
+    }
+
     return {
       [indexByKey]: xValue,
       [aggregateValueKey]: aggregateValue,
-      __bucketRawValue: dimensionValues[0],
-    } as BarChartDataItem;
+    };
   });
 
   const series: BarChartSeries[] = [
@@ -97,5 +105,6 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     keys: [aggregateValueKey],
     series,
     hasTooManyGroups: rawResults.length > BAR_CHART_MAXIMUM_NUMBER_OF_BARS,
+    dimensionMetadata,
   };
 };

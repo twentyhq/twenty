@@ -2,8 +2,12 @@ import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/Char
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { LINE_CHART_IS_STACKED_DEFAULT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartIsStackedDefault';
 import { useGraphLineChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useGraphLineChartWidgetData';
+import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
+import { buildChartDrilldownUrl } from '@/page-layout/widgets/graph/utils/buildChartDrilldownUrl';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
-import { lazy, Suspense } from 'react';
+import { type Point } from '@nivo/line';
+import { lazy, Suspense, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type LineChartConfiguration,
@@ -30,12 +34,14 @@ export const GraphWidgetLineChartRenderer = ({
     showDataLabels,
     hasTooManyGroups,
     loading,
+    dimensionMetadata,
     objectMetadataItem,
   } = useGraphLineChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration as LineChartConfiguration,
   });
 
+  const navigate = useNavigate();
   const configuration = widget.configuration as LineChartConfiguration;
 
   const hasGroupByOnSecondaryAxis = isDefined(
@@ -52,6 +58,29 @@ export const GraphWidgetLineChartRenderer = ({
     configuration.rangeMin,
     configuration.rangeMax,
     configuration.omitNullValues,
+  );
+
+  const handlePointClick = useCallback(
+    (point: Point<any>) => {
+      const xValue = (point.data as LineChartDataPoint).x;
+      const rawValue = dimensionMetadata.get(xValue as string);
+
+      if (!isDefined(rawValue)) {
+        return;
+      }
+
+      const url = buildChartDrilldownUrl({
+        objectMetadataItem,
+        configuration,
+        clickedData: {
+          primaryBucketRawValue: rawValue,
+        },
+        timezone: configuration.timezone ?? undefined,
+      });
+
+      navigate(url);
+    },
+    [dimensionMetadata, objectMetadataItem, configuration, navigate],
   );
 
   if (loading) {
@@ -75,8 +104,7 @@ export const GraphWidgetLineChartRenderer = ({
         omitNullValues={configuration.omitNullValues ?? false}
         groupMode={groupMode}
         displayType="shortNumber"
-        objectMetadataItem={objectMetadataItem}
-        configuration={configuration}
+        onClick={handlePointClick}
       />
     </Suspense>
   );

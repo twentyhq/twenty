@@ -1,5 +1,6 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
 import { transformGroupByDataToLineChartData } from '@/page-layout/widgets/graph/utils/transformGroupByDataToLineChartData';
 import { useMemo } from 'react';
@@ -16,6 +17,7 @@ type UseGraphLineChartWidgetDataResult = {
   yAxisLabel?: string;
   showDataLabels: boolean;
   hasTooManyGroups: boolean;
+  dimensionMetadata: Map<string, RawDimensionValue>;
   loading: boolean;
   error?: Error;
   objectMetadataItem: ReturnType<

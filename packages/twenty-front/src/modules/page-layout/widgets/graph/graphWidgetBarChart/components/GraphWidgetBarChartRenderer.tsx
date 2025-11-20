@@ -2,8 +2,12 @@ import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/Char
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
+import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { buildChartDrilldownUrl } from '@/page-layout/widgets/graph/utils/buildChartDrilldownUrl';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
-import { lazy, Suspense } from 'react';
+import { type ComputedDatum } from '@nivo/bar';
+import { lazy, Suspense, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type BarChartConfiguration,
@@ -34,12 +38,14 @@ export const GraphWidgetBarChartRenderer = ({
     layout,
     loading,
     hasTooManyGroups,
+    dimensionMetadata,
     objectMetadataItem,
   } = useGraphBarChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration as BarChartConfiguration,
   });
 
+  const navigate = useNavigate();
   const configuration = widget.configuration as BarChartConfiguration;
 
   const hasGroupByOnSecondaryAxis = isDefined(
@@ -53,6 +59,29 @@ export const GraphWidgetBarChartRenderer = ({
     configuration.rangeMin,
     configuration.rangeMax,
     configuration.omitNullValues,
+  );
+
+  const handleBarClick = useCallback(
+    (datum: ComputedDatum<BarChartDataItem>) => {
+      const displayValue = datum.data[indexBy];
+      const rawValue = dimensionMetadata.get(displayValue as string);
+
+      if (!isDefined(rawValue)) {
+        return;
+      }
+
+      const url = buildChartDrilldownUrl({
+        objectMetadataItem,
+        configuration,
+        clickedData: {
+          primaryBucketRawValue: rawValue,
+        },
+        timezone: configuration.timezone ?? undefined,
+      });
+
+      navigate(url);
+    },
+    [dimensionMetadata, indexBy, objectMetadataItem, configuration, navigate],
   );
 
   if (loading) {
@@ -80,8 +109,7 @@ export const GraphWidgetBarChartRenderer = ({
         rangeMin={configuration.rangeMin ?? undefined}
         rangeMax={configuration.rangeMax ?? undefined}
         omitNullValues={configuration.omitNullValues ?? false}
-        objectMetadataItem={objectMetadataItem}
-        configuration={configuration}
+        onClick={handleBarClick}
       />
     </Suspense>
   );
