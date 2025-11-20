@@ -2,6 +2,7 @@ import {
   extractAndSanitizeObjectStringFields,
   isDefined,
 } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-standard-overrides-properties.constant';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -13,7 +14,6 @@ import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-mod
 import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
-import { v4 } from 'uuid';
 
 type SanitizeRawUpdateFieldInputArgs = {
   rawUpdateFieldInput: UpdateFieldInput;

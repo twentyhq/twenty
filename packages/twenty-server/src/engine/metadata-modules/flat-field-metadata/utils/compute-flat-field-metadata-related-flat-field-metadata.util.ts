@@ -39,6 +39,7 @@ export const computeFlatFieldMetadataRelatedFlatFieldMetadata = ({
         flatFieldMetadataMaps,
         flatObjectMetadata,
       });
+
     return [...morphRelationFlatFieldMetadatas, ...relationFlatFieldMetadatas];
   }
 
