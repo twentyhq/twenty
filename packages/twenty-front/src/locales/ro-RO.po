@@ -711,8 +711,6 @@ msgstr "Adaugă la favorite"
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Add to favorites"
 msgstr "Adaugă la favorite"
 
