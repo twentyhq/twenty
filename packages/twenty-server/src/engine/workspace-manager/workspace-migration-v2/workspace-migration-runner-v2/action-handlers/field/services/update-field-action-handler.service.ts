@@ -56,13 +56,6 @@ type UpdateFieldPropertyUpdateHandlerArgs<
   update: PropertyUpdate<FlatFieldMetadata<T>, P>;
 };
 
-type UpdateFieldPropertyUpdateHandlerArgsContext<
-  P extends FlatEntityPropertiesToCompare<'fieldMetadata'>,
-  T extends FieldMetadataType = FieldMetadataType,
-> = UpdateFieldPropertyUpdateHandlerArgs<P, T> & {
-  context: WorkspaceMigrationActionRunnerArgs<UpdateFieldAction>;
-};
-
 @Injectable()
 export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
   'update_field',
@@ -178,7 +171,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           tableName,
           flatFieldMetadata: optimisticFlatFieldMetadata,
           update,
-          context,
         });
         optimisticFlatFieldMetadata.name = update.to;
       }
@@ -251,8 +243,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     schemaName,
     tableName,
     update,
-    context,
-  }: UpdateFieldPropertyUpdateHandlerArgsContext<'name', FieldMetadataType>) {
+  }: UpdateFieldPropertyUpdateHandlerArgs<'name'>) {
     if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
       const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
 
