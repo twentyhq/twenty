@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
+import { TitleInputAutoOpenEffect } from '@/ui/input/components/TitleInputAutoOpenEffect';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -24,6 +25,8 @@ type InputProps = {
 
 export type TitleInputProps = {
   disabled?: boolean;
+  shouldOpen?: boolean;
+  onOpen?: () => void;
 } & InputProps;
 
 const StyledDiv = styled.div<{
@@ -142,6 +145,8 @@ export const TitleInput = ({
   onClickOutside,
   onTab,
   onShiftTab,
+  shouldOpen,
+  onOpen,
 }: TitleInputProps) => {
   const [isOpened, setIsOpened] = useState(false);
 
@@ -149,6 +154,14 @@ export const TitleInput = ({
 
   return (
     <>
+      <TitleInputAutoOpenEffect
+        shouldOpen={shouldOpen}
+        isOpened={isOpened}
+        disabled={disabled}
+        instanceId={instanceId}
+        onOpen={onOpen}
+        setIsOpened={setIsOpened}
+      />
       {isOpened ? (
         <Input
           instanceId={instanceId}

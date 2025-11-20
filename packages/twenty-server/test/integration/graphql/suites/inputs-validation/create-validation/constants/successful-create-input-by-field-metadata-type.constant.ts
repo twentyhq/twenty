@@ -145,6 +145,14 @@ export const successfulCreateInputByFieldMetadataType: {
         return record.rawJsonField === null;
       },
     },
+    {
+      input: {
+        rawJsonField: '{"key": "value"}',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return record.rawJsonField.key === 'value';
+      },
+    },
   ],
   [FieldMetadataType.ARRAY]: [
     {
@@ -156,6 +164,16 @@ export const successfulCreateInputByFieldMetadataType: {
           record.arrayField.length === 2 &&
           record.arrayField.includes('item1') &&
           record.arrayField.includes('item2')
+        );
+      },
+    },
+    {
+      input: {
+        arrayField: 'item1',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return (
+          record.arrayField.length === 1 && record.arrayField.includes('item1')
         );
       },
     },

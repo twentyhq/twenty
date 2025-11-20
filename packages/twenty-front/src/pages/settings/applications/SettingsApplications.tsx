@@ -1,16 +1,13 @@
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { t } from '@lingui/core/macro';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { SettingsPath } from 'twenty-shared/types';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { Section } from 'twenty-ui/layout';
-import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
-import { useFindManyApplicationsQuery } from '~/generated-metadata/graphql';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import styled from '@emotion/styled';
 import { LinkDisplay } from '@/ui/field/display/components/LinkDisplay';
-
-const APPLICATIONS_ID = 'applications';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/layout';
+import { useFindManyApplicationsQuery } from '~/generated-metadata/graphql';
+import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
 
 const StyledNoApplicationContainer = styled.div``;
 
@@ -18,8 +15,6 @@ export const SettingsApplications = () => {
   const { data } = useFindManyApplicationsQuery();
 
   const applications = data?.findManyApplications ?? [];
-
-  const tabs = [{ id: 'inUsed', title: 'In used' }];
 
   return (
     <SubMenuTopBarContainer
@@ -35,14 +30,7 @@ export const SettingsApplications = () => {
       <SettingsPageContainer>
         <Section>
           {applications.length > 0 ? (
-            <>
-              <TabList
-                tabs={tabs}
-                behaveAsLinks={false}
-                componentInstanceId={APPLICATIONS_ID}
-              />
-              <SettingsApplicationsTable applications={applications} />
-            </>
+            <SettingsApplicationsTable applications={applications} />
           ) : (
             <StyledNoApplicationContainer>
               No installed application. Please check our{' '}

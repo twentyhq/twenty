@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Create input validation - RICH_TEXT_V2 Gql create input - failure RICH_TEXT_V2 - should fail with : {"richTextV2Field":"not-a-rich-text"} 1`] = `"Expected type "RichTextV2CreateInput" to be an object."`;
+
+exports[`Create input validation - RICH_TEXT_V2 Rest create input - failure RICH_TEXT_V2 - should fail with : {"richTextV2Field":"not-a-rich-text"} 1`] = `"["Invalid rich text v2 value 'not-a-rich-text' for field \\"richTextV2Field\\" - Should be an object"]"`;

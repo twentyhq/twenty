@@ -19,4 +19,5 @@ export type PageLayoutTab = Omit<PageLayoutTabGenerated, 'widgets'> & {
    */
   layoutMode?: PageLayoutTabLayoutMode;
   displayAsFirstTabOnMobileAndSidePanel?: boolean;
+  icon?: string;
 };

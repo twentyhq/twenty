@@ -208,6 +208,7 @@ msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "حدث متجمع / مصفى لعرضه على الشريط الزمني"
 
 #. js-lingui-id: pdOYzu
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workspace-members-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
@@ -215,9 +216,12 @@ msgstr "حدث متجمع / مصفى لعرضه على الشريط الزمني
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/messages-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/message-threads-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/calendar-events-all.view.ts
 msgid "All {objectLabelPlural}"
 msgstr "الكل {objectLabelPlural}"
 
@@ -302,6 +306,11 @@ msgstr "الموكِل"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated User Id"
 msgstr "معرف المستخدم المرتبط"
+
+#. js-lingui-id: scLx/y
+#: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
+msgid "At least one folder must be synced."
+msgstr ""
 
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -611,7 +620,6 @@ msgstr "لا يمكن حذف الحساب: أنت المدير الوحيد. ع�
 
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "لا يمكن الحذف، يرجى تحديث حقل معرف العلامة أولاً"
 
@@ -1847,7 +1855,7 @@ msgstr "اللغة"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Last credentials refreshed at"
-msgstr ""
+msgstr "آخر تحديث للبيانات في"
 
 #. js-lingui-id: WvYp6o
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -2009,6 +2017,11 @@ msgstr "مجلد الرسائل"
 msgid "Message folder import policy"
 msgstr "سياسة استيراد مجلد الرسائل"
 
+#. js-lingui-id: aIgrkW
+#: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
+msgid "Message folder not found"
+msgstr ""
+
 #. js-lingui-id: p4ANpY
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -2162,11 +2175,6 @@ msgstr "الاسم \"{flatFieldMetadataName}\" غير متاح"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
 msgstr "الاسم \"{flatFieldMetadataName}\" غير متاح لأنه مستخدم بالفعل من قبل حقل آخر"
-
-#. js-lingui-id: Q2loDF
-#: src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service.ts
-msgid "Name \"{name}\" is not available."
-msgstr "هذا الاسم غير متاح."
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2758,17 +2766,6 @@ msgstr "لم يتم تعريف رابط النطاق العام. يرجى تعي
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Received At"
 msgstr "تم الاستلام في"
-
-#. js-lingui-id: x93onj
-#: src/engine/metadata-modules/view-field/services/view-field.service.ts
-#: src/engine/metadata-modules/view-field/services/view-field.service.ts
-msgid "Record text must be in first position of the view."
-msgstr "يجب أن يكون نص السجل في الموضع الأول من العرض."
-
-#. js-lingui-id: KGmwY/
-#: src/engine/metadata-modules/view-field/services/view-field.service.ts
-msgid "Record text must stay visible."
-msgstr "يجب أن يظل نص السجل مرئيًا."
 
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -3522,12 +3519,6 @@ msgstr "النوع"
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Type (deprecated)"
 msgstr "النوع (مهمل)"
-
-#. js-lingui-id: RBJNRI
-#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
-msgid "Unique field cannot have a default value"
-msgstr "لا يمكن أن يحتوي الحقل الفريد على قيمة افتراضية"
 
 #. js-lingui-id: WWSSTx
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts

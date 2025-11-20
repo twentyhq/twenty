@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Create input validation - PHONES Gql create input - failure PHONES - should fail with : {"phonesField":"not-a-phone"} 1`] = `"Expected type "PhonesCreateInput" to be an object."`;
+
+exports[`Create input validation - PHONES Rest create input - failure PHONES - should fail with : {"phonesField":"not-a-phone"} 1`] = `"["Invalid object value 'not-a-phone' for field \\"phonesField\\""]"`;

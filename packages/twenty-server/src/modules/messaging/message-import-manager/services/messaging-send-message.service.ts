@@ -8,12 +8,7 @@ import { z } from 'zod';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import {
-  MessageImportDriverException,
-  MessageImportDriverExceptionCode,
-} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
-import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
 import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
 
@@ -130,31 +125,11 @@ export class MessagingSendMessageService {
 
         const response = await microsoftClient
           .api(`/me/messages`)
-          .post(message)
-          .catch((error) => {
-            if (isAccessTokenRefreshingError(error?.body)) {
-              throw new MessageImportDriverException(
-                error.message,
-                MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
-              );
-            }
-            throw error;
-          });
+          .post(message);
 
         z.string().parse(response.id);
 
-        await microsoftClient
-          .api(`/me/messages/${response.id}/send`)
-          .post({})
-          .catch((error) => {
-            if (isAccessTokenRefreshingError(error?.body)) {
-              throw new MessageImportDriverException(
-                error.message,
-                MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
-              );
-            }
-            throw error;
-          });
+        await microsoftClient.api(`/me/messages/${response.id}/send`).post({});
 
         break;
       }

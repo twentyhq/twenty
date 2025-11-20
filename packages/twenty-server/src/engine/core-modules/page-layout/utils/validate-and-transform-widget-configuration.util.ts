@@ -1,5 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import { validateSync, type ValidationError } from 'class-validator';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AggregateChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/aggregate-chart-configuration.dto';
 import { BarChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/bar-chart-configuration.dto';
@@ -8,6 +9,7 @@ import { IframeConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos
 import { LineChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/line-chart-configuration.dto';
 import { PieChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/pie-chart-configuration.dto';
 import { type WidgetConfigurationInterface } from 'src/engine/core-modules/page-layout/dtos/widget-configuration.interface';
+import { BarChartGroupMode } from 'src/engine/core-modules/page-layout/enums/bar-chart-group-mode.enum';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 
@@ -58,6 +60,13 @@ const validateGraphConfiguration = ({
         throw errors;
       }
 
+      if (
+        isDefined(instance.secondaryAxisGroupByFieldMetadataId) &&
+        !isDefined(instance.groupMode)
+      ) {
+        instance.groupMode = BarChartGroupMode.STACKED;
+      }
+
       return instance;
     }
     case GraphType.LINE: {
@@ -73,6 +82,13 @@ const validateGraphConfiguration = ({
 
       if (errors.length > 0) {
         throw errors;
+      }
+
+      if (
+        isDefined(instance.secondaryAxisGroupByFieldMetadataId) &&
+        !isDefined(instance.isStacked)
+      ) {
+        instance.isStacked = true;
       }
 
       return instance;

@@ -23,6 +23,7 @@ image: /images/user-guide/fields/field.png
 <Warning>
 `npm` won't work, you should use `yarn` instead. Yarn 現已隨 Node.js 發佈，因此您不需要單獨安裝它。
 如果尚未啟用 Yarn，請運行 `corepack enable` 。
+如果尚未啟用 Yarn，請運行 `corepack enable` 。
 </Warning>
 
 </Tab>
@@ -39,6 +40,7 @@ wsl --install
 您現在應該會看到要求重新啟動計算機的提示。 如果沒有，請手動重啟。
 
 重新啟動後，將打開一個 powerShell 窗口並安裝 Ubuntu。 這可能會花一些時間。
+重新啟動後，將打開一個 powerShell 窗口並安裝 Ubuntu。 這可能會花一些時間。
 您將看到提示為您的 Ubuntu 安裝創建用戶名和密碼。
 
 2. 安裝並配置 git
@@ -54,7 +56,9 @@ git config --global user.email "youremail@domain.com"
 3. 安裝 nvm、node.js 和 yarn
 
 <Warning>
+
 使用 `nvm` 安裝正確的 `node` 版本。 `.nvmrc` 確保所有貢獻者使用相同的版本。
+ `.nvmrc` 確保所有貢獻者使用相同的版本。
 </Warning>
 
 ```bash
@@ -63,7 +67,7 @@ sudo apt-get install curl
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 ```
 
-關閉並重新打開終端以使用 nvm。 然後運行以下命令。
+關閉並重新打開終端以使用 nvm。 然後運行以下命令。 然後運行以下命令。
 
 ```bash
 
@@ -85,7 +89,12 @@ corepack enable
 
 <Tabs>
 <Tab title="SSH (Recommended)">
+
 如果尚未設置 SSH 密鑰，您可以在[此處](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh)了解如何設置。
+```bash
+git clone git@github.com:twentyhq/twenty.git
+```
+
 ```bash
 git clone git@github.com:twentyhq/twenty.git
 ```
@@ -254,7 +263,7 @@ Twenty 需要一個 redis 緩存來提供最佳性能
 
 ## 步驟 5：設定環境變數
 
-使用環境變數或 `.env` 文件配置您的項目。 查看更多信息 [這裡](https://docs.twenty.com/l/zh/developers/self-hosting/setup)
+使用環境變數或 `.env` 文件配置您的項目。 使用環境變數或 `.env` 文件配置您的項目。 查看更多信息 [這裡](https://docs.twenty.com/l/zh/developers/self-hosting/setup)
 
 複製 `/front` 和 `/server` 中的 `.env.example` 文件：
 
@@ -278,17 +287,25 @@ Note that `npm` or `pnpm` won't work
 <Tabs>
   <Tab title="Linux">
     根據您的 Linux 發行版，Redis 服務器可能會自動啟動。
+    
+    根據您的 Linux 發行版，Redis 服務器可能會自動啟動。
     如果沒有，請檢查您的發行版的 [Redis 安裝指南](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)。
+  
   </Tab>
   <Tab title="Mac OS">
+  Redis 應已在運行。 
   Redis 應已在運行。 If not, run:
     ```bash
     brew services start redis
     ```  
+  
 </Tab>
   <Tab title="Windows (WSL)">
     根據您的 Linux 發行版，Redis 服務器可能會自動啟動。
+    
+    根據您的 Linux 發行版，Redis 服務器可能會自動啟動。
     如果沒有，請檢查您的發行版的 [Redis 安裝指南](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)。
+  
   </Tab>
 </Tabs>
 
@@ -317,6 +334,7 @@ npx nx start
 **前端**
 
 Twenty 的前端將在 [http://localhost:3001](http://localhost:3001) 運行。
+您可以使用默認的演示帳戶登錄：`tim@apple.dev`（密碼：`tim@apple.dev`）
 您可以使用默認的演示帳戶登錄：`tim@apple.dev`（密碼：`tim@apple.dev`）
 
 **後端**

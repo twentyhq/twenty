@@ -10,6 +10,7 @@ type NavigatePageLayoutCommandMenuProps = {
   commandMenuPage: PageLayoutCommandMenuPage;
   pageTitle?: string;
   pageIcon?: IconComponent;
+  focusTitleInput?: boolean;
 };
 
 export const useNavigatePageLayoutCommandMenu = () => {
@@ -20,6 +21,7 @@ export const useNavigatePageLayoutCommandMenu = () => {
       commandMenuPage,
       pageTitle,
       pageIcon,
+      focusTitleInput = false,
     }: NavigatePageLayoutCommandMenuProps) => {
       navigateCommandMenu({
         page: commandMenuPage,
@@ -29,6 +31,7 @@ export const useNavigatePageLayoutCommandMenu = () => {
         pageIcon: isDefined(pageIcon)
           ? pageIcon
           : getPageLayoutIcon(commandMenuPage),
+        focusTitleInput,
       });
     };
   }, [navigateCommandMenu]);
