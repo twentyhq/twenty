@@ -4,7 +4,7 @@ import { useAggregateGqlFieldsFromRecordIndexGroupAggregates } from '@/object-re
 import { useRecordIndexGroupsAggregatesGroupBy } from '@/object-record/record-index/hooks/useRecordIndexGroupsAggregatesGroupBy';
 import { useSetRecordIndexAggregateDisplayLabel } from '@/object-record/record-index/hooks/useSetRecordIndexAggregateDisplayLabel';
 import { useSetRecordIndexAggregateDisplayValueForRecordGroupValue } from '@/object-record/record-index/hooks/useSetRecordIndexAggregateDisplayValueForRecordGroupValue';
-import { useSetRecordIndexAggregateValueByGroupValue } from '@/object-record/record-index/hooks/useSetRecordIndexAggregateValueByGroupValue';
+
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValue } from '@/object-record/record-index/utils/turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValue';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
@@ -49,9 +49,6 @@ export const RecordIndexGroupAggregateQueryEffect = ({
   const { setRecordIndexAggregateDisplayValueForRecordGroupValue } =
     useSetRecordIndexAggregateDisplayValueForRecordGroupValue();
 
-  const { setRecordIndexAggregateValueByGroupValue } =
-    useSetRecordIndexAggregateValueByGroupValue();
-
   useEffect(() => {
     if (
       !loading &&
@@ -67,10 +64,6 @@ export const RecordIndexGroupAggregateQueryEffect = ({
             recordAggregateGqlField,
           },
         );
-
-      setRecordIndexAggregateValueByGroupValue(
-        recordAggregateValueByGroupValueArray,
-      );
 
       if (isDefined(recordIndexGroupAggregateFieldMetadataItem)) {
         setRecordIndexAggregateDisplayLabel(
@@ -92,7 +85,6 @@ export const RecordIndexGroupAggregateQueryEffect = ({
     data,
     loading,
     error,
-    setRecordIndexAggregateValueByGroupValue,
     setRecordIndexAggregateDisplayValueForRecordGroupValue,
     setRecordIndexAggregateDisplayLabel,
     recordIndexGroupAggregateFieldMetadataItem,
