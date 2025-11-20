@@ -60,7 +60,6 @@ export class GraphqlQueryFilterFieldParser {
         GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       );
     }
-    //TODODO
     const { sql, params } = computeWhereConditionParts({
       operator,
       objectNameSingular,
