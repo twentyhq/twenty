@@ -1,6 +1,8 @@
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
 import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowIdComponentState';
 import { commandMenuWorkflowStepIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowStepIdComponentState';
+import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { TitleInput } from '@/ui/input/components/TitleInput';
@@ -17,6 +19,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
@@ -61,6 +64,8 @@ export const CommandMenuWorkflowStepInfo = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
 
+  const commandMenuPage = useRecoilValue(commandMenuPageState);
+
   const workflowId = useRecoilComponentValue(
     commandMenuWorkflowIdComponentState,
     commandMenuPageInstanceId,
@@ -72,6 +77,10 @@ export const CommandMenuWorkflowStepInfo = ({
   );
 
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
+
+  const isReadonly =
+    commandMenuPage === CommandMenuPages.WorkflowStepView ||
+    commandMenuPage === CommandMenuPages.WorkflowRunStepView;
 
   const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
   const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
@@ -192,7 +201,7 @@ export const CommandMenuWorkflowStepInfo = ({
       <StyledWorkflowStepTitleContainer>
         <TitleInput
           instanceId={`workflow-step-title-${commandMenuPageInstanceId}`}
-          disabled={false}
+          disabled={isReadonly}
           sizeVariant="sm"
           value={title}
           onChange={handleTitleChange}
