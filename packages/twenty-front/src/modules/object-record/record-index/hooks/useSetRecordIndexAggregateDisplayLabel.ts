@@ -19,7 +19,8 @@ export const useSetRecordIndexAggregateDisplayLabel = () => {
       ) => {
         const { aggregateLabel } = getRecordAggregateDisplayLabel({
           aggregateOperation: recordIndexGroupAggregateOperation,
-          aggregateFieldMetadataItem: recordIndexGroupAggregateFieldMetadataItem,
+          aggregateFieldMetadataItem:
+            recordIndexGroupAggregateFieldMetadataItem,
         });
 
         set(recordIndexAggregateValueByGroupValueCallbackState, aggregateLabel);

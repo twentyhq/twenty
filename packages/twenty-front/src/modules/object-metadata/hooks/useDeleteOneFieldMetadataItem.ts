@@ -1,5 +1,6 @@
 import { useDeleteOneFieldMetadataItemMutation } from '~/generated-metadata/graphql';
 
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
@@ -27,6 +28,7 @@ export const useDeleteOneFieldMetadataItem = () => {
 
   const setRecordIndexGroupAggregateOperation = useSetRecoilComponentState(
     recordIndexGroupAggregateOperationComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const [
@@ -34,6 +36,7 @@ export const useDeleteOneFieldMetadataItem = () => {
     setRecordIndexGroupAggregateFieldMetadataItem,
   ] = useRecoilComponentState(
     recordIndexGroupAggregateFieldMetadataItemComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const resetRecordIndexKanbanAggregateOperation = async (
@@ -63,6 +66,7 @@ export const useDeleteOneFieldMetadataItem = () => {
         },
       });
 
+      // TODO: see if we can remove this lin altogether
       await resetRecordIndexKanbanAggregateOperation(idToDelete);
 
       await refreshObjectMetadataItems();
