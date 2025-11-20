@@ -13,7 +13,6 @@ import {
   type ModelConfiguration,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   useFindOneAgentQuery,
@@ -37,8 +36,6 @@ export const WorkflowEditActionAiAgent = ({
   action,
   actionOptions,
 }: WorkflowEditActionAiAgentProps) => {
-  const { getIcon } = useIcons();
-
   const agentId = action.settings.input.agentId;
   const { data: agentData, loading: agentLoading } = useFindOneAgentQuery({
     variables: { id: agentId || '' },
