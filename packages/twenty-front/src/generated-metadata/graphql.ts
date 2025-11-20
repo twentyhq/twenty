@@ -4157,11 +4157,11 @@ export type UpdateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
-  label: Scalars['String'];
+  label?: InputMaybe<Scalars['String']>;
   modelConfiguration?: InputMaybe<Scalars['JSON']>;
-  modelId: Scalars['String'];
-  name: Scalars['String'];
-  prompt: Scalars['String'];
+  modelId?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  prompt?: InputMaybe<Scalars['String']>;
   responseFormat?: InputMaybe<Scalars['JSON']>;
   roleId?: InputMaybe<Scalars['UUID']>;
 };
