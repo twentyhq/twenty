@@ -58,6 +58,10 @@ const StyledContentContainer = styled.div<{
   margin: ${({ theme, isInRightDrawer }) =>
     isInRightDrawer ? theme.spacing(3) : '0'};
   overflow-y: auto;
+
+  .scroll-wrapper-y-enabled {
+    height: auto;
+  }
 `;
 
 type ShowPageSubContainerProps = {
