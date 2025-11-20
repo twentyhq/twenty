@@ -11,11 +11,7 @@ const StyledSection = styled(Section)`
   width: auto;
 `;
 
-export const MergeSettingsTab = ({
-  objectNameSingular,
-}: {
-  objectNameSingular: string;
-}) => {
+export const MergeSettingsTab = () => {
   const { mergeSettings, updatePriorityRecordIndex } =
     useMergeRecordsSettings();
   const { selectedRecords } = useMergeRecordsSelectedRecords();

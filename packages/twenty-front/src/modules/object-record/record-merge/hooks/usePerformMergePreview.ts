@@ -75,6 +75,7 @@ export const usePerformMergePreview = ({
     selectedRecords,
     mergeSettings,
     isMergeInProgress,
+    isGeneratingPreview,
     mergeManyRecords,
     upsertRecordsInStore,
     isInitialized,
