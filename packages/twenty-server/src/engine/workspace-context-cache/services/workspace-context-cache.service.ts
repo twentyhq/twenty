@@ -6,9 +6,12 @@ import crypto from 'crypto';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 import { WORKSPACE_CONTEXT_CACHE_KEY } from 'src/engine/workspace-context-cache/decorators/workspace-context-cache.decorator';
 import { WorkspaceContextLocalCacheEntry } from 'src/engine/workspace-context-cache/types/workspace-context-cache-entry.type';
 import { WorkspaceContextCacheProvider } from 'src/engine/workspace-context-cache/workspace-context-cache-provider.service';
+
+const STALENESS_CHECK_INTERVAL_MS = 30_000;
 
 @Injectable()
 export class WorkspaceContextCacheService implements OnModuleInit {
@@ -20,8 +23,9 @@ export class WorkspaceContextCacheService implements OnModuleInit {
     string,
     WorkspaceContextCacheProvider<unknown>
   >();
-
-  private readonly REDIS_CHECK_INTERVAL_MS = 30_000;
+  private readonly getMemoizer = new PromiseMemoizer<Record<string, unknown>>(
+    STALENESS_CHECK_INTERVAL_MS,
+  );
 
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
@@ -58,27 +62,40 @@ export class WorkspaceContextCacheService implements OnModuleInit {
     workspaceId: string,
     cacheProviderNames: string[],
   ): Promise<T> {
-    const result: Record<string, unknown> = {};
+    const memoKey =
+      `${workspaceId}-${cacheProviderNames.sort().join(',')}` as const;
 
-    const { freshKeys, staleKeys } = this.partitionKeysByFreshness(
-      workspaceId,
-      cacheProviderNames,
+    const result = await this.getMemoizer.memoizePromiseAndExecute(
+      memoKey,
+      async () => {
+        const result: Record<string, unknown> = {};
+
+        const { freshKeys, staleKeys } = this.partitionKeysByStaleness(
+          workspaceId,
+          cacheProviderNames,
+        );
+
+        for (const providerName of freshKeys) {
+          const localKey = this.localCacheKey(workspaceId, providerName);
+          const cached = this.localCache.get(localKey);
+
+          result[providerName] = cached?.data;
+        }
+
+        if (staleKeys.length === 0) {
+          return result;
+        }
+
+        const staleResults = await this.resolveStaleKeys(
+          workspaceId,
+          staleKeys,
+        );
+
+        return { ...result, ...staleResults };
+      },
     );
 
-    for (const providerName of freshKeys) {
-      const localKey = this.localCacheKey(workspaceId, providerName);
-      const cached = this.localCache.get(localKey);
-
-      result[providerName] = cached?.data;
-    }
-
-    if (staleKeys.length === 0) {
-      return result as T;
-    }
-
-    const staleResults = await this.resolveStaleKeys(workspaceId, staleKeys);
-
-    return { ...result, ...staleResults } as T;
+    return result as T;
   }
 
   invalidate(workspaceId: string, cacheProviderNames?: string[]): void {
@@ -101,7 +118,7 @@ export class WorkspaceContextCacheService implements OnModuleInit {
     }
   }
 
-  private partitionKeysByFreshness(
+  private partitionKeysByStaleness(
     workspaceId: string,
     cacheProviderNames: string[],
   ): { freshKeys: string[]; staleKeys: string[] } {
@@ -113,7 +130,7 @@ export class WorkspaceContextCacheService implements OnModuleInit {
       const localKey = this.localCacheKey(workspaceId, providerName);
       const cached = this.localCache.get(localKey);
 
-      if (cached && now - cached.lastCheckedAt < this.REDIS_CHECK_INTERVAL_MS) {
+      if (cached && now - cached.lastCheckedAt < STALENESS_CHECK_INTERVAL_MS) {
         freshKeys.push(providerName);
       } else {
         staleKeys.push(providerName);
