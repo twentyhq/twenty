@@ -11,10 +11,9 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
 import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entity-schema-column.factory';
 import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
-import { WorkspaceContextCacheModule } from 'src/engine/workspace-context-cache/workspace-context-cache.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 
 @Global()
@@ -26,7 +25,6 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
     WorkspaceMetadataCacheModule,
     WorkspacePermissionsCacheModule,
     WorkspaceFeatureFlagsMapCacheModule,
-    WorkspaceContextCacheModule,
     FeatureFlagModule,
     TwentyConfigModule,
     WorkspaceEventEmitterModule,
