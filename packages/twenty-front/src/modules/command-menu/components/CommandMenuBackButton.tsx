@@ -9,6 +9,7 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconChevronLeft } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledNavigationIcon = styled.div`
@@ -50,11 +51,13 @@ export const CommandMenuBackButton = () => {
   return (
     <Dropdown
       clickableComponent={
-        <StyledNavigationIcon
-          onClick={goBackFromCommandMenu}
-          onContextMenu={handleBackButtonContextMenu}
-        >
-          <IconChevronLeft size={theme.icon.size.md} />
+        <StyledNavigationIcon onContextMenu={handleBackButtonContextMenu}>
+          <IconButton
+            Icon={IconChevronLeft}
+            size="small"
+            variant="tertiary"
+            onClick={goBackFromCommandMenu}
+          />
         </StyledNavigationIcon>
       }
       dropdownComponents={

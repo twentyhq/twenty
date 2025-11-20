@@ -4,25 +4,15 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { IconHandMove, IconSparkles } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { FeatureFlagKey } from '~/generated/graphql';
 
-const StyledIconContainer = styled.div`
-  align-items: center;
+const StyledIconButton = styled(IconButton)`
   color: ${({ theme }) => theme.font.color.secondary};
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-`;
-
-const StyledIconSparkles = styled(IconSparkles)`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
-  cursor: pointer;
 `;
 
 export const CommandMenuTopBarRightCornerIcon = () => {
@@ -35,8 +25,6 @@ export const CommandMenuTopBarRightCornerIcon = () => {
 
   const { goBackFromCommandMenu } = useCommandMenuHistory();
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
-
-  const theme = useTheme();
 
   if (isMobile || !isAiEnabled) {
     return null;
@@ -51,9 +39,11 @@ export const CommandMenuTopBarRightCornerIcon = () => {
 
   if (!isOnAskAIPage) {
     return (
-      <StyledIconSparkles
+      <StyledIconButton
         onClick={() => openAskAIPage({ resetNavigationStack: false })}
-        size={theme.icon.size.md}
+        Icon={IconSparkles}
+        variant="tertiary"
+        size="small"
       />
     );
   }
@@ -63,8 +53,11 @@ export const CommandMenuTopBarRightCornerIcon = () => {
   }
 
   return (
-    <StyledIconContainer onClick={goBackFromCommandMenu}>
-      <IconHandMove size={theme.icon.size.md} />
-    </StyledIconContainer>
+    <StyledIconButton
+      Icon={IconHandMove}
+      size="small"
+      variant="tertiary"
+      onClick={goBackFromCommandMenu}
+    />
   );
 };

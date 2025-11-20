@@ -18,6 +18,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { IconX } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledInputContainer = styled.div<{ isMobile: boolean }>`
@@ -138,9 +139,12 @@ export const CommandMenuTopBar = () => {
                 duration: theme.animation.duration.instant,
               }}
             >
-              <StyledNavigationIcon onClick={closeCommandMenu}>
-                <IconX size={theme.icon.size.md} />
-              </StyledNavigationIcon>
+              <IconButton
+                Icon={IconX}
+                size="small"
+                variant="tertiary"
+                onClick={closeCommandMenu}
+              />
             </motion.div>
           )}
         </AnimatePresence>
