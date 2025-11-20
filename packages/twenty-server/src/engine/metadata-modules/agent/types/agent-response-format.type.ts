@@ -8,4 +8,3 @@ export type AgentResponseFormat =
       type: 'json';
       schema: AgentResponseSchema;
     };
-

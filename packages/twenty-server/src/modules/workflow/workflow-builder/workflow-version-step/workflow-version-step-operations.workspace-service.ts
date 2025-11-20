@@ -747,6 +747,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     for (let i = 1; i <= MAX_AGENT_NAME_CONFLICT_ATTEMPTS; i++) {
       const candidateName = `${baseName} ${i}`;
+
       if (!existingNames.has(candidateName)) {
         return candidateName;
       }
