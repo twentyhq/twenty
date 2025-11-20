@@ -2,11 +2,11 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isDefined } from 'twenty-shared/utils';
-import { convertRecordFilterToUrlFilter } from './convertRecordFilterToUrlFilter';
+import { mapRecordFilterToUrlFilter } from './mapRecordFilterToUrlFilter';
 import {
-  serializeRecordFilterGroupToUrl,
+  mapRecordFilterGroupToUrlFilterGroup,
   type UrlFilterGroup,
-} from './serializeRecordFilterGroupToUrl';
+} from './mapRecordFilterGroupToUrlFilterGroup';
 
 const serializeNestedGroups = (
   groups: UrlFilterGroup[],
@@ -59,7 +59,7 @@ export const buildFilterQueryParams = ({
   );
 
   if (isDefined(rootGroup)) {
-    const urlFilterGroup = serializeRecordFilterGroupToUrl({
+    const urlFilterGroup = mapRecordFilterGroupToUrlFilterGroup({
       recordFilterGroupId: rootGroup.id,
       allRecordFilters: recordFilters,
       allRecordFilterGroups: recordFilterGroups,
@@ -97,7 +97,7 @@ export const buildFilterQueryParams = ({
     );
 
     parentlessFilters.forEach((filter) => {
-      const urlFilter = convertRecordFilterToUrlFilter({
+      const urlFilter = mapRecordFilterToUrlFilter({
         recordFilter: filter,
         objectMetadataItem,
       });

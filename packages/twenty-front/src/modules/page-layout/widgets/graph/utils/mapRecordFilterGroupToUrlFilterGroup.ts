@@ -3,9 +3,9 @@ import { type RecordFilterGroup } from '@/object-record/record-filter-group/type
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  convertRecordFilterToUrlFilter,
+  mapRecordFilterToUrlFilter,
   type UrlFilter,
-} from './convertRecordFilterToUrlFilter';
+} from './mapRecordFilterToUrlFilter';
 
 export type UrlFilterGroup = {
   operator: string;
@@ -13,7 +13,7 @@ export type UrlFilterGroup = {
   groups?: UrlFilterGroup[];
 };
 
-export const serializeRecordFilterGroupToUrl = ({
+export const mapRecordFilterGroupToUrlFilterGroup = ({
   recordFilterGroupId,
   allRecordFilters,
   allRecordFilterGroups,
@@ -47,7 +47,7 @@ export const serializeRecordFilterGroupToUrl = ({
   if (filtersInGroup.length > 0) {
     const urlFilters = filtersInGroup
       .map((filter) =>
-        convertRecordFilterToUrlFilter({
+        mapRecordFilterToUrlFilter({
           recordFilter: filter,
           objectMetadataItem,
         }),
@@ -70,7 +70,7 @@ export const serializeRecordFilterGroupToUrl = ({
   if (childGroups.length > 0) {
     const urlChildGroups = childGroups
       .map((childGroup) =>
-        serializeRecordFilterGroupToUrl({
+        mapRecordFilterGroupToUrlFilterGroup({
           recordFilterGroupId: childGroup.id,
           allRecordFilters,
           allRecordFilterGroups,

@@ -10,7 +10,7 @@ export type UrlFilter = {
   subField?: string;
 };
 
-export const convertRecordFilterToUrlFilter = ({
+export const mapRecordFilterToUrlFilter = ({
   recordFilter,
   objectMetadataItem,
 }: {

@@ -10,16 +10,18 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import { useObjectMetadataFromRoute } from '@/views/hooks/internal/useObjectMetadataFromRoute';
 import { type ViewFilter } from '@/views/types/ViewFilter';
-import { parseFilterGroupFromUrl } from '@/views/utils/deserializeFiltersFromUrl';
+import { mapUrlFilterGroupToRecordFilterGroup } from '@/views/utils/deserializeFiltersFromUrl';
 import { type ObjectPermissions, ViewFilterOperand } from 'twenty-shared/types';
 import {
   isDefined,
+  isExpectedSubFieldName,
   relationFilterValueSchemaObject,
 } from 'twenty-shared/utils';
 
@@ -117,11 +119,39 @@ export const useFiltersFromQueryParams = () => {
             filterValueFromURL,
           ] of Object.entries(filterFromURL)) {
             const promise = (async (): Promise<ViewFilter | null> => {
+              // Split field name to handle subfields (e.g., "name.firstName" -> "name" + "firstName")
+              const fieldParts = fieldName.split('.');
+              const baseFieldName = fieldParts[0];
+              const subFieldName =
+                fieldParts.length > 1
+                  ? fieldParts.slice(1).join('.')
+                  : undefined;
+
               const fieldMetadataItem = objectMetadataItem.fields.find(
-                (field) => field.name === fieldName,
+                (field) => field.name === baseFieldName,
               );
 
               if (!fieldMetadataItem) return null;
+
+              if (isDefined(subFieldName) && isNonEmptyString(subFieldName)) {
+                if (!isCompositeFieldType(fieldMetadataItem.type)) {
+                  return null;
+                }
+
+                if (
+                  !isExpectedSubFieldName(
+                    fieldMetadataItem.type as Parameters<
+                      typeof isExpectedSubFieldName
+                    >[0],
+                    subFieldName as Parameters<
+                      typeof isExpectedSubFieldName
+                    >[1],
+                    subFieldName,
+                  )
+                ) {
+                  return null;
+                }
+              }
 
               const relationObjectMetadataNameSingular =
                 fieldMetadataItem.relation?.targetObjectMetadata?.nameSingular;
@@ -214,6 +244,9 @@ export const useFiltersFromQueryParams = () => {
                 value: filterValueAsString,
                 displayValue:
                   relationRecordNames?.join(', ') ?? filterValueAsString,
+                subFieldName: subFieldName
+                  ? (subFieldName as ViewFilter['subFieldName'])
+                  : undefined,
               };
             })();
 
@@ -251,9 +284,9 @@ export const useFiltersFromQueryParams = () => {
         return { recordFilters: [], recordFilterGroups: [] };
       }
 
-      return parseFilterGroupFromUrl({
+      return mapUrlFilterGroupToRecordFilterGroup({
         urlFilterGroup: filterGroupQueryParams as Parameters<
-          typeof parseFilterGroupFromUrl
+          typeof mapUrlFilterGroupToRecordFilterGroup
         >[0]['urlFilterGroup'],
         objectMetadataItem,
       });

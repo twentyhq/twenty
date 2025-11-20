@@ -1,4 +1,5 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -6,7 +7,7 @@ import {
   type RecordFilterGroupLogicalOperator,
   type ViewFilterOperand,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isExpectedSubFieldName } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 type UrlFilter = {
@@ -44,6 +45,22 @@ const convertUrlFilterToRecordFilter = ({
 
   if (!isDefined(fieldMetadataItem)) {
     return null;
+  }
+
+  if (isNonEmptyString(urlFilter.subField)) {
+    if (!isCompositeFieldType(fieldMetadataItem.type)) {
+      return null;
+    }
+
+    if (
+      !isExpectedSubFieldName(
+        fieldMetadataItem.type as Parameters<typeof isExpectedSubFieldName>[0],
+        urlFilter.subField as Parameters<typeof isExpectedSubFieldName>[1],
+        urlFilter.subField,
+      )
+    ) {
+      return null;
+    }
   }
 
   const recordFilter: RecordFilter = {
@@ -133,7 +150,7 @@ const deserializeUrlFilterGroup = ({
   };
 };
 
-export const parseFilterGroupFromUrl = ({
+export const mapUrlFilterGroupToRecordFilterGroup = ({
   urlFilterGroup,
   objectMetadataItem,
 }: {
