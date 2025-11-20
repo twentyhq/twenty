@@ -9,7 +9,9 @@ import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
+import { getAgentIdFromStep } from '@/workflow/utils/getAgentIdFromStep';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
+import { useUpdateAgentLabel } from '@/workflow/workflow-steps/hooks/useUpdateAgentLabel';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
@@ -113,6 +115,9 @@ export const CommandMenuWorkflowStepInfo = ({
       : undefined;
 
   const isTrigger = stepDefinition?.type === 'trigger';
+
+  const agentId = getAgentIdFromStep(stepDefinition);
+  const { updateAgentLabel } = useUpdateAgentLabel(agentId);
   const stepName =
     isDefined(stepDefinition) && isDefined(stepDefinition.definition)
       ? isTrigger
@@ -188,6 +193,10 @@ export const CommandMenuWorkflowStepInfo = ({
           name: title,
         },
       });
+
+      if (isDefined(agentId)) {
+        await updateAgentLabel(title);
+      }
     }
   };
 
