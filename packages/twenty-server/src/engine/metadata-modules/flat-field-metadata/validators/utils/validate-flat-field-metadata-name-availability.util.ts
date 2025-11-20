@@ -1,7 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import {
-  compositeTypeDefinitions
-} from 'twenty-shared/types';
+import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
