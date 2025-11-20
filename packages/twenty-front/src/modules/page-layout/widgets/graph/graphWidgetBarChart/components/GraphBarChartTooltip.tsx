@@ -1,6 +1,5 @@
 import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { getBarChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTooltipData';
 import { getTooltipReferenceFromBarChartElementAnchor } from '@/page-layout/widgets/graph/utils/getTooltipReferenceFromBarChartElementAnchor';
@@ -11,8 +10,6 @@ import { isDefined } from 'twenty-shared/utils';
 type GraphBarChartTooltipProps = {
   containerId: string;
   enrichedKeys: BarChartEnrichedKey[];
-  data: BarChartDataItem[];
-  indexBy: string;
   formatOptions: GraphValueFormatOptions;
   enableGroupTooltip?: boolean;
   layout?: 'vertical' | 'horizontal';
@@ -23,8 +20,6 @@ type GraphBarChartTooltipProps = {
 export const GraphBarChartTooltip = ({
   containerId,
   enrichedKeys,
-  data,
-  indexBy,
   formatOptions,
   enableGroupTooltip = true,
   layout = 'vertical',
@@ -40,8 +35,6 @@ export const GraphBarChartTooltip = ({
     : getBarChartTooltipData({
         datum: tooltipState.datum,
         enrichedKeys,
-        data,
-        indexBy,
         formatOptions,
         enableGroupTooltip,
         layout,
@@ -79,7 +72,7 @@ export const GraphBarChartTooltip = ({
       items={tooltipData.tooltipItems}
       indexLabel={tooltipData.indexLabel}
       highlightedKey={tooltipData.hoveredKey}
-      linkTo={tooltipData.linkTo}
+      onGraphWidgetTooltipClick={tooltipState?.onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     />

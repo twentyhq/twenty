@@ -41,7 +41,7 @@ export const WithClickHint: Story = {
         dotColor: 'green',
       },
     ],
-    linkTo: '/sales/details',
+    onGraphWidgetTooltipClick: () => console.log('Navigate to sales details'),
   },
 };
 
@@ -63,7 +63,8 @@ export const MultipleItems: Story = {
         dotColor: 'purple',
       },
     ],
-    linkTo: '/comparison/details',
+    onGraphWidgetTooltipClick: () =>
+      console.log('Navigate to comparison details'),
     indexLabel: 'February 2',
   },
 };
@@ -87,7 +88,8 @@ export const SuperLongText: Story = {
         dotColor: 'purple',
       },
     ],
-    linkTo: '/financials/q4-2024',
+    onGraphWidgetTooltipClick: () =>
+      console.log('Navigate to financials Q4 2024'),
     indexLabel:
       'Q4 2024 Financial Year End (October - December) - North America Regional Performance Summary',
   },
@@ -217,7 +219,8 @@ export const ManyItemsWithScroll: Story = {
         dotColor: 'lime',
       },
     ],
-    linkTo: '/annual-report/2024',
+    onGraphWidgetTooltipClick: () =>
+      console.log('Navigate to annual report 2024'),
     indexLabel: 'Annual Report 2024',
   },
 };

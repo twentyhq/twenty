@@ -36,6 +36,7 @@ import {
   type SliceTooltipProps,
 } from '@nivo/line';
 import { useCallback, useId, useRef, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
 type CrosshairLayerProps = LineCustomSvgLayerProps<LineSeries>;
@@ -105,23 +106,17 @@ export const GraphWidgetLineChart = ({
   const effectiveMinimumValue = rangeMin ?? calculatedValueRange.minimum;
   const effectiveMaximumValue = rangeMax ?? calculatedValueRange.maximum;
 
-  const {
-    dataMap,
-    enrichedSeries,
-    nivoData,
-    defs,
-    fill,
-    colors,
-    legendItems,
-    hasClickableItems,
-  } = useLineChartData({
-    data,
-    colorRegistry,
-    id,
-    instanceId,
-    enableArea,
-    theme,
-  });
+  const { enrichedSeries, nivoData, defs, fill, colors, legendItems } =
+    useLineChartData({
+      data,
+      colorRegistry,
+      id,
+      instanceId,
+      enableArea,
+      theme,
+    });
+
+  const hasClickableItems = isDefined(onClick);
 
   const setActiveLineTooltip = useSetRecoilComponentState(
     graphWidgetLineTooltipComponentState,
@@ -160,10 +155,6 @@ export const GraphWidgetLineChart = ({
       const offsetLeft = sliceData.nearestSlice.x + LINE_CHART_MARGIN_LEFT;
       const offsetTop = sliceData.mouseY + LINE_CHART_MARGIN_TOP;
 
-      const seriesForLink = dataMap[String(sliceData.closestPoint.seriesId)];
-      const linkTo =
-        seriesForLink?.data?.[sliceData.closestPoint.indexInSeries]?.to;
-
       debouncedHideTooltip.cancel();
       setCrosshairX(sliceData.sliceX);
       setActiveLineTooltip({
@@ -171,10 +162,10 @@ export const GraphWidgetLineChart = ({
         offsetLeft,
         offsetTop,
         highlightedSeriesId: String(sliceData.closestPoint.seriesId),
-        linkTo,
+        onClick: onClick ? () => onClick(sliceData.closestPoint) : undefined,
       });
     },
-    [dataMap, debouncedHideTooltip, setActiveLineTooltip, setCrosshairX],
+    [debouncedHideTooltip, setActiveLineTooltip, setCrosshairX, onClick],
   );
 
   const handleSliceClick = useCallback(

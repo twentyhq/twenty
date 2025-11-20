@@ -2,11 +2,11 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMaximumNumberOfDataPoints.constant';
-import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { sortLineChartSeries } from '@/page-layout/widgets/graph/utils/sortLineChartSeries';
@@ -98,7 +98,10 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
 
     if (!seriesMap.has(seriesKey)) {
       seriesMap.set(seriesKey, new Map());
-      seriesKeyToRawValueMap.set(seriesKey, seriesRawValue as RawDimensionValue);
+      seriesKeyToRawValueMap.set(
+        seriesKey,
+        seriesRawValue as RawDimensionValue,
+      );
     }
 
     seriesMap.get(seriesKey)!.set(xValue, aggregateValue);

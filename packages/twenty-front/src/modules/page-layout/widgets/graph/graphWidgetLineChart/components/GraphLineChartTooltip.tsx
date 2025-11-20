@@ -66,7 +66,7 @@ export const GraphLineChartTooltip = ({
       items={tooltipData.items}
       indexLabel={tooltipData.indexLabel}
       highlightedKey={tooltipState?.highlightedSeriesId}
-      linkTo={tooltipState?.linkTo}
+      onGraphWidgetTooltipClick={tooltipState?.onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     />

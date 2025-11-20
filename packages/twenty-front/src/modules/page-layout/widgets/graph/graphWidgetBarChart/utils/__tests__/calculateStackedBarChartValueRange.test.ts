@@ -1,9 +1,9 @@
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { type BarDatum } from '@nivo/bar';
 import { calculateStackedBarChartValueRange } from '../calculateStackedBarChartValueRange';
 
 describe('calculateStackedBarChartValueRange (essential cases)', () => {
   it('returns minimum=0 and maximum=largest positive stack', () => {
-    const data: BarChartDataItem[] = [
+    const data: BarDatum[] = [
       { cat: 'A', v1: 100, v2: 200, v3: 50 },
       { cat: 'B', v1: 150, v2: 25, v3: 75 },
       { cat: 'C', v1: 300, v2: 10, v3: 0 },
@@ -17,7 +17,7 @@ describe('calculateStackedBarChartValueRange (essential cases)', () => {
   });
 
   it('returns minimum=most negative stack and maximum=0 for all negative values', () => {
-    const data: BarChartDataItem[] = [
+    const data: BarDatum[] = [
       { cat: 'A', v1: -100, v2: -200, v3: 0 },
       { cat: 'B', v1: -50, v2: -25, v3: -75 },
     ];
@@ -30,7 +30,7 @@ describe('calculateStackedBarChartValueRange (essential cases)', () => {
   });
 
   it('sums positives and negatives per index to compute range when values mix', () => {
-    const data: BarChartDataItem[] = [
+    const data: BarDatum[] = [
       { cat: 'A', v1: 100, v2: -60, v3: 20 },
       { cat: 'B', v1: 50, v2: -80, v3: -30 },
       { cat: 'C', v1: 10, v2: 0, v3: 0 },
@@ -54,7 +54,7 @@ describe('calculateStackedBarChartValueRange (essential cases)', () => {
   });
 
   it('ignores missing keys and NaN values', () => {
-    const data: BarChartDataItem[] = [
+    const data: BarDatum[] = [
       { cat: 'A', v1: 10 },
       { cat: 'B', v2: 30 },
       { cat: 'C', v1: NaN as number },

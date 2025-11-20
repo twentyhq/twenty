@@ -6,7 +6,6 @@ import { GraphBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBar
 import { BAR_CHART_MINIMUM_INNER_PADDING } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumInnerPadding';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
@@ -25,6 +24,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   ResponsiveBar,
+  type BarDatum,
   type BarItemProps,
   type ComputedBarDatum,
   type ComputedDatum,
@@ -38,7 +38,7 @@ import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 type GraphWidgetBarChartProps = {
-  data: BarChartDataItem[];
+  data: BarDatum[];
   indexBy: string;
   keys: string[];
   series?: BarChartSeries[];
@@ -54,7 +54,7 @@ type GraphWidgetBarChartProps = {
   rangeMin?: number;
   rangeMax?: number;
   omitNullValues?: boolean;
-  onClick?: (datum: ComputedDatum<BarChartDataItem>) => void;
+  onClick?: (datum: ComputedDatum<BarDatum>) => void;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -121,7 +121,7 @@ export const GraphWidgetBarChart = ({
     seriesLabels,
   });
 
-  const hasClickableItems = data.some((item) => isDefined(item.to));
+  const hasClickableItems = isDefined(onClick);
 
   const hideTooltip = () => setActiveBarTooltip(null);
   const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
@@ -133,17 +133,15 @@ export const GraphWidgetBarChart = ({
   const handleTooltipMouseLeave = debouncedHideTooltip;
 
   const handleBarEnter = useCallback(
-    (
-      datum: ComputedDatum<BarChartDataItem>,
-      event: MouseEvent<SVGRectElement>,
-    ) => {
+    (datum: ComputedDatum<BarDatum>, event: MouseEvent<SVGRectElement>) => {
       debouncedHideTooltip.cancel();
       setActiveBarTooltip({
         datum,
         anchorElement: event.currentTarget,
+        onClick: onClick ? () => onClick(datum) : undefined,
       });
     },
-    [debouncedHideTooltip, setActiveBarTooltip],
+    [debouncedHideTooltip, setActiveBarTooltip, onClick],
   );
 
   const handleBarLeave = useCallback(() => {
@@ -151,7 +149,7 @@ export const GraphWidgetBarChart = ({
   }, [debouncedHideTooltip]);
 
   const handleBarClick = useCallback(
-    (datum: ComputedDatum<BarChartDataItem>) => {
+    (datum: ComputedDatum<BarDatum>) => {
       onClick?.(datum);
     },
     [onClick],
@@ -175,7 +173,7 @@ export const GraphWidgetBarChart = ({
     });
 
   const BarItemWithContext = useMemo(
-    () => (props: BarItemProps<BarChartDataItem>) => (
+    () => (props: BarItemProps<BarDatum>) => (
       <CustomBarItem
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
@@ -193,7 +191,7 @@ export const GraphWidgetBarChart = ({
   const TotalsLayer = ({
     bars,
   }: {
-    bars: readonly ComputedBarDatum<BarChartDataItem>[];
+    bars: readonly ComputedBarDatum<BarDatum>[];
   }) => (
     <CustomTotalsLayer
       bars={bars}
@@ -295,8 +293,6 @@ export const GraphWidgetBarChart = ({
       <GraphBarChartTooltip
         containerId={id}
         enrichedKeys={enrichedKeys}
-        data={data}
-        indexBy={indexBy}
         formatOptions={formatOptions}
         enableGroupTooltip={groupMode === 'stacked'}
         layout={layout}

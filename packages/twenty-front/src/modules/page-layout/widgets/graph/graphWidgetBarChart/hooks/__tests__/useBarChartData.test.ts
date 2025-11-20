@@ -1,6 +1,6 @@
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
+import { type BarDatum } from '@nivo/bar';
 import { renderHook } from '@testing-library/react';
 import { useBarChartData } from '../useBarChartData';
 
@@ -56,7 +56,7 @@ describe('useBarChartData', () => {
     },
   };
 
-  const mockData: BarChartDataItem[] = [
+  const mockData: BarDatum[] = [
     { month: 'Jan', sales: 100, costs: 80 },
     { month: 'Feb', sales: 120, costs: 90 },
     { month: 'Mar', sales: 150, costs: 100 },

@@ -1,16 +1,12 @@
 import { GraphDataLabel } from '@/page-layout/widgets/graph/components/GraphDataLabel';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartLabelData } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLabelData';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { computeBarChartGroupedLabels } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartGroupedLabels';
 import { computeBarChartStackedLabels } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartStackedLabels';
 import { type GraphLabelData } from '@/page-layout/widgets/graph/types/GraphLabelData';
-import { type BarCustomLayerProps } from '@nivo/bar';
+import { type BarCustomLayerProps, type BarDatum } from '@nivo/bar';
 
-type CustomTotalsLayerProps = Pick<
-  BarCustomLayerProps<BarChartDataItem>,
-  'bars'
-> & {
+type CustomTotalsLayerProps = Pick<BarCustomLayerProps<BarDatum>, 'bars'> & {
   formatValue?: (value: number) => string;
   offset?: number;
   layout?: BarChartLayout;

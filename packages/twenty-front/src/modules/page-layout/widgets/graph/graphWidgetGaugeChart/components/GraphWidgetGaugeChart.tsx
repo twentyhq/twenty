@@ -120,12 +120,7 @@ export const GraphWidgetGaugeChart = ({
 
   const renderTooltip = () => {
     const tooltipData = createTooltipData();
-    return (
-      <GraphWidgetTooltip
-        items={[tooltipData.tooltipItem]}
-        linkTo={tooltipData.linkTo}
-      />
-    );
+    return <GraphWidgetTooltip items={[tooltipData.tooltipItem]} />;
   };
 
   return (

@@ -1,9 +1,8 @@
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartLabelData } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLabelData';
-import { type ComputedBarDatum } from '@nivo/bar';
+import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
 
 export const computeBarChartGroupedLabels = (
-  bars: readonly ComputedBarDatum<BarChartDataItem>[],
+  bars: readonly ComputedBarDatum<BarDatum>[],
 ): BarChartLabelData[] => {
   return bars.map((bar) => {
     const value = Number(bar.data.value);

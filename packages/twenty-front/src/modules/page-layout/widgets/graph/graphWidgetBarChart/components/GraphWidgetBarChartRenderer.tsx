@@ -2,10 +2,9 @@ import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/Char
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { buildChartDrilldownUrl } from '@/page-layout/widgets/graph/utils/buildChartDrilldownUrl';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
-import { type ComputedDatum } from '@nivo/bar';
+import { type BarDatum, type ComputedDatum } from '@nivo/bar';
 import { lazy, Suspense, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -62,7 +61,7 @@ export const GraphWidgetBarChartRenderer = ({
   );
 
   const handleBarClick = useCallback(
-    (datum: ComputedDatum<BarChartDataItem>) => {
+    (datum: ComputedDatum<BarDatum>) => {
       const displayValue = datum.data[indexBy];
       const rawValue = dimensionMetadata.get(displayValue as string);
 

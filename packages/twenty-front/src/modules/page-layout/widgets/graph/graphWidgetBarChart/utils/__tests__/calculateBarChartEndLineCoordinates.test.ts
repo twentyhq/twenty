@@ -1,11 +1,10 @@
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
-import { type ComputedBarDatum } from '@nivo/bar';
+import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
 import { calculateBarChartEndLineCoordinates } from '../calculateBarChartEndLineCoordinates';
 describe('calculateBarChartEndLineCoordinates', () => {
   const createMockBar = (
-    overrides?: Partial<ComputedBarDatum<BarChartDataItem>>,
-  ): ComputedBarDatum<BarChartDataItem> =>
+    overrides?: Partial<ComputedBarDatum<BarDatum>>,
+  ): ComputedBarDatum<BarDatum> =>
     ({
       x: 100,
       y: 50,
@@ -17,13 +16,13 @@ describe('calculateBarChartEndLineCoordinates', () => {
         value: 100,
         index: 0,
         indexValue: 'Q1',
-        data: { Q1: 100 } as BarChartDataItem,
+        data: { Q1: 100 } as BarDatum,
         formattedValue: '100',
         hidden: false,
       },
       label: 'Sales',
       ...overrides,
-    }) as ComputedBarDatum<BarChartDataItem>;
+    }) as ComputedBarDatum<BarDatum>;
   describe('vertical layout', () => {
     it('should calculate horizontal line coordinates at the top of vertical bars', () => {
       const mockBar = createMockBar();

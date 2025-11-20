@@ -1,10 +1,10 @@
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { calculateMaxTickLabelLength } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateMaxTickLabelLength';
 import { calculateWidthPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateWidthPerTick';
 import { computeBarChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartCategoryTickValues';
 import { computeBarChartValueTickCount } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartValueTickCount';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
+import { type BarDatum } from '@nivo/bar';
 
 const MAX_LEFT_AXIS_LABEL_LENGTH = 10;
 
@@ -27,7 +27,7 @@ export const getBarChartTickConfig = ({
 }: {
   width: number;
   height: number;
-  data: BarChartDataItem[];
+  data: BarDatum[];
   indexBy: string;
   xAxisLabel?: string;
   yAxisLabel?: string;

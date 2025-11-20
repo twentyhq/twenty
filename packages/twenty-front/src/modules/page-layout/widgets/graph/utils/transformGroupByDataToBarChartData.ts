@@ -3,7 +3,6 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { getGroupByQueryName } from '@/page-layout/utils/getGroupByQueryName';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
@@ -12,6 +11,7 @@ import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGr
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { transformOneDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/utils/transformOneDimensionalGroupByToBarChartData';
 import { transformTwoDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/utils/transformTwoDimensionalGroupByToBarChartData';
+import { type BarDatum } from '@nivo/bar';
 import { isDefined } from 'twenty-shared/utils';
 import { GraphType } from '~/generated-metadata/graphql';
 import {
@@ -27,7 +27,7 @@ type TransformGroupByDataToBarChartDataParams = {
 };
 
 type TransformGroupByDataToBarChartDataResult = {
-  data: BarChartDataItem[];
+  data: BarDatum[];
   indexBy: string;
   keys: string[];
   series: BarChartSeries[];

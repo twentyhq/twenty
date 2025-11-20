@@ -2,7 +2,6 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
@@ -12,6 +11,7 @@ import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDi
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { getSortedKeys } from '@/page-layout/widgets/graph/utils/getSortedKeys';
 import { sortBarChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/graph/utils/sortBarChartDataBySecondaryDimensionSum';
+import { type BarDatum } from '@nivo/bar';
 import { isDefined } from 'twenty-shared/utils';
 import {
   BarChartGroupMode,
@@ -30,7 +30,7 @@ type TransformTwoDimensionalGroupByToBarChartDataParams = {
 };
 
 type TransformTwoDimensionalGroupByToBarChartDataResult = {
-  data: BarChartDataItem[];
+  data: BarDatum[];
   indexBy: string;
   keys: string[];
   series: BarChartSeries[];
@@ -53,7 +53,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     subFieldName: primaryAxisSubFieldName ?? undefined,
   });
 
-  const dataMap = new Map<string, BarChartDataItem>();
+  const dataMap = new Map<string, BarDatum>();
   const xValues = new Set<string>();
   const yValues = new Set<string>();
   const yFormattedToRawMap = new Map<string, RawDimensionValue>();
