@@ -129,8 +129,10 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
           message={
             currentGraphType === GraphType.LINE
               ? t`Max ${LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart. Consider adding a filter`
-              : t`Max ${BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter`
+              : t`Undisplayed data: max ${BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart.`
           }
+          tooltipMessage={t`Consider adding a filter to display more data.`}
+          variant="warning"
         />
       )}
       {chartSettings.map((group) => {
