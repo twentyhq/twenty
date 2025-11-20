@@ -1,9 +1,7 @@
-import { findManyFieldsMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata-query-factory.util';
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
@@ -11,6 +9,7 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 
 const allTestsUseCases: EachTestingContext<{
   nameSingular: string;
@@ -212,7 +211,7 @@ const findFieldMetadata = async ({
 }: {
   fieldMetadataId: string;
 }) => {
-  const operation = findManyFieldsMetadataQueryFactory({
+  const { fields } = await findManyFieldsMetadata({
     gqlFields: `
       id
       name
@@ -224,9 +223,8 @@ const findFieldMetadata = async ({
       filter: { id: { eq: fieldMetadataId } },
       paging: { first: 1 },
     },
+    expectToFail: false,
   });
-  const fields = await makeMetadataAPIRequest(operation);
-  const field = fields.body.data.fields.edges?.[0]?.node;
 
-  return field;
+  return fields[0]?.node;
 };
