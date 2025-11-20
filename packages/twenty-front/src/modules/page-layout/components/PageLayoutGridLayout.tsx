@@ -7,6 +7,8 @@ import {
   PAGE_LAYOUT_CONFIG,
   type PageLayoutBreakpoint,
 } from '@/page-layout/constants/PageLayoutBreakpoints';
+import { PAGE_LAYOUT_GRID_MARGIN } from '@/page-layout/constants/PageLayoutGridMargin';
+import { PAGE_LAYOUT_GRID_ROW_HEIGHT } from '@/page-layout/constants/PageLayoutGridRowHeight';
 import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
@@ -153,10 +155,10 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
           layouts={layouts}
           breakpoints={PAGE_LAYOUT_CONFIG.breakpoints}
           cols={PAGE_LAYOUT_CONFIG.columns}
-          rowHeight={55}
+          rowHeight={PAGE_LAYOUT_GRID_ROW_HEIGHT}
           maxCols={12}
           containerPadding={[0, 0]}
-          margin={[8, 8]}
+          margin={[PAGE_LAYOUT_GRID_MARGIN, PAGE_LAYOUT_GRID_MARGIN]}
           isDraggable={isPageLayoutInEditMode}
           isResizable={isPageLayoutInEditMode}
           draggableHandle=".drag-handle"

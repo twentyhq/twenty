@@ -1,8 +1,11 @@
+import { PAGE_LAYOUT_GRID_MARGIN } from '@/page-layout/constants/PageLayoutGridMargin';
+import { PAGE_LAYOUT_GRID_ROW_HEIGHT } from '@/page-layout/constants/PageLayoutGridRowHeight';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
+import { getScrollWrapperInstanceIdFromPageLayoutId } from '@/page-layout/utils/getScrollWrapperInstanceIdFromPageLayoutId';
 import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -39,7 +42,7 @@ export const useDuplicatePageLayoutWidget = (
   );
 
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement(
-    `scroll-wrapper-page-layout-${pageLayoutId}`,
+    getScrollWrapperInstanceIdFromPageLayoutId(pageLayoutId),
   );
 
   const duplicateWidget = useRecoilCallback(
@@ -122,9 +125,10 @@ export const useDuplicatePageLayoutWidget = (
         requestAnimationFrame(() => {
           const { scrollWrapperElement } = getScrollWrapperElement();
           if (isDefined(scrollWrapperElement)) {
-            const rowHeight = 55;
-            const marginY = 8;
-            const scrollPosition = newLayout.y * (rowHeight + marginY);
+            const scrollPosition =
+              newLayout.y *
+              (PAGE_LAYOUT_GRID_ROW_HEIGHT + PAGE_LAYOUT_GRID_MARGIN);
+
             scrollWrapperElement.scrollTo({
               top: scrollPosition,
               behavior: 'smooth',
