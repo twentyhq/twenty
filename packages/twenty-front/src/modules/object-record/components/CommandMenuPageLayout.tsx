@@ -1,4 +1,5 @@
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
+import { COMMAND_MENU_SIDE_PANEL_WIDTH } from '@/command-menu/constants/CommandMenuSidePanelWidth';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
@@ -14,8 +15,6 @@ import { useIsMobile } from 'twenty-ui/utilities';
 type CommandMenuPageLayoutProps = {
   children: ReactNode;
 };
-
-const DEFAULT_SIDE_PANEL_WIDTH = 400;
 
 const StyledLayout = styled.div`
   display: flex;
@@ -47,7 +46,7 @@ const StyledSidePanel = styled(motion.aside)`
   height: 100%;
   overflow: hidden;
   position: relative;
-  width: ${DEFAULT_SIDE_PANEL_WIDTH}px;
+  width: ${COMMAND_MENU_SIDE_PANEL_WIDTH}px;
   box-sizing: border-box;
 `;
 
@@ -116,7 +115,7 @@ export const CommandMenuPageLayout = ({
       <StyledSidePanelWrapper
         initial={false}
         animate={{
-          width: isCommandMenuOpened ? DEFAULT_SIDE_PANEL_WIDTH : 0,
+          width: isCommandMenuOpened ? COMMAND_MENU_SIDE_PANEL_WIDTH : 0,
           marginLeft: isCommandMenuOpened ? theme.spacing(2) : 0,
         }}
         transition={{
@@ -128,7 +127,7 @@ export const CommandMenuPageLayout = ({
         <StyledSidePanel
           initial={false}
           animate={{
-            x: isCommandMenuOpened ? 0 : DEFAULT_SIDE_PANEL_WIDTH,
+            x: isCommandMenuOpened ? 0 : COMMAND_MENU_SIDE_PANEL_WIDTH,
           }}
           transition={{
             duration: theme.animation.duration.normal,

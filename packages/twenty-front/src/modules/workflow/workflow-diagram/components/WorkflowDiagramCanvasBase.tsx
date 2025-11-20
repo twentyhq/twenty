@@ -1,3 +1,4 @@
+import { COMMAND_MENU_SIDE_PANEL_WIDTH } from '@/command-menu/constants/CommandMenuSidePanelWidth';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
@@ -261,22 +262,29 @@ export const WorkflowDiagramCanvasBase = ({
 
         setWorkflowDiagramWaitingNodesDimensions(false);
 
-        let containerWidth = containerRef.current.offsetWidth;
+        const baseContainerWidth = containerRef.current.offsetWidth;
+        const hasViewportBeenMoved = currentViewport.x !== 0;
+
+        let adjustedContainerWidth = baseContainerWidth;
         if (isCommandMenuOpened) {
-          containerWidth = containerRef.current.offsetWidth - 400;
-        } else if (currentViewport.x !== 0) {
-          containerWidth = containerRef.current.offsetWidth + 400;
+          adjustedContainerWidth =
+            baseContainerWidth - COMMAND_MENU_SIDE_PANEL_WIDTH;
+        } else if (hasViewportBeenMoved) {
+          adjustedContainerWidth =
+            baseContainerWidth + COMMAND_MENU_SIDE_PANEL_WIDTH;
         }
 
         const flowBounds = reactflow.getNodesBounds(nodes);
+        const centeredXPosition =
+          adjustedContainerWidth / 2 - flowBounds.width / 2;
 
         reactflow.setViewport(
           {
             ...currentViewport,
-            x: containerWidth / 2 - flowBounds.width / 2,
+            x: centeredXPosition,
             zoom: defaultFitViewOptions.maxZoom,
           },
-          { duration: currentViewport.x === 0 ? 0 : 300 },
+          { duration: hasViewportBeenMoved ? 300 : 0 },
         );
       },
     [reactflow, setWorkflowDiagramWaitingNodesDimensions],
