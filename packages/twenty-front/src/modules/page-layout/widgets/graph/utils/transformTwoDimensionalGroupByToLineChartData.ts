@@ -7,6 +7,7 @@ import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLin
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { buildPrimaryDimensionMetadata } from '@/page-layout/widgets/graph/utils/buildPrimaryDimensionMetadata';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { sortLineChartSeries } from '@/page-layout/widgets/graph/utils/sortLineChartSeries';
@@ -43,7 +44,13 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
   const seriesMap = new Map<string, Map<string, number>>();
   const allXValues: string[] = [];
   const xValueSet = new Set<string>();
-  const dimensionMetadata = new Map<string, RawDimensionValue>();
+  const dimensionMetadata = buildPrimaryDimensionMetadata({
+    groupByRawResults: rawResults,
+    primaryAxisGroupByField: groupByFieldX,
+    primaryAxisDateGranularity:
+      configuration.primaryAxisDateGranularity ?? undefined,
+    primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
+  });
   let hasTooManyGroups = false;
 
   rawResults.forEach((result) => {
@@ -71,7 +78,6 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
     if (isNewX) {
       xValueSet.add(xValue);
       allXValues.push(xValue);
-      dimensionMetadata.set(xValue, dimensionValues[0] as RawDimensionValue);
     }
 
     const seriesRawValue = dimensionValues[1];

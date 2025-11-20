@@ -6,6 +6,7 @@ import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { buildPrimaryDimensionMetadata } from '@/page-layout/widgets/graph/utils/buildPrimaryDimensionMetadata';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
@@ -56,7 +57,14 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
   const dataMap = new Map<string, BarDatum>();
   const xValues = new Set<string>();
   const yValues = new Set<string>();
-  const dimensionMetadata = new Map<string, RawDimensionValue>();
+  const dimensionMetadata = buildPrimaryDimensionMetadata({
+    groupByRawResults: rawResults,
+    primaryAxisGroupByField: groupByFieldX,
+    primaryAxisDateGranularity:
+      configuration.primaryAxisDateGranularity ?? undefined,
+    primaryAxisGroupBySubFieldName:
+      configuration.primaryAxisGroupBySubFieldName ?? undefined,
+  });
 
   let hasTooManyGroups = false;
 

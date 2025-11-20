@@ -8,6 +8,7 @@ import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidget
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { buildPrimaryDimensionMetadata } from '@/page-layout/widgets/graph/utils/buildPrimaryDimensionMetadata';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -44,7 +45,13 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
   );
 
-  const dimensionMetadata = new Map<string, RawDimensionValue>();
+  const dimensionMetadata = buildPrimaryDimensionMetadata({
+    groupByRawResults: limitedResults,
+    primaryAxisGroupByField: groupByFieldX,
+    primaryAxisDateGranularity:
+      configuration.primaryAxisDateGranularity ?? undefined,
+    primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
+  });
 
   const data: LineChartDataPoint[] = limitedResults
     .map((result) => {
@@ -73,11 +80,6 @@ export const transformOneDimensionalGroupByToLineChartData = ({
         aggregateOperationFromRawResult: aggregateOperation,
         objectMetadataItem,
       });
-
-      // Store dimension metadata
-      if (isDefined(dimensionValues?.[0])) {
-        dimensionMetadata.set(xValue, dimensionValues[0] as RawDimensionValue);
-      }
 
       return {
         x: xValue,
