@@ -64,6 +64,9 @@ export class CalendarEventImportErrorHandlerService {
           workspaceId,
         );
         break;
+      case CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR:
+        await this.handleSyncCursorErrorException(calendarChannel, workspaceId);
+        break;
       case CalendarEventImportDriverExceptionCode.UNKNOWN:
       case CalendarEventImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
       default:
@@ -74,6 +77,20 @@ export class CalendarEventImportErrorHandlerService {
         );
         break;
     }
+  }
+
+  private async handleSyncCursorErrorException(
+    calendarChannel: Pick<CalendarChannelWorkspaceEntity, 'id'>,
+    workspaceId: string,
+  ): Promise<void> {
+    this.logger.log(
+      `CalendarChannelId: ${calendarChannel.id} - Sync cursor error, resetting and rescheduling`,
+    );
+
+    await this.calendarChannelSyncStatusService.resetAndScheduleCalendarEventListFetch(
+      [calendarChannel.id],
+      workspaceId,
+    );
   }
 
   private async handleTemporaryException(
