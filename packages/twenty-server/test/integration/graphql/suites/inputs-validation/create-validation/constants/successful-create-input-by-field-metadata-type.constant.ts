@@ -145,6 +145,14 @@ export const successfulCreateInputByFieldMetadataType: {
         return record.rawJsonField === null;
       },
     },
+    {
+      input: {
+        rawJsonField: '{"key": "value"}',
+      },
+      validateInput: (record: Record<string, any>) => {
+        return record.rawJsonField.key === 'value';
+      },
+    },
   ],
   [FieldMetadataType.ARRAY]: [
     {

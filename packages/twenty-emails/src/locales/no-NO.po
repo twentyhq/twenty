@@ -136,7 +136,7 @@ msgstr "Tilbakestill passordet ditt 🗝"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
-msgstr ""
+msgstr "Opprett ditt passord 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

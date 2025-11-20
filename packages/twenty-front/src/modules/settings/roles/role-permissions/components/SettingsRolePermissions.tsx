@@ -13,11 +13,13 @@ const StyledRolePermissionsContainer = styled.div`
 type SettingsRolePermissionsProps = {
   roleId: string;
   isEditable: boolean;
+  fromAgentId?: string;
 };
 
 export const SettingsRolePermissions = ({
   roleId,
   isEditable,
+  fromAgentId,
 }: SettingsRolePermissionsProps) => {
   return (
     <StyledRolePermissionsContainer>
@@ -27,7 +29,7 @@ export const SettingsRolePermissions = ({
       />
       <SettingsRolePermissionsObjectLevelSection
         roleId={roleId}
-        isEditable={isEditable}
+        fromAgentId={fromAgentId}
       />
       <SettingsRolePermissionsSettingsSection
         roleId={roleId}

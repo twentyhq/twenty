@@ -41,6 +41,7 @@ import {
 import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/parse-group-by-args.util';
 import { formatColumnNameAsAlias } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/remove-quote.util';
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
+import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -206,6 +207,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         selectedFieldsResult: args.selectedFieldsResult,
         queryRunnerContext,
         orderByForRecords: args.orderByForRecords ?? [],
+        groupLimit: args.limit,
       });
     }
 
@@ -213,6 +215,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       queryBuilder,
       groupByDefinitions,
       selectedFieldsResult: args.selectedFieldsResult,
+      groupLimit: args.limit,
     });
   }
 
@@ -351,11 +354,17 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     queryBuilder,
     groupByDefinitions,
     selectedFieldsResult,
+    groupLimit,
   }: {
     queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     groupByDefinitions: GroupByDefinition[];
     selectedFieldsResult: GraphqlQuerySelectedFieldsResult;
+    groupLimit?: number;
   }): Promise<CommonGroupByOutputItem[]> {
+    const effectiveGroupLimit = getGroupLimit(groupLimit);
+
+    queryBuilder.limit(effectiveGroupLimit);
+
     const result = await queryBuilder.getRawMany();
 
     return formatResultWithGroupByDimensionValues({

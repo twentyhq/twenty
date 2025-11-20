@@ -14,6 +14,7 @@ import { type GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/gr
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { type GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.types';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
+import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -22,7 +23,6 @@ import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/reposito
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
-const GROUPS_LIMIT = 50;
 const RECORDS_PER_GROUP_LIMIT = 10;
 const RELATIONS_PER_RECORD_LIMIT = 5;
 const SUB_QUERY_PREFIX = 'sub_query_';
@@ -42,6 +42,7 @@ export class GroupByWithRecordsService {
     selectedFieldsResult,
     queryRunnerContext,
     orderByForRecords,
+    groupLimit,
   }: {
     queryBuilderWithGroupBy: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     queryBuilderWithFiltersAndWithoutGroupBy: WorkspaceSelectQueryBuilder<ObjectLiteral>;
@@ -49,9 +50,12 @@ export class GroupByWithRecordsService {
     selectedFieldsResult: GraphqlQuerySelectedFieldsResult;
     queryRunnerContext: CommonExtendedQueryRunnerContext;
     orderByForRecords: ObjectRecordOrderBy;
+    groupLimit?: number;
   }): Promise<CommonGroupByOutputItem[]> {
+    const effectiveGroupLimit = getGroupLimit(groupLimit);
+
     const groupsResult = await queryBuilderWithGroupBy
-      .limit(GROUPS_LIMIT)
+      .limit(effectiveGroupLimit)
       .getRawMany();
 
     if (groupsResult.length === 0) {

@@ -19,6 +19,7 @@ import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/c
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   FieldMetadataType,
+  OrderByDirection,
   RelationType,
   ViewFilterOperand,
 } from 'twenty-shared/types';
@@ -89,6 +90,8 @@ describe('group-by resolver (integration)', () => {
           objectMetadataSingularName: 'person',
           objectMetadataPluralName: 'people',
           groupBy: [{ city: true }],
+          orderBy: [{ city: OrderByDirection.AscNullsFirst }], // needed for City groups to be in 300 first groups
+          limit: 300,
         }),
       );
 
@@ -115,6 +118,49 @@ describe('group-by resolver (integration)', () => {
 
       expect(groupWithCityB.groupByDimensionValues).toEqual([cityB]);
       expect(groupWithCityB.totalCount).toEqual(2);
+    });
+
+    it('limits the number of groups when limit argument is provided', async () => {
+      const cityA = 'City A';
+      const cityB = 'City B';
+      const cityC = 'City C';
+
+      await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: PERSON_GQL_FIELDS,
+          data: { id: testPersonId, city: cityA },
+        }),
+      );
+      await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: PERSON_GQL_FIELDS,
+          data: { id: testPerson2Id, city: cityB },
+        }),
+      );
+      await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: PERSON_GQL_FIELDS,
+          data: { id: testPerson3Id, city: cityC },
+        }),
+      );
+
+      const response = await makeGraphqlAPIRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          groupBy: [{ city: true }],
+          limit: 2,
+        }),
+      );
+
+      const groups = response.body.data.peopleGroupBy;
+
+      expect(groups).toBeDefined();
+      expect(Array.isArray(groups)).toBe(true);
+      expect(groups).toHaveLength(2);
     });
 
     it('computes aggregated metrics on date time field', async () => {
@@ -154,7 +200,9 @@ describe('group-by resolver (integration)', () => {
           objectMetadataSingularName: 'person',
           objectMetadataPluralName: 'people',
           groupBy: [{ city: true }],
+          orderBy: [{ city: OrderByDirection.AscNullsFirst }], // needed for City groups to be in 300 first groups
           gqlFields: 'minCreatedAt',
+          limit: 300,
         }),
       );
 
@@ -604,6 +652,8 @@ describe('group-by resolver (integration)', () => {
           objectMetadataPluralName: 'people',
           groupBy: [{ city: true }],
           viewId,
+          orderBy: [{ city: OrderByDirection.AscNullsFirst }], // needed for City groups to be in 300 first groups
+          limit: 300,
         }),
       );
 

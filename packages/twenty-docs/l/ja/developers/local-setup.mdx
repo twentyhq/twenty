@@ -21,7 +21,10 @@ Twentyをインストールして使用する前に、以下をコンピュー�
 - [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
 
 <Warning>
+`npm`は使えません。代わりに`yarn`を使用してください。 
 `npm`は使えません。代わりに`yarn`を使用してください。 Yarnは今Node.jsに同梱されているので、別途インストールする必要はありません。
+Yarnを有効にするには、まだしていない場合は`corepack enable`を実行するだけです。
+
 Yarnを有効にするには、まだしていない場合は`corepack enable`を実行するだけです。
 </Warning>
 
@@ -36,8 +39,9 @@ Yarnを有効にするには、まだしていない場合は`corepack enable`�
 wsl --install
 ```
 
-コンピュータを再起動するプロンプトが表示されるはずです。 表示されなければ、手動で再起動してください。
+コンピュータを再起動するプロンプトが表示されるはずです。 表示されなければ、手動で再起動してください。 表示されなければ、手動で再起動してください。
 
+再起動後、PowerShellウィンドウが開き、Ubuntuをインストールします。 これには少し時間がかかるかもしれません。
 再起動後、PowerShellウィンドウが開き、Ubuntuをインストールします。 これには少し時間がかかるかもしれません。
 Ubuntuインストールのためにユーザー名とパスワードを設定するプロンプトが表示されます。
 
@@ -54,7 +58,9 @@ git config --global user.email "youremail@domain.com"
 3. nvm、node.js、yarnをインストールする
 
 <Warning>
+
 `nvm`を使用して正しい`node`バージョンをインストールします。 `.nvmrc`は、すべての寄稿者が同じバージョンを使用することを保証します。
+ `.nvmrc`は、すべての寄稿者が同じバージョンを使用することを保証します。
 </Warning>
 
 ```bash
@@ -63,7 +69,7 @@ sudo apt-get install curl
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 ```
 
-nvmを使用できるようにするには、ターミナルを閉じて再度開いてください。 次のコマンドを実行します。
+nvmを使用できるようにするには、ターミナルを閉じて再度開いてください。 次のコマンドを実行します。 次のコマンドを実行します。
 
 ```bash
 
@@ -85,7 +91,12 @@ corepack enable
 
 <Tabs>
 <Tab title="SSH (Recommended)">
+
 SSHキーの設定をまだ行っていない場合は、[こちら](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh)で学べます。
+```bash
+git clone git@github.com:twentyhq/twenty.git
+```
+
 ```bash
 git clone git@github.com:twentyhq/twenty.git
 ```
@@ -254,7 +265,7 @@ Twentyは、最良のパフォーマンスを提供するためにredisキャッ
 
 ## ステップ5：環境変数をセットアップします
 
-環境変数や`.env`ファイルを使ってプロジェクトを設定します。 詳細は[こちら](https://docs.twenty.com/l/ja/developers/self-hosting/setup)。
+環境変数や`.env`ファイルを使ってプロジェクトを設定します。 詳細は[こちら](https://docs.twenty.com/l/ja/developers/self-hosting/setup)。 詳細は[こちら](https://docs.twenty.com/l/ja/developers/self-hosting/setup)。
 
 `/front`と`/server`内の`.env.example`ファイルをコピーします：
 
@@ -278,17 +289,25 @@ yarn
 <Tabs>
   <Tab title="Linux">
     Linuxディストリビューションによっては、Redisサーバーが自動的に開始されるかもしれません。
+    
+    Linuxディストリビューションによっては、Redisサーバーが自動的に開始されるかもしれません。
     そうでない場合は、[Redisインストールガイド](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)を参照し、お使いのディストリビューションに合わせて確認してください。
+  
   </Tab>
   <Tab title="Mac OS">
+  Redisはすでに稼働しているはずです。 
   Redisはすでに稼働しているはずです。 If not, run:
     ```bash
     brew services start redis
     ```  
+  
 </Tab>
   <Tab title="Windows (WSL)">
     Linuxディストリビューションによっては、Redisサーバーが自動的に開始されるかもしれません。
+    
+    Linuxディストリビューションによっては、Redisサーバーが自動的に開始されるかもしれません。
     そうでない場合は、[Redisインストールガイド](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)を参照し、お使いのディストリビューションに合わせて確認してください。
+  
   </Tab>
 </Tabs>
 
@@ -316,6 +335,7 @@ npx nx start
 
 **フロントエンド**
 
+Twentyのフロントエンドは[http://localhost:3001](http://localhost:3001)で稼働しています。
 Twentyのフロントエンドは[http://localhost:3001](http://localhost:3001)で稼働しています。
 デフォルトのデモアカウントを使用してログインできます: `tim@apple.dev` (パスワード: `tim@apple.dev`)
 
