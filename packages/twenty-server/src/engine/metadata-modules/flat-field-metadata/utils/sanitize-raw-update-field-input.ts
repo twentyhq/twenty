@@ -13,6 +13,7 @@ import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-mod
 import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
+import { v4 } from 'uuid';
 
 type SanitizeRawUpdateFieldInputArgs = {
   rawUpdateFieldInput: UpdateFieldInput;
@@ -32,6 +33,15 @@ export const sanitizeRawUpdateFieldInput = ({
       ]),
     ],
   );
+
+  updatedEditableFieldProperties.options = !isDefined(
+    updatedEditableFieldProperties.options,
+  )
+    ? updatedEditableFieldProperties.options
+    : updatedEditableFieldProperties.options.map((option) => ({
+        id: v4(),
+        ...option,
+      }));
 
   if (!isStandardField) {
     return {
