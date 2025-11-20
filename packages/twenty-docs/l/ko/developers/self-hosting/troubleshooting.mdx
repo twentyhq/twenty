@@ -70,7 +70,7 @@ eslint 확장 프로그램이 설치된 상태에서는 기본 설정으로 작�
 
 #### `npx nx start` 또는 `npx nx start twenty-front` 실행 시 메모리 부족 오류 발생
 
-`packages/twenty-front/.env`에서 `VITE_DISABLE_TYPESCRIPT_CHECKER=true`와 `VITE_DISABLE_ESLINT_CHECKER=true`를 주석 해제하여 백그라운드 검사 기능을 비활성화하여 필요한 RAM의 양을 줄입니다.
+`packages/twenty-front/.env`에서 `VITE_DISABLE_TYPESCRIPT_CHECKER=true`를 주석 해제하여 백그라운드 검사 기능을 비활성화하여 필요한 RAM의 양을 줄입니다.
 
 **If it does not work:**  
 Run only the services you need, instead of `npx nx start`. 예를 들어, 서버에서 작업하는 경우, `npx nx worker twenty-server`만 실행하십시오.

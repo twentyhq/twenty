@@ -70,7 +70,7 @@ git config --global core.autocrlf false
 
 #### أثناء تشغيل `npx nx start` أو `npx nx start twenty-front`، ظهرت خطأ نفاد الذاكرة
 
-في `packages/twenty-front/.env` قم بإزالة تعليق على `VITE_DISABLE_TYPESCRIPT_CHECKER=true` و`VITE_DISABLE_ESLINT_CHECKER=true` لتعطيل فحوصات الخلفية مما يقلل من كمية الذاكرة المطلوبة.
+في `packages/twenty-front/.env` قم بإزالة تعليق على `VITE_DISABLE_TYPESCRIPT_CHECKER=true` لتعطيل فحوصات الخلفية مما يقلل من كمية الذاكرة المطلوبة.
 
 **إذا لم يعمل ذلك:**
 قم بتشغيل الخدمات التي تحتاجها فقط، بدلاً من `npx nx start`. على سبيل المثال، إذا كنت تعمل على الخادم، قم بتشغيل `npx nx worker twenty-server` فقط

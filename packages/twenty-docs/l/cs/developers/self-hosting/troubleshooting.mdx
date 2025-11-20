@@ -71,7 +71,7 @@ Toto by mělo fungovat přímo s nainstalovaným rozšířením eslint. If this 
 
 #### Při spuštění `npx nx start` nebo `npx nx start twenty-front` došlo k chybě nedostatku paměti
 
-In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` and `VITE_DISABLE_ESLINT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
+In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
 
 **Pokud to nefunguje:**  
 Spusťte pouze služby, které potřebujete, místo `npx nx start`. Například pokud pracujete na serveru, spusťte pouze `npx nx worker twenty-server`

@@ -70,7 +70,7 @@ git config --global core.autocrlf false
 
 #### Κατά τη λειτουργία `npx nx start` ή `npx nx start twenty-front`, εμφανίζεται σφάλμα Εξαιτίας έλλειψης μνήμης
 
-Στο `packages/twenty-front/.env` αποδηλώστε `VITE_DISABLE_TYPESCRIPT_CHECKER=true` και `VITE_DISABLE_ESLINT_CHECKER=true` για να απενεργοποιήσετε τους ελέγχους παρασκηνίου, μειώνοντας έτσι το απαιτούμενο RAM.
+Στο `packages/twenty-front/.env` αποδηλώστε `VITE_DISABLE_TYPESCRIPT_CHECKER=true` για να απενεργοποιήσετε τους ελέγχους παρασκηνίου, μειώνοντας έτσι το απαιτούμενο RAM.
 
 **Εάν δεν λειτουργεί:**  
 Εκτελέστε μόνο τις υπηρεσίες που χρειάζεστε, αντί για `npx nx start`. Για παράδειγμα, αν εργάζεστε στον διακομιστή, εκτελέστε μόνο `npx nx worker twenty-server`

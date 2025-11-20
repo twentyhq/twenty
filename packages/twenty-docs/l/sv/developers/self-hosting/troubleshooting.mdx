@@ -71,7 +71,7 @@ Detta bör fungera direkt med eslint-tillägget installerat. Om detta inte funge
 
 #### Vid körning av `npx nx start` eller `npx nx start twenty-front`, får jag ett Minnesfel
 
-I `packages/twenty-front/.env` avkommentera `VITE_DISABLE_TYPESCRIPT_CHECKER=true` och `VITE_DISABLE_ESLINT_CHECKER=true` för att inaktivera bakgrundskontroller och således minska mängden behövt RAM.
+I `packages/twenty-front/.env` avkommentera `VITE_DISABLE_TYPESCRIPT_CHECKER=true` för att inaktivera bakgrundskontroller och således minska mängden behövt RAM.
 
 **Om det inte fungerar:**  
 Kör endast de tjänster du behöver, istället för `npx nx start`. Till exempel, om du arbetar på servern, kör endast `npx nx worker twenty-server`
