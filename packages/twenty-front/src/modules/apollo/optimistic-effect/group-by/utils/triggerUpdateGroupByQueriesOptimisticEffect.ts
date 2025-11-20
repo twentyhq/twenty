@@ -10,6 +10,7 @@ import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode'
 import { type RecordGqlGroupByConnection } from '@/object-record/graphql/types/RecordGqlOperationGroupByResult';
 import { type RecordGqlOperationGroupByVariables } from '@/object-record/graphql/types/RecordGqlOperationGroupByVariables';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
+import { isArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
@@ -56,12 +57,15 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
           (groupConnection) => {
             const groupByDimensionValues =
               readField('groupByDimensionValues', groupConnection) || [];
+
             const cachedEdges =
               readField<RecordGqlRefEdge[]>('edges', groupConnection) || [];
+
             const cachedTotalCount = readField<number | undefined>(
               'totalCount',
               groupConnection,
             );
+
             const cachedPageInfo = readField<{
               startCursor?: string;
               endCursor?: string;
@@ -132,57 +136,64 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
               continue;
             }
 
-            const groupByFieldNames = groupByConfig.map(
-              (groupByField) => Object.keys(groupByField)[0],
-            );
-
-            const recordDimensionValues: string[] = [];
-
-            for (let i = 0; i < groupByFieldNames.length; i++) {
-              const fieldName = groupByFieldNames[i];
-              let recordValue = record[fieldName];
-
-              if (!isDefined(recordValue)) {
-                break;
-              }
-
-              const fieldConfig = groupByConfig[i][fieldName];
-              const normalizedValue = normalizeGroupByDimensionValue(
-                recordValue,
-                fieldConfig,
-              );
-              recordDimensionValues.push(normalizedValue);
+            // TODO: see if we need to handle the case where it's not an array like for aggregate header
+            if (!isArray(groupByConfig)) {
+              continue;
             }
 
-            const dimensionKey = recordDimensionValues.join('|');
-            const dimensionExists = updatedGroupByConnections.some((conn) => {
-              const connDimensionValues =
-                readField('groupByDimensionValues', conn) || [];
-              return (
-                Array.isArray(connDimensionValues) &&
-                connDimensionValues.join('|') === dimensionKey
+            if (isArray(groupByConfig)) {
+              const groupByFieldNames = groupByConfig.map(
+                (groupByField) => Object.keys(groupByField)[0],
               );
-            });
 
-            if (
-              !dimensionExists &&
-              recordDimensionValues.length === groupByFieldNames.length
-            ) {
-              const edge = createCacheEdgeWithRecordRef({
-                record,
-                objectMetadataItem,
-                toReference,
-              });
+              const recordDimensionValues: string[] = [];
 
-              if (isDefined(edge)) {
-                if (!recordsToAddToNewGroups.has(dimensionKey)) {
-                  recordsToAddToNewGroups.set(dimensionKey, {
-                    dimensionValues: recordDimensionValues,
-                    edges: [],
-                  });
+              for (let i = 0; i < groupByFieldNames.length; i++) {
+                const fieldName = groupByFieldNames[i];
+                let recordValue = record[fieldName];
+
+                if (!isDefined(recordValue)) {
+                  break;
                 }
 
-                recordsToAddToNewGroups.get(dimensionKey)!.edges.push(edge);
+                const fieldConfig = groupByConfig[i][fieldName];
+                const normalizedValue = normalizeGroupByDimensionValue(
+                  recordValue,
+                  fieldConfig,
+                );
+                recordDimensionValues.push(normalizedValue);
+              }
+
+              const dimensionKey = recordDimensionValues.join('|');
+              const dimensionExists = updatedGroupByConnections.some((conn) => {
+                const connDimensionValues =
+                  readField('groupByDimensionValues', conn) || [];
+                return (
+                  Array.isArray(connDimensionValues) &&
+                  connDimensionValues.join('|') === dimensionKey
+                );
+              });
+
+              if (
+                !dimensionExists &&
+                recordDimensionValues.length === groupByFieldNames.length
+              ) {
+                const edge = createCacheEdgeWithRecordRef({
+                  record,
+                  objectMetadataItem,
+                  toReference,
+                });
+
+                if (isDefined(edge)) {
+                  if (!recordsToAddToNewGroups.has(dimensionKey)) {
+                    recordsToAddToNewGroups.set(dimensionKey, {
+                      dimensionValues: recordDimensionValues,
+                      edges: [],
+                    });
+                  }
+
+                  recordsToAddToNewGroups.get(dimensionKey)!.edges.push(edge);
+                }
               }
             }
           }

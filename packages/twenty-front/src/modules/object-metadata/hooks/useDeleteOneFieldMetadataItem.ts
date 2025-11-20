@@ -3,13 +3,15 @@ import { useDeleteOneFieldMetadataItemMutation } from '~/generated-metadata/grap
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
+import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateFieldMetadataItemComponentState';
+import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
-import { useRecoilState } from 'recoil';
 
 export const useDeleteOneFieldMetadataItem = () => {
   const [deleteOneFieldMetadataItemMutation] =
@@ -23,19 +25,23 @@ export const useDeleteOneFieldMetadataItem = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
+  const setRecordIndexGroupAggregateOperation = useSetRecoilComponentState(
+    recordIndexGroupAggregateOperationComponentState,
+  );
+
   const [
-    recordIndexKanbanAggregateOperation,
-    setRecordIndexKanbanAggregateOperation,
-  ] = useRecoilState(recordIndexKanbanAggregateOperationState);
+    recordIndexGroupAggregateFieldMetadataItem,
+    setRecordIndexGroupAggregateFieldMetadataItem,
+  ] = useRecoilComponentState(
+    recordIndexGroupAggregateFieldMetadataItemComponentState,
+  );
 
   const resetRecordIndexKanbanAggregateOperation = async (
     idToDelete: string,
   ) => {
-    if (recordIndexKanbanAggregateOperation?.fieldMetadataId === idToDelete) {
-      setRecordIndexKanbanAggregateOperation({
-        operation: AggregateOperations.COUNT,
-        fieldMetadataId: null,
-      });
+    if (recordIndexGroupAggregateFieldMetadataItem?.id === idToDelete) {
+      setRecordIndexGroupAggregateOperation(AggregateOperations.COUNT);
+      setRecordIndexGroupAggregateFieldMetadataItem(null);
     }
   };
 

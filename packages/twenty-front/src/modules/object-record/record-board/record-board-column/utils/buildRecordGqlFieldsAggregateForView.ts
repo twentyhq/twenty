@@ -1,32 +1,28 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGqlFieldsAggregate';
-import { type KanbanAggregateOperation } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
+
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
+import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const buildRecordGqlFieldsAggregateForView = ({
   objectMetadataItem,
-  recordIndexKanbanAggregateOperation,
+  recordIndexGroupAggregateFieldMetadataItem,
+  recordIndexGroupAggregateOperation,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  recordIndexKanbanAggregateOperation: KanbanAggregateOperation;
+  recordIndexGroupAggregateFieldMetadataItem: Nullable<FieldMetadataItem>;
+  recordIndexGroupAggregateOperation: ExtendedAggregateOperations;
 }): RecordGqlFieldsAggregate => {
   let recordGqlFieldsAggregate = {};
 
-  const kanbanAggregateOperationFieldName = objectMetadataItem.fields?.find(
-    (field) =>
-      field.id === recordIndexKanbanAggregateOperation?.fieldMetadataId,
-  )?.name;
-
-  if (!kanbanAggregateOperationFieldName) {
-    if (
-      isDefined(recordIndexKanbanAggregateOperation?.operation) &&
-      recordIndexKanbanAggregateOperation.operation !==
-        AggregateOperations.COUNT
-    ) {
+  if (!isDefined(recordIndexGroupAggregateFieldMetadataItem)) {
+    if (recordIndexGroupAggregateOperation !== AggregateOperations.COUNT) {
       throw new Error(
-        `No field found to compute aggregate operation ${recordIndexKanbanAggregateOperation.operation} on object ${objectMetadataItem.nameSingular}`,
+        `No field found to compute aggregate operation ${recordIndexGroupAggregateOperation} on object ${objectMetadataItem.nameSingular}`,
       );
     } else {
       recordGqlFieldsAggregate = {
@@ -37,9 +33,8 @@ export const buildRecordGqlFieldsAggregateForView = ({
     }
   } else {
     recordGqlFieldsAggregate = {
-      [kanbanAggregateOperationFieldName]: [
-        recordIndexKanbanAggregateOperation?.operation ??
-          AggregateOperations.COUNT,
+      [recordIndexGroupAggregateFieldMetadataItem.name]: [
+        recordIndexGroupAggregateOperation ?? AggregateOperations.COUNT,
       ],
     };
   }
