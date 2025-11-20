@@ -13,7 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconCopyPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
-export const ChartSettingsFooter = () => {
+export const WidgetSettingsFooter = () => {
   const dropdownId = useId();
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();

@@ -3,7 +3,7 @@ import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
 import { ChartSettingItem } from '@/command-menu/pages/page-layout/components/chart-settings/ChartSettingItem';
-import { ChartSettingsFooter } from '@/command-menu/pages/page-layout/components/ChartSettingsFooter';
+import { WidgetSettingsFooter } from '@/command-menu/pages/page-layout/components/ChartSettingsFooter';
 import { ChartTypeSelectionSection } from '@/command-menu/pages/page-layout/components/ChartTypeSelectionSection';
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
 import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/useChartSettingsValues';
@@ -188,7 +188,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
           );
         })}
       </CommandMenuList>
-      <ChartSettingsFooter />
+      <WidgetSettingsFooter />
     </>
   );
 };
