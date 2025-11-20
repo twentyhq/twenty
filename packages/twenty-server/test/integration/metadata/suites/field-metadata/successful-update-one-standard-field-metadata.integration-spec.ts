@@ -77,7 +77,8 @@ const successfulUpdateTestsUseCase: UpdateOneStandardFieldMetadataTestingContext
   ];
 
 describe('Standard field metadata update should succeed', () => {
-  let originalStageFieldMetadata: FieldMetadataDTO;
+  const opportunityObjectFields: FieldMetadataDTO[] = [];
+  let originalFieldMetadataToRestore: FieldMetadataDTO[] = [];
 
   beforeAll(async () => {
     const { objects } = await findManyObjectMetadata({
@@ -114,45 +115,49 @@ describe('Standard field metadata update should succeed', () => {
       (o) => o.nameSingular === 'opportunity',
     );
 
-    jestExpectToBeDefined(opportunityObject);
+    jestExpectToBeDefined(opportunityObject?.fieldsList);
 
-    const opportunityStageField = opportunityObject.fieldsList?.find(
-      (field) => field.name === 'stage' && !field.isCustom,
-    );
-
-    jestExpectToBeDefined(opportunityStageField);
-    originalStageFieldMetadata = opportunityStageField;
+    opportunityObjectFields.push(...opportunityObject.fieldsList);
   });
 
   afterEach(async () => {
-    await updateOneFieldMetadata({
-      expectToFail: false,
-      input: {
-        idToUpdate: originalStageFieldMetadata.id,
-        updatePayload: {
-          label: originalStageFieldMetadata.label,
-          description: originalStageFieldMetadata.description,
-          icon: originalStageFieldMetadata.icon,
-          isActive: originalStageFieldMetadata.isActive,
-          options: originalStageFieldMetadata.options,
-          defaultValue: originalStageFieldMetadata.defaultValue,
+    for (const originalFieldMetadata of originalFieldMetadataToRestore) {
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: originalFieldMetadata.id,
+          updatePayload: {
+            label: originalFieldMetadata.label,
+            description: originalFieldMetadata.description,
+            icon: originalFieldMetadata.icon,
+            isActive: originalFieldMetadata.isActive,
+            options: originalFieldMetadata.options,
+            defaultValue: originalFieldMetadata.defaultValue,
+          },
         },
-      },
-    });
+      });
+    }
+
+    originalFieldMetadataToRestore = [];
   });
 
-  it.each(eachTestingContextFilter(successfulUpdateTestsUseCase))(
-    '$title',
-    async ({ context }) => {
-      const updatePayload = context;
-
-      const { data } = await updateOneFieldMetadata({
-        input: {
-          idToUpdate: originalStageFieldMetadata.id,
-          updatePayload,
-        },
-        expectToFail: false,
-        gqlFields: `
+  describe('Atomic update test suite', () => {
+    const originalStageFieldMetadata = opportunityObjectFields.find(
+      (field) => field.name === 'stage' && !field.isCustom,
+    );
+    it.each(eachTestingContextFilter(successfulUpdateTestsUseCase))(
+      '$title',
+      async ({ context }) => {
+        jestExpectToBeDefined(originalStageFieldMetadata);
+        originalFieldMetadataToRestore.push(originalStageFieldMetadata);
+        const updatePayload = context;
+        const { data } = await updateOneFieldMetadata({
+          input: {
+            idToUpdate: (originalStageFieldMetadata as FieldMetadataDTO).id,
+            updatePayload,
+          },
+          expectToFail: false,
+          gqlFields: `
           id
           name
           label
@@ -168,12 +173,76 @@ describe('Standard field metadata update should succeed', () => {
             icon
           }
         `,
-      });
+        });
 
-      expect(data.updateOneField.id).toBe(originalStageFieldMetadata.id);
-      expect(data.updateOneField).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny({ ...data.updateOneField }),
-      );
-    },
-  );
+        expect(data.updateOneField.id).toBe(originalStageFieldMetadata.id);
+        expect(data.updateOneField).toMatchSnapshot(
+          extractRecordIdsAndDatesAsExpectAny({ ...data.updateOneField }),
+        );
+      },
+    );
+  });
+
+  it('Should deactivate and reactivate standard field successfully', async () => {
+    const deletedAtField = opportunityObjectFields.find(
+      (field) => field.name === 'deletedAt',
+    );
+    jestExpectToBeDefined(deletedAtField);
+    expect(deletedAtField.isActive).toBe(true);
+
+    const { data: firstUpdateData } = await updateOneFieldMetadata({
+      input: {
+        idToUpdate: deletedAtField.id,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+      expectToFail: false,
+      gqlFields: `
+          id
+          name
+          label
+          description
+          icon
+          isActive
+          isCustom
+          options
+          defaultValue
+          standardOverrides {
+            label
+            description
+            icon
+          }
+        `,
+    });
+
+    expect(firstUpdateData.updateOneField.isActive).toBe(false);
+
+    const { data: secondUpdateData } = await updateOneFieldMetadata({
+      input: {
+        idToUpdate: deletedAtField.id,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+      expectToFail: false,
+      gqlFields: `
+          id
+          name
+          label
+          description
+          icon
+          isActive
+          isCustom
+          options
+          defaultValue
+          standardOverrides {
+            label
+            description
+            icon
+          }
+        `,
+    });
+    expect(secondUpdateData.updateOneField.isActive).toBe(true);
+  });
 });
