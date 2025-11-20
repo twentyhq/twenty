@@ -9,10 +9,8 @@ import { contextStoreIsPageInEditModeComponentState } from '@/context-store/stat
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRegisteredActions = (
   shouldBeRegisteredParams: ShouldBeRegisteredFunctionParams,
@@ -34,10 +32,6 @@ export const useRegisteredActions = (
     contextStoreIsPageInEditModeComponentState,
   );
 
-  const isRecordPageLayoutEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
-  );
-
   const viewType = getActionViewType(
     contextStoreCurrentViewType,
     contextStoreTargetedRecordsRule,
@@ -45,7 +39,6 @@ export const useRegisteredActions = (
 
   const recordActionConfig = getActionConfig({
     objectMetadataItem,
-    isRecordPageLayoutEnabled,
   });
 
   const relatedRecordActionConfig = useRelatedRecordActions({

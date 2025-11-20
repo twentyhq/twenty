@@ -16,6 +16,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/inte
 
 import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentResponseFormat } from 'src/engine/metadata-modules/agent/types/agent-response-format.type';
 import { ModelConfiguration } from 'src/engine/metadata-modules/agent/types/modelConfiguration';
 
 import { AgentHandoffEntity } from './agent-handoff.entity';
@@ -54,8 +55,8 @@ export class AgentEntity
   @Column({ nullable: false, type: 'varchar', default: 'auto' })
   modelId: ModelId;
 
-  @Column({ nullable: true, type: 'jsonb' })
-  responseFormat: object;
+  @Column({ nullable: true, type: 'jsonb', default: { type: 'text' } })
+  responseFormat: AgentResponseFormat;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;

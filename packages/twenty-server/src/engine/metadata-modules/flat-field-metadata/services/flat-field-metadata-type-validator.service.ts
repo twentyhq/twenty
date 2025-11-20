@@ -4,6 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { isDefined } from 'class-validator';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
 import { type FlatFieldMetadataTypeValidator } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { validateEnumSelectFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util';
@@ -13,6 +14,11 @@ import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace
 const DEFAULT_NO_VALIDATION = async (): Promise<
   FlatFieldMetadataValidationError[]
 > => [];
+
+export type GenericValidateFlatFieldMetadataTypeSpecificitiesArgs =
+  FlatEntityValidationArgs<'fieldMetadata'> & {
+    updates?: FlatEntityPropertiesUpdates<'fieldMetadata'>;
+  };
 
 @Injectable()
 export class FlatFieldMetadataTypeValidatorService {
@@ -51,7 +57,7 @@ export class FlatFieldMetadataTypeValidatorService {
     };
 
   public async validateFlatFieldMetadataTypeSpecificities(
-    args: FlatEntityValidationArgs<'fieldMetadata'>,
+    args: GenericValidateFlatFieldMetadataTypeSpecificitiesArgs,
   ): Promise<FlatFieldMetadataValidationError[]> {
     const { flatEntityToValidate } = args;
     const fieldType = flatEntityToValidate.type;
