@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import {
-    useFindOneAgentQuery,
-    useUpdateOneAgentMutation,
+  useFindOneAgentQuery,
+  useUpdateOneAgentMutation,
 } from '~/generated-metadata/graphql';
 
 export const useUpdateAgentLabel = (agentId: string | undefined) => {
