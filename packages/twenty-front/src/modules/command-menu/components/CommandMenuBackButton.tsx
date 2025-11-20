@@ -6,7 +6,6 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconChevronLeft } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
@@ -23,8 +22,6 @@ const StyledNavigationIcon = styled.div`
 
 export const CommandMenuBackButton = () => {
   const { goBackFromCommandMenu } = useCommandMenuHistory();
-
-  const theme = useTheme();
 
   const { contextChips } = useCommandMenuContextChips();
 

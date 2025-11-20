@@ -74,15 +74,6 @@ const StyledContentContainer = styled.div`
   overflow: hidden;
 `;
 
-const StyledNavigationIcon = styled.div`
-  align-items: center;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  margin-right: ${({ theme }) => theme.spacing(0.5)};
-  color: ${({ theme }) => theme.font.color.secondary};
-`;
-
 export const CommandMenuTopBar = () => {
   const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
     commandMenuSearchState,
