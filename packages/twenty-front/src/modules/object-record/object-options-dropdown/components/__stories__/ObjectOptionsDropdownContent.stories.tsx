@@ -116,7 +116,7 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
               dropdownId: OBJECT_OPTIONS_DROPDOWN_ID,
             }}
           >
-            <DropdownContent data-select-disable>
+            <DropdownContent>
               <Story />
             </DropdownContent>
           </ObjectOptionsDropdownContext.Provider>
