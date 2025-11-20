@@ -63,7 +63,7 @@ export class WorkspaceContextCacheService implements OnModuleInit {
     cacheProviderNames: string[],
   ): Promise<T> {
     const memoKey =
-      `${workspaceId}-${cacheProviderNames.sort().join(',')}` as const;
+      `${workspaceId}-${[...cacheProviderNames].sort().join(',')}` as const;
 
     const result = await this.getMemoizer.memoizePromiseAndExecute(
       memoKey,

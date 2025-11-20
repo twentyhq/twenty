@@ -6,7 +6,6 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceFeatureFlagsMapCacheModule } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.module';
-import { PermissionsCacheProvider } from 'src/engine/metadata-modules/workspace-permissions-cache/providers/permissions-cache.provider';
 import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache-storage.service';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
@@ -26,12 +25,10 @@ import { WorkspacePermissionsCacheService } from './workspace-permissions-cache.
   providers: [
     WorkspacePermissionsCacheService,
     WorkspacePermissionsCacheStorageService,
-    PermissionsCacheProvider,
   ],
   exports: [
     WorkspacePermissionsCacheService,
     WorkspacePermissionsCacheStorageService,
-    PermissionsCacheProvider,
   ],
 })
 export class WorkspacePermissionsCacheModule {}
