@@ -44,8 +44,8 @@ import { UpdateUserEmailInput } from 'src/engine/core-modules/user/dtos/update-u
 import { WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import {
-  WorkspaceMemberTranspiler,
   type ToWorkspaceMemberDtoArgs,
+  WorkspaceMemberTranspiler,
 } from 'src/engine/core-modules/user/services/workspace-member-transpiler.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
