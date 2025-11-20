@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react';
+import { fn } from '@storybook/test';
 
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { GraphWidgetTooltip } from '../GraphWidgetTooltip';
@@ -41,7 +42,7 @@ export const WithClickHint: Story = {
         dotColor: 'green',
       },
     ],
-    onGraphWidgetTooltipClick: () => console.log('Navigate to sales details'),
+    onGraphWidgetTooltipClick: fn(),
   },
 };
 
@@ -63,8 +64,7 @@ export const MultipleItems: Story = {
         dotColor: 'purple',
       },
     ],
-    onGraphWidgetTooltipClick: () =>
-      console.log('Navigate to comparison details'),
+    onGraphWidgetTooltipClick: fn(),
     indexLabel: 'February 2',
   },
 };
@@ -88,8 +88,7 @@ export const SuperLongText: Story = {
         dotColor: 'purple',
       },
     ],
-    onGraphWidgetTooltipClick: () =>
-      console.log('Navigate to financials Q4 2024'),
+    onGraphWidgetTooltipClick: fn(),
     indexLabel:
       'Q4 2024 Financial Year End (October - December) - North America Regional Performance Summary',
   },
@@ -219,8 +218,7 @@ export const ManyItemsWithScroll: Story = {
         dotColor: 'lime',
       },
     ],
-    onGraphWidgetTooltipClick: () =>
-      console.log('Navigate to annual report 2024'),
+    onGraphWidgetTooltipClick: fn(),
     indexLabel: 'Annual Report 2024',
   },
 };

@@ -54,7 +54,7 @@ type GraphWidgetBarChartProps = {
   rangeMin?: number;
   rangeMax?: number;
   omitNullValues?: boolean;
-  onClick?: (datum: ComputedDatum<BarDatum>) => void;
+  onBarClick?: (datum: ComputedDatum<BarDatum>) => void;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -88,7 +88,7 @@ export const GraphWidgetBarChart = ({
   prefix,
   suffix,
   customFormatter,
-  onClick,
+  onBarClick,
 }: GraphWidgetBarChartProps) => {
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
@@ -121,7 +121,7 @@ export const GraphWidgetBarChart = ({
     seriesLabels,
   });
 
-  const hasClickableItems = isDefined(onClick);
+  const hasClickableItems = isDefined(onBarClick);
 
   const hideTooltip = () => setActiveBarTooltip(null);
   const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
@@ -138,10 +138,10 @@ export const GraphWidgetBarChart = ({
       setActiveBarTooltip({
         datum,
         anchorElement: event.currentTarget,
-        onClick: onClick ? () => onClick(datum) : undefined,
+        onClick: onBarClick ? () => onBarClick(datum) : undefined,
       });
     },
-    [debouncedHideTooltip, setActiveBarTooltip, onClick],
+    [debouncedHideTooltip, setActiveBarTooltip, onBarClick],
   );
 
   const handleBarLeave = useCallback(() => {
@@ -150,9 +150,9 @@ export const GraphWidgetBarChart = ({
 
   const handleBarClick = useCallback(
     (datum: ComputedDatum<BarDatum>) => {
-      onClick?.(datum);
+      onBarClick?.(datum);
     },
-    [onClick],
+    [onBarClick],
   );
 
   const areThereTooManyKeys = keys.length > CHART_LEGEND_ITEM_THRESHOLD;

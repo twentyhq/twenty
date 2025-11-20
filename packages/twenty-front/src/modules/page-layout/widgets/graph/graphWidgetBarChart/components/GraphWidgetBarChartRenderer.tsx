@@ -108,7 +108,7 @@ export const GraphWidgetBarChartRenderer = ({
         rangeMin={configuration.rangeMin ?? undefined}
         rangeMax={configuration.rangeMax ?? undefined}
         omitNullValues={configuration.omitNullValues ?? false}
-        onClick={handleBarClick}
+        onBarClick={handleBarClick}
       />
     </Suspense>
   );
