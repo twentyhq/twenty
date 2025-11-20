@@ -1,7 +1,6 @@
+import { usePageLayoutHeaderInfo } from '@/command-menu/components/hooks/usePageLayoutHeaderInfo';
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
-import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
-import { isChartWidget } from '@/command-menu/pages/page-layout/utils/isChartWidget';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useUpdatePageLayoutTab } from '@/page-layout/hooks/useUpdatePageLayoutTab';
@@ -9,24 +8,16 @@ import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayo
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
-import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconAppWindow,
-  IconFrame,
-  useIcons,
-  type IconComponent,
-} from 'twenty-ui/display';
-import { type PageLayoutWidget } from '~/generated/graphql';
+import { useIcons } from 'twenty-ui/display';
 
 const StyledPageLayoutInfoContainer = styled.div`
   align-items: center;
@@ -87,82 +78,27 @@ export const CommandMenuPageLayoutInfo = () => {
 
   const [editedTitle, setEditedTitle] = useState<string | null>(null);
 
-  let widgetInEditMode: PageLayoutWidget | undefined;
-  let tab: PageLayoutTab | undefined;
-  let headerIcon: IconComponent | undefined;
-  let headerIconColor: string;
-  let headerType: string;
-  let title: string;
-  let isReadonly: boolean;
+  const headerInfo = usePageLayoutHeaderInfo({
+    commandMenuPage,
+    draftPageLayout,
+    pageLayoutEditingWidgetId,
+    openTabId,
+    editedTitle,
+  });
 
-  if (commandMenuPage === CommandMenuPages.PageLayoutTabSettings) {
-    if (!isDefined(openTabId)) {
-      return null;
-    }
-
-    tab = draftPageLayout.tabs.find((t) => t.id === openTabId);
-    if (!isDefined(tab)) {
-      return null;
-    }
-
-    headerIcon = IconAppWindow;
-    headerIconColor = theme.font.color.tertiary;
-    headerType = t`Tab`;
-    title =
-      editedTitle ??
-      (isDefined(tab.title) && tab.title !== '' ? tab.title : '');
-    isReadonly = false;
-  } else {
-    if (!isDefined(pageLayoutEditingWidgetId)) {
-      return null;
-    }
-
-    widgetInEditMode = draftPageLayout.tabs
-      .flatMap((tab) => tab.widgets)
-      .find((widget) => widget.id === pageLayoutEditingWidgetId);
-
-    if (!isDefined(widgetInEditMode)) {
-      return null;
-    }
-
-    if (commandMenuPage === CommandMenuPages.PageLayoutIframeSettings) {
-      headerIcon = IconFrame;
-      headerIconColor = theme.font.color.tertiary;
-      headerType = t`iFrame Widget`;
-      title =
-        editedTitle ??
-        (isDefined(widgetInEditMode.title) && widgetInEditMode.title !== ''
-          ? widgetInEditMode.title
-          : '');
-      isReadonly = false;
-    } else if (
-      commandMenuPage === CommandMenuPages.PageLayoutGraphTypeSelect ||
-      commandMenuPage === CommandMenuPages.PageLayoutGraphFilter
-    ) {
-      if (!isChartWidget(widgetInEditMode)) {
-        return null;
-      }
-
-      const currentGraphType = widgetInEditMode.configuration.graphType;
-      const graphTypeInfo = GRAPH_TYPE_INFORMATION[currentGraphType];
-      const graphTypeLabel = t(graphTypeInfo.label);
-
-      headerIcon = graphTypeInfo.icon;
-      headerIconColor = theme.font.color.tertiary;
-      headerType =
-        commandMenuPage === CommandMenuPages.PageLayoutGraphFilter
-          ? t`${graphTypeLabel} Chart`
-          : t`Chart`;
-      title =
-        editedTitle ??
-        (isDefined(widgetInEditMode.title) && widgetInEditMode.title !== ''
-          ? widgetInEditMode.title
-          : '');
-      isReadonly = commandMenuPage === CommandMenuPages.PageLayoutGraphFilter;
-    } else {
-      return null;
-    }
+  if (!headerInfo) {
+    return null;
   }
+
+  const {
+    headerIcon,
+    headerIconColor,
+    headerType,
+    title,
+    isReadonly,
+    tab,
+    widgetInEditMode,
+  } = headerInfo;
 
   const Icon = headerIcon ?? getIcon('IconDefault');
 
@@ -186,9 +122,9 @@ export const CommandMenuPageLayoutInfo = () => {
       commandMenuPage === CommandMenuPages.PageLayoutTabSettings &&
       isDefined(tab)
     ) {
-      await updatePageLayoutTab(tab.id, { title: finalTitle });
+      updatePageLayoutTab(tab.id, { title: finalTitle });
     } else if (isDefined(widgetInEditMode)) {
-      await updatePageLayoutWidget(widgetInEditMode.id, {
+      updatePageLayoutWidget(widgetInEditMode.id, {
         title: finalTitle,
       });
     }
