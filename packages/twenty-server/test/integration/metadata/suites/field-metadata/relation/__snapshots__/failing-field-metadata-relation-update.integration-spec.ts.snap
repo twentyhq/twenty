@@ -16,12 +16,6 @@ exports[`Field metadata relation update should fail relation when name is change
                 "message": "Forbidden updated properties for relation field metadata: name",
                 "userFriendlyMessage": "Forbidden updated properties for relation field metadata",
               },
-              {
-                "code": "NOT_AVAILABLE",
-                "message": "Name "employerId" is not available as it is already used by another join column name",
-                "userFriendlyMessage": "Name "employerId" is not available as it is already used by join column name",
-                "value": "employerId",
-              },
             ],
             "flatEntityMinimalInformation": {
               "id": Any<String>,
@@ -107,12 +101,6 @@ exports[`Field metadata relation update should fail relation when name is not in
                 "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
                 "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
                 "value": "New Name",
-              },
-              {
-                "code": "NOT_AVAILABLE",
-                "message": "Name "employerId" is not available as it is already used by another join column name",
-                "userFriendlyMessage": "Name "employerId" is not available as it is already used by join column name",
-                "value": "employerId",
               },
             ],
             "flatEntityMinimalInformation": {
