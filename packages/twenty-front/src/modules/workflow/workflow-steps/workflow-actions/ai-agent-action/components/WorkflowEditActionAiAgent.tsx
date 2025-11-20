@@ -11,9 +11,11 @@ import { AI_AGENT_ACTION } from '@/workflow/workflow-steps/workflow-actions/cons
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
-import { type ModelConfiguration } from 'twenty-shared/ai';
+import {
+  type AgentResponseSchema,
+  type ModelConfiguration,
+} from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 import {
@@ -112,7 +114,7 @@ export const WorkflowEditActionAiAgent = ({
 
   const updateAgentResponseFormat = async (format: {
     type: 'text' | 'json';
-    schema?: BaseOutputSchemaV2;
+    schema?: AgentResponseSchema;
   }) => {
     if (actionOptions.readonly === true || !isDefined(agent)) {
       return;
@@ -139,9 +141,9 @@ export const WorkflowEditActionAiAgent = ({
     300,
   );
 
-  const handleAgentResponseFormatChange = (format: {
+  const handleAgentResponseFormatChange = async (format: {
     type: 'text' | 'json';
-    schema?: BaseOutputSchemaV2;
+    schema?: AgentResponseSchema;
   }) => {
     if (format.type !== agent?.responseFormat?.type) {
       debouncedUpdateAgentResponseFormat.cancel();
@@ -161,7 +163,6 @@ export const WorkflowEditActionAiAgent = ({
             return;
           }
 
-          // Update step name
           actionOptions.onActionUpdate?.({ ...action, name: newName });
 
           // Also update agent label

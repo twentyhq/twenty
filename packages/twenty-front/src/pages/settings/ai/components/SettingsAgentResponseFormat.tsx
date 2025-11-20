@@ -1,11 +1,10 @@
 import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
 import { Select } from '@/ui/input/components/Select';
-import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 import { WorkflowOutputSchemaBuilder } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
+import { type AgentResponseSchema } from 'twenty-shared/ai';
 import { v4 } from 'uuid';
 
 const StyledContainer = styled.div`
@@ -17,42 +16,32 @@ const StyledContainer = styled.div`
 type SettingsAgentResponseFormatProps = {
   responseFormat?: {
     type: 'text' | 'json';
-    schema?: BaseOutputSchemaV2;
+    schema?: AgentResponseSchema;
   };
   onResponseFormatChange: (format: {
     type: 'text' | 'json';
-    schema?: BaseOutputSchemaV2;
+    schema?: AgentResponseSchema;
   }) => void;
   disabled?: boolean;
 };
 
-// Convert BaseOutputSchemaV2 to OutputSchemaField[] for visual builder
-const schemaToFields = (schema: BaseOutputSchemaV2): OutputSchemaField[] => {
-  return Object.entries(schema).map(
-    ([key, value]): OutputSchemaField => ({
-      id: v4(),
-      name: key,
-      description: value.label || '',
-      type: value.type as InputSchemaPropertyType | undefined,
-    }),
-  );
-};
+const schemaToFields = (schema: AgentResponseSchema): OutputSchemaField[] =>
+  Object.entries(schema).map(([key, field]) => ({
+    id: v4(),
+    name: key,
+    description: field.description || '',
+    type: field.type as any,
+  }));
 
-// Convert OutputSchemaField[] to BaseOutputSchemaV2 for storage
-const fieldsToSchema = (fields: OutputSchemaField[]): BaseOutputSchemaV2 => {
-  const schema: BaseOutputSchemaV2 = {};
-  fields.forEach((field) => {
-    if (field.name.trim() !== '') {
-      schema[field.name] = {
-        isLeaf: true,
-        type: (field.type as any) || 'string',
-        value: null,
-        label: field.description || field.name,
-      };
-    }
-  });
-  return schema;
-};
+const fieldsToSchema = (fields: OutputSchemaField[]): AgentResponseSchema =>
+  Object.fromEntries(
+    fields
+      .filter((field) => field.name.trim() && field.type)
+      .map((field) => [
+        field.name,
+        { type: field.type!, description: field.description || field.name },
+      ]),
+  );
 
 export const SettingsAgentResponseFormat = ({
   responseFormat,

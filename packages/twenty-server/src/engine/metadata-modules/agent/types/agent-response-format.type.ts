@@ -1,4 +1,4 @@
-import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
+import { type AgentResponseSchema } from 'twenty-shared/ai';
 
 export type AgentResponseFormatType = 'text' | 'json';
 
@@ -6,6 +6,6 @@ export type AgentResponseFormat =
   | { type: 'text' }
   | {
       type: 'json';
-      schema: OutputSchema;
+      schema: AgentResponseSchema;
     };
 

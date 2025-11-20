@@ -1,4 +1,4 @@
-import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
+import { type AgentResponseSchema } from 'twenty-shared/ai';
 import { z } from 'zod';
 import { zodNonEmptyString } from '~/types/ZodNonEmptyString';
 
@@ -30,7 +30,7 @@ export const settingsAIAgentFormSchema = z.object({
   responseFormat: z
     .object({
       type: z.enum(['text', 'json']),
-      schema: z.custom<BaseOutputSchemaV2>().optional(),
+      schema: z.custom<AgentResponseSchema>().optional(),
     })
     .optional(),
 });

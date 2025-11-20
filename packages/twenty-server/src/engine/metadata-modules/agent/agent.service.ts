@@ -120,7 +120,6 @@ export class AgentService {
   async updateOneAgent(input: UpdateAgentInput, workspaceId: string) {
     const agent = await this.findOneAgent(input.id, workspaceId);
 
-    // Build update object, only including fields that are provided
     const updateData: Partial<AgentEntity> = {
       ...agent,
       ...Object.fromEntries(
@@ -128,12 +127,9 @@ export class AgentService {
       ),
     };
 
-    // If label is provided, compute and update the name
     if (input.label !== undefined) {
       updateData.name = computeMetadataNameFromLabel(input.label);
-    }
-    // If name is explicitly provided, use it
-    else if (input.name !== undefined) {
+    } else if (input.name !== undefined) {
       updateData.name = input.name;
     }
 

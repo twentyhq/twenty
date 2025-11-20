@@ -556,7 +556,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        // Clone the agent for the duplicated step
         const existingAgent = await this.agentRepository.findOne({
           where: { id: step.settings.input.agentId, workspaceId },
         });
@@ -568,7 +567,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           );
         }
 
-        // Create unique name for cloned agent
         const baseName = `${existingAgent.name} (Copy)`;
         const agentName = await this.generateUniqueAgentName(
           baseName,
@@ -743,12 +741,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     const existingNames = new Set(existingAgents.map((agent) => agent.name));
 
-    // Try base name first
     if (!existingNames.has(baseName)) {
       return baseName;
     }
 
-    // Try numbered suffixes
     for (let i = 1; i <= MAX_AGENT_NAME_CONFLICT_ATTEMPTS; i++) {
       const candidateName = `${baseName} ${i}`;
       if (!existingNames.has(candidateName)) {
