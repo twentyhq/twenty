@@ -70,7 +70,7 @@ Hãy chắc chắn rằng đã chạy yarn trong thư mục gốc và sau đó c
 
 #### Trong khi chạy `npx nx start` hoặc `npx nx start twenty-front`, lỗi Out of memory được ném ra
 
-Trong `packages/twenty-front/.env` bỏ chú thích `VITE_DISABLE_TYPESCRIPT_CHECKER=true` để vô hiệu hoá các kiểm tra nền, do đó giảm lượng RAM cần thiết.
+Trong `packages/twenty-front/.env` bỏ chú thích `VITE_DISABLE_TYPESCRIPT_CHECKER=true` và `VITE_DISABLE_ESLINT_CHECKER=true` để vô hiệu hoá các kiểm tra nền, do đó giảm lượng RAM cần thiết.
 
 **Nếu nó không hoạt động:**  
 Chỉ chạy các dịch vụ bạn cần, thay vì `npx nx start`. Ví dụ, nếu bạn làm việc trên máy chủ, chỉ cần chạy `npx nx worker twenty-server`

@@ -71,7 +71,7 @@ Acesta ar trebui să funcționeze implicit cu extensia eslint instalată. Dacă 
 
 #### În timpul rulării `npx nx start` sau `npx nx start twenty-front`, apare o eroare Out of memory
 
-În `packages/twenty-front/.env` decomentați `VITE_DISABLE_TYPESCRIPT_CHECKER=true` pentru a dezactiva verificările de fundal, astfel reducând cantitatea de RAM necesară.
+În `packages/twenty-front/.env` decomentați `VITE_DISABLE_TYPESCRIPT_CHECKER=true` și `VITE_DISABLE_ESLINT_CHECKER=true` pentru a dezactiva verificările de fundal, astfel reducând cantitatea de RAM necesară.
 
 **Dacă nu funcționează:**  
 Rulați doar serviciile de care aveți nevoie, în loc de `npx nx start`. De exemplu, dacă lucrați la server, rulați doar `npx nx worker twenty-server`

@@ -71,7 +71,7 @@ git config --global core.autocrlf false
 
 #### При запуске `npx nx start` или `npx nx start twenty-front` возникает ошибка нехватки памяти
 
-В `packages/twenty-front/.env` раскомментируйте `VITE_DISABLE_TYPESCRIPT_CHECKER=true`, чтобы отключить фоновые проверки, таким образом уменьшая количество необходимой оперативной памяти.
+В `packages/twenty-front/.env` раскомментируйте `VITE_DISABLE_TYPESCRIPT_CHECKER=true` и `VITE_DISABLE_ESLINT_CHECKER=true`, чтобы отключить фоновые проверки, таким образом уменьшая количество необходимой оперативной памяти.
 
 **Если это не работает:**  
 Запускайте только те сервисы, которые вам нужны, вместо `npx nx start`. Например, если вы работаете на сервере, запускайте только `npx nx worker twenty-server`

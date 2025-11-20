@@ -70,7 +70,7 @@ Cela devrait fonctionner directement avec l'extension eslint installée. Si cela
 
 #### Pendant l'exécution de `npx nx start` ou `npx nx start twenty-front`, une erreur de mémoire est renvoyée
 
-Dans `packages/twenty-front/.env`, décommentez `VITE_DISABLE_TYPESCRIPT_CHECKER=true` pour désactiver les vérifications en arrière-plan, réduisant ainsi la quantité de RAM nécessaire.
+Dans `packages/twenty-front/.env`, décommentez `VITE_DISABLE_TYPESCRIPT_CHECKER=true` et `VITE_DISABLE_ESLINT_CHECKER=true` pour désactiver les vérifications en arrière-plan, réduisant ainsi la quantité de RAM nécessaire.
 
 **Si cela ne fonctionne pas :**
 Lancez uniquement les services dont vous avez besoin, au lieu de `npx nx start`. Par exemple, si vous travaillez sur le serveur, lancez seulement `npx nx worker twenty-server`

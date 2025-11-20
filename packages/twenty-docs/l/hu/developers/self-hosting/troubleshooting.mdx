@@ -71,7 +71,7 @@ This should work out of the box with the eslint extension installed. If this doe
 
 #### A `npx nx start` vagy `npx nx start twenty-front` futtatása közben memóriahiány hibát dob
 
-In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
+In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` and `VITE_DISABLE_ESLINT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
 
 **Ha ez nem működik:**  
 Csak azokat a szolgáltatásokat futtasd, amelyeket szükséges, ahelyett, hogy a `npx nx start` parancsot használnád. Például, ha a szerverrel dolgozol, csak a `npx nx worker twenty-server` parancsot futtasd.

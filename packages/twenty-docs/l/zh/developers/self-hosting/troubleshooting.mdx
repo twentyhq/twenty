@@ -70,7 +70,7 @@ git config --global core.autocrlf false
 
 #### 運行 `npx nx start` 或 `npx nx start twenty-front` 時，內存不足錯誤被拋出
 
-在 `packages/twenty-front/.env` 中取消註釋 `VITE_DISABLE_TYPESCRIPT_CHECKER=true` 以禁用後台檢查，從而減少所需的RAM量。
+在 `packages/twenty-front/.env` 中取消註釋 `VITE_DISABLE_TYPESCRIPT_CHECKER=true` 和 `VITE_DISABLE_ESLINT_CHECKER=true` 以禁用後台檢查，從而減少所需的RAM量。
 
 **如果不工作：**  
 僅運行您需要的服務，而不是 `npx nx start`。 例如，如果您在服務器上工作，僅運行 `npx nx worker twenty-server` 例如，如果您在服務器上工作，僅運行 `npx nx worker twenty-server`

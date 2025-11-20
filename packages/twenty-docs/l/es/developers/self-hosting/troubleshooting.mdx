@@ -70,7 +70,7 @@ This should work out of the box with the eslint extension installed. Si esto no 
 
 #### While running `npx nx start` or `npx nx start twenty-front`, Out of memory error is thrown
 
-En `packages/twenty-front/.env` descomente `VITE_DISABLE_TYPESCRIPT_CHECKER=true` para deshabilitar las comprobaciones en segundo plano y así reducir la cantidad de RAM necesaria.
+En `packages/twenty-front/.env` descomente `VITE_DISABLE_TYPESCRIPT_CHECKER=true` y `VITE_DISABLE_ESLINT_CHECKER=true` para deshabilitar las comprobaciones en segundo plano y así reducir la cantidad de RAM necesaria.
 
 **Si no funciona:**  
 Ejecute solo los servicios que necesite, en lugar de `npx nx start`. Por ejemplo, si trabaja en el servidor, ejecute solo `npx nx worker twenty-server`

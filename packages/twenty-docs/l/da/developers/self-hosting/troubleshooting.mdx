@@ -71,7 +71,7 @@ Dette skulle virke automatisk med den installerede eslint-udvidelse. Hvis dette 
 
 #### Mens du kører `npx nx start` eller `npx nx start twenty-front`, kastes der en 'Out of memory' fejl
 
-I `packages/twenty-front/.env` fjern kommenteringen af `VITE_DISABLE_TYPESCRIPT_CHECKER=true` for at deaktivere baggrundskontroller, hvilket reducerer behovet for RAM.
+I `packages/twenty-front/.env` fjern kommenteringen af `VITE_DISABLE_TYPESCRIPT_CHECKER=true` og `VITE_DISABLE_ESLINT_CHECKER=true` for at deaktivere baggrundskontroller, hvilket reducerer behovet for RAM.
 
 **Hvis det ikke virker:**  
 Kør kun de tjenester, du har brug for, i stedet for `npx nx start`. For eksempel, hvis du arbejder på serveren, kør bare `npx nx worker twenty-server`

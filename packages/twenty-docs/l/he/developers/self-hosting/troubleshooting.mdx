@@ -71,7 +71,7 @@ Then delete the repository and clone it again.
 
 #### בעת הרצת `npx nx start` או `npx nx start twenty-front`, מופיעה שגיאה של מחסור בזיכרון
 
-In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
+In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` and `VITE_DISABLE_ESLINT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
 
 **אם זה לא עובד:**
 הרץ רק את השירותים שאתה צריך, במקום `npx nx start`. למשל, אם אתה עובד על השרת, הרץ רק `npx nx worker twenty-server`.

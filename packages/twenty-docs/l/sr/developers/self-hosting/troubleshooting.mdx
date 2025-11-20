@@ -70,7 +70,7 @@ git config --global core.autocrlf false
 
 #### Док покрећете `npx nx start` или `npx nx start twenty-front`, јавља се грешка недостатка меморије
 
-У `packages/twenty-front/.env` одкоментаришите `VITE_DISABLE_TYPESCRIPT_CHECKER=true` да онемогућите проверу у позадини и тако смањите потребну количину RAM-a.
+У `packages/twenty-front/.env` одкоментаришите `VITE_DISABLE_TYPESCRIPT_CHECKER=true` и `VITE_DISABLE_ESLINT_CHECKER=true` да онемогућите проверу у позадини и тако смањите потребну количину RAM-a.
 
 **Ако не ради:**  
 Покрените само оне услуге које су вам потребне, уместо `npx nx start`. На пример, ако радите на серверу, покрените само `npx nx worker twenty-server`

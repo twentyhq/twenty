@@ -71,7 +71,7 @@ Tämän pitäisi toimia heti suorilta käsin, jos eslint-laajennus on asennettu.
 
 #### Kun `npx nx start` tai `npx nx start twenty-front` suoritetaan, muistivirhe ilmoitetaan
 
-In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
+In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` and `VITE_DISABLE_ESLINT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
 
 **Jos tämä ei toimi:**  
 Suorita vain tarvitsemasi palvelut sen sijaan, että käyttäisit `npx nx start`. Esimerkiksi, jos työskentelet palvelimen kanssa, suorita vain `npx nx worker twenty-server`

@@ -71,7 +71,7 @@ Dit zou zonder enige configuratie moeten werken met de geïnstalleerde eslint-ex
 
 #### Tijdens uitvoeren van `npx nx start` of `npx nx start twenty-front`, wordt er een geheugenfout gegenereerd
 
-In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` om achtergrondcontroles te stoppen en zo het benodigde RAM-gebruik te verminderen.
+In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` en `VITE_DISABLE_ESLINT_CHECKER=true` om achtergrondcontroles te stoppen en zo het benodigde RAM-gebruik te verminderen.
 
 **Als dit niet werkt:**  
 Voer alleen de services uit die u nodig heeft, in plaats van `npx nx start`. Bijvoorbeeld, als je aan de server werkt, voer alleen `npx nx worker twenty-server` uit.

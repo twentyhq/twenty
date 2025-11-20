@@ -73,7 +73,7 @@ eslint拡張子がインストールされている場合、これは標準設�
 
 #### `npx nx start` または `npx nx start twenty-front` 実行中にメモリエラーが発生
 
-`packages/twenty-front/.env`で`VITE_DISABLE_TYPESCRIPT_CHECKER=true` をコメント解除して、バックグラウンドチェックを無効化し、必要なRAMの量を減らします。
+`packages/twenty-front/.env`で`VITE_DISABLE_TYPESCRIPT_CHECKER=true` と `VITE_DISABLE_ESLINT_CHECKER=true` をコメント解除して、バックグラウンドチェックを無効化し、必要なRAMの量を減らします。
 
 **これが機能しない場合:**  
 必要なサービスのみを実行し、`npx nx start`の実行を避けてください。 例えば、サーバーで作業している場合は、`npx nx worker twenty-server` のみを実行してください。 例えば、サーバーで作業している場合は、`npx nx worker twenty-server` のみを実行してください。

@@ -71,7 +71,7 @@ Questo dovrebbe funzionare direttamente con l'estensione eslint installata. Se q
 
 #### Durante l'esecuzione di `npx nx start` o `npx nx start twenty-front`, viene generato un errore di memoria insufficiente
 
-In `packages/twenty-front/.env` decommentare `VITE_DISABLE_TYPESCRIPT_CHECKER=true` per disabilitare i controlli in background riducendo così la quantità di RAM necessaria.
+In `packages/twenty-front/.env` decommentare `VITE_DISABLE_TYPESCRIPT_CHECKER=true` e `VITE_DISABLE_ESLINT_CHECKER=true` per disabilitare i controlli in background riducendo così la quantità di RAM necessaria.
 
 **Se non funziona:**  
 Esegui solo i servizi di cui hai bisogno, invece di `npx nx start`. Ad esempio, se lavori sul server, esegui solo `npx nx worker twenty-server`
