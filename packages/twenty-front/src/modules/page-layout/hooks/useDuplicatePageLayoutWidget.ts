@@ -122,19 +122,18 @@ export const useDuplicatePageLayoutWidget = (
 
         setEditingWidgetId(newWidgetId);
 
-        requestAnimationFrame(() => {
-          const { scrollWrapperElement } = getScrollWrapperElement();
-          if (isDefined(scrollWrapperElement)) {
-            const scrollPosition =
-              newLayout.y *
-              (PAGE_LAYOUT_GRID_ROW_HEIGHT + PAGE_LAYOUT_GRID_MARGIN);
+        const { scrollWrapperElement } = getScrollWrapperElement();
 
-            scrollWrapperElement.scrollTo({
-              top: scrollPosition,
-              behavior: 'smooth',
-            });
-          }
-        });
+        if (isDefined(scrollWrapperElement)) {
+          const scrollPosition =
+            newLayout.y *
+            (PAGE_LAYOUT_GRID_ROW_HEIGHT + PAGE_LAYOUT_GRID_MARGIN);
+
+          scrollWrapperElement.scrollTo({
+            top: scrollPosition,
+            behavior: 'smooth',
+          });
+        }
 
         return newWidgetId;
       },
