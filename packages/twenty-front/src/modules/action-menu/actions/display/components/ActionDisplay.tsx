@@ -15,6 +15,7 @@ export type ActionDisplayProps = {
   shortLabel?: MessageDescriptor | string;
   description?: MessageDescriptor | string;
   Icon: IconComponent;
+  isPrimaryCTA?: boolean;
   accent?: MenuItemAccent;
   hotKeys?: string[];
 };
