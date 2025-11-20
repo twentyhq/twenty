@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`updateOne FieldMetadataService morph relation fields v2 RENAME ME It should update all morph related flat field metadata allowing its deletion 1`] = `
+{
+  "id": "ced1fe67-53ab-42c5-93b3-d08e44bba080",
+  "isLabelSyncedWithName": false,
+  "label": "field label",
+  "morphRelations": [
+    {
+      "sourceFieldMetadata": {
+        "id": "ced1fe67-53ab-42c5-93b3-d08e44bba080",
+        "type": "MORPH_RELATION",
+      },
+      "targetFieldMetadata": {
+        "id": "79988f22-ced5-435d-bcfb-df0c5e062d66",
+        "type": "RELATION",
+      },
+      "type": "MANY_TO_ONE",
+    },
+    {
+      "sourceFieldMetadata": {
+        "id": "760a8fee-4129-4b7a-919b-fb68bb11333a",
+        "type": "MORPH_RELATION",
+      },
+      "targetFieldMetadata": {
+        "id": "885c0098-f117-49d9-8dcc-6631a9e7178e",
+        "type": "RELATION",
+      },
+      "type": "MANY_TO_ONE",
+    },
+  ],
+  "name": "fieldNameOpportunityForMorphRelationSecond",
+  "object": {
+    "id": "a655c5d7-8865-4226-853c-af961f1ff682",
+    "nameSingular": "companyForMorphRelationSecond",
+  },
+  "settings": {
+    "joinColumnName": "fieldNameOpportunityForMorphRelationSecondId",
+    "onDelete": "SET_NULL",
+    "relationType": "MANY_TO_ONE",
+  },
+  "type": "MORPH_RELATION",
+}
+`;
+
+exports[`updateOne FieldMetadataService morph relation fields v2 RENAME ME It should update all morph related flat field metadata allowing its deletion 4`] = `
+{
+  "description": [
+    "Description for all",
+  ],
+  "isActive": [
+    true,
+  ],
+  "label": [
+    "field label",
+  ],
+  "name": [
+    "fieldNameOpportunityForMorphRelationSecond",
+    "fieldNamePersonForMorphRelationSecond",
+  ],
+}
+`;
