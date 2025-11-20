@@ -1,6 +1,6 @@
+import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 import { type WhereExpressionBuilder } from 'typeorm';
-import { compositeTypeDefinitions } from 'twenty-shared/types';
 
 import {
   GraphqlQueryRunnerException,
@@ -60,12 +60,13 @@ export class GraphqlQueryFilterFieldParser {
         GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       );
     }
-
+    //TODODO
     const { sql, params } = computeWhereConditionParts({
       operator,
       objectNameSingular,
       key,
       value,
+      fieldMetadataType: fieldMetadata.type,
     });
 
     if (isFirst) {
@@ -125,7 +126,9 @@ export class GraphqlQueryFilterFieldParser {
         operator,
         objectNameSingular,
         key: fullFieldName,
+        subFieldKey,
         value,
+        fieldMetadataType: fieldMetadata.type,
       });
 
       if (isFirst && index === 0) {

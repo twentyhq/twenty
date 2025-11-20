@@ -235,7 +235,7 @@ export class DataArgProcessor {
       case FieldMetadataType.EMAILS: {
         const validatedValue = validateEmailsFieldOrThrow(value, key);
 
-        return transformEmailsValue(validatedValue);
+        return transformEmailsValue(validatedValue, isNullEquivalenceEnabled);
       }
       case FieldMetadataType.FULL_NAME: {
         const validatedValue = validateFullNameFieldOrThrow(value, key);
