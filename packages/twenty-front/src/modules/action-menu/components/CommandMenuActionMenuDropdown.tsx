@@ -34,7 +34,9 @@ export const CommandMenuActionMenuDropdown = () => {
       selectableListId={actionMenuId}
       selectableItemIdArray={selectableItemIdArray}
       onOpen={() => {
-        setSelectedItemId(selectableItemIdArray[0]);
+        if (selectableItemIdArray.length > 0) {
+          setSelectedItemId(selectableItemIdArray[0]);
+        }
       }}
     >
       {recordSelectionActions.map((action) => (
