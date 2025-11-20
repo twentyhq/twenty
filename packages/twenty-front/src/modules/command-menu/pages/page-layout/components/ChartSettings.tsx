@@ -4,7 +4,6 @@ import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/C
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
 import { ChartSettingItem } from '@/command-menu/pages/page-layout/components/chart-settings/ChartSettingItem';
 import { ChartTypeSelectionSection } from '@/command-menu/pages/page-layout/components/ChartTypeSelectionSection';
-import { WidgetSettingsFooter } from '@/command-menu/pages/page-layout/components/WidgetSettingsFooter';
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
 import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/useChartSettingsValues';
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
@@ -29,6 +28,12 @@ import { t } from '@lingui/core/macro';
 import { SidePanelInformationBanner } from 'twenty-ui/display';
 
 import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
+
+const StyledCommandMenuContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
 
 const StyledSidePanelInformationBanner = styled(SidePanelInformationBanner)`
   margin-top: ${({ theme }) => theme.spacing(2)};
@@ -120,7 +125,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   );
 
   return (
-    <>
+    <StyledCommandMenuContainer>
       <CommandMenuList commandGroups={[]} selectableItemIds={visibleItemIds}>
         <ChartTypeSelectionSection
           currentGraphType={currentGraphType}
@@ -188,7 +193,6 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
           );
         })}
       </CommandMenuList>
-      <WidgetSettingsFooter />
-    </>
+    </StyledCommandMenuContainer>
   );
 };
