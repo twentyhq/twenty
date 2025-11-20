@@ -68,7 +68,7 @@ export const validateMorphOrRelationFlatFieldJoinColumName = ({
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           message:
             'One to many field metadata should not carry the join column name in its settings',
-          userFriendlyMessage: msg`A ont to many relation field should never declare a join column`,
+          userFriendlyMessage: msg`A one to many relation field should never declare a join column`,
         });
       }
       break;
