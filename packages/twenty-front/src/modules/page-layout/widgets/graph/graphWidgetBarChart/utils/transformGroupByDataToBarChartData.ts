@@ -147,7 +147,7 @@ export const transformGroupByDataToBarChartData = ({
     groupByFieldX.type === FieldMetadataType.DATE ||
     groupByFieldX.type === FieldMetadataType.DATE_TIME;
 
-  const filteredResultsWithDateGaps = isDateField
+  const dateGapFillResult = isDateField
     ? fillDateGapsInBarChartData({
         data: filteredResults,
         keys: [aggregateField.name],
@@ -156,7 +156,10 @@ export const transformGroupByDataToBarChartData = ({
           GRAPH_DEFAULT_DATE_GRANULARITY,
         hasSecondDimension: isDefined(groupByFieldY),
       })
-    : filteredResults;
+    : { data: filteredResults, wasTruncated: false };
+
+  const filteredResultsWithDateGaps = dateGapFillResult.data;
+  const dateRangeWasTruncated = dateGapFillResult.wasTruncated;
 
   const baseResult = isDefined(groupByFieldY)
     ? transformTwoDimensionalGroupByToBarChartData({
@@ -190,5 +193,6 @@ export const transformGroupByDataToBarChartData = ({
     yAxisLabel,
     showDataLabels,
     layout,
+    hasTooManyGroups: baseResult.hasTooManyGroups || dateRangeWasTruncated,
   };
 };

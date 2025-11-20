@@ -12,21 +12,29 @@ type GenerateDateRangeParams = {
     | ObjectRecordGroupByDateGranularity.YEAR;
 };
 
+type GenerateDateRangeResult = {
+  dates: Date[];
+  wasTruncated: boolean;
+};
+
 export const generateDateGroupsInRange = ({
   startDate,
   endDate,
   granularity,
-}: GenerateDateRangeParams): Date[] => {
+}: GenerateDateRangeParams): GenerateDateRangeResult => {
   const dates: Date[] = [];
 
   let iterations = 0;
+  let wasTruncated = false;
 
   let currentDateCursor = new Date(startDate);
 
-  while (
-    currentDateCursor <= endDate &&
-    iterations < BAR_CHART_MAXIMUM_NUMBER_OF_BARS
-  ) {
+  while (currentDateCursor <= endDate) {
+    if (iterations >= BAR_CHART_MAXIMUM_NUMBER_OF_BARS) {
+      wasTruncated = true;
+      break;
+    }
+
     dates.push(new Date(currentDateCursor));
     iterations++;
 
@@ -52,5 +60,5 @@ export const generateDateGroupsInRange = ({
     }
   }
 
-  return dates;
+  return { dates, wasTruncated };
 };

@@ -21,19 +21,20 @@ describe('fillDateGapsInBarChartData', () => {
         dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
       });
 
-      expect(result).toHaveLength(3);
-      expect(result[0]).toEqual({
+      expect(result.data).toHaveLength(3);
+      expect(result.data[0]).toEqual({
         groupByDimensionValues: ['2024-01-01T00:00:00.000Z'],
         count: 5,
       });
-      expect(result[1]).toEqual({
+      expect(result.data[1]).toEqual({
         groupByDimensionValues: ['2024-01-02T00:00:00.000Z'],
         count: 0,
       });
-      expect(result[2]).toEqual({
+      expect(result.data[2]).toEqual({
         groupByDimensionValues: ['2024-01-03T00:00:00.000Z'],
         count: 3,
       });
+      expect(result.wasTruncated).toBe(false);
     });
 
     it('returns empty data unchanged', () => {
@@ -43,7 +44,8 @@ describe('fillDateGapsInBarChartData', () => {
         dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
       });
 
-      expect(result).toEqual([]);
+      expect(result.data).toEqual([]);
+      expect(result.wasTruncated).toBe(false);
     });
   });
 
@@ -71,15 +73,15 @@ describe('fillDateGapsInBarChartData', () => {
         hasSecondDimension: true,
       });
 
-      expect(result).toHaveLength(6);
+      expect(result.data).toHaveLength(6);
       expect(
-        result.filter((r) => r.groupByDimensionValues[1] === 'A'),
+        result.data.filter((r) => r.groupByDimensionValues[1] === 'A'),
       ).toHaveLength(3);
       expect(
-        result.filter((r) => r.groupByDimensionValues[1] === 'B'),
+        result.data.filter((r) => r.groupByDimensionValues[1] === 'B'),
       ).toHaveLength(3);
       expect(
-        result.find(
+        result.data.find(
           (r) =>
             r.groupByDimensionValues[0] === '2024-01-02T00:00:00.000Z' &&
             r.groupByDimensionValues[1] === 'A',
@@ -88,6 +90,7 @@ describe('fillDateGapsInBarChartData', () => {
         groupByDimensionValues: ['2024-01-02T00:00:00.000Z', 'A'],
         count: 0,
       });
+      expect(result.wasTruncated).toBe(false);
     });
   });
 });

@@ -19,6 +19,11 @@ type FillDateGapsParams = {
   hasSecondDimension?: boolean;
 };
 
+type FillDateGapsResult = {
+  data: GroupByRawResult[];
+  wasTruncated: boolean;
+};
+
 type OneDimensionalFillParams = {
   data: GroupByRawResult[];
   keys: string[];
@@ -47,23 +52,25 @@ const createEmptyDateGroup = (
 const getDateGroupsFromData = (
   parsedDates: Date[],
   dateGranularity: SupportedDateGranularity,
-): Date[] => {
+): { dates: Date[]; wasTruncated: boolean } => {
   const timestamps = parsedDates.map((date) => date.getTime());
   const minDate = new Date(Math.min(...timestamps));
   const maxDate = new Date(Math.max(...timestamps));
 
-  return generateDateGroupsInRange({
+  const result = generateDateGroupsInRange({
     startDate: minDate,
     endDate: maxDate,
     granularity: dateGranularity,
   });
+
+  return { dates: result.dates, wasTruncated: result.wasTruncated };
 };
 
 const fillDateGapsInOneDimensionalBarChartData = ({
   data,
   keys,
   dateGranularity,
-}: OneDimensionalFillParams): GroupByRawResult[] => {
+}: OneDimensionalFillParams): FillDateGapsResult => {
   const existingDateGroupsMap = new Map<string, GroupByRawResult>();
   const parsedDates: Date[] = [];
 
@@ -85,12 +92,15 @@ const fillDateGapsInOneDimensionalBarChartData = ({
   }
 
   if (parsedDates.length === 0) {
-    return data;
+    return { data, wasTruncated: false };
   }
 
-  const allDates = getDateGroupsFromData(parsedDates, dateGranularity);
+  const { dates: allDates, wasTruncated } = getDateGroupsFromData(
+    parsedDates,
+    dateGranularity,
+  );
 
-  return allDates.map((date) => {
+  const filledData = allDates.map((date) => {
     const key = date.toISOString();
     const existingDateGroup = existingDateGroupsMap.get(key);
 
@@ -98,13 +108,15 @@ const fillDateGapsInOneDimensionalBarChartData = ({
       ? existingDateGroup
       : createEmptyDateGroup([date], keys);
   });
+
+  return { data: filledData, wasTruncated };
 };
 
 const fillDateGapsInTwoDimensionalBarChartData = ({
   data,
   keys,
   dateGranularity,
-}: TwoDimensionalFillParams): GroupByRawResult[] => {
+}: TwoDimensionalFillParams): FillDateGapsResult => {
   const existingDateGroupsMap = new Map<string, GroupByRawResult>();
   const parsedDates: Date[] = [];
   const uniqueSecondDimensionValues = new Set<DimensionValue>();
@@ -133,12 +145,15 @@ const fillDateGapsInTwoDimensionalBarChartData = ({
   }
 
   if (parsedDates.length === 0) {
-    return data;
+    return { data, wasTruncated: false };
   }
 
-  const allDates = getDateGroupsFromData(parsedDates, dateGranularity);
+  const { dates: allDates, wasTruncated } = getDateGroupsFromData(
+    parsedDates,
+    dateGranularity,
+  );
 
-  return allDates.flatMap((date) =>
+  const filledData = allDates.flatMap((date) =>
     Array.from(uniqueSecondDimensionValues).map((secondDimensionValue) => {
       const key = `${date.toISOString()}_${String(secondDimensionValue)}`;
       const existingDateGroup = existingDateGroupsMap.get(key);
@@ -148,6 +163,8 @@ const fillDateGapsInTwoDimensionalBarChartData = ({
         : createEmptyDateGroup([date, secondDimensionValue], keys);
     }),
   );
+
+  return { data: filledData, wasTruncated };
 };
 
 export const fillDateGapsInBarChartData = ({
@@ -155,13 +172,13 @@ export const fillDateGapsInBarChartData = ({
   keys,
   dateGranularity,
   hasSecondDimension = false,
-}: FillDateGapsParams): GroupByRawResult[] => {
+}: FillDateGapsParams): FillDateGapsResult => {
   if (data.length === 0) {
-    return data;
+    return { data, wasTruncated: false };
   }
 
   if (BAR_CHART_DATE_GRANULARITIES_WITHOUT_GAP_FILLING.has(dateGranularity)) {
-    return data;
+    return { data, wasTruncated: false };
   }
 
   if (hasSecondDimension) {
