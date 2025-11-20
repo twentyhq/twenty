@@ -147,15 +147,17 @@ export class WorkflowSchemaWorkspaceService {
         }
 
         return Object.fromEntries(
-          Object.entries(agent.responseFormat.schema).map(([key, field]) => [
-            key,
-            {
-              isLeaf: true,
-              type: field.type,
-              label: field.description || key,
-              value: null,
-            },
-          ]),
+          Object.entries(agent.responseFormat.schema.properties).map(
+            ([key, field]) => [
+              key,
+              {
+                isLeaf: true,
+                type: field.type,
+                label: field.description || key,
+                value: null,
+              },
+            ],
+          ),
         ) as OutputSchema;
       }
       case WorkflowActionType.CODE: // StepOutput schema is computed on serverlessFunction draft execution

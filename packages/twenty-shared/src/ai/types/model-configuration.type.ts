@@ -8,4 +8,3 @@ export type ModelConfiguration = {
     configuration?: Record<string, unknown>;
   };
 };
-

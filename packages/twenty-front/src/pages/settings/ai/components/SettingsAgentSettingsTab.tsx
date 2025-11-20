@@ -8,7 +8,6 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isDefined } from 'twenty-shared/utils';
-import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 import { H2Title, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -151,11 +150,7 @@ export const SettingsAgentSettingsTab = ({
       </StyledFormContainer>
       <StyledFormContainer>
         <SettingsAgentResponseFormat
-          responseFormat={
-            formValues.responseFormat as
-              | { type: 'text' | 'json'; schema?: BaseOutputSchemaV2 }
-              | undefined
-          }
+          responseFormat={formValues.responseFormat}
           onResponseFormatChange={(format) =>
             onFieldChange('responseFormat', format)
           }

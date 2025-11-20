@@ -1,7 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { generateObject, generateText, stepCountIs, ToolSet } from 'ai';
+import {
+  generateObject,
+  generateText,
+  jsonSchema,
+  stepCountIs,
+  ToolSet,
+} from 'ai';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
@@ -17,7 +23,6 @@ import {
 } from 'src/engine/metadata-modules/agent/agent.exception';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
-import { convertAgentSchemaToZod } from 'src/engine/metadata-modules/agent/utils/convert-output-schema-to-zod';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
@@ -138,12 +143,12 @@ export class AiAgentExecutorService {
                  Execution Results: ${textResponse.text}
 
                  Please generate the structured output based on the execution results and context above.`,
-        schema: convertAgentSchemaToZod(agentSchema),
+        schema: jsonSchema(agentSchema),
         experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 
       return {
-        result: output.object,
+        result: output.object as object,
         usage: {
           inputTokens:
             (textResponse.usage?.inputTokens ?? 0) +

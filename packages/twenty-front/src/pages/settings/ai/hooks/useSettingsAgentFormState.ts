@@ -20,7 +20,12 @@ export const useSettingsAgentFormState = (mode: 'create' | 'edit') => {
     modelConfiguration: {},
     responseFormat: {
       type: 'text',
-      schema: {},
+      schema: {
+        type: 'object' as const,
+        properties: {},
+        required: [],
+        additionalProperties: false as const,
+      },
     },
   });
 
@@ -58,7 +63,12 @@ export const useSettingsAgentFormState = (mode: 'create' | 'edit') => {
         modelConfiguration: {},
         responseFormat: {
           type: 'text',
-          schema: {},
+          schema: {
+            type: 'object' as const,
+            properties: {},
+            required: [],
+            additionalProperties: false as const,
+          },
         },
       });
     }

@@ -4,7 +4,10 @@ import { WorkflowOutputSchemaBuilder } from '@/workflow/workflow-steps/workflow-
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { type AgentResponseSchema } from 'twenty-shared/ai';
+import {
+  type AgentResponseFieldType,
+  type AgentResponseSchema,
+} from 'twenty-shared/ai';
 import { v4 } from 'uuid';
 
 const StyledContainer = styled.div`
@@ -25,23 +28,41 @@ type SettingsAgentResponseFormatProps = {
   disabled?: boolean;
 };
 
-const schemaToFields = (schema: AgentResponseSchema): OutputSchemaField[] =>
-  Object.entries(schema).map(([key, field]) => ({
+const schemaToFields = (schema: AgentResponseSchema): OutputSchemaField[] => {
+  if (!schema.properties) return [];
+
+  return Object.entries(schema.properties).map(([key, field]) => ({
     id: v4(),
     name: key,
     description: field.description || '',
-    type: field.type as any,
+    type: field.type,
   }));
+};
 
-const fieldsToSchema = (fields: OutputSchemaField[]): AgentResponseSchema =>
-  Object.fromEntries(
-    fields
-      .filter((field) => field.name.trim() && field.type)
-      .map((field) => [
-        field.name,
-        { type: field.type!, description: field.description || field.name },
-      ]),
-  );
+const fieldsToSchema = (fields: OutputSchemaField[]): AgentResponseSchema => {
+  const properties: Record<
+    string,
+    { type: AgentResponseFieldType; description?: string }
+  > = {};
+  const required: string[] = [];
+
+  fields
+    .filter((field) => field.name.trim() && field.type)
+    .forEach((field) => {
+      properties[field.name] = {
+        type: field.type!,
+        description: field.description || field.name,
+      };
+      required.push(field.name);
+    });
+
+  return {
+    type: 'object' as const,
+    properties,
+    required,
+    additionalProperties: false as const,
+  };
+};
 
 export const SettingsAgentResponseFormat = ({
   responseFormat,
@@ -49,39 +70,40 @@ export const SettingsAgentResponseFormat = ({
   disabled,
 }: SettingsAgentResponseFormatProps) => {
   const formatType = responseFormat?.type || 'text';
-  const schema = responseFormat?.schema || {};
+  const schema: AgentResponseSchema = responseFormat?.schema || {
+    type: 'object' as const,
+    properties: {},
+    required: [],
+    additionalProperties: false as const,
+  };
 
-  // Local state for visual builder to allow empty fields to persist in UI
   const [visualBuilderFields, setVisualBuilderFields] = useState<
     OutputSchemaField[]
   >(() => schemaToFields(schema));
 
   const handleFormatTypeChange = (newType: 'text' | 'json') => {
-    const newSchema = newType === 'text' ? {} : schema;
     if (newType === 'json') {
-      setVisualBuilderFields(schemaToFields(newSchema));
+      setVisualBuilderFields(schemaToFields(schema));
     }
+    const emptySchema: AgentResponseSchema = {
+      type: 'object' as const,
+      properties: {},
+      required: [],
+      additionalProperties: false as const,
+    };
     onResponseFormatChange({
       type: newType,
-      schema: newSchema,
+      schema: newType === 'text' ? emptySchema : schema,
     });
   };
 
   const handleVisualBuilderChange = (updatedFields: OutputSchemaField[]) => {
-    // Update local state immediately for responsive UI
     setVisualBuilderFields(updatedFields);
-
-    // Update parent state with schema (filtering out empty fields)
     onResponseFormatChange({
       type: 'json',
       schema: fieldsToSchema(updatedFields),
     });
   };
-
-  const formatTypeOptions = [
-    { label: t`String`, value: 'text' as const },
-    { label: t`JSON`, value: 'json' as const },
-  ];
 
   return (
     <StyledContainer>
@@ -90,7 +112,10 @@ export const SettingsAgentResponseFormat = ({
         label={t`Response Format`}
         value={formatType}
         onChange={handleFormatTypeChange}
-        options={formatTypeOptions}
+        options={[
+          { label: t`String`, value: 'text' as const },
+          { label: t`JSON`, value: 'json' as const },
+        ]}
         disabled={disabled}
       />
 
