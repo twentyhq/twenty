@@ -94,20 +94,17 @@ describe('transformTwoDimensionalGroupByToBarChartData', () => {
         key: 'SCREENING',
         label: 'SCREENING',
         color: 'blue',
-        rawValue: 'SCREENING',
       },
       {
         key: 'PROPOSAL',
         label: 'PROPOSAL',
         color: 'blue',
-        rawValue: 'PROPOSAL',
       },
-      { key: 'NEW', label: 'NEW', color: 'blue', rawValue: 'NEW' },
+      { key: 'NEW', label: 'NEW', color: 'blue' },
       {
         key: 'CUSTOMER',
         label: 'CUSTOMER',
         color: 'blue',
-        rawValue: 'CUSTOMER',
       },
     ]);
 

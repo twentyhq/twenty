@@ -44,7 +44,6 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
   const allXValues: string[] = [];
   const xValueSet = new Set<string>();
   const dimensionMetadata = new Map<string, RawDimensionValue>();
-  const seriesKeyToRawValueMap = new Map<string, RawDimensionValue>();
   let hasTooManyGroups = false;
 
   rawResults.forEach((result) => {
@@ -98,10 +97,6 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
 
     if (!seriesMap.has(seriesKey)) {
       seriesMap.set(seriesKey, new Map());
-      seriesKeyToRawValueMap.set(
-        seriesKey,
-        seriesRawValue as RawDimensionValue,
-      );
     }
 
     seriesMap.get(seriesKey)!.set(xValue, aggregateValue);
@@ -119,7 +114,6 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
         label: seriesKey,
         color: configuration.color as GraphColor,
         data,
-        rawValue: seriesKeyToRawValueMap.get(seriesKey),
       };
     },
   );
