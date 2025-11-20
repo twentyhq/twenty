@@ -1,7 +1,8 @@
 import { isNull } from '@sniptt/guards';
+import { isEmptyObject } from 'twenty-shared/utils';
 
 export const isNullEquivalentRawJsonFieldValue = (value: unknown): boolean => {
   if (isNull(value)) return true;
 
-  return typeof value === 'object' && Object.keys(value).length === 0;
+  return isEmptyObject(value);
 };

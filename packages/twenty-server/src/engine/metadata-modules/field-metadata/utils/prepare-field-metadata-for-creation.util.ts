@@ -27,7 +27,6 @@ export const prepareCustomFieldMetadataForCreation = (
     objectMetadataId: fieldMetadataInput.objectMetadataId,
     workspaceId: fieldMetadataInput.workspaceId,
     isNullable: generateNullable(
-      fieldMetadataInput.type,
       fieldMetadataInput.isNullable,
       fieldMetadataInput.isRemoteCreation,
     ),

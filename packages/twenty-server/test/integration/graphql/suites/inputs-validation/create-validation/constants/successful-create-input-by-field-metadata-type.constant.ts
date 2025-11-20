@@ -134,7 +134,10 @@ export const successfulCreateInputByFieldMetadataType: {
         rawJsonField: {},
       },
       validateInput: (record: Record<string, any>) => {
-        return Object.keys(record.rawJsonField).length === 0;
+        return (
+          typeof record.rawJsonField === 'object' &&
+          Object.keys(record.rawJsonField).length === 0
+        );
       },
     },
     {
@@ -142,7 +145,10 @@ export const successfulCreateInputByFieldMetadataType: {
         rawJsonField: null,
       },
       validateInput: (record: Record<string, any>) => {
-        return record.rawJsonField === null;
+        return (
+          typeof record.rawJsonField === 'object' &&
+          Object.keys(record.rawJsonField).length === 0
+        );
       },
     },
     {
@@ -182,7 +188,9 @@ export const successfulCreateInputByFieldMetadataType: {
         arrayField: [],
       },
       validateInput: (record: Record<string, any>) => {
-        return record.arrayField.length === 0;
+        return (
+          Array.isArray(record.arrayField) && record.arrayField.length === 0
+        );
       },
     },
     {
@@ -190,7 +198,9 @@ export const successfulCreateInputByFieldMetadataType: {
         arrayField: null,
       },
       validateInput: (record: Record<string, any>) => {
-        return record.arrayField === null;
+        return (
+          Array.isArray(record.arrayField) && record.arrayField.length === 0
+        );
       },
     },
   ],
@@ -229,7 +239,10 @@ export const successfulCreateInputByFieldMetadataType: {
         multiSelectField: [],
       },
       validateInput: (record: Record<string, any>) => {
-        return record.multiSelectField.length === 0;
+        return (
+          Array.isArray(record.multiSelectField) &&
+          record.multiSelectField.length === 0
+        );
       },
     },
     {
@@ -237,7 +250,10 @@ export const successfulCreateInputByFieldMetadataType: {
         multiSelectField: null,
       },
       validateInput: (record: Record<string, any>) => {
-        return record.multiSelectField === null;
+        return (
+          Array.isArray(record.multiSelectField) &&
+          record.multiSelectField.length === 0
+        );
       },
     },
   ],

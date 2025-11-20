@@ -14,7 +14,6 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { computeUniqueIndexWhereClause } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-index-where-clause.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
@@ -128,15 +127,6 @@ export class UpsertRecordService {
           ? conflictPathsUniqueFieldsToUpdate
           : ['id'];
 
-      const indexPredicate = uniqueFieldsToUpdate
-        .map((field) =>
-          computeUniqueIndexWhereClause({
-            type: field.type,
-            name: field.name,
-          }),
-        )
-        .filter(isDefined);
-
       const restrictedFields =
         repository.objectRecordsPermissions?.[
           objectMetadataItemWithFieldsMaps.id
@@ -151,10 +141,6 @@ export class UpsertRecordService {
         transformedObjectRecord,
         {
           conflictPaths: conflictPaths,
-          indexPredicate:
-            indexPredicate.length > 0
-              ? `${indexPredicate.join(' AND ')}`
-              : undefined,
         },
         undefined,
         selectedColumns,

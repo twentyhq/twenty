@@ -140,6 +140,7 @@ describe('WorkspaceEntityManager', () => {
         IS_WORKFLOW_RUN_STOPPAGE_ENABLED: false,
         IS_DASHBOARD_V2_ENABLED: false,
         IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED: false,
+        IS_NULL_EQUIVALENCE_ENABLED: false,
       },
       eventEmitterService: {
         emitMutationEvent: jest.fn(),
@@ -167,6 +168,7 @@ describe('WorkspaceEntityManager', () => {
         IS_WORKFLOW_RUN_STOPPAGE_ENABLED: false,
         IS_DASHBOARD_V2_ENABLED: false,
         IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED: false,
+        IS_NULL_EQUIVALENCE_ENABLED: false,
       },
       permissionsPerRoleId: {},
     } as WorkspaceDataSource;
