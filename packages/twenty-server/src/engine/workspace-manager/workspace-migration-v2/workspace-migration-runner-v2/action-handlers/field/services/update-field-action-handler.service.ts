@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  FieldMetadataRelationSettings,
-  FieldMetadataType,
-} from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ColumnType, type QueryRunner } from 'typeorm';
 
@@ -17,6 +14,7 @@ import { MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/fi
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { isFlatFieldMetadataTypeRelationOrMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation.util copy';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { FlatEntityPropertiesToCompare } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-to-compare.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -224,7 +222,10 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         isPropertyUpdate(update, 'settings') &&
         isDefined(update.from?.joinColumnName) &&
         isDefined(update.to?.joinColumnName) &&
-        update.from.joinColumnName !== update.to.joinColumnName
+        update.from.joinColumnName !== update.to.joinColumnName &&
+        isFlatFieldMetadataTypeRelationOrMorphRelation(
+          optimisticFlatFieldMetadata,
+        )
       ) {
         await this.workspaceSchemaManagerService.columnManager.renameColumn({
           queryRunner,
@@ -236,7 +237,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         optimisticFlatFieldMetadata = {
           ...optimisticFlatFieldMetadata,
           settings: {
-            ...(optimisticFlatFieldMetadata.settings as FieldMetadataRelationSettings),
+            ...optimisticFlatFieldMetadata.settings,
             joinColumnName: update.to.joinColumnName,
           },
         };
