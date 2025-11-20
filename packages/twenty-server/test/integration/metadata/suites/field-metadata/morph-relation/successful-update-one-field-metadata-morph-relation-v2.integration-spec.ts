@@ -13,20 +13,22 @@ import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-m
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
+type AggregatedFieldMetadataDto = {
+  description: (string | null)[];
+  name: string[];
+  label: string[];
+  isActive: boolean[];
+};
 const aggregateFieldMetadata = (
   fieldMetadataDtos: { node: FieldMetadataDTO }[],
 ) => {
-  const initialAcc: {
-    description: string[];
-    name: string[];
-    label: string[];
-    isActive: boolean[];
-  } = {
+  const initialAcc: AggregatedFieldMetadataDto = {
     description: [],
     name: [],
     label: [],
     isActive: [],
   };
+
   return fieldMetadataDtos.reduce((acc, { node: fieldMetadataDto }) => {
     return {
       ...acc,
@@ -235,17 +237,15 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
         morphRelationFieldsBeforeUpdate.fields,
       );
 
-      expect(aggregatedMorphFieldMetadataDtos.name.length).toBe(
-        allMorphFieldIds.length,
-      );
-      expect(aggregatedMorphFieldMetadataDtos.description.length).toBe(1);
-      expect(aggregatedMorphFieldMetadataDtos.label.length).toBe(1);
-      expect(aggregatedMorphFieldMetadataDtos.isActive.length).toBe(1);
-      expect(aggregatedMorphFieldMetadataDtos.isActive[0]).toBe(true);
-      expect(aggregatedMorphFieldMetadataDtos.label[0]).toBe('field label');
-      expect(aggregatedMorphFieldMetadataDtos.description[0]).toBe(
-        'Description for all',
-      );
+      expect(aggregatedMorphFieldMetadataDtos).toMatchSnapshot();
+      expect(
+        aggregatedMorphFieldMetadataDtos,
+      ).toMatchObject<AggregatedFieldMetadataDto>({
+        description: ['Description for all'],
+        isActive: [true],
+        label: ['field label'],
+        name: [expect.any(String), expect.any(String)],
+      });
       const relationFieldsBeforeUpdate = (await findManyFieldsMetadata({
         input: {
           filter: { id: { in: allRelationFieldIds } },
@@ -267,10 +267,16 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
       const aggregatedRelationFieldMetadataDtos = aggregateFieldMetadata(
         relationFieldsBeforeUpdate.fields,
       );
-      expect(aggregatedRelationFieldMetadataDtos.description.length).toBe(1);
-      expect(aggregatedRelationFieldMetadataDtos.label.length).toBe(2);
-      expect(aggregatedRelationFieldMetadataDtos.isActive.length).toBe(1);
-      expect(aggregatedMorphFieldMetadataDtos.isActive[0]).toBe(true);
+
+      expect(aggregatedRelationFieldMetadataDtos).toMatchSnapshot();
+      expect(
+        aggregatedRelationFieldMetadataDtos,
+      ).toMatchObject<AggregatedFieldMetadataDto>({
+        description: [null],
+        isActive: [true],
+        label: [expect.any(String), expect.any(String)],
+        name: [expect.any(String), expect.any(String)],
+      });
     }
 
     // UPDATE
@@ -318,17 +324,15 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
         morphRelationFieldsAfterUpdate.fields,
       );
 
-      expect(aggregatedMorphFieldMetadataDtos.name.length).toBe(
-        allMorphFieldIds.length,
-      );
-      expect(aggregatedMorphFieldMetadataDtos.description.length).toBe(1);
-      expect(aggregatedMorphFieldMetadataDtos.label.length).toBe(1);
-      expect(aggregatedMorphFieldMetadataDtos.isActive.length).toBe(1);
-      expect(aggregatedMorphFieldMetadataDtos.isActive[0]).toBe(false);
-      expect(aggregatedMorphFieldMetadataDtos.label[0]).toBe('new label');
-      expect(aggregatedMorphFieldMetadataDtos.description[0]).toBe(
-        'new description',
-      );
+      expect(aggregatedMorphFieldMetadataDtos).toMatchSnapshot();
+      expect(
+        aggregatedMorphFieldMetadataDtos,
+      ).toMatchObject<AggregatedFieldMetadataDto>({
+        description: ['new description'],
+        isActive: [false],
+        label: ['new label'],
+        name: [expect.any(String), expect.any(String)],
+      });
 
       const allRelationFieldIds = createdMorphFromResult.morphRelations.map(
         ({ targetFieldMetadata }) => targetFieldMetadata.id,
@@ -355,10 +359,16 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
       const aggregatedRelationFieldMetadataDtos = aggregateFieldMetadata(
         relationFieldsBeforeUpdate.fields,
       );
-      expect(aggregatedRelationFieldMetadataDtos.description.length).toBe(1);
-      expect(aggregatedRelationFieldMetadataDtos.label.length).toBe(2);
-      expect(aggregatedRelationFieldMetadataDtos.isActive.length).toBe(1);
-      expect(aggregatedRelationFieldMetadataDtos.isActive[0]).toBe(false);
+
+      expect(aggregatedRelationFieldMetadataDtos).toMatchSnapshot();
+      expect(
+        aggregatedRelationFieldMetadataDtos,
+      ).toMatchObject<AggregatedFieldMetadataDto>({
+        description: [null],
+        isActive: [false],
+        label: [expect.any(String), expect.any(String)],
+        name: [expect.any(String), expect.any(String)],
+      });
     }
 
     await deleteOneFieldMetadata({
