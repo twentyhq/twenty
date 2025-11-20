@@ -3,6 +3,7 @@ import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
 import { ChartSettingItem } from '@/command-menu/pages/page-layout/components/chart-settings/ChartSettingItem';
+import { ChartSettingsFooter } from '@/command-menu/pages/page-layout/components/ChartSettingsFooter';
 import { ChartTypeSelectionSection } from '@/command-menu/pages/page-layout/components/ChartTypeSelectionSection';
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
 import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/useChartSettingsValues';
@@ -119,72 +120,75 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   );
 
   return (
-    <CommandMenuList commandGroups={[]} selectableItemIds={visibleItemIds}>
-      <ChartTypeSelectionSection
-        currentGraphType={currentGraphType}
-        setCurrentGraphType={handleGraphTypeChange}
-      />
-      {hasWidgetTooManyGroups && (
-        <StyledSidePanelInformationBanner
-          message={
-            currentGraphType === GraphType.LINE
-              ? t`Max ${LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart. Consider adding a filter`
-              : t`Max ${BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter`
-          }
+    <>
+      <CommandMenuList commandGroups={[]} selectableItemIds={visibleItemIds}>
+        <ChartTypeSelectionSection
+          currentGraphType={currentGraphType}
+          setCurrentGraphType={handleGraphTypeChange}
         />
-      )}
-      {chartSettings.map((group) => {
-        const visibleItems = group.items.filter(
-          (item) =>
-            !shouldHideChartSetting(
-              item,
-              widget.objectMetadataId,
-              isGroupByEnabled as boolean,
-              configuration,
-              objectMetadataItem,
-            ),
-        );
+        {hasWidgetTooManyGroups && (
+          <StyledSidePanelInformationBanner
+            message={
+              currentGraphType === GraphType.LINE
+                ? t`Max ${LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart. Consider adding a filter`
+                : t`Max ${BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter`
+            }
+          />
+        )}
+        {chartSettings.map((group) => {
+          const visibleItems = group.items.filter(
+            (item) =>
+              !shouldHideChartSetting(
+                item,
+                widget.objectMetadataId,
+                isGroupByEnabled as boolean,
+                configuration,
+                objectMetadataItem,
+              ),
+          );
 
-        return (
-          <CommandGroup key={group.heading} heading={group.heading}>
-            {visibleItems.map((item) => {
-              const handleItemToggleChange = () => {
-                setSelectedItemId(item.id);
-                updateChartSettingToggle(item.id);
-              };
+          return (
+            <CommandGroup key={group.heading} heading={group.heading}>
+              {visibleItems.map((item) => {
+                const handleItemToggleChange = () => {
+                  setSelectedItemId(item.id);
+                  updateChartSettingToggle(item.id);
+                };
 
-              const handleItemInputChange = (value: number | null) => {
-                updateChartSettingInput(item.id, value);
-              };
+                const handleItemInputChange = (value: number | null) => {
+                  updateChartSettingInput(item.id, value);
+                };
 
-              const handleItemDropdownOpen = () => {
-                openDropdown({
-                  dropdownComponentInstanceIdFromProps: item.id,
-                });
-              };
+                const handleItemDropdownOpen = () => {
+                  openDropdown({
+                    dropdownComponentInstanceIdFromProps: item.id,
+                  });
+                };
 
-              const handleFilterClick = () => {
-                navigatePageLayoutCommandMenu({
-                  commandMenuPage: CommandMenuPages.PageLayoutGraphFilter,
-                });
-              };
+                const handleFilterClick = () => {
+                  navigatePageLayoutCommandMenu({
+                    commandMenuPage: CommandMenuPages.PageLayoutGraphFilter,
+                  });
+                };
 
-              return (
-                <ChartSettingItem
-                  key={item.id}
-                  item={item}
-                  configuration={configuration}
-                  getChartSettingsValues={getChartSettingsValues}
-                  onToggleChange={handleItemToggleChange}
-                  onInputChange={handleItemInputChange}
-                  onDropdownOpen={handleItemDropdownOpen}
-                  onFilterClick={handleFilterClick}
-                />
-              );
-            })}
-          </CommandGroup>
-        );
-      })}
-    </CommandMenuList>
+                return (
+                  <ChartSettingItem
+                    key={item.id}
+                    item={item}
+                    configuration={configuration}
+                    getChartSettingsValues={getChartSettingsValues}
+                    onToggleChange={handleItemToggleChange}
+                    onInputChange={handleItemInputChange}
+                    onDropdownOpen={handleItemDropdownOpen}
+                    onFilterClick={handleFilterClick}
+                  />
+                );
+              })}
+            </CommandGroup>
+          );
+        })}
+      </CommandMenuList>
+      <ChartSettingsFooter />
+    </>
   );
 };

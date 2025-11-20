@@ -1,0 +1,51 @@
+import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useLingui } from '@lingui/react/macro';
+import { useId } from 'react';
+import { IconCopyPlus } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
+
+export const ChartSettingsFooter = () => {
+  const dropdownId = useId();
+  const { t } = useLingui();
+  const { closeDropdown } = useCloseDropdown();
+
+  const handleDuplicateWidget = () => {
+    closeDropdown(dropdownId);
+    // Empty callback - behavior to be defined later
+  };
+
+  const selectedItemId = useRecoilComponentValue(
+    selectedItemIdComponentState,
+    dropdownId,
+  );
+
+  return (
+    <RightDrawerFooter
+      actions={[
+        <OptionsDropdownMenu
+          key="options"
+          dropdownId={dropdownId}
+          selectableListId={dropdownId}
+          selectableItemIdArray={['duplicate-widget']}
+        >
+          <SelectableListItem
+            itemId="duplicate-widget"
+            onEnter={handleDuplicateWidget}
+          >
+            <MenuItem
+              focused={selectedItemId === 'duplicate-widget'}
+              onClick={handleDuplicateWidget}
+              text={t`Duplicate widget`}
+              LeftIcon={IconCopyPlus}
+            />
+          </SelectableListItem>
+        </OptionsDropdownMenu>,
+      ]}
+    />
+  );
+};
