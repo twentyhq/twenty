@@ -3,11 +3,38 @@ import { useMemo } from 'react';
 import z from 'zod';
 
 import { useObjectMetadataFromRoute } from '@/views/hooks/internal/useObjectMetadataFromRoute';
-import { ViewFilterOperand } from 'twenty-shared/types';
+import {
+  RecordFilterGroupLogicalOperator,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 import {
   isDefined,
   relationFilterValueSchemaObject,
 } from 'twenty-shared/utils';
+
+// Recursive schema for nested filter groups
+const urlFilterSchema = z.object({
+  field: z.string(),
+  op: z.enum(ViewFilterOperand),
+  value: z.string(),
+  subField: z.string().optional(),
+});
+
+const urlFilterGroupSchema: z.ZodType<{
+  operator: string;
+  filters?: z.infer<typeof urlFilterSchema>[];
+  groups?: {
+    operator: string;
+    filters?: z.infer<typeof urlFilterSchema>[];
+    groups?: unknown[];
+  }[];
+}> = z.lazy(() =>
+  z.object({
+    operator: z.string(),
+    filters: z.array(urlFilterSchema).optional(),
+    groups: z.array(urlFilterGroupSchema).optional(),
+  }),
+);
 
 const filterQueryParamsSchema = z.object({
   filter: z
@@ -19,6 +46,7 @@ const filterQueryParamsSchema = z.object({
       ),
     )
     .optional(),
+  filterGroup: urlFilterGroupSchema.optional(),
 });
 
 export const useHasFiltersInQueryParams = () => {
@@ -34,9 +62,18 @@ export const useHasFiltersInQueryParams = () => {
     [queryParamsValidation],
   );
 
+  const filterGroupQueryParams = useMemo(
+    () =>
+      queryParamsValidation.success
+        ? queryParamsValidation.data.filterGroup
+        : undefined,
+    [queryParamsValidation],
+  );
+
   const hasFiltersQueryParams =
-    isDefined(filterQueryParams) &&
-    Object.entries(filterQueryParams).length > 0;
+    (isDefined(filterQueryParams) &&
+      Object.entries(filterQueryParams).length > 0) ||
+    isDefined(filterGroupQueryParams);
 
   return {
     hasFiltersQueryParams,
