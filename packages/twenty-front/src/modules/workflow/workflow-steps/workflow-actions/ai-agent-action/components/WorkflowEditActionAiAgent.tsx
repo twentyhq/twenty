@@ -2,31 +2,36 @@ import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
+import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { AI_AGENT_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/AiAgentAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
-import { type SelectOption } from 'twenty-ui/input';
 import {
-  useFindManyAgentsQuery,
+  useFindOneAgentQuery,
   useUpdateOneAgentMutation,
 } from '~/generated-metadata/graphql';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
+import { SettingsAgentModelCapabilities } from '~/pages/settings/ai/components/SettingsAgentModelCapabilities';
 import { SettingsAgentResponseFormat } from '~/pages/settings/ai/components/SettingsAgentResponseFormat';
 
-const StyledErrorMessage = styled.div`
-  color: ${({ theme }) => theme.font.color.danger};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  margin-top: ${({ theme }) => theme.spacing(1)};
-`;
+type ModelConfiguration = {
+  webSearch?: {
+    enabled: boolean;
+    configuration?: Record<string, unknown>;
+  };
+  twitterSearch?: {
+    enabled: boolean;
+    configuration?: Record<string, unknown>;
+  };
+};
 
 type WorkflowEditActionAiAgentProps = {
   action: WorkflowAiAgentAction;
@@ -49,72 +54,65 @@ export const WorkflowEditActionAiAgent = ({
       defaultTitle: AI_AGENT_ACTION.defaultLabel,
     });
 
-  const { data: agentsData, loading: agentsLoading } = useFindManyAgentsQuery();
+  const agentId = action.settings.input.agentId;
+  const { data: agentData, loading: agentLoading } = useFindOneAgentQuery({
+    variables: { id: agentId || '' },
+    skip: !agentId,
+  });
   const [updateAgent] = useUpdateOneAgentMutation();
   const aiModelOptions = useAiModelOptions();
+  const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
+  const flow = useFlowOrThrow();
 
-  const agentOptions = (agentsData?.findManyAgents || []).reduce<
-    SelectOption<string>[]
-  >(
-    (acc, agent) => {
-      acc.push({
-        label: agent.label,
-        value: agent.id,
-        Icon: agent.icon ? getIcon(agent.icon) : undefined,
-      });
-      return acc;
-    },
-    [
-      {
-        label: t`No Agent`,
-        value: '',
-      },
-    ],
-  );
+  const agent = agentData?.findOneAgent;
 
-  const selectedAgentId = action.settings.input.agentId;
-  const selectedAgent = (agentsData?.findManyAgents || []).find(
-    (agent) => agent.id === selectedAgentId,
-  );
-
-  const noAgentsAvailable = agentOptions.length === 0;
-
-  const handleFieldChange = (field: 'agentId' | 'prompt', value: string) => {
-    if (actionOptions.readonly === true) {
-      return;
-    }
-    actionOptions.onActionUpdate?.({
-      ...action,
-      settings: {
-        ...action.settings,
-        input: {
-          ...action.settings.input,
-          [field]: value,
-        },
-      },
-    });
-  };
-
-  const handleAgentModelChange = async (modelId: string) => {
-    if (
-      actionOptions.readonly === true ||
-      !selectedAgent ||
-      !isDefined(selectedAgent)
-    ) {
+  const handleAgentPromptChange = async (newPrompt: string) => {
+    if (actionOptions.readonly === true || !isDefined(agent)) {
       return;
     }
 
     await updateAgent({
       variables: {
         input: {
-          id: selectedAgent.id,
-          label: selectedAgent.label,
-          name: selectedAgent.name,
-          prompt: selectedAgent.prompt,
+          id: agent.id,
+          prompt: newPrompt,
+        },
+      },
+      refetchQueries: ['FindOneAgent'],
+    });
+  };
+
+  const handleAgentModelChange = async (modelId: string) => {
+    if (actionOptions.readonly === true || !isDefined(agent)) {
+      return;
+    }
+
+    await updateAgent({
+      variables: {
+        input: {
+          id: agent.id,
           modelId,
         },
       },
-      refetchQueries: ['FindManyAgents'],
+      refetchQueries: ['FindOneAgent'],
+    });
+  };
+
+  const handleModelConfigurationChange = async (
+    configuration: ModelConfiguration,
+  ) => {
+    if (actionOptions.readonly === true || !isDefined(agent)) {
+      return;
+    }
+
+    await updateAgent({
+      variables: {
+        input: {
+          id: agent.id,
+          modelConfiguration: configuration,
+        },
+      },
+      refetchQueries: ['FindOneAgent'],
     });
   };
 
@@ -122,39 +120,52 @@ export const WorkflowEditActionAiAgent = ({
     type: 'text' | 'json';
     schema?: BaseOutputSchemaV2;
   }) => {
-    if (
-      actionOptions.readonly === true ||
-      !selectedAgent ||
-      !isDefined(selectedAgent)
-    ) {
+    if (actionOptions.readonly === true || !isDefined(agent)) {
       return;
     }
 
     await updateAgent({
       variables: {
         input: {
-          id: selectedAgent.id,
-          label: selectedAgent.label,
-          name: selectedAgent.name,
-          prompt: selectedAgent.prompt,
-          modelId: selectedAgent.modelId,
+          id: agent.id,
           responseFormat: format.type === 'text' ? null : format,
         },
       },
-      refetchQueries: ['FindManyAgents'],
+      refetchQueries: ['FindOneAgent'],
+    });
+
+    // Trigger step re-enrichment to update outputSchema
+    await updateWorkflowVersionStep({
+      workflowVersionId: flow.workflowVersionId,
+      step: action,
     });
   };
 
-  return agentsLoading ? (
+  return agentLoading ? (
     <RightDrawerSkeletonLoader />
   ) : (
     <>
       <SidePanelHeader
-        onTitleChange={(newName: string) => {
+        onTitleChange={async (newName: string) => {
           if (actionOptions.readonly === true) {
             return;
           }
+
+          // Update step name
           actionOptions.onActionUpdate?.({ ...action, name: newName });
+
+          // Also update agent label
+          if (isDefined(agent)) {
+            await updateAgent({
+              variables: {
+                input: {
+                  id: agent.id,
+                  label: newName,
+                },
+              },
+              refetchQueries: ['FindOneAgent'],
+            });
+          }
         }}
         Icon={getIcon(headerIcon)}
         iconColor={headerIconColor}
@@ -164,47 +175,37 @@ export const WorkflowEditActionAiAgent = ({
         iconTooltip={AI_AGENT_ACTION.defaultLabel}
       />
       <WorkflowStepBody>
-        <div>
-          <Select
-            dropdownId="select-agent"
-            label={t`Select Agent`}
-            options={agentOptions}
-            value={action.settings.input.agentId || ''}
-            onChange={(value) => handleFieldChange('agentId', value)}
-            disabled={actionOptions.readonly || noAgentsAvailable}
-          />
-
-          {noAgentsAvailable && (
-            <StyledErrorMessage>
-              {t`Please create agents in the AI settings to use in workflows.`}
-            </StyledErrorMessage>
-          )}
-        </div>
-
         <FormTextFieldInput
           multiline
           VariablePicker={WorkflowVariablePicker}
           label={t`Instructions for AI`}
           placeholder={t`Describe what you want the AI to do...`}
-          defaultValue={action.settings.input.prompt}
-          onChange={(value) => handleFieldChange('prompt', value)}
+          defaultValue={agent?.prompt || ''}
+          onChange={handleAgentPromptChange}
           readonly={actionOptions.readonly}
         />
 
-        {selectedAgent && isDefined(selectedAgent) && (
+        {isDefined(agent) && (
           <>
             <Select
               dropdownId="select-agent-model"
               label={t`AI Model`}
               options={aiModelOptions}
-              value={selectedAgent.modelId}
+              value={agent.modelId}
               onChange={handleAgentModelChange}
+              disabled={actionOptions.readonly}
+            />
+
+            <SettingsAgentModelCapabilities
+              selectedModelId={agent.modelId}
+              modelConfiguration={agent.modelConfiguration || {}}
+              onConfigurationChange={handleModelConfigurationChange}
               disabled={actionOptions.readonly}
             />
 
             <SettingsAgentResponseFormat
               responseFormat={
-                selectedAgent.responseFormat || { type: 'text', schema: {} }
+                agent.responseFormat || { type: 'text', schema: {} }
               }
               onResponseFormatChange={handleAgentResponseFormatChange}
               disabled={actionOptions.readonly}

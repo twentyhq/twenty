@@ -13,17 +13,17 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
-  WorkflowVersionStepException,
-  WorkflowVersionStepExceptionCode,
+    WorkflowVersionStepException,
+    WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
-  type WorkflowAction,
-  WorkflowActionType,
-  type WorkflowEmptyAction,
-  type WorkflowFormAction,
+    type WorkflowAction,
+    WorkflowActionType,
+    type WorkflowEmptyAction,
+    type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
@@ -336,6 +336,64 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
+        // Get workflow version to use workflow name in agent name
+        const workflowVersion =
+          await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+            workflowVersionId,
+            workspaceId,
+          });
+
+        const workflowRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+            workspaceId,
+            'workflow',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const workflow = await workflowRepository.findOne({
+          where: { id: workflowVersion.workflowId },
+        });
+
+        // Create agent name with simple conflict resolution
+        const baseName = `${workflow?.name || 'Workflow'} - AI Agent`;
+        let agentName = baseName;
+        let attempts = 0;
+
+        // Try to find unique name (simple approach: append counter if conflict)
+        while (attempts < 10) {
+          const existing = await this.agentRepository.findOne({
+            where: { name: agentName, workspaceId },
+          });
+
+          if (!existing) break;
+          attempts++;
+          agentName = `${baseName} ${attempts}`;
+        }
+
+        // If still conflicting after 10 attempts, use step ID for guaranteed uniqueness
+        if (attempts >= 10) {
+          agentName = `${baseName} ${id || v4()}`;
+        }
+
+        const newAgent = await this.agentRepository.save({
+          name: agentName,
+          label: 'AI Agent',
+          icon: 'IconRobot',
+          description: '',
+          prompt: '',
+          modelId: 'auto',
+          responseFormat: { type: 'text' },
+          workspaceId,
+          isCustom: true,
+        });
+
+        if (!isDefined(newAgent)) {
+          throw new WorkflowVersionStepException(
+            'Failed to create AI Agent step',
+            WorkflowVersionStepExceptionCode.AI_AGENT_STEP_FAILURE,
+          );
+        }
+
         return {
           builtStep: {
             ...baseStep,
@@ -344,7 +402,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             settings: {
               ...BASE_STEP_DEFINITION,
               input: {
-                agentId: '',
+                agentId: newAgent.id,
                 prompt: '',
               },
             },
@@ -506,6 +564,65 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               ...step.settings.input,
               serverlessFunctionId: newServerlessFunction.id,
               serverlessFunctionVersion: 'draft',
+            },
+          },
+        };
+      }
+      case WorkflowActionType.AI_AGENT: {
+        // Clone the agent for the duplicated step
+        const existingAgent = await this.agentRepository.findOne({
+          where: { id: step.settings.input.agentId, workspaceId },
+        });
+
+        if (!isDefined(existingAgent)) {
+          throw new WorkflowVersionStepException(
+            'Agent not found for cloning',
+            WorkflowVersionStepExceptionCode.AI_AGENT_STEP_FAILURE,
+          );
+        }
+
+        // Create unique name for cloned agent
+        const baseName = `${existingAgent.name} (Copy)`;
+        let agentName = baseName;
+        let attempts = 0;
+
+        while (attempts < 10) {
+          const existing = await this.agentRepository.findOne({
+            where: { name: agentName, workspaceId },
+          });
+
+          if (!existing) break;
+          attempts++;
+          agentName = `${baseName} ${attempts}`;
+        }
+
+        if (attempts >= 10) {
+          agentName = `${baseName} ${v4()}`;
+        }
+
+        const clonedAgent = await this.agentRepository.save({
+          name: agentName,
+          label: existingAgent.label,
+          icon: existingAgent.icon,
+          description: existingAgent.description,
+          prompt: existingAgent.prompt,
+          modelId: existingAgent.modelId,
+          responseFormat: existingAgent.responseFormat,
+          workspaceId,
+          isCustom: true,
+          modelConfiguration: existingAgent.modelConfiguration,
+        });
+
+        return {
+          ...step,
+          id: v4(),
+          nextStepIds: [],
+          position: duplicatedStepPosition,
+          settings: {
+            ...step.settings,
+            input: {
+              ...step.settings.input,
+              agentId: clonedAgent.id,
             },
           },
         };

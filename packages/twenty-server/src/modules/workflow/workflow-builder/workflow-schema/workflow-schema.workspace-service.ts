@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isString } from '@sniptt/guards';
-import { Repository } from 'typeorm';
 import { isDefined, isValidVariable } from 'twenty-shared/utils';
 import {
   BaseOutputSchemaV2,
@@ -13,6 +12,7 @@ import {
   SingleRecordAvailability,
   TRIGGER_STEP_ID,
 } from 'twenty-shared/workflow';
+import { Repository } from 'typeorm';
 
 import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
@@ -165,13 +165,12 @@ export class WorkflowSchemaWorkspaceService {
   }): Promise<WorkflowAction> {
     // We don't enrich on the fly for code and HTTP request workflow actions.
     // For code actions, OutputSchema is computed and updated when testing the serverless function.
-    // For HTTP requests and AI agent, OutputSchema is determined by the example response input
+    // For HTTP requests, OutputSchema is determined by the example response input
+    // AI agent OutputSchema is enriched from agent's responseFormat
     if (
-      [
-        WorkflowActionType.CODE,
-        WorkflowActionType.HTTP_REQUEST,
-        WorkflowActionType.AI_AGENT,
-      ].includes(step.type)
+      [WorkflowActionType.CODE, WorkflowActionType.HTTP_REQUEST].includes(
+        step.type,
+      )
     ) {
       return step;
     }

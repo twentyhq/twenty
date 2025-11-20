@@ -55,8 +55,8 @@ export class AgentEntity
   @Column({ nullable: false, type: 'varchar', default: 'auto' })
   modelId: ModelId;
 
-  @Column({ nullable: true, type: 'jsonb' })
-  responseFormat: AgentResponseFormat | null;
+  @Column({ nullable: true, type: 'jsonb', default: { type: 'text' } })
+  responseFormat: AgentResponseFormat;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
