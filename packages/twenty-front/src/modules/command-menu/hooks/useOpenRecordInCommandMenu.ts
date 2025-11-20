@@ -106,13 +106,6 @@ export const useOpenRecordInCommandMenu = () => {
         );
 
         set(
-          contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
-            instanceId: CommandMenuPages.MergeRecords,
-          }),
-          objectMetadataItem.id,
-        );
-
-        set(
           contextStoreTargetedRecordsRuleComponentState.atomFamily({
             instanceId: pageComponentInstanceId,
           }),

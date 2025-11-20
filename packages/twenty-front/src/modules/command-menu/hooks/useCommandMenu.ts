@@ -6,7 +6,6 @@ import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { emitSidePanelOpenEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelOpenEvent';
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
@@ -37,12 +36,6 @@ export const useCommandMenu = () => {
           removeFocusItemFromFocusStackById({
             focusId: SIDE_PANEL_FOCUS_ID,
           });
-          set(
-            contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
-              instanceId: CommandMenuPages.MergeRecords,
-            }),
-            undefined,
-          );
         }
       },
     [closeAnyOpenDropdown, removeFocusItemFromFocusStackById],
