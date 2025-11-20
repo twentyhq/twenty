@@ -74,9 +74,7 @@ export const MergeRecordsContainer = ({
             {activeTabId === MergeRecordsTabId.MERGE_PREVIEW && (
               <MergePreviewTab objectNameSingular={objectNameSingular} />
             )}
-            {activeTabId === MergeRecordsTabId.SETTINGS && (
-              <MergeSettingsTab objectNameSingular={objectNameSingular} />
-            )}
+            {activeTabId === MergeRecordsTabId.SETTINGS && <MergeSettingsTab />}
             {selectedRecords.some((record) => record.id === activeTabId) && (
               <MergeRecordTab
                 objectNameSingular={objectNameSingular}
