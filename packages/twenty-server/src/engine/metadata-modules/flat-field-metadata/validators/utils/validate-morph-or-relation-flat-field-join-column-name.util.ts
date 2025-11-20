@@ -52,10 +52,7 @@ export const validateMorphOrRelationFlatFieldJoinColumName = ({
 
       errors.push(
         ...validateFlatFieldMetadataNameAvailability({
-          flatFieldMetadata: {
-            name: flatFieldMetadata.settings.joinColumnName,
-            type: flatFieldMetadata.type,
-          },
+          name: flatFieldMetadata.name,
           flatFieldMetadataMaps,
           flatObjectMetadata,
         }),
