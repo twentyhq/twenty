@@ -33,6 +33,7 @@ const StyledCommandMenuContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow: hidden;
 `;
 
 const StyledSidePanelInformationBanner = styled(SidePanelInformationBanner)`
