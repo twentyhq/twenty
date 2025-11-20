@@ -45,7 +45,7 @@ export const buildFilterFromChartBucket = ({
     ? `${fieldMetadataItem.name}.${subFieldName}`
     : fieldMetadataItem.name;
 
-  if (!isDefined(bucketRawValue) || isNonEmptyString(bucketRawValue)) {
+  if (!isDefined(bucketRawValue) || !isNonEmptyString(String(bucketRawValue))) {
     return [
       {
         fieldName,

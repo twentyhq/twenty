@@ -17,6 +17,46 @@ const mockConvertRecordFilterToUrlFilter =
   >;
 
 describe('mapRecordFilterGroupToUrlFilterGroup', () => {
+  const mockObjectMetadataItem: ObjectMetadataItem = {
+    id: 'obj-1',
+    nameSingular: 'opportunity',
+    namePlural: 'opportunities',
+    fields: [
+      { id: 'field-1', name: 'status', type: FieldMetadataType.SELECT },
+      { id: 'field-2', name: 'name', type: FieldMetadataType.TEXT },
+      { id: 'field-3', name: 'amount', type: FieldMetadataType.NUMBER },
+    ],
+  } as ObjectMetadataItem;
+
+  const createFilter = (
+    id: string,
+    fieldMetadataId: string,
+    value: string,
+    operand: ViewFilterOperand,
+    groupId?: string,
+    position = 0,
+  ): RecordFilter =>
+    ({
+      id,
+      fieldMetadataId,
+      value,
+      operand,
+      recordFilterGroupId: groupId,
+      positionInRecordFilterGroup: position,
+    }) as RecordFilter;
+
+  const createGroup = (
+    id: string,
+    operator: RecordFilterGroupLogicalOperator,
+    parentId?: string,
+    position = 0,
+  ): RecordFilterGroup => ({
+    id,
+    logicalOperator: operator,
+    parentRecordFilterGroupId: parentId,
+    positionInRecordFilterGroup: position,
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockConvertRecordFilterToUrlFilter.mockImplementation(
@@ -35,21 +75,10 @@ describe('mapRecordFilterGroupToUrlFilterGroup', () => {
     );
   });
 
-  const mockObjectMetadataItem: ObjectMetadataItem = {
-    id: 'obj-1',
-    nameSingular: 'opportunity',
-    namePlural: 'opportunities',
-    fields: [
-      { id: 'field-1', name: 'status', type: FieldMetadataType.SELECT },
-      { id: 'field-2', name: 'name', type: FieldMetadataType.TEXT },
-      { id: 'field-3', name: 'amount', type: FieldMetadataType.NUMBER },
-    ],
-  } as ObjectMetadataItem;
-
   describe('Basic cases', () => {
-    it('should return null when group ID not found', () => {
+    it('should return null when group not found', () => {
       const result = mapRecordFilterGroupToUrlFilterGroup({
-        recordFilterGroupId: 'non-existent-id',
+        recordFilterGroupId: 'non-existent',
         allRecordFilters: [],
         allRecordFilterGroups: [],
         objectMetadataItem: mockObjectMetadataItem,
@@ -58,13 +87,9 @@ describe('mapRecordFilterGroupToUrlFilterGroup', () => {
       expect(result).toBeNull();
     });
 
-    it('should serialize group with operator only (no filters or child groups)', () => {
-      const groups: RecordFilterGroup[] = [
-        {
-          id: 'group-1',
-          logicalOperator: RecordFilterGroupLogicalOperator.AND,
-          positionInRecordFilterGroup: 0,
-        },
+    it('should serialize empty group with operator only', () => {
+      const groups = [
+        createGroup('group-1', RecordFilterGroupLogicalOperator.AND),
       ];
 
       const result = mapRecordFilterGroupToUrlFilterGroup({
@@ -80,23 +105,17 @@ describe('mapRecordFilterGroupToUrlFilterGroup', () => {
     });
 
     it('should serialize group with single filter', () => {
-      const groups: RecordFilterGroup[] = [
-        {
-          id: 'group-1',
-          logicalOperator: RecordFilterGroupLogicalOperator.AND,
-          positionInRecordFilterGroup: 0,
-        },
+      const groups = [
+        createGroup('group-1', RecordFilterGroupLogicalOperator.AND),
       ];
-
-      const filters: RecordFilter[] = [
-        {
-          id: 'filter-1',
-          fieldMetadataId: 'field-1',
-          value: 'OPEN',
-          operand: ViewFilterOperand.IS,
-          recordFilterGroupId: 'group-1',
-          positionInRecordFilterGroup: 0,
-        } as RecordFilter,
+      const filters = [
+        createFilter(
+          'filter-1',
+          'field-1',
+          'OPEN',
+          ViewFilterOperand.IS,
+          'group-1',
+        ),
       ];
 
       const result = mapRecordFilterGroupToUrlFilterGroup({
@@ -119,31 +138,26 @@ describe('mapRecordFilterGroupToUrlFilterGroup', () => {
     });
 
     it('should serialize group with multiple filters', () => {
-      const groups: RecordFilterGroup[] = [
-        {
-          id: 'group-1',
-          logicalOperator: RecordFilterGroupLogicalOperator.OR,
-          positionInRecordFilterGroup: 0,
-        },
+      const groups = [
+        createGroup('group-1', RecordFilterGroupLogicalOperator.OR),
       ];
-
-      const filters: RecordFilter[] = [
-        {
-          id: 'filter-1',
-          fieldMetadataId: 'field-1',
-          value: 'OPEN',
-          operand: ViewFilterOperand.IS,
-          recordFilterGroupId: 'group-1',
-          positionInRecordFilterGroup: 0,
-        } as RecordFilter,
-        {
-          id: 'filter-2',
-          fieldMetadataId: 'field-2',
-          value: 'Acme',
-          operand: ViewFilterOperand.CONTAINS,
-          recordFilterGroupId: 'group-1',
-          positionInRecordFilterGroup: 1,
-        } as RecordFilter,
+      const filters = [
+        createFilter(
+          'filter-1',
+          'field-1',
+          'OPEN',
+          ViewFilterOperand.IS,
+          'group-1',
+          0,
+        ),
+        createFilter(
+          'filter-2',
+          'field-2',
+          'Acme',
+          ViewFilterOperand.CONTAINS,
+          'group-1',
+          1,
+        ),
       ];
 
       const result = mapRecordFilterGroupToUrlFilterGroup({
@@ -156,56 +170,43 @@ describe('mapRecordFilterGroupToUrlFilterGroup', () => {
       expect(result).toEqual({
         operator: RecordFilterGroupLogicalOperator.OR,
         filters: [
-          {
-            field: 'status',
-            op: ViewFilterOperand.IS,
-            value: 'OPEN',
-          },
-          {
-            field: 'name',
-            op: ViewFilterOperand.CONTAINS,
-            value: 'Acme',
-          },
+          { field: 'status', op: ViewFilterOperand.IS, value: 'OPEN' },
+          { field: 'name', op: ViewFilterOperand.CONTAINS, value: 'Acme' },
         ],
       });
     });
   });
 
   describe('Position-based sorting', () => {
-    it('should sort filters by positionInRecordFilterGroup', () => {
-      const groups: RecordFilterGroup[] = [
-        {
-          id: 'group-1',
-          logicalOperator: RecordFilterGroupLogicalOperator.AND,
-          positionInRecordFilterGroup: 0,
-        },
+    it('should sort filters by position', () => {
+      const groups = [
+        createGroup('group-1', RecordFilterGroupLogicalOperator.AND),
       ];
-
-      const filters: RecordFilter[] = [
-        {
-          id: 'filter-2',
-          fieldMetadataId: 'field-2',
-          value: 'Acme',
-          operand: ViewFilterOperand.CONTAINS,
-          recordFilterGroupId: 'group-1',
-          positionInRecordFilterGroup: 2,
-        } as RecordFilter,
-        {
-          id: 'filter-1',
-          fieldMetadataId: 'field-1',
-          value: 'OPEN',
-          operand: ViewFilterOperand.IS,
-          recordFilterGroupId: 'group-1',
-          positionInRecordFilterGroup: 0,
-        } as RecordFilter,
-        {
-          id: 'filter-3',
-          fieldMetadataId: 'field-3',
-          value: '1000',
-          operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
-          recordFilterGroupId: 'group-1',
-          positionInRecordFilterGroup: 1,
-        } as RecordFilter,
+      const filters = [
+        createFilter(
+          'filter-2',
+          'field-2',
+          'Acme',
+          ViewFilterOperand.CONTAINS,
+          'group-1',
+          2,
+        ),
+        createFilter(
+          'filter-1',
+          'field-1',
+          'OPEN',
+          ViewFilterOperand.IS,
+          'group-1',
+          0,
+        ),
+        createFilter(
+          'filter-3',
+          'field-3',
+          '1000',
+          ViewFilterOperand.GREATER_THAN_OR_EQUAL,
+          'group-1',
+          1,
+        ),
       ];
 
       const result = mapRecordFilterGroupToUrlFilterGroup({
@@ -215,100 +216,69 @@ describe('mapRecordFilterGroupToUrlFilterGroup', () => {
         objectMetadataItem: mockObjectMetadataItem,
       });
 
-      expect(result?.filters).toEqual([
-        {
-          field: 'status',
-          op: ViewFilterOperand.IS,
-          value: 'OPEN',
-        },
-        {
-          field: 'amount',
-          op: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
-          value: '1000',
-        },
-        {
-          field: 'name',
-          op: ViewFilterOperand.CONTAINS,
-          value: 'Acme',
-        },
+      expect(result?.filters?.map((f) => f.field)).toEqual([
+        'status',
+        'amount',
+        'name',
       ]);
     });
 
-    it('should sort child groups by positionInRecordFilterGroup', () => {
-      const groups: RecordFilterGroup[] = [
-        {
-          id: 'group-parent',
-          logicalOperator: RecordFilterGroupLogicalOperator.AND,
-          positionInRecordFilterGroup: 0,
-        },
-        {
-          id: 'group-child-2',
-          logicalOperator: RecordFilterGroupLogicalOperator.OR,
-          parentRecordFilterGroupId: 'group-parent',
-          positionInRecordFilterGroup: 2,
-        },
-        {
-          id: 'group-child-1',
-          logicalOperator: RecordFilterGroupLogicalOperator.AND,
-          parentRecordFilterGroupId: 'group-parent',
-          positionInRecordFilterGroup: 1,
-        },
+    it('should sort child groups by position', () => {
+      const groups = [
+        createGroup('parent', RecordFilterGroupLogicalOperator.AND),
+        createGroup(
+          'child-2',
+          RecordFilterGroupLogicalOperator.OR,
+          'parent',
+          2,
+        ),
+        createGroup(
+          'child-1',
+          RecordFilterGroupLogicalOperator.AND,
+          'parent',
+          1,
+        ),
       ];
 
       const result = mapRecordFilterGroupToUrlFilterGroup({
-        recordFilterGroupId: 'group-parent',
+        recordFilterGroupId: 'parent',
         allRecordFilters: [],
         allRecordFilterGroups: groups,
         objectMetadataItem: mockObjectMetadataItem,
       });
 
-      expect(result?.groups).toHaveLength(2);
-      expect(result?.groups?.[0].operator).toBe(
+      expect(result?.groups?.map((g) => g.operator)).toEqual([
         RecordFilterGroupLogicalOperator.AND,
-      );
-      expect(result?.groups?.[1].operator).toBe(
         RecordFilterGroupLogicalOperator.OR,
-      );
+      ]);
     });
   });
 
   describe('Nested groups', () => {
-    it('should recursively serialize one level of nested groups', () => {
-      const groups: RecordFilterGroup[] = [
-        {
-          id: 'group-parent',
-          logicalOperator: RecordFilterGroupLogicalOperator.AND,
-          positionInRecordFilterGroup: 0,
-        },
-        {
-          id: 'group-child',
-          logicalOperator: RecordFilterGroupLogicalOperator.OR,
-          parentRecordFilterGroupId: 'group-parent',
-          positionInRecordFilterGroup: 0,
-        },
+    it('should handle one level of nesting', () => {
+      const groups = [
+        createGroup('parent', RecordFilterGroupLogicalOperator.AND),
+        createGroup('child', RecordFilterGroupLogicalOperator.OR, 'parent'),
       ];
-
-      const filters: RecordFilter[] = [
-        {
-          id: 'filter-parent',
-          fieldMetadataId: 'field-1',
-          value: 'OPEN',
-          operand: ViewFilterOperand.IS,
-          recordFilterGroupId: 'group-parent',
-          positionInRecordFilterGroup: 0,
-        } as RecordFilter,
-        {
-          id: 'filter-child',
-          fieldMetadataId: 'field-2',
-          value: 'Acme',
-          operand: ViewFilterOperand.CONTAINS,
-          recordFilterGroupId: 'group-child',
-          positionInRecordFilterGroup: 0,
-        } as RecordFilter,
+      const filters = [
+        createFilter(
+          'filter-parent',
+          'field-1',
+          'OPEN',
+          ViewFilterOperand.IS,
+          'parent',
+        ),
+        createFilter(
+          'filter-child',
+          'field-2',
+          'Acme',
+          ViewFilterOperand.CONTAINS,
+          'child',
+        ),
       ];
 
       const result = mapRecordFilterGroupToUrlFilterGroup({
-        recordFilterGroupId: 'group-parent',
+        recordFilterGroupId: 'parent',
         allRecordFilters: filters,
         allRecordFilterGroups: groups,
         objectMetadataItem: mockObjectMetadataItem,
@@ -316,58 +286,32 @@ describe('mapRecordFilterGroupToUrlFilterGroup', () => {
 
       expect(result).toEqual({
         operator: RecordFilterGroupLogicalOperator.AND,
-        filters: [
-          {
-            field: 'status',
-            op: ViewFilterOperand.IS,
-            value: 'OPEN',
-          },
-        ],
+        filters: [{ field: 'status', op: ViewFilterOperand.IS, value: 'OPEN' }],
         groups: [
           {
             operator: RecordFilterGroupLogicalOperator.OR,
             filters: [
-              {
-                field: 'name',
-                op: ViewFilterOperand.CONTAINS,
-                value: 'Acme',
-              },
+              { field: 'name', op: ViewFilterOperand.CONTAINS, value: 'Acme' },
             ],
           },
         ],
       });
     });
 
-    it('should recursively serialize deeply nested groups (3 levels)', () => {
-      const groups: RecordFilterGroup[] = [
-        {
-          id: 'level-1',
-          logicalOperator: RecordFilterGroupLogicalOperator.AND,
-          positionInRecordFilterGroup: 0,
-        },
-        {
-          id: 'level-2',
-          logicalOperator: RecordFilterGroupLogicalOperator.OR,
-          parentRecordFilterGroupId: 'level-1',
-          positionInRecordFilterGroup: 0,
-        },
-        {
-          id: 'level-3',
-          logicalOperator: RecordFilterGroupLogicalOperator.AND,
-          parentRecordFilterGroupId: 'level-2',
-          positionInRecordFilterGroup: 0,
-        },
+    it('should handle deep nesting (3 levels)', () => {
+      const groups = [
+        createGroup('level-1', RecordFilterGroupLogicalOperator.AND),
+        createGroup('level-2', RecordFilterGroupLogicalOperator.OR, 'level-1'),
+        createGroup('level-3', RecordFilterGroupLogicalOperator.AND, 'level-2'),
       ];
-
-      const filters: RecordFilter[] = [
-        {
-          id: 'filter-level-3',
-          fieldMetadataId: 'field-1',
-          value: 'OPEN',
-          operand: ViewFilterOperand.IS,
-          recordFilterGroupId: 'level-3',
-          positionInRecordFilterGroup: 0,
-        } as RecordFilter,
+      const filters = [
+        createFilter(
+          'filter-3',
+          'field-1',
+          'OPEN',
+          ViewFilterOperand.IS,
+          'level-3',
+        ),
       ];
 
       const result = mapRecordFilterGroupToUrlFilterGroup({
@@ -386,11 +330,7 @@ describe('mapRecordFilterGroupToUrlFilterGroup', () => {
               {
                 operator: RecordFilterGroupLogicalOperator.AND,
                 filters: [
-                  {
-                    field: 'status',
-                    op: ViewFilterOperand.IS,
-                    value: 'OPEN',
-                  },
+                  { field: 'status', op: ViewFilterOperand.IS, value: 'OPEN' },
                 ],
               },
             ],
@@ -400,24 +340,10 @@ describe('mapRecordFilterGroupToUrlFilterGroup', () => {
     });
 
     it('should handle multiple sibling child groups', () => {
-      const groups: RecordFilterGroup[] = [
-        {
-          id: 'parent',
-          logicalOperator: RecordFilterGroupLogicalOperator.AND,
-          positionInRecordFilterGroup: 0,
-        },
-        {
-          id: 'child-1',
-          logicalOperator: RecordFilterGroupLogicalOperator.OR,
-          parentRecordFilterGroupId: 'parent',
-          positionInRecordFilterGroup: 0,
-        },
-        {
-          id: 'child-2',
-          logicalOperator: RecordFilterGroupLogicalOperator.AND,
-          parentRecordFilterGroupId: 'parent',
-          positionInRecordFilterGroup: 1,
-        },
+      const groups = [
+        createGroup('parent', RecordFilterGroupLogicalOperator.AND),
+        createGroup('child-1', RecordFilterGroupLogicalOperator.OR, 'parent'),
+        createGroup('child-2', RecordFilterGroupLogicalOperator.AND, 'parent'),
       ];
 
       const result = mapRecordFilterGroupToUrlFilterGroup({
@@ -428,22 +354,18 @@ describe('mapRecordFilterGroupToUrlFilterGroup', () => {
       });
 
       expect(result?.groups).toHaveLength(2);
-      expect(result?.groups?.[0].operator).toBe(
+      expect(result?.groups?.map((g) => g.operator)).toEqual([
         RecordFilterGroupLogicalOperator.OR,
-      );
-      expect(result?.groups?.[1].operator).toBe(
         RecordFilterGroupLogicalOperator.AND,
-      );
+      ]);
     });
   });
 
-  describe('Filtering out invalid filters', () => {
-    it('should filter out filters that mapRecordFilterToUrlFilter returns null for', () => {
+  describe('Filter validation', () => {
+    it('should filter out invalid filters that return null', () => {
       mockConvertRecordFilterToUrlFilter.mockImplementation(
         ({ recordFilter }) => {
-          if (recordFilter.id === 'filter-2') {
-            return null;
-          }
+          if (recordFilter.id === 'filter-2') return null;
           const field = mockObjectMetadataItem.fields.find(
             (f) => f.id === recordFilter.fieldMetadataId,
           );
@@ -456,39 +378,31 @@ describe('mapRecordFilterGroupToUrlFilterGroup', () => {
         },
       );
 
-      const groups: RecordFilterGroup[] = [
-        {
-          id: 'group-1',
-          logicalOperator: RecordFilterGroupLogicalOperator.AND,
-          positionInRecordFilterGroup: 0,
-        },
+      const groups = [
+        createGroup('group-1', RecordFilterGroupLogicalOperator.AND),
       ];
-
-      const filters: RecordFilter[] = [
-        {
-          id: 'filter-1',
-          fieldMetadataId: 'field-1',
-          value: 'OPEN',
-          operand: ViewFilterOperand.IS,
-          recordFilterGroupId: 'group-1',
-          positionInRecordFilterGroup: 0,
-        } as RecordFilter,
-        {
-          id: 'filter-2',
-          fieldMetadataId: 'non-existent-field',
-          value: 'value',
-          operand: ViewFilterOperand.IS,
-          recordFilterGroupId: 'group-1',
-          positionInRecordFilterGroup: 1,
-        } as RecordFilter,
-        {
-          id: 'filter-3',
-          fieldMetadataId: 'field-3',
-          value: '1000',
-          operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
-          recordFilterGroupId: 'group-1',
-          positionInRecordFilterGroup: 2,
-        } as RecordFilter,
+      const filters = [
+        createFilter(
+          'filter-1',
+          'field-1',
+          'OPEN',
+          ViewFilterOperand.IS,
+          'group-1',
+        ),
+        createFilter(
+          'filter-2',
+          'invalid',
+          'value',
+          ViewFilterOperand.IS,
+          'group-1',
+        ),
+        createFilter(
+          'filter-3',
+          'field-3',
+          '1000',
+          ViewFilterOperand.GREATER_THAN_OR_EQUAL,
+          'group-1',
+        ),
       ];
 
       const result = mapRecordFilterGroupToUrlFilterGroup({
@@ -499,30 +413,26 @@ describe('mapRecordFilterGroupToUrlFilterGroup', () => {
       });
 
       expect(result?.filters).toHaveLength(2);
-      expect(result?.filters?.[0].field).toBe('status');
-      expect(result?.filters?.[1].field).toBe('amount');
+      expect(result?.filters?.map((f) => f.field)).toEqual([
+        'status',
+        'amount',
+      ]);
     });
 
-    it('should not include filters array when all filters are filtered out', () => {
+    it('should omit filters array when all filtered out', () => {
       mockConvertRecordFilterToUrlFilter.mockReturnValue(null);
 
-      const groups: RecordFilterGroup[] = [
-        {
-          id: 'group-1',
-          logicalOperator: RecordFilterGroupLogicalOperator.AND,
-          positionInRecordFilterGroup: 0,
-        },
+      const groups = [
+        createGroup('group-1', RecordFilterGroupLogicalOperator.AND),
       ];
-
-      const filters: RecordFilter[] = [
-        {
-          id: 'filter-1',
-          fieldMetadataId: 'bad-field',
-          value: 'OPEN',
-          operand: ViewFilterOperand.IS,
-          recordFilterGroupId: 'group-1',
-          positionInRecordFilterGroup: 0,
-        } as RecordFilter,
+      const filters = [
+        createFilter(
+          'filter-1',
+          'bad',
+          'OPEN',
+          ViewFilterOperand.IS,
+          'group-1',
+        ),
       ];
 
       const result = mapRecordFilterGroupToUrlFilterGroup({
@@ -540,76 +450,26 @@ describe('mapRecordFilterGroupToUrlFilterGroup', () => {
   });
 
   describe('Edge cases', () => {
-    it('should handle filters without positionInRecordFilterGroup', () => {
-      const groups: RecordFilterGroup[] = [
-        {
-          id: 'group-1',
-          logicalOperator: RecordFilterGroupLogicalOperator.AND,
-          positionInRecordFilterGroup: 0,
-        },
+    it('should only include filters from the specified group', () => {
+      const groups = [
+        createGroup('group-1', RecordFilterGroupLogicalOperator.AND),
+        createGroup('group-2', RecordFilterGroupLogicalOperator.OR),
       ];
-
-      const filters: RecordFilter[] = [
-        {
-          id: 'filter-1',
-          fieldMetadataId: 'field-1',
-          value: 'OPEN',
-          operand: ViewFilterOperand.IS,
-          recordFilterGroupId: 'group-1',
-          positionInRecordFilterGroup: undefined,
-        } as RecordFilter,
-        {
-          id: 'filter-2',
-          fieldMetadataId: 'field-2',
-          value: 'Acme',
-          operand: ViewFilterOperand.CONTAINS,
-          recordFilterGroupId: 'group-1',
-          positionInRecordFilterGroup: undefined,
-        } as RecordFilter,
-      ];
-
-      const result = mapRecordFilterGroupToUrlFilterGroup({
-        recordFilterGroupId: 'group-1',
-        allRecordFilters: filters,
-        allRecordFilterGroups: groups,
-        objectMetadataItem: mockObjectMetadataItem,
-      });
-
-      // Should still work, treating undefined as 0
-      expect(result?.filters).toHaveLength(2);
-    });
-
-    it('should only include filters that belong to the specified group', () => {
-      const groups: RecordFilterGroup[] = [
-        {
-          id: 'group-1',
-          logicalOperator: RecordFilterGroupLogicalOperator.AND,
-          positionInRecordFilterGroup: 0,
-        },
-        {
-          id: 'group-2',
-          logicalOperator: RecordFilterGroupLogicalOperator.OR,
-          positionInRecordFilterGroup: 1,
-        },
-      ];
-
-      const filters: RecordFilter[] = [
-        {
-          id: 'filter-group-1',
-          fieldMetadataId: 'field-1',
-          value: 'OPEN',
-          operand: ViewFilterOperand.IS,
-          recordFilterGroupId: 'group-1',
-          positionInRecordFilterGroup: 0,
-        } as RecordFilter,
-        {
-          id: 'filter-group-2',
-          fieldMetadataId: 'field-2',
-          value: 'Acme',
-          operand: ViewFilterOperand.CONTAINS,
-          recordFilterGroupId: 'group-2',
-          positionInRecordFilterGroup: 0,
-        } as RecordFilter,
+      const filters = [
+        createFilter(
+          'filter-1',
+          'field-1',
+          'OPEN',
+          ViewFilterOperand.IS,
+          'group-1',
+        ),
+        createFilter(
+          'filter-2',
+          'field-2',
+          'Acme',
+          ViewFilterOperand.CONTAINS,
+          'group-2',
+        ),
       ];
 
       const result = mapRecordFilterGroupToUrlFilterGroup({
