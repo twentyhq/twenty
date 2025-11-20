@@ -5,7 +5,7 @@ import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { type WorkflowTrigger } from 'src/modules/workflow/common/types/workflow-trigger.type';
+import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 @Injectable()
 export class WorkflowVersionStepHelpersWorkspaceService {
@@ -40,8 +40,8 @@ export class WorkflowVersionStepHelpersWorkspaceService {
   }: {
     workspaceId: string;
     workflowVersionId: string;
-    steps?: WorkflowAction[];
-    trigger?: WorkflowTrigger;
+    steps?: WorkflowAction[] | null;
+    trigger?: WorkflowTrigger | null;
   }): Promise<void> {
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
