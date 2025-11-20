@@ -38,6 +38,12 @@ describe('deserializeFiltersFromUrl', () => {
         type: FieldMetadataType.DATE_TIME,
         label: 'Created At',
       },
+      {
+        id: 'field-price',
+        name: 'price',
+        type: FieldMetadataType.CURRENCY,
+        label: 'Price',
+      },
     ],
   } as ObjectMetadataItem;
 
@@ -375,10 +381,10 @@ describe('deserializeFiltersFromUrl', () => {
         operator: RecordFilterGroupLogicalOperator.AND,
         filters: [
           {
-            field: 'createdAt',
-            op: ViewFilterOperand.IS_AFTER,
-            value: '2024-01-01',
-            subField: 'date',
+            field: 'price',
+            op: ViewFilterOperand.IS,
+            value: 'USD',
+            subField: 'currencyCode',
           },
         ],
       };
@@ -389,7 +395,8 @@ describe('deserializeFiltersFromUrl', () => {
       });
 
       expect(result.recordFilters).toHaveLength(1);
-      expect(result.recordFilters[0].subFieldName).toBe('date');
+      expect(result.recordFilters[0].subFieldName).toBe('currencyCode');
+      expect(result.recordFilters[0].fieldMetadataId).toBe('field-price');
     });
 
     it('should handle empty filters array', () => {
