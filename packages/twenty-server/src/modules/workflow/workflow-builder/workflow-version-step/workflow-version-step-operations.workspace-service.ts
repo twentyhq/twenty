@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { ILike, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
@@ -25,7 +25,6 @@ import {
   type WorkflowEmptyAction,
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { MAX_AGENT_NAME_CONFLICT_ATTEMPTS } from 'src/modules/workflow/workflow-builder/workflow-version-step/constants/agent-naming.constants';
 
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
   outputSchema: {},
@@ -344,27 +343,9 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             workspaceId,
           });
 
-        const workflowRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-            workspaceId,
-            'workflow',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        const workflow = await workflowRepository.findOne({
-          where: { id: workflowVersion.workflowId },
-        });
-
-        // Create agent name including workflow ID for better uniqueness
-        const baseName = `${workflow?.name || 'Workflow'} (${workflowVersion.workflowId.substring(0, 8)}) - AI Agent`;
-        const agentName = await this.generateUniqueAgentName(
-          baseName,
-          workspaceId,
-        );
-
         const newAgent = await this.agentRepository.save({
-          name: agentName,
-          label: 'AI Agent',
+          name: 'workflow-service-agent' + v4(),
+          label: 'Workflow Agent' + workflowVersion.workflowId.substring(0, 4),
           icon: 'IconRobot',
           description: '',
           prompt: '',
@@ -567,14 +548,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           );
         }
 
-        const baseName = `${existingAgent.name} (Copy)`;
-        const agentName = await this.generateUniqueAgentName(
-          baseName,
-          workspaceId,
-        );
-
         const clonedAgent = await this.agentRepository.save({
-          name: agentName,
+          name: 'workflow-service-agent' + v4(),
           label: existingAgent.label,
           icon: existingAgent.icon,
           description: existingAgent.description,
@@ -723,37 +698,5 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return step;
       }
     }
-  }
-
-  private async generateUniqueAgentName(
-    baseName: string,
-    workspaceId: string,
-  ): Promise<string> {
-    // Fetch all agents with similar names in one query
-    const baseNamePattern = `${baseName}%`;
-    const existingAgents = await this.agentRepository.find({
-      where: {
-        name: ILike(baseNamePattern),
-        workspaceId,
-      },
-      select: ['name'],
-    });
-
-    const existingNames = new Set(existingAgents.map((agent) => agent.name));
-
-    if (!existingNames.has(baseName)) {
-      return baseName;
-    }
-
-    for (let i = 1; i <= MAX_AGENT_NAME_CONFLICT_ATTEMPTS; i++) {
-      const candidateName = `${baseName} ${i}`;
-
-      if (!existingNames.has(candidateName)) {
-        return candidateName;
-      }
-    }
-
-    // If still conflicting, use UUID for guaranteed uniqueness
-    return `${baseName} ${v4()}`;
   }
 }
