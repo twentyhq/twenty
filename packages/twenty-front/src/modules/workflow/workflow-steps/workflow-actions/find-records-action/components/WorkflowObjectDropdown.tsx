@@ -7,7 +7,11 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { IconChevronLeft, IconSettings, type IconComponent } from 'twenty-ui/display';
+import {
+  IconChevronLeft,
+  IconSettings,
+  type IconComponent,
+} from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
 type ObjectOption = {
@@ -83,4 +87,3 @@ export const WorkflowObjectDropdown = ({
     </DropdownContent>
   );
 };
-
