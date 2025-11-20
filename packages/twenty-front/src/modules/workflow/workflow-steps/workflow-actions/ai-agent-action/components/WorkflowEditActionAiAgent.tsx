@@ -11,9 +11,11 @@ import { AI_AGENT_ACTION } from '@/workflow/workflow-steps/workflow-actions/cons
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
+import { type ModelConfiguration } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
+import { useDebouncedCallback } from 'use-debounce';
 import {
   useFindOneAgentQuery,
   useUpdateOneAgentMutation,
@@ -21,17 +23,6 @@ import {
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 import { SettingsAgentModelCapabilities } from '~/pages/settings/ai/components/SettingsAgentModelCapabilities';
 import { SettingsAgentResponseFormat } from '~/pages/settings/ai/components/SettingsAgentResponseFormat';
-
-type ModelConfiguration = {
-  webSearch?: {
-    enabled: boolean;
-    configuration?: Record<string, unknown>;
-  };
-  twitterSearch?: {
-    enabled: boolean;
-    configuration?: Record<string, unknown>;
-  };
-};
 
 type WorkflowEditActionAiAgentProps = {
   action: WorkflowAiAgentAction;
@@ -66,21 +57,24 @@ export const WorkflowEditActionAiAgent = ({
 
   const agent = agentData?.findOneAgent;
 
-  const handleAgentPromptChange = async (newPrompt: string) => {
-    if (actionOptions.readonly === true || !isDefined(agent)) {
-      return;
-    }
+  const handleAgentPromptChange = useDebouncedCallback(
+    async (newPrompt: string) => {
+      if (actionOptions.readonly === true || !isDefined(agent)) {
+        return;
+      }
 
-    await updateAgent({
-      variables: {
-        input: {
-          id: agent.id,
-          prompt: newPrompt,
+      await updateAgent({
+        variables: {
+          input: {
+            id: agent.id,
+            prompt: newPrompt,
+          },
         },
-      },
-      refetchQueries: ['FindOneAgent'],
-    });
-  };
+        refetchQueries: ['FindOneAgent'],
+      });
+    },
+    500,
+  );
 
   const handleAgentModelChange = async (modelId: string) => {
     if (actionOptions.readonly === true || !isDefined(agent)) {
@@ -116,7 +110,7 @@ export const WorkflowEditActionAiAgent = ({
     });
   };
 
-  const handleAgentResponseFormatChange = async (format: {
+  const updateAgentResponseFormat = async (format: {
     type: 'text' | 'json';
     schema?: BaseOutputSchemaV2;
   }) => {
@@ -128,17 +122,33 @@ export const WorkflowEditActionAiAgent = ({
       variables: {
         input: {
           id: agent.id,
-          responseFormat: format.type === 'text' ? null : format,
+          responseFormat: format,
         },
       },
       refetchQueries: ['FindOneAgent'],
     });
 
-    // Trigger step re-enrichment to update outputSchema
     await updateWorkflowVersionStep({
       workflowVersionId: flow.workflowVersionId,
       step: action,
     });
+  };
+
+  const debouncedUpdateAgentResponseFormat = useDebouncedCallback(
+    updateAgentResponseFormat,
+    300,
+  );
+
+  const handleAgentResponseFormatChange = (format: {
+    type: 'text' | 'json';
+    schema?: BaseOutputSchemaV2;
+  }) => {
+    if (format.type !== agent?.responseFormat?.type) {
+      debouncedUpdateAgentResponseFormat.cancel();
+      void updateAgentResponseFormat(format);
+    } else {
+      void debouncedUpdateAgentResponseFormat(format);
+    }
   };
 
   return agentLoading ? (

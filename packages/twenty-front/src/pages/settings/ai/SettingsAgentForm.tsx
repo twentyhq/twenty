@@ -191,10 +191,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           roleId: formValues.role,
           prompt: formValues.prompt,
           modelConfiguration: formValues.modelConfiguration,
-          responseFormat:
-            formValues.responseFormat?.type === 'text'
-              ? null
-              : formValues.responseFormat,
+          responseFormat: formValues.responseFormat,
         };
 
         await createAgent({
@@ -220,10 +217,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
             roleId: formValues.role,
             prompt: formValues.prompt,
             modelConfiguration: formValues.modelConfiguration,
-            responseFormat:
-              formValues.responseFormat?.type === 'text'
-                ? null
-                : formValues.responseFormat,
+            responseFormat: formValues.responseFormat,
           },
         },
       });

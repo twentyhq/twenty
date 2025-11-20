@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
@@ -13,18 +13,19 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
-    WorkflowVersionStepException,
-    WorkflowVersionStepExceptionCode,
+  WorkflowVersionStepException,
+  WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
-    type WorkflowAction,
-    WorkflowActionType,
-    type WorkflowEmptyAction,
-    type WorkflowFormAction,
+  type WorkflowAction,
+  WorkflowActionType,
+  type WorkflowEmptyAction,
+  type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { MAX_AGENT_NAME_CONFLICT_ATTEMPTS } from 'src/modules/workflow/workflow-builder/workflow-version-step/constants/agent-naming.constants';
 
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
   outputSchema: {},
@@ -336,7 +337,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        // Get workflow version to use workflow name in agent name
+        // Get workflow version to use workflow ID and name in agent name
         const workflowVersion =
           await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
             workflowVersionId,
@@ -354,26 +355,12 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           where: { id: workflowVersion.workflowId },
         });
 
-        // Create agent name with simple conflict resolution
-        const baseName = `${workflow?.name || 'Workflow'} - AI Agent`;
-        let agentName = baseName;
-        let attempts = 0;
-
-        // Try to find unique name (simple approach: append counter if conflict)
-        while (attempts < 10) {
-          const existing = await this.agentRepository.findOne({
-            where: { name: agentName, workspaceId },
-          });
-
-          if (!existing) break;
-          attempts++;
-          agentName = `${baseName} ${attempts}`;
-        }
-
-        // If still conflicting after 10 attempts, use step ID for guaranteed uniqueness
-        if (attempts >= 10) {
-          agentName = `${baseName} ${id || v4()}`;
-        }
+        // Create agent name including workflow ID for better uniqueness
+        const baseName = `${workflow?.name || 'Workflow'} (${workflowVersion.workflowId.substring(0, 8)}) - AI Agent`;
+        const agentName = await this.generateUniqueAgentName(
+          baseName,
+          workspaceId,
+        );
 
         const newAgent = await this.agentRepository.save({
           name: agentName,
@@ -583,22 +570,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
         // Create unique name for cloned agent
         const baseName = `${existingAgent.name} (Copy)`;
-        let agentName = baseName;
-        let attempts = 0;
-
-        while (attempts < 10) {
-          const existing = await this.agentRepository.findOne({
-            where: { name: agentName, workspaceId },
-          });
-
-          if (!existing) break;
-          attempts++;
-          agentName = `${baseName} ${attempts}`;
-        }
-
-        if (attempts >= 10) {
-          agentName = `${baseName} ${v4()}`;
-        }
+        const agentName = await this.generateUniqueAgentName(
+          baseName,
+          workspaceId,
+        );
 
         const clonedAgent = await this.agentRepository.save({
           name: agentName,
@@ -750,5 +725,38 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return step;
       }
     }
+  }
+
+  private async generateUniqueAgentName(
+    baseName: string,
+    workspaceId: string,
+  ): Promise<string> {
+    // Fetch all agents with similar names in one query
+    const baseNamePattern = `${baseName}%`;
+    const existingAgents = await this.agentRepository.find({
+      where: {
+        name: ILike(baseNamePattern),
+        workspaceId,
+      },
+      select: ['name'],
+    });
+
+    const existingNames = new Set(existingAgents.map((agent) => agent.name));
+
+    // Try base name first
+    if (!existingNames.has(baseName)) {
+      return baseName;
+    }
+
+    // Try numbered suffixes
+    for (let i = 1; i <= MAX_AGENT_NAME_CONFLICT_ATTEMPTS; i++) {
+      const candidateName = `${baseName} ${i}`;
+      if (!existingNames.has(candidateName)) {
+        return candidateName;
+      }
+    }
+
+    // If still conflicting, use UUID for guaranteed uniqueness
+    return `${baseName} ${v4()}`;
   }
 }

@@ -10,3 +10,4 @@
 export type { DataMessagePart } from './types/DataMessagePart';
 export type { ExtendedUIMessage } from './types/ExtendedUIMessage';
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
+export type { ModelConfiguration } from './types/model-configuration.type';
