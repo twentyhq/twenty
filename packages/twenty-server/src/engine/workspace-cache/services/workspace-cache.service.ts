@@ -13,7 +13,8 @@ import { WORKSPACE_CACHE_KEY } from 'src/engine/workspace-cache/decorators/works
 import { WorkspaceContextLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-context-cache-entry.type';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/workspace-cache-provider.service';
 
-const STALENESS_CHECK_INTERVAL_MS = 30_000;
+const LOCAL_STALENESS_TTL_MS = 30_000;
+const MEMOIZER_TTL_MS = 10_000;
 
 @Injectable()
 export class WorkspaceCacheService implements OnModuleInit {
@@ -25,8 +26,8 @@ export class WorkspaceCacheService implements OnModuleInit {
     string,
     WorkspaceCacheProvider<unknown>
   >();
-  private readonly getMemoizer = new PromiseMemoizer<Record<string, unknown>>(
-    STALENESS_CHECK_INTERVAL_MS,
+  private readonly memoizer = new PromiseMemoizer<Record<string, unknown>>(
+    MEMOIZER_TTL_MS,
   );
 
   constructor(
@@ -66,7 +67,7 @@ export class WorkspaceCacheService implements OnModuleInit {
     const memoKey =
       `${workspaceId}-${[...workspaceCacheKeys].sort().join(',')}` as const;
 
-    const result = await this.getMemoizer.memoizePromiseAndExecute(
+    const result = await this.memoizer.memoizePromiseAndExecute(
       memoKey,
       async () => {
         const freshResult: Record<string, unknown> = {};
@@ -133,7 +134,7 @@ export class WorkspaceCacheService implements OnModuleInit {
 
       if (
         isDefined(cached) &&
-        now - cached.lastCheckedAt < STALENESS_CHECK_INTERVAL_MS
+        now - cached.lastCheckedAt < LOCAL_STALENESS_TTL_MS
       ) {
         freshKeys.push(workspaceCacheKey);
       } else {
