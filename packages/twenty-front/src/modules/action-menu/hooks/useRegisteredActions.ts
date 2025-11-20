@@ -5,13 +5,12 @@ import { type ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/typ
 import { getActionConfig } from '@/action-menu/actions/utils/getActionConfig';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
+import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRegisteredActions = (
   shouldBeRegisteredParams: ShouldBeRegisteredFunctionParams,
@@ -29,8 +28,8 @@ export const useRegisteredActions = (
     contextStoreCurrentViewTypeComponentState,
   );
 
-  const isRecordPageLayoutEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
+  const isFullTabWidgetInEditMode = useRecoilComponentValue(
+    contextStoreIsPageInEditModeComponentState,
   );
 
   const viewType = getActionViewType(
@@ -40,7 +39,6 @@ export const useRegisteredActions = (
 
   const recordActionConfig = getActionConfig({
     objectMetadataItem,
-    isRecordPageLayoutEnabled,
   });
 
   const relatedRecordActionConfig = useRelatedRecordActions({
@@ -59,13 +57,23 @@ export const useRegisteredActions = (
 
   const permissionMap = usePermissionFlagMap();
 
-  const actionsToRegister = isDefined(viewType)
-    ? Object.values(actionsConfig).filter(
-        (action) =>
-          action.availableOn?.includes(viewType) ||
-          action.availableOn?.includes(ActionViewType.GLOBAL),
-      )
-    : [];
+  const actionsToRegister = Object.values(actionsConfig).filter((action) => {
+    if (isFullTabWidgetInEditMode) {
+      return (
+        isDefined(action.availableOn) &&
+        action.availableOn.includes(ActionViewType.PAGE_EDIT_MODE)
+      );
+    }
+
+    if (isDefined(viewType)) {
+      return (
+        action.availableOn?.includes(viewType) ||
+        action.availableOn?.includes(ActionViewType.GLOBAL)
+      );
+    }
+
+    return action.availableOn?.includes(ActionViewType.GLOBAL);
+  });
 
   const actions = actionsToRegister
     .filter((action) => {

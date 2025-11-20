@@ -1,6 +1,7 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { MergeRecordsContainer } from '@/object-record/record-merge/components/MergeRecordsContainer';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -20,11 +21,13 @@ const StyledRightDrawerRecord = styled.div<{
 export const CommandMenuMergeRecordPage = () => {
   const isMobile = useIsMobile();
 
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
-
   const commandMenuPageInstanceId = useComponentInstanceStateContext(
     CommandMenuPageComponentInstanceContext,
   )?.instanceId;
+
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow(
+    commandMenuPageInstanceId,
+  );
 
   if (!commandMenuPageInstanceId) {
     throw new Error('Command menu page instance id is not defined');
@@ -34,15 +37,21 @@ export const CommandMenuMergeRecordPage = () => {
     <RecordComponentInstanceContextsWrapper
       componentInstanceId={`record-merge-${commandMenuPageInstanceId}`}
     >
-      <ActionMenuComponentInstanceContext.Provider
-        value={{ instanceId: commandMenuPageInstanceId }}
+      <ContextStoreComponentInstanceContext.Provider
+        value={{
+          instanceId: commandMenuPageInstanceId,
+        }}
       >
-        <StyledRightDrawerRecord isMobile={isMobile}>
-          <MergeRecordsContainer
-            objectNameSingular={objectMetadataItem.nameSingular}
-          />
-        </StyledRightDrawerRecord>
-      </ActionMenuComponentInstanceContext.Provider>
+        <ActionMenuComponentInstanceContext.Provider
+          value={{ instanceId: commandMenuPageInstanceId }}
+        >
+          <StyledRightDrawerRecord isMobile={isMobile}>
+            <MergeRecordsContainer
+              objectNameSingular={objectMetadataItem.nameSingular}
+            />
+          </StyledRightDrawerRecord>
+        </ActionMenuComponentInstanceContext.Provider>
+      </ContextStoreComponentInstanceContext.Provider>
     </RecordComponentInstanceContextsWrapper>
   );
 };

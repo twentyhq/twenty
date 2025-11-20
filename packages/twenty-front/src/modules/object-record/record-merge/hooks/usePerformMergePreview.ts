@@ -1,9 +1,7 @@
-import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
+import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hooks/useMergeRecordsSelectedRecords';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -14,7 +12,7 @@ type UseMergePreviewProps = {
   objectNameSingular: string;
 };
 
-export const useMergePreview = ({
+export const usePerformMergePreview = ({
   objectNameSingular,
 }: UseMergePreviewProps) => {
   const [mergePreviewRecord, setMergePreviewRecord] =
@@ -29,26 +27,20 @@ export const useMergePreview = ({
     objectNameSingular,
   });
 
-  const commandMenuNavigationMorphItemsByPage = useRecoilValue(
-    commandMenuNavigationMorphItemsByPageState,
-  );
-
-  const selectedRecordIds =
-    commandMenuNavigationMorphItemsByPage
-      .get(CommandMenuPages.MergeRecords)
-      ?.map((morphItem) => morphItem.recordId) ?? [];
-  const selectedRecords = useRecoilValue(
-    recordStoreRecordsSelector({
-      recordIds: selectedRecordIds,
-    }),
-  );
+  const { selectedRecords } = useMergeRecordsSelectedRecords();
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   useEffect(() => {
     const fetchPreview = async () => {
-      if (selectedRecords.length < 2 || isMergeInProgress || isInitialized)
+      if (
+        selectedRecords.length < 2 ||
+        isMergeInProgress ||
+        isInitialized ||
+        isGeneratingPreview
+      ) {
         return;
+      }
 
       setIsGeneratingPreview(true);
       try {
@@ -83,13 +75,13 @@ export const useMergePreview = ({
     selectedRecords,
     mergeSettings,
     isMergeInProgress,
+    isGeneratingPreview,
     mergeManyRecords,
     upsertRecordsInStore,
     isInitialized,
   ]);
 
   return {
-    selectedRecords,
     mergePreviewRecord,
     isGeneratingPreview: isGeneratingPreview,
   };
