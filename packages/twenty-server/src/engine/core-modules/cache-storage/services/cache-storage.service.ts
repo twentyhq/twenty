@@ -68,7 +68,9 @@ export class CacheStorageService {
       return;
     }
 
-    await Promise.all(entries.map(({ key, value, ttl }) => this.set(key, value, ttl)));
+    await Promise.all(
+      entries.map(({ key, value, ttl }) => this.set(key, value, ttl)),
+    );
   }
 
   async setAdd(key: string, value: string[], ttl?: Milliseconds) {
