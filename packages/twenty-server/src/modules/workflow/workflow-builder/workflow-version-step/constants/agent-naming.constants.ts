@@ -1,1 +1,0 @@
-export const MAX_AGENT_NAME_CONFLICT_ATTEMPTS = 100;
