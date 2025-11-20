@@ -18,6 +18,7 @@ import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/w
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 @Injectable()
 export class ObjectMetadataOrderByBaseGenerator {
@@ -31,10 +32,12 @@ export class ObjectMetadataOrderByBaseGenerator {
     objectMetadata,
     logger,
     orderByDateGranularity,
+    objectMetadataMaps,
   }: {
     objectMetadata: ObjectMetadataEntity;
     logger: Logger;
     orderByDateGranularity?: boolean;
+    objectMetadataMaps?: ObjectMetadataMaps;
   }): GraphQLInputFieldConfigMap {
     const allGeneratedFields: GraphQLInputFieldConfigMap = {};
 
@@ -54,6 +57,7 @@ export class ObjectMetadataOrderByBaseGenerator {
             {
               fieldMetadata,
               typeOptions,
+              objectMetadataMaps,
             },
           );
       } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {

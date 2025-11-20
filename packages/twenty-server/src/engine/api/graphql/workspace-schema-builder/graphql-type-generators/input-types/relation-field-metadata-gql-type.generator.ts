@@ -118,16 +118,19 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
   public generateSimpleRelationFieldOrderByInputType({
     fieldMetadata,
     typeOptions,
+    objectMetadataMaps,
   }: {
     fieldMetadata: FieldMetadataEntity<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >;
     typeOptions: TypeOptions;
+    objectMetadataMaps?: ObjectMetadataMaps;
   }) {
     if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
       return {};
 
-    const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
+    const { joinColumnName, fieldMetadataName } =
+      extractGraphQLRelationFieldNames(fieldMetadata);
 
     const type = this.typeMapperService.mapToOrderByType(fieldMetadata.type);
 
@@ -146,12 +149,43 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
       typeOptions,
     );
 
-    return {
+    const fields: GraphQLInputFieldConfigMap = {
       [joinColumnName]: {
         type: modifiedType,
         description: fieldMetadata.description,
       },
     };
+
+    if (
+      isDefined(fieldMetadata.relationTargetObjectMetadataId) &&
+      isDefined(objectMetadataMaps)
+    ) {
+      const targetObjectMetadata =
+        objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
+
+      if (isDefined(targetObjectMetadata)) {
+        const targetOrderByInputTypeKey = computeObjectMetadataInputTypeKey(
+          targetObjectMetadata.nameSingular,
+          GqlInputTypeDefinitionKind.OrderBy,
+        );
+
+        const targetOrderByInputType = this.gqlTypesStorage.getGqlTypeByKey(
+          targetOrderByInputTypeKey,
+        );
+
+        if (
+          isDefined(targetOrderByInputType) &&
+          isInputObjectType(targetOrderByInputType)
+        ) {
+          fields[fieldMetadataName] = {
+            type: targetOrderByInputType,
+            description: `Order by fields of the related ${targetObjectMetadata.nameSingular}`,
+          };
+        }
+      }
+    }
+
+    return fields;
   }
 
   public generateSimpleRelationFieldGroupByInputType(

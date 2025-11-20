@@ -37,6 +37,7 @@ export class ObjectMetadataGqlInputTypeGenerator {
     });
     this.objectMetadataOrderByWithGroupByGqlInputTypeGenerator.buildAndStore({
       objectMetadata,
+      objectMetadataCollection,
     });
     this.objectMetadataGroupByGqlInputTypeGenerator.buildAndStore(
       objectMetadata,
