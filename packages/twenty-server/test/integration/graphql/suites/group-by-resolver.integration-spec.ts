@@ -956,7 +956,7 @@ describe('group-by resolver (integration)', () => {
         }),
       );
 
-      const ao = await makeGraphqlAPIRequest(
+      await makeGraphqlAPIRequest(
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: PERSON_GQL_FIELDS,
@@ -969,7 +969,7 @@ describe('group-by resolver (integration)', () => {
         }),
       );
 
-      const b = await makeGraphqlAPIRequest(
+      await makeGraphqlAPIRequest(
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
           gqlFields: PERSON_GQL_FIELDS,
@@ -1096,6 +1096,153 @@ describe('group-by resolver (integration)', () => {
 
       expect(companyAFlatInParisGroup.totalCount).toBe(1);
       expect(companyAHouseInMarseilleGroup.totalCount).toBe(2);
+    });
+  });
+
+  describe('group by morph relation fields', () => {
+    const testPetId = randomUUID();
+    const testPet2Id = randomUUID();
+    const testPet3Id = randomUUID();
+    const testRocketId = randomUUID();
+    const testRocket2Id = randomUUID();
+
+    const filter2025 = {
+      and: [
+        {
+          createdAt: {
+            gte: '2025-01-01T00:00:00.000Z',
+          },
+        },
+        {
+          createdAt: {
+            lte: '2025-03-03T23:59:59.999Z',
+          },
+        },
+      ],
+    };
+
+    beforeAll(async () => {
+      // Create rockets with different names
+      await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'rocket',
+          gqlFields: 'id name',
+          data: {
+            id: testRocketId,
+            name: 'Rocket A',
+          },
+        }),
+      );
+
+      await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'rocket',
+          gqlFields: 'id name',
+          data: {
+            id: testRocket2Id,
+            name: 'Rocket B',
+          },
+        }),
+      );
+
+      // Create pets linked to rockets via morph relation
+      await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'pet',
+          gqlFields: 'id name ownerRocket { id name }',
+          data: {
+            id: testPetId,
+            name: 'Pet 1',
+            ownerRocketId: testRocketId,
+            createdAt: '2025-03-03T09:30:00.000Z',
+          },
+        }),
+      );
+
+      await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'pet',
+          gqlFields: 'id name ownerRocket { id name }',
+          data: {
+            id: testPet2Id,
+            name: 'Pet 2',
+            ownerRocketId: testRocketId,
+            createdAt: '2025-03-03T09:30:00.000Z',
+          },
+        }),
+      );
+
+      await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'pet',
+          gqlFields: 'id name ownerRocket { id name }',
+          data: {
+            id: testPet3Id,
+            name: 'Pet 3',
+            ownerRocketId: testRocket2Id,
+            createdAt: '2025-03-03T09:30:00.000Z',
+          },
+        }),
+      );
+    });
+
+    afterAll(async () => {
+      // Cleanup pets
+      for (const id of [testPetId, testPet2Id, testPet3Id]) {
+        await makeGraphqlAPIRequest(
+          destroyOneOperationFactory({
+            objectMetadataSingularName: 'pet',
+            gqlFields: 'id',
+            recordId: id,
+          }),
+        );
+      }
+
+      // Cleanup rockets
+      for (const id of [testRocketId, testRocket2Id]) {
+        await makeGraphqlAPIRequest(
+          destroyOneOperationFactory({
+            objectMetadataSingularName: 'rocket',
+            gqlFields: 'id',
+            recordId: id,
+          }),
+        );
+      }
+    });
+
+    it('groups by morph relation field - ownerRocket name', async () => {
+      const response = await makeGraphqlAPIRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'pet',
+          objectMetadataPluralName: 'pets',
+          groupBy: [
+            {
+              ownerRocket: {
+                name: true,
+              },
+            },
+          ],
+          filter: filter2025,
+        }),
+      );
+
+      const groups = response.body.data.petsGroupBy;
+
+      expect(groups).toBeDefined();
+      expect(Array.isArray(groups)).toBe(true);
+
+      const rocketAGroup = groups.find(
+        (g: any) => g.groupByDimensionValues?.[0] === 'Rocket A',
+      );
+      const rocketBGroup = groups.find(
+        (g: any) => g.groupByDimensionValues?.[0] === 'Rocket B',
+      );
+
+      expect(rocketAGroup).toBeDefined();
+      expect(rocketBGroup).toBeDefined();
+
+      expect(rocketAGroup.totalCount).toBe(2);
+      expect(rocketBGroup.totalCount).toBe(1);
     });
   });
 });

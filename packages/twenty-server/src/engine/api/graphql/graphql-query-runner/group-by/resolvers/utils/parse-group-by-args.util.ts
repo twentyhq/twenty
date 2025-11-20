@@ -1,3 +1,4 @@
+import { UserInputError } from 'apollo-server-core';
 import { isDefined } from 'class-validator';
 import {
   FieldMetadataType,
@@ -123,6 +124,12 @@ export const parseGroupByArgs = (
           throw new GraphqlQueryRunnerException(
             `Nested field "${nestedFieldName}" not found in target object "${targetObjectMetadata.nameSingular}"`,
             GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND,
+          );
+        }
+
+        if (nestedFieldMetadata.type === FieldMetadataType.RELATION) {
+          throw new UserInputError(
+            `Cannot group by a relation field of the relation field: "${nestedFieldName}" is a relation field of "${targetObjectMetadata.nameSingular}"`,
           );
         }
 
