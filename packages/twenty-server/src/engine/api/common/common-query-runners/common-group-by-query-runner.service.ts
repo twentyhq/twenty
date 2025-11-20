@@ -39,7 +39,7 @@ import {
   isGroupByRelationField,
 } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';
 import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/parse-group-by-args.util';
-import { removeQuotes } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/remove-quote.util';
+import { formatColumnNameAsAlias } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/remove-quote.util';
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
@@ -140,9 +140,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       }
 
       const alias =
-        removeQuotes(
-          columnNameWithQuotes.replace(/"/g, '').replace(/\./g, '_'),
-        ) +
+        formatColumnNameAsAlias(columnNameWithQuotes) +
         (isGroupByDateField(groupByField)
           ? `_${groupByField.dateGranularity}`
           : isGroupByRelationField(groupByField) && groupByField.dateGranularity
@@ -186,37 +184,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       const queryBuilderWithFiltersAndWithoutGroupBy =
         repository.createQueryBuilder(objectMetadataNameSingular);
 
-      const joinAliasSet = new Set<string>();
-
-      for (const groupByField of groupByFields) {
-        // Add the same joins for relation fields to the records query builder
-        if (isGroupByRelationField(groupByField)) {
-          const joinAlias = groupByField.fieldMetadata.name;
-
-          if (
-            !groupByField.fieldMetadata.settings ||
-            !isFieldMetadataRelationOrMorphRelation(groupByField.fieldMetadata)
-          ) {
-            throw new Error(
-              `Field metadata settings are missing or invalid for field ${groupByField.fieldMetadata.name}`,
-            );
-          }
-
-          const joinColumnName = formatColumnNameForRelationField(
-            groupByField.fieldMetadata.name,
-            groupByField.fieldMetadata.settings,
-          );
-
-          if (!joinAliasSet.has(joinAlias)) {
-            queryBuilderWithFiltersAndWithoutGroupBy.leftJoin(
-              `${objectMetadataNameSingular}.${joinAlias}`,
-              `${joinAlias}`,
-              `"${objectMetadataNameSingular}"."${joinColumnName}" = "${joinAlias}"."id"`,
-            );
-            joinAliasSet.add(joinAlias);
-          }
-        }
-      }
+      this.addJoinForGroupByOnRelationFields({
+        queryBuilder: queryBuilderWithFiltersAndWithoutGroupBy,
+        groupByFields,
+        objectMetadataNameSingular,
+      });
 
       await this.addFiltersToQueryBuilder({
         args,

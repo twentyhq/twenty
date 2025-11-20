@@ -141,6 +141,12 @@ export class GraphqlQueryOrderFieldParser {
         continue;
       }
 
+      if (Object.keys(orderByArg).length > 1) {
+        throw new UserInputError(
+          'Please provide orderBy field criteria one by one in orderBy array',
+        );
+      }
+
       const fieldName = Object.keys(orderByArg)[0];
       const fieldMetadataId =
         this.objectMetadataMapItem.fieldIdByName[fieldName];
@@ -552,31 +558,34 @@ export class GraphqlQueryOrderFieldParser {
     orderByArg: ObjectRecordOrderByForRelationField;
     fieldMetadata: FieldMetadataEntity;
   }): Record<string, OrderByCondition> | null => {
-    const { associatedGroupByField, nestedFieldMetadata, nestedFieldOrderBy } =
-      prepareForOrderByRelationFieldParsing({
-        orderByArg,
-        fieldMetadata,
-        objectMetadataMaps: this.objectMetadataMaps,
-        groupByFields,
-      });
+    const {
+      associatedGroupByField,
+      nestedFieldMetadata,
+      nestedFieldOrderByValue,
+    } = prepareForOrderByRelationFieldParsing({
+      orderByArg,
+      fieldMetadata,
+      objectMetadataMaps: this.objectMetadataMaps,
+      groupByFields,
+    });
 
     if (
       !isDefined(associatedGroupByField) ||
       !isDefined(nestedFieldMetadata) ||
-      !isDefined(nestedFieldOrderBy)
+      !isDefined(nestedFieldOrderByValue)
     ) {
       return null;
     }
 
     // Handle composite fields
     if (isCompositeFieldMetadataType(nestedFieldMetadata.type)) {
-      if (!isObject(nestedFieldOrderBy)) {
+      if (!isObject(nestedFieldOrderByValue)) {
         throw new UserInputError(
           `Composite field "${nestedFieldMetadata.name}" requires a subfield to be specified`,
         );
       }
 
-      const compositeSubFields = Object.keys(nestedFieldOrderBy);
+      const compositeSubFields = Object.keys(nestedFieldOrderByValue);
 
       if (compositeSubFields.length > 1) {
         throw new UserInputError(
@@ -586,7 +595,7 @@ export class GraphqlQueryOrderFieldParser {
 
       const nestedSubFieldName = compositeSubFields[0];
       const orderByDirection = (
-        nestedFieldOrderBy as Record<string, OrderByDirection>
+        nestedFieldOrderByValue as Record<string, OrderByDirection>
       )[nestedSubFieldName];
 
       if (!isDefined(orderByDirection)) {
@@ -619,19 +628,19 @@ export class GraphqlQueryOrderFieldParser {
     const isGroupByDateField =
       (nestedFieldMetadata.type === FieldMetadataType.DATE ||
         nestedFieldMetadata.type === FieldMetadataType.DATE_TIME) &&
-      isObject(nestedFieldOrderBy) &&
-      'orderBy' in nestedFieldOrderBy &&
-      'granularity' in nestedFieldOrderBy;
+      isObject(nestedFieldOrderByValue) &&
+      'orderBy' in nestedFieldOrderByValue &&
+      'granularity' in nestedFieldOrderByValue;
 
     if (isGroupByDateField) {
       const orderByDirection = (
-        nestedFieldOrderBy as {
+        nestedFieldOrderByValue as {
           orderBy: OrderByDirection;
           granularity: ObjectRecordGroupByDateGranularity;
         }
       ).orderBy;
       const granularity = (
-        nestedFieldOrderBy as {
+        nestedFieldOrderByValue as {
           orderBy: OrderByDirection;
           granularity: ObjectRecordGroupByDateGranularity;
         }
@@ -648,7 +657,6 @@ export class GraphqlQueryOrderFieldParser {
 
       const joinAlias = fieldMetadata.name;
       const nestedColumnName = formatColumnNamesFromCompositeFieldAndSubfields(
-        // NOK
         nestedFieldMetadata.name,
         associatedGroupByField.nestedSubFieldName
           ? [associatedGroupByField.nestedSubFieldName]
@@ -669,12 +677,12 @@ export class GraphqlQueryOrderFieldParser {
 
     // Handle regular nested fields
     if (
-      typeof nestedFieldOrderBy === 'string' &&
+      typeof nestedFieldOrderByValue === 'string' &&
       Object.values(OrderByDirection).includes(
-        nestedFieldOrderBy as OrderByDirection,
+        nestedFieldOrderByValue as OrderByDirection,
       )
     ) {
-      const orderByDirection = nestedFieldOrderBy as OrderByDirection;
+      const orderByDirection = nestedFieldOrderByValue as OrderByDirection;
 
       const joinAlias = fieldMetadata.name;
       const nestedColumnName = formatColumnNamesFromCompositeFieldAndSubfields(

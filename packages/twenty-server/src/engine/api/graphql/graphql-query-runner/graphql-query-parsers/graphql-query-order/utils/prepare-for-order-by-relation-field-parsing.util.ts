@@ -29,22 +29,25 @@ export const prepareForOrderByRelationFieldParsing = ({
   }
 
   const relationFieldName = Object.keys(orderByArg)[0];
-  const nestedFieldValue = orderByArg[relationFieldName];
+  const nestedFieldOrderByObject = orderByArg[relationFieldName];
 
-  if (!isDefined(nestedFieldValue) || !isObject(nestedFieldValue)) {
+  if (
+    !isDefined(nestedFieldOrderByObject) ||
+    !isObject(nestedFieldOrderByObject)
+  ) {
     return {};
   }
 
-  if (Object.keys(nestedFieldValue).length > 1) {
+  if (Object.keys(nestedFieldOrderByObject).length > 1) {
     throw new UserInputError(
       'Please provide nested field criteria one by one in orderBy array',
     );
   }
 
-  const nestedFieldName = Object.keys(nestedFieldValue)[0];
-  const nestedFieldOrderBy = nestedFieldValue[nestedFieldName];
+  const nestedFieldName = Object.keys(nestedFieldOrderByObject)[0];
+  const nestedFieldOrderByValue = nestedFieldOrderByObject[nestedFieldName];
 
-  if (!isDefined(nestedFieldOrderBy)) {
+  if (!isDefined(nestedFieldOrderByValue)) {
     return {};
   }
 
@@ -97,6 +100,6 @@ export const prepareForOrderByRelationFieldParsing = ({
   return {
     associatedGroupByField,
     nestedFieldMetadata,
-    nestedFieldOrderBy,
+    nestedFieldOrderByValue,
   };
 };

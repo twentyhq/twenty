@@ -14,10 +14,13 @@ export const getGroupByExpression = ({
   groupByField: GroupByField;
   columnNameWithQuotes: string;
 }) => {
-  const dateGranularity =
-    isGroupByDateField(groupByField) || isGroupByRelationField(groupByField)
-      ? groupByField.dateGranularity
-      : undefined;
+  if (
+    !(isGroupByDateField(groupByField) || isGroupByRelationField(groupByField))
+  ) {
+    return columnNameWithQuotes;
+  }
+
+  const dateGranularity = groupByField.dateGranularity;
 
   if (!isDefined(dateGranularity)) {
     return columnNameWithQuotes;
