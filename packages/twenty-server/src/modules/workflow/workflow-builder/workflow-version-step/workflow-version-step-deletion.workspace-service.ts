@@ -75,8 +75,8 @@ export class WorkflowVersionStepDeletionWorkspaceService {
       {
         workspaceId,
         workflowVersionId: workflowVersion.id,
-        steps: updatedSteps ?? undefined,
-        trigger: updatedTrigger ?? undefined,
+        steps: updatedSteps,
+        trigger: updatedTrigger,
       },
     );
 
