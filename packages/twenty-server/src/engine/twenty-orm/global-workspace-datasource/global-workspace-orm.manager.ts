@@ -4,9 +4,6 @@ import { type ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
-import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import {
@@ -14,15 +11,15 @@ import {
   withWorkspaceContext,
 } from 'src/engine/twenty-orm/storage/workspace-context.storage';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { WorkspaceContextCacheService } from 'src/engine/workspace-context-cache/services/workspace-context-cache.service';
+import { type WorkspaceContextData } from 'src/engine/workspace-context-cache/types/workspace-context-data.type';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 
 @Injectable()
 export class GlobalWorkspaceOrmManager {
   constructor(
     private readonly globalWorkspaceDataSourceService: GlobalWorkspaceDataSourceService,
-    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
-    private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
-    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly workspaceContextCacheService: WorkspaceContextCacheService,
   ) {}
 
   async getRepository<T extends ObjectLiteral>(
@@ -93,29 +90,24 @@ export class GlobalWorkspaceOrmManager {
     authContext: WorkspaceAuthContext,
   ): Promise<WorkspaceContext> {
     const workspaceId = authContext.workspace.id;
-    const { objectMetadataMaps, metadataVersion } =
-      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-        {
-          workspaceId,
-        },
-      );
 
-    const { data: featureFlagsMap } =
-      await this.workspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMapAndVersion(
-        { workspaceId },
-      );
-
-    const { data: permissionsPerRoleId } =
-      await this.workspacePermissionsCacheService.getRolesPermissionsFromCache({
+    const cache =
+      await this.workspaceContextCacheService.get<WorkspaceContextData>(
         workspaceId,
-      });
+        [
+          'objectMetadataMaps',
+          'metadataVersion',
+          'featureFlagsMap',
+          'permissionsPerRoleId',
+        ],
+      );
 
     return {
       authContext,
-      objectMetadataMaps,
-      metadataVersion,
-      featureFlagsMap,
-      permissionsPerRoleId,
+      objectMetadataMaps: cache.objectMetadataMaps,
+      metadataVersion: cache.metadataVersion,
+      featureFlagsMap: cache.featureFlagsMap,
+      permissionsPerRoleId: cache.permissionsPerRoleId,
     };
   }
 }
