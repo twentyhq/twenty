@@ -3,16 +3,12 @@ import { useMemo } from 'react';
 import z from 'zod';
 
 import { useObjectMetadataFromRoute } from '@/views/hooks/internal/useObjectMetadataFromRoute';
-import {
-  RecordFilterGroupLogicalOperator,
-  ViewFilterOperand,
-} from 'twenty-shared/types';
+import { ViewFilterOperand } from 'twenty-shared/types';
 import {
   isDefined,
   relationFilterValueSchemaObject,
 } from 'twenty-shared/utils';
 
-// Recursive schema for nested filter groups
 const urlFilterSchema = z.object({
   field: z.string(),
   op: z.enum(ViewFilterOperand),

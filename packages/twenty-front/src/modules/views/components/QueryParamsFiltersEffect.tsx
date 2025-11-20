@@ -7,8 +7,8 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { useFiltersFromQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
 import { useHasFiltersInQueryParams } from '@/views/hooks/internal/useHasFiltersInQueryParams';
 import { useObjectMetadataFromRoute } from '@/views/hooks/internal/useObjectMetadataFromRoute';
-import { useApplyViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyViewFiltersToCurrentRecordFilters';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { useMapViewFiltersToFilters } from '@/views/hooks/useMapViewFiltersToFilters';
 import { isDefined } from 'twenty-shared/utils';
 
 export const QueryParamsFiltersEffect = () => {
@@ -19,8 +19,7 @@ export const QueryParamsFiltersEffect = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const { applyViewFiltersToCurrentRecordFilters } =
-    useApplyViewFiltersToCurrentRecordFilters();
+  const { mapViewFiltersToRecordFilters } = useMapViewFiltersToFilters();
 
   const { recordIndexId } = useRecordIndexContextOrThrow();
   const setCurrentRecordFilters = useSetRecoilComponentState(
@@ -43,49 +42,39 @@ export const QueryParamsFiltersEffect = () => {
       return;
     }
 
-    // Parse and apply both simple filters and filter groups
     Promise.all([
       getFiltersFromQueryParams(),
       getFilterGroupsFromQueryParams(),
     ]).then(([filtersFromParams, filterGroupsFromParams]) => {
-      // eslint-disable-next-line no-console
-      console.log(
-        '[Query Params Effect] Applying filters to state:',
-        JSON.stringify({
-          hasFilterGroups:
-            (filterGroupsFromParams?.recordFilterGroups.length ?? 0) > 0,
-          filterGroupsCount:
-            filterGroupsFromParams?.recordFilterGroups.length ?? 0,
-          filtersCount: filterGroupsFromParams?.recordFilters.length ?? 0,
-          legacyFiltersCount: Array.isArray(filtersFromParams)
-            ? filtersFromParams.length
-            : 0,
-        }),
-      );
+      const allRecordFilters = [];
 
-      // If we have filter groups from URL, use them directly
       if (
         isDefined(filterGroupsFromParams) &&
-        (filterGroupsFromParams.recordFilterGroups.length > 0 ||
-          filterGroupsFromParams.recordFilters.length > 0)
+        filterGroupsFromParams.recordFilters.length > 0
       ) {
-        if (filterGroupsFromParams.recordFilterGroups.length > 0) {
-          setCurrentRecordFilterGroups(
-            filterGroupsFromParams.recordFilterGroups,
-          );
-        }
-        if (filterGroupsFromParams.recordFilters.length > 0) {
-          setCurrentRecordFilters(filterGroupsFromParams.recordFilters);
-        }
+        allRecordFilters.push(...filterGroupsFromParams.recordFilters);
       }
-      // Otherwise apply simple filters (legacy format)
-      else if (Array.isArray(filtersFromParams)) {
-        applyViewFiltersToCurrentRecordFilters(filtersFromParams);
+
+      if (Array.isArray(filtersFromParams) && filtersFromParams.length > 0) {
+        const simpleRecordFilters =
+          mapViewFiltersToRecordFilters(filtersFromParams);
+        allRecordFilters.push(...simpleRecordFilters);
+      }
+
+      if (
+        isDefined(filterGroupsFromParams) &&
+        filterGroupsFromParams.recordFilterGroups.length > 0
+      ) {
+        setCurrentRecordFilterGroups(filterGroupsFromParams.recordFilterGroups);
+      }
+
+      if (allRecordFilters.length > 0) {
+        setCurrentRecordFilters(allRecordFilters);
       }
     });
   }, [
     currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem,
-    applyViewFiltersToCurrentRecordFilters,
+    mapViewFiltersToRecordFilters,
     getFiltersFromQueryParams,
     getFilterGroupsFromQueryParams,
     hasFiltersQueryParams,

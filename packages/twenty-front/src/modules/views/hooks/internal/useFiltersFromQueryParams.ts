@@ -2,28 +2,27 @@ import { isNonEmptyString, isObject } from '@sniptt/guards';
 import qs from 'qs';
 import { useMemo } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { logError } from '~/utils/logError';
 import z from 'zod';
+import { logError } from '~/utils/logError';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
-import { parseFilterGroupFromUrl } from '@/views/utils/deserializeFiltersFromUrl';
 import { useObjectMetadataFromRoute } from '@/views/hooks/internal/useObjectMetadataFromRoute';
 import { type ViewFilter } from '@/views/types/ViewFilter';
+import { parseFilterGroupFromUrl } from '@/views/utils/deserializeFiltersFromUrl';
 import { type ObjectPermissions, ViewFilterOperand } from 'twenty-shared/types';
 import {
   isDefined,
   relationFilterValueSchemaObject,
 } from 'twenty-shared/utils';
 
-// Recursive schema for nested filter groups
 const urlFilterSchema = z.object({
   field: z.string(),
   op: z.enum(ViewFilterOperand),
@@ -59,8 +58,6 @@ const filterQueryParamsSchema = z.object({
     .optional(),
   filterGroup: urlFilterGroupSchema.optional(),
 });
-
-export type FilterQueryParams = z.infer<typeof filterQueryParamsSchema>;
 
 export const useFiltersFromQueryParams = () => {
   const apolloCoreClient = useApolloCoreClient();

@@ -27,9 +27,6 @@ type DeserializationResult = {
   recordFilterGroups: RecordFilterGroup[];
 };
 
-/**
- * Converts a URL filter to a RecordFilter
- */
 const convertUrlFilterToRecordFilter = ({
   urlFilter,
   objectMetadataItem,
@@ -65,15 +62,13 @@ const convertUrlFilterToRecordFilter = ({
   }
 
   if (isNonEmptyString(urlFilter.subField)) {
-    recordFilter.subFieldName = urlFilter.subField as RecordFilter['subFieldName'];
+    recordFilter.subFieldName =
+      urlFilter.subField as RecordFilter['subFieldName'];
   }
 
   return recordFilter;
 };
 
-/**
- * Recursively deserializes URL filter group hierarchy into RecordFilterGroups and RecordFilters
- */
 const deserializeUrlFilterGroup = ({
   urlFilterGroup,
   objectMetadataItem,
@@ -89,7 +84,6 @@ const deserializeUrlFilterGroup = ({
   const recordFilters: RecordFilter[] = [];
   const recordFilterGroups: RecordFilterGroup[] = [];
 
-  // Create the current group
   const currentGroup: RecordFilterGroup = {
     id: groupId,
     logicalOperator: urlFilterGroup.operator,
@@ -104,7 +98,6 @@ const deserializeUrlFilterGroup = ({
 
   let positionCounter = 0;
 
-  // Deserialize filters in this group
   if (isDefined(urlFilterGroup.filters)) {
     urlFilterGroup.filters.forEach((urlFilter) => {
       const recordFilter = convertUrlFilterToRecordFilter({
@@ -120,7 +113,6 @@ const deserializeUrlFilterGroup = ({
     });
   }
 
-  // Recursively deserialize child groups
   if (isDefined(urlFilterGroup.groups)) {
     urlFilterGroup.groups.forEach((childUrlGroup) => {
       const childResult = deserializeUrlFilterGroup({
@@ -141,9 +133,6 @@ const deserializeUrlFilterGroup = ({
   };
 };
 
-/**
- * Parses filter group from URL query params into RecordFilterGroups and RecordFilters
- */
 export const parseFilterGroupFromUrl = ({
   urlFilterGroup,
   objectMetadataItem,
@@ -156,17 +145,6 @@ export const parseFilterGroupFromUrl = ({
     objectMetadataItem,
     positionInParent: 0,
   });
-
-  // eslint-disable-next-line no-console
-  console.log(
-    '[Filter Deserialization] Parsed from URL:',
-    JSON.stringify({
-      filterCount: result.recordFilters.length,
-      groupCount: result.recordFilterGroups.length,
-      recordFilters: result.recordFilters,
-      recordFilterGroups: result.recordFilterGroups,
-    }),
-  );
 
   return result;
 };

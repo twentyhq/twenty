@@ -33,7 +33,11 @@ export const QueryParamsCleanupEffect = () => {
     const newParams = new URLSearchParams(searchParams);
 
     Array.from(newParams.keys()).forEach((key) => {
-      if (key.startsWith('filter[') || key.startsWith('sort[')) {
+      if (
+        key.startsWith('filter[') ||
+        key.startsWith('filterGroup[') ||
+        key.startsWith('sort[')
+      ) {
         newParams.delete(key);
       }
     });
