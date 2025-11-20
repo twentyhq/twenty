@@ -155,6 +155,7 @@ export class FlatFieldMetadataValidatorService {
     const fieldMetadataTypeValidationErrors =
       await this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
+          updates,
           optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
             flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
             flatObjectMetadataMaps,

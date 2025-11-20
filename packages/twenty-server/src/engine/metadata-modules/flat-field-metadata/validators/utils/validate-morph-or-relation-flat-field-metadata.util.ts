@@ -1,6 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { RelationType } from 'twenty-shared/types';
-import { assertUnreachable, isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
@@ -8,7 +7,8 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
-import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
+import { validateMorphOrRelationFlatFieldJoinColumName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util';
+import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/find-flat-entity-property-update.util';
 
 export const validateMorphOrRelationFlatFieldMetadata = async ({
   flatEntityToValidate: flatFieldMetadataToValidate,
@@ -16,6 +16,7 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
   },
+  updates,
   remainingFlatEntityMapsToValidate,
 }: FlatFieldMetadataTypeValidationArgs<MorphOrRelationFieldMetadataType>): Promise<
   FlatFieldMetadataValidationError[]
@@ -82,61 +83,24 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
     });
   }
 
-  switch (flatFieldMetadataToValidate.settings.relationType) {
-    case RelationType.MANY_TO_ONE: {
-      if (!isDefined(flatFieldMetadataToValidate.settings.joinColumnName)) {
-        errors.push({
-          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          message:
-            'Many to one field metadata should carry the join column name in its settings',
-          userFriendlyMessage: msg`A many to one relation field should always declare a join column`,
-        });
-
-        return errors;
-      }
-
-      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: flatFieldMetadataToValidate.objectMetadataId,
-        flatEntityMaps: flatObjectMetadataMaps,
-      });
-
-      if (!isDefined(flatObjectMetadata)) {
-        errors.push({
-          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          message: 'Could not find relation field parent flat object',
-          userFriendlyMessage: msg`Could not find relation field parent flat object`,
-        });
-
-        return errors;
-      }
-
-      errors.push(
-        ...validateFlatFieldMetadataNameAvailability({
-          flatFieldMetadata: {
-            name: flatFieldMetadataToValidate.settings.joinColumnName,
-            type: flatFieldMetadataToValidate.type,
-          },
+  if (
+    !isDefined(updates) ||
+    isDefined(
+      findFlatEntityPropertyUpdate({
+        flatEntityUpdates: updates,
+        property: 'settings',
+      }),
+    )
+  )
+    errors.push(
+      ...validateMorphOrRelationFlatFieldJoinColumName({
+        flatFieldMetadata: flatFieldMetadataToValidate,
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
           flatFieldMetadataMaps,
-          flatObjectMetadata,
-        }),
-      );
-      break;
-    }
-    case RelationType.ONE_TO_MANY: {
-      if (isDefined(flatFieldMetadataToValidate.settings.joinColumnName)) {
-        errors.push({
-          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          message:
-            'One to many field metadata should not carry the join column name in its settings',
-          userFriendlyMessage: msg`A ont to many relation field should never declare a join column`,
-        });
-      }
-      break;
-    }
-    default: {
-      assertUnreachable(flatFieldMetadataToValidate.settings.relationType);
-    }
-  }
+          flatObjectMetadataMaps,
+        },
+      }),
+    );
 
   return errors;
 };
