@@ -84,8 +84,10 @@ export const PageLayoutRendererContent = () => {
     return null;
   }
 
+  const sortedTabs = sortTabsByPosition(currentPageLayout.tabs);
+
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
-    tabs: currentPageLayout.tabs,
+    tabs: sortedTabs,
     isMobile,
     isInRightDrawer,
     isEditMode: isPageLayoutInEditMode,
@@ -102,8 +104,6 @@ export const PageLayoutRendererContent = () => {
     currentPageLayout.id,
   );
 
-  const sortedTabs = sortTabsByPosition(tabsToRenderInTabList);
-
   return (
     <ShowPageContainer>
       {isDefined(pinnedLeftTab) && (
@@ -113,12 +113,12 @@ export const PageLayoutRendererContent = () => {
       <StyledShowPageRightContainer>
         <StyledTabsAndDashboardContainer>
           <PageLayoutTabListEffect
-            tabs={sortedTabs}
+            tabs={tabsToRenderInTabList}
             componentInstanceId={tabListInstanceId}
           />
-          {(sortedTabs.length > 1 || isPageLayoutInEditMode) && (
+          {(tabsToRenderInTabList.length > 1 || isPageLayoutInEditMode) && (
             <StyledPageLayoutTabList
-              tabs={sortedTabs}
+              tabs={tabsToRenderInTabList}
               behaveAsLinks={false}
               componentInstanceId={tabListInstanceId}
               onAddTab={handleAddTab}

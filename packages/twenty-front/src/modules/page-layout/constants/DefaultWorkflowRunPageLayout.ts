@@ -60,6 +60,7 @@ export const DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT: PageLayout = {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
+      displayAsFirstTabOnMobileAndSidePanel: true,
       widgets: [
         {
           __typename: 'PageLayoutWidget',

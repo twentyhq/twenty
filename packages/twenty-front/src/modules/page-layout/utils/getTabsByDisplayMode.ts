@@ -1,4 +1,5 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { reorderTabsForMobileAndSidePanel } from '@/page-layout/utils/reorderTabsForMobileAndSidePanel';
 import { PageLayoutType } from '~/generated/graphql';
 
 type GetTabsByDisplayModeParams = {
@@ -14,26 +15,32 @@ export const getTabsByDisplayMode = ({
   isMobile,
   isInRightDrawer,
 }: GetTabsByDisplayModeParams) => {
+  const reorderedTabs = reorderTabsForMobileAndSidePanel({
+    tabs,
+    isMobile,
+    isInRightDrawer,
+  });
+
   if (
     isMobile ||
     isInRightDrawer ||
     pageLayoutType !== PageLayoutType.RECORD_PAGE
   ) {
     return {
-      tabsToRenderInTabList: tabs,
+      tabsToRenderInTabList: reorderedTabs,
       pinnedLeftTab: undefined,
     };
   }
 
-  if (tabs.length === 1) {
+  if (reorderedTabs.length === 1) {
     return {
-      tabsToRenderInTabList: tabs,
+      tabsToRenderInTabList: reorderedTabs,
       pinnedLeftTab: undefined,
     };
   }
 
-  const tabsToRenderInTabList = tabs.slice(1);
-  const pinnedLeftTab = tabs[0];
+  const tabsToRenderInTabList = reorderedTabs.slice(1);
+  const pinnedLeftTab = reorderedTabs[0];
 
   return {
     tabsToRenderInTabList,
