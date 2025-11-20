@@ -47,6 +47,7 @@ describe('transformTwoDimensionalGroupByToBarChartData', () => {
     primaryAxisGroupByFieldMetadataId: 'field-x',
     secondaryAxisGroupByFieldMetadataId: 'field-y',
     secondaryAxisOrderBy: GraphOrderBy.FIELD_DESC,
+    color: 'blue',
   };
 
   it('should order keys correctly despite unordered raw results', () => {
@@ -89,10 +90,25 @@ describe('transformTwoDimensionalGroupByToBarChartData', () => {
 
     expect(result.keys).toEqual(['SCREENING', 'PROPOSAL', 'NEW', 'CUSTOMER']);
     expect(result.series).toEqual([
-      { key: 'SCREENING', label: 'SCREENING' },
-      { key: 'PROPOSAL', label: 'PROPOSAL' },
-      { key: 'NEW', label: 'NEW' },
-      { key: 'CUSTOMER', label: 'CUSTOMER' },
+      {
+        key: 'SCREENING',
+        label: 'SCREENING',
+        color: 'blue',
+        rawValue: 'SCREENING',
+      },
+      {
+        key: 'PROPOSAL',
+        label: 'PROPOSAL',
+        color: 'blue',
+        rawValue: 'PROPOSAL',
+      },
+      { key: 'NEW', label: 'NEW', color: 'blue', rawValue: 'NEW' },
+      {
+        key: 'CUSTOMER',
+        label: 'CUSTOMER',
+        color: 'blue',
+        rawValue: 'CUSTOMER',
+      },
     ]);
 
     expect(result.data).toHaveLength(3);
