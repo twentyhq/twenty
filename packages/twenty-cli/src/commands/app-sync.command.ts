@@ -28,7 +28,7 @@ export class AppSyncCommand {
   }
 
   private async synchronize({ appPath }: { appPath: string }) {
-    const { manifest, packageJson, yarnLock, isTwentyClientUsed } =
+    const { manifest, packageJson, yarnLock, shouldGenerate } =
       await loadManifest(appPath);
 
     let serverlessSyncResult = await this.apiService.syncApplication({
@@ -37,7 +37,7 @@ export class AppSyncCommand {
       yarnLock,
     });
 
-    if (isTwentyClientUsed) {
+    if (shouldGenerate) {
       await this.generateService.generateClient(appPath);
 
       const { manifest: manifestWithClient } = await loadManifest(appPath);
