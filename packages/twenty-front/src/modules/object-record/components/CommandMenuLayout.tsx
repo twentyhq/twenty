@@ -11,7 +11,7 @@ import { type ReactNode, useCallback, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-type CommandMenuSidePanelLayoutProps = {
+type CommandMenuPageLayoutProps = {
   children: ReactNode;
   isSidePanelOpen?: boolean;
 };
@@ -62,10 +62,10 @@ const StyledModalContainer = styled.div`
   z-index: 1;
 `;
 
-export const CommandMenuSidePanelLayout = ({
+export const CommandMenuPageLayout = ({
   children,
   isSidePanelOpen,
-}: CommandMenuSidePanelLayoutProps) => {
+}: CommandMenuPageLayoutProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
