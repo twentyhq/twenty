@@ -2,6 +2,7 @@ import { type ReactNode, useEffect, useRef } from 'react';
 
 import { SelectableListItemHotkeyEffect } from '@/ui/layout/selectable-list/components/SelectableListItemHotkeyEffect';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
+import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
@@ -32,14 +33,27 @@ export const SelectableListItem = ({
 
   const listItemRef = useRef<HTMLDivElement>(null);
 
+  const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
+
   useEffect(() => {
-    if (isSelectedItemId) {
-      listItemRef.current?.scrollIntoView({
-        behavior: 'auto',
-        block: 'start',
-      });
+    if (!isSelectedItemId || !listItemRef.current) {
+      return;
     }
-  }, [isSelectedItemId]);
+
+    const { scrollWrapperElement } = getScrollWrapperElement();
+
+    if (
+      isDefined(scrollWrapperElement) &&
+      scrollWrapperElement.scrollTop === 0
+    ) {
+      return;
+    }
+
+    listItemRef.current.scrollIntoView({
+      behavior: 'auto',
+      block: 'start',
+    });
+  }, [isSelectedItemId, getScrollWrapperElement]);
 
   return (
     <>
