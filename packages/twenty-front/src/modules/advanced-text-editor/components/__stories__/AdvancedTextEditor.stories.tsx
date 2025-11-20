@@ -1,7 +1,7 @@
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, waitFor } from '@storybook/test';
+import { expect, fn, userEvent } from '@storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -395,41 +395,31 @@ export const WithLists: Story = {
   },
   play: async ({ canvasElement, step }) => {
     await step('Verify bullet list is rendered', async () => {
-      await waitFor(() => {
-        const listItems = canvasElement.querySelectorAll('ul li');
-        expect(listItems.length).toBeGreaterThan(0);
+      const listItems = canvasElement.querySelectorAll('ul li');
+      expect(listItems.length).toBeGreaterThan(0);
 
-        const firstItem = listItems[0];
-        expect(firstItem).toBeInTheDocument();
-        expect(firstItem).toHaveTextContent(/User authentication system/i);
-      });
+      const firstItem = listItems[0];
+      expect(firstItem).toBeInTheDocument();
+      expect(firstItem).toHaveTextContent(/User authentication system/i);
     });
 
     await step('Verify ordered list is rendered', async () => {
-      await waitFor(() => {
-        const orderedListItems = canvasElement.querySelectorAll('ol li');
-        expect(orderedListItems.length).toBeGreaterThan(0);
+      const orderedListItems = canvasElement.querySelectorAll('ol li');
+      expect(orderedListItems.length).toBeGreaterThan(0);
 
-        const firstOrderedItem = orderedListItems[0];
-        expect(firstOrderedItem).toBeInTheDocument();
-        expect(firstOrderedItem).toHaveTextContent(
-          /Set up development environment/i,
-        );
-      });
+      const firstOrderedItem = orderedListItems[0];
+      expect(firstOrderedItem).toBeInTheDocument();
+      expect(firstOrderedItem).toHaveTextContent(
+        /Set up development environment/i,
+      );
     });
 
     await step('Test list interaction', async () => {
-      await waitFor(() => {
-        const editorContent = canvasElement.querySelector('.tiptap');
-        expect(editorContent).toBeInTheDocument();
-      });
-
-      const editorContent = canvasElement.querySelector(
-        '.tiptap',
-      ) as HTMLElement | null;
+      const editorContent = canvasElement.querySelector('.tiptap');
+      expect(editorContent).toBeInTheDocument();
 
       const firstListItem = canvasElement.querySelector('ul li');
-      if (isDefined(firstListItem) && isDefined(editorContent)) {
+      if (isDefined(firstListItem)) {
         await userEvent.click(firstListItem);
 
         expect(editorContent).toHaveFocus();
@@ -437,19 +427,17 @@ export const WithLists: Story = {
     });
 
     await step('Verify list structure', async () => {
-      await waitFor(() => {
-        const bulletList = canvasElement.querySelector('ul');
-        expect(bulletList).toBeInTheDocument();
+      const bulletList = canvasElement.querySelector('ul');
+      expect(bulletList).toBeInTheDocument();
 
-        const orderedList = canvasElement.querySelector('ol');
-        expect(orderedList).toBeInTheDocument();
+      const orderedList = canvasElement.querySelector('ol');
+      expect(orderedList).toBeInTheDocument();
 
-        const bulletListItems = canvasElement.querySelectorAll('ul li');
-        expect(bulletListItems.length).toBe(3);
+      const bulletListItems = canvasElement.querySelectorAll('ul li');
+      expect(bulletListItems.length).toBe(3);
 
-        const orderedListItems = canvasElement.querySelectorAll('ol li');
-        expect(orderedListItems.length).toBe(4);
-      });
+      const orderedListItems = canvasElement.querySelectorAll('ol li');
+      expect(orderedListItems.length).toBe(4);
     });
   },
 };
