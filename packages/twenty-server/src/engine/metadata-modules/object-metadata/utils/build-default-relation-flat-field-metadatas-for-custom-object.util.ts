@@ -197,7 +197,6 @@ const EMPTY_SOURCE_AND_TARGET_FLAT_FIELD_METADATAS_RECORD: SourceAndTargetFlatFi
     standardTargetFlatFieldMetadatas: [],
   };
 
-// TODO: @guillim handle morph relations, duplicate this logic for morph relations
 export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
   existingFlatObjectMetadataMaps,
   sourceFlatObjectMetadata,

@@ -87,7 +87,6 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       workspaceId,
     };
 
-    // TODO: handle morph relations
     const {
       standardSourceFlatFieldMetadatas,
       standardTargetFlatFieldMetadatas,
