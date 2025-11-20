@@ -1,0 +1,91 @@
+{
+  "tabs": {
+    "userGuide": {
+      "label": "User Guide",
+      "groups": {
+        "gettingStarted": {
+          "label": "Getting Started"
+        },
+        "dataModel": {
+          "label": "Veri modeli"
+        },
+        "crmEssentials": {
+          "label": "CRM Temelleri"
+        },
+        "views": {
+          "label": "Görünümler"
+        },
+        "workflows": {
+          "label": "İş Akışları"
+        },
+        "collaboration": {
+          "label": "İşbirliği"
+        },
+        "integrationsApi": {
+          "label": "Integrations & API"
+        },
+        "reporting": {
+          "label": "Raporlama"
+        },
+        "settings": {
+          "label": "Ayarlar"
+        },
+        "pricing": {
+          "label": "Fiyatlandırma"
+        },
+        "resources": {
+          "label": "Kaynaklar"
+        }
+      }
+    },
+    "developers": {
+      "label": "Geliştiriciler",
+      "groups": {
+        "developersGroup": {
+          "label": "Geliştiriciler"
+        },
+        "devGettingStarted": {
+          "label": "Getting Started",
+          "groups": {
+            "selfHosting": {
+              "label": "Self-Hosting"
+            },
+            "apiAndWebhooks": {
+              "label": "API and Webhooks"
+            }
+          }
+        },
+        "contributing": {
+          "label": "Katkıda Bulunma",
+          "groups": {
+            "frontendDevelopment": {
+              "label": "Frontend Geliştirme",
+              "groups": {
+                "twentyUi": {
+                  "label": "Twenty UI",
+                  "groups": {
+                    "display": {
+                      "label": "Görüntüle"
+                    },
+                    "feedback": {
+                      "label": "Geri Bildirim"
+                    },
+                    "input": {
+                      "label": "Girdi"
+                    },
+                    "navigation": {
+                      "label": "Gezinme"
+                    }
+                  }
+                }
+              }
+            },
+            "backendDevelopment": {
+              "label": "Backend Geliştirme"
+            }
+          }
+        }
+      }
+    }
+  }
+}

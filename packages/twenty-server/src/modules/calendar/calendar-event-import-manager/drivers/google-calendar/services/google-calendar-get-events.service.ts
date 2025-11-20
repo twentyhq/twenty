@@ -2,7 +2,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type GaxiosError } from 'gaxios';
-import { type calendar_v3 as calendarV3 } from 'googleapis';
+import { google, type calendar_v3 as calendarV3 } from 'googleapis';
 
 import { formatGoogleCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/format-google-calendar-event.util';
 import { parseGaxiosError } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/parse-gaxios-error.util';
@@ -31,7 +31,10 @@ export class GoogleCalendarGetEventsService {
         connectedAccount,
       );
 
-    const googleCalendarClient = oAuth2Client.calendar({ version: 'v3' });
+    const googleCalendarClient = google.calendar({
+      version: 'v3',
+      auth: oAuth2Client,
+    });
 
     let nextSyncToken: string | null | undefined;
     let nextPageToken: string | undefined;

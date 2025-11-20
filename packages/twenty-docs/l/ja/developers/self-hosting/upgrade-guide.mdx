@@ -17,7 +17,7 @@ Docker Composeを使用している場合、次の手順に従います：
 
 1. Twentyを実行しているホスト上のターミナルで、Twentyを停止します：`docker compose down`
 
-2. docker-compose近くにある.envファイルの`TAG`値を変更してバージョンをアップグレードします。 ( `v0.53` のように `major.minor` バージョンを使用することをお勧めします )
+2. docker-compose近くにある.envファイルの`TAG`値を変更してバージョンをアップグレードします。 ( `v0.53` のように `major.minor` バージョンを使用することをお勧めします ) ( `v0.53` のように `major.minor` バージョンを使用することをお勧めします )
 
 3. `docker compose up -d` でTwentyを再起動します。
 
@@ -39,7 +39,7 @@ All interactions with the metadata API have been optimized for better performanc
 
 キャッシング戦略を見直し、可能な場合はデータベースクエリよりもキャッシュヒットを優先するようにしました。これにより、メタデータAPIオペレーションのパフォーマンスが大幅に向上しました。
 
-アップグレード後にランタイムの問題が発生した場合は、キャッシュをフラッシュして最新の変更と同期させる必要があるかもしれません。 twenty-serverコンテナ内で次のコマンドを実行します：
+アップグレード後にランタイムの問題が発生した場合は、キャッシュをフラッシュして最新の変更と同期させる必要があるかもしれません。 twenty-serverコンテナ内で次のコマンドを実行します： twenty-serverコンテナ内で次のコマンドを実行します：
 
 ```bash
 yarn command:prod cache:flush
@@ -100,6 +100,7 @@ yarn command:prod upgrade
 #### 私は `0.52.0` と `0.52.6` の間のバージョンでブロックされたワークスペースを持っています。
 
 残念ながら、`0.52.0` と `0.52.6` はdockerHubから完全に削除されました。
+残念ながら、`0.52.0` と `0.52.6` はdockerHubから完全に削除されました。
 データベースでワークスペースバージョンを手動で `0.51.0` に更新し、twentyバージョン `0.52.11` を使用して、その直上のアップグレードガイドに従ってアップグレードする必要があります。
 
 ### v0.50からv0.51
@@ -123,6 +124,7 @@ yarn command:prod upgrade
 #### Docker-compose.ymlの変更
 
 このバージョンには、`worker` サービスが `server-local-data` ボリュームにアクセスできるようにするための `docker-compose.yml` の変更が含まれています。
+ローカルの `docker-compose.yml` を[v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml)に更新してください。
 ローカルの `docker-compose.yml` を[v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml)に更新してください。
 
 ### v0.43.0からv0.44.0
@@ -249,7 +251,9 @@ yarn command:prod upgrade-0.34
 - 追加: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
 
 フロントエンドURLの取り扱いを更新しました。
+フロントエンドURLの取り扱いを更新しました。
 フロントエンドURLは、`FRONT_DOMAIN`、`FRONT_PROTOCOL`、`FRONT_PORT` 変数を使用して設定できます。
+FRONT_DOMAIN が設定されていない場合、フロントエンドURLは `SERVER_URL` に戻されます。
 FRONT_DOMAIN が設定されていない場合、フロントエンドURLは `SERVER_URL` に戻されます。
 
 ### v0.32.0からv0.33.0
@@ -265,7 +269,11 @@ yarn command:prod upgrade-0.33
 `yarn command:prod cache:flush` コマンドはRedisキャッシュをフラッシュします。
 `yarn database:migrate:prod` コマンドはデータベース構造（コアおよびメタデータスキーマ）の移行を適用します
 `yarn command:prod upgrade-0.33` はすべてのワークスペースのデータ移行を行います。
+`yarn database:migrate:prod` コマンドはデータベースへの移行を適用します。
+"`yarn command:prod workspace:sync-metadata -f` コマンドは、標準オブジェクトの定義をメタデータテーブルに同期し、既存のワークスペースに必要な移行を適用します。"
+The `yarn command:prod upgrade-0.22` command will apply specific data transformations to adapt to the new object defaultRequestInstrumentationOptions.
 
+このバージョンから、DB用のtwenty-postgresイメージは廃止され、twenty-postgres-spiloが代わりに使用されるようになりました。
 このバージョンから、DB用のtwenty-postgresイメージは廃止され、twenty-postgres-spiloが代わりに使用されるようになりました。
 twenty-postgresイメージを使い続けたい場合は、docker-compose.yml内の`twentycrm/twenty-postgres:${TAG}`を`twentycrm/twenty-postgres`に置き換えるだけで済みます。
 
@@ -323,6 +331,7 @@ Twentyインスタンスをv0.30.0イメージにアップグレードします�
 
 **Breaking change**:
 To enhance performances, Twenty now requires redis cache to be configured. これを反映した[docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml)を更新しました。
+構成を更新し、環境変数を適切に更新してください：
 構成を更新し、環境変数を適切に更新してください：
 
 ```
@@ -382,6 +391,7 @@ yarn command:prod upgrade-0.22
 ```
 
 `yarn database:migrate:prod` コマンドはデータベースへの移行を適用します。
+`yarn command:prod upgrade-0.23` は、アクティビティをタスク/ノートに移行するなど、データ移行を担当します。
 "`yarn command:prod workspace:sync-metadata -f` コマンドは、標準オブジェクトの定義をメタデータテーブルに同期し、既存のワークスペースに必要な移行を適用します。"
 The `yarn command:prod upgrade-0.22` command will apply specific data transformations to adapt to the new object defaultRequestInstrumentationOptions.
 

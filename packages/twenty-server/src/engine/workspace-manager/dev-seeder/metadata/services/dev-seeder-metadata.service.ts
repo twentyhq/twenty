@@ -8,7 +8,6 @@ import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/d
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import {
@@ -30,7 +29,6 @@ import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-
 @Injectable()
 export class DevSeederMetadataService {
   constructor(
-    private readonly objectMetadataService: ObjectMetadataService,
     private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
     private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
@@ -140,7 +138,7 @@ export class DevSeederMetadataService {
     workspaceId: string;
     objectMetadataSeed: ObjectMetadataSeed;
   }): Promise<void> {
-    await this.objectMetadataServiceV2.createOne({
+    await this.objectMetadataServiceV2.createOneObject({
       createObjectInput: {
         ...objectMetadataSeed,
         dataSourceId,
@@ -159,7 +157,7 @@ export class DevSeederMetadataService {
     fieldMetadataSeeds: FieldMetadataSeed[];
   }): Promise<void> {
     const objectMetadata =
-      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
+      await this.objectMetadataServiceV2.findOneWithinWorkspace(workspaceId, {
         where: { nameSingular: objectMetadataNameSingular },
       });
 
@@ -173,7 +171,7 @@ export class DevSeederMetadataService {
       objectMetadataId: objectMetadata.id,
     }));
 
-    await this.fieldMetadataServiceV2.createMany({
+    await this.fieldMetadataServiceV2.createManyFields({
       createFieldInputs,
       workspaceId,
     });
@@ -189,7 +187,7 @@ export class DevSeederMetadataService {
     featureFlags?: Record<string, boolean>;
   }): Promise<void> {
     const createdObjectMetadata =
-      await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
+      await this.objectMetadataServiceV2.findManyWithinWorkspace(workspaceId);
 
     await prefillCoreViews({
       coreDataSource: this.coreDataSource,
@@ -243,7 +241,7 @@ export class DevSeederMetadataService {
       objectMetadataMaps,
     });
 
-    await this.fieldMetadataServiceV2.createMany({
+    await this.fieldMetadataServiceV2.createManyFields({
       createFieldInputs,
       workspaceId,
     });

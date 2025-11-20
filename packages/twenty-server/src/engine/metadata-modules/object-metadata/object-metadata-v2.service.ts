@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
+import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
@@ -10,15 +13,14 @@ import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metada
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
-import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-update-object-input-to-flat-object-metadata-and-related-flat-entities.util';
 import { fromCreateViewFieldInputToFlatViewFieldToCreate } from 'src/engine/metadata-modules/flat-view-field/utils/from-create-view-field-input-to-flat-view-field-to-create.util';
 import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/metadata-modules/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
-import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -33,21 +35,25 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 
 @Injectable()
-export class ObjectMetadataServiceV2 {
+export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataEntity> {
   constructor(
+    @InjectRepository(ObjectMetadataEntity)
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-  ) {}
+  ) {
+    super(objectMetadataRepository);
+  }
 
-  async updateOne({
+  async updateOneObject({
     updateObjectInput,
     workspaceId,
   }: {
     workspaceId: string;
     updateObjectInput: UpdateOneObjectInput;
-  }): Promise<ObjectMetadataDTO> {
+  }): Promise<FlatObjectMetadata> {
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatIndexMaps: existingFlatIndexMaps,
@@ -154,10 +160,10 @@ export class ObjectMetadataServiceV2 {
       );
     }
 
-    return fromFlatObjectMetadataToObjectMetadataDto(updatedFlatObjectMetadata);
+    return updatedFlatObjectMetadata;
   }
 
-  async deleteOne({
+  async deleteOneObject({
     deleteObjectInput,
     workspaceId,
     isSystemBuild = false,
@@ -165,7 +171,7 @@ export class ObjectMetadataServiceV2 {
     deleteObjectInput: DeleteOneObjectInput;
     workspaceId: string;
     isSystemBuild?: boolean;
-  }): Promise<ObjectMetadataDTO> {
+  }): Promise<FlatObjectMetadata> {
     const deletedObjectMetadataDtos = await this.deleteManyObjectMetadatas({
       deleteObjectInputs: [deleteObjectInput],
       workspaceId,
@@ -192,7 +198,7 @@ export class ObjectMetadataServiceV2 {
     deleteObjectInputs: DeleteOneObjectInput[];
     workspaceId: string;
     isSystemBuild?: boolean;
-  }): Promise<ObjectMetadataDTO[]> {
+  }): Promise<FlatObjectMetadata[]> {
     if (deleteObjectInputs.length === 0) {
       return [];
     }
@@ -311,16 +317,14 @@ export class ObjectMetadataServiceV2 {
       );
     }
 
-    return flatObjectMetadatasToDelete.map(
-      fromFlatObjectMetadataToObjectMetadataDto,
-    );
+    return flatObjectMetadatasToDelete;
   }
 
-  async createOne({
+  async createOneObject({
     createObjectInput,
     workspaceId,
   }: {
-    createObjectInput: Omit<CreateObjectInput, 'workspaceId'>;
+    createObjectInput: CreateObjectInput;
     workspaceId: string;
   }): Promise<FlatObjectMetadata> {
     const {
@@ -547,6 +551,45 @@ export class ObjectMetadataServiceV2 {
       deleteObjectInputs,
       workspaceId,
       isSystemBuild: true,
+    });
+  }
+
+  public async findOneWithinWorkspace(
+    workspaceId: string,
+    options: FindOneOptions<ObjectMetadataEntity>,
+  ): Promise<ObjectMetadataEntity | null> {
+    return this.objectMetadataRepository.findOne({
+      relations: [
+        'fields',
+        'indexMetadatas',
+        'indexMetadatas.indexFieldMetadatas',
+      ],
+      ...options,
+      where: {
+        ...options.where,
+        workspaceId,
+      },
+    });
+  }
+
+  public async findManyWithinWorkspace(
+    workspaceId: string,
+    options?: FindManyOptions<ObjectMetadataEntity>,
+  ) {
+    return this.objectMetadataRepository.find({
+      relations: [
+        'fields.object',
+        'fields',
+        'fields.relationTargetObjectMetadata',
+      ],
+      ...options,
+      where: {
+        ...options?.where,
+        workspaceId,
+      },
+      order: {
+        ...options?.order,
+      },
     });
   }
 }

@@ -3,8 +3,12 @@ import { useRecoilValue } from 'recoil';
 
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
+import { AppTooltip, TooltipPosition } from 'twenty-ui/display';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import {
+  beautifyPastDateRelativeToNow,
+  formatToHumanReadableDate,
+} from '~/utils/date-utils';
 
 const StyledEmailThreadMessageSender = styled.div`
   display: flex;
@@ -28,13 +32,19 @@ export const EmailThreadMessageSender = ({
   sentAt,
 }: EmailThreadMessageSenderProps) => {
   const { localeCatalog } = useRecoilValue(dateLocaleState);
+  const tooltipId = `date-tooltip-${sentAt.replace(/[^a-zA-Z0-9]/g, '-')}`;
 
   return (
     <StyledEmailThreadMessageSender>
       <ParticipantChip participant={sender} variant="bold" />
-      <StyledThreadMessageSentAt>
+      <StyledThreadMessageSentAt id={tooltipId}>
         {beautifyPastDateRelativeToNow(sentAt, localeCatalog)}
       </StyledThreadMessageSentAt>
+      <AppTooltip
+        anchorSelect={`#${tooltipId}`}
+        content={formatToHumanReadableDate(sentAt)}
+        place={TooltipPosition.Top}
+      />
     </StyledEmailThreadMessageSender>
   );
 };

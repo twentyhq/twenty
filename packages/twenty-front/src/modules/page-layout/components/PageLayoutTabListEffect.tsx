@@ -1,3 +1,4 @@
+import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
@@ -5,8 +6,10 @@ import { useEffect } from 'react';
 
 type PageLayoutTabListEffectProps = Pick<
   TabListProps,
-  'componentInstanceId' | 'tabs' | 'onChangeTab'
->;
+  'componentInstanceId' | 'onChangeTab'
+> & {
+  tabs: PageLayoutTab[];
+};
 
 export const PageLayoutTabListEffect = ({
   tabs,
@@ -18,10 +21,8 @@ export const PageLayoutTabListEffect = ({
     componentInstanceId,
   );
 
-  const visibleTabs = tabs.filter((tab) => !tab.hide);
-
-  const activeTabExists = visibleTabs.some((tab) => tab.id === activeTabId);
-  const initialActiveTabId = activeTabExists ? activeTabId : visibleTabs[0]?.id;
+  const activeTabExists = tabs.some((tab) => tab.id === activeTabId);
+  const initialActiveTabId = activeTabExists ? activeTabId : tabs[0]?.id;
 
   useEffect(() => {
     setActiveTabId(initialActiveTabId);

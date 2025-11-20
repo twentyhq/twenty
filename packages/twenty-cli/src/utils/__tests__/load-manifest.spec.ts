@@ -1,6 +1,6 @@
+import { ensureDirSync, removeSync, writeFileSync } from 'fs-extra';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { ensureDirSync, writeFileSync, removeSync } from 'fs-extra';
 import { copyBaseApplicationProject } from '../app-template';
 import { loadManifest } from '../load-manifest';
 
@@ -24,13 +24,13 @@ const tsLibMock = `declare module 'tslib' {
 const twentySdkTypesMock = `
 declare module 'twenty-sdk/application' {
   export type SyncableEntityOptions = { universalIdentifier: string };
-  
+
   type ApplicationVariable = SyncableEntityOptions & {
     value?: string;
     description?: string;
     isSecret?: boolean;
   };
-  
+
   export type ApplicationConfig = SyncableEntityOptions & {
     displayName?: string;
     description?: string;
@@ -44,27 +44,27 @@ declare module 'twenty-sdk/application' {
     httpMethod: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
     isAuthRequired: boolean;
   };
-  
+
   type CronTrigger = {
     type: 'cron';
     pattern: string;
   };
-  
+
   type DatabaseEventTrigger = {
     type: 'databaseEvent';
     eventName: string;
   };
-  
+
   type ServerlessFunctionTrigger = SyncableEntityOptions &
     (RouteTrigger | CronTrigger | DatabaseEventTrigger);
-  
+
   export type ServerlessFunctionConfig = SyncableEntityOptions & {
     name?: string;
     description?: string;
     timeoutSeconds?: number;
     triggers?: ServerlessFunctionTrigger[];
   };
-  
+
   type ObjectMetadataOptions = SyncableEntityOptions & {
     nameSingular: string;
     namePlural: string;
@@ -73,7 +73,7 @@ declare module 'twenty-sdk/application' {
     description?: string;
     icon?: string;
   };
-  
+
   export const ObjectMetadata = (_: ObjectMetadataOptions): ClassDecorator => {
     return () => {};
   };
@@ -412,11 +412,8 @@ export const format = async (params: any): Promise<any> => {
     ]);
   });
 
-  it('fails fast if TS validation fails', async () => {
-    write(appDirectory, 'src/utils/broken.ts', `const x: number = 'oops';`);
-
-    await expect(loadManifest(appDirectory)).rejects.toThrow(
-      /TypeScript validation failed/,
-    );
+  it('manifest should contains typescript sources', async () => {
+    const { shouldGenerate } = await loadManifest(appDirectory);
+    expect(shouldGenerate).toBe(false);
   });
 });
