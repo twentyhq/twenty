@@ -36,12 +36,7 @@ const objectsNotForUpdate: string[] = [
   'viewGroups',
 ];
 
-type TwentyObject = {
-  id: string;
-  namePlural: string;
-};
-
-const fetchAllObjects = async (): Promise<TwentyObject[]> => {
+const returnWorkspaceMemberObjectId = async (): Promise<string> => {
   const options = {
     method: 'GET',
     headers: {
@@ -50,26 +45,16 @@ const fetchAllObjects = async (): Promise<TwentyObject[]> => {
     url: `${TWENTY_API_URL}/rest/metadata/objects`,
   };
   const response = await axios.request(options);
-  let objects: TwentyObject[] = [];
-  const objectsToParse: Record<string, any>[] = response.data.data.objects;
-  objectsToParse.forEach((object) => {
-    objects.push({ id: object.id, namePlural: object.namePlural });
-  });
-  return objects;
+  return response.data.data.objects.find(
+    (object: any) => object.namePlural === 'workspaceMembers',
+  ).id;
 };
 
 const createUpdatedByField = async (
-  twentyObjects: TwentyObject[],
+  sourceObjectId: string,
+  workspaceMemberObjectId: string,
   objectName: string,
 ): Promise<boolean | undefined> => {
-  //@ts-expect-error suppress so compiler won't complain
-  const sourceObjectId: string = twentyObjects.find(
-    (object: TwentyObject) => object.namePlural === objectName,
-  ).id;
-  // @ts-expect-error object is in array but compiler doesn't know it
-  const targetObjectId: string = twentyObjects.find(
-    (object: TwentyObject) => object.namePlural === 'workspaceMembers',
-  ).id;
   // taken directly from Network tab
   const GraphQLQuery: string = `mutation CreateOneFieldMetadataItem($input: CreateOneFieldMetadataInput!) {
   createOneField(input: $input) {
@@ -109,7 +94,7 @@ const createUpdatedByField = async (
         type: 'RELATION',
         relationCreationPayload: {
           type: 'MANY_TO_ONE',
-          targetObjectMetadataId: `${targetObjectId}`,
+          targetObjectMetadataId: `${workspaceMemberObjectId}`,
           targetFieldLabel: `Updated by ${objectName}`,
           targetFieldIcon: 'IconUsers',
         },
@@ -165,46 +150,9 @@ const updateUpdatedByField = async (
   }
 };
 
-const helperFinderObjectName = async (
-  objectName: string,
-  objectId: string,
-): Promise<string> => {
-  const options = {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${TWENTY_API_KEY}`,
-    },
-    url: `${TWENTY_API_URL}/rest/${objectName}/${objectId}`,
-  };
-  try {
-    const response = await axios.request(options);
-    return response.status === 200 ? objectName : '';
-  } catch (error) {
-    return ''; // throwing error will finish process, it's necessary to do it like this
-  }
-};
-
-const findObjectName = async (
-  twentyObjects: TwentyObject[],
-  objectId: string,
-): Promise<string> => {
-  const changeableObjects: string[] = twentyObjects
-    .filter((obj) => !objectsNotForUpdate.includes(obj.namePlural))
-    .map((obj) => obj.namePlural);
-
-  const results = await Promise.all(
-    changeableObjects.map((object) => helperFinderObjectName(object, objectId)),
-  );
-  for (let i = 0; i < results.length; i++) {
-    if (results[i] !== '') {
-      return results[i];
-    }
-  }
-  throw new Error('No matching object was found');
-};
-
 export const main = async (params: {
   properties: Record<string, any>;
+  objectMetadata: Record<string, any>;
   recordId: string;
   workspaceMemberId: string;
 }): Promise<object> => {
@@ -213,7 +161,12 @@ export const main = async (params: {
     return {};
   }
   try {
-    const { properties, recordId, workspaceMemberId } = params;
+    const { properties, objectMetadata, recordId, workspaceMemberId } = params;
+    if (objectsNotForUpdate.includes(objectMetadata.namePlural)) {
+      console.log('Updated object is immutable system object');
+      return {};
+    }
+
     if (!workspaceMemberId) {
       console.log('Exited as last update was done via API');
       return {};
@@ -226,39 +179,39 @@ export const main = async (params: {
       console.log('Exited as last update was done by serverless function');
       return {}; // if last update was updatedBy field, don't update
     }
-    const twentyObjects: TwentyObject[] = await fetchAllObjects();
 
-    // const objectName = properties.after; //TODO: uncomment once object type is exposed in properties
-    const objectPluralName: string = await findObjectName(
-      twentyObjects,
-      recordId,
-    );
+    if (objectMetadata.fieldIdByJoinColumnName.updatedById === undefined) {
+      const workspaceMemberObjectId: string =
+        await returnWorkspaceMemberObjectId();
 
-    if (properties.after.updatedById === undefined) {
       const isFieldCreated: boolean | undefined = await createUpdatedByField(
-        twentyObjects,
-        objectPluralName,
+        objectMetadata.id,
+        workspaceMemberObjectId,
+        objectMetadata.namePlural,
       );
       if (!isFieldCreated) {
-        console.error('Creation of updated by field failed');
+        console.error(`Creation of updated by field in ${objectMetadata.namePlural} failed`);
         return {};
+      }
+      else {
+        console.log(`Updated by field in ${objectMetadata.namePlural} has been successfully created`);
       }
     }
 
     const isObjectUpdated: boolean | undefined = await updateUpdatedByField(
-      objectPluralName,
+      objectMetadata.namePlural,
       workspaceMemberId,
       recordId,
     );
 
     if (isObjectUpdated) {
       console.log(
-        `Field updatedBy in record ${recordId} in object ${objectPluralName} has been updated`,
+        `Field updatedBy in record ${recordId} in object ${objectMetadata.namePlural} has been updated`,
       );
       return {};
     }
     throw new Error(
-      `Update field updatedBy in record ${recordId} in object ${objectPluralName} has failed!`,
+      `Update field updatedBy in record ${recordId} in object ${objectMetadata.namePlural} has failed!`,
     );
   } catch (error) {
     console.error('Exiting because of error');

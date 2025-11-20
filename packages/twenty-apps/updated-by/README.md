@@ -34,5 +34,3 @@ send requests to Twenty.
 
 - Updated by field shouldn't be changed by users, only by extension 
 - Amount of API requests is reduced to possible minimum
-- New version of app will come out once type of object to which updated record belongs to will be exposed in properties 
-(more optimizations regarding amount of requests and computation will be done)
