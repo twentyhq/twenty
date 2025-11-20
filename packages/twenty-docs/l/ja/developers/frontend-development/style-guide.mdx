@@ -88,7 +88,7 @@ const EmailField = ({ value }: EmailFieldProps) => (
 
 #### JSX要素内で単一の変数プロップスプレーディングを使用しない
 
-`{...props}`のようにJSX要素内で単一の変数プロップスプレーディングを避けてください。 この方法は、コンポーネントが受け取るプロップスを不明確にするため、コードの可読性が低下し、メンテナンスが困難になります。
+`{...props}`のようにJSX要素内で単一の変数プロップスプレーディングを避けてください。 この方法は、コンポーネントが受け取るプロップスを不明確にするため、コードの可読性が低下し、メンテナンスが困難になります。 この方法は、コンポーネントが受け取るプロップスを不明確にするため、コードの可読性が低下し、メンテナンスが困難になります。
 
 ```tsx
 /* ❌ - Bad, spreads a single variable prop into the underlying component
@@ -155,7 +155,7 @@ type MyType = {
 
 ### 列挙型の代わりに文字列リテラルを使う
 
-[文字列リテラル](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) は、TypeScriptで列挙型のような値を扱うための推奨方法です。 それらはPickやOmitで拡張するのが簡単で、特にコード補完を伴う開発者の体験を向上させます。
+[文字列リテラル](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) は、TypeScriptで列挙型のような値を扱うための推奨方法です。 それらはPickやOmitで拡張するのが簡単で、特にコード補完を伴う開発者の体験を向上させます。 それらはPickやOmitで拡張するのが簡単で、特にコード補完を伴う開発者の体験を向上させます。
 
 なぜTypeScriptが列挙型を避けることを推奨しているかは[ここ](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums)をご覧ください。
 
@@ -235,11 +235,11 @@ const StyledTitle = styled.div`
 
 #### 測定の単位
 
-Styledコンポーネント内で`px`または`rem`値を直接使用しない 必要な値は一般的にテーマに既に定義されているため、これらの目的でテーマを利用することが推奨されます。
+Styledコンポーネント内で`px`または`rem`値を直接使用しない 必要な値は一般的にテーマに既に定義されているため、これらの目的でテーマを利用することが推奨されます。 必要な値は一般的にテーマに既に定義されているため、これらの目的でテーマを利用することが推奨されます。
 
 #### カラー
 
-新しい色を追加するのではなく、テーマから既存のパレットを使用してください。 パレットが適合しない場合には、コメントを残してチームがそれを修正できるようにしてください。
+新しい色を追加するのではなく、テーマから既存のパレットを使用してください。 パレットが適合しない場合には、コメントを残してチームがそれを修正できるようにしてください。 パレットが適合しない場合には、コメントを残してチームがそれを修正できるようにしてください。
 
 ```tsx
 // ❌ Bad, directly specifies style values without utilizing the theme
@@ -265,7 +265,7 @@ const StyledButton = styled.button`
 
 ## タイプ無しのインポートの強制
 
-タイプインポートを避けてください。 この標準を強制するために、ESLintルールがどのタイプのインポートもチェックして報告します。 これにより、TypeScriptコードの一貫性と可読性が維持されます。
+タイプインポートを避けてください。 タイプインポートを避けてください。 この標準を強制するために、ESLintルールがどのタイプのインポートもチェックして報告します。 これにより、TypeScriptコードの一貫性と可読性が維持されます。 これにより、TypeScriptコードの一貫性と可読性が維持されます。
 
 ```tsx
 // ❌ Bad
@@ -290,6 +290,6 @@ import { Meta, StoryObj } from '@storybook/react';
 
 An ESLint rule, `@typescript-eslint/consistent-type-imports`, enforces the no-type import standard. このルールは、タイプインポート違反のエラーや警告を生成します。
 
-Please note that this rule specifically addresses rare edge cases where unintentional type imports occur. TypeScript自体、[TypeScript 3.8 リリースノート](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html)でこのプラクティスを避けています。 ほとんどの状況で、タイプのみのインポートを使用する必要はありません。
+Please note that this rule specifically addresses rare edge cases where unintentional type imports occur. TypeScript自体、[TypeScript 3.8 リリースノート](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html)でこのプラクティスを避けています。 ほとんどの状況で、タイプのみのインポートを使用する必要はありません。 ほとんどの状況で、タイプのみのインポートを使用する必要はありません。
 
 To ensure your code complies with this rule, make sure to run ESLint as part of your development workflow.

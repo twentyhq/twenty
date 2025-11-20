@@ -186,18 +186,15 @@ export const GraphWidgetBarChart = ({
   }: {
     bars: readonly ComputedBarDatum<BarChartDataItem>[];
   }) => (
-    <>
-      {showValues && (
-        <CustomTotalsLayer
-          bars={bars}
-          formatValue={(value) => formatGraphValue(value, formatOptions)}
-          offset={theme.spacingMultiplicator * 2}
-          layout={layout}
-          groupMode={groupMode}
-          omitNullValues={omitNullValues}
-        />
-      )}
-    </>
+    <CustomTotalsLayer
+      bars={bars}
+      formatValue={(value) => formatGraphValue(value, formatOptions)}
+      offset={theme.spacingMultiplicator * 2}
+      layout={layout}
+      groupMode={groupMode}
+      omitNullValues={omitNullValues}
+      showValues={showValues}
+    />
   );
 
   const calculatedValueRange =

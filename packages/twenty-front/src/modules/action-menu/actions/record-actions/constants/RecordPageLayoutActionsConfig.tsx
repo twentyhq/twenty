@@ -19,7 +19,7 @@ export const RECORD_PAGE_LAYOUT_ACTIONS_CONFIG =
         label: msg`Edit Layout`,
         shortLabel: msg`Edit`,
         isPinned: true,
-        position: 0,
+        position: 2,
         Icon: IconPencil,
         type: ActionType.Standard,
         scope: ActionScope.RecordSelection,
@@ -47,7 +47,7 @@ export const RECORD_PAGE_LAYOUT_ACTIONS_CONFIG =
           !isDefined(selectedRecord?.deletedAt),
         // TODO: Once backend is ready, uncomment the line below
         // isDefined(selectedRecord?.pageLayoutId),
-        availableOn: [ActionViewType.SHOW_PAGE],
+        availableOn: [ActionViewType.PAGE_EDIT_MODE],
         component: <SaveRecordPageLayoutSingleRecordAction />,
       },
       [PageLayoutSingleRecordActionKeys.CANCEL_LAYOUT_EDITION]: {
@@ -55,7 +55,7 @@ export const RECORD_PAGE_LAYOUT_ACTIONS_CONFIG =
         label: msg`Cancel Edition`,
         shortLabel: msg`Cancel`,
         isPinned: true,
-        position: 2,
+        position: 0,
         Icon: IconX,
         type: ActionType.Standard,
         scope: ActionScope.RecordSelection,
@@ -65,7 +65,7 @@ export const RECORD_PAGE_LAYOUT_ACTIONS_CONFIG =
           !isDefined(selectedRecord?.deletedAt),
         // TODO: Once backend is ready, uncomment the line below
         // isDefined(selectedRecord?.pageLayoutId),
-        availableOn: [ActionViewType.SHOW_PAGE],
+        availableOn: [ActionViewType.PAGE_EDIT_MODE],
         component: <CancelRecordPageLayoutSingleRecordAction />,
       },
     },

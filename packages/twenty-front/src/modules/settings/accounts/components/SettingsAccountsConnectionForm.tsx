@@ -121,6 +121,23 @@ export const SettingsAccountsConnectionForm = ({
           />
 
           <Controller
+            name="IMAP.username"
+            control={control}
+            render={({ field, fieldState }) => (
+              <SettingsTextInput
+                instanceId="imap-username-connection-form"
+                label={t`IMAP Username (Optional)`}
+                placeholder={t`john.doe`}
+                type="text"
+                value={field.value || ''}
+                required={false}
+                onChange={field.onChange}
+                error={fieldState.error?.message}
+              />
+            )}
+          />
+
+          <Controller
             name="IMAP.password"
             control={control}
             render={({ field, fieldState }) => (

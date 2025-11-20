@@ -7,8 +7,8 @@ image: /images/user-guide/emails/emails_header.png
   <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
 </Frame>
 
-队列支持异步操作的执行。 它们可用于执行后台任务，例如在注册时发送欢迎邮件。
-每个用例都将拥有一个继承自 `MessageQueueServiceBase` 的队列类。
+佇列促進異步操作的執行。 它們可用於執行背景任務，例如在註冊時發送歡迎電子郵件。
+每個用例都有其自己的佇列類，以 `MessageQueueServiceBase` 為基礎進行擴展。
 
 当前，我们仅支持使用 `bull-mq`[bull-mq](https://bullmq.io/) 作为队列驱动。
 

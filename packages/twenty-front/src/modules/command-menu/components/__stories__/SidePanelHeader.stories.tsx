@@ -3,6 +3,7 @@ import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { IconPlus } from 'twenty-ui/display';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { THEME_LIGHT } from 'twenty-ui/theme';
+import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { SidePanelHeader } from '../SidePanelHeader';
 
 const meta: Meta<typeof SidePanelHeader> = {
@@ -12,7 +13,16 @@ const meta: Meta<typeof SidePanelHeader> = {
     onTitleChange: fn(),
   },
   argTypes: {},
-  decorators: [ComponentDecorator],
+  decorators: [
+    ComponentDecorator,
+    (Story) => (
+      <CommandMenuPageComponentInstanceContext.Provider
+        value={{ instanceId: 'side-panel-header-story-instance' }}
+      >
+        <Story />
+      </CommandMenuPageComponentInstanceContext.Provider>
+    ),
+  ],
   parameters: {
     disableHotkeyInitialization: true,
   },
