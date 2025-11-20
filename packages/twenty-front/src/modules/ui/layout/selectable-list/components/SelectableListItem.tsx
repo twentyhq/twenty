@@ -40,12 +40,11 @@ export const SelectableListItem = ({
       return;
     }
 
-    const { scrollWrapperElement } = getScrollWrapperElement();
+    const scrollContainer = listItemRef.current.closest(
+      '[id^="scroll-wrapper-"]',
+    ) as HTMLElement | null;
 
-    if (
-      isDefined(scrollWrapperElement) &&
-      scrollWrapperElement.scrollTop === 0
-    ) {
+    if (isDefined(scrollContainer) && scrollContainer.scrollTop === 0) {
       return;
     }
 
