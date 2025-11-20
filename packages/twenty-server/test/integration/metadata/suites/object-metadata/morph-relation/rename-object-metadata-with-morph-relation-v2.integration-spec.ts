@@ -4,9 +4,63 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import {
+  eachTestingContextFilter,
+  type EachTestingContext,
+} from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
+const allTestsUseCases: EachTestingContext<{
+  nameSingular: string;
+  namePlural: string;
+  labelSingular: string;
+  labelPlural: string;
+  isLabelSyncedWithName: boolean;
+  newJoinColumnName: string | undefined;
+  relationType: RelationType;
+}>[] = [
+  {
+    title:
+      'should rename custom object, and update both the field name and join column name of the morph relation that contains the object name',
+    context: {
+      nameSingular: 'personForRenameSecond2',
+      namePlural: 'peopleForRenameSecond2',
+      labelSingular: 'Person For Rename2',
+      labelPlural: 'People For Rename2',
+      isLabelSyncedWithName: false,
+      newJoinColumnName: 'ownerPersonForRenameSecond2Id',
+      relationType: RelationType.MANY_TO_ONE,
+    },
+  },
+  {
+    title:
+      'should rename custom object, and update both the field name and join column name of the morph relation that contains the object name if label is sync with name',
+    context: {
+      nameSingular: 'personForRenameSecond3',
+      namePlural: 'peopleForRenameSecond3',
+      labelSingular: 'person For Rename Second3',
+      labelPlural: 'people For Rename Second3',
+      isLabelSyncedWithName: true,
+      newJoinColumnName: 'ownerPersonForRenameSecond3Id',
+      relationType: RelationType.MANY_TO_ONE,
+    },
+  },
+  {
+    title:
+      'should rename custom object, and update both the field name and join column name of the morph relation that contains the object name with ONE_TO_MANY relation type',
+    context: {
+      nameSingular: 'personForRenameSecond4',
+      namePlural: 'peopleForRenameSecond4',
+      labelSingular: 'Person For Rename Second4',
+      labelPlural: 'People For Rename Second4',
+      isLabelSyncedWithName: true,
+      newJoinColumnName: undefined,
+      relationType: RelationType.ONE_TO_MANY,
+    },
+  },
+];
 
 describe('Rename an object metadata with morph relation should succeed', () => {
   let createdObjectMetadataPersonId: string;
@@ -83,112 +137,74 @@ describe('Rename an object metadata with morph relation should succeed', () => {
     }
   });
 
-  it('should rename custom object, and update both the field name and join column name of the morph relation that contains the object name', async () => {
-    const morphRelationField = await createMorphRelationBetweenObjects({
-      name: 'owner',
-      objectMetadataId: createdObjectMetadataOpportunityId,
-      firstTargetObjectMetadataId: createdObjectMetadataPersonId,
-      secondTargetObjectMetadataId: createdObjectMetadataCompanyId,
-      type: FieldMetadataType.MORPH_RELATION,
-      relationType: RelationType.MANY_TO_ONE,
-    });
+  it.each(eachTestingContextFilter(allTestsUseCases))(
+    '$title',
+    async ({ context }) => {
+      const {
+        nameSingular,
+        namePlural,
+        labelSingular,
+        labelPlural,
+        isLabelSyncedWithName,
+        newJoinColumnName,
+        relationType,
+      } = context;
 
-    expect(morphRelationField.morphRelations.length).toBe(2);
+      const morphRelationField = await createMorphRelationBetweenObjects({
+        name: 'owner',
+        objectMetadataId: createdObjectMetadataOpportunityId,
+        firstTargetObjectMetadataId: createdObjectMetadataPersonId,
+        secondTargetObjectMetadataId: createdObjectMetadataCompanyId,
+        type: FieldMetadataType.MORPH_RELATION,
+        relationType,
+      });
 
-    const { data } = await updateOneObjectMetadata({
-      expectToFail: false,
-      gqlFields: `
-      nameSingular
-      labelSingular
-      namePlural
-      labelPlural
-      `,
-      input: {
-        idToUpdate: createdObjectMetadataPersonId,
-        updatePayload: {
-          nameSingular: 'personForRenameSecond2',
-          namePlural: 'peopleForRenameSecond2',
-          labelSingular: 'Person For Rename2',
-          labelPlural: 'People For Rename2',
-        },
-      },
-    });
+      expect(morphRelationField.morphRelations.length).toBe(2);
 
-    expect(data.updateOneObject.nameSingular).toBe('personForRenameSecond2');
-
-    const ownerFieldMetadataOnPersonId = morphRelationField.morphRelations.find(
-      (morphRelation) =>
-        morphRelation.targetObjectMetadata.id === createdObjectMetadataPersonId,
-    )?.sourceFieldMetadata.id;
-
-    if (!ownerFieldMetadataOnPersonId) {
-      throw new Error(
-        'Morph Relation Error: Owner field metadata on person not found',
-      );
-    }
-
-    const fieldAfterRenaming = await findFieldMetadata({
-      fieldMetadataId: ownerFieldMetadataOnPersonId,
-    });
-
-    expect(fieldAfterRenaming.settings.joinColumnName).toBe(
-      'ownerPersonForRenameSecond2Id',
-    );
-  });
-
-  it('should rename custom object, and update both the field name and join column name of the morph relation that contains the object name if label is sync with name', async () => {
-    const morphRelationField = await createMorphRelationBetweenObjects({
-      name: 'owner',
-      objectMetadataId: createdObjectMetadataOpportunityId,
-      firstTargetObjectMetadataId: createdObjectMetadataPersonId,
-      secondTargetObjectMetadataId: createdObjectMetadataCompanyId,
-      type: FieldMetadataType.MORPH_RELATION,
-      relationType: RelationType.MANY_TO_ONE,
-    });
-
-    expect(morphRelationField.morphRelations.length).toBe(2);
-
-    const { data } = await updateOneObjectMetadata({
-      expectToFail: false,
-      gqlFields: `
+      const { data } = await updateOneObjectMetadata({
+        expectToFail: false,
+        gqlFields: `
     nameSingular
     labelSingular
     namePlural
     labelPlural
     `,
-      input: {
-        idToUpdate: createdObjectMetadataPersonId,
-        updatePayload: {
-          nameSingular: 'personForRenameSecond2',
-          namePlural: 'peopleForRenameSecond2',
-          labelSingular: 'person For Rename Second2',
-          labelPlural: 'people For Rename Second2',
-          isLabelSyncedWithName: true,
+        input: {
+          idToUpdate: createdObjectMetadataPersonId,
+          updatePayload: {
+            nameSingular,
+            namePlural,
+            labelSingular,
+            labelPlural,
+            isLabelSyncedWithName,
+          },
         },
-      },
-    });
+      });
 
-    expect(data.updateOneObject.nameSingular).toBe('personForRenameSecond2');
+      expect(data.updateOneObject.nameSingular).toBe(nameSingular);
 
-    const ownerFieldMetadataOnPersonId = morphRelationField.morphRelations.find(
-      (morphRelation) =>
-        morphRelation.targetObjectMetadata.id === createdObjectMetadataPersonId,
-    )?.sourceFieldMetadata.id;
+      const ownerFieldMetadataOnPersonId =
+        morphRelationField.morphRelations.find(
+          (morphRelation) =>
+            morphRelation.targetObjectMetadata.id ===
+            createdObjectMetadataPersonId,
+        )?.sourceFieldMetadata.id;
 
-    if (!ownerFieldMetadataOnPersonId) {
-      throw new Error(
-        'Morph Relation Error: Owner field metadata on person not found',
+      if (!ownerFieldMetadataOnPersonId) {
+        throw new Error(
+          'Morph Relation Error: Owner field metadata on person not found',
+        );
+      }
+
+      const fieldAfterRenaming = await findFieldMetadata({
+        fieldMetadataId: ownerFieldMetadataOnPersonId,
+      });
+
+      expect(fieldAfterRenaming.settings.joinColumnName).toBe(
+        newJoinColumnName,
       );
-    }
-
-    const fieldAfterRenaming = await findFieldMetadata({
-      fieldMetadataId: ownerFieldMetadataOnPersonId,
-    });
-
-    expect(fieldAfterRenaming.settings.joinColumnName).toBe(
-      'ownerPersonForRenameSecond2Id',
-    );
-  });
+    },
+  );
 });
 
 const findFieldMetadata = async ({
