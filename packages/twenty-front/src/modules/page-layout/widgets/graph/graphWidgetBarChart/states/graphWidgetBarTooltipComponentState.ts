@@ -5,7 +5,6 @@ import { type BarDatum, type ComputedDatum } from '@nivo/bar';
 export const graphWidgetBarTooltipComponentState = createComponentState<{
   datum: ComputedDatum<BarDatum>;
   anchorElement: Element;
-  onClick?: () => void;
 } | null>({
   key: 'graphWidgetBarTooltipComponentState',
   defaultValue: null,

@@ -55,7 +55,7 @@ type GraphWidgetLineChartProps = {
   rangeMax?: number;
   omitNullValues?: boolean;
   groupMode?: 'stacked';
-  onClick?: (point: Point<any>) => void;
+  onSliceClick?: (point: Point<LineSeries>) => void;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -85,7 +85,7 @@ export const GraphWidgetLineChart = ({
   prefix,
   suffix,
   customFormatter,
-  onClick,
+  onSliceClick,
 }: GraphWidgetLineChartProps) => {
   const theme = useTheme();
   const instanceId = useId();
@@ -116,7 +116,7 @@ export const GraphWidgetLineChart = ({
       theme,
     });
 
-  const hasClickableItems = isDefined(onClick);
+  const hasClickableItems = isDefined(onSliceClick);
 
   const setActiveLineTooltip = useSetRecoilComponentState(
     graphWidgetLineTooltipComponentState,
@@ -139,7 +139,11 @@ export const GraphWidgetLineChart = ({
 
   const handleTooltipMouseLeave = debouncedHideTooltip;
 
-  const handleSliceHover = useCallback(
+  const handleSliceLeave = useCallback(() => {
+    debouncedHideTooltip();
+  }, [debouncedHideTooltip]);
+
+  const handleSliceEnter = useCallback(
     (sliceData: SliceHoverData) => {
       const slice: SliceTooltipProps<LineSeries>['slice'] = {
         id: String(sliceData.nearestSlice.xValue ?? ''),
@@ -162,17 +166,9 @@ export const GraphWidgetLineChart = ({
         offsetLeft,
         offsetTop,
         highlightedSeriesId: String(sliceData.closestPoint.seriesId),
-        onClick: onClick ? () => onClick(sliceData.closestPoint) : undefined,
       });
     },
-    [debouncedHideTooltip, setActiveLineTooltip, setCrosshairX, onClick],
-  );
-
-  const handleSliceClick = useCallback(
-    (sliceData: SliceHoverData) => {
-      onClick?.(sliceData.closestPoint);
-    },
-    [onClick],
+    [debouncedHideTooltip, setActiveLineTooltip, setCrosshairX],
   );
 
   const PointLabelsLayer = (layerProps: PointLabelsLayerProps) => (
@@ -192,9 +188,13 @@ export const GraphWidgetLineChart = ({
       points={layerProps.points}
       innerHeight={layerProps.innerHeight}
       innerWidth={layerProps.innerWidth}
-      onSliceHover={handleSliceHover}
-      onSliceClick={handleSliceClick}
-      onRectLeave={() => debouncedHideTooltip()}
+      onSliceHover={handleSliceEnter}
+      onSliceClick={
+        onSliceClick
+          ? (sliceData) => onSliceClick(sliceData.closestPoint)
+          : undefined
+      }
+      onRectLeave={handleSliceLeave}
     />
   );
 
@@ -278,6 +278,7 @@ export const GraphWidgetLineChart = ({
         containerId={id}
         enrichedSeries={enrichedSeries}
         formatOptions={formatOptions}
+        onSliceClick={onSliceClick}
         onMouseEnter={handleTooltipMouseEnter}
         onMouseLeave={handleTooltipMouseLeave}
       />

@@ -138,22 +138,14 @@ export const GraphWidgetBarChart = ({
       setActiveBarTooltip({
         datum,
         anchorElement: event.currentTarget,
-        onClick: onBarClick ? () => onBarClick(datum) : undefined,
       });
     },
-    [debouncedHideTooltip, setActiveBarTooltip, onBarClick],
+    [debouncedHideTooltip, setActiveBarTooltip],
   );
 
   const handleBarLeave = useCallback(() => {
     debouncedHideTooltip();
   }, [debouncedHideTooltip]);
-
-  const handleBarClick = useCallback(
-    (datum: ComputedDatum<BarDatum>) => {
-      onBarClick?.(datum);
-    },
-    [onBarClick],
-  );
 
   const areThereTooManyKeys = keys.length > CHART_LEGEND_ITEM_THRESHOLD;
 
@@ -284,7 +276,7 @@ export const GraphWidgetBarChart = ({
           tooltip={() => null}
           onMouseEnter={handleBarEnter}
           onMouseLeave={handleBarLeave}
-          onClick={handleBarClick}
+          onClick={onBarClick}
           theme={chartTheme}
           borderRadius={parseInt(theme.border.radius.sm)}
         />
@@ -296,6 +288,7 @@ export const GraphWidgetBarChart = ({
         formatOptions={formatOptions}
         enableGroupTooltip={groupMode === 'stacked'}
         layout={layout}
+        onBarClick={onBarClick}
         onMouseEnter={handleTooltipMouseEnter}
         onMouseLeave={handleTooltipMouseLeave}
       />

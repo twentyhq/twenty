@@ -5,7 +5,7 @@ import { useGraphLineChartWidgetData } from '@/page-layout/widgets/graph/graphWi
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { buildChartDrilldownUrl } from '@/page-layout/widgets/graph/utils/buildChartDrilldownUrl';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
-import { type Point } from '@nivo/line';
+import { type LineSeries, type Point } from '@nivo/line';
 import { lazy, Suspense, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -61,7 +61,7 @@ export const GraphWidgetLineChartRenderer = ({
   );
 
   const handlePointClick = useCallback(
-    (point: Point<any>) => {
+    (point: Point<LineSeries>) => {
       const xValue = (point.data as LineChartDataPoint).x;
       const rawValue = dimensionMetadata.get(xValue as string);
 
@@ -104,7 +104,7 @@ export const GraphWidgetLineChartRenderer = ({
         omitNullValues={configuration.omitNullValues ?? false}
         groupMode={groupMode}
         displayType="shortNumber"
-        onClick={handlePointClick}
+        onSliceClick={handlePointClick}
       />
     </Suspense>
   );

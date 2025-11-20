@@ -4,6 +4,8 @@ import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidge
 import { getBarChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTooltipData';
 import { getTooltipReferenceFromBarChartElementAnchor } from '@/page-layout/widgets/graph/utils/getTooltipReferenceFromBarChartElementAnchor';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
+import { type BarDatum, type ComputedDatum } from '@nivo/bar';
+import { useCallback } from 'react';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,6 +15,7 @@ type GraphBarChartTooltipProps = {
   formatOptions: GraphValueFormatOptions;
   enableGroupTooltip?: boolean;
   layout?: 'vertical' | 'horizontal';
+  onBarClick?: (datum: ComputedDatum<BarDatum>) => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 };
@@ -23,12 +26,19 @@ export const GraphBarChartTooltip = ({
   formatOptions,
   enableGroupTooltip = true,
   layout = 'vertical',
+  onBarClick,
   onMouseEnter,
   onMouseLeave,
 }: GraphBarChartTooltipProps) => {
   const tooltipState = useRecoilComponentValue(
     graphWidgetBarTooltipComponentState,
   );
+
+  const handleTooltipClick = useCallback(() => {
+    if (isDefined(tooltipState) && isDefined(onBarClick)) {
+      onBarClick(tooltipState.datum);
+    }
+  }, [tooltipState, onBarClick]);
 
   const tooltipData = !isDefined(tooltipState)
     ? null
@@ -72,7 +82,9 @@ export const GraphBarChartTooltip = ({
       items={tooltipData.tooltipItems}
       indexLabel={tooltipData.indexLabel}
       highlightedKey={tooltipData.hoveredKey}
-      onGraphWidgetTooltipClick={tooltipState?.onClick}
+      onGraphWidgetTooltipClick={
+        isDefined(onBarClick) ? handleTooltipClick : undefined
+      }
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     />
