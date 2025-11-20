@@ -3,6 +3,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, Repository } from 'typeorm';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -18,7 +19,6 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { createCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
 import { dashboardsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 @Command({
   name: 'upgrade:1-10:seed-dashboard-view',
