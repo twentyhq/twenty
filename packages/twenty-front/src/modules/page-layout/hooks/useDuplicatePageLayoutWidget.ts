@@ -12,6 +12,8 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { type PageLayoutWidget } from '~/generated/graphql';
+import { generateDuplicatedTimestamps } from '../utils/generateDuplicatedTimestamps';
+import { getDuplicatedTitle } from '../utils/getDuplicatedTitle';
 
 export const useDuplicatePageLayoutWidget = (
   pageLayoutIdFromProps?: string,
@@ -74,11 +76,8 @@ export const useDuplicatePageLayoutWidget = (
         const clonedWidget: PageLayoutWidget = {
           ...sourceWidget,
           id: newWidgetId,
-          title: sourceWidget.title.endsWith('(Copy)')
-            ? sourceWidget.title
-            : `${sourceWidget.title} (Copy)`,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+          title: getDuplicatedTitle(sourceWidget.title),
+          ...generateDuplicatedTimestamps(),
         };
 
         const currentTabLayouts = allTabLayouts[sourceTab.id] || {
