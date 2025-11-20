@@ -42,13 +42,4 @@ export type ObjectRecordOrderByForRelationField = {
     | ObjectRecordOrderByForCompositeField
     | ObjectRecordOrderByWithGroupByDateField
     | ObjectRecordOrderByForScalarField;
-  // [Property in keyof ObjectRecord]?: Record<
-  //   string,
-  //   | OrderByDirection
-  //   | Record<string, OrderByDirection>
-  //   | {
-  //       orderBy: OrderByDirection;
-  //       granularity: ObjectRecordGroupByDateGranularity;
-  //     }
-  // >;
 };

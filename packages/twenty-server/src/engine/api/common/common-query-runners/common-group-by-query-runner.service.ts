@@ -31,6 +31,7 @@ import {
 import { GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.types';
+import { GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
 import {
@@ -109,37 +110,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       queryRunnerContext.objectMetadataMaps,
     );
 
-    // Process relation fields first to add joins
-    const joinAliasSet = new Set<string>();
-
-    for (const groupByField of groupByFields) {
-      if (isGroupByRelationField(groupByField)) {
-        const joinAlias = groupByField.fieldMetadata.name;
-
-        if (
-          !groupByField.fieldMetadata.settings ||
-          !isFieldMetadataRelationOrMorphRelation(groupByField.fieldMetadata)
-        ) {
-          throw new Error(
-            `Field metadata settings are missing or invalid for field ${groupByField.fieldMetadata.name}`,
-          );
-        }
-
-        const joinColumnName = formatColumnNameForRelationField(
-          groupByField.fieldMetadata.name,
-          groupByField.fieldMetadata.settings,
-        );
-
-        if (!joinAliasSet.has(joinAlias)) {
-          queryBuilder.leftJoin(
-            `${objectMetadataNameSingular}.${joinAlias}`,
-            `${joinAlias}`,
-            `"${objectMetadataNameSingular}"."${joinColumnName}" = "${joinAlias}"."id"`,
-          );
-          joinAliasSet.add(joinAlias);
-        }
-      }
-    }
+    this.addJoinForGroupByOnRelationFields({
+      queryBuilder,
+      groupByFields,
+      objectMetadataNameSingular,
+    });
 
     const groupByDefinitions = groupByFields.map((groupByField) => {
       let columnName: string;
@@ -416,6 +391,47 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       groupByDefinitions,
       aggregateFieldNames: Object.keys(selectedFieldsResult.aggregate),
     });
+  }
+
+  private addJoinForGroupByOnRelationFields({
+    queryBuilder,
+    groupByFields,
+    objectMetadataNameSingular,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
+    groupByFields: GroupByField[];
+    objectMetadataNameSingular: string;
+  }): void {
+    const joinAliasSet = new Set<string>();
+
+    for (const groupByField of groupByFields) {
+      if (isGroupByRelationField(groupByField)) {
+        const joinAlias = groupByField.fieldMetadata.name;
+
+        if (
+          !groupByField.fieldMetadata.settings ||
+          !isFieldMetadataRelationOrMorphRelation(groupByField.fieldMetadata)
+        ) {
+          throw new Error(
+            `Field metadata settings are missing or invalid for field ${groupByField.fieldMetadata.name}`,
+          );
+        }
+
+        const joinColumnName = formatColumnNameForRelationField(
+          groupByField.fieldMetadata.name,
+          groupByField.fieldMetadata.settings,
+        );
+
+        if (!joinAliasSet.has(joinAlias)) {
+          queryBuilder.leftJoin(
+            `${objectMetadataNameSingular}.${joinAlias}`,
+            `${joinAlias}`,
+            `"${objectMetadataNameSingular}"."${joinColumnName}" = "${joinAlias}"."id"`,
+          );
+          joinAliasSet.add(joinAlias);
+        }
+      }
+    }
   }
 
   async validate(
