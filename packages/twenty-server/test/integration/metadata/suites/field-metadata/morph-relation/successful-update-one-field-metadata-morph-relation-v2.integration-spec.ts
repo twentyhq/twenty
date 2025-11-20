@@ -8,7 +8,9 @@ import { DeepPartial } from 'ai';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
+import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const aggregateFieldMetadata = (
@@ -151,7 +153,7 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
   });
 
   it.only('RENAME ME It should update all morph related flat field metadata allowing its deletion', async () => {
-    console.log(createdFieldMetadataId);
+    // SETUP
     const { fields: findResult } = await findManyFieldsMetadata({
       input: {
         filter: { id: { eq: createdFieldMetadataId } },
@@ -183,7 +185,6 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
       `,
     });
 
-    console.log(findResult);
     expect(findResult.length).toBe(1);
     const createdMorphFromResult = findResult[0].node as FieldMetadataDTO & {
       morphRelations: RelationDTO[];
@@ -191,7 +192,6 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
 
     jestExpectToBeDefined(createdMorphFromResult);
 
-    expect(createdMorphFromResult).toMatchSnapshot();
     createdMorphFromResult.morphRelations.map((relationDto) =>
       expect(relationDto).toMatchObject<DeepPartial<RelationDTO>>({
         sourceFieldMetadata: {
@@ -207,95 +207,165 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
       ({ sourceFieldMetadata }) => sourceFieldMetadata.id,
     );
 
-    const morphRelationFieldsBeforeUpdate = (await findManyFieldsMetadata({
-      input: {
-        filter: { id: { in: allMorphFieldIds } },
-        paging: { first: allMorphFieldIds.length },
-      },
-      gqlFields: `
-        id
-        name
-        description
-        label
-        isActive
-      `,
-      expectToFail: false,
-    })) as { fields: { node: FieldMetadataDTO }[] };
-
-    expect(morphRelationFieldsBeforeUpdate.fields.length).toBe(
-      allMorphFieldIds.length,
-    );
-    const aggregatedMorphFieldMetadataDtos = aggregateFieldMetadata(
-      morphRelationFieldsBeforeUpdate.fields,
-    );
-
-    expect(aggregatedMorphFieldMetadataDtos.name.length).toBe(
-      allMorphFieldIds.length,
-    );
-    expect(aggregatedMorphFieldMetadataDtos.description.length).toBe(1);
-    expect(aggregatedMorphFieldMetadataDtos.label.length).toBe(1);
-    expect(aggregatedMorphFieldMetadataDtos.isActive.length).toBe(1);
-    expect(aggregatedMorphFieldMetadataDtos).toMatchSnapshot();
-
     const allRelationFieldIds = createdMorphFromResult.morphRelations.map(
       ({ targetFieldMetadata }) => targetFieldMetadata.id,
     );
 
-    const relationFieldsBeforeUpdate = (await findManyFieldsMetadata({
-      input: {
-        filter: { id: { in: allRelationFieldIds } },
-        paging: { first: allRelationFieldIds.length },
-      },
-      gqlFields: `
+    /// ASSERT
+    {
+      const morphRelationFieldsBeforeUpdate = (await findManyFieldsMetadata({
+        input: {
+          filter: { id: { in: allMorphFieldIds } },
+          paging: { first: allMorphFieldIds.length },
+        },
+        gqlFields: `
         id
         name
         description
         label
         isActive
       `,
+        expectToFail: false,
+      })) as { fields: { node: FieldMetadataDTO }[] };
+
+      expect(morphRelationFieldsBeforeUpdate.fields.length).toBe(
+        allMorphFieldIds.length,
+      );
+      const aggregatedMorphFieldMetadataDtos = aggregateFieldMetadata(
+        morphRelationFieldsBeforeUpdate.fields,
+      );
+
+      expect(aggregatedMorphFieldMetadataDtos.name.length).toBe(
+        allMorphFieldIds.length,
+      );
+      expect(aggregatedMorphFieldMetadataDtos.description.length).toBe(1);
+      expect(aggregatedMorphFieldMetadataDtos.label.length).toBe(1);
+      expect(aggregatedMorphFieldMetadataDtos.isActive.length).toBe(1);
+      expect(aggregatedMorphFieldMetadataDtos.isActive[0]).toBe(true);
+      expect(aggregatedMorphFieldMetadataDtos.label[0]).toBe('field label');
+      expect(aggregatedMorphFieldMetadataDtos.description[0]).toBe(
+        'Description for all',
+      );
+      const relationFieldsBeforeUpdate = (await findManyFieldsMetadata({
+        input: {
+          filter: { id: { in: allRelationFieldIds } },
+          paging: { first: allRelationFieldIds.length },
+        },
+        gqlFields: `
+        id
+        name
+        description
+        label
+        isActive
+      `,
+        expectToFail: false,
+      })) as { fields: { node: FieldMetadataDTO }[] };
+      expect(relationFieldsBeforeUpdate.fields.length).toBe(
+        allRelationFieldIds.length,
+      );
+
+      const aggregatedRelationFieldMetadataDtos = aggregateFieldMetadata(
+        relationFieldsBeforeUpdate.fields,
+      );
+      expect(aggregatedRelationFieldMetadataDtos.description.length).toBe(1);
+      expect(aggregatedRelationFieldMetadataDtos.label.length).toBe(2);
+      expect(aggregatedRelationFieldMetadataDtos.isActive.length).toBe(1);
+      expect(aggregatedMorphFieldMetadataDtos.isActive[0]).toBe(true);
+    }
+
+    // UPDATE
+    const input = {
+      idToUpdate: createdFieldMetadataId,
+      updatePayload: {
+        isActive: false,
+        label: 'new label',
+        description: 'new description',
+      },
+    };
+    await updateOneFieldMetadata({
       expectToFail: false,
-    })) as { fields: { node: FieldMetadataDTO }[] };
-    expect(relationFieldsBeforeUpdate.fields.length).toBe(
-      allRelationFieldIds.length,
-    );
+      input,
+      gqlFields: `
+        id
+        name
+        description
+        label
+        isActive
+        `,
+    });
 
-    const aggregatedRelationFieldMetadataDtos = aggregateFieldMetadata(
-      morphRelationFieldsBeforeUpdate.fields,
-    );
-    expect(aggregatedRelationFieldMetadataDtos).toMatchSnapshot();
-    expect(aggregatedRelationFieldMetadataDtos.description.length).toBe(1);
-    expect(aggregatedRelationFieldMetadataDtos.label.length).toBe(1);
-    expect(aggregatedRelationFieldMetadataDtos.isActive.length).toBe(1);
+    //ASSERT
+    {
+      const morphRelationFieldsAfterUpdate = (await findManyFieldsMetadata({
+        input: {
+          filter: { id: { in: allMorphFieldIds } },
+          paging: { first: allMorphFieldIds.length },
+        },
+        gqlFields: `
+        id
+        name
+        description
+        label
+        isActive
+      `,
+        expectToFail: false,
+      })) as { fields: { node: FieldMetadataDTO }[] };
 
-    // const input = {
-    //   idToUpdate: createdFieldMetadataId,
-    //   updatePayload: {
-    //     isActive: false,
-    //     label: 'new label',
-    //     description: 'new description',
-    //   },
-    // };
-    // const {
-    //   data: { updateOneField },
-    // } = await updateOneFieldMetadata({
-    //   expectToFail: false,
-    //   input,
-    //   gqlFields: `
-    //     id
-    //     isActive
-    //     description
-    //     name
-    //     label
-    //     `,
-    // });
+      expect(morphRelationFieldsAfterUpdate.fields.length).toBe(
+        allMorphFieldIds.length,
+      );
+      const aggregatedMorphFieldMetadataDtos = aggregateFieldMetadata(
+        morphRelationFieldsAfterUpdate.fields,
+      );
 
-    // expect(updateOneField).toMatchObject(input.updatePayload);
+      expect(aggregatedMorphFieldMetadataDtos.name.length).toBe(
+        allMorphFieldIds.length,
+      );
+      expect(aggregatedMorphFieldMetadataDtos.description.length).toBe(1);
+      expect(aggregatedMorphFieldMetadataDtos.label.length).toBe(1);
+      expect(aggregatedMorphFieldMetadataDtos.isActive.length).toBe(1);
+      expect(aggregatedMorphFieldMetadataDtos.isActive[0]).toBe(false);
+      expect(aggregatedMorphFieldMetadataDtos.label[0]).toBe('new label');
+      expect(aggregatedMorphFieldMetadataDtos.description[0]).toBe(
+        'new description',
+      );
 
-    // await deleteOneFieldMetadata({
-    //   input: {
-    //     idToDelete: createdFieldMetadataId,
-    //   },
-    //   expectToFail: false,
-    // });
+      const allRelationFieldIds = createdMorphFromResult.morphRelations.map(
+        ({ targetFieldMetadata }) => targetFieldMetadata.id,
+      );
+
+      const relationFieldsBeforeUpdate = (await findManyFieldsMetadata({
+        input: {
+          filter: { id: { in: allRelationFieldIds } },
+          paging: { first: allRelationFieldIds.length },
+        },
+        gqlFields: `
+        id
+        name
+        description
+        label
+        isActive
+      `,
+        expectToFail: false,
+      })) as { fields: { node: FieldMetadataDTO }[] };
+      expect(relationFieldsBeforeUpdate.fields.length).toBe(
+        allRelationFieldIds.length,
+      );
+
+      const aggregatedRelationFieldMetadataDtos = aggregateFieldMetadata(
+        relationFieldsBeforeUpdate.fields,
+      );
+      expect(aggregatedRelationFieldMetadataDtos.description.length).toBe(1);
+      expect(aggregatedRelationFieldMetadataDtos.label.length).toBe(2);
+      expect(aggregatedRelationFieldMetadataDtos.isActive.length).toBe(1);
+      expect(aggregatedRelationFieldMetadataDtos.isActive[0]).toBe(false);
+    }
+
+    await deleteOneFieldMetadata({
+      input: {
+        idToDelete: createdFieldMetadataId,
+      },
+      expectToFail: false,
+    });
   });
 });
