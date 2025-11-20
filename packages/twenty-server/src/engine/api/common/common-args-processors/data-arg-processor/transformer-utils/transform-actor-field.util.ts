@@ -6,12 +6,12 @@ import { transformRawJsonField } from 'src/engine/api/common/common-args-process
 export const transformActorField = (
   value: {
     source?: FieldActorSource | null;
-    context?: object | null;
+    context?: object | string | null;
   } | null,
   isNullEquivalenceEnabled: boolean = false,
 ): {
   source?: FieldActorSource | null;
-  context?: object | null;
+  context?: object | string | null;
 } | null => {
   if (isNull(value)) return null;
 

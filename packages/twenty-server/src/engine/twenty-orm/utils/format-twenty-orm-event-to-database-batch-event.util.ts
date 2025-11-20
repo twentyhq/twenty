@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import type { ObjectLiteral } from 'typeorm';
 
@@ -13,7 +14,6 @@ import { ObjectRecordUpsertEvent } from 'src/engine/core-modules/event-emitter/t
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import type { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type DatabaseBatchEventInput } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const formatTwentyOrmEventToDatabaseBatchEvent = <
   T extends ObjectLiteral,

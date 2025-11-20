@@ -1,4 +1,4 @@
-import { useMergePreview } from '@/object-record/record-merge/hooks/useMergePreview';
+import { usePerformMergePreview } from '@/object-record/record-merge/hooks/usePerformMergePreview';
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
 import { CardType } from '@/object-record/record-show/types/CardType';
 import { getCardComponent } from '@/object-record/record-show/utils/getCardComponent';
@@ -14,7 +14,7 @@ type MergePreviewTabProps = {
 export const MergePreviewTab = ({
   objectNameSingular,
 }: MergePreviewTabProps) => {
-  const { mergePreviewRecord, isGeneratingPreview } = useMergePreview({
+  const { mergePreviewRecord, isGeneratingPreview } = usePerformMergePreview({
     objectNameSingular,
   });
 

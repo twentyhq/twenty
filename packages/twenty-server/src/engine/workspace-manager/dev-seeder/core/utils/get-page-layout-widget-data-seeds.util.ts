@@ -1,5 +1,6 @@
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { AxisNameDisplay } from 'src/engine/core-modules/page-layout/enums/axis-name-display.enum';
@@ -10,7 +11,6 @@ import { PAGE_LAYOUT_TAB_SEEDS } from 'src/engine/workspace-manager/dev-seeder/c
 import { PAGE_LAYOUT_WIDGET_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-widget-seeds.constant';
 import { generateSeedId } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-seed-id.util';
 import { getPageLayoutWidgetDataSeedsV2 } from 'src/engine/workspace-manager/dev-seeder/core/utils/get-page-layout-widget-data-seeds-v2.util';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 type PageLayoutWidgetDataSeed = {
   id: string;

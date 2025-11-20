@@ -413,7 +413,7 @@ export const format = async (params: any): Promise<any> => {
   });
 
   it('manifest should contains typescript sources', async () => {
-    const { isTwentyClientUsed } = await loadManifest(appDirectory);
-    expect(isTwentyClientUsed).toBe(false);
+    const { shouldGenerate } = await loadManifest(appDirectory);
+    expect(shouldGenerate).toBe(false);
   });
 });
