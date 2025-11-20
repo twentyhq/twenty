@@ -149,7 +149,7 @@ export const failingCreateInputByFieldMetadataType: {
   [FieldMetadataType.RAW_JSON]: [
     {
       input: {
-        rawJsonField: 'not-a-json',
+        rawJsonField: 'not-a-stringified-json',
       },
     },
   ],
