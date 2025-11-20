@@ -1,10 +1,11 @@
 import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isMergeInProgressState } from '../states/mergeInProgressState';
@@ -33,9 +34,13 @@ export const useMergePreview = ({
     commandMenuNavigationMorphItemsByPageState,
   );
 
+  const mergeRecordsPageInstanceId = useComponentInstanceStateContext(
+    CommandMenuPageComponentInstanceContext,
+  )?.instanceId;
+
   const selectedRecordIds =
     commandMenuNavigationMorphItemsByPage
-      .get(CommandMenuPages.MergeRecords)
+      .get(mergeRecordsPageInstanceId ?? '')
       ?.map((morphItem) => morphItem.recordId) ?? [];
   const selectedRecords = useRecoilValue(
     recordStoreRecordsSelector({
