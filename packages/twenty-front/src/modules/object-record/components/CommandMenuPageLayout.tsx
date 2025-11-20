@@ -13,7 +13,6 @@ import { useIsMobile } from 'twenty-ui/utilities';
 
 type CommandMenuPageLayoutProps = {
   children: ReactNode;
-  isSidePanelOpen?: boolean;
 };
 
 const DEFAULT_SIDE_PANEL_WIDTH = 400;
@@ -64,7 +63,6 @@ const StyledModalContainer = styled.div`
 
 export const CommandMenuPageLayout = ({
   children,
-  isSidePanelOpen,
 }: CommandMenuPageLayoutProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -77,17 +75,13 @@ export const CommandMenuPageLayout = ({
     tableWidthResizeIsActiveState,
   );
 
-  const resolvedIsSidePanelOpen =
-    isSidePanelOpen ?? isCommandMenuOpened ?? false;
+  const [shouldRenderContent, setShouldRenderContent] =
+    useState(isCommandMenuOpened);
 
-  const [shouldRenderContent, setShouldRenderContent] = useState(
-    resolvedIsSidePanelOpen,
-  );
-
-  const shouldShowContent = resolvedIsSidePanelOpen || shouldRenderContent;
+  const shouldShowContent = isCommandMenuOpened || shouldRenderContent;
 
   const handleAnimationComplete = () => {
-    if (!resolvedIsSidePanelOpen) {
+    if (!isCommandMenuOpened) {
       setShouldRenderContent(false);
     }
 
@@ -95,7 +89,7 @@ export const CommandMenuPageLayout = ({
   };
 
   const handleAnimationStart = () => {
-    if (resolvedIsSidePanelOpen && !shouldRenderContent) {
+    if (isCommandMenuOpened && !shouldRenderContent) {
       setShouldRenderContent(true);
     }
 
@@ -122,8 +116,8 @@ export const CommandMenuPageLayout = ({
       <StyledSidePanelWrapper
         initial={false}
         animate={{
-          width: resolvedIsSidePanelOpen ? DEFAULT_SIDE_PANEL_WIDTH : 0,
-          marginLeft: resolvedIsSidePanelOpen ? theme.spacing(2) : 0,
+          width: isCommandMenuOpened ? DEFAULT_SIDE_PANEL_WIDTH : 0,
+          marginLeft: isCommandMenuOpened ? theme.spacing(2) : 0,
         }}
         transition={{
           duration: theme.animation.duration.normal,
@@ -134,7 +128,7 @@ export const CommandMenuPageLayout = ({
         <StyledSidePanel
           initial={false}
           animate={{
-            x: resolvedIsSidePanelOpen ? 0 : DEFAULT_SIDE_PANEL_WIDTH,
+            x: isCommandMenuOpened ? 0 : DEFAULT_SIDE_PANEL_WIDTH,
           }}
           transition={{
             duration: theme.animation.duration.normal,
