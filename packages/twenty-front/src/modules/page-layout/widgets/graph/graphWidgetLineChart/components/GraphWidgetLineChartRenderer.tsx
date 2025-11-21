@@ -4,9 +4,11 @@ import { LINE_CHART_IS_STACKED_DEFAULT } from '@/page-layout/widgets/graph/graph
 import { useGraphLineChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useGraphLineChartWidgetData';
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { buildChartDrilldownUrl } from '@/page-layout/widgets/graph/utils/buildChartDrilldownUrl';
+import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
 import { type LineSeries, type Point } from '@nivo/line';
 import { lazy, Suspense, useCallback } from 'react';
+import { useRecoilValue } from 'recoil';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -60,14 +62,16 @@ export const GraphWidgetLineChartRenderer = ({
     configuration.omitNullValues,
   );
 
+  const indexViewId = useRecoilValue(
+    coreIndexViewIdFromObjectMetadataItemFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
+  );
+
   const handlePointClick = useCallback(
     (point: Point<LineSeries>) => {
       const xValue = (point.data as LineChartDataPoint).x;
-      const rawValue = dimensionMetadata.get(xValue as string);
-
-      if (!isDefined(rawValue)) {
-        return;
-      }
+      const rawValue = dimensionMetadata.get(xValue as string) ?? null;
 
       const url = buildChartDrilldownUrl({
         objectMetadataItem,
@@ -75,12 +79,19 @@ export const GraphWidgetLineChartRenderer = ({
         clickedData: {
           primaryBucketRawValue: rawValue,
         },
+        viewId: indexViewId,
         timezone: configuration.timezone ?? undefined,
       });
 
       navigate(url);
     },
-    [dimensionMetadata, objectMetadataItem, configuration, navigate],
+    [
+      dimensionMetadata,
+      objectMetadataItem,
+      configuration,
+      indexViewId,
+      navigate,
+    ],
   );
 
   if (loading) {

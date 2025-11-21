@@ -8,6 +8,7 @@ export const buildChartDrilldownUrl = ({
   objectMetadataItem,
   configuration,
   clickedData,
+  viewId,
   timezone,
 }: BuildChartDrilldownUrlParams): string => {
   const drilldownQueryParams = new URLSearchParams();
@@ -53,6 +54,10 @@ export const buildChartDrilldownUrl = ({
   sorts.forEach((sort) => {
     drilldownQueryParams.append(`sort[${sort.fieldName}]`, sort.direction);
   });
+
+  if (isDefined(viewId)) {
+    drilldownQueryParams.set('viewId', viewId);
+  }
 
   const drilldownUrl = `/objects/${objectMetadataItem.namePlural}?${drilldownQueryParams.toString()}`;
 

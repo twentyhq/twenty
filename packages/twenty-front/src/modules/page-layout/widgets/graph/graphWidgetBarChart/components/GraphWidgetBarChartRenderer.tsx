@@ -3,9 +3,11 @@ import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/gr
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
 import { buildChartDrilldownUrl } from '@/page-layout/widgets/graph/utils/buildChartDrilldownUrl';
+import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
 import { type BarDatum, type ComputedDatum } from '@nivo/bar';
 import { lazy, Suspense, useCallback } from 'react';
+import { useRecoilValue } from 'recoil';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -60,14 +62,16 @@ export const GraphWidgetBarChartRenderer = ({
     configuration.omitNullValues,
   );
 
+  const indexViewId = useRecoilValue(
+    coreIndexViewIdFromObjectMetadataItemFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
+  );
+
   const handleBarClick = useCallback(
     (datum: ComputedDatum<BarDatum>) => {
       const displayValue = datum.data[indexBy];
-      const rawValue = dimensionMetadata.get(displayValue as string);
-
-      if (!isDefined(rawValue)) {
-        return;
-      }
+      const rawValue = dimensionMetadata.get(displayValue as string) ?? null;
 
       const url = buildChartDrilldownUrl({
         objectMetadataItem,
@@ -75,12 +79,20 @@ export const GraphWidgetBarChartRenderer = ({
         clickedData: {
           primaryBucketRawValue: rawValue,
         },
+        viewId: indexViewId,
         timezone: configuration.timezone ?? undefined,
       });
 
       navigate(url);
     },
-    [dimensionMetadata, indexBy, objectMetadataItem, configuration, navigate],
+    [
+      dimensionMetadata,
+      indexBy,
+      objectMetadataItem,
+      configuration,
+      indexViewId,
+      navigate,
+    ],
   );
 
   if (loading) {

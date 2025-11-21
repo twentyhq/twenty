@@ -11,5 +11,6 @@ export type BuildChartDrilldownUrlParams = {
   clickedData: {
     primaryBucketRawValue: RawDimensionValue;
   };
+  viewId?: string;
   timezone?: string;
 };
