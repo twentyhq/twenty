@@ -189,8 +189,7 @@ msgid "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted f
 msgstr "{grantedBy, plural, one {Granted για {grantedBy} αντικείμενο} other {Granted για {grantedBy} αντικείμενα}}"
 
 #. js-lingui-id: 2EPGDl
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphFilter.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "{graphTypeLabel} Chart"
 msgstr "Διάγραμμα {graphTypeLabel}"
 
@@ -483,6 +482,7 @@ msgstr "Το Url ACS αντιγράφηκε στο πρόχειρο"
 
 #. js-lingui-id: bwRvnp
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
 msgid "Action"
 msgstr "Ενέργεια"
 
@@ -1238,16 +1238,6 @@ msgstr "Εγκεκριμένοι Τομείς"
 msgid "Arabic"
 msgstr "Αραβικά"
 
-#. js-lingui-id: 2BZAqa
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
-msgid "Are you sure you want to delete these records? They can be recovered from the Command menu."
-msgstr "Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτές τις εγγραφές; Μπορούν να αποκατασταθούν από το μενού Εντολών."
-
-#. js-lingui-id: yb2hF4
-#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
-msgid "Are you sure you want to delete this record? It can be recovered from the Command menu."
-msgstr "Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτήν την εγγραφή; Μπορεί να αποκατασταθεί από το μενού Εντολών."
-
 #. js-lingui-id: OJOR8q
 #: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
 msgid "Are you sure you want to destroy these records? They won't be recoverable anymore."
@@ -1822,6 +1812,7 @@ msgstr "Αλλαγές Καταγραφής"
 
 #. js-lingui-id: nuBbBr
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Chart"
 msgstr "Διάγραμμα"
 
@@ -2520,6 +2511,11 @@ msgstr "Δημιουργήστε το χώρο εργασίας σας"
 msgid "Create, edit, and delete workspace views"
 msgstr "Δημιουργία, επεξεργασία και διαγραφή προβολών χώρου εργασίας"
 
+#. js-lingui-id: 4fBuqE
+#: src/modules/command-menu/components/CommandMenuRecordInfo.tsx
+msgid "Created {beautifiedCreatedAt}"
+msgstr ""
+
 #. js-lingui-id: fR16ki
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Creating your data model..."
@@ -3010,21 +3006,9 @@ msgstr "Διαγραφή πεδίου"
 msgid "Delete node"
 msgstr "Διαγραφή κόμβου"
 
-#. js-lingui-id: LUsa0/
-#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
-#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
-msgid "Delete Record"
-msgstr "Διαγραφή Εγγραφής"
-
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete records"
-msgstr "Διαγραφή εγγραφών"
-
-#. js-lingui-id: rMgHjD
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
-msgid "Delete Records"
 msgstr "Διαγραφή εγγραφών"
 
 #. js-lingui-id: mcXHCJ
@@ -4832,7 +4816,7 @@ msgid "iFrame Settings"
 msgstr "Ρυθμίσεις iFrame"
 
 #. js-lingui-id: mO+Bte
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "iFrame Widget"
 msgstr "Widget iFrame"
 
@@ -8080,6 +8064,7 @@ msgid "Send an invite email to your team"
 msgstr "Στείλτε ένα email πρόσκλησης στην ομάδα σας"
 
 #. js-lingui-id: i/TzEU
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Send Email"
 msgstr "Αποστολή Email"
@@ -8758,7 +8743,7 @@ msgid "System settings - Sunday"
 msgstr "Ρυθμίσεις συστήματος - Κυριακή"
 
 #. js-lingui-id: HuA3RU
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Tab"
 msgstr "Καρτέλα"
 
@@ -9159,6 +9144,7 @@ msgstr "Η δοκιμαστική περίοδος έληξε. Ενημερώσ�
 #. js-lingui-id: H2Sfhg
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
+#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
 msgid "Trigger"
 msgstr "Σκανδάλη"
 
@@ -9258,10 +9244,10 @@ msgstr "Η εγκατάσταση δύο παραγοντικής ταυτοπο
 msgid "Type"
 msgstr "Τύπος"
 
-#. js-lingui-id: U83IeL
+#. js-lingui-id: qzD6hf
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
-msgid "Type anything"
-msgstr "Πληκτρολογήστε οτιδήποτε"
+msgid "Type anything..."
+msgstr ""
 
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx

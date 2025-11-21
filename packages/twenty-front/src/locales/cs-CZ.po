@@ -189,8 +189,7 @@ msgid "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted f
 msgstr "{grantedBy, plural, one {Udělena pro {grantedBy} objekt} few {Udělena pro {grantedBy} objekty} many {Udělena pro {grantedBy} objektů} other {Udělena pro {grantedBy} objektů}}"
 
 #. js-lingui-id: 2EPGDl
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphFilter.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "{graphTypeLabel} Chart"
 msgstr "Graf {graphTypeLabel}"
 
@@ -483,6 +482,7 @@ msgstr "ACS Url zkopírována do schránky"
 
 #. js-lingui-id: bwRvnp
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
 msgid "Action"
 msgstr "Akce"
 
@@ -1238,16 +1238,6 @@ msgstr "Schválené domény"
 msgid "Arabic"
 msgstr "Arabština"
 
-#. js-lingui-id: 2BZAqa
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
-msgid "Are you sure you want to delete these records? They can be recovered from the Command menu."
-msgstr "Jste si jisti, že chcete smazat tyto záznamy? Mohou být obnoveny z příkazové nabídky."
-
-#. js-lingui-id: yb2hF4
-#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
-msgid "Are you sure you want to delete this record? It can be recovered from the Command menu."
-msgstr "Jste si jisti, že chcete odstranit tento záznam? Lze jej obnovit z menu Příkazy."
-
 #. js-lingui-id: OJOR8q
 #: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
 msgid "Are you sure you want to destroy these records? They won't be recoverable anymore."
@@ -1822,6 +1812,7 @@ msgstr "Changelog"
 
 #. js-lingui-id: nuBbBr
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Chart"
 msgstr "Graf"
 
@@ -2520,6 +2511,11 @@ msgstr "Vytvořte svůj pracovní prostor"
 msgid "Create, edit, and delete workspace views"
 msgstr "Vytvářet, upravovat a mazat zobrazení pracoviště"
 
+#. js-lingui-id: 4fBuqE
+#: src/modules/command-menu/components/CommandMenuRecordInfo.tsx
+msgid "Created {beautifiedCreatedAt}"
+msgstr ""
+
 #. js-lingui-id: fR16ki
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Creating your data model..."
@@ -3010,21 +3006,9 @@ msgstr "Smazat pole"
 msgid "Delete node"
 msgstr "Odstranit uzel"
 
-#. js-lingui-id: LUsa0/
-#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
-#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
-msgid "Delete Record"
-msgstr "Smazat záznam"
-
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete records"
-msgstr "Smazat záznamy"
-
-#. js-lingui-id: rMgHjD
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
-msgid "Delete Records"
 msgstr "Smazat záznamy"
 
 #. js-lingui-id: mcXHCJ
@@ -4832,7 +4816,7 @@ msgid "iFrame Settings"
 msgstr "Nastavení iFrame"
 
 #. js-lingui-id: mO+Bte
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "iFrame Widget"
 msgstr "Widget iFrame"
 
@@ -8080,6 +8064,7 @@ msgid "Send an invite email to your team"
 msgstr "Pošlete pozvánku e-mailem vašemu týmu"
 
 #. js-lingui-id: i/TzEU
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Send Email"
 msgstr "Odeslat e-mail"
@@ -8756,7 +8741,7 @@ msgid "System settings - Sunday"
 msgstr "Systémová nastavení - Neděle"
 
 #. js-lingui-id: HuA3RU
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Tab"
 msgstr "Karta"
 
@@ -9155,6 +9140,7 @@ msgstr "Zkušební verze vypršela. Prosím, aktualizujte své fakturační úda
 #. js-lingui-id: H2Sfhg
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
+#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
 msgid "Trigger"
 msgstr "Spustit"
 
@@ -9254,10 +9240,10 @@ msgstr "Nastavení dvoufaktorového ověřování bylo úspěšně dokončeno!"
 msgid "Type"
 msgstr "Typ"
 
-#. js-lingui-id: U83IeL
+#. js-lingui-id: qzD6hf
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
-msgid "Type anything"
-msgstr "Napište cokoli"
+msgid "Type anything..."
+msgstr ""
 
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx

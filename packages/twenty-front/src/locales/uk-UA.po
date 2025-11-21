@@ -189,8 +189,7 @@ msgid "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted f
 msgstr "{grantedBy, plural, one {Доступ надано для {grantedBy} об'єкта} few {Доступ надано для {grantedBy} об'єктів} many {Доступ надано для {grantedBy} об'єктів} other {Доступ надано для {grantedBy} об'єктів}}"
 
 #. js-lingui-id: 2EPGDl
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphFilter.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "{graphTypeLabel} Chart"
 msgstr "Діаграма {graphTypeLabel} "
 
@@ -483,6 +482,7 @@ msgstr "ACS Url скопійовано в буфер обміну"
 
 #. js-lingui-id: bwRvnp
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
 msgid "Action"
 msgstr "Дія"
 
@@ -1238,16 +1238,6 @@ msgstr "Затверджені домени"
 msgid "Arabic"
 msgstr "Арабська"
 
-#. js-lingui-id: 2BZAqa
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
-msgid "Are you sure you want to delete these records? They can be recovered from the Command menu."
-msgstr "Ви впевнені, що хочете видалити ці записи? Їх можна відновити з меню Command."
-
-#. js-lingui-id: yb2hF4
-#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
-msgid "Are you sure you want to delete this record? It can be recovered from the Command menu."
-msgstr "Ви впевнені, що хочете видалити цей запис? Його можна відновити з меню Command."
-
 #. js-lingui-id: OJOR8q
 #: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
 msgid "Are you sure you want to destroy these records? They won't be recoverable anymore."
@@ -1822,6 +1812,7 @@ msgstr "Журнал змін"
 
 #. js-lingui-id: nuBbBr
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Chart"
 msgstr "Діаграма"
 
@@ -2520,6 +2511,11 @@ msgstr "Створіть свій робочий простір"
 msgid "Create, edit, and delete workspace views"
 msgstr "Створюйте, редагуйте та видаляйте перегляди робочого простору"
 
+#. js-lingui-id: 4fBuqE
+#: src/modules/command-menu/components/CommandMenuRecordInfo.tsx
+msgid "Created {beautifiedCreatedAt}"
+msgstr ""
+
 #. js-lingui-id: fR16ki
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Creating your data model..."
@@ -3010,21 +3006,9 @@ msgstr "Видалити поле"
 msgid "Delete node"
 msgstr "Видалити вузол"
 
-#. js-lingui-id: LUsa0/
-#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
-#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
-msgid "Delete Record"
-msgstr "Видалення запису"
-
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete records"
-msgstr "Видалити записи"
-
-#. js-lingui-id: rMgHjD
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
-msgid "Delete Records"
 msgstr "Видалити записи"
 
 #. js-lingui-id: mcXHCJ
@@ -4832,7 +4816,7 @@ msgid "iFrame Settings"
 msgstr "Налаштування iFrame"
 
 #. js-lingui-id: mO+Bte
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "iFrame Widget"
 msgstr "Віджет iFrame"
 
@@ -8080,6 +8064,7 @@ msgid "Send an invite email to your team"
 msgstr "Надішліть запрошення на електронну адресу вашої команди"
 
 #. js-lingui-id: i/TzEU
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Send Email"
 msgstr "Надіслати електронний лист"
@@ -8756,7 +8741,7 @@ msgid "System settings - Sunday"
 msgstr "Системні налаштування - Неділя"
 
 #. js-lingui-id: HuA3RU
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Tab"
 msgstr "Вкладка"
 
@@ -9157,6 +9142,7 @@ msgstr "Термін пробного періоду минув. Будь лас
 #. js-lingui-id: H2Sfhg
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
+#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
 msgid "Trigger"
 msgstr "Тригер"
 
@@ -9256,10 +9242,10 @@ msgstr "Налаштування двофакторної аутентифіка
 msgid "Type"
 msgstr "Тип"
 
-#. js-lingui-id: U83IeL
+#. js-lingui-id: qzD6hf
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
-msgid "Type anything"
-msgstr "Наберіть щось"
+msgid "Type anything..."
+msgstr ""
 
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
