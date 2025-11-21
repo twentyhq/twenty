@@ -138,6 +138,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_1120: VersionCommands = {
+      beforeSyncMetadata: [],
       afterSyncMetadata: [
         this.readonlysetStandardApplicationNotUninstallableCommand,
       ],
