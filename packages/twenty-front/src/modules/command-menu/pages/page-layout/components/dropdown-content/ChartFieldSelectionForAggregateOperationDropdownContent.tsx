@@ -31,7 +31,8 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
   if (
     configuration?.__typename !== 'BarChartConfiguration' &&
     configuration?.__typename !== 'LineChartConfiguration' &&
-    configuration?.__typename !== 'AggregateChartConfiguration'
+    configuration?.__typename !== 'AggregateChartConfiguration' &&
+    configuration?.__typename !== 'PieChartConfiguration'
   ) {
     throw new Error('Invalid configuration type');
   }

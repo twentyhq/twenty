@@ -145,6 +145,19 @@ export const useChartSettingsValues = ({
             : ''
         }`;
       }
+      case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_PIE_CHART: {
+        const pieChartGroupByField = groupByFieldY;
+        const pieChartGroupBySubFieldNameLabel =
+          isDefined(finalGroupBySubFieldNameY) &&
+          isDefined(pieChartGroupByField)
+            ? getFieldLabelWithSubField({
+                field: pieChartGroupByField,
+                subFieldName: finalGroupBySubFieldNameY,
+              })
+            : undefined;
+
+        return pieChartGroupBySubFieldNameLabel ?? pieChartGroupByField?.label;
+      }
       case CHART_CONFIGURATION_SETTING_IDS.GROUP_BY:
         return groupByFieldY?.label;
       case CHART_CONFIGURATION_SETTING_IDS.AXIS_NAME:

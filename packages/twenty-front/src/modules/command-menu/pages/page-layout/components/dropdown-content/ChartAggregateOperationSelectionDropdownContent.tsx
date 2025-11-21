@@ -42,7 +42,8 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
     widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
     widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration' &&
     widgetInEditMode?.configuration?.__typename !==
-      'AggregateChartConfiguration'
+      'AggregateChartConfiguration' &&
+    widgetInEditMode?.configuration?.__typename !== 'PieChartConfiguration'
   ) {
     throw new Error('Invalid configuration type');
   }

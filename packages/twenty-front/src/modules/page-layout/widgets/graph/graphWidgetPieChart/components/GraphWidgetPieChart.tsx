@@ -21,6 +21,7 @@ type GraphWidgetPieChartProps = {
   data: PieChartDataItem[];
   showLegend?: boolean;
   id: string;
+  onSliceClick?: (datum: PieChartDataItem) => void;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -41,6 +42,7 @@ export const GraphWidgetPieChart = ({
   prefix,
   suffix,
   customFormatter,
+  onSliceClick,
 }: GraphWidgetPieChartProps) => {
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
@@ -58,7 +60,7 @@ export const GraphWidgetPieChart = ({
     setHoveredSliceId,
     handleSliceClick,
     hasClickableItems,
-  } = usePieChartHandlers({ data });
+  } = usePieChartHandlers({ data, onSliceClick });
 
   const { enrichedData, enrichedDataMap, defs, fill } = usePieChartData({
     data,
