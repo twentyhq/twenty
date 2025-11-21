@@ -14,16 +14,21 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { type GraphOrderBy } from '~/generated/graphql';
+import {
+  type BarChartConfiguration,
+  type GraphOrderBy,
+  type LineChartConfiguration,
+} from '~/generated/graphql';
 
-export const ChartXAxisSortBySelectionDropdownContent = () => {
+export const ChartSortBySelectionDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const configuration = widgetInEditMode?.configuration;
 
   if (
     configuration?.__typename !== 'BarChartConfiguration' &&
-    configuration?.__typename !== 'LineChartConfiguration'
+    configuration?.__typename !== 'LineChartConfiguration' &&
+    configuration?.__typename !== 'PieChartConfiguration'
   ) {
     throw new Error('Invalid configuration type');
   }
@@ -49,20 +54,48 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
     objectMetadataId: widgetInEditMode.objectMetadataId,
   });
 
+  const isPieChart = configuration.__typename === 'PieChartConfiguration';
+  const isLineChart = configuration.__typename === 'LineChartConfiguration';
+
   const handleSelect = (orderBy: GraphOrderBy) => {
-    updateCurrentWidgetConfig({
-      configToUpdate: { primaryAxisOrderBy: orderBy },
-    });
+    if (isPieChart) {
+      updateCurrentWidgetConfig({
+        configToUpdate: { orderBy },
+      });
+    } else {
+      updateCurrentWidgetConfig({
+        configToUpdate: { primaryAxisOrderBy: orderBy },
+      });
+    }
     closeDropdown();
   };
 
-  const isLineChart = configuration.__typename === 'LineChartConfiguration';
   const availableOptions = X_SORT_BY_OPTIONS.filter((option) => {
     if (isLineChart) {
       return option.value !== 'VALUE_ASC' && option.value !== 'VALUE_DESC';
     }
     return true;
   });
+
+  let currentOrderBy: GraphOrderBy | undefined;
+  let groupByFieldMetadataId: string | undefined;
+  let groupBySubFieldName: string | null | undefined;
+
+  if (configuration.__typename === 'PieChartConfiguration') {
+    currentOrderBy = configuration.orderBy ?? undefined;
+    groupByFieldMetadataId = configuration.groupByFieldMetadataId;
+    groupBySubFieldName = configuration.groupBySubFieldName;
+  } else {
+    const barOrLineChartConfiguration = configuration as
+      | BarChartConfiguration
+      | LineChartConfiguration;
+    currentOrderBy =
+      barOrLineChartConfiguration.primaryAxisOrderBy ?? undefined;
+    groupByFieldMetadataId =
+      barOrLineChartConfiguration.primaryAxisGroupByFieldMetadataId;
+    groupBySubFieldName =
+      barOrLineChartConfiguration.primaryAxisGroupBySubFieldName;
+  }
 
   return (
     <DropdownMenuItemsContainer>
@@ -82,18 +115,16 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
             <MenuItemSelect
               text={getXSortOptionLabel({
                 graphOrderBy: sortOption.value,
-                groupByFieldMetadataIdX:
-                  configuration.primaryAxisGroupByFieldMetadataId,
-                groupBySubFieldNameX:
-                  configuration.primaryAxisGroupBySubFieldName as
-                    | CompositeFieldSubFieldName
-                    | undefined,
+                groupByFieldMetadataIdX: groupByFieldMetadataId ?? '',
+                groupBySubFieldNameX: groupBySubFieldName as
+                  | CompositeFieldSubFieldName
+                  | undefined,
                 aggregateFieldMetadataId:
                   configuration.aggregateFieldMetadataId ?? undefined,
                 aggregateOperation:
                   configuration.aggregateOperation ?? undefined,
               })}
-              selected={configuration.primaryAxisOrderBy === sortOption.value}
+              selected={currentOrderBy === sortOption.value}
               focused={selectedItemId === sortOption.value}
               LeftIcon={sortOption.icon}
               onClick={() => {
