@@ -23,37 +23,30 @@ type PageLayoutGridResizeHandleProps = {
 
 const StyledBottomRightIcon = styled(IconRadiusBottomRight)`
   color: transparent;
-  cursor: nwse-resize;
-
-  :hover {
-    color: ${({ theme }) => theme.font.color.tertiary};
-  }
 `;
 
 const StyledBottomLeftIcon = styled(IconRadiusBottomLeft)`
   color: transparent;
-  cursor: nesw-resize;
-
-  :hover {
-    color: ${({ theme }) => theme.font.color.tertiary};
-  }
 `;
 
 const StyledTopLeftIcon = styled(IconRadiusTopLeft)`
   color: transparent;
-  cursor: nwse-resize;
-
-  :hover {
-    color: ${({ theme }) => theme.font.color.tertiary};
-  }
 `;
 
 const StyledTopRightIcon = styled(IconRadiusTopRight)`
   color: transparent;
-  cursor: nesw-resize;
+`;
+
+const StyledCornerIconWrapper = styled.div<{
+  cursor: 'nwse-resize' | 'nesw-resize';
+}>`
+  position: relative;
+  cursor: ${({ cursor }) => cursor};
 
   :hover {
-    color: ${({ theme }) => theme.font.color.tertiary};
+    svg {
+      color: ${({ theme }) => theme.font.color.tertiary};
+    }
   }
 `;
 
@@ -209,28 +202,36 @@ export const PageLayoutGridResizeHandle = forwardRef<
           </StyledHorizontalHandleWrapper>
         )}
         {widgetHandleAxis === 'ne' && (
-          <StyledTopRightIcon
-            size={theme.icon.size.lg}
-            stroke={theme.icon.stroke.lg}
-          />
+          <StyledCornerIconWrapper cursor="nesw-resize">
+            <StyledTopRightIcon
+              size={theme.icon.size.lg}
+              stroke={theme.icon.stroke.lg}
+            />
+          </StyledCornerIconWrapper>
         )}
         {widgetHandleAxis === 'nw' && (
-          <StyledTopLeftIcon
-            size={theme.icon.size.lg}
-            stroke={theme.icon.stroke.lg}
-          />
+          <StyledCornerIconWrapper cursor="nwse-resize">
+            <StyledTopLeftIcon
+              size={theme.icon.size.lg}
+              stroke={theme.icon.stroke.lg}
+            />
+          </StyledCornerIconWrapper>
         )}
         {widgetHandleAxis === 'se' && (
-          <StyledBottomRightIcon
-            size={theme.icon.size.lg}
-            stroke={theme.icon.stroke.lg}
-          />
+          <StyledCornerIconWrapper cursor="nwse-resize">
+            <StyledBottomRightIcon
+              size={theme.icon.size.lg}
+              stroke={theme.icon.stroke.lg}
+            />
+          </StyledCornerIconWrapper>
         )}
         {widgetHandleAxis === 'sw' && (
-          <StyledBottomLeftIcon
-            size={theme.icon.size.lg}
-            stroke={theme.icon.stroke.lg}
-          />
+          <StyledCornerIconWrapper cursor="nesw-resize">
+            <StyledBottomLeftIcon
+              size={theme.icon.size.lg}
+              stroke={theme.icon.stroke.lg}
+            />
+          </StyledCornerIconWrapper>
         )}
       </StyledResizeHandleWrapper>
     );
