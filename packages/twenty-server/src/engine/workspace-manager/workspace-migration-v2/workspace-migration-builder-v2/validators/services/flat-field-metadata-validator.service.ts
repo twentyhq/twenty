@@ -108,6 +108,7 @@ export class FlatFieldMetadataValidatorService {
       });
     }
 
+    // Should be moved in relation field validator
     if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadataToValidate)) {
       const relationNonEditableUpdatedProperties = updates.flatMap(
         ({ property }) =>
@@ -126,6 +127,7 @@ export class FlatFieldMetadataValidatorService {
         });
       }
     }
+    ///
 
     if (updates.some((update) => update.property === 'name')) {
       validationResult.errors.push(
