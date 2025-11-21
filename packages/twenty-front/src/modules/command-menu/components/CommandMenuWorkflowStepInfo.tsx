@@ -7,6 +7,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { getAgentIdFromStep } from '@/workflow/utils/getAgentIdFromStep';
@@ -86,6 +87,8 @@ export const CommandMenuWorkflowStepInfo = ({
 
   const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
   const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
+  const { createDraftFromWorkflowVersion } =
+    useCreateDraftFromWorkflowVersion();
   const { updateOneRecord: updateOneWorkflowVersion } =
     useUpdateOneRecord<WorkflowVersion>({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
@@ -95,10 +98,12 @@ export const CommandMenuWorkflowStepInfo = ({
     trigger,
     steps,
     id: workflowVersionId,
+    status: workflowVersionStatus,
   } = workflowWithCurrentVersion?.currentVersion ?? {
     trigger: null,
     steps: null,
     id: undefined,
+    status: undefined,
   };
 
   const isTriggerStep = workflowStepId === TRIGGER_STEP_ID;
@@ -166,7 +171,7 @@ export const CommandMenuWorkflowStepInfo = ({
   const Icon = getIcon(headerIcon ?? 'IconDefault');
 
   const saveTitle = async () => {
-    if (!isDefined(workflowVersionId)) {
+    if (!isDefined(workflowVersionId) || !isDefined(workflowId)) {
       return;
     }
 
@@ -175,9 +180,24 @@ export const CommandMenuWorkflowStepInfo = ({
       pageIcon: Icon,
     });
 
+    let targetWorkflowVersionId = workflowVersionId;
+
+    if (workflowVersionStatus === 'ACTIVE') {
+      const draftVersionId = await createDraftFromWorkflowVersion({
+        workflowId,
+        workflowVersionIdToCopy: workflowVersionId,
+      });
+
+      if (!isDefined(draftVersionId)) {
+        throw new Error('Failed to create draft version');
+      }
+
+      targetWorkflowVersionId = draftVersionId;
+    }
+
     if (isTrigger) {
       await updateOneWorkflowVersion({
-        idToUpdate: workflowVersionId,
+        idToUpdate: targetWorkflowVersionId,
         updateOneRecordInput: {
           trigger: {
             ...stepDefinition.definition,
@@ -187,7 +207,7 @@ export const CommandMenuWorkflowStepInfo = ({
       });
     } else {
       await updateWorkflowVersionStep({
-        workflowVersionId,
+        workflowVersionId: targetWorkflowVersionId,
         step: {
           ...stepDefinition.definition,
           name: title,
