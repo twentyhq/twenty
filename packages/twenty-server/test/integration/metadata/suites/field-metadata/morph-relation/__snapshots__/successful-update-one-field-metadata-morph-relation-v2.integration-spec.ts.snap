@@ -12,8 +12,8 @@ exports[`updateOne FieldMetadataService morph relation fields v2 It should updat
     "field label",
   ],
   "name": [
-    "fieldNamePersonForMorphRelationSecond",
     "fieldNameOpportunityForMorphRelationSecond",
+    "fieldNamePersonForMorphRelationSecond",
   ],
 }
 `;
@@ -27,8 +27,8 @@ exports[`updateOne FieldMetadataService morph relation fields v2 It should updat
     true,
   ],
   "label": [
-    "tata",
     "toto",
+    "tata",
   ],
   "name": [
     "tata",
@@ -49,8 +49,8 @@ exports[`updateOne FieldMetadataService morph relation fields v2 It should updat
     "new label",
   ],
   "name": [
-    "fieldNamePersonForMorphRelationSecond",
     "fieldNameOpportunityForMorphRelationSecond",
+    "fieldNamePersonForMorphRelationSecond",
   ],
 }
 `;
@@ -64,8 +64,8 @@ exports[`updateOne FieldMetadataService morph relation fields v2 It should updat
     false,
   ],
   "label": [
-    "tata",
     "toto",
+    "tata",
   ],
   "name": [
     "tata",
