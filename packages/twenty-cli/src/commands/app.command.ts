@@ -50,7 +50,25 @@ export class AppCommand {
       });
 
     appCommand
-      .command('delete [appPath]')
+      .command('uninstall [appPath]')
+      .description('Uninstall application from Twenty')
+      .action(async (appPath?: string) => {
+        try {
+          const result = await this.deleteCommand.execute({
+            appPath: formatPath(appPath),
+            askForConfirmation: true,
+          });
+          if (!result.success) {
+            process.exit(1);
+          }
+        } catch {
+          process.exit(1);
+        }
+      });
+
+    // Keeping to avoid breaking changes
+    appCommand
+      .command('delete [appPath]', { hidden: true })
       .description('Delete application from Twenty')
       .action(async (appPath?: string) => {
         try {

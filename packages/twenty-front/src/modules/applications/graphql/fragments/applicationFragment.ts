@@ -12,6 +12,7 @@ export const APPLICATION_FRAGMENT = gql`
     name
     description
     version
+    universalIdentifier
     applicationVariables {
       id
       key

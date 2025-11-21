@@ -926,7 +926,7 @@ export class ApplicationSyncService {
     }
   }
 
-  public async deleteApplication({
+  public async uninstallApplication({
     workspaceId,
     applicationUniversalIdentifier,
   }: {

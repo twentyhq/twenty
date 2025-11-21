@@ -7,7 +7,7 @@ import { ApplicationSyncService } from 'src/engine/core-modules/application/appl
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
-import { DeleteApplicationInput } from 'src/engine/core-modules/application/dtos/deleteApplication.input';
+import { UninstallApplicationInput } from 'src/engine/core-modules/application/dtos/uninstallApplicationInput';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -61,11 +61,11 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteApplication(
-    @Args() { universalIdentifier }: DeleteApplicationInput,
+  async uninstallApplication(
+    @Args() { universalIdentifier }: UninstallApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    await this.applicationSyncService.deleteApplication({
+    await this.applicationSyncService.uninstallApplication({
       applicationUniversalIdentifier: universalIdentifier,
       workspaceId,
     });
