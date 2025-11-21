@@ -130,7 +130,7 @@ export class AppAddCommand {
           if (input.trim() === answers?.nameSingular.trim()) {
             return 'Name plural must be different from name singular';
           }
-          if (!input || input.length === 0) {
+          if (!input || input.trim().length === 0) {
             return 'Please enter a non empty string';
           }
           return true;
