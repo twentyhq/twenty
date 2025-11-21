@@ -101,10 +101,11 @@ export class AppCommand {
 
     appCommand
       .command('add [entityType]')
+      .option('--path <path>', 'Path in which the entity should be created.')
       .description(
         `Add a new entity to your application (${Object.values(SyncableEntity).join('|')})`,
       )
-      .action(async (entityType?: string) => {
+      .action(async (entityType?: string, options?: { path?: string }) => {
         if (entityType && !isSyncableEntity(entityType)) {
           console.error(
             chalk.red(
@@ -113,7 +114,10 @@ export class AppCommand {
           );
           process.exit(1);
         }
-        await this.addCommand.execute(entityType as SyncableEntity);
+        await this.addCommand.execute(
+          entityType as SyncableEntity,
+          options?.path,
+        );
       });
 
     appCommand
