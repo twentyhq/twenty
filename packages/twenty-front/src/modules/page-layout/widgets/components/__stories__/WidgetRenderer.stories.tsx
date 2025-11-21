@@ -21,10 +21,13 @@ import {
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
+import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
+import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import {
@@ -535,7 +538,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       id: 'catalog-widget',
       pageLayoutTabId: 'tab-overview',
       type: WidgetType.GRAPH,
-      title: 'Widget',
+      title: 'Widget name',
       objectMetadataId: companyObjectMetadataItem.id,
       gridPosition: {
         __typename: 'GridPosition',
@@ -560,38 +563,40 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
     catalog: {
       dimensions: [
         {
+          name: 'state',
+          values: ['default', 'hover', 'selected', 'dragging', 'read'],
+          props: (state: string) => ({ catalogState: state }) as any,
+          labels: (state: string) => {
+            const labelMap: Record<string, string> = {
+              default: 'Default',
+              hover: 'Hover',
+              selected: 'Selected',
+              dragging: 'Dragging',
+              read: 'Read',
+            };
+            return labelMap[state] ?? state;
+          },
+        },
+        {
           name: 'variant',
           values: [
             'record-page',
             'side-column',
-            'canvas',
+            'record-page-restricted',
             'dashboard',
-          ] satisfies WidgetCardVariant[],
+            'dashboard-restricted',
+          ],
           props: (variant: string) => ({ catalogVariant: variant }) as any,
           labels: (variant: string) => {
             const labelMap: Record<string, string> = {
-              'record-page': 'Record Page',
-              'side-column': 'Side Column',
-              canvas: 'Canvas',
+              'record-page': 'Record page > Default',
+              'side-column': 'Record page > Side column',
+              'record-page-restricted': 'Record page - content restriction',
               dashboard: 'Dashboard',
+              'dashboard-restricted': 'Dashboard - content restriction',
             };
             return labelMap[variant] ?? variant;
           },
-        },
-        {
-          name: 'mode',
-          values: ['edit', 'read'],
-          props: (mode: string) => ({ catalogMode: mode }) as any,
-          labels: (mode: string) =>
-            mode === 'edit' ? 'Edit Mode' : 'Read Mode',
-        },
-        {
-          name: 'permission',
-          values: ['allowed', 'restricted'],
-          props: (permission: string) =>
-            ({ catalogPermission: permission }) as any,
-          labels: (permission: string) =>
-            permission === 'allowed' ? 'Allowed' : 'Restricted',
         },
       ],
       options: {
@@ -600,11 +605,18 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
         },
       },
     },
+    pseudo: {
+      hover: ['.hover-state *'],
+    },
   },
   render: (args) => {
-    const variant = (args as any).catalogVariant || 'record-page';
-    const mode = (args as any).catalogMode || 'edit';
-    const permission = (args as any).catalogPermission || 'allowed';
+    const state = (args as any).catalogState || 'default';
+    const variantKey = (args as any).catalogVariant || 'record-page';
+
+    const isRestricted = variantKey.includes('-restricted');
+    const variant = variantKey.replace('-restricted', '') as WidgetCardVariant;
+
+    const isInEditMode = state !== 'read';
 
     const pageLayoutType =
       variant === 'dashboard'
@@ -618,13 +630,39 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
           ? ('grid' as const)
           : ('grid' as const);
 
-    const isInEditMode = mode === 'edit';
-
     const initializeState = (snapshot: MutableSnapshot) => {
       snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
       snapshot.set(shouldAppBeLoadingState, false);
 
-      if (permission === 'restricted') {
+      if (state === 'hover') {
+        snapshot.set(
+          widgetCardHoveredComponentFamilyState.atomFamily({
+            instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+            familyKey: args.widget.id,
+          }),
+          true,
+        );
+      }
+
+      if (state === 'selected') {
+        snapshot.set(
+          pageLayoutEditingWidgetIdComponentState.atomFamily({
+            instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          }),
+          args.widget.id,
+        );
+      }
+
+      if (state === 'dragging') {
+        snapshot.set(
+          pageLayoutDraggingWidgetIdComponentState.atomFamily({
+            instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          }),
+          args.widget.id,
+        );
+      }
+
+      if (isRestricted === true) {
         snapshot.set(currentUserWorkspaceState, {
           permissionFlags: [],
           twoFactorAuthenticationMethodSummary: null,
@@ -713,8 +751,13 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       );
     };
 
+    const containerClassName = state === 'hover' ? 'hover-state' : '';
+
     return (
-      <div style={{ width: '300px', height: '200px' }}>
+      <div
+        style={{ width: '300px', height: '200px' }}
+        className={containerClassName}
+      >
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
             <PageLayoutTestWrapper initializeState={initializeState}>
