@@ -35,10 +35,11 @@ const ONGOING_SYNC_STAGES = [
 export class MessageChannelUpdateOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
+  private readonly logger = new Logger(
+    MessageChannelUpdateOnePreQueryHook.name,
+  );
+
   constructor(
-    private readonly logger = new Logger(
-      MessageChannelUpdateOnePreQueryHook.name,
-    ),
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
   ) {}
