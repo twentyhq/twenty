@@ -11,24 +11,16 @@ import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetCo
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
-import { CanvasWidgetCard } from '@/page-layout/widgets/widget-card/components/CanvasWidgetCard';
-import { CanvasWidgetCardContent } from '@/page-layout/widgets/widget-card/components/CanvasWidgetCardContent';
-import { DashboardWidgetCard } from '@/page-layout/widgets/widget-card/components/DashboardWidgetCard';
-import { DashboardWidgetCardContent } from '@/page-layout/widgets/widget-card/components/DashboardWidgetCardContent';
-import { DashboardWidgetCardEditable } from '@/page-layout/widgets/widget-card/components/DashboardWidgetCardEditable';
-import { RecordPageWidgetCard } from '@/page-layout/widgets/widget-card/components/RecordPageWidgetCard';
-import { RecordPageWidgetCardContent } from '@/page-layout/widgets/widget-card/components/RecordPageWidgetCardContent';
-import { RecordPageWidgetCardEditable } from '@/page-layout/widgets/widget-card/components/RecordPageWidgetCardEditable';
-import { SideColumnWidgetCard } from '@/page-layout/widgets/widget-card/components/SideColumnWidgetCard';
-import { SideColumnWidgetCardContent } from '@/page-layout/widgets/widget-card/components/SideColumnWidgetCardContent';
-import { SideColumnWidgetCardEditable } from '@/page-layout/widgets/widget-card/components/SideColumnWidgetCardEditable';
+import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
+import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
+import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
 import { useTheme } from '@emotion/react';
 import { type MouseEvent } from 'react';
 import { IconLock } from 'twenty-ui/display';
-import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
+import { type PageLayoutWidget } from '~/generated/graphql';
 
 type WidgetRendererProps = {
   widget: PageLayoutWidget;
@@ -95,166 +87,20 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     setIsHovered(false);
   };
 
-  if (layoutMode === 'canvas') {
-    return (
-      <CanvasWidgetCard
-        onClick={isPageLayoutInEditMode ? handleClick : undefined}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        <CanvasWidgetCardContent>
-          {hasAccess && <WidgetContentRenderer widget={widget} />}
-        </CanvasWidgetCardContent>
-      </CanvasWidgetCard>
-    );
-  }
-
-  if (isInPinnedTab) {
-    if (isPageLayoutInEditMode) {
-      return (
-        <SideColumnWidgetCardEditable
-          isDragging={isDragging}
-          isResizing={isResizing}
-          isEditing={isEditing}
-          onClick={handleClick}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <SideColumnWidgetCardContent>
-            {hasAccess && <WidgetContentRenderer widget={widget} />}
-          </SideColumnWidgetCardContent>
-        </SideColumnWidgetCardEditable>
-      );
-    }
-
-    return (
-      <SideColumnWidgetCard
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        <SideColumnWidgetCardContent>
-          {hasAccess && <WidgetContentRenderer widget={widget} />}
-        </SideColumnWidgetCardContent>
-      </SideColumnWidgetCard>
-    );
-  }
-
-  if (currentPageLayout.type === PageLayoutType.DASHBOARD) {
-    if (isPageLayoutInEditMode) {
-      return (
-        <DashboardWidgetCardEditable
-          isDragging={isDragging}
-          isResizing={isResizing}
-          isEditing={isEditing}
-          onClick={handleClick}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          {showHeader && (
-            <WidgetCardHeader
-              widgetId={widget.id}
-              isInEditMode={isPageLayoutInEditMode}
-              isResizing={isResizing}
-              title={widget.title}
-              onRemove={handleRemove}
-              forbiddenDisplay={
-                !hasAccess && (
-                  <PageLayoutWidgetForbiddenDisplay
-                    widgetId={widget.id}
-                    restriction={restriction}
-                  />
-                )
-              }
-            />
-          )}
-
-          <DashboardWidgetCardContent>
-            {hasAccess && <WidgetContentRenderer widget={widget} />}
-            {!hasAccess && (
-              <IconLock
-                color={theme.font.color.tertiary}
-                stroke={theme.icon.stroke.sm}
-              />
-            )}
-          </DashboardWidgetCardContent>
-        </DashboardWidgetCardEditable>
-      );
-    }
-
-    return (
-      <DashboardWidgetCard
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        {showHeader && (
-          <WidgetCardHeader
-            widgetId={widget.id}
-            isInEditMode={isPageLayoutInEditMode}
-            isResizing={isResizing}
-            title={widget.title}
-            onRemove={handleRemove}
-            forbiddenDisplay={
-              !hasAccess && (
-                <PageLayoutWidgetForbiddenDisplay
-                  widgetId={widget.id}
-                  restriction={restriction}
-                />
-              )
-            }
-          />
-        )}
-
-        <DashboardWidgetCardContent>
-          {hasAccess && <WidgetContentRenderer widget={widget} />}
-          {!hasAccess && (
-            <IconLock
-              color={theme.font.color.tertiary}
-              stroke={theme.icon.stroke.sm}
-            />
-          )}
-        </DashboardWidgetCardContent>
-      </DashboardWidgetCard>
-    );
-  }
-
-  // PageLayoutType.RECORD_PAGE
-  if (isPageLayoutInEditMode) {
-    return (
-      <RecordPageWidgetCardEditable
-        isDragging={isDragging}
-        isResizing={isResizing}
-        isEditing={isEditing}
-        onClick={handleClick}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        {showHeader && (
-          <WidgetCardHeader
-            widgetId={widget.id}
-            isInEditMode={isPageLayoutInEditMode}
-            isResizing={isResizing}
-            title={widget.title}
-            onRemove={handleRemove}
-            forbiddenDisplay={
-              !hasAccess && (
-                <PageLayoutWidgetForbiddenDisplay
-                  widgetId={widget.id}
-                  restriction={restriction}
-                />
-              )
-            }
-          />
-        )}
-
-        <RecordPageWidgetCardContent>
-          {hasAccess && <WidgetContentRenderer widget={widget} />}
-        </RecordPageWidgetCardContent>
-      </RecordPageWidgetCardEditable>
-    );
-  }
+  const variant = getWidgetCardVariant({
+    layoutMode,
+    isInPinnedTab,
+    pageLayoutType: currentPageLayout.type,
+  });
 
   return (
-    <RecordPageWidgetCard
+    <WidgetCard
+      variant={variant}
+      isEditable={isPageLayoutInEditMode}
+      onClick={isPageLayoutInEditMode ? handleClick : undefined}
+      isEditing={isEditing}
+      isDragging={isDragging}
+      isResizing={isResizing}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -276,9 +122,15 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
         />
       )}
 
-      <RecordPageWidgetCardContent>
+      <WidgetCardContent variant={variant}>
         {hasAccess && <WidgetContentRenderer widget={widget} />}
-      </RecordPageWidgetCardContent>
-    </RecordPageWidgetCard>
+        {!hasAccess && (
+          <IconLock
+            color={theme.font.color.tertiary}
+            stroke={theme.icon.stroke.sm}
+          />
+        )}
+      </WidgetCardContent>
+    </WidgetCard>
   );
 };
