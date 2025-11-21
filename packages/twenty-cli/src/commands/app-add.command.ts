@@ -4,7 +4,7 @@ import inquirer from 'inquirer';
 import { join } from 'path';
 import camelcase from 'lodash.camelcase';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
-import { getObjectDecoratedClass } from 'src/utils/get-object-decorated-class';
+import { getObjectDecoratedClass } from '../utils/get-object-decorated-class';
 import { getServerlessFunctionBaseFile } from '../utils/get-serverless-function-base-file';
 import { convertToLabel } from '../utils/convert-to-label';
 
