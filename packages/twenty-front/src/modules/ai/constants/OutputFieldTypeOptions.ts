@@ -1,8 +1,6 @@
-import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+import { type AgentResponseFieldType } from 'twenty-shared/ai';
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
 import {
-  IllustrationIconCalendarEvent,
   IllustrationIconNumbers,
   IllustrationIconText,
   IllustrationIconToggle,
@@ -12,28 +10,23 @@ export interface OutputSchemaField {
   id: string;
   name: string;
   description?: string;
-  type: InputSchemaPropertyType | undefined;
+  type: AgentResponseFieldType | undefined;
 }
 
 export const OUTPUT_FIELD_TYPE_OPTIONS = [
   {
     label: msg`Text`,
-    value: FieldMetadataType.TEXT,
+    value: 'string' as const,
     Icon: IllustrationIconText,
   },
   {
     label: msg`Number`,
-    value: FieldMetadataType.NUMBER,
+    value: 'number' as const,
     Icon: IllustrationIconNumbers,
   },
   {
     label: msg`Boolean`,
-    value: FieldMetadataType.BOOLEAN,
+    value: 'boolean' as const,
     Icon: IllustrationIconToggle,
-  },
-  {
-    label: msg`Date`,
-    value: FieldMetadataType.DATE,
-    Icon: IllustrationIconCalendarEvent,
   },
 ];

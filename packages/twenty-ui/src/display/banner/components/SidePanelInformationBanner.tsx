@@ -1,5 +1,9 @@
 import styled from '@emotion/styled';
-import { IconInfoCircle } from '../../icon/components/TablerIcons';
+import {
+  IconAlertTriangle,
+  IconInfoCircle,
+} from '../../icon/components/TablerIcons';
+import { AppTooltip } from '../../tooltip/AppTooltip';
 
 const StyledBanner = styled.div`
   align-items: center;
@@ -37,18 +41,38 @@ const StyledMessage = styled.p`
 export type SidePanelInformationBannerProps = {
   message: string;
   className?: string;
+  variant?: 'default' | 'warning';
+  tooltipMessage?: string;
 };
 
 export const SidePanelInformationBanner = ({
   message,
   className,
+  variant = 'default',
+  tooltipMessage,
 }: SidePanelInformationBannerProps) => {
+  const tooltipId = 'side-panel-information-banner-tooltip';
+
   return (
-    <StyledBanner className={className}>
+    <StyledBanner
+      className={className}
+      data-tooltip-id={tooltipMessage ? tooltipId : undefined}
+    >
       <StyledIconContainer>
-        <IconInfoCircle size={16} />
+        {variant === 'default' ? (
+          <IconInfoCircle size={16} />
+        ) : (
+          <IconAlertTriangle size={16} />
+        )}
       </StyledIconContainer>
       <StyledMessage>{message}</StyledMessage>
+      {tooltipMessage && (
+        <AppTooltip
+          anchorSelect={`[data-tooltip-id='${tooltipId}']`}
+          content={tooltipMessage}
+          place="bottom"
+        />
+      )}
     </StyledBanner>
   );
 };
