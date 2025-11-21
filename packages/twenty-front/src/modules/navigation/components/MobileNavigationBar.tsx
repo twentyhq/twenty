@@ -81,7 +81,7 @@ export const MobileNavigationBar = () => {
         if (isSettingsPage) {
           const firstObjectMetadataItem =
             alphaSortedActiveNonSystemObjectMetadataItems[0];
-          if (firstObjectMetadataItem) {
+          if (firstObjectMetadataItem !== undefined) {
             setContextStoreCurrentObjectMetadataItemId(
               firstObjectMetadataItem.id,
             );
