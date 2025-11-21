@@ -23,7 +23,9 @@ type ProcessGroupByConnectionWithRecordsArgs = {
   queryFilter: any;
   shouldMatchRootQueryFilter: boolean;
   groupByDimensionValues: readonly string[];
-  groupByConfig?: Array<Record<string, boolean | Record<string, string>>>;
+  groupByConfig?:
+    | Array<Record<string, boolean | Record<string, string>>>
+    | Record<string, boolean | Record<string, string>>;
   objectMetadataItem: ObjectMetadataItem;
   readField: ReadFieldFunction;
   toReference: ToReferenceFunction;
