@@ -12,6 +12,8 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
+import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 
 const findFieldMetadata = async ({
@@ -232,7 +234,6 @@ describe('Rename an object metadata with morph relation should succeed', () => {
   );
 
   it('should handle ONE_TO_MANY morph field related index update after an target object name update', async () => {
-    // Create morph relation - this creates multiple RELATION fields
     const morphRelationField = await createMorphRelationBetweenObjects({
       name: 'owner',
       objectMetadataId: createdObjectMetadataOpportunityId,
@@ -242,28 +243,18 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       relationType: RelationType.ONE_TO_MANY,
     });
 
-    // Verify morph relations were created
     expect(morphRelationField.morphRelations.length).toBe(2);
 
-    // Fetch all objects with their indexes
-    let objects = await findManyObjectMetadataWithIndexes({
+    const objects = await findManyObjectMetadataWithIndexes({
       expectToFail: false,
     });
 
-    let opportunityObject = objects.find(
-      (obj) => obj.id === createdObjectMetadataOpportunityId,
-    );
-    let personObject = objects.find(
-      (obj) => obj.id === createdObjectMetadataPersonId,
-    );
-    let companyObject = objects.find(
-      (obj) => obj.id === createdObjectMetadataCompanyId,
-    );
-
-    jestExpectToBeDefined(opportunityObject);
-    jestExpectToBeDefined(personObject);
-    jestExpectToBeDefined(companyObject);
-
+    let relationIndexByFieldId: Record<
+      string,
+      IndexMetadataDTO & {
+        indexFieldMetadataList: IndexFieldMetadataDTO[];
+      }
+    > = {};
     for (const {
       targetObjectMetadata,
       targetFieldMetadata,
@@ -296,6 +287,64 @@ describe('Rename an object metadata with morph relation should succeed', () => {
           },
         ],
       });
+
+      relationIndexByFieldId[targetFieldMetadata.id] = relationIndex;
+    }
+
+    // Update the person object name to trigger morph field name update
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: createdObjectMetadataPersonId,
+        updatePayload: {
+          nameSingular: 'personForRenameSecondUpdated',
+          namePlural: 'peopleForRenameSecondUpdated',
+          labelSingular: 'Person For Rename Updated',
+          labelPlural: 'People For Rename Updated',
+        },
+      },
+    });
+
+    const updatedObjects = await findManyObjectMetadataWithIndexes({
+      expectToFail: false,
+    });
+
+    for (const {
+      targetObjectMetadata,
+      targetFieldMetadata,
+    } of morphRelationField.morphRelations) {
+      const relatedObject = updatedObjects.find(
+        (object) => object.id === targetObjectMetadata.id,
+      );
+      jestExpectToBeDefined(relatedObject);
+
+      const objectRelatedIndexes = relatedObject.indexMetadataList.filter(
+        (index) =>
+          index.indexFieldMetadataList.some(
+            (indexField) =>
+              indexField.fieldMetadataId === targetFieldMetadata.id,
+          ),
+      );
+      expect(objectRelatedIndexes.length).toBe(1);
+      const [relationIndex] = objectRelatedIndexes;
+      jestExpectToBeDefined(relationIndex);
+      expect(relationIndex).toMatchSnapshot({
+        indexType: IndexType.BTREE,
+        isCustom: true,
+        isUnique: false,
+        indexFieldMetadataList: [
+          {
+            createdAt: expect.any(String),
+            fieldMetadataId: targetFieldMetadata.id,
+            id: expect.any(String),
+            updatedAt: expect.any(String),
+          },
+        ],
+      });
+
+      const previousIndex = relationIndexByFieldId[targetFieldMetadata.id];
+      jestExpectToBeDefined(previousIndex);
+      expect(previousIndex.name).not.toBe(relationIndex.name);
     }
   });
 });

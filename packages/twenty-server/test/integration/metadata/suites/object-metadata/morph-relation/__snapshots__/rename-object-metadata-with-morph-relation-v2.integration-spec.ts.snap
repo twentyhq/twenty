@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Rename an object metadata with morph relation should succeed should handle morph field related index update after an target object name update 2`] = `
+exports[`Rename an object metadata with morph relation should succeed should handle ONE_TO_MANY morph field related index update after an target object name update 1`] = `
 {
   "indexFieldMetadataList": [
     {
       "createdAt": Any<String>,
-      "fieldMetadataId": "6362af37-1db1-44db-b082-9e9030e40079",
+      "fieldMetadataId": "bfb53062-511d-4500-95ab-8bf9949afc28",
       "id": Any<String>,
       "order": 0,
       "updatedAt": Any<String>,
@@ -18,12 +18,48 @@ exports[`Rename an object metadata with morph relation should succeed should han
 }
 `;
 
-exports[`Rename an object metadata with morph relation should succeed should handle morph field related index update after an target object name update 3`] = `
+exports[`Rename an object metadata with morph relation should succeed should handle ONE_TO_MANY morph field related index update after an target object name update 2`] = `
 {
   "indexFieldMetadataList": [
     {
       "createdAt": Any<String>,
-      "fieldMetadataId": "b89c6c4f-c2a9-4ec9-bba8-454f1b615d19",
+      "fieldMetadataId": "0f1d3467-e680-4b3d-984f-55bd2a228445",
+      "id": Any<String>,
+      "order": 0,
+      "updatedAt": Any<String>,
+    },
+  ],
+  "indexType": "BTREE",
+  "isCustom": true,
+  "isUnique": false,
+  "name": "IDX_270c22872e92d429bb4f07a15dd",
+}
+`;
+
+exports[`Rename an object metadata with morph relation should succeed should handle ONE_TO_MANY morph field related index update after an target object name update 3`] = `
+{
+  "indexFieldMetadataList": [
+    {
+      "createdAt": Any<String>,
+      "fieldMetadataId": "bfb53062-511d-4500-95ab-8bf9949afc28",
+      "id": Any<String>,
+      "order": 0,
+      "updatedAt": Any<String>,
+    },
+  ],
+  "indexType": "BTREE",
+  "isCustom": true,
+  "isUnique": false,
+  "name": "IDX_aabda09e5917c5a7cbe5b6c84fc",
+}
+`;
+
+exports[`Rename an object metadata with morph relation should succeed should handle ONE_TO_MANY morph field related index update after an target object name update 4`] = `
+{
+  "indexFieldMetadataList": [
+    {
+      "createdAt": Any<String>,
+      "fieldMetadataId": "0f1d3467-e680-4b3d-984f-55bd2a228445",
       "id": Any<String>,
       "order": 0,
       "updatedAt": Any<String>,
