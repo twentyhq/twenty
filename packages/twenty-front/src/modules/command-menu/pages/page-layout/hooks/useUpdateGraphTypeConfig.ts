@@ -1,7 +1,9 @@
 import { GRAPH_TYPE_TO_CONFIG_TYPENAME } from '@/command-menu/pages/page-layout/constants/GraphTypeToConfigTypename';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
+import { convertAggregateOperationForDateField } from '@/command-menu/pages/page-layout/utils/convertAggregateOperationForDateField';
+import { convertBarOrLineChartConfigToPieChart } from '@/command-menu/pages/page-layout/utils/convertBarOrLineChartConfigToPieChart';
+import { convertPieChartConfigToBarOrLineChart } from '@/command-menu/pages/page-layout/utils/convertPieChartConfigToBarOrLineChart';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
@@ -9,7 +11,7 @@ import { updateWidgetMinimumSizeForGraphType } from '@/page-layout/utils/updateW
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
 
 export const useUpdateGraphTypeConfig = ({
@@ -43,7 +45,7 @@ export const useUpdateGraphTypeConfig = ({
   const updateGraphTypeConfig = useRecoilCallback(
     ({ set, snapshot }) =>
       (graphType: GraphType) => {
-        const configToUpdate: Record<string, any> = {
+        let configToUpdate: Record<string, any> = {
           __typename: GRAPH_TYPE_TO_CONFIG_TYPENAME[graphType],
           graphType,
         };
@@ -52,30 +54,29 @@ export const useUpdateGraphTypeConfig = ({
           graphType !== GraphType.AGGREGATE &&
           graphType !== GraphType.GAUGE
         ) {
-          const currentAggregateFieldMetadataId =
-            configuration.aggregateFieldMetadataId;
-
           const objectMetadataItem = objectMetadataItems.find(
             (item) => item.id === widget.objectMetadataId,
           );
 
-          if (isDefined(objectMetadataItem)) {
-            const aggregateField = objectMetadataItem.fields.find(
-              (field) => field.id === currentAggregateFieldMetadataId,
+          const convertedAggregateOperation =
+            convertAggregateOperationForDateField(
+              configuration,
+              objectMetadataItem,
             );
 
-            if (
-              isDefined(aggregateField) &&
-              isFieldMetadataDateKind(aggregateField.type) &&
-              (configuration.aggregateOperation === AggregateOperations.MIN ||
-                configuration.aggregateOperation === AggregateOperations.MAX)
-            ) {
-              configToUpdate.aggregateOperation = AggregateOperations.COUNT;
-            }
+          if (isDefined(convertedAggregateOperation)) {
+            configToUpdate = {
+              ...configToUpdate,
+              aggregateOperation: convertedAggregateOperation,
+            };
           }
         }
 
         const isPieChart = graphType === GraphType.PIE;
+        const isBarOrLineChart =
+          graphType === GraphType.VERTICAL_BAR ||
+          graphType === GraphType.HORIZONTAL_BAR ||
+          graphType === GraphType.LINE;
         const wasBarOrLineChart =
           configuration.__typename === 'BarChartConfiguration' ||
           configuration.__typename === 'LineChartConfiguration';
@@ -83,42 +84,17 @@ export const useUpdateGraphTypeConfig = ({
           configuration.__typename === 'PieChartConfiguration';
 
         if (isPieChart && wasBarOrLineChart) {
-          if ('primaryAxisGroupByFieldMetadataId' in configuration) {
-            configToUpdate.groupByFieldMetadataId =
-              configuration.primaryAxisGroupByFieldMetadataId;
-          }
-          if ('primaryAxisGroupBySubFieldName' in configuration) {
-            configToUpdate.groupBySubFieldName =
-              configuration.primaryAxisGroupBySubFieldName;
-          }
-          if ('primaryAxisDateGranularity' in configuration) {
-            configToUpdate.dateGranularity =
-              configuration.primaryAxisDateGranularity;
-          }
-          if ('primaryAxisOrderBy' in configuration) {
-            configToUpdate.orderBy = configuration.primaryAxisOrderBy;
-          }
-        } else if (
-          (graphType === GraphType.VERTICAL_BAR ||
-            graphType === GraphType.HORIZONTAL_BAR ||
-            graphType === GraphType.LINE) &&
-          wasPieChart
-        ) {
-          if ('groupByFieldMetadataId' in configuration) {
-            configToUpdate.primaryAxisGroupByFieldMetadataId =
-              configuration.groupByFieldMetadataId;
-          }
-          if ('groupBySubFieldName' in configuration) {
-            configToUpdate.primaryAxisGroupBySubFieldName =
-              configuration.groupBySubFieldName;
-          }
-          if ('dateGranularity' in configuration) {
-            configToUpdate.primaryAxisDateGranularity =
-              configuration.dateGranularity;
-          }
-          if ('orderBy' in configuration) {
-            configToUpdate.primaryAxisOrderBy = configuration.orderBy;
-          }
+          configToUpdate = {
+            ...configToUpdate,
+            ...convertBarOrLineChartConfigToPieChart(configuration),
+          };
+        }
+
+        if (isBarOrLineChart && wasPieChart) {
+          configToUpdate = {
+            ...configToUpdate,
+            ...convertPieChartConfigToBarOrLineChart(configuration),
+          };
         }
 
         const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
