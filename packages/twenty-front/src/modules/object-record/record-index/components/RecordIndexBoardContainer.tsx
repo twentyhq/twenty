@@ -7,6 +7,9 @@ import { RecordBoard } from '@/object-record/record-board/components/RecordBoard
 import { RecordBoardBodyEscapeHotkeyEffect } from '@/object-record/record-board/components/RecordBoardBodyEscapeHotkeyEffect';
 import { RecordBoardHotkeyEffect } from '@/object-record/record-board/components/RecordBoardHotkeyEffect';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
+import { RecordIndexBoardDataLoaderEffect } from '@/object-record/record-index/components/RecordIndexBoardDataLoaderEffect';
+import { RecordIndexGroupsQueryEffect } from '@/object-record/record-index/components/RecordIndexGroupsQueryEffect';
 import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
 import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataItemComponentState';
@@ -64,12 +67,20 @@ export const RecordIndexBoardContainer = ({
         objectPermissions,
       }}
     >
-      <RecordBoard />
-      {isRecordIndexRemoveSortingModalOpened && (
-        <RecordIndexRemoveSortingModal />
-      )}
-      <RecordBoardHotkeyEffect />
-      <RecordBoardBodyEscapeHotkeyEffect />
+      <RecordBoardComponentInstanceContext.Provider
+        value={{ instanceId: recordBoardId }}
+      >
+        <RecordBoard />
+        {isRecordIndexRemoveSortingModalOpened && (
+          <RecordIndexRemoveSortingModal />
+        )}
+        <RecordBoardHotkeyEffect />
+        <RecordBoardBodyEscapeHotkeyEffect />
+        {/* <RecordIndexBoardDataLoader /> */}
+        {/* <RecordIndexGroupAggregatesDataLoader /> */}
+        <RecordIndexGroupsQueryEffect />
+        <RecordIndexBoardDataLoaderEffect />
+      </RecordBoardComponentInstanceContext.Provider>
     </RecordBoardContext.Provider>
   );
 };

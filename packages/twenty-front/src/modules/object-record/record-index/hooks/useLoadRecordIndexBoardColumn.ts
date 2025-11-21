@@ -1,116 +1,36 @@
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useSetRecordIdsForColumn } from '@/object-record/record-board/hooks/useSetRecordIdsForColumn';
-import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-
-import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/hooks/useRecordsFieldVisibleGqlFields';
-import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
-import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useRecordIndexGroupQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupQueryVariables';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import {
-  combineFilters,
-  computeRecordGqlOperationFilter,
-  isDefined,
-  turnAnyFieldFilterIntoRecordGqlFilter,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseLoadRecordIndexBoardProps = {
-  objectNameSingular: string;
-  kanbanFieldMetadataItem: FieldMetadataItem;
-  recordBoardId: string;
   columnId: string;
 };
 
 export const useLoadRecordIndexBoardColumn = ({
-  objectNameSingular,
-  kanbanFieldMetadataItem,
-  recordBoardId,
   columnId,
 }: UseLoadRecordIndexBoardProps) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
-  const { setRecordIdsForColumn } = useSetRecordIdsForColumn(recordBoardId);
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
+  const { setRecordIdsForColumn } = useSetRecordIdsForColumn();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const recordGroupDefinition = useRecoilValue(
-    recordGroupDefinitionFamilyState(columnId),
-  );
-
-  const currentRecordFilterGroups = useRecoilComponentValue(
-    currentRecordFilterGroupsComponentState,
-  );
-
-  const currentRecordFilters = useRecoilComponentValue(
-    currentRecordFiltersComponentState,
-  );
-
-  const currentRecordSorts = useRecoilComponentValue(
-    currentRecordSortsComponentState,
-  );
-
-  const { filterValueDependencies } = useFilterValueDependencies();
-
-  const requestFilters = computeRecordGqlOperationFilter({
-    filterValueDependencies,
-    recordFilters: currentRecordFilters,
-    recordFilterGroups: currentRecordFilterGroups,
-    fields: objectMetadataItem.fields,
+  const queryVariables = useRecordIndexGroupQueryVariables({
+    recordGroupId: columnId,
   });
-
-  const anyFieldFilterValue = useRecoilComponentValue(
-    anyFieldFilterValueComponentState,
-  );
-
-  const { recordGqlOperationFilter: anyFieldFilter } =
-    turnAnyFieldFilterIntoRecordGqlFilter({
-      fields: objectMetadataItem.fields,
-      filterValue: anyFieldFilterValue,
-    });
-
-  const orderBy = turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts);
-  const recordGroupFieldMetadata = useRecoilComponentValue(
-    recordGroupFieldMetadataComponentState,
-    recordBoardId,
-  );
-
-  const recordGqlFields = useRecordsFieldVisibleGqlFields({
-    objectMetadataItem,
-    additionalFieldMetadataId: recordGroupFieldMetadata?.id,
-  });
-
-  const recordIndexKanbanFieldMetadataFilterValue = isDefined(
-    recordGroupDefinition?.value,
-  )
-    ? { in: [recordGroupDefinition?.value] }
-    : { is: 'NULL' };
-
-  const combinedFilters = combineFilters([
-    anyFieldFilter,
-    requestFilters,
-    {
-      [kanbanFieldMetadataItem.name]: recordIndexKanbanFieldMetadataFilterValue,
-    },
-  ]);
 
   const { records, loading, fetchMoreRecords, queryIdentifier, hasNextPage } =
     useFindManyRecords({
-      objectNameSingular,
-      filter: combinedFilters,
-      orderBy,
-      recordGqlFields,
+      objectNameSingular: objectMetadataItem.nameSingular,
+      filter: queryVariables?.filters,
+      orderBy: queryVariables?.orderBy,
+      recordGqlFields: queryVariables?.recordGqlFields,
       limit: 10,
+      skip: !isDefined(queryVariables),
     });
 
   useEffect(() => {

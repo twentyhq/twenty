@@ -1,10 +1,10 @@
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
-import { RecordIndexBoardColumnLoaderEffect } from '@/object-record/record-index/components/RecordIndexBoardColumnLoaderEffect';
+import { RecordIndexBoardColumnFetchMoreEffect } from '@/object-record/record-index/components/RecordIndexBoardColumnFetchMoreEffect';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataItemComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 
-export const RecordIndexBoardDataLoader = () => {
+export const RecordIndexBoardFetchMoreDataLoader = () => {
   const recordGroupIds = useRecoilComponentValue(recordGroupIdsComponentState);
 
   const recordIndexGroupFieldMetadataItem = useRecoilComponentValue(
@@ -18,13 +18,13 @@ export const RecordIndexBoardDataLoader = () => {
   return (
     <>
       {recordGroupIds.map((recordGroupId) => (
-        <RecordIndexBoardColumnLoaderEffect
+        <RecordIndexBoardColumnFetchMoreEffect
           columnId={recordGroupId}
           key={recordGroupId}
         />
       ))}
       {recordIndexGroupFieldMetadataItem.isNullable === true && (
-        <RecordIndexBoardColumnLoaderEffect columnId="no-value" />
+        <RecordIndexBoardColumnFetchMoreEffect columnId={'no-value'} />
       )}
     </>
   );

@@ -11,7 +11,6 @@ import { RecordBoardScrollToFocusedCardEffect } from '@/object-record/record-boa
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardDeactivateBoardCardEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardDeactivateBoardCardEffect';
-import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 const StyledContainer = styled.div`
@@ -48,9 +47,7 @@ export const RecordBoard = () => {
   const boardRef = useRef<HTMLDivElement>(null);
 
   return (
-    <RecordBoardComponentInstanceContext.Provider
-      value={{ instanceId: recordBoardId }}
-    >
+    <>
       <ScrollWrapper
         componentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
       >
@@ -72,6 +69,6 @@ export const RecordBoard = () => {
         </StyledContainerContainer>
       </ScrollWrapper>
       <RecordBoardClickOutsideEffect />
-    </RecordBoardComponentInstanceContext.Provider>
+    </>
   );
 };
