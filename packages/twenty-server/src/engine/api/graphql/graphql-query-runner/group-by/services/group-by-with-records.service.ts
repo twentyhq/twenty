@@ -7,6 +7,7 @@ import { type ObjectLiteral } from 'typeorm';
 
 import { ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
@@ -21,7 +22,6 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 const RECORDS_PER_GROUP_LIMIT = 10;
 const RELATIONS_PER_RECORD_LIMIT = 5;
@@ -157,10 +157,10 @@ export class GroupByWithRecordsService {
       queryBuilderForSubQuery,
     );
 
-    const tableName = computeObjectTargetTable(objectMetadataItemWithFieldMaps);
+    const objectAlias = getObjectAlias(objectMetadataItemWithFieldMaps);
 
     const recordSelectWithAlias = Object.keys(columnsToSelect)
-      .map((col) => `"${tableName}"."${col}" as "${SUB_QUERY_PREFIX}${col}"`)
+      .map((col) => `"${objectAlias}"."${col}" as "${SUB_QUERY_PREFIX}${col}"`)
       .join(', ');
 
     const groupBySelectWithAlias = groupByDefinitions

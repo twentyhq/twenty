@@ -19,6 +19,7 @@ import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
@@ -111,10 +112,12 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       queryRunnerContext.objectMetadataMaps,
     );
 
+    const objectAlias = getObjectAlias(objectMetadataItemWithFieldMaps);
+
     this.addJoinForGroupByOnRelationFields({
       queryBuilder,
       groupByFields,
-      objectMetadataNameSingular,
+      objectAlias,
     });
 
     const groupByDefinitions = groupByFields.map((groupByField) => {
@@ -188,7 +191,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       this.addJoinForGroupByOnRelationFields({
         queryBuilder: queryBuilderWithFiltersAndWithoutGroupBy,
         groupByFields,
-        objectMetadataNameSingular,
+        objectAlias,
       });
 
       await this.addFiltersToQueryBuilder({
@@ -377,11 +380,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   private addJoinForGroupByOnRelationFields({
     queryBuilder,
     groupByFields,
-    objectMetadataNameSingular,
+    objectAlias,
   }: {
     queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     groupByFields: GroupByField[];
-    objectMetadataNameSingular: string;
+    objectAlias: string;
   }): void {
     const joinAliasSet = new Set<string>();
 
@@ -405,9 +408,9 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
         if (!joinAliasSet.has(joinAlias)) {
           queryBuilder.leftJoin(
-            `${objectMetadataNameSingular}.${joinAlias}`,
+            `${objectAlias}.${joinAlias}`,
             `${joinAlias}`,
-            `"${objectMetadataNameSingular}"."${joinColumnName}" = "${joinAlias}"."id"`,
+            `"${objectAlias}"."${joinColumnName}" = "${joinAlias}"."id"`,
           );
           joinAliasSet.add(joinAlias);
         }
