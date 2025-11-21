@@ -46,6 +46,16 @@ export const main = async (
       };
     }
 
+    if (
+      userEmail.toLowerCase().includes('example') ||
+      userEmail.toLowerCase().includes('test')
+    ) {
+      return {
+        success: true,
+        message: `Email '${userEmail}' ignored (contains test/example data)`,
+      };
+    }
+
     const client = createClient({
       url: `${process.env.TWENTY_API_URL}/graphql`,
       headers: {
