@@ -1,5 +1,5 @@
 import { existsSync } from 'fs';
-import { AppDeleteCommand } from '../../commands/app-delete.command';
+import { AppUninstallCommand } from 'src/commands/app-uninstall.command';
 import { AppSyncCommand } from '../../commands/app-sync.command';
 import { COVERED_APPLICATION_FOLDERS } from './constants/covered-applications-folder.constant';
 import { getTestedApplicationPath } from './utils/get-tested-application-path.util';
@@ -8,7 +8,7 @@ describe.each(COVERED_APPLICATION_FOLDERS)(
   'Application: "%s" install delete and reinstall test suite',
   (applicationName) => {
     const syncCommand = new AppSyncCommand();
-    const deleteCommand = new AppDeleteCommand();
+    const deleteCommand = new AppUninstallCommand();
     const appPath = getTestedApplicationPath(applicationName);
 
     beforeAll(async () => {

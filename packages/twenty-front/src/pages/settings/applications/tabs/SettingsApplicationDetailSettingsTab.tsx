@@ -82,7 +82,7 @@ export const SettingsApplicationDetailSettingsTab = ({
           <Section>
             <H2Title
               title={t`Danger zone`}
-              description={t`Uninstall this integration`}
+              description={t`Uninstall this application`}
             />
             <Button
               accent="danger"

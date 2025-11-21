@@ -5,7 +5,7 @@ import { ApiService } from '../services/api.service';
 import { ApiResponse } from '../types/config.types';
 import { loadManifest } from '../utils/load-manifest';
 
-export class AppDeleteCommand {
+export class AppUninstallCommand {
   private apiService = new ApiService();
 
   async execute({

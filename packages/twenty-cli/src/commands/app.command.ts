@@ -5,7 +5,7 @@ import {
   isSyncableEntity,
   SyncableEntity,
 } from './app-add.command';
-import { AppDeleteCommand } from './app-delete.command';
+import { AppUninstallCommand } from './app-uninstall.command';
 import { AppDevCommand } from './app-dev.command';
 import { AppInitCommand } from './app-init.command';
 import { AppSyncCommand } from './app-sync.command';
@@ -15,7 +15,7 @@ import { AppGenerateCommand } from './app-generate.command';
 export class AppCommand {
   private devCommand = new AppDevCommand();
   private syncCommand = new AppSyncCommand();
-  private deleteCommand = new AppDeleteCommand();
+  private uninstallCommand = new AppUninstallCommand();
   private initCommand = new AppInitCommand();
   private addCommand = new AppAddCommand();
   private generateCommand = new AppGenerateCommand();
@@ -54,7 +54,7 @@ export class AppCommand {
       .description('Uninstall application from Twenty')
       .action(async (appPath?: string) => {
         try {
-          const result = await this.deleteCommand.execute({
+          const result = await this.uninstallCommand.execute({
             appPath: formatPath(appPath),
             askForConfirmation: true,
           });
@@ -72,7 +72,7 @@ export class AppCommand {
       .description('Delete application from Twenty')
       .action(async (appPath?: string) => {
         try {
-          const result = await this.deleteCommand.execute({
+          const result = await this.uninstallCommand.execute({
             appPath: formatPath(appPath),
             askForConfirmation: true,
           });
