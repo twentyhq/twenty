@@ -21,27 +21,39 @@ type PageLayoutGridResizeHandleProps = {
   style?: React.CSSProperties;
 };
 
-const StyledBottomRightIcon = styled(IconRadiusBottomRight)`
-  color: transparent;
-`;
-
-const StyledBottomLeftIcon = styled(IconRadiusBottomLeft)`
-  color: transparent;
-`;
-
-const StyledTopLeftIcon = styled(IconRadiusTopLeft)`
-  color: transparent;
-`;
-
-const StyledTopRightIcon = styled(IconRadiusTopRight)`
-  color: transparent;
-`;
-
 const StyledCornerIconWrapper = styled.div<{
   cursor: 'nwse-resize' | 'nesw-resize';
+  position: 'ne' | 'nw' | 'se' | 'sw';
 }>`
-  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: ${({ cursor }) => cursor};
+  width: ${({ theme }) => theme.spacing(4)};
+  height: ${({ theme }) => theme.spacing(4)};
+
+  & svg {
+    color: transparent;
+  }
+
+  svg {
+    flex-shrink: 0;
+    pointer-events: none;
+    transform: ${({ position, theme }) => {
+      if (position === 'se') {
+        return `translate(-${theme.spacing(2)}, -${theme.spacing(2)})`;
+      }
+      if (position === 'sw') {
+        return `translate(${theme.spacing(2)}, -${theme.spacing(2)})`;
+      }
+      if (position === 'ne') {
+        return `translate(-${theme.spacing(2)}, ${theme.spacing(2)})`;
+      }
+      if (position === 'nw') {
+        return `translate(${theme.spacing(2)}, ${theme.spacing(2)})`;
+      }
+    }};
+  }
 
   :hover {
     svg {
@@ -129,26 +141,30 @@ const StyledResizeHandleWrapper = styled.div<{
     }
     if (widgetHandleAxis === 'se') {
       return css`
-        bottom: ${theme.spacing(0.5)};
-        right: ${theme.spacing(0.5)};
+        bottom: 0;
+        right: 0;
+        transform: translate(${theme.spacing(1)}, ${theme.spacing(1)});
       `;
     }
     if (widgetHandleAxis === 'sw') {
       return css`
-        bottom: ${theme.spacing(0.5)};
-        left: ${theme.spacing(0.5)};
+        bottom: 0;
+        left: 0;
+        transform: translate(-${theme.spacing(1)}, ${theme.spacing(1)});
       `;
     }
     if (widgetHandleAxis === 'ne') {
       return css`
-        right: ${theme.spacing(0.5)};
-        top: ${theme.spacing(0.5)};
+        right: 0;
+        top: 0;
+        transform: translate(${theme.spacing(1)}, -${theme.spacing(1)});
       `;
     }
     if (widgetHandleAxis === 'nw') {
       return css`
-        left: ${theme.spacing(0.5)};
-        top: ${theme.spacing(0.5)};
+        left: 0;
+        top: 0;
+        transform: translate(-${theme.spacing(1)}, -${theme.spacing(1)});
       `;
     }
   }}
@@ -202,32 +218,32 @@ export const PageLayoutGridResizeHandle = forwardRef<
           </StyledHorizontalHandleWrapper>
         )}
         {widgetHandleAxis === 'ne' && (
-          <StyledCornerIconWrapper cursor="nesw-resize">
-            <StyledTopRightIcon
+          <StyledCornerIconWrapper cursor="nesw-resize" position="ne">
+            <IconRadiusTopRight
               size={theme.icon.size.lg}
               stroke={theme.icon.stroke.lg}
             />
           </StyledCornerIconWrapper>
         )}
         {widgetHandleAxis === 'nw' && (
-          <StyledCornerIconWrapper cursor="nwse-resize">
-            <StyledTopLeftIcon
+          <StyledCornerIconWrapper cursor="nwse-resize" position="nw">
+            <IconRadiusTopLeft
               size={theme.icon.size.lg}
               stroke={theme.icon.stroke.lg}
             />
           </StyledCornerIconWrapper>
         )}
         {widgetHandleAxis === 'se' && (
-          <StyledCornerIconWrapper cursor="nwse-resize">
-            <StyledBottomRightIcon
+          <StyledCornerIconWrapper cursor="nwse-resize" position="se">
+            <IconRadiusBottomRight
               size={theme.icon.size.lg}
               stroke={theme.icon.stroke.lg}
             />
           </StyledCornerIconWrapper>
         )}
         {widgetHandleAxis === 'sw' && (
-          <StyledCornerIconWrapper cursor="nesw-resize">
-            <StyledBottomLeftIcon
+          <StyledCornerIconWrapper cursor="nesw-resize" position="sw">
+            <IconRadiusBottomLeft
               size={theme.icon.size.lg}
               stroke={theme.icon.stroke.lg}
             />
