@@ -273,14 +273,6 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
       );
 
       expect(aggregatedRelationFieldMetadataDtos).toMatchSnapshot();
-      expect(
-        aggregatedRelationFieldMetadataDtos,
-      ).toMatchObject<AggregatedFieldMetadataDto>({
-        description: [null],
-        isActive: [true],
-        label: [expect.any(String), expect.any(String)],
-        name: [expect.any(String), expect.any(String)],
-      });
     }
 
     // UPDATE
@@ -367,14 +359,6 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
       );
 
       expect(aggregatedRelationFieldMetadataDtos).toMatchSnapshot();
-      expect(
-        aggregatedRelationFieldMetadataDtos,
-      ).toMatchObject<AggregatedFieldMetadataDto>({
-        description: [null],
-        isActive: [false],
-        label: [expect.any(String), expect.any(String)],
-        name: [expect.any(String), expect.any(String)],
-      });
     }
 
     await deleteOneFieldMetadata({

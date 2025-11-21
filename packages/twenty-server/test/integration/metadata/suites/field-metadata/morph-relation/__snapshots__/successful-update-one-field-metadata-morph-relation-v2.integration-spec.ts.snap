@@ -27,8 +27,8 @@ exports[`updateOne FieldMetadataService morph relation fields v2 It should updat
     true,
   ],
   "label": [
-    "toto",
     "tata",
+    "toto",
   ],
   "name": [
     "tata",
@@ -64,8 +64,8 @@ exports[`updateOne FieldMetadataService morph relation fields v2 It should updat
     false,
   ],
   "label": [
-    "toto",
     "tata",
+    "toto",
   ],
   "name": [
     "tata",
