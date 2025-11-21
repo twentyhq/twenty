@@ -7,7 +7,7 @@ import { useLoadRecordIndexBoardColumn } from '@/object-record/record-index/hook
 import { isRecordIndexBoardColumnLoadingFamilyState } from '@/object-record/states/isRecordBoardColumnLoadingFamilyState';
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
 
-export const RecordIndexBoardColumnLoaderEffect = ({
+export const RecordIndexBoardColumnFetchMoreEffect = ({
   columnId,
 }: {
   columnId: string;

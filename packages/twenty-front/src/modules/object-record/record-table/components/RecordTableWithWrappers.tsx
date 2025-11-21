@@ -1,4 +1,5 @@
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { RecordTable } from '@/object-record/record-table/components/RecordTable';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
@@ -67,6 +68,7 @@ export const RecordTableWithWrappers = ({
           >
             <RecordUpdateContext.Provider value={updateRecordMutation}>
               <RecordTable />
+              <RecordIndexTableContainerEffect />
             </RecordUpdateContext.Provider>
           </ScrollWrapper>
         </EntityDeleteContext.Provider>
