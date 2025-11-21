@@ -10,7 +10,6 @@ type UseGaugeChartTooltipProps = {
   label: string;
   colorScheme: GraphColorScheme;
   formatOptions: GraphValueFormatOptions;
-  to?: string;
 };
 
 export const useGaugeChartTooltip = ({
@@ -19,7 +18,6 @@ export const useGaugeChartTooltip = ({
   label,
   colorScheme,
   formatOptions,
-  to,
 }: UseGaugeChartTooltipProps) => {
   const createTooltipData = () => {
     // Format value based on display type to avoid redundant percentage display
@@ -37,7 +35,6 @@ export const useGaugeChartTooltip = ({
         value,
         dotColor: colorScheme.solid,
       },
-      linkTo: to,
     };
   };
 

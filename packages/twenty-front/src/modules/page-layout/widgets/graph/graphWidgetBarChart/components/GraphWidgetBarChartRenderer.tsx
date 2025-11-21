@@ -1,10 +1,16 @@
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
+import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
+import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
+import { type ComputedDatum } from '@nivo/bar';
 import { lazy, Suspense } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import {
   type BarChartConfiguration,
   type PageLayoutWidget,
@@ -34,11 +40,13 @@ export const GraphWidgetBarChartRenderer = ({
     layout,
     loading,
     hasTooManyGroups,
+    objectMetadataItem,
   } = useGraphBarChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration as BarChartConfiguration,
   });
 
+  const navigate = useNavigate();
   const configuration = widget.configuration as BarChartConfiguration;
 
   const hasGroupByOnSecondaryAxis = isDefined(
@@ -53,6 +61,24 @@ export const GraphWidgetBarChartRenderer = ({
     configuration.rangeMax,
     configuration.omitNullValues,
   );
+
+  const indexViewId = useRecoilValue(
+    coreIndexViewIdFromObjectMetadataItemFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
+  );
+
+  const handleBarClick = (_datum: ComputedDatum<BarChartDataItem>) => {
+    return navigate(
+      getAppPath(
+        AppPath.RecordIndexPage,
+        {
+          objectNamePlural: objectMetadataItem.namePlural,
+        },
+        isDefined(indexViewId) ? { viewId: indexViewId } : undefined,
+      ),
+    );
+  };
 
   if (loading) {
     return <ChartSkeletonLoader />;
@@ -79,6 +105,7 @@ export const GraphWidgetBarChartRenderer = ({
         rangeMin={configuration.rangeMin ?? undefined}
         rangeMax={configuration.rangeMax ?? undefined}
         omitNullValues={configuration.omitNullValues ?? false}
+        onBarClick={handleBarClick}
       />
     </Suspense>
   );

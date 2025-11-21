@@ -7,7 +7,6 @@ export const graphWidgetLineTooltipComponentState = createComponentState<{
   offsetLeft: number;
   offsetTop: number;
   highlightedSeriesId: string;
-  linkTo: string | undefined;
 } | null>({
   key: 'graphWidgetLineTooltipComponentState',
   defaultValue: null,
