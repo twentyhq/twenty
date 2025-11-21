@@ -34,9 +34,6 @@ const StyledCornerIconWrapper = styled.div<{
 
   & svg {
     color: transparent;
-  }
-
-  svg {
     flex-shrink: 0;
     pointer-events: none;
     transform: ${({ position, theme }) => {
