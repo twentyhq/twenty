@@ -10,12 +10,12 @@ import {
   type EachTestingContext,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 
 const findFieldMetadata = async ({
   fieldMetadataId,
@@ -260,6 +260,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
     const morphParentObject = objects.find(
       (object) => object.id === createdObjectMetadataOpportunityId,
     );
+
     jestExpectToBeDefined(morphParentObject);
 
     for (const {
@@ -298,6 +299,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
               indexField.fieldMetadataId == sourceFieldMetadata.id,
           ),
       );
+
       expect(parentRelationIndex.length).toBe(0);
     }
 
@@ -321,6 +323,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
     const morphParentObjectAfterUpdate = objects.find(
       (object) => object.id === createdObjectMetadataOpportunityId,
     );
+
     jestExpectToBeDefined(morphParentObjectAfterUpdate);
     for (const {
       targetObjectMetadata,
@@ -364,6 +367,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
               indexField.fieldMetadataId == sourceFieldMetadata.id,
           ),
         );
+
       expect(parentRelationIndex.length).toBe(0);
     }
   });
@@ -394,6 +398,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
     const morphParentObject = objects.find(
       (object) => object.id === createdObjectMetadataOpportunityId,
     );
+
     jestExpectToBeDefined(morphParentObject);
 
     for (const {
@@ -404,6 +409,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       const relatedObject = objects.find(
         (object) => object.id === targetObjectMetadata.id,
       );
+
       jestExpectToBeDefined(relatedObject);
 
       const objectRelatedIndexes = relatedObject.indexMetadataList.filter(
@@ -413,6 +419,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
               indexField.fieldMetadataId === targetFieldMetadata.id,
           ),
       );
+
       expect(objectRelatedIndexes.length).toBe(0);
 
       const parentRelationIndex = morphParentObject.indexMetadataList.filter(
@@ -425,6 +432,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
 
       expect(parentRelationIndex.length).toBe(1);
       const [relationIndex] = parentRelationIndex;
+
       relationIndexByFieldId[
         relationIndex.indexFieldMetadataList[0].fieldMetadataId
       ] = relationIndex;
@@ -450,6 +458,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
     const morphParentObjectAfterUpdate = objects.find(
       (object) => object.id === createdObjectMetadataOpportunityId,
     );
+
     jestExpectToBeDefined(morphParentObjectAfterUpdate);
 
     for (const {
@@ -460,6 +469,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       const relatedObject = updatedObjects.find(
         (object) => object.id === targetObjectMetadata.id,
       );
+
       jestExpectToBeDefined(relatedObject);
 
       const objectRelatedIndexes = relatedObject.indexMetadataList.filter(
@@ -469,6 +479,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
               indexField.fieldMetadataId === targetFieldMetadata.id,
           ),
       );
+
       expect(objectRelatedIndexes.length).toBe(0);
 
       const parentRelationIndex =
@@ -478,10 +489,12 @@ describe('Rename an object metadata with morph relation should succeed', () => {
               indexField.fieldMetadataId == sourceFieldMetadata.id,
           ),
         );
+
       expect(parentRelationIndex.length).toBe(1);
 
       const [relationIndex] = parentRelationIndex;
       const previousIndex = relationIndexByFieldId[sourceFieldMetadata.id];
+
       expect(previousIndex.name).toBe(relationIndex.name);
     }
   });
