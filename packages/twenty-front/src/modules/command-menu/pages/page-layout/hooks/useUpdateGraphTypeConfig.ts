@@ -75,6 +75,52 @@ export const useUpdateGraphTypeConfig = ({
           }
         }
 
+        const isPieChart = graphType === GraphType.PIE;
+        const wasBarOrLineChart =
+          configuration.__typename === 'BarChartConfiguration' ||
+          configuration.__typename === 'LineChartConfiguration';
+        const wasPieChart =
+          configuration.__typename === 'PieChartConfiguration';
+
+        if (isPieChart && wasBarOrLineChart) {
+          if ('primaryAxisGroupByFieldMetadataId' in configuration) {
+            configToUpdate.groupByFieldMetadataId =
+              configuration.primaryAxisGroupByFieldMetadataId;
+          }
+          if ('primaryAxisGroupBySubFieldName' in configuration) {
+            configToUpdate.groupBySubFieldName =
+              configuration.primaryAxisGroupBySubFieldName;
+          }
+          if ('primaryAxisDateGranularity' in configuration) {
+            configToUpdate.dateGranularity =
+              configuration.primaryAxisDateGranularity;
+          }
+          if ('primaryAxisOrderBy' in configuration) {
+            configToUpdate.orderBy = configuration.primaryAxisOrderBy;
+          }
+        } else if (
+          (graphType === GraphType.VERTICAL_BAR ||
+            graphType === GraphType.HORIZONTAL_BAR ||
+            graphType === GraphType.LINE) &&
+          wasPieChart
+        ) {
+          if ('groupByFieldMetadataId' in configuration) {
+            configToUpdate.primaryAxisGroupByFieldMetadataId =
+              configuration.groupByFieldMetadataId;
+          }
+          if ('groupBySubFieldName' in configuration) {
+            configToUpdate.primaryAxisGroupBySubFieldName =
+              configuration.groupBySubFieldName;
+          }
+          if ('dateGranularity' in configuration) {
+            configToUpdate.primaryAxisDateGranularity =
+              configuration.dateGranularity;
+          }
+          if ('orderBy' in configuration) {
+            configToUpdate.primaryAxisOrderBy = configuration.orderBy;
+          }
+        }
+
         const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
         const currentlyEditingWidgetId = snapshot
           .getLoadable(currentlyEditingWidgetIdState)
