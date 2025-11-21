@@ -5,6 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   ObjectRecordGroupByDateGranularity,
   ViewFilterOperand,
+  type FilterableAndTSVectorFieldType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -32,6 +33,97 @@ const isTimeRangeDateGranularity = (
     ObjectRecordGroupByDateGranularity.QUARTER,
     ObjectRecordGroupByDateGranularity.YEAR,
   ].includes(granularity);
+};
+
+const selectChartFilterOperand = (
+  fieldType: FilterableAndTSVectorFieldType,
+  subFieldName?: string | null,
+): ViewFilterOperand => {
+  const textLikeFields: FilterableAndTSVectorFieldType[] = [
+    'TEXT',
+    'FULL_NAME',
+    'EMAILS',
+    'PHONES',
+    'LINKS',
+    'RAW_JSON',
+  ];
+
+  const containsJsonArrayFields: FilterableAndTSVectorFieldType[] = [
+    'MULTI_SELECT',
+    'ARRAY',
+  ];
+
+  const isOperandFields: FilterableAndTSVectorFieldType[] = [
+    'SELECT',
+    'BOOLEAN',
+    'NUMBER',
+    'RATING',
+    'UUID',
+    'RELATION',
+  ];
+
+  if (fieldType === 'CURRENCY') {
+    if (subFieldName === 'currencyCode') {
+      return ViewFilterOperand.IS;
+    }
+    return ViewFilterOperand.IS;
+  }
+
+  if (fieldType === 'ADDRESS') {
+    if (subFieldName === 'addressCountry') {
+      return ViewFilterOperand.IS;
+    }
+    return ViewFilterOperand.CONTAINS;
+  }
+
+  if (fieldType === 'ACTOR') {
+    if (subFieldName === 'source') {
+      return ViewFilterOperand.IS;
+    }
+    return ViewFilterOperand.CONTAINS;
+  }
+
+  if (textLikeFields.includes(fieldType)) {
+    return ViewFilterOperand.CONTAINS;
+  }
+
+  if (containsJsonArrayFields.includes(fieldType)) {
+    return ViewFilterOperand.CONTAINS;
+  }
+
+  if (isOperandFields.includes(fieldType)) {
+    return ViewFilterOperand.IS;
+  }
+
+  return ViewFilterOperand.IS;
+};
+
+const formatChartFilterValue = (
+  fieldType: FieldMetadataType,
+  bucketRawValue: unknown,
+  operand: ViewFilterOperand,
+  subFieldName?: string | null,
+): string => {
+  const stringValue = String(bucketRawValue);
+
+  const needsJsonArray =
+    (operand === ViewFilterOperand.IS &&
+      [
+        FieldMetadataType.SELECT,
+        FieldMetadataType.UUID,
+        FieldMetadataType.RELATION,
+      ].includes(fieldType)) ||
+    (operand === ViewFilterOperand.CONTAINS &&
+      [FieldMetadataType.MULTI_SELECT, FieldMetadataType.ARRAY].includes(
+        fieldType,
+      )) ||
+    (fieldType === FieldMetadataType.CURRENCY &&
+      subFieldName === 'currencyCode') ||
+    (fieldType === FieldMetadataType.ADDRESS &&
+      subFieldName === 'addressCountry') ||
+    (fieldType === FieldMetadataType.ACTOR && subFieldName === 'source');
+
+  return needsJsonArray ? JSON.stringify([stringValue]) : stringValue;
 };
 
 export const buildFilterFromChartBucket = ({
@@ -100,202 +192,35 @@ export const buildFilterFromChartBucket = ({
     return [];
   }
 
-  switch (fieldMetadataItem.type) {
-    case FieldMetadataType.SELECT:
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.IS,
-          value: JSON.stringify([String(bucketRawValue)]),
-        },
-      ];
+  const nonFilterableTypes = [
+    FieldMetadataType.POSITION,
+    FieldMetadataType.MORPH_RELATION,
+    FieldMetadataType.TS_VECTOR,
+    FieldMetadataType.RICH_TEXT,
+    FieldMetadataType.RICH_TEXT_V2,
+  ];
 
-    case FieldMetadataType.MULTI_SELECT:
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.CONTAINS,
-          value: JSON.stringify([String(bucketRawValue)]),
-        },
-      ];
-
-    case FieldMetadataType.TEXT:
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.CONTAINS,
-          value: String(bucketRawValue),
-        },
-      ];
-
-    case FieldMetadataType.BOOLEAN:
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.IS,
-          value: String(bucketRawValue),
-        },
-      ];
-
-    case FieldMetadataType.NUMBER:
-    case FieldMetadataType.NUMERIC:
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.IS,
-          value: String(bucketRawValue),
-        },
-      ];
-
-    case FieldMetadataType.RATING:
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.IS,
-          value: String(bucketRawValue),
-        },
-      ];
-
-    case FieldMetadataType.UUID:
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.IS,
-          value: JSON.stringify([String(bucketRawValue)]),
-        },
-      ];
-
-    case FieldMetadataType.CURRENCY:
-      if (isNonEmptyString(subFieldName) && subFieldName === 'currencyCode') {
-        return [
-          {
-            fieldName,
-            operand: ViewFilterOperand.IS,
-            value: JSON.stringify([String(bucketRawValue)]),
-          },
-        ];
-      }
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.IS,
-          value: String(bucketRawValue),
-        },
-      ];
-
-    case FieldMetadataType.FULL_NAME:
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.CONTAINS,
-          value: String(bucketRawValue),
-        },
-      ];
-
-    case FieldMetadataType.EMAILS:
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.CONTAINS,
-          value: String(bucketRawValue),
-        },
-      ];
-
-    case FieldMetadataType.PHONES:
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.CONTAINS,
-          value: String(bucketRawValue),
-        },
-      ];
-
-    case FieldMetadataType.LINKS:
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.CONTAINS,
-          value: String(bucketRawValue),
-        },
-      ];
-
-    case FieldMetadataType.ADDRESS:
-      if (isNonEmptyString(subFieldName) && subFieldName === 'addressCountry') {
-        return [
-          {
-            fieldName,
-            operand: ViewFilterOperand.IS,
-            value: JSON.stringify([String(bucketRawValue)]),
-          },
-        ];
-      }
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.CONTAINS,
-          value: String(bucketRawValue),
-        },
-      ];
-
-    case FieldMetadataType.ACTOR:
-      if (isNonEmptyString(subFieldName) && subFieldName === 'source') {
-        return [
-          {
-            fieldName,
-            operand: ViewFilterOperand.IS,
-            value: JSON.stringify([String(bucketRawValue)]),
-          },
-        ];
-      }
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.CONTAINS,
-          value: String(bucketRawValue),
-        },
-      ];
-
-    case FieldMetadataType.ARRAY:
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.CONTAINS,
-          value: JSON.stringify([String(bucketRawValue)]),
-        },
-      ];
-
-    case FieldMetadataType.RAW_JSON:
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.CONTAINS,
-          value: String(bucketRawValue),
-        },
-      ];
-
-    case FieldMetadataType.RELATION:
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.IS,
-          value: JSON.stringify([String(bucketRawValue)]),
-        },
-      ];
-
-    case FieldMetadataType.POSITION:
-    case FieldMetadataType.MORPH_RELATION:
-    case FieldMetadataType.TS_VECTOR:
-    case FieldMetadataType.RICH_TEXT:
-    case FieldMetadataType.RICH_TEXT_V2:
-      return [];
-
-    default:
-      return [
-        {
-          fieldName,
-          operand: ViewFilterOperand.IS,
-          value: String(bucketRawValue),
-        },
-      ];
+  if (nonFilterableTypes.includes(fieldMetadataItem.type)) {
+    return [];
   }
+
+  const operand = selectChartFilterOperand(
+    fieldMetadataItem.type as FilterableAndTSVectorFieldType,
+    subFieldName,
+  );
+
+  const value = formatChartFilterValue(
+    fieldMetadataItem.type,
+    bucketRawValue,
+    operand,
+    subFieldName,
+  );
+
+  return [
+    {
+      fieldName,
+      operand,
+      value,
+    },
+  ];
 };
