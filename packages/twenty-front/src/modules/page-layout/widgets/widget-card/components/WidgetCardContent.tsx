@@ -1,13 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { type ReactNode } from 'react';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
-
-export type WidgetCardContentProps = {
-  children?: ReactNode;
-  variant: WidgetCardVariant;
-  className?: string;
-};
 
 const StyledWidgetCardContent = styled.div<{ variant: WidgetCardVariant }>`
   align-items: center;
@@ -18,19 +11,6 @@ const StyledWidgetCardContent = styled.div<{ variant: WidgetCardVariant }>`
   box-sizing: border-box;
 
   ${({ theme, variant }) => {
-    if (variant === 'canvas') {
-      return css`
-        padding: 0;
-      `;
-    }
-
-    if (variant === 'side-column') {
-      return css`
-        border: none;
-        padding: 0;
-      `;
-    }
-
     if (variant === 'dashboard') {
       return css`
         padding: ${theme.spacing(2)};

@@ -27,26 +27,14 @@ const StyledWidgetCard = styled.div<{
     isResizing,
     onClick,
   }) => {
-    if (variant === 'canvas') {
-      return css`
-        height: 100%;
-      `;
-    }
-
     if (variant === 'side-column' && !isEditable) {
       return css`
-        border: none;
-        padding: 0;
-        border-radius: 0;
         background: ${theme.background.secondary};
       `;
     }
 
     if (variant === 'side-column' && isEditable) {
       return css`
-        border: none;
-        padding: 0;
-        border-radius: 0;
         background: ${theme.background.secondary};
 
         ${!isDragging &&
