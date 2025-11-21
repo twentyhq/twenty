@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`compareTwoFlatEntity It should detect flat field metadata isActive diff from true to false 1`] = `
+[
+  {
+    "from": true,
+    "property": "isActive",
+    "to": false,
+  },
+]
+`;
+
+exports[`compareTwoFlatEntity It should detect flat field metadata isActive diff from true to false 2`] = `
+[
+  {
+    "from": false,
+    "property": "isActive",
+    "to": true,
+  },
+]
+`;
