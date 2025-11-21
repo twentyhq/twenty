@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/applicationVariable/dtos/application-variable.dto';
@@ -27,6 +27,14 @@ export class ApplicationDTO {
   @Field()
   version: string;
 
+  @IsString()
+  @Field()
+  universalIdentifier: string;
+
+  @Field(() => Boolean)
+  @IsBoolean()
+  canBeUninstalled: boolean;
+
   @Field(() => [AgentDTO])
   agents: AgentDTO[];
 
@@ -38,8 +46,4 @@ export class ApplicationDTO {
 
   @Field(() => [ApplicationVariableEntityDTO])
   applicationVariables: ApplicationVariableEntityDTO[];
-
-  @IsString()
-  @Field()
-  universalIdentifier: string;
 }

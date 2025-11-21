@@ -8,6 +8,7 @@ export const TWENTY_STANDARD_APPLICATION = {
   version: '1.0.0',
   sourcePath: 'cli-sync',
   sourceType: 'local',
+  canBeUninstalled: false,
 } as const satisfies CreateApplicationInput;
 
 export type CreateApplicationInput = Omit<
@@ -24,5 +25,3 @@ export type CreateApplicationInput = Omit<
   | 'objects'
   | 'serverlessFunctions'
 >;
-export type TwentyStandardApplicationUniversalIdentifiers =
-  (typeof TWENTY_STANDARD_APPLICATION)['universalIdentifier'];

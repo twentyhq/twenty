@@ -217,6 +217,7 @@ export type Application = {
   __typename?: 'Application';
   agents: Array<Agent>;
   applicationVariables: Array<ApplicationVariable>;
+  canBeUninstalled: Scalars['Boolean'];
   description: Scalars['String'];
   id: Scalars['UUID'];
   name: Scalars['String'];

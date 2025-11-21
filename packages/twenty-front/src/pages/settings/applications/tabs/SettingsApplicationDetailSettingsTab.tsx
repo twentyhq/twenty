@@ -77,34 +77,38 @@ export const SettingsApplicationDetailSettingsTab = ({
           })
         }
       />
-      <Section>
-        <H2Title
-          title={t`Danger zone`}
-          description={t`Uninstall this integration`}
-        />
-        <Button
-          accent="danger"
-          variant="secondary"
-          title={t`Uninstall`}
-          Icon={IconTrash}
-          onClick={() => openModal(UNINSTALL_APPLICATION_MODAL_ID)}
-        />
-      </Section>
-      <ConfirmationModal
-        confirmationPlaceholder={confirmationValue}
-        confirmationValue={confirmationValue}
-        modalId={UNINSTALL_APPLICATION_MODAL_ID}
-        title={t`Uninstall Application?`}
-        subtitle={
-          <Trans>
-            Please type {`"${confirmationValue}"`} to confirm you want to
-            uninstall this application.
-          </Trans>
-        }
-        onConfirmClick={handleUninstallApplication}
-        confirmButtonText={t`Uninstall`}
-        loading={isLoading}
-      />
+      {application.canBeUninstalled && (
+        <>
+          <Section>
+            <H2Title
+              title={t`Danger zone`}
+              description={t`Uninstall this integration`}
+            />
+            <Button
+              accent="danger"
+              variant="secondary"
+              title={t`Uninstall`}
+              Icon={IconTrash}
+              onClick={() => openModal(UNINSTALL_APPLICATION_MODAL_ID)}
+            />
+          </Section>
+          <ConfirmationModal
+            confirmationPlaceholder={confirmationValue}
+            confirmationValue={confirmationValue}
+            modalId={UNINSTALL_APPLICATION_MODAL_ID}
+            title={t`Uninstall Application?`}
+            subtitle={
+              <Trans>
+                Please type {`"${confirmationValue}"`} to confirm you want to
+                uninstall this application.
+              </Trans>
+            }
+            onConfirmClick={handleUninstallApplication}
+            confirmButtonText={t`Uninstall`}
+            loading={isLoading}
+          />
+        </>
+      )}
     </>
   );
 };

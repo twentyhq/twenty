@@ -959,6 +959,13 @@ export class ApplicationSyncService {
       );
     }
 
+    if (!application.canBeUninstalled) {
+      throw new ApplicationException(
+        'This application cannot be uninstalled.',
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
+
     const flatObjectMetadataMapsByApplicationId =
       getFlatEntitiesByApplicationId(
         existingFlatObjectMetadataMaps,
