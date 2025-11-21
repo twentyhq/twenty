@@ -8,9 +8,11 @@ import { usePersistView } from '@/views/hooks/internal/usePersistView';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
-import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
-import { findById, isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  upsertIntoArrayOfObjectsComparingId,
+} from 'twenty-shared/utils';
 import { type CoreView } from '~/generated/graphql';
 
 export const useUpdateViewAggregate = () => {
@@ -65,19 +67,10 @@ export const useUpdateViewAggregate = () => {
           }
 
           set(coreViewsState, (currentCoreViews) =>
-            produce(currentCoreViews, (draftCoreViews) => {
-              const correspondingCoreViewIndex = currentCoreViews.findIndex(
-                findById(updatedCoreView.id),
-              );
-
-              if (correspondingCoreViewIndex === -1) {
-                draftCoreViews.push(updatedCoreView);
-              } else {
-                draftCoreViews[correspondingCoreViewIndex] = updatedCoreView;
-              }
-
-              return draftCoreViews;
-            }),
+            upsertIntoArrayOfObjectsComparingId(
+              currentCoreViews,
+              updatedCoreView,
+            ),
           );
 
           const updatedView = convertCoreViewToView(updatedCoreView);

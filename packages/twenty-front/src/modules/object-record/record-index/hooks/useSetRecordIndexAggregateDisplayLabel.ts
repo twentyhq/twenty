@@ -6,7 +6,7 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { useRecoilCallback } from 'recoil';
 
 export const useSetRecordIndexAggregateDisplayLabel = () => {
-  const recordIndexAggregateValueByGroupValueCallbackState =
+  const recordIndexAggregateDisplayLabelCallbackState =
     useRecoilComponentCallbackState(
       recordIndexAggregateDisplayLabelComponentState,
     );
@@ -23,9 +23,9 @@ export const useSetRecordIndexAggregateDisplayLabel = () => {
             recordIndexGroupAggregateFieldMetadataItem,
         });
 
-        set(recordIndexAggregateValueByGroupValueCallbackState, aggregateLabel);
+        set(recordIndexAggregateDisplayLabelCallbackState, aggregateLabel);
       },
-    [recordIndexAggregateValueByGroupValueCallbackState],
+    [recordIndexAggregateDisplayLabelCallbackState],
   );
 
   return {
