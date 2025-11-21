@@ -4,7 +4,7 @@ import inquirer from 'inquirer';
 import { join } from 'path';
 import camelcase from 'lodash.camelcase';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
-import { getObjectMetadataDecoratedClass } from '../utils/get-object-metadata-decorated-class';
+import { getObjectDecoratedClass } from 'src/utils/get-object-decorated-class';
 import { getServerlessFunctionBaseFile } from '../utils/get-serverless-function-base-file';
 import { convertToLabel } from '../utils/convert-to-label';
 
@@ -34,7 +34,7 @@ export class AppAddCommand {
 
         const objectFileName = `${camelcase(name)}.ts`;
 
-        const decoratedObject = getObjectMetadataDecoratedClass({
+        const decoratedObject = getObjectDecoratedClass({
           data: entityData,
           name,
         });

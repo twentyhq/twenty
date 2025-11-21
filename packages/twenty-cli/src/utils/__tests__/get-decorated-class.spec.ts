@@ -1,8 +1,8 @@
-import { getObjectMetadataDecoratedClass } from '../../utils/get-object-metadata-decorated-class';
+import { getObjectDecoratedClass } from 'src/utils/get-object-decorated-class';
 
 describe('getDecoratedClass', () => {
   it('should return properly formatted class', () => {
-    const result = getObjectMetadataDecoratedClass({
+    const result = getObjectDecoratedClass({
       data: { nameSingular: 'Name', namePlural: 'Names' },
       name: 'MyNewObject',
     });
