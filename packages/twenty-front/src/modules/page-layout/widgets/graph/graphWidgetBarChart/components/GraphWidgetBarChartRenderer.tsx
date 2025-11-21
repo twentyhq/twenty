@@ -3,8 +3,14 @@ import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/gr
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
-import { lazy, Suspense } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
+import { type ComputedDatum } from '@nivo/bar';
+import { lazy, Suspense, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import {
   type BarChartConfiguration,
   type PageLayoutWidget,
@@ -34,11 +40,13 @@ export const GraphWidgetBarChartRenderer = ({
     layout,
     loading,
     hasTooManyGroups,
+    objectMetadataItem,
   } = useGraphBarChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration as BarChartConfiguration,
   });
 
+  const navigate = useNavigate();
   const configuration = widget.configuration as BarChartConfiguration;
 
   const hasGroupByOnSecondaryAxis = isDefined(
@@ -52,6 +60,27 @@ export const GraphWidgetBarChartRenderer = ({
     configuration.rangeMin,
     configuration.rangeMax,
     configuration.omitNullValues,
+  );
+
+  const indexViewId = useRecoilValue(
+    coreIndexViewIdFromObjectMetadataItemFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
+  );
+
+  const handleBarClick = useCallback(
+    (_datum: ComputedDatum<BarChartDataItem>) => {
+      navigate(
+        getAppPath(
+          AppPath.RecordIndexPage,
+          {
+            objectNamePlural: objectMetadataItem.namePlural,
+          },
+          indexViewId ? { viewId: indexViewId } : undefined,
+        ),
+      );
+    },
+    [navigate, objectMetadataItem.namePlural, indexViewId],
   );
 
   if (loading) {
@@ -79,6 +108,7 @@ export const GraphWidgetBarChartRenderer = ({
         rangeMin={configuration.rangeMin ?? undefined}
         rangeMax={configuration.rangeMax ?? undefined}
         omitNullValues={configuration.omitNullValues ?? false}
+        onBarClick={handleBarClick}
       />
     </Suspense>
   );

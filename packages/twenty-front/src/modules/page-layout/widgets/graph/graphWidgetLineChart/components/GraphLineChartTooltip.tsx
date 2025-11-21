@@ -4,13 +4,16 @@ import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graphW
 import { getLineChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartTooltipData';
 import { getTooltipReferenceFromLineChartPointAnchor } from '@/page-layout/widgets/graph/utils/getTooltipReferenceFromLineChartPointAnchor';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type LineSeries, type Point } from '@nivo/line';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 type GraphLineChartTooltipProps = {
   containerId: string;
   enrichedSeries: LineChartEnrichedSeries[];
   formatOptions: GraphValueFormatOptions;
+  onSliceClick?: (point: Point<LineSeries>) => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 };
@@ -19,12 +22,25 @@ export const GraphLineChartTooltip = ({
   containerId,
   enrichedSeries,
   formatOptions,
+  onSliceClick,
   onMouseEnter,
   onMouseLeave,
 }: GraphLineChartTooltipProps) => {
   const tooltipState = useRecoilComponentValue(
     graphWidgetLineTooltipComponentState,
   );
+
+  const handleTooltipClick = useCallback(() => {
+    if (isDefined(tooltipState) && isDefined(onSliceClick)) {
+      const highlightedPoint = tooltipState.slice.points.find(
+        (point) => String(point.seriesId) === tooltipState.highlightedSeriesId,
+      );
+      if (isDefined(highlightedPoint)) {
+        onSliceClick(highlightedPoint);
+      }
+    }
+  }, [tooltipState, onSliceClick]);
+
   const tooltipData = !isDefined(tooltipState)
     ? null
     : getLineChartTooltipData({
@@ -66,7 +82,9 @@ export const GraphLineChartTooltip = ({
       items={tooltipData.items}
       indexLabel={tooltipData.indexLabel}
       highlightedKey={tooltipState?.highlightedSeriesId}
-      linkTo={tooltipState?.linkTo}
+      onGraphWidgetTooltipClick={
+        isDefined(onSliceClick) ? handleTooltipClick : undefined
+      }
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     />
