@@ -8,10 +8,10 @@ import {
   type EachTestingContext,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
-
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 const allTestsUseCases: EachTestingContext<{
   nameSingular: string;
@@ -230,6 +230,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       createdObjectMetadataPersonId,
       createdObjectMetadataCompanyId,
     ].map((searchId) => objects.find((el) => el.id === searchId));
+
     jestExpectToBeDefined(objectMetadataOpportunityDto);
     jestExpectToBeDefined(objectMetadataPersonDto);
     jestExpectToBeDefined(objectMetadataCompanyDto);
