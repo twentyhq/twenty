@@ -9,7 +9,7 @@ import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndef
 
 type RecordTitleCellTextFieldInputProps = {
   instanceId: string;
-  sizeVariant?: 'xs' | 'md';
+  sizeVariant?: 'xs' | 'sm' | 'md';
 };
 
 export const RecordTitleCellTextFieldInput = ({

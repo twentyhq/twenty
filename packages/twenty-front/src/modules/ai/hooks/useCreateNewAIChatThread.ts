@@ -10,7 +10,7 @@ export const useCreateNewAIChatThread = () => {
   const [createChatThread] = useCreateChatThreadMutation({
     onCompleted: (data) => {
       setCurrentAIChatThread(data.createChatThread.id);
-      openAskAIPage();
+      openAskAIPage({ resetNavigationStack: false });
     },
   });
 

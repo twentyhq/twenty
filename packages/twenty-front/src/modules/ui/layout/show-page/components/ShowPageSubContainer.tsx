@@ -20,6 +20,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import React from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledShowPageRightContainer = styled.div`
   display: flex;
@@ -44,12 +45,23 @@ const StyledTabList = styled(TabList)`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
+const StyledContentContainer = styled.div<{
+  isInRightDrawer: boolean;
+}>`
+  background: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? theme.background.secondary : theme.background.primary};
+  border: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? `1px solid ${theme.border.color.light}` : 'none'};
+  border-radius: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? theme.border.radius.md : '0'};
   flex: 1;
+  margin: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? theme.spacing(3) : '0'};
   overflow-y: auto;
-  background: ${({ theme }) => theme.background.primary};
-  padding-bottom: ${({ theme, isInRightDrawer }) =>
-    isInRightDrawer ? theme.spacing(16) : 0};
+
+  .scroll-wrapper-y-enabled {
+    height: auto;
+  }
 `;
 
 type ShowPageSubContainerProps = {
@@ -109,6 +121,8 @@ export const ShowPageSubContainer = ({
 
   const visibleTabs = tabs.filter((tab) => !tab.hide);
 
+  const isInCommandMenu = isDefined(commandMenuPageComponentInstance);
+
   const displaySummaryAndFields =
     layout && !layout.hideSummaryAndFields && !isMobile && !isInRightDrawer;
 
@@ -132,7 +146,7 @@ export const ShowPageSubContainer = ({
             componentInstanceId={tabListComponentId}
           />
         </StyledTabListContainer>
-        {(isMobile || isInRightDrawer) && summaryCard}
+        {(isMobile || isInRightDrawer) && !isInCommandMenu && summaryCard}
         <StyledContentContainer isInRightDrawer={isInRightDrawer}>
           {renderActiveTabContent()}
         </StyledContentContainer>

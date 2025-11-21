@@ -64,6 +64,7 @@ export const WorkflowDiagramEmptyTriggerReadonly = () => {
       workflowVersionId: workflowVisualizerWorkflowVersionId,
       title: t`Add a Trigger`,
       icon: getIcon(null),
+      stepId: TRIGGER_STEP_ID,
     });
   };
 

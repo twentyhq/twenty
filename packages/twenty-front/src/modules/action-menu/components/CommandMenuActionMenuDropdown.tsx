@@ -66,7 +66,11 @@ export const CommandMenuActionMenuDropdown = () => {
       dropdownId={dropdownId}
       data-select-disable
       clickableComponent={
-        <Button title={t`Options`} hotkeys={[getOsControlSymbol(), 'O']} />
+        <Button
+          size="small"
+          title={t`Options`}
+          hotkeys={[getOsControlSymbol(), 'O']}
+        />
       }
       dropdownPlacement="top-end"
       dropdownOffset={{ y: parseInt(theme.spacing(2), 10) }}

@@ -11,6 +11,7 @@ type NavigatePageLayoutCommandMenuProps = {
   pageTitle?: string;
   pageIcon?: IconComponent;
   focusTitleInput?: boolean;
+  resetNavigationStack?: boolean;
 };
 
 export const useNavigatePageLayoutCommandMenu = () => {
@@ -22,6 +23,7 @@ export const useNavigatePageLayoutCommandMenu = () => {
       pageTitle,
       pageIcon,
       focusTitleInput = false,
+      resetNavigationStack = false,
     }: NavigatePageLayoutCommandMenuProps) => {
       navigateCommandMenu({
         page: commandMenuPage,
@@ -32,6 +34,7 @@ export const useNavigatePageLayoutCommandMenu = () => {
           ? pageIcon
           : getPageLayoutIcon(commandMenuPage),
         focusTitleInput,
+        resetNavigationStack,
       });
     };
   }, [navigateCommandMenu]);

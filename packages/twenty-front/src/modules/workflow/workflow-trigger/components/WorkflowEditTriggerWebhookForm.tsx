@@ -1,5 +1,4 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -12,10 +11,6 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WEBHOOK_TRIGGER_AUTHENTICATION_OPTIONS } from '@/workflow/workflow-trigger/constants/WebhookTriggerAuthenticationOptions';
 import { WEBHOOK_TRIGGER_HTTP_METHOD_OPTIONS } from '@/workflow/workflow-trigger/constants/WebhookTriggerHttpMethodOptions';
-import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
-import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
-import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
-import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { getWebhookTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getWebhookTriggerDefaultSettings';
 import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -26,7 +21,7 @@ import {
   buildOutputSchemaFromValue,
   TRIGGER_STEP_ID,
 } from 'twenty-shared/workflow';
-import { IconCopy, useIcons } from 'twenty-ui/display';
+import { IconCopy } from 'twenty-ui/display';
 
 import { useDebouncedCallback } from 'use-debounce';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -60,7 +55,6 @@ export const WorkflowEditTriggerWebhookForm = ({
   const { copyToClipboard } = useCopyToClipboard();
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
   const [errorMessagesVisible, setErrorMessagesVisible] = useState(false);
-  const { getIcon } = useIcons();
   const workflowVisualizerWorkflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
   );
@@ -69,11 +63,6 @@ export const WorkflowEditTriggerWebhookForm = ({
   const onBlur = () => {
     setErrorMessagesVisible(true);
   };
-
-  const headerTitle = trigger.name ?? getTriggerDefaultLabel(trigger);
-
-  const headerIcon = getTriggerIcon(trigger);
-  const headerType = getTriggerHeaderType(trigger);
 
   const webhookUrl = `${REACT_APP_SERVER_BASE_URL}/webhooks/workflows/${currentWorkspace?.id}/${workflowVisualizerWorkflowId}`;
   const displayWebhookUrl = webhookUrl.replace(/^(https?:\/\/)?(www\.)?/, '');
@@ -89,27 +78,6 @@ export const WorkflowEditTriggerWebhookForm = ({
 
   return (
     <>
-      <SidePanelHeader
-        onTitleChange={(newName: string) => {
-          if (triggerOptions.readonly === true) {
-            return;
-          }
-
-          triggerOptions.onTriggerUpdate(
-            {
-              ...trigger,
-              name: newName,
-            },
-            { computeOutputSchema: false },
-          );
-        }}
-        Icon={getIcon(headerIcon)}
-        iconColor={getTriggerIconColor({ theme, triggerType: trigger.type })}
-        initialTitle={headerTitle}
-        headerType={headerType}
-        disabled={triggerOptions.readonly}
-        iconTooltip={getTriggerDefaultLabel(trigger)}
-      />
       <WorkflowStepBody>
         <TextInput
           label="Live URL"
