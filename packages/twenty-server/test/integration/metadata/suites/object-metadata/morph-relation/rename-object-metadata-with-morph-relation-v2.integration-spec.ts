@@ -12,8 +12,9 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
-import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
+
+import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
+import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 
 const findFieldMetadata = async ({
@@ -255,6 +256,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
         indexFieldMetadataList: IndexFieldMetadataDTO[];
       }
     > = {};
+
     for (const {
       targetObjectMetadata,
       targetFieldMetadata,
@@ -262,6 +264,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       const relatedObject = objects.find(
         (object) => object.id === targetObjectMetadata.id,
       );
+
       jestExpectToBeDefined(relatedObject);
 
       const objectRelatedIndexes = relatedObject.indexMetadataList.filter(
@@ -271,8 +274,10 @@ describe('Rename an object metadata with morph relation should succeed', () => {
               indexField.fieldMetadataId === targetFieldMetadata.id,
           ),
       );
+
       expect(objectRelatedIndexes.length).toBe(1);
       const [relationIndex] = objectRelatedIndexes;
+
       jestExpectToBeDefined(relationIndex);
       expect(relationIndex).toMatchSnapshot({
         indexType: IndexType.BTREE,
@@ -316,6 +321,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       const relatedObject = updatedObjects.find(
         (object) => object.id === targetObjectMetadata.id,
       );
+
       jestExpectToBeDefined(relatedObject);
 
       const objectRelatedIndexes = relatedObject.indexMetadataList.filter(
@@ -325,8 +331,10 @@ describe('Rename an object metadata with morph relation should succeed', () => {
               indexField.fieldMetadataId === targetFieldMetadata.id,
           ),
       );
+
       expect(objectRelatedIndexes.length).toBe(1);
       const [relationIndex] = objectRelatedIndexes;
+
       jestExpectToBeDefined(relationIndex);
       expect(relationIndex).toMatchSnapshot({
         indexType: IndexType.BTREE,
@@ -343,6 +351,7 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       });
 
       const previousIndex = relationIndexByFieldId[targetFieldMetadata.id];
+
       jestExpectToBeDefined(previousIndex);
       expect(previousIndex.name).not.toBe(relationIndex.name);
     }
