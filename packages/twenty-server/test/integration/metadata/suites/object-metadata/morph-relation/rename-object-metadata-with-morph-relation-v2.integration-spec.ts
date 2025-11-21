@@ -1,3 +1,4 @@
+import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -7,9 +8,10 @@ import {
   type EachTestingContext,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const allTestsUseCases: EachTestingContext<{
   nameSingular: string;
@@ -204,6 +206,123 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       );
     },
   );
+
+  it('should handle morph field related index update after an target object name update', async () => {
+    await createMorphRelationBetweenObjects({
+      name: 'owner',
+      objectMetadataId: createdObjectMetadataOpportunityId,
+      firstTargetObjectMetadataId: createdObjectMetadataPersonId,
+      secondTargetObjectMetadataId: createdObjectMetadataCompanyId,
+      type: FieldMetadataType.MORPH_RELATION,
+      relationType: RelationType.MANY_TO_ONE,
+    });
+
+    const objects = await findManyObjectMetadataWithIndexes({
+      expectToFail: false,
+    });
+
+    const [
+      objectMetadataOpportunityDto,
+      objectMetadataPersonDto,
+      objectMetadataCompanyDto,
+    ] = [
+      createdObjectMetadataOpportunityId,
+      createdObjectMetadataPersonId,
+      createdObjectMetadataCompanyId,
+    ].map((searchId) => objects.find((el) => el.id === searchId));
+    jestExpectToBeDefined(objectMetadataOpportunityDto);
+    jestExpectToBeDefined(objectMetadataPersonDto);
+    jestExpectToBeDefined(objectMetadataCompanyDto);
+
+    expect(objectMetadataOpportunityDto.indexMetadataList)
+      .toMatchInlineSnapshot(`
+[
+  {
+    "indexFieldMetadataList": [
+      {
+        "createdAt": "2025-11-21T10:49:12.687Z",
+        "fieldMetadataId": "1fdcd4ea-874e-4c31-8e46-489ae475d018",
+        "id": "e0464bd2-3353-46da-ad9a-b293466a50f6",
+        "order": 0,
+        "updatedAt": "2025-11-21T10:49:12.687Z",
+      },
+    ],
+    "indexType": "GIN",
+    "isCustom": false,
+    "isUnique": false,
+    "name": "IDX_40200e590d3df92b24ae83562a5",
+  },
+  {
+    "indexFieldMetadataList": [
+      {
+        "createdAt": "2025-11-21T10:49:14.572Z",
+        "fieldMetadataId": "adc67505-8b32-41c5-a091-eb1f5db9eaed",
+        "id": "969cfb65-f315-4dfd-9374-5a1642dcde6f",
+        "order": 0,
+        "updatedAt": "2025-11-21T10:49:14.572Z",
+      },
+    ],
+    "indexType": "BTREE",
+    "isCustom": true,
+    "isUnique": false,
+    "name": "IDX_24ffb84b5e10b297f43de77d3c9",
+  },
+  {
+    "indexFieldMetadataList": [
+      {
+        "createdAt": "2025-11-21T10:49:14.572Z",
+        "fieldMetadataId": "c1ff9c17-e4f1-4a6d-9762-5133e0096395",
+        "id": "99eed91e-45d0-49e5-84dc-008925724a96",
+        "order": 0,
+        "updatedAt": "2025-11-21T10:49:14.572Z",
+      },
+    ],
+    "indexType": "BTREE",
+    "isCustom": true,
+    "isUnique": false,
+    "name": "IDX_bbd1c2c6b957c166e0950044d6c",
+  },
+]
+`);
+    expect(objectMetadataPersonDto.indexMetadataList).toMatchInlineSnapshot(`
+[
+  {
+    "indexFieldMetadataList": [
+      {
+        "createdAt": "2025-11-21T10:49:13.427Z",
+        "fieldMetadataId": "4bf2c306-99e1-435a-8c95-3e286ab39a46",
+        "id": "fd8cd9df-e7e2-4fc3-be0e-55817887aecd",
+        "order": 0,
+        "updatedAt": "2025-11-21T10:49:13.427Z",
+      },
+    ],
+    "indexType": "GIN",
+    "isCustom": false,
+    "isUnique": false,
+    "name": "IDX_71e8260de81b7b73409286e7bc9",
+  },
+]
+`);
+    expect(objectMetadataCompanyDto.indexMetadataList).toMatchInlineSnapshot(`
+[
+  {
+    "indexFieldMetadataList": [
+      {
+        "createdAt": "2025-11-21T10:49:14.299Z",
+        "fieldMetadataId": "d5f6a52d-eab7-4865-a742-9ba5c90061b2",
+        "id": "81d01596-5357-4e74-aa3a-e725d47907d8",
+        "order": 0,
+        "updatedAt": "2025-11-21T10:49:14.299Z",
+      },
+    ],
+    "indexType": "GIN",
+    "isCustom": false,
+    "isUnique": false,
+    "name": "IDX_0fc228563008e8e1b4845918fea",
+  },
+]
+`);
+  });
 });
 
 const findFieldMetadata = async ({
