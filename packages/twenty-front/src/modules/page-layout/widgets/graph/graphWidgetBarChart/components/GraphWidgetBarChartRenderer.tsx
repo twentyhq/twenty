@@ -75,7 +75,7 @@ export const GraphWidgetBarChartRenderer = ({
         {
           objectNamePlural: objectMetadataItem.namePlural,
         },
-        indexViewId ? { viewId: indexViewId } : undefined,
+        isDefined(indexViewId) ? { viewId: indexViewId } : undefined,
       ),
     );
   };

@@ -29,16 +29,20 @@ export const GraphLineChartTooltip = ({
     graphWidgetLineTooltipComponentState,
   );
 
-  const handleTooltipClick = () => {
-    if (isDefined(tooltipState) && isDefined(onSliceClick)) {
-      const highlightedPoint = tooltipState.slice.points.find(
-        (point) => String(point.seriesId) === tooltipState.highlightedSeriesId,
-      );
-      if (isDefined(highlightedPoint)) {
+  const handleTooltipClick: (() => void) | undefined = isDefined(onSliceClick)
+    ? () => {
+        if (!isDefined(tooltipState)) return;
+
+        const highlightedPoint = tooltipState.slice.points.find(
+          (point) =>
+            String(point.seriesId) === tooltipState.highlightedSeriesId,
+        );
+
+        if (!isDefined(highlightedPoint)) return;
+
         onSliceClick(highlightedPoint);
       }
-    }
-  };
+    : undefined;
 
   const tooltipData = !isDefined(tooltipState)
     ? null
@@ -81,9 +85,7 @@ export const GraphLineChartTooltip = ({
       items={tooltipData.items}
       indexLabel={tooltipData.indexLabel}
       highlightedKey={tooltipState?.highlightedSeriesId}
-      onGraphWidgetTooltipClick={
-        isDefined(onSliceClick) ? handleTooltipClick : undefined
-      }
+      onGraphWidgetTooltipClick={handleTooltipClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     />

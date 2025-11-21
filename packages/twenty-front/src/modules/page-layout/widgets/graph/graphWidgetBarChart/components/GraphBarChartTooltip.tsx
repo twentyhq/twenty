@@ -34,11 +34,13 @@ export const GraphBarChartTooltip = ({
     graphWidgetBarTooltipComponentState,
   );
 
-  const handleTooltipClick = () => {
-    if (isDefined(tooltipState) && isDefined(onBarClick)) {
-      onBarClick(tooltipState.datum);
-    }
-  };
+  const handleTooltipClick: (() => void) | undefined = isDefined(onBarClick)
+    ? () => {
+        if (isDefined(tooltipState)) {
+          onBarClick(tooltipState.datum);
+        }
+      }
+    : undefined;
 
   const tooltipData = !isDefined(tooltipState)
     ? null
@@ -82,9 +84,7 @@ export const GraphBarChartTooltip = ({
       items={tooltipData.tooltipItems}
       indexLabel={tooltipData.indexLabel}
       highlightedKey={tooltipData.hoveredKey}
-      onGraphWidgetTooltipClick={
-        isDefined(onBarClick) ? handleTooltipClick : undefined
-      }
+      onGraphWidgetTooltipClick={handleTooltipClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     />

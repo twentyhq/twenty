@@ -143,33 +143,30 @@ export const GraphWidgetLineChart = ({
     debouncedHideTooltip();
   };
 
-  const handleSliceEnter = useCallback(
-    (sliceData: SliceHoverData) => {
-      const slice: SliceTooltipProps<LineSeries>['slice'] = {
-        id: String(sliceData.nearestSlice.xValue ?? ''),
-        x: sliceData.nearestSlice.x,
-        y: sliceData.mouseY,
-        x0: sliceData.nearestSlice.x,
-        y0: 0,
-        width: 0,
-        height: 0,
-        points: sliceData.nearestSlice.points,
-      };
+  const handleSliceEnter = (sliceData: SliceHoverData) => {
+    const slice: SliceTooltipProps<LineSeries>['slice'] = {
+      id: String(sliceData.nearestSlice.xValue ?? ''),
+      x: sliceData.nearestSlice.x,
+      y: sliceData.mouseY,
+      x0: sliceData.nearestSlice.x,
+      y0: 0,
+      width: 0,
+      height: 0,
+      points: sliceData.nearestSlice.points,
+    };
 
-      const offsetLeft = sliceData.nearestSlice.x + LINE_CHART_MARGIN_LEFT;
-      const offsetTop = sliceData.mouseY + LINE_CHART_MARGIN_TOP;
+    const offsetLeft = sliceData.nearestSlice.x + LINE_CHART_MARGIN_LEFT;
+    const offsetTop = sliceData.mouseY + LINE_CHART_MARGIN_TOP;
 
-      debouncedHideTooltip.cancel();
-      setCrosshairX(sliceData.sliceX);
-      setActiveLineTooltip({
-        slice,
-        offsetLeft,
-        offsetTop,
-        highlightedSeriesId: String(sliceData.closestPoint.seriesId),
-      });
-    },
-    [debouncedHideTooltip, setActiveLineTooltip, setCrosshairX],
-  );
+    debouncedHideTooltip.cancel();
+    setCrosshairX(sliceData.sliceX);
+    setActiveLineTooltip({
+      slice,
+      offsetLeft,
+      offsetTop,
+      highlightedSeriesId: String(sliceData.closestPoint.seriesId),
+    });
+  };
 
   const PointLabelsLayer = (layerProps: PointLabelsLayerProps) => (
     <CustomPointLabelsLayer
@@ -190,7 +187,7 @@ export const GraphWidgetLineChart = ({
       innerWidth={layerProps.innerWidth}
       onSliceHover={handleSliceEnter}
       onSliceClick={
-        onSliceClick
+        isDefined(onSliceClick)
           ? (sliceData) => onSliceClick(sliceData.closestPoint)
           : undefined
       }
