@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { type RelationUpdatePayload } from 'twenty-shared/types';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
@@ -11,6 +12,7 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
@@ -40,6 +42,7 @@ type FromUpdateFieldInputToFlatFieldMetadataArgs = {
 
 type FlatFieldMetadataAndIndexToUpdate = {
   flatFieldMetadatasToUpdate: FlatFieldMetadata[];
+  flatFieldMetadatasToCreate: FlatFieldMetadata[];
 } & FlatFieldMetadataUpdateSideEffects;
 export const fromUpdateFieldInputToFlatFieldMetadata = ({
   flatIndexMaps,
@@ -104,9 +107,18 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     ...relatedFlatFieldMetadatasToUpdate,
   ];
 
+  const flatFieldMetadatasToCreate =
+    flatFieldMetadatasToCreateForMorphRelationsPayload({
+      morphRelationsUpdatePayload:
+        rawUpdateFieldInput?.morphRelationsUpdatePayload,
+      flatFieldMetadataMaps: flatFieldMetadataMaps,
+      fieldMetadataToUpdate: existingFlatFieldMetadataToUpdate,
+    });
+
   const initialAccumulator: FlatFieldMetadataAndIndexToUpdate = {
     ...structuredClone(FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS),
     flatFieldMetadatasToUpdate: [],
+    flatFieldMetadatasToCreate: flatFieldMetadatasToCreate,
   };
 
   updatedEditableFieldProperties.options = !isDefined(
@@ -162,6 +174,9 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
             ...accumulator.flatFieldMetadatasToUpdate,
             toFlatFieldMetadata,
           ],
+          flatFieldMetadatasToCreate: [
+            ...accumulator.flatFieldMetadatasToCreate,
+          ],
           flatIndexMetadatasToUpdate: [
             ...accumulator.flatIndexMetadatasToUpdate,
             ...flatIndexMetadatasToUpdate,
@@ -215,4 +230,54 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     status: 'success',
     result: optimisticiallyUpdatedFlatFieldMetadatas,
   };
+};
+
+const flatFieldMetadatasToCreateForMorphRelationsPayload = ({
+  flatFieldMetadataMaps,
+  morphRelationsUpdatePayload,
+  fieldMetadataToUpdate,
+}: {
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  morphRelationsUpdatePayload?: RelationUpdatePayload[];
+  fieldMetadataToUpdate: FlatFieldMetadata;
+}): FlatFieldMetadata[] => {
+  // todo @guillim : make it wokr for morph relations update payload
+
+  // if (!isDefined(morphRelationsUpdatePayload)) {
+  //   return [];
+  // }
+
+  // if (fieldMetadataToUpdate.type !== FieldMetadataType.MORPH_RELATION) {
+  //   throw new FieldMetadataException(
+  //     'Field metadata to update is not a morph or relation field metadata',
+  //     FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+  //   );
+  // }
+
+  // const morphId = fieldMetadataToUpdate.morphId;
+  // const allExistingFieldMetadataMorphSiblings = Object.values(
+  //   flatFieldMetadataMaps.byId,
+  // )
+  //   .filter(isDefined)
+  //   .filter((fieldMetadata) => fieldMetadata.morphId === morphId);
+
+  // morphRelationsUpdatePayload.forEach((morphRelationUpdatePayload) => {
+  //   const { targetObjectMetadataId } = morphRelationUpdatePayload;
+  //   const newFieldMetadata = {
+  //     ...getDefaultFlatFieldMetadata({
+  //       createFieldInput: {
+  //         type: FieldMetadataType.MORPH_RELATION,
+  //         name: computeMetadataNameFromLabel(
+  //           morphRelationUpdatePayload.targetFieldLabel,
+  //         ),
+  //         objectMetadataId: targetObjectMetadataId,
+  //       },
+  //       workspaceId: fieldMetadataToUpdate.workspaceId,
+  //       fieldMetadataId: v4(),
+  //     }),
+  //     ...morphRelationUpdatePayload,
+  //   };
+  // });
+
+  return [];
 };

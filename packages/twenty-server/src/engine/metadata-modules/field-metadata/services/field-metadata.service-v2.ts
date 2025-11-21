@@ -188,6 +188,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
 
     const {
       flatFieldMetadatasToUpdate,
+      flatFieldMetadatasToCreate,
       flatIndexMetadatasToUpdate,
       flatIndexMetadatasToDelete,
       flatIndexMetadatasToCreate,
@@ -211,7 +212,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
           fromToAllFlatEntityMaps: {
             flatFieldMetadataMaps: computeFlatEntityMapsFromTo({
               flatEntityMaps: existingFlatFieldMetadataMaps,
-              flatEntityToCreate: [],
+              flatEntityToCreate: flatFieldMetadatasToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: flatFieldMetadatasToUpdate,
             }),

@@ -170,6 +170,7 @@ export type { RelationAndMorphRelationFieldMetadataType } from './RelationAndMor
 export type { RelationCreationPayload } from './RelationCreationPayload';
 export { RelationOnDeleteAction } from './RelationOnDeleteAction.type';
 export { RelationType } from './RelationType';
+export type { RelationUpdatePayload } from './RelationUpdatePayload';
 export type { RestrictedFieldPermissions } from './RestrictedFieldPermissions';
 export type { RestrictedFieldsPermissions } from './RestrictedFieldsPermissions';
 export { SettingsPath } from './SettingsPath';
