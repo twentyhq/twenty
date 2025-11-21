@@ -1,9 +1,9 @@
 import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  UpdateQueryBuilder,
   type EntityTarget,
   type ObjectLiteral,
-  UpdateQueryBuilder,
   type UpdateResult,
 } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -118,6 +118,12 @@ export class WorkspaceUpdateQueryBuilder<
       );
 
       eventSelectQueryBuilder.expressionMap.wheres = this.expressionMap.wheres;
+      eventSelectQueryBuilder.expressionMap.orderBys = {
+        id: {
+          order: 'ASC',
+          nulls: 'NULLS LAST',
+        },
+      };
       eventSelectQueryBuilder.expressionMap.aliases =
         this.expressionMap.aliases;
       eventSelectQueryBuilder.setParameters(this.getParameters());
@@ -252,6 +258,12 @@ export class WorkspaceUpdateQueryBuilder<
       );
       eventSelectQueryBuilder.expressionMap.aliases =
         this.expressionMap.aliases;
+      eventSelectQueryBuilder.expressionMap.orderBys = {
+        id: {
+          order: 'ASC',
+          nulls: 'NULLS LAST',
+        },
+      };
       eventSelectQueryBuilder.setParameters(this.getParameters());
 
       const beforeRecords = await eventSelectQueryBuilder.getMany();

@@ -98,6 +98,12 @@ export class WorkspaceSoftDeleteQueryBuilder<
       eventSelectQueryBuilder.expressionMap.wheres = this.expressionMap.wheres;
       eventSelectQueryBuilder.expressionMap.aliases =
         this.expressionMap.aliases;
+      eventSelectQueryBuilder.expressionMap.orderBys = {
+        id: {
+          order: 'ASC',
+          nulls: 'NULLS LAST',
+        },
+      };
       eventSelectQueryBuilder.setParameters(this.getParameters());
 
       const before = await eventSelectQueryBuilder.getMany();
