@@ -215,9 +215,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         isDefined(update.from?.joinColumnName) &&
         isDefined(update.to?.joinColumnName) &&
         update.from.joinColumnName !== update.to.joinColumnName &&
-        isMorphOrRelationFlatFieldMetadata(
-          optimisticFlatFieldMetadata,
-        )
+        isMorphOrRelationFlatFieldMetadata(optimisticFlatFieldMetadata)
       ) {
         await this.workspaceSchemaManagerService.columnManager.renameColumn({
           queryRunner,
