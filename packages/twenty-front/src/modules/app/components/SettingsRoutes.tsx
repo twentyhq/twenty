@@ -171,6 +171,12 @@ const SettingsWorkspaceMembers = lazy(() =>
   })),
 );
 
+const SettingsWorkspaceMember = lazy(() =>
+  import('~/pages/settings/SettingsWorkspaceMember').then((module) => ({
+    default: module.SettingsWorkspaceMember,
+  })),
+);
+
 const SettingsProfile = lazy(() =>
   import('~/pages/settings/SettingsProfile').then((module) => ({
     default: module.SettingsProfile,
@@ -447,6 +453,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.WorkspaceMembersPage}
           element={<SettingsWorkspaceMembers />}
+        />
+        <Route
+          path={SettingsPath.WorkspaceMemberPage}
+          element={<SettingsWorkspaceMember />}
         />
       </Route>
       <Route
