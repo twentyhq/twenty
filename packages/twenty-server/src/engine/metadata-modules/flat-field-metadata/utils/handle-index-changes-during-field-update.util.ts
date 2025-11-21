@@ -6,6 +6,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { recomputeIndexOnFlatFieldMetadataNameUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-index-on-flat-field-metadata-name-update.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -139,6 +140,30 @@ const handleExistingIndexes = ({
   FlatFieldMetadata,
   'flatFieldMetadata'
 >): FieldMetadataUpdateIndexSideEffect => {
+  if (
+    toFlatFieldMetadata.isUnique === false &&
+    !isMorphOrRelationFlatFieldMetadata(fromFlatFieldMetadata)
+  ) {
+    const expectedUniqueIndex = generateIndexForFlatFieldMetadata({
+      flatFieldMetadata: {
+        ...fromFlatFieldMetadata,
+        isUnique: true,
+      },
+      flatObjectMetadata,
+      workspaceId: flatObjectMetadata.workspaceId,
+    });
+
+    const uniqueIndexToDelete = relatedIndexes.find(
+      (index) => index.name === expectedUniqueIndex.name,
+    );
+
+    return {
+      ...FIELD_METADATA_UPDATE_INDEX_SIDE_EFFECT,
+      flatIndexMetadatasToDelete: uniqueIndexToDelete
+        ? [uniqueIndexToDelete]
+        : [],
+    };
+  }
   const updatedIndexes = recomputeIndexOnFlatFieldMetadataNameUpdate({
     flatFieldMetadataMaps,
     flatObjectMetadata,
