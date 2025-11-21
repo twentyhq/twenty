@@ -21,39 +21,41 @@ type PageLayoutGridResizeHandleProps = {
   style?: React.CSSProperties;
 };
 
-const StyledBottomRightIcon = styled(IconRadiusBottomRight)`
-  color: transparent;
-  cursor: nwse-resize;
+const StyledCornerIconWrapper = styled.div<{
+  cursor: 'nwse-resize' | 'nesw-resize';
+  position: 'ne' | 'nw' | 'se' | 'sw';
+}>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: ${({ cursor }) => cursor};
+  width: ${({ theme }) => theme.spacing(4)};
+  height: ${({ theme }) => theme.spacing(4)};
 
-  :hover {
-    color: ${({ theme }) => theme.font.color.tertiary};
+  & svg {
+    color: transparent;
+    flex-shrink: 0;
+    pointer-events: none;
+    transform: ${({ position, theme }) => {
+      if (position === 'se') {
+        return `translate(-${theme.spacing(2)}, -${theme.spacing(2)})`;
+      }
+      if (position === 'sw') {
+        return `translate(${theme.spacing(2)}, -${theme.spacing(2)})`;
+      }
+      if (position === 'ne') {
+        return `translate(-${theme.spacing(2)}, ${theme.spacing(2)})`;
+      }
+      if (position === 'nw') {
+        return `translate(${theme.spacing(2)}, ${theme.spacing(2)})`;
+      }
+    }};
   }
-`;
-
-const StyledBottomLeftIcon = styled(IconRadiusBottomLeft)`
-  color: transparent;
-  cursor: nesw-resize;
 
   :hover {
-    color: ${({ theme }) => theme.font.color.tertiary};
-  }
-`;
-
-const StyledTopLeftIcon = styled(IconRadiusTopLeft)`
-  color: transparent;
-  cursor: nwse-resize;
-
-  :hover {
-    color: ${({ theme }) => theme.font.color.tertiary};
-  }
-`;
-
-const StyledTopRightIcon = styled(IconRadiusTopRight)`
-  color: transparent;
-  cursor: nesw-resize;
-
-  :hover {
-    color: ${({ theme }) => theme.font.color.tertiary};
+    svg {
+      color: ${({ theme }) => theme.font.color.tertiary};
+    }
   }
 `;
 
@@ -108,54 +110,58 @@ const StyledResizeHandleWrapper = styled.div<{
   ${({ theme, widgetHandleAxis }) => {
     if (widgetHandleAxis === 'w') {
       return css`
-        left: ${theme.spacing(2)};
+        left: ${theme.spacing(1.5)};
         top: 50%;
         transform: translateY(-50%);
       `;
     }
     if (widgetHandleAxis === 'e') {
       return css`
-        right: ${theme.spacing(2)};
+        right: ${theme.spacing(1.5)};
         top: 50%;
         transform: translateY(-50%);
       `;
     }
     if (widgetHandleAxis === 'n') {
       return css`
-        top: ${theme.spacing(2)};
+        top: ${theme.spacing(1.5)};
         left: 50%;
         transform: translateX(-50%);
       `;
     }
     if (widgetHandleAxis === 's') {
       return css`
-        bottom: ${theme.spacing(2)};
+        bottom: ${theme.spacing(1.5)};
         left: 50%;
         transform: translateX(-50%);
       `;
     }
     if (widgetHandleAxis === 'se') {
       return css`
-        bottom: ${theme.spacing(0.5)};
-        right: ${theme.spacing(0.5)};
+        bottom: 0;
+        right: 0;
+        transform: translate(${theme.spacing(1)}, ${theme.spacing(1)});
       `;
     }
     if (widgetHandleAxis === 'sw') {
       return css`
-        bottom: ${theme.spacing(0.5)};
-        left: ${theme.spacing(0.5)};
+        bottom: 0;
+        left: 0;
+        transform: translate(-${theme.spacing(1)}, ${theme.spacing(1)});
       `;
     }
     if (widgetHandleAxis === 'ne') {
       return css`
-        right: ${theme.spacing(0.5)};
-        top: ${theme.spacing(0.5)};
+        right: 0;
+        top: 0;
+        transform: translate(${theme.spacing(1)}, -${theme.spacing(1)});
       `;
     }
     if (widgetHandleAxis === 'nw') {
       return css`
-        left: ${theme.spacing(0.5)};
-        top: ${theme.spacing(0.5)};
+        left: 0;
+        top: 0;
+        transform: translate(-${theme.spacing(1)}, -${theme.spacing(1)});
       `;
     }
   }}
@@ -209,28 +215,36 @@ export const PageLayoutGridResizeHandle = forwardRef<
           </StyledHorizontalHandleWrapper>
         )}
         {widgetHandleAxis === 'ne' && (
-          <StyledTopRightIcon
-            size={theme.icon.size.lg}
-            stroke={theme.icon.stroke.lg}
-          />
+          <StyledCornerIconWrapper cursor="nesw-resize" position="ne">
+            <IconRadiusTopRight
+              size={theme.icon.size.lg}
+              stroke={theme.icon.stroke.lg}
+            />
+          </StyledCornerIconWrapper>
         )}
         {widgetHandleAxis === 'nw' && (
-          <StyledTopLeftIcon
-            size={theme.icon.size.lg}
-            stroke={theme.icon.stroke.lg}
-          />
+          <StyledCornerIconWrapper cursor="nwse-resize" position="nw">
+            <IconRadiusTopLeft
+              size={theme.icon.size.lg}
+              stroke={theme.icon.stroke.lg}
+            />
+          </StyledCornerIconWrapper>
         )}
         {widgetHandleAxis === 'se' && (
-          <StyledBottomRightIcon
-            size={theme.icon.size.lg}
-            stroke={theme.icon.stroke.lg}
-          />
+          <StyledCornerIconWrapper cursor="nwse-resize" position="se">
+            <IconRadiusBottomRight
+              size={theme.icon.size.lg}
+              stroke={theme.icon.stroke.lg}
+            />
+          </StyledCornerIconWrapper>
         )}
         {widgetHandleAxis === 'sw' && (
-          <StyledBottomLeftIcon
-            size={theme.icon.size.lg}
-            stroke={theme.icon.stroke.lg}
-          />
+          <StyledCornerIconWrapper cursor="nesw-resize" position="sw">
+            <IconRadiusBottomLeft
+              size={theme.icon.size.lg}
+              stroke={theme.icon.stroke.lg}
+            />
+          </StyledCornerIconWrapper>
         )}
       </StyledResizeHandleWrapper>
     );
