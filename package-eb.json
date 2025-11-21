@@ -1,0 +1,13 @@
+{
+  "name": "twenty-eb-wrapper",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "preinstall": "npm install -g yarn || true",
+    "install": "echo 'Skipping npm install - using yarn' && exit 0",
+    "postinstall": "yarn install --frozen-lockfile && yarn nx build twenty-server"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}
