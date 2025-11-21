@@ -4,10 +4,9 @@ import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graphW
 import { getLineChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartTooltipData';
 import { getTooltipReferenceFromLineChartPointAnchor } from '@/page-layout/widgets/graph/utils/getTooltipReferenceFromLineChartPointAnchor';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { type LineSeries, type Point } from '@nivo/line';
-import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type LineSeries, type Point } from '@nivo/line';
+import { isDefined } from 'twenty-shared/utils';
 
 type GraphLineChartTooltipProps = {
   containerId: string;
@@ -30,7 +29,7 @@ export const GraphLineChartTooltip = ({
     graphWidgetLineTooltipComponentState,
   );
 
-  const handleTooltipClick = useCallback(() => {
+  const handleTooltipClick = () => {
     if (isDefined(tooltipState) && isDefined(onSliceClick)) {
       const highlightedPoint = tooltipState.slice.points.find(
         (point) => String(point.seriesId) === tooltipState.highlightedSeriesId,
@@ -39,7 +38,7 @@ export const GraphLineChartTooltip = ({
         onSliceClick(highlightedPoint);
       }
     }
-  }, [tooltipState, onSliceClick]);
+  };
 
   const tooltipData = !isDefined(tooltipState)
     ? null

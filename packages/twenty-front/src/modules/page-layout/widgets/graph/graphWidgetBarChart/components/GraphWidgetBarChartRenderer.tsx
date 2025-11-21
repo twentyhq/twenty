@@ -1,12 +1,12 @@
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
+import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { type ComputedDatum } from '@nivo/bar';
-import { lazy, Suspense, useCallback } from 'react';
+import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
@@ -68,20 +68,17 @@ export const GraphWidgetBarChartRenderer = ({
     }),
   );
 
-  const handleBarClick = useCallback(
-    (_datum: ComputedDatum<BarChartDataItem>) => {
-      navigate(
-        getAppPath(
-          AppPath.RecordIndexPage,
-          {
-            objectNamePlural: objectMetadataItem.namePlural,
-          },
-          indexViewId ? { viewId: indexViewId } : undefined,
-        ),
-      );
-    },
-    [navigate, objectMetadataItem.namePlural, indexViewId],
-  );
+  const handleBarClick = (_datum: ComputedDatum<BarChartDataItem>) => {
+    return navigate(
+      getAppPath(
+        AppPath.RecordIndexPage,
+        {
+          objectNamePlural: objectMetadataItem.namePlural,
+        },
+        indexViewId ? { viewId: indexViewId } : undefined,
+      ),
+    );
+  };
 
   if (loading) {
     return <ChartSkeletonLoader />;

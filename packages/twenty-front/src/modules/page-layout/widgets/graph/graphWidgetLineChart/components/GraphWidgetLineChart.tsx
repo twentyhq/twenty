@@ -139,9 +139,9 @@ export const GraphWidgetLineChart = ({
 
   const handleTooltipMouseLeave = debouncedHideTooltip;
 
-  const handleSliceLeave = useCallback(() => {
+  const handleSliceLeave = () => {
     debouncedHideTooltip();
-  }, [debouncedHideTooltip]);
+  };
 
   const handleSliceEnter = useCallback(
     (sliceData: SliceHoverData) => {

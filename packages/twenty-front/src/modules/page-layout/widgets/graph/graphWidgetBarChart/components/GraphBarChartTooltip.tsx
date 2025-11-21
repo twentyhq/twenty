@@ -5,10 +5,9 @@ import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidge
 import { getBarChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTooltipData';
 import { getTooltipReferenceFromBarChartElementAnchor } from '@/page-layout/widgets/graph/utils/getTooltipReferenceFromBarChartElementAnchor';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { type ComputedDatum } from '@nivo/bar';
-import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type ComputedDatum } from '@nivo/bar';
+import { isDefined } from 'twenty-shared/utils';
 
 type GraphBarChartTooltipProps = {
   containerId: string;
@@ -35,11 +34,11 @@ export const GraphBarChartTooltip = ({
     graphWidgetBarTooltipComponentState,
   );
 
-  const handleTooltipClick = useCallback(() => {
+  const handleTooltipClick = () => {
     if (isDefined(tooltipState) && isDefined(onBarClick)) {
       onBarClick(tooltipState.datum);
     }
-  }, [tooltipState, onBarClick]);
+  };
 
   const tooltipData = !isDefined(tooltipState)
     ? null

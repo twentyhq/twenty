@@ -5,7 +5,7 @@ import { useGraphLineChartWidgetData } from '@/page-layout/widgets/graph/graphWi
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { type LineSeries, type Point } from '@nivo/line';
-import { lazy, Suspense, useCallback } from 'react';
+import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
@@ -66,18 +66,15 @@ export const GraphWidgetLineChartRenderer = ({
     }),
   );
 
-  const handlePointClick = useCallback(
-    (_point: Point<LineSeries>) => {
-      navigate(
-        getAppPath(
-          AppPath.RecordIndexPage,
-          { objectNamePlural: objectMetadataItem.namePlural },
-          indexViewId ? { viewId: indexViewId } : undefined,
-        ),
-      );
-    },
-    [navigate, objectMetadataItem.namePlural, indexViewId],
-  );
+  const handlePointClick = (_point: Point<LineSeries>) => {
+    return navigate(
+      getAppPath(
+        AppPath.RecordIndexPage,
+        { objectNamePlural: objectMetadataItem.namePlural },
+        isDefined(indexViewId) ? { viewId: indexViewId } : undefined,
+      ),
+    );
+  };
 
   if (loading) {
     return <ChartSkeletonLoader />;

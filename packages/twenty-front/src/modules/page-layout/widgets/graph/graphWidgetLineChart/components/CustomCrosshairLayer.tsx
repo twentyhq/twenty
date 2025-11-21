@@ -105,21 +105,18 @@ export const CustomCrosshairLayer = ({
     [slices],
   );
 
-  const handleMouseMove = useCallback(
-    (event: MouseEvent<SVGRectElement>) => {
-      const sliceData = buildSliceData(event);
-      if (!isDefined(sliceData)) {
-        return;
-      }
+  const handleMouseMove = (event: MouseEvent<SVGRectElement>) => {
+    const sliceData = buildSliceData(event);
+    if (!isDefined(sliceData)) {
+      return;
+    }
 
-      if (sliceData.sliceX === crosshairX) {
-        return;
-      }
+    if (sliceData.sliceX === crosshairX) {
+      return;
+    }
 
-      onSliceHover(sliceData);
-    },
-    [buildSliceData, crosshairX, onSliceHover],
-  );
+    onSliceHover(sliceData);
+  };
 
   const handleClick = useCallback(
     (event: MouseEvent<SVGRectElement>) => {
