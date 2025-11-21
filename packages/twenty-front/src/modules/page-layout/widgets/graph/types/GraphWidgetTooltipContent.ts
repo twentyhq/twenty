@@ -4,5 +4,4 @@ export type GraphWidgetTooltipContent = {
   items: GraphWidgetTooltipItem[];
   indexLabel?: string;
   highlightedKey?: string;
-  linkTo?: string;
 };
