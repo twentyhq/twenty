@@ -19,10 +19,6 @@
     "vite-plugin-dts": "3.8.1",
     "vite-tsconfig-paths": "^4.2.1"
   },
-  "dependencies": {
-    "glob": "^11.1.0",
-    "twenty-shared": "workspace:*"
-  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
