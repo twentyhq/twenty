@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Standard field metadata update should succeed when setting isActive to false 1`] = `
+exports[`Standard field metadata update should succeed Atomic update test suite when setting isActive to false 1`] = `
 {
   "defaultValue": "'NEW'",
   "description": "Opportunity stage",
@@ -51,7 +51,7 @@ exports[`Standard field metadata update should succeed when setting isActive to 
 }
 `;
 
-exports[`Standard field metadata update should succeed when updating defaultValue 1`] = `
+exports[`Standard field metadata update should succeed Atomic update test suite when updating defaultValue 1`] = `
 {
   "defaultValue": "'SCREENING'",
   "description": "Opportunity stage",
@@ -102,7 +102,7 @@ exports[`Standard field metadata update should succeed when updating defaultValu
 }
 `;
 
-exports[`Standard field metadata update should succeed when updating description 1`] = `
+exports[`Standard field metadata update should succeed Atomic update test suite when updating description 1`] = `
 {
   "defaultValue": "'NEW'",
   "description": "Opportunity stage",
@@ -157,7 +157,7 @@ exports[`Standard field metadata update should succeed when updating description
 }
 `;
 
-exports[`Standard field metadata update should succeed when updating icon 1`] = `
+exports[`Standard field metadata update should succeed Atomic update test suite when updating icon 1`] = `
 {
   "defaultValue": "'NEW'",
   "description": "Opportunity stage",
@@ -212,7 +212,7 @@ exports[`Standard field metadata update should succeed when updating icon 1`] = 
 }
 `;
 
-exports[`Standard field metadata update should succeed when updating label 1`] = `
+exports[`Standard field metadata update should succeed Atomic update test suite when updating label 1`] = `
 {
   "defaultValue": "'NEW'",
   "description": "Opportunity stage",
@@ -267,7 +267,7 @@ exports[`Standard field metadata update should succeed when updating label 1`] =
 }
 `;
 
-exports[`Standard field metadata update should succeed when updating options 1`] = `
+exports[`Standard field metadata update should succeed Atomic update test suite when updating options 1`] = `
 {
   "defaultValue": "'NEW'",
   "description": "Opportunity stage",

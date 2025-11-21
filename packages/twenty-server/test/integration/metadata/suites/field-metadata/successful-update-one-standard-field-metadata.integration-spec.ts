@@ -79,6 +79,7 @@ const successfulUpdateTestsUseCase: UpdateOneStandardFieldMetadataTestingContext
 describe('Standard field metadata update should succeed', () => {
   const opportunityObjectFields: FieldMetadataDTO[] = [];
   let originalFieldMetadataToRestore: FieldMetadataDTO[] = [];
+  let originalStageFieldMetadata: FieldMetadataDTO | undefined;
 
   beforeAll(async () => {
     const { objects } = await findManyObjectMetadata({
@@ -118,6 +119,10 @@ describe('Standard field metadata update should succeed', () => {
     jestExpectToBeDefined(opportunityObject?.fieldsList);
 
     opportunityObjectFields.push(...opportunityObject.fieldsList);
+
+    originalStageFieldMetadata = opportunityObjectFields.find(
+      (field) => field.name === 'stage' && !field.isCustom,
+    );
   });
 
   afterEach(async () => {
@@ -142,9 +147,6 @@ describe('Standard field metadata update should succeed', () => {
   });
 
   describe('Atomic update test suite', () => {
-    const originalStageFieldMetadata = opportunityObjectFields.find(
-      (field) => field.name === 'stage' && !field.isCustom,
-    );
     it.each(eachTestingContextFilter(successfulUpdateTestsUseCase))(
       '$title',
       async ({ context }) => {
@@ -187,6 +189,7 @@ describe('Standard field metadata update should succeed', () => {
     const deletedAtField = opportunityObjectFields.find(
       (field) => field.name === 'deletedAt',
     );
+
     jestExpectToBeDefined(deletedAtField);
     expect(deletedAtField.isActive).toBe(true);
 
@@ -222,7 +225,7 @@ describe('Standard field metadata update should succeed', () => {
       input: {
         idToUpdate: deletedAtField.id,
         updatePayload: {
-          isActive: false,
+          isActive: true,
         },
       },
       expectToFail: false,
@@ -243,6 +246,7 @@ describe('Standard field metadata update should succeed', () => {
           }
         `,
     });
+
     expect(secondUpdateData.updateOneField.isActive).toBe(true);
   });
 });
