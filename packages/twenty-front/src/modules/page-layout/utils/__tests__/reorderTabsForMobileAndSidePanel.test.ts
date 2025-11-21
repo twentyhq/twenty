@@ -2,30 +2,27 @@ import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { reorderTabsForMobileAndSidePanel } from '../reorderTabsForMobileAndSidePanel';
 
 describe('reorderTabsForMobileAndSidePanel', () => {
-  const createMockTab = (
-    id: string,
-    displayAsFirstTabOnMobileAndSidePanel?: boolean,
-  ): PageLayoutTab => ({
+  const createMockTab = (id: string): PageLayoutTab => ({
     id,
     pageLayoutId: 'page-layout-1',
     title: `Tab ${id}`,
     position: 0,
     widgets: [],
-    displayAsFirstTabOnMobileAndSidePanel,
     createdAt: '2024-01-01T00:00:00.000Z',
     updatedAt: '2024-01-01T00:00:00.000Z',
   });
 
   describe('when isMobile is true', () => {
-    it('should swap second tab to first position when displayAsFirstTabOnMobileAndSidePanel is true', () => {
+    it('should swap second tab to first position when displaySecondTabAsFirstTabOnMobileAndSidePanel is true', () => {
       const tabs = [
         createMockTab('tab-1'),
-        createMockTab('tab-2', true),
+        createMockTab('tab-2'),
         createMockTab('tab-3'),
       ];
 
       const result = reorderTabsForMobileAndSidePanel({
         tabs,
+        displaySecondTabAsFirstTabOnMobileAndSidePanel: true,
         isMobile: true,
         isInRightDrawer: false,
       });
@@ -36,15 +33,16 @@ describe('reorderTabsForMobileAndSidePanel', () => {
       expect(result[2].id).toBe('tab-3');
     });
 
-    it('should not reorder when displayAsFirstTabOnMobileAndSidePanel is false', () => {
+    it('should not reorder when displaySecondTabAsFirstTabOnMobileAndSidePanel is false', () => {
       const tabs = [
         createMockTab('tab-1'),
-        createMockTab('tab-2', false),
+        createMockTab('tab-2'),
         createMockTab('tab-3'),
       ];
 
       const result = reorderTabsForMobileAndSidePanel({
         tabs,
+        displaySecondTabAsFirstTabOnMobileAndSidePanel: false,
         isMobile: true,
         isInRightDrawer: false,
       });
@@ -55,7 +53,7 @@ describe('reorderTabsForMobileAndSidePanel', () => {
       expect(result[2].id).toBe('tab-3');
     });
 
-    it('should not reorder when displayAsFirstTabOnMobileAndSidePanel is undefined', () => {
+    it('should not reorder when displaySecondTabAsFirstTabOnMobileAndSidePanel is undefined', () => {
       const tabs = [
         createMockTab('tab-1'),
         createMockTab('tab-2'),
@@ -72,10 +70,11 @@ describe('reorderTabsForMobileAndSidePanel', () => {
     });
 
     it('should handle only two tabs when second tab should be first', () => {
-      const tabs = [createMockTab('tab-1'), createMockTab('tab-2', true)];
+      const tabs = [createMockTab('tab-1'), createMockTab('tab-2')];
 
       const result = reorderTabsForMobileAndSidePanel({
         tabs,
+        displaySecondTabAsFirstTabOnMobileAndSidePanel: true,
         isMobile: true,
         isInRightDrawer: false,
       });
@@ -109,15 +108,16 @@ describe('reorderTabsForMobileAndSidePanel', () => {
   });
 
   describe('when isInRightDrawer is true', () => {
-    it('should swap second tab to first position when displayAsFirstTabOnMobileAndSidePanel is true', () => {
+    it('should swap second tab to first position when displaySecondTabAsFirstTabOnMobileAndSidePanel is true', () => {
       const tabs = [
         createMockTab('tab-1'),
-        createMockTab('tab-2', true),
+        createMockTab('tab-2'),
         createMockTab('tab-3'),
       ];
 
       const result = reorderTabsForMobileAndSidePanel({
         tabs,
+        displaySecondTabAsFirstTabOnMobileAndSidePanel: true,
         isMobile: false,
         isInRightDrawer: true,
       });
@@ -128,15 +128,16 @@ describe('reorderTabsForMobileAndSidePanel', () => {
       expect(result[2].id).toBe('tab-3');
     });
 
-    it('should not reorder when displayAsFirstTabOnMobileAndSidePanel is false', () => {
+    it('should not reorder when displaySecondTabAsFirstTabOnMobileAndSidePanel is false', () => {
       const tabs = [
         createMockTab('tab-1'),
-        createMockTab('tab-2', false),
+        createMockTab('tab-2'),
         createMockTab('tab-3'),
       ];
 
       const result = reorderTabsForMobileAndSidePanel({
         tabs,
+        displaySecondTabAsFirstTabOnMobileAndSidePanel: false,
         isMobile: false,
         isInRightDrawer: true,
       });
@@ -146,15 +147,16 @@ describe('reorderTabsForMobileAndSidePanel', () => {
   });
 
   describe('when both isMobile and isInRightDrawer are false', () => {
-    it('should not reorder even when displayAsFirstTabOnMobileAndSidePanel is true', () => {
+    it('should not reorder even when displaySecondTabAsFirstTabOnMobileAndSidePanel is true', () => {
       const tabs = [
         createMockTab('tab-1'),
-        createMockTab('tab-2', true),
+        createMockTab('tab-2'),
         createMockTab('tab-3'),
       ];
 
       const result = reorderTabsForMobileAndSidePanel({
         tabs,
+        displaySecondTabAsFirstTabOnMobileAndSidePanel: true,
         isMobile: false,
         isInRightDrawer: false,
       });
@@ -179,15 +181,16 @@ describe('reorderTabsForMobileAndSidePanel', () => {
   });
 
   describe('when both isMobile and isInRightDrawer are true', () => {
-    it('should swap second tab to first position when displayAsFirstTabOnMobileAndSidePanel is true', () => {
+    it('should swap second tab to first position when displaySecondTabAsFirstTabOnMobileAndSidePanel is true', () => {
       const tabs = [
         createMockTab('tab-1'),
-        createMockTab('tab-2', true),
+        createMockTab('tab-2'),
         createMockTab('tab-3'),
       ];
 
       const result = reorderTabsForMobileAndSidePanel({
         tabs,
+        displaySecondTabAsFirstTabOnMobileAndSidePanel: true,
         isMobile: true,
         isInRightDrawer: true,
       });
@@ -203,13 +206,14 @@ describe('reorderTabsForMobileAndSidePanel', () => {
     it('should not mutate the original tabs array', () => {
       const tabs = [
         createMockTab('tab-1'),
-        createMockTab('tab-2', true),
+        createMockTab('tab-2'),
         createMockTab('tab-3'),
       ];
       const originalTabs = [...tabs];
 
       reorderTabsForMobileAndSidePanel({
         tabs,
+        displaySecondTabAsFirstTabOnMobileAndSidePanel: true,
         isMobile: true,
         isInRightDrawer: false,
       });
@@ -223,12 +227,13 @@ describe('reorderTabsForMobileAndSidePanel', () => {
         layoutMode: 'grid' as const,
       };
       const tabToSwap: PageLayoutTab = {
-        ...createMockTab('tab-2', true),
+        ...createMockTab('tab-2'),
         layoutMode: 'vertical-list' as const,
       };
 
       const result = reorderTabsForMobileAndSidePanel({
         tabs: [tabWithExtraProps, tabToSwap],
+        displaySecondTabAsFirstTabOnMobileAndSidePanel: true,
         isMobile: true,
         isInRightDrawer: false,
       });
@@ -240,7 +245,7 @@ describe('reorderTabsForMobileAndSidePanel', () => {
     it('should handle many tabs and only swap first two', () => {
       const tabs = [
         createMockTab('tab-1'),
-        createMockTab('tab-2', true),
+        createMockTab('tab-2'),
         createMockTab('tab-3'),
         createMockTab('tab-4'),
         createMockTab('tab-5'),
@@ -248,6 +253,7 @@ describe('reorderTabsForMobileAndSidePanel', () => {
 
       const result = reorderTabsForMobileAndSidePanel({
         tabs,
+        displaySecondTabAsFirstTabOnMobileAndSidePanel: true,
         isMobile: true,
         isInRightDrawer: false,
       });
@@ -265,17 +271,19 @@ describe('reorderTabsForMobileAndSidePanel', () => {
     it('should return consistent results for the same input', () => {
       const tabs = [
         createMockTab('tab-1'),
-        createMockTab('tab-2', true),
+        createMockTab('tab-2'),
         createMockTab('tab-3'),
       ];
 
       const result1 = reorderTabsForMobileAndSidePanel({
         tabs,
+        displaySecondTabAsFirstTabOnMobileAndSidePanel: true,
         isMobile: true,
         isInRightDrawer: false,
       });
       const result2 = reorderTabsForMobileAndSidePanel({
         tabs,
+        displaySecondTabAsFirstTabOnMobileAndSidePanel: true,
         isMobile: true,
         isInRightDrawer: false,
       });
@@ -286,17 +294,19 @@ describe('reorderTabsForMobileAndSidePanel', () => {
     it('should show different results for mobile vs desktop', () => {
       const tabs = [
         createMockTab('tab-1'),
-        createMockTab('tab-2', true),
+        createMockTab('tab-2'),
         createMockTab('tab-3'),
       ];
 
       const mobileResult = reorderTabsForMobileAndSidePanel({
         tabs,
+        displaySecondTabAsFirstTabOnMobileAndSidePanel: true,
         isMobile: true,
         isInRightDrawer: false,
       });
       const desktopResult = reorderTabsForMobileAndSidePanel({
         tabs,
+        displaySecondTabAsFirstTabOnMobileAndSidePanel: true,
         isMobile: false,
         isInRightDrawer: false,
       });

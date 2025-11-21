@@ -5,6 +5,7 @@ import { PageLayoutType } from '~/generated/graphql';
 type GetTabsByDisplayModeParams = {
   tabs: PageLayoutTab[];
   pageLayoutType: PageLayoutType;
+  displaySecondTabAsFirstTabOnMobileAndSidePanel?: boolean;
   isMobile: boolean;
   isInRightDrawer: boolean;
 };
@@ -14,9 +15,11 @@ export const getTabsByDisplayMode = ({
   pageLayoutType,
   isMobile,
   isInRightDrawer,
+  displaySecondTabAsFirstTabOnMobileAndSidePanel,
 }: GetTabsByDisplayModeParams) => {
   const reorderedTabs = reorderTabsForMobileAndSidePanel({
     tabs,
+    displaySecondTabAsFirstTabOnMobileAndSidePanel,
     isMobile,
     isInRightDrawer,
   });

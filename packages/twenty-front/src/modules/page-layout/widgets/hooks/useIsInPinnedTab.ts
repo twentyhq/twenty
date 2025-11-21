@@ -32,6 +32,8 @@ export const useIsInPinnedTab = () => {
   const { pinnedLeftTab } = getTabsByDisplayMode({
     tabs: tabsWithVisibleWidgets,
     pageLayoutType: currentPageLayout.type,
+    displaySecondTabAsFirstTabOnMobileAndSidePanel:
+      currentPageLayout.displaySecondTabAsFirstTabOnMobileAndSidePanel,
     isMobile,
     isInRightDrawer,
   });

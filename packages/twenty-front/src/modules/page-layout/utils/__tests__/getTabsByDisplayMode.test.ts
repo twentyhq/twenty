@@ -436,4 +436,154 @@ describe('getTabsByDisplayMode', () => {
       expect(resultBothTrue.pinnedLeftTab).toBeUndefined();
     });
   });
+
+  describe('displaySecondTabAsFirstTabOnMobileAndSidePanel', () => {
+    describe('when on mobile', () => {
+      it('should swap second tab to first position when flag is true', () => {
+        const tabs = [
+          createMockTab('tab-1'),
+          createMockTab('tab-2'),
+          createMockTab('tab-3'),
+        ];
+        const pageLayout = createMockPageLayout(tabs);
+
+        const result = getTabsByDisplayMode({
+          tabs: pageLayout.tabs,
+          pageLayoutType: pageLayout.type,
+          displaySecondTabAsFirstTabOnMobileAndSidePanel: true,
+          isMobile: true,
+          isInRightDrawer: false,
+        });
+
+        expect(result.tabsToRenderInTabList).toHaveLength(3);
+        expect(result.tabsToRenderInTabList[0].id).toBe('tab-2');
+        expect(result.tabsToRenderInTabList[1].id).toBe('tab-1');
+        expect(result.tabsToRenderInTabList[2].id).toBe('tab-3');
+        expect(result.pinnedLeftTab).toBeUndefined();
+      });
+
+      it('should not swap when flag is false', () => {
+        const tabs = [
+          createMockTab('tab-1'),
+          createMockTab('tab-2'),
+          createMockTab('tab-3'),
+        ];
+        const pageLayout = createMockPageLayout(tabs);
+
+        const result = getTabsByDisplayMode({
+          tabs: pageLayout.tabs,
+          pageLayoutType: pageLayout.type,
+          displaySecondTabAsFirstTabOnMobileAndSidePanel: false,
+          isMobile: true,
+          isInRightDrawer: false,
+        });
+
+        expect(result.tabsToRenderInTabList).toEqual(tabs);
+        expect(result.tabsToRenderInTabList[0].id).toBe('tab-1');
+      });
+
+      it('should not swap when flag is undefined', () => {
+        const tabs = [
+          createMockTab('tab-1'),
+          createMockTab('tab-2'),
+          createMockTab('tab-3'),
+        ];
+        const pageLayout = createMockPageLayout(tabs);
+
+        const result = getTabsByDisplayMode({
+          tabs: pageLayout.tabs,
+          pageLayoutType: pageLayout.type,
+          isMobile: true,
+          isInRightDrawer: false,
+        });
+
+        expect(result.tabsToRenderInTabList).toEqual(tabs);
+      });
+    });
+
+    describe('when in right drawer', () => {
+      it('should swap second tab to first position when flag is true', () => {
+        const tabs = [
+          createMockTab('tab-1'),
+          createMockTab('tab-2'),
+          createMockTab('tab-3'),
+        ];
+        const pageLayout = createMockPageLayout(tabs);
+
+        const result = getTabsByDisplayMode({
+          tabs: pageLayout.tabs,
+          pageLayoutType: pageLayout.type,
+          displaySecondTabAsFirstTabOnMobileAndSidePanel: true,
+          isMobile: false,
+          isInRightDrawer: true,
+        });
+
+        expect(result.tabsToRenderInTabList).toHaveLength(3);
+        expect(result.tabsToRenderInTabList[0].id).toBe('tab-2');
+        expect(result.tabsToRenderInTabList[1].id).toBe('tab-1');
+        expect(result.tabsToRenderInTabList[2].id).toBe('tab-3');
+        expect(result.pinnedLeftTab).toBeUndefined();
+      });
+    });
+
+    describe('when on desktop (not mobile, not right drawer)', () => {
+      it('should not swap even when flag is true', () => {
+        const tabs = [
+          createMockTab('tab-1'),
+          createMockTab('tab-2'),
+          createMockTab('tab-3'),
+        ];
+        const pageLayout = createMockPageLayout(tabs);
+
+        const result = getTabsByDisplayMode({
+          tabs: pageLayout.tabs,
+          pageLayoutType: pageLayout.type,
+          displaySecondTabAsFirstTabOnMobileAndSidePanel: true,
+          isMobile: false,
+          isInRightDrawer: false,
+        });
+
+        expect(result.pinnedLeftTab?.id).toBe('tab-1');
+        expect(result.tabsToRenderInTabList).toHaveLength(2);
+        expect(result.tabsToRenderInTabList[0].id).toBe('tab-2');
+        expect(result.tabsToRenderInTabList[1].id).toBe('tab-3');
+      });
+    });
+
+    describe('with two tabs', () => {
+      it('should swap tabs when flag is true on mobile', () => {
+        const tabs = [createMockTab('tab-1'), createMockTab('tab-2')];
+        const pageLayout = createMockPageLayout(tabs);
+
+        const result = getTabsByDisplayMode({
+          tabs: pageLayout.tabs,
+          pageLayoutType: pageLayout.type,
+          displaySecondTabAsFirstTabOnMobileAndSidePanel: true,
+          isMobile: true,
+          isInRightDrawer: false,
+        });
+
+        expect(result.tabsToRenderInTabList).toHaveLength(2);
+        expect(result.tabsToRenderInTabList[0].id).toBe('tab-2');
+        expect(result.tabsToRenderInTabList[1].id).toBe('tab-1');
+      });
+    });
+
+    describe('with single tab', () => {
+      it('should not change anything when flag is true', () => {
+        const tabs = [createMockTab('tab-1')];
+        const pageLayout = createMockPageLayout(tabs);
+
+        const result = getTabsByDisplayMode({
+          tabs: pageLayout.tabs,
+          pageLayoutType: pageLayout.type,
+          displaySecondTabAsFirstTabOnMobileAndSidePanel: true,
+          isMobile: true,
+          isInRightDrawer: false,
+        });
+
+        expect(result.tabsToRenderInTabList).toEqual(tabs);
+      });
+    });
+  });
 });
