@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { msg } from '@lingui/core/macro';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { Not } from 'typeorm';
@@ -33,6 +35,10 @@ const ONGOING_SYNC_STAGES = [
 export class MessageChannelUpdateOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
+  private readonly logger = new Logger(
+    MessageChannelUpdateOnePreQueryHook.name,
+  );
+
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
@@ -103,6 +109,18 @@ export class MessageChannelUpdateOnePreQueryHook
       );
     }
 
+    const hasCompletedConfiguration =
+      messageChannel.syncStage !==
+      MessageChannelSyncStage.PENDING_CONFIGURATION;
+
+    if (!hasCompletedConfiguration) {
+      this.logger.log(
+        `MessageChannelId: ${messageChannel.id} - Skipping pending action for message channel in PENDING_CONFIGURATION state`,
+      );
+
+      return payload;
+    }
+
     const excludeGroupEmailsChanged =
       payload.data.excludeGroupEmails !== messageChannel.excludeGroupEmails;
 
@@ -113,6 +131,11 @@ export class MessageChannelUpdateOnePreQueryHook
         payload.data.excludeGroupEmails
           ? MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_DELETION
           : MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_IMPORT,
+      );
+
+      await this.messagingProcessGroupEmailActionsService.enqueueProcessingJob(
+        messageChannel.id,
+        workspace.id,
       );
     }
 

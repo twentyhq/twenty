@@ -2,6 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
@@ -9,6 +12,10 @@ import {
   MessageChannelPendingGroupEmailsAction,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessagingProcessGroupEmailActionsJob,
+  type MessagingProcessGroupEmailActionsJobData,
+} from 'src/modules/messaging/message-import-manager/jobs/messaging-process-group-email-actions.job';
 import { MessagingClearCursorsService } from 'src/modules/messaging/message-import-manager/services/messaging-clear-cursors.service';
 import { MessagingDeleteGroupEmailMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-group-email-messages.service';
 
@@ -23,6 +30,8 @@ export class MessagingProcessGroupEmailActionsService {
     private readonly messagingDeleteGroupEmailMessagesService: MessagingDeleteGroupEmailMessagesService,
     private readonly messagingClearCursorsService: MessagingClearCursorsService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
+    @InjectMessageQueue(MessageQueue.messagingQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async markMessageChannelAsPendingGroupEmailsAction(
@@ -42,6 +51,23 @@ export class MessagingProcessGroupEmailActionsService {
 
     this.logger.log(
       `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Marked message channel as pending group emails action: ${pendingGroupEmailsAction}`,
+    );
+  }
+
+  async enqueueProcessingJob(
+    messageChannelId: string,
+    workspaceId: string,
+  ): Promise<void> {
+    await this.messageQueueService.add<MessagingProcessGroupEmailActionsJobData>(
+      MessagingProcessGroupEmailActionsJob.name,
+      {
+        workspaceId,
+        messageChannelId,
+      },
+    );
+
+    this.logger.log(
+      `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannelId} - Enqueued immediate processing job for group email action`,
     );
   }
 
