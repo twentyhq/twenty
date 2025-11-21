@@ -10,12 +10,12 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import {
-    AnimatedPlaceholder,
-    AnimatedPlaceholderEmptyContainer,
-    AnimatedPlaceholderEmptySubTitle,
-    AnimatedPlaceholderEmptyTextContainer,
-    AnimatedPlaceholderEmptyTitle,
-    EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
 
 export const DashboardWidgetPlaceholder = () => {

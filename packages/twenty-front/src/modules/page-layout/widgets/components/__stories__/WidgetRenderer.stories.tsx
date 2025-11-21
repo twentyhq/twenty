@@ -7,7 +7,9 @@ import { type MockedResponse } from '@apollo/client/testing';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import { type MutableSnapshot } from 'recoil';
+import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
@@ -17,9 +19,13 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
+import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import {
   GraphOrderBy,
@@ -32,6 +38,7 @@ import {
   PageLayoutType,
   type PageLayoutWidget,
 } from '~/generated/graphql';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
@@ -123,6 +130,7 @@ const meta: Meta<typeof WidgetRenderer> = {
   title: 'Modules/PageLayout/Widgets/WidgetRenderer',
   component: WidgetRenderer,
   decorators: [
+    I18nFrontDecorator,
     (Story) => {
       const initializeState = (snapshot: MutableSnapshot) => {
         snapshot.set(
@@ -518,4 +526,223 @@ export const TallWidget: Story = {
       <WidgetRenderer widget={args.widget} />
     </div>
   ),
+};
+
+export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
+  args: {
+    widget: {
+      __typename: 'PageLayoutWidget',
+      id: 'catalog-widget',
+      pageLayoutTabId: 'tab-overview',
+      type: WidgetType.GRAPH,
+      title: 'Widget',
+      objectMetadataId: companyObjectMetadataItem.id,
+      gridPosition: {
+        __typename: 'GridPosition',
+        row: 0,
+        column: 0,
+        rowSpan: 2,
+        columnSpan: 3,
+      },
+      configuration: {
+        __typename: 'AggregateChartConfiguration',
+        graphType: GraphType.AGGREGATE,
+        aggregateOperation: AggregateOperations.COUNT,
+        aggregateFieldMetadataId: idField.id,
+        displayDataLabel: true,
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    } as PageLayoutWidget,
+  },
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
+          name: 'variant',
+          values: [
+            'record-page',
+            'side-column',
+            'canvas',
+            'dashboard',
+          ] satisfies WidgetCardVariant[],
+          props: (variant: string) => ({ catalogVariant: variant }) as any,
+          labels: (variant: string) => {
+            const labelMap: Record<string, string> = {
+              'record-page': 'Record Page',
+              'side-column': 'Side Column',
+              canvas: 'Canvas',
+              dashboard: 'Dashboard',
+            };
+            return labelMap[variant] ?? variant;
+          },
+        },
+        {
+          name: 'mode',
+          values: ['edit', 'read'],
+          props: (mode: string) => ({ catalogMode: mode }) as any,
+          labels: (mode: string) =>
+            mode === 'edit' ? 'Edit Mode' : 'Read Mode',
+        },
+        {
+          name: 'permission',
+          values: ['allowed', 'restricted'],
+          props: (permission: string) =>
+            ({ catalogPermission: permission }) as any,
+          labels: (permission: string) =>
+            permission === 'allowed' ? 'Allowed' : 'Restricted',
+        },
+      ],
+      options: {
+        elementContainer: {
+          width: 300,
+        },
+      },
+    },
+  },
+  render: (args) => {
+    const variant = (args as any).catalogVariant || 'record-page';
+    const mode = (args as any).catalogMode || 'edit';
+    const permission = (args as any).catalogPermission || 'allowed';
+
+    const pageLayoutType =
+      variant === 'dashboard'
+        ? PageLayoutType.DASHBOARD
+        : PageLayoutType.RECORD_PAGE;
+
+    const layoutMode =
+      variant === 'canvas'
+        ? ('canvas' as const)
+        : variant === 'side-column'
+          ? ('grid' as const)
+          : ('grid' as const);
+
+    const isInEditMode = mode === 'edit';
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+
+      if (permission === 'restricted') {
+        snapshot.set(currentUserWorkspaceState, {
+          permissionFlags: [],
+          twoFactorAuthenticationMethodSummary: null,
+          objectsPermissions: [
+            {
+              objectMetadataId: companyObjectMetadataItem.id,
+              canReadObjectRecords: false,
+              canUpdateObjectRecords: false,
+              canSoftDeleteObjectRecords: false,
+              canDestroyObjectRecords: false,
+              restrictedFields: {},
+            },
+          ],
+        });
+      } else {
+        snapshot.set(currentUserWorkspaceState, {
+          permissionFlags: [],
+          twoFactorAuthenticationMethodSummary: null,
+          objectsPermissions: [
+            {
+              objectMetadataId: companyObjectMetadataItem.id,
+              canReadObjectRecords: true,
+              canUpdateObjectRecords: true,
+              canSoftDeleteObjectRecords: true,
+              canDestroyObjectRecords: true,
+              restrictedFields: {},
+            },
+          ],
+        });
+      }
+
+      const pageLayoutData: PageLayout = {
+        id: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        name: 'Mock Page Layout',
+        type: pageLayoutType,
+        objectMetadataId: companyObjectMetadataItem.id,
+        tabs:
+          variant === 'side-column'
+            ? [
+                {
+                  __typename: 'PageLayoutTab',
+                  id: 'pinned-tab',
+                  title: 'Pinned Tab',
+                  position: 0,
+                  pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+                  widgets: [args.widget],
+                  createdAt: '2024-01-01T00:00:00Z',
+                  updatedAt: '2024-01-01T00:00:00Z',
+                  deletedAt: null,
+                },
+                {
+                  __typename: 'PageLayoutTab',
+                  id: 'other-tab',
+                  title: 'Other Tab',
+                  position: 1,
+                  pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+                  widgets: [args.widget],
+                  createdAt: '2024-01-01T00:00:00Z',
+                  updatedAt: '2024-01-01T00:00:00Z',
+                  deletedAt: null,
+                },
+              ]
+            : [],
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z',
+        deletedAt: null,
+      };
+
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        isPageLayoutInEditModeComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        isInEditMode,
+      );
+    };
+
+    return (
+      <div style={{ width: '300px', height: '200px' }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: pageLayoutType,
+                  targetRecordIdentifier: {
+                    id: companyObjectMetadataItem.id,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode,
+                    tabId: variant === 'side-column' ? 'pinned-tab' : 'fields',
+                  }}
+                >
+                  <WidgetRenderer widget={args.widget} />
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
+  },
+  decorators: [CatalogDecorator],
 };
