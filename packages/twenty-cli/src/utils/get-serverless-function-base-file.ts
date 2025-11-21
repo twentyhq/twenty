@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 export const getServerlessFunctionBaseFile = ({ name }: { name: string }) => {
   const kebabCaseName = kebabCase(name);
 
-  return `import { ServerlessFunctionConfig } from 'twenty-sdk/application';
+  return `import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
 
 export const main = async (params: {
   a: string;
