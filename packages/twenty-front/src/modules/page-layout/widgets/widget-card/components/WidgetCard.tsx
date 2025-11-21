@@ -27,27 +27,6 @@ const StyledWidgetCard = styled.div<{
     isResizing,
     onClick,
   }) => {
-    if (variant === 'side-column' && !isEditable) {
-      return css`
-        background: ${theme.background.secondary};
-      `;
-    }
-
-    if (variant === 'side-column' && isEditable) {
-      return css`
-        background: ${theme.background.secondary};
-
-        ${!isDragging &&
-        !isEditing &&
-        !isResizing &&
-        css`
-          &:hover {
-            cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
-          }
-        `}
-      `;
-    }
-
     if (variant === 'dashboard' && !isEditable) {
       return css`
         background: ${theme.background.secondary};
@@ -95,17 +74,16 @@ const StyledWidgetCard = styled.div<{
       `;
     }
 
-    if (variant === 'record-page' && !isEditable) {
+    if (variant === 'side-column' && !isEditable) {
       return css`
-        background: ${theme.background.primary};
-        border: 1px solid transparent;
-        border-radius: ${theme.border.radius.md};
-        gap: ${theme.spacing(2)};
-        padding: ${theme.spacing(2)};
+        background: ${theme.background.secondary};
       `;
     }
 
-    if (variant === 'record-page' && isEditable) {
+    if (
+      (variant === 'side-column' && isEditable) ||
+      (variant === 'record-page' && isEditable)
+    ) {
       return css`
         background: ${theme.background.primary};
         border: 1px solid transparent;
@@ -139,6 +117,16 @@ const StyledWidgetCard = styled.div<{
             ${theme.background.secondary};
           border: 1px solid ${theme.color.blue} !important;
         `}
+      `;
+    }
+
+    if (variant === 'record-page' && !isEditable) {
+      return css`
+        background: ${theme.background.primary};
+        border: 1px solid transparent;
+        border-radius: ${theme.border.radius.md};
+        gap: ${theme.spacing(2)};
+        padding: ${theme.spacing(2)};
       `;
     }
   }}
