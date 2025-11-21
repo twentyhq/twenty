@@ -14,10 +14,12 @@ export const generateGroupByQueryVariablesFromChartConfiguration = ({
   objectMetadataItem,
   chartConfiguration,
   aggregateOperation,
+  limit,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   chartConfiguration: GroupByChartConfiguration;
   aggregateOperation?: string;
+  limit?: number;
 }) => {
   const groupByFieldXId = chartConfiguration.primaryAxisGroupByFieldMetadataId;
 
@@ -107,5 +109,6 @@ export const generateGroupByQueryVariablesFromChartConfiguration = ({
   return {
     groupBy,
     ...(orderBy.length > 0 && { orderBy }),
+    ...(isDefined(limit) && { limit }),
   };
 };
