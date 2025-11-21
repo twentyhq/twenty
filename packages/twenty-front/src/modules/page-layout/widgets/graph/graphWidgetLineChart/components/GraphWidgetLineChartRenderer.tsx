@@ -3,8 +3,13 @@ import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/gr
 import { LINE_CHART_IS_STACKED_DEFAULT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartIsStackedDefault';
 import { useGraphLineChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useGraphLineChartWidgetData';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
+import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
+import { type LineSeries, type Point } from '@nivo/line';
 import { lazy, Suspense } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import {
   type LineChartConfiguration,
   type PageLayoutWidget,
@@ -30,11 +35,13 @@ export const GraphWidgetLineChartRenderer = ({
     showDataLabels,
     hasTooManyGroups,
     loading,
+    objectMetadataItem,
   } = useGraphLineChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration as LineChartConfiguration,
   });
 
+  const navigate = useNavigate();
   const configuration = widget.configuration as LineChartConfiguration;
 
   const hasGroupByOnSecondaryAxis = isDefined(
@@ -52,6 +59,22 @@ export const GraphWidgetLineChartRenderer = ({
     configuration.rangeMax,
     configuration.omitNullValues,
   );
+
+  const indexViewId = useRecoilValue(
+    coreIndexViewIdFromObjectMetadataItemFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
+  );
+
+  const handlePointClick = (_point: Point<LineSeries>) => {
+    return navigate(
+      getAppPath(
+        AppPath.RecordIndexPage,
+        { objectNamePlural: objectMetadataItem.namePlural },
+        isDefined(indexViewId) ? { viewId: indexViewId } : undefined,
+      ),
+    );
+  };
 
   if (loading) {
     return <ChartSkeletonLoader />;
@@ -74,6 +97,7 @@ export const GraphWidgetLineChartRenderer = ({
         omitNullValues={configuration.omitNullValues ?? false}
         groupMode={groupMode}
         displayType="shortNumber"
+        onSliceClick={handlePointClick}
       />
     </Suspense>
   );

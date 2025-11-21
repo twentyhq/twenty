@@ -23777,6 +23777,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/busboy@npm:^1.5.0":
+  version: 1.5.4
+  resolution: "@types/busboy@npm:1.5.4"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/0bdd209069a445d5a71277e558978ec0db1b1a3d108335da96477d017177ae349c4d81d604db0bea19e3c99c10af2d60dbac20e36cef7cb7a517e5a4760738bd
+  languageName: node
+  linkType: hard
+
 "@types/bytes@npm:^3.1.1":
   version: 3.1.4
   resolution: "@types/bytes@npm:3.1.4"
@@ -24232,15 +24241,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/graphql-upload@npm:^8.0.12":
-  version: 8.0.12
-  resolution: "@types/graphql-upload@npm:8.0.12"
+"@types/graphql-upload@npm:^16.0.7":
+  version: 16.0.7
+  resolution: "@types/graphql-upload@npm:16.0.7"
   dependencies:
     "@types/express": "npm:*"
     "@types/koa": "npm:*"
+    "@types/node": "npm:*"
     fs-capacitor: "npm:^8.0.0"
-    graphql: "npm:0.13.1 - 16"
-  checksum: 10c0/f9055d03aa3b4d751c3989afee0a7baf3131a945573bd97ef8996cdf0ec79e6e8e5bf16e7b6d69f353fdf4f0dfaa158e751c059928e2149974120212665e391d
+    graphql: "npm:^16.3.0"
+  checksum: 10c0/ed6118873e66a5949c50a37b13d6f823d28a38a2ec54f23b334027e80f8988643c41976542c99185a24dde0847688183e9eddb913695e6068887b33f8237d070
   languageName: node
   linkType: hard
 
@@ -24699,6 +24709,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.startcase@npm:^4":
+  version: 4.4.9
+  resolution: "@types/lodash.startcase@npm:4.4.9"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: 10c0/9d31900b2a7096f307f30b765fcd50fe83c5270c9f730c8f5006c4560628f979fefb7a5d04bced817863707bc0587f2d8b743a9318707983ebc42d944e0030cb
+  languageName: node
+  linkType: hard
+
 "@types/lodash.uniq@npm:^4.5.9":
   version: 4.5.9
   resolution: "@types/lodash.uniq@npm:4.5.9"
@@ -24997,6 +25016,13 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/af42f19125e46fc0e9063e5560095aca5445895399c5073a6a28335d4b658dbed4975b470673cb61edf1a5eb79ba245a1f1d53f70a3e51645cfbbd93900cfbdd
+  languageName: node
+  linkType: hard
+
+"@types/object-path@npm:^0.11.1":
+  version: 0.11.4
+  resolution: "@types/object-path@npm:0.11.4"
+  checksum: 10c0/fb7f71b170013cf23d323782f12d25e8fa3e2d4048ee3d4d71ca7fe9c553ceeaaa720560bae9925a1c6b893f6d02bbaefad6d68be52c0bd6b136722a5baba77d
   languageName: node
   linkType: hard
 
@@ -29340,15 +29366,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"busboy@npm:^0.3.1":
-  version: 0.3.1
-  resolution: "busboy@npm:0.3.1"
-  dependencies:
-    dicer: "npm:0.3.0"
-  checksum: 10c0/15b3382816f657302956ba68e48342891b4f36ae1164f1ad47d96302dd2cda634672513d03c7e5dde0dc90e2889becf3fa32f9b3b391d0f8ab4a5a675b5b5581
-  languageName: node
-  linkType: hard
-
 "bytes@npm:3.1.2, bytes@npm:^3.1.2":
   version: 3.1.2
   resolution: "bytes@npm:3.1.2"
@@ -32734,15 +32751,6 @@ __metadata:
   version: 1.2.0
   resolution: "dfa@npm:1.2.0"
   checksum: 10c0/ad12f0bc73b530876672e0a9dfbaa350eeff0c876580042734a004e462eca86d7749b9dedf6b067ba54f346137ab23d16615826bbfa424a3e01ab0e2786fad3c
-  languageName: node
-  linkType: hard
-
-"dicer@npm:0.3.0":
-  version: 0.3.0
-  resolution: "dicer@npm:0.3.0"
-  dependencies:
-    streamsearch: "npm:0.1.2"
-  checksum: 10c0/4486f0448233145216cfadd5f6bbb4c26c3a28824da5344322b06051632e99d6af2b44f893fa8b30f1749ad175b4e565d301c760d0437226d9e41ccdb6546f35
   languageName: node
   linkType: hard
 
@@ -36454,13 +36462,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fs-capacitor@npm:^6.2.0":
-  version: 6.2.0
-  resolution: "fs-capacitor@npm:6.2.0"
-  checksum: 10c0/68443988ca28f734339f8346316a224b69af1b9bf8a3d8c7b649bc410d3d36dc145536f8e8ca5225fb5589f67a7502f4666a3a63670592c7d0c843bba4b3daca
-  languageName: node
-  linkType: hard
-
 "fs-capacitor@npm:^8.0.0":
   version: 8.0.0
   resolution: "fs-capacitor@npm:8.0.0"
@@ -37575,17 +37576,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-upload@npm:13.0.0":
-  version: 13.0.0
-  resolution: "graphql-upload@npm:13.0.0"
+"graphql-upload@npm:16.0.2":
+  version: 16.0.2
+  resolution: "graphql-upload@npm:16.0.2"
   dependencies:
-    busboy: "npm:^0.3.1"
-    fs-capacitor: "npm:^6.2.0"
-    http-errors: "npm:^1.8.1"
+    "@types/busboy": "npm:^1.5.0"
+    "@types/node": "npm:*"
+    "@types/object-path": "npm:^0.11.1"
+    busboy: "npm:^1.6.0"
+    fs-capacitor: "npm:^8.0.0"
+    http-errors: "npm:^2.0.0"
     object-path: "npm:^0.11.8"
   peerDependencies:
-    graphql: 0.13.1 - 16
-  checksum: 10c0/487936b1cbeead5e630b057355b408e4852e5d605bf452dd21bc1a1cf29923d4c3ee567257c4469bcd18989f983bdb608b8c9319d3fa738e43fff318ea6f96e8
+    "@types/express": ^4.0.29
+    "@types/koa": ^2.11.4
+    graphql: ^16.3.0
+  peerDependenciesMeta:
+    "@types/express":
+      optional: true
+    "@types/koa":
+      optional: true
+  checksum: 10c0/292e786cc20cb1edc1744dd12a40be17955cf66f7e0ebd47ed69a2570b01c19d3f631d7353d1329f80f666ac39bdafc70d3b46ed8c26d9ce72abe46d77102503
   languageName: node
   linkType: hard
 
@@ -38545,7 +38556,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-errors@npm:^1.8.1, http-errors@npm:~1.8.0":
+"http-errors@npm:~1.8.0":
   version: 1.8.1
   resolution: "http-errors@npm:1.8.1"
   dependencies:
@@ -42875,6 +42886,13 @@ __metadata:
   version: 4.7.0
   resolution: "lodash.sortby@npm:4.7.0"
   checksum: 10c0/fc48fb54ff7669f33bb32997cab9460757ee99fafaf72400b261c3e10fde21538e47d8cfcbe6a25a31bcb5b7b727c27d52626386fc2de24eb059a6d64a89cdf5
+  languageName: node
+  linkType: hard
+
+"lodash.startcase@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "lodash.startcase@npm:4.4.0"
+  checksum: 10c0/bd82aa87a45de8080e1c5ee61128c7aee77bf7f1d86f4ff94f4a6d7438fc9e15e5f03374b947be577a93804c8ad6241f0251beaf1452bf716064eeb657b3a9f0
   languageName: node
   linkType: hard
 
@@ -54169,13 +54187,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"streamsearch@npm:0.1.2":
-  version: 0.1.2
-  resolution: "streamsearch@npm:0.1.2"
-  checksum: 10c0/408a3db5b5643c1d6eb65c9d8ccc011b4857bfca41946d808b7f165b5b85f47755b2ff56ec1c4bbbeb5a496afcde9adfea12f9f67bd09ff3f04ae3f1f58d37c6
-  languageName: node
-  linkType: hard
-
 "streamsearch@npm:^1.1.0":
   version: 1.1.0
   resolution: "streamsearch@npm:1.1.0"
@@ -56067,6 +56078,7 @@ __metadata:
     "@types/lodash.camelcase": "npm:^4.3.7"
     "@types/lodash.capitalize": "npm:^4"
     "@types/lodash.kebabcase": "npm:^4.1.7"
+    "@types/lodash.startcase": "npm:^4"
     "@types/node": "npm:^20.0.0"
     ajv: "npm:^8.12.0"
     ajv-formats: "npm:^2.1.1"
@@ -56083,6 +56095,7 @@ __metadata:
     lodash.camelcase: "npm:^4.3.0"
     lodash.capitalize: "npm:^4.2.1"
     lodash.kebabcase: "npm:^4.1.1"
+    lodash.startcase: "npm:^4.4.0"
     tsx: "npm:^4.7.0"
     typescript: "npm:^5.9.2"
     uuid: "npm:^13.0.0"
@@ -56257,8 +56270,6 @@ __metadata:
   resolution: "twenty-sdk@workspace:packages/twenty-sdk"
   dependencies:
     "@types/node": "npm:^24.0.0"
-    glob: "npm:^11.1.0"
-    twenty-shared: "workspace:*"
     typescript: "npm:5.9.2"
     vite: "npm:^7.0.0"
     vite-plugin-dts: "npm:3.8.1"
@@ -56337,7 +56348,7 @@ __metadata:
     "@types/dompurify": "npm:^3.0.5"
     "@types/express": "npm:^4.17.13"
     "@types/express-session": "npm:^1.18.0"
-    "@types/graphql-upload": "npm:^8.0.12"
+    "@types/graphql-upload": "npm:^16.0.7"
     "@types/html-to-text": "npm:^9.0.4"
     "@types/lodash.chunk": "npm:^4.2.9"
     "@types/lodash.differencewith": "npm:^4.5.9"
@@ -56402,7 +56413,7 @@ __metadata:
     graphql-subscriptions: "npm:2.0.0"
     graphql-tag: "npm:2.12.6"
     graphql-type-json: "npm:0.3.2"
-    graphql-upload: "npm:13.0.0"
+    graphql-upload: "npm:16.0.2"
     graphql-yoga: "npm:4.0.5"
     html-to-text: "npm:^9.0.5"
     imapflow: "npm:1.1.0"

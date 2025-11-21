@@ -4,6 +4,7 @@ import inquirer from 'inquirer';
 import * as path from 'path';
 import { copyBaseApplicationProject } from '../utils/app-template';
 import kebabCase from 'lodash.kebabcase';
+import { convertToLabel } from '../utils/convert-to-label';
 
 export class AppInitCommand {
   async execute(directory?: string): Promise<void> {
@@ -44,7 +45,9 @@ export class AppInitCommand {
       {
         type: 'input',
         name: 'name',
-        message: 'Application name (eg: my-awesome-app):',
+        message: 'Application name:',
+        when: () => !directory,
+        default: 'my-awesome-app',
         validate: (input) => {
           if (input.length === 0) return 'Application name is required';
           return true;
@@ -53,12 +56,9 @@ export class AppInitCommand {
       {
         type: 'input',
         name: 'displayName',
-        message: 'Display name (eg: My awesome app):',
+        message: 'Application display name:',
         default: (answers: any) => {
-          return answers.name
-            .split('-')
-            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
+          return convertToLabel(answers?.name ?? directory);
         },
       },
       {
@@ -69,7 +69,9 @@ export class AppInitCommand {
       },
     ]);
 
-    const appName = name.trim();
+    const computedName = name ?? directory;
+
+    const appName = computedName.trim();
 
     const appDisplayName = displayName.trim();
 

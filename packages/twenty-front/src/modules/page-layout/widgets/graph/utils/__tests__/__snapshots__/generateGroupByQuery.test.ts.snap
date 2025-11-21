@@ -7,12 +7,14 @@ exports[`generateGroupByQuery should generate valid GraphQL query for empty aggr
       $filter: PersonFilterInput
       $orderBy: [PersonOrderByWithGroupByInput!]
       $viewId: UUID
+      $limit: Int
     ) {
       peopleGroupBy(
         groupBy: $groupBy
         filter: $filter
         orderBy: $orderBy
         viewId: $viewId
+        limit: $limit
       ) {
         groupByDimensionValues
       }
@@ -27,12 +29,14 @@ exports[`generateGroupByQuery should generate valid GraphQL query for multiple a
       $filter: OpportunityFilterInput
       $orderBy: [OpportunityOrderByWithGroupByInput!]
       $viewId: UUID
+      $limit: Int
     ) {
       opportunitiesGroupBy(
         groupBy: $groupBy
         filter: $filter
         orderBy: $orderBy
         viewId: $viewId
+        limit: $limit
       ) {
         groupByDimensionValues
         totalCount
@@ -50,12 +54,14 @@ exports[`generateGroupByQuery should generate valid GraphQL query for single agg
       $filter: OpportunityFilterInput
       $orderBy: [OpportunityOrderByWithGroupByInput!]
       $viewId: UUID
+      $limit: Int
     ) {
       opportunitiesGroupBy(
         groupBy: $groupBy
         filter: $filter
         orderBy: $orderBy
         viewId: $viewId
+        limit: $limit
       ) {
         groupByDimensionValues
         sumAmountAmountMicros

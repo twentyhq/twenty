@@ -54,6 +54,7 @@ type GraphWidgetBarChartProps = {
   rangeMin?: number;
   rangeMax?: number;
   omitNullValues?: boolean;
+  onBarClick?: (datum: ComputedDatum<BarChartDataItem>) => void;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -87,6 +88,7 @@ export const GraphWidgetBarChart = ({
   prefix,
   suffix,
   customFormatter,
+  onBarClick,
 }: GraphWidgetBarChartProps) => {
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
@@ -119,7 +121,7 @@ export const GraphWidgetBarChart = ({
     seriesLabels,
   });
 
-  const hasClickableItems = data.some((item) => isDefined(item.to));
+  const hasClickableItems = isDefined(onBarClick);
 
   const hideTooltip = () => setActiveBarTooltip(null);
   const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
@@ -277,6 +279,7 @@ export const GraphWidgetBarChart = ({
           tooltip={() => null}
           onMouseEnter={handleBarEnter}
           onMouseLeave={handleBarLeave}
+          onClick={onBarClick}
           theme={chartTheme}
           borderRadius={parseInt(theme.border.radius.sm)}
         />
@@ -285,11 +288,10 @@ export const GraphWidgetBarChart = ({
       <GraphBarChartTooltip
         containerId={id}
         enrichedKeys={enrichedKeys}
-        data={data}
-        indexBy={indexBy}
         formatOptions={formatOptions}
         enableGroupTooltip={groupMode === 'stacked'}
         layout={layout}
+        onBarClick={onBarClick}
         onMouseEnter={handleTooltipMouseEnter}
         onMouseLeave={handleTooltipMouseLeave}
       />

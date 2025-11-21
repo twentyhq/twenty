@@ -1,4 +1,3 @@
-import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
@@ -10,10 +9,6 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { MANUAL_TRIGGER_AVAILABILITY_TYPE_OPTIONS } from '@/workflow/workflow-trigger/constants/ManualTriggerAvailabilityTypeOptions';
 import { MANUAL_TRIGGER_IS_PINNED_OPTIONS } from '@/workflow/workflow-trigger/constants/ManualTriggerIsPinnedOptions';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
-import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
-import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
-import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
-import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -76,12 +71,6 @@ export const WorkflowEditTriggerManual = ({
 
   const availability = trigger.settings.availability;
 
-  const headerTitle = trigger.name ?? getTriggerDefaultLabel(trigger);
-
-  const headerIcon = getTriggerIcon(trigger);
-
-  const headerType = getTriggerHeaderType(trigger);
-
   const availabilityDescriptions = {
     SINGLE_RECORD: t`The selected record will be passed to your workflow`,
     BULK_RECORDS: t`The selected records (up to ${maxRecordsFormatted}) will be passed to your workflow`,
@@ -90,24 +79,6 @@ export const WorkflowEditTriggerManual = ({
 
   return (
     <>
-      <SidePanelHeader
-        onTitleChange={(newName: string) => {
-          if (triggerOptions.readonly === true) {
-            return;
-          }
-
-          triggerOptions.onTriggerUpdate({
-            ...trigger,
-            name: newName,
-          });
-        }}
-        Icon={getIcon(headerIcon)}
-        iconColor={getTriggerIconColor({ theme, triggerType: trigger.type })}
-        initialTitle={headerTitle}
-        headerType={headerType}
-        disabled={triggerOptions.readonly}
-        iconTooltip={getTriggerDefaultLabel(trigger)}
-      />
       <WorkflowStepBody>
         <Select
           dropdownId="workflow-edit-manual-trigger-availability"

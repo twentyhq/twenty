@@ -63,7 +63,7 @@ Your capabilities include:
 
 Be helpful, thorough, and always prioritize data integrity while executing user requests efficiently.`,
   modelId: 'auto',
-  responseFormat: {},
+  responseFormat: { type: 'text' },
   isCustom: false,
   standardRoleId: DATA_MANIPULATOR_ROLE.standardId,
   modelConfiguration: {},

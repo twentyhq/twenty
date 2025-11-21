@@ -3,7 +3,6 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 
 import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -114,7 +113,7 @@ export const WorkflowOutputSchemaBuilder = ({
       id: v4(),
       name: '',
       description: '',
-      type: 'TEXT' as InputSchemaPropertyType,
+      type: 'string',
     };
     onChange([...fields, newField]);
   };

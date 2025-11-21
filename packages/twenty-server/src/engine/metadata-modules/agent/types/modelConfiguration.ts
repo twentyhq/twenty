@@ -1,10 +1,1 @@
-export type ModelConfiguration = {
-  webSearch?: {
-    enabled: boolean;
-    configuration: object;
-  };
-  twitterSearch?: {
-    enabled: boolean;
-    configuration: object;
-  };
-};
+export type { ModelConfiguration } from 'twenty-shared/ai';

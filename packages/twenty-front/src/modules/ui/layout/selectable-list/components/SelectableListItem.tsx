@@ -33,12 +33,22 @@ export const SelectableListItem = ({
   const listItemRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isSelectedItemId) {
-      listItemRef.current?.scrollIntoView({
-        behavior: 'auto',
-        block: 'start',
-      });
+    if (!isSelectedItemId || !listItemRef.current) {
+      return;
     }
+
+    const scrollContainer = listItemRef.current.closest(
+      '[id^="scroll-wrapper-"]',
+    ) as HTMLElement | null;
+
+    if (isDefined(scrollContainer) && scrollContainer.scrollTop === 0) {
+      return;
+    }
+
+    listItemRef.current.scrollIntoView({
+      behavior: 'auto',
+      block: 'start',
+    });
   }, [isSelectedItemId]);
 
   return (

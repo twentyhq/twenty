@@ -20,6 +20,7 @@ export const computeWorkspaceCustomCreateApplicationInput = ({
     universalIdentifier: applicationId,
     workspaceId: workspace.id,
     id: applicationId,
+    canBeUninstalled: false,
   }) as const satisfies CreateApplicationInput & {
     workspaceId: string;
     id: string;

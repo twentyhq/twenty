@@ -90,7 +90,10 @@ export const AIChatThreadGroup = ({
           <StyledThreadItem
             onClick={() => {
               setCurrentAIChatThread(thread.id);
-              openAskAIPage(thread.title);
+              openAskAIPage({
+                pageTitle: thread.title,
+                resetNavigationStack: false,
+              });
             }}
             key={thread.id}
           >

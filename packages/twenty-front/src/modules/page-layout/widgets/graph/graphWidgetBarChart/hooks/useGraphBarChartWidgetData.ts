@@ -1,9 +1,11 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { transformGroupByDataToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformGroupByDataToBarChartData';
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
-import { transformGroupByDataToBarChartData } from '@/page-layout/widgets/graph/utils/transformGroupByDataToBarChartData';
 import { useMemo } from 'react';
 import { type BarChartConfiguration } from '~/generated/graphql';
 
@@ -24,7 +26,11 @@ type UseGraphBarChartWidgetDataResult = {
   loading: boolean;
   error?: Error;
   hasTooManyGroups: boolean;
+  objectMetadataItem: ObjectMetadataItem;
 };
+
+// TODO: Remove this once backend returns total group count
+const EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS = 1;
 
 export const useGraphBarChartWidgetData = ({
   objectMetadataItemId,
@@ -42,6 +48,8 @@ export const useGraphBarChartWidgetData = ({
   } = useGraphWidgetGroupByQuery({
     objectMetadataItemId,
     configuration,
+    limit:
+      BAR_CHART_MAXIMUM_NUMBER_OF_BARS + EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS,
   });
 
   const transformedData = useMemo(
@@ -57,6 +65,7 @@ export const useGraphBarChartWidgetData = ({
 
   return {
     ...transformedData,
+    objectMetadataItem,
     loading,
     error,
   };

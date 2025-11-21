@@ -138,7 +138,13 @@ describe('parseGmailMessagesImportError', () => {
       messageExternalId,
     );
 
-    expect(exception).toBe(undefined);
+    expect(exception).toBeInstanceOf(MessageImportDriverException);
+    expect(exception?.code).toBe(
+      MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+    );
+    expect(exception?.message).toBe(
+      `${error.error.errors[0].message} for message with externalId: ${messageExternalId}`,
+    );
   });
 
   it('should handle 410 Gone', () => {
@@ -148,7 +154,13 @@ describe('parseGmailMessagesImportError', () => {
       messageExternalId,
     );
 
-    expect(exception).toBe(undefined);
+    expect(exception).toBeInstanceOf(MessageImportDriverException);
+    expect(exception?.code).toBe(
+      MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+    );
+    expect(exception?.message).toBe(
+      `${error.error.errors[0].message} for message with externalId: ${messageExternalId}`,
+    );
   });
 
   it('should handle 429 Too Many Requests', () => {
