@@ -5,10 +5,10 @@ import {
   QUERY_MAX_RECORDS,
 } from 'twenty-shared/constants';
 import {
+  FieldMetadataRelationSettings,
   FieldMetadataType,
   ObjectRecord,
   RelationType,
-  FieldMetadataRelationSettings,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
@@ -95,7 +95,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     });
 
     await queryBuilder
-      .softDelete()
+      .delete()
       .whereInIds(idsToDelete)
       .returning(columnsToReturn)
       .execute();
