@@ -1,9 +1,10 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
 import { type BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { transformGroupByDataToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformGroupByDataToBarChartData';
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
-import { transformGroupByDataToBarChartData } from '@/page-layout/widgets/graph/utils/transformGroupByDataToBarChartData';
 import { type BarDatum } from '@nivo/bar';
 import { useMemo } from 'react';
 import { type BarChartConfiguration } from '~/generated/graphql';
@@ -31,6 +32,9 @@ type UseGraphBarChartWidgetDataResult = {
   >['objectMetadataItem'];
 };
 
+// TODO: Remove this once backend returns total group count
+const EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS = 1;
+
 export const useGraphBarChartWidgetData = ({
   objectMetadataItemId,
   configuration,
@@ -47,6 +51,8 @@ export const useGraphBarChartWidgetData = ({
   } = useGraphWidgetGroupByQuery({
     objectMetadataItemId,
     configuration,
+    limit:
+      BAR_CHART_MAXIMUM_NUMBER_OF_BARS + EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS,
   });
 
   const transformedData = useMemo(

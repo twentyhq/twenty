@@ -3,19 +3,22 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { getGroupByQueryName } from '@/page-layout/utils/getGroupByQueryName';
+import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { fillDateGapsInBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillDateGapsInBarChartData';
+import { transformOneDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformOneDimensionalGroupByToBarChartData';
+import { transformTwoDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformTwoDimensionalGroupByToBarChartData';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGroupByResults';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
-import { transformOneDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/utils/transformOneDimensionalGroupByToBarChartData';
-import { transformTwoDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/utils/transformTwoDimensionalGroupByToBarChartData';
 import { type BarDatum } from '@nivo/bar';
 import { isDefined } from 'twenty-shared/utils';
 import { GraphType } from '~/generated-metadata/graphql';
 import {
   AxisNameDisplay,
+  FieldMetadataType,
   type BarChartConfiguration,
 } from '~/generated/graphql';
 
@@ -143,9 +146,27 @@ export const transformGroupByDataToBarChartData = ({
 
   const showDataLabels = configuration.displayDataLabel ?? false;
 
+  const isDateField =
+    groupByFieldX.type === FieldMetadataType.DATE ||
+    groupByFieldX.type === FieldMetadataType.DATE_TIME;
+
+  const dateGapFillResult = isDateField
+    ? fillDateGapsInBarChartData({
+        data: filteredResults,
+        keys: [aggregateField.name],
+        dateGranularity:
+          configuration.primaryAxisDateGranularity ??
+          GRAPH_DEFAULT_DATE_GRANULARITY,
+        hasSecondDimension: isDefined(groupByFieldY),
+      })
+    : { data: filteredResults, wasTruncated: false };
+
+  const filteredResultsWithDateGaps = dateGapFillResult.data;
+  const dateRangeWasTruncated = dateGapFillResult.wasTruncated;
+
   const baseResult = isDefined(groupByFieldY)
     ? transformTwoDimensionalGroupByToBarChartData({
-        rawResults: filteredResults,
+        rawResults: filteredResultsWithDateGaps,
         groupByFieldX,
         groupByFieldY,
         aggregateField,
@@ -155,7 +176,7 @@ export const transformGroupByDataToBarChartData = ({
         primaryAxisSubFieldName,
       })
     : transformOneDimensionalGroupByToBarChartData({
-        rawResults: filteredResults,
+        rawResults: filteredResultsWithDateGaps,
         groupByFieldX,
         aggregateField,
         configuration,
@@ -175,5 +196,6 @@ export const transformGroupByDataToBarChartData = ({
     yAxisLabel,
     showDataLabels,
     layout,
+    hasTooManyGroups: baseResult.hasTooManyGroups || dateRangeWasTruncated,
   };
 };
