@@ -5,5 +5,6 @@ describe('convertToLabel', () => {
     expect(convertToLabel('toto')).toBe('Toto');
     expect(convertToLabel('totoTata')).toBe('Toto tata');
     expect(convertToLabel('totoTataTiti')).toBe('Toto tata titi');
+    expect(convertToLabel('toto-tata-titi')).toBe('Toto tata titi');
   });
 });
