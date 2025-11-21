@@ -35,7 +35,7 @@ export const SettingsApplicationDetailSettingsTab = ({
 
   const { updateOneApplicationVariable } = useUpdateOneApplicationVariable();
 
-  const [unistallApplication] = useUninstallApplicationMutation();
+  const [uninstallApplication] = useUninstallApplicationMutation();
 
   if (!isDefined(application)) {
     return null;
@@ -48,7 +48,7 @@ export const SettingsApplicationDetailSettingsTab = ({
   const handleUninstallApplication = async () => {
     setIsLoading(true);
     try {
-      await unistallApplication({
+      await uninstallApplication({
         variables: { universalIdentifier: application.universalIdentifier },
       });
 

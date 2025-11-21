@@ -183,7 +183,7 @@ export class ApiService {
       return {
         success: true,
         data: response.data.data.uninstallApplication,
-        message: 'Successfully uninstall application',
+        message: 'Successfully uninstalled application',
       };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
