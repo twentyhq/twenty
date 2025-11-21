@@ -294,7 +294,8 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       const parentRelationIndex = morphParentObject.indexMetadataList.filter(
         (index) =>
           index.indexFieldMetadataList.some(
-            (indexField) => indexField.id == sourceFieldMetadata.id,
+            (indexField) =>
+              indexField.fieldMetadataId == sourceFieldMetadata.id,
           ),
       );
       expect(parentRelationIndex.length).toBe(0);
@@ -359,7 +360,8 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       const parentRelationIndex =
         morphParentObjectAfterUpdate.indexMetadataList.filter((index) =>
           index.indexFieldMetadataList.some(
-            (indexField) => indexField.id == sourceFieldMetadata.id,
+            (indexField) =>
+              indexField.fieldMetadataId == sourceFieldMetadata.id,
           ),
         );
       expect(parentRelationIndex.length).toBe(0);
@@ -389,14 +391,19 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       }
     > = {};
 
+    const morphParentObject = objects.find(
+      (object) => object.id === createdObjectMetadataOpportunityId,
+    );
+    jestExpectToBeDefined(morphParentObject);
+
     for (const {
       targetObjectMetadata,
       targetFieldMetadata,
+      sourceFieldMetadata,
     } of morphRelationField.morphRelations) {
       const relatedObject = objects.find(
         (object) => object.id === targetObjectMetadata.id,
       );
-
       jestExpectToBeDefined(relatedObject);
 
       const objectRelatedIndexes = relatedObject.indexMetadataList.filter(
@@ -406,16 +413,21 @@ describe('Rename an object metadata with morph relation should succeed', () => {
               indexField.fieldMetadataId === targetFieldMetadata.id,
           ),
       );
+      expect(objectRelatedIndexes.length).toBe(0);
 
-      expect(objectRelatedIndexes.length).toBe(1);
-      const [relationIndex] = objectRelatedIndexes;
-
-      jestExpectToBeDefined(relationIndex);
-      expect(relationIndex).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny({ ...relationIndex }),
+      const parentRelationIndex = morphParentObject.indexMetadataList.filter(
+        (index) =>
+          index.indexFieldMetadataList.some(
+            (indexField) =>
+              indexField.fieldMetadataId == sourceFieldMetadata.id,
+          ),
       );
 
-      relationIndexByFieldId[targetFieldMetadata.id] = relationIndex;
+      expect(parentRelationIndex.length).toBe(1);
+      const [relationIndex] = parentRelationIndex;
+      relationIndexByFieldId[
+        relationIndex.indexFieldMetadataList[0].fieldMetadataId
+      ] = relationIndex;
     }
 
     await updateOneObjectMetadata({
@@ -435,14 +447,19 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       expectToFail: false,
     });
 
+    const morphParentObjectAfterUpdate = objects.find(
+      (object) => object.id === createdObjectMetadataOpportunityId,
+    );
+    jestExpectToBeDefined(morphParentObjectAfterUpdate);
+
     for (const {
       targetObjectMetadata,
       targetFieldMetadata,
+      sourceFieldMetadata,
     } of morphRelationField.morphRelations) {
       const relatedObject = updatedObjects.find(
         (object) => object.id === targetObjectMetadata.id,
       );
-
       jestExpectToBeDefined(relatedObject);
 
       const objectRelatedIndexes = relatedObject.indexMetadataList.filter(
@@ -452,8 +469,20 @@ describe('Rename an object metadata with morph relation should succeed', () => {
               indexField.fieldMetadataId === targetFieldMetadata.id,
           ),
       );
-
       expect(objectRelatedIndexes.length).toBe(0);
+
+      const parentRelationIndex =
+        morphParentObjectAfterUpdate.indexMetadataList.filter((index) =>
+          index.indexFieldMetadataList.some(
+            (indexField) =>
+              indexField.fieldMetadataId == sourceFieldMetadata.id,
+          ),
+        );
+      expect(parentRelationIndex.length).toBe(1);
+
+      const [relationIndex] = parentRelationIndex;
+      const previousIndex = relationIndexByFieldId[sourceFieldMetadata.id];
+      expect(previousIndex.name).toBe(relationIndex.name);
     }
   });
 });
