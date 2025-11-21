@@ -9,6 +9,7 @@ import { getSchemaUrls } from '../utils/schema-validator';
 import { BASE_SCHEMAS_PATH } from '../constants/constants-path';
 import { getObjectMetadataDecoratedClass } from '../utils/get-object-metadata-decorated-class';
 import { getServerlessFunctionBaseFile } from '../utils/get-serverless-function-base-file';
+import { convertToLabel } from '../utils/convert-to-label';
 
 export enum SyncableEntity {
   AGENT = 'agent',
@@ -30,12 +31,9 @@ export class AppAddCommand {
       const entity = entityType ?? (await this.getEntity());
 
       if (entity === SyncableEntity.OBJECT) {
-        const entityData = await this.getEntityToCreateData(entity);
+        const entityData = await this.getObjectData();
 
-        const name = entityData['nameSingular'];
-
-        delete entityData['standardId'];
-        delete entityData['$schema'];
+        const name = entityData.nameSingular;
 
         const objectFileName = `${camelcase(name)}.ts`;
 
@@ -112,50 +110,63 @@ export class AppAddCommand {
     return name;
   }
 
-  private async getEntityToCreateData(entity: SyncableEntity) {
-    const schemas = getSchemaUrls();
-
-    const uuid = randomUUID();
-
-    const entityToCreateData: Record<string, string> = {
-      $schema: schemas[entity],
-      universalIdentifier: uuid,
-    };
-
-    if (entity === SyncableEntity.OBJECT || entity === SyncableEntity.AGENT) {
-      entityToCreateData.standardId = uuid;
-    }
-
-    const schemaPath = join(BASE_SCHEMAS_PATH, `${entity}.schema.json`);
-
-    const schema = await fs.readJson(schemaPath);
-
-    const requiredFields = schema.required;
-
-    for (const requiredField of requiredFields) {
-      if (Object.keys(entityToCreateData).includes(requiredField)) {
-        continue;
-      }
-
-      const answer = await inquirer.prompt<{ [key: string]: string }>([
-        {
-          type: 'input',
-          name: requiredField,
-          message: `Enter a ${requiredField} for your new ${entity}:`,
-          default: '',
-          validate: (input) => {
-            try {
-              return input.length > 0;
-            } catch {
-              return 'Please enter non empty string';
-            }
-          },
+  private async getObjectData() {
+    return inquirer.prompt([
+      {
+        type: 'input',
+        name: 'nameSingular',
+        message: 'Enter a name singular for your object (eg: company):',
+        default: '',
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
         },
-      ]);
-
-      entityToCreateData[requiredField] = answer[requiredField];
-    }
-
-    return entityToCreateData;
+      },
+      {
+        type: 'input',
+        name: 'namePlural',
+        message: 'Enter a name plural for your object (eg: companies):',
+        default: '',
+        validate: (input: string, answers?: any) => {
+          if (input.trim() === answers?.nameSingular.trim()) {
+            return 'Name plural must be different from name singular';
+          }
+          if (!input || input.length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'labelSingular',
+        message: 'Enter a label singular for your object:',
+        default: (answers: any) => {
+          return convertToLabel(answers.nameSingular);
+        },
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'labelPlural',
+        message: 'Enter a label plural for your object:',
+        default: (answers: any) => {
+          return convertToLabel(answers.namePlural);
+        },
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+    ]);
   }
 }
