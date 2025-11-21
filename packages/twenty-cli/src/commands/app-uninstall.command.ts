@@ -5,7 +5,7 @@ import { ApiService } from '../services/api.service';
 import { ApiResponse } from '../types/config.types';
 import { loadManifest } from '../utils/load-manifest';
 
-export class AppDeleteCommand {
+export class AppUninstallCommand {
   private apiService = new ApiService();
 
   async execute({
@@ -16,31 +16,31 @@ export class AppDeleteCommand {
     askForConfirmation: boolean;
   }): Promise<ApiResponse<any>> {
     try {
-      console.log(chalk.blue('🚀 Deleting Twenty Application'));
+      console.log(chalk.blue('🚀 Uninstall Twenty Application'));
       console.log(chalk.gray(`📁 App Path: ${appPath}`));
       console.log('');
 
       if (askForConfirmation && !(await this.confirmationPrompt())) {
-        console.error(chalk.red('⛔️ Aborting deletion'));
+        console.error(chalk.red('⛔️ Aborting uninstall'));
         process.exit(1);
       }
 
       const { manifest } = await loadManifest(appPath);
 
-      const result = await this.apiService.deleteApplication(
+      const result = await this.apiService.uninstallApplication(
         manifest.application.universalIdentifier,
       );
 
       if (!result.success) {
-        console.error(chalk.red('❌ Deletion failed:'), result.error);
+        console.error(chalk.red('❌ Uninstall failed:'), result.error);
       } else {
-        console.log(chalk.green('✅ Application deleted successfully'));
+        console.log(chalk.green('✅ Application uninstalled successfully'));
       }
 
       return result;
     } catch (error) {
       console.error(
-        chalk.red('Deletion failed:'),
+        chalk.red('Uninstall failed:'),
         error instanceof Error ? error.message : error,
       );
       throw error;
@@ -52,7 +52,7 @@ export class AppDeleteCommand {
       {
         type: 'confirm',
         name: 'confirmation',
-        message: 'Are you sure you want to delete this application?',
+        message: 'Are you sure you want to uninstall this application?',
         default: false,
       },
     ]);

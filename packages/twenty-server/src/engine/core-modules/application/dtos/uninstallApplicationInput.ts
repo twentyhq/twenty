@@ -1,7 +1,7 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
 @ArgsType()
-export class DeleteApplicationInput {
+export class UninstallApplicationInput {
   @Field(() => String)
   universalIdentifier: string;
 }
