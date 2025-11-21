@@ -1,12 +1,9 @@
 import chalk from 'chalk';
-import { randomUUID } from 'crypto';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import { join } from 'path';
 import camelcase from 'lodash.camelcase';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
-import { getSchemaUrls } from '../utils/schema-validator';
-import { BASE_SCHEMAS_PATH } from '../constants/constants-path';
 import { getObjectMetadataDecoratedClass } from '../utils/get-object-metadata-decorated-class';
 import { getServerlessFunctionBaseFile } from '../utils/get-serverless-function-base-file';
 import { convertToLabel } from '../utils/convert-to-label';
