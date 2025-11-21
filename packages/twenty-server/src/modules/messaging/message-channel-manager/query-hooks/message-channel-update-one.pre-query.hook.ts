@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { msg } from '@lingui/core/macro';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { Not } from 'typeorm';
@@ -34,6 +36,9 @@ export class MessageChannelUpdateOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
   constructor(
+    private readonly logger = new Logger(
+      MessageChannelUpdateOnePreQueryHook.name,
+    ),
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
   ) {}
@@ -101,6 +106,18 @@ export class MessageChannelUpdateOnePreQueryHook
           userFriendlyMessage: msg`Cannot update message channel while sync is ongoing. Please wait for the sync to complete.`,
         },
       );
+    }
+
+    const hasCompletedConfiguration =
+      messageChannel.syncStage !==
+      MessageChannelSyncStage.PENDING_CONFIGURATION;
+
+    if (!hasCompletedConfiguration) {
+      this.logger.log(
+        `MessageChannelId: ${messageChannel.id} - Skipping pending action for message channel in PENDING_CONFIGURATION state`,
+      );
+
+      return payload;
     }
 
     const excludeGroupEmailsChanged =
