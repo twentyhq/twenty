@@ -7,6 +7,7 @@ import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manage
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
+  MessageChannelPendingGroupEmailsAction,
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
   MessageChannelType,
@@ -67,6 +68,7 @@ export class CreateMessageChannelService {
           messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
         syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
         syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
+        pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
       },
       {},
       manager,
