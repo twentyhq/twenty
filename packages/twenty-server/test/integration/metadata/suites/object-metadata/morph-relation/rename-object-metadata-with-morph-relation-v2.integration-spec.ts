@@ -296,7 +296,6 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       relationIndexByFieldId[targetFieldMetadata.id] = relationIndex;
     }
 
-    // Update the person object name to trigger morph field name update
     await updateOneObjectMetadata({
       expectToFail: false,
       input: {
@@ -419,7 +418,6 @@ describe('Rename an object metadata with morph relation should succeed', () => {
       relationIndexByFieldId[targetFieldMetadata.id] = relationIndex;
     }
 
-    // Update the person object name to trigger morph field name update
     await updateOneObjectMetadata({
       expectToFail: false,
       input: {
