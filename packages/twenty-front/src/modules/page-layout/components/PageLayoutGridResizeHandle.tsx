@@ -113,28 +113,28 @@ const StyledResizeHandleWrapper = styled.div<{
   ${({ theme, widgetHandleAxis }) => {
     if (widgetHandleAxis === 'w') {
       return css`
-        left: ${theme.spacing(2)};
+        left: ${theme.spacing(1.5)};
         top: 50%;
         transform: translateY(-50%);
       `;
     }
     if (widgetHandleAxis === 'e') {
       return css`
-        right: ${theme.spacing(2)};
+        right: ${theme.spacing(1.5)};
         top: 50%;
         transform: translateY(-50%);
       `;
     }
     if (widgetHandleAxis === 'n') {
       return css`
-        top: ${theme.spacing(2)};
+        top: ${theme.spacing(1.5)};
         left: 50%;
         transform: translateX(-50%);
       `;
     }
     if (widgetHandleAxis === 's') {
       return css`
-        bottom: ${theme.spacing(2)};
+        bottom: ${theme.spacing(1.5)};
         left: 50%;
         transform: translateX(-50%);
       `;
