@@ -1,21 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
-
-export type WidgetCardProps = {
-  children?: ReactNode;
-  variant: WidgetCardVariant;
-  isEditable: boolean;
-  onClick?: () => void;
-  isEditing?: boolean;
-  isDragging?: boolean;
-  isResizing?: boolean;
-  className?: string;
-  onMouseEnter?: () => void;
-  onMouseLeave?: () => void;
-};
 
 const StyledWidgetCard = styled.div<{
   variant: WidgetCardVariant;
@@ -41,14 +27,12 @@ const StyledWidgetCard = styled.div<{
     isResizing,
     onClick,
   }) => {
-    // Canvas variant
     if (variant === 'canvas') {
       return css`
         height: 100%;
       `;
     }
 
-    // Side column variant - read-only
     if (variant === 'side-column' && !isEditable) {
       return css`
         border: none;
@@ -58,7 +42,6 @@ const StyledWidgetCard = styled.div<{
       `;
     }
 
-    // Side column variant - editable
     if (variant === 'side-column' && isEditable) {
       return css`
         border: none;
@@ -77,7 +60,6 @@ const StyledWidgetCard = styled.div<{
       `;
     }
 
-    // Dashboard variant - read-only
     if (variant === 'dashboard' && !isEditable) {
       return css`
         background: ${theme.background.secondary};
@@ -88,7 +70,6 @@ const StyledWidgetCard = styled.div<{
       `;
     }
 
-    // Dashboard variant - editable
     if (variant === 'dashboard' && isEditable) {
       return css`
         background: ${theme.background.secondary};
@@ -126,7 +107,6 @@ const StyledWidgetCard = styled.div<{
       `;
     }
 
-    // Record page variant - read-only
     if (variant === 'record-page' && !isEditable) {
       return css`
         background: ${theme.background.primary};
@@ -137,7 +117,6 @@ const StyledWidgetCard = styled.div<{
       `;
     }
 
-    // Record page variant - editable
     if (variant === 'record-page' && isEditable) {
       return css`
         background: ${theme.background.primary};
@@ -177,31 +156,4 @@ const StyledWidgetCard = styled.div<{
   }}
 `;
 
-export const WidgetCard = ({
-  children,
-  variant,
-  isEditable,
-  onClick,
-  isEditing = false,
-  isDragging = false,
-  isResizing = false,
-  className,
-  onMouseEnter,
-  onMouseLeave,
-}: WidgetCardProps) => {
-  return (
-    <StyledWidgetCard
-      variant={variant}
-      isEditable={isEditable}
-      onClick={onClick}
-      isEditing={isEditing}
-      isDragging={isDragging}
-      isResizing={isResizing}
-      className={className}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-    >
-      {children}
-    </StyledWidgetCard>
-  );
-};
+export { StyledWidgetCard as WidgetCard };

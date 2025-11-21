@@ -18,14 +18,12 @@ const StyledWidgetCardContent = styled.div<{ variant: WidgetCardVariant }>`
   box-sizing: border-box;
 
   ${({ theme, variant }) => {
-    // Canvas variant
     if (variant === 'canvas') {
       return css`
         padding: 0;
       `;
     }
 
-    // Side column variant
     if (variant === 'side-column') {
       return css`
         border: none;
@@ -33,14 +31,12 @@ const StyledWidgetCardContent = styled.div<{ variant: WidgetCardVariant }>`
       `;
     }
 
-    // Dashboard variant
     if (variant === 'dashboard') {
       return css`
         padding: ${theme.spacing(2)};
       `;
     }
 
-    // Record page variant
     if (variant === 'record-page') {
       return css`
         border: 1px solid ${theme.border.color.medium};
