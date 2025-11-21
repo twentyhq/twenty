@@ -35,9 +35,11 @@ const aggregateFieldMetadata = (
       ...acc,
       description: [
         ...new Set([...acc.description, fieldMetadataDto.description]),
-      ],
-      isActive: [...new Set([...acc.isActive, fieldMetadataDto.isActive])],
-      label: [...new Set([...acc.label, fieldMetadataDto.label])],
+      ].sort(),
+      isActive: [
+        ...new Set([...acc.isActive, fieldMetadataDto.isActive]),
+      ].sort(),
+      label: [...new Set([...acc.label, fieldMetadataDto.label])].sort(),
       name: [...new Set([...acc.name, fieldMetadataDto.name])].sort(),
     };
   }, initialAcc);
