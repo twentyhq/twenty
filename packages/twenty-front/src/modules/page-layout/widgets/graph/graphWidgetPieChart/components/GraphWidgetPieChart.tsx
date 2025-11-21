@@ -2,6 +2,7 @@ import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/component
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { PieChartEndLines } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartEndLines';
+import { PIE_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartHoverBrightness';
 import { usePieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartData';
 import { usePieChartHandlers } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartHandlers';
 import { usePieChartTooltip } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartTooltip';
@@ -31,6 +32,19 @@ const StyledContainer = styled.div`
   height: 100%;
   justify-content: center;
   width: 100%;
+`;
+
+const StyledPieChartWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+
+  svg g path {
+    transition: filter 0.15s ease-in-out;
+
+    &:hover {
+      filter: brightness(${PIE_CHART_HOVER_BRIGHTNESS});
+    }
+  }
 `;
 
 export const GraphWidgetPieChart = ({
@@ -100,19 +114,21 @@ export const GraphWidgetPieChart = ({
         $isClickable={hasClickableItems}
         $cursorSelector="svg g path"
       >
-        <ResponsivePie
-          data={data}
-          innerRadius={0.8}
-          colors={enrichedData.map((item) => item.colorScheme.solid)}
-          borderWidth={0}
-          enableArcLinkLabels={false}
-          enableArcLabels={false}
-          tooltip={renderTooltip}
-          onClick={handleSliceClick}
-          onMouseEnter={(datum) => setHoveredSliceId(datum.id)}
-          onMouseLeave={() => setHoveredSliceId(null)}
-          layers={['arcs', renderSliceEndLines]}
-        />
+        <StyledPieChartWrapper>
+          <ResponsivePie
+            data={data}
+            innerRadius={0.8}
+            colors={enrichedData.map((item) => item.colorScheme.solid)}
+            borderWidth={0}
+            enableArcLinkLabels={false}
+            enableArcLabels={false}
+            tooltip={renderTooltip}
+            onClick={handleSliceClick}
+            onMouseEnter={(datum) => setHoveredSliceId(datum.id)}
+            onMouseLeave={() => setHoveredSliceId(null)}
+            layers={['arcs', renderSliceEndLines]}
+          />
+        </StyledPieChartWrapper>
       </GraphWidgetChartContainer>
       <GraphWidgetLegend
         show={showLegend}
