@@ -62,10 +62,9 @@ export const GraphWidgetPieChart = ({
     hasClickableItems,
   } = usePieChartHandlers({ data, onSliceClick });
 
-  const { enrichedData, enrichedDataMap, defs, fill } = usePieChartData({
+  const { enrichedData, enrichedDataMap } = usePieChartData({
     data,
     colorRegistry,
-    id,
     hoveredSliceId,
   });
 
@@ -99,12 +98,12 @@ export const GraphWidgetPieChart = ({
     <StyledContainer id={id}>
       <GraphWidgetChartContainer
         $isClickable={hasClickableItems}
-        $cursorSelector='svg g path[fill^="url(#"]'
+        $cursorSelector="svg g path"
       >
         <ResponsivePie
           data={data}
           innerRadius={0.8}
-          colors={enrichedData.map((item) => `url(#${item.gradientId})`)}
+          colors={enrichedData.map((item) => item.colorScheme.solid)}
           borderWidth={0}
           enableArcLinkLabels={false}
           enableArcLabels={false}
@@ -112,8 +111,6 @@ export const GraphWidgetPieChart = ({
           onClick={handleSliceClick}
           onMouseEnter={(datum) => setHoveredSliceId(datum.id)}
           onMouseLeave={() => setHoveredSliceId(null)}
-          defs={defs}
-          fill={fill}
           layers={['arcs', renderSliceEndLines]}
         />
       </GraphWidgetChartContainer>
