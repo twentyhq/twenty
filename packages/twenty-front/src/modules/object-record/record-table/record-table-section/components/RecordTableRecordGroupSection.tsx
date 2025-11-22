@@ -18,9 +18,12 @@ import { RecordTableGroupSectionLastDynamicFillingCell } from '@/object-record/r
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
 import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-record/record-table/constants/RecordTableLabelIdentifierColumnWidthOnMobile';
-import { useAggregateRecordsForRecordTableSection } from '@/object-record/record-table/record-table-section/hooks/useAggregateRecordsForRecordTableSection';
+
+import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
+import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilValue } from 'recoil';
 import {
@@ -116,8 +119,19 @@ export const RecordTableRecordGroupSection = () => {
 
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-  const { aggregateValue, aggregateLabel } =
-    useAggregateRecordsForRecordTableSection();
+  const recordGroup = useRecoilValue(
+    recordGroupDefinitionFamilyState(currentRecordGroupId),
+  );
+
+  const recordIndexAggregateDisplayValueForGroupValue =
+    useRecoilComponentFamilyValue(
+      recordIndexAggregateDisplayValueForGroupValueComponentFamilyState,
+      { groupValue: recordGroup?.value ?? '' },
+    );
+
+  const recordIndexAggregateDisplayLabel = useRecoilComponentValue(
+    recordIndexAggregateDisplayLabelComponentState,
+  );
 
   const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
 
@@ -142,10 +156,6 @@ export const RecordTableRecordGroupSection = () => {
   ] = useRecoilComponentFamilyState(
     isRecordGroupTableSectionToggledComponentState,
     currentRecordGroupId,
-  );
-
-  const recordGroup = useRecoilValue(
-    recordGroupDefinitionFamilyState(currentRecordGroupId),
   );
 
   const handleDropdownToggle = useCallback(() => {
@@ -203,10 +213,10 @@ export const RecordTableRecordGroupSection = () => {
           weight="medium"
         />
         <RecordBoardColumnHeaderAggregateDropdown
-          aggregateValue={aggregateValue}
+          aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
           dropdownId={`record-group-section-aggregate-dropdown-${currentRecordGroupId}`}
           objectMetadataItem={objectMetadataItem}
-          aggregateLabel={aggregateLabel}
+          aggregateLabel={recordIndexAggregateDisplayLabel}
         />
       </StyledRecordGroupSection>
       <StyledFieldPlaceholderCell widthOfFields={fieldsPlaceholderWidth} />

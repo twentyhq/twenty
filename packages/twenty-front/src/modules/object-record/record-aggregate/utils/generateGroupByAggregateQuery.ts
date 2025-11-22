@@ -2,18 +2,18 @@ import gql from 'graphql-tag';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { capitalize } from 'twenty-shared/utils';
-import { getGroupByQueryName } from '../../../utils/getGroupByQueryName';
+import { getGroupByQueryResultGqlFieldName } from '../../../page-layout/utils/getGroupByQueryResultGqlFieldName';
 
-export const generateGroupByQuery = ({
+export const generateGroupByAggregateQuery = ({
   objectMetadataItem,
-  aggregateOperations,
+  aggregateOperationGqlFields,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  aggregateOperations: string[];
+  aggregateOperationGqlFields: string[];
 }) => {
   const capitalizedSingular = capitalize(objectMetadataItem.nameSingular);
   const queryName = `${capitalize(objectMetadataItem.namePlural)}GroupBy`;
-  const queryFieldName = getGroupByQueryName(objectMetadataItem);
+  const queryFieldName = getGroupByQueryResultGqlFieldName(objectMetadataItem);
 
   return gql`
     query ${queryName}(
@@ -30,7 +30,7 @@ export const generateGroupByQuery = ({
         viewId: $viewId
         limit: $limit
       ) {
-        groupByDimensionValues${aggregateOperations.length > 0 ? `\n        ${aggregateOperations.join('\n        ')}` : ''}
+        groupByDimensionValues${aggregateOperationGqlFields.length > 0 ? `\n        ${aggregateOperationGqlFields.join('\n        ')}` : ''}
       }
     }
   `;

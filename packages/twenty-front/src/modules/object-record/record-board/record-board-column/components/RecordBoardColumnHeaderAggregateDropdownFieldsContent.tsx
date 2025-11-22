@@ -3,14 +3,14 @@ import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record
 import { aggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/aggregateOperationComponentState';
 import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/availableFieldIdsForAggregateOperationComponentState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
-import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
+import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateFieldMetadataItemComponentState';
+import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   Icon123,
@@ -43,11 +43,18 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
     availableFieldIdsForAggregateOperationComponentState,
   );
 
-  const recordIndexKanbanAggregateOperation = useRecoilValue(
-    recordIndexKanbanAggregateOperationState,
+  const recordIndexGroupAggregateOperation = useRecoilComponentValue(
+    recordIndexGroupAggregateOperationComponentState,
   );
 
-  if (!isDefined(aggregateOperation)) return <></>;
+  const recordIndexGroupAggregateFieldMetadataItem = useRecoilComponentValue(
+    recordIndexGroupAggregateFieldMetadataItemComponentState,
+  );
+
+  if (!isDefined(aggregateOperation)) {
+    return <></>;
+  }
+
   return (
     <DropdownContent>
       <DropdownMenuHeader
@@ -78,17 +85,15 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
                 updateViewAggregate({
                   kanbanAggregateOperationFieldMetadataId: fieldId,
                   kanbanAggregateOperation: aggregateOperation,
-                  objectMetadataId: objectMetadataItem.id,
+                  objectMetadataItem,
                 });
                 closeDropdown();
               }}
               LeftIcon={getIcon(fieldMetadata.icon) ?? Icon123}
               text={fieldMetadata.label}
               RightIcon={
-                recordIndexKanbanAggregateOperation?.fieldMetadataId ===
-                  fieldId &&
-                recordIndexKanbanAggregateOperation?.operation ===
-                  aggregateOperation
+                recordIndexGroupAggregateFieldMetadataItem?.id === fieldId &&
+                recordIndexGroupAggregateOperation === aggregateOperation
                   ? IconCheck
                   : undefined
               }

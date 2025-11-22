@@ -15,6 +15,7 @@ export { findOrThrow } from './array/findOrThrow';
 export { getContiguousIncrementalValues } from './array/getContiguousIncrementalValues';
 export { isNonEmptyArray } from './array/isNonEmptyArray';
 export { sumByProperty } from './array/sumByProperty';
+export { upsertIntoArrayOfObjectsComparingId } from './array/upsertIntoArrayOfObjectComparingId';
 export { assertUnreachable } from './assertUnreachable';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
 export { deepMerge } from './deepMerge';

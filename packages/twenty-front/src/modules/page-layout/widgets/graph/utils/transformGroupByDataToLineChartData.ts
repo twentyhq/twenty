@@ -1,8 +1,8 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
-import { getGroupByQueryName } from '@/page-layout/utils/getGroupByQueryName';
+import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGroupByResults';
@@ -73,8 +73,9 @@ export const transformGroupByDataToLineChartData = ({
   const primaryAxisSubFieldName =
     configuration.primaryAxisGroupBySubFieldName ?? undefined;
 
-  const queryName = getGroupByQueryName(objectMetadataItem);
-  const rawResults = groupByData[queryName];
+  const queryResultGqlFieldName =
+    getGroupByQueryResultGqlFieldName(objectMetadataItem);
+  const rawResults = groupByData[queryResultGqlFieldName];
 
   if (!isDefined(rawResults) || !Array.isArray(rawResults)) {
     return EMPTY_LINE_CHART_RESULT;
