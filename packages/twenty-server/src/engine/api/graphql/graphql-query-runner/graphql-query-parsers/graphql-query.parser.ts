@@ -40,6 +40,7 @@ export class GraphqlQueryParser {
     );
     this.orderFieldParser = new GraphqlQueryOrderFieldParser(
       this.objectMetadataMapItem,
+      this.objectMetadataMaps,
     );
   }
 

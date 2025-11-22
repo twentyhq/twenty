@@ -19,7 +19,10 @@ export class ObjectMetadataGqlInputTypeGenerator {
     private readonly objectMetadataGroupByGqlInputTypeGenerator: ObjectMetadataGroupByGqlInputTypeGenerator,
   ) {}
 
-  public buildAndStore(objectMetadata: ObjectMetadataEntity) {
+  public buildAndStore(
+    objectMetadata: ObjectMetadataEntity,
+    objectMetadataCollection?: ObjectMetadataEntity[],
+  ) {
     this.objectMetadataCreateGqlInputTypeGenerator.buildAndStore(
       objectMetadata,
     );
@@ -34,9 +37,11 @@ export class ObjectMetadataGqlInputTypeGenerator {
     });
     this.objectMetadataOrderByWithGroupByGqlInputTypeGenerator.buildAndStore({
       objectMetadata,
+      objectMetadataCollection,
     });
     this.objectMetadataGroupByGqlInputTypeGenerator.buildAndStore(
       objectMetadata,
+      objectMetadataCollection,
     );
   }
 }

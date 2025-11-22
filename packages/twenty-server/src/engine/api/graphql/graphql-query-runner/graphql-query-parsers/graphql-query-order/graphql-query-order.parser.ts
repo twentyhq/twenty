@@ -4,6 +4,7 @@ import {
   FieldMetadataType,
   ObjectRecordGroupByDateGranularity,
   type ObjectRecordOrderByForCompositeField,
+  type ObjectRecordOrderByForRelationField,
   type ObjectRecordOrderByForScalarField,
   type ObjectRecordOrderByWithGroupByDateField,
   OrderByDirection,
@@ -19,9 +20,11 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
 import { parseCompositeFieldForOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/parse-composite-field-for-order.util';
+import { prepareForOrderByRelationFieldParsing } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/prepare-for-order-by-relation-field-parsing.util';
 import {
   type GroupByDateField,
   type GroupByField,
+  type GroupByRegularField,
 } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
 import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
@@ -34,6 +37,7 @@ import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-er
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { formatColumnNameForRelationField } from 'src/engine/twenty-orm/utils/format-column-name-for-relation-field.util';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
@@ -44,9 +48,14 @@ export type OrderByCondition = {
 
 export class GraphqlQueryOrderFieldParser {
   private objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+  private objectMetadataMaps?: ObjectMetadataMaps;
 
-  constructor(objectMetadataMapItem: ObjectMetadataItemWithFieldMaps) {
+  constructor(
+    objectMetadataMapItem: ObjectMetadataItemWithFieldMaps,
+    objectMetadataMaps?: ObjectMetadataMaps,
+  ) {
     this.objectMetadataMapItem = objectMetadataMapItem;
+    this.objectMetadataMaps = objectMetadataMaps;
   }
 
   parse(
@@ -132,6 +141,12 @@ export class GraphqlQueryOrderFieldParser {
         continue;
       }
 
+      if (Object.keys(orderByArg).length > 1) {
+        throw new UserInputError(
+          'Please provide orderBy field criteria one by one in orderBy array',
+        );
+      }
+
       const fieldName = Object.keys(orderByArg)[0];
       const fieldMetadataId =
         this.objectMetadataMapItem.fieldIdByName[fieldName];
@@ -180,6 +195,24 @@ export class GraphqlQueryOrderFieldParser {
         continue;
       }
 
+      if (
+        this.isObjectRecordOrderByForRelationField(orderByArg, fieldMetadata)
+      ) {
+        const parsedOrderByForRelationField =
+          this.parseObjectRecordOrderByForRelationField({
+            groupByFields,
+            orderByArg,
+            fieldMetadata,
+          });
+
+        if (!isDefined(parsedOrderByForRelationField)) {
+          continue;
+        }
+
+        parsedOrderBy.push(parsedOrderByForRelationField);
+        continue;
+      }
+
       if (this.isObjectRecordOrderByForCompositeField(orderByArg)) {
         const parsedOrderByForCompositeField =
           this.parseObjectRecordOrderByForCompositeField({
@@ -221,7 +254,8 @@ export class GraphqlQueryOrderFieldParser {
       | ObjectRecordOrderByForScalarField
       | ObjectRecordOrderByForCompositeField
       | AggregateOrderByWithGroupByField
-      | ObjectRecordOrderByWithGroupByDateField,
+      | ObjectRecordOrderByWithGroupByDateField
+      | ObjectRecordOrderByForRelationField,
   ): orderByArg is AggregateOrderByWithGroupByField => {
     return isDefined(orderByArg.aggregate);
   };
@@ -230,7 +264,8 @@ export class GraphqlQueryOrderFieldParser {
     orderByArg:
       | ObjectRecordOrderByForScalarField
       | ObjectRecordOrderByForCompositeField
-      | ObjectRecordOrderByWithGroupByDateField,
+      | ObjectRecordOrderByWithGroupByDateField
+      | ObjectRecordOrderByForRelationField,
   ): orderByArg is ObjectRecordOrderByForScalarField => {
     if (Object.keys(orderByArg).length > 1) {
       throw new UserInputError(
@@ -256,7 +291,8 @@ export class GraphqlQueryOrderFieldParser {
     orderByArg:
       | ObjectRecordOrderByForScalarField
       | ObjectRecordOrderByForCompositeField
-      | ObjectRecordOrderByWithGroupByDateField,
+      | ObjectRecordOrderByWithGroupByDateField
+      | ObjectRecordOrderByForRelationField,
   ): orderByArg is ObjectRecordOrderByForCompositeField => {
     const compositeFieldOrderByValue = Object.values(orderByArg)[0];
 
@@ -292,7 +328,8 @@ export class GraphqlQueryOrderFieldParser {
       | ObjectRecordOrderByForScalarField
       | ObjectRecordOrderByForCompositeField
       | AggregateOrderByWithGroupByField
-      | ObjectRecordOrderByWithGroupByDateField,
+      | ObjectRecordOrderByWithGroupByDateField
+      | ObjectRecordOrderByForRelationField,
     fieldMetadataType: FieldMetadataType,
   ): orderByArg is ObjectRecordOrderByWithGroupByDateField => {
     if (
@@ -443,7 +480,7 @@ export class GraphqlQueryOrderFieldParser {
       !groupByFields.some(
         (groupByField) =>
           groupByField.fieldMetadata.id === fieldMetadata.id &&
-          groupByField.subFieldName === subFieldName,
+          (groupByField as GroupByRegularField).subFieldName === subFieldName,
       )
     ) {
       throw new UserInputError(
@@ -485,7 +522,7 @@ export class GraphqlQueryOrderFieldParser {
       (groupByField) =>
         groupByField.fieldMetadata.id === fieldMetadataId &&
         (groupByField as GroupByDateField).dateGranularity === granularity,
-    );
+    ) as GroupByDateField | undefined;
 
     if (!isDefined(associatedGroupByField)) {
       throw new UserInputError(
@@ -510,5 +547,180 @@ export class GraphqlQueryOrderFieldParser {
     return {
       [expression]: convertOrderByToFindOptionsOrder(orderByDirection),
     };
+  };
+
+  parseObjectRecordOrderByForRelationField = ({
+    groupByFields,
+    orderByArg,
+    fieldMetadata,
+  }: {
+    groupByFields: GroupByField[];
+    orderByArg: ObjectRecordOrderByForRelationField;
+    fieldMetadata: FieldMetadataEntity;
+  }): Record<string, OrderByCondition> | null => {
+    const {
+      associatedGroupByField,
+      nestedFieldMetadata,
+      nestedFieldOrderByValue,
+    } = prepareForOrderByRelationFieldParsing({
+      orderByArg,
+      fieldMetadata,
+      objectMetadataMaps: this.objectMetadataMaps,
+      groupByFields,
+    });
+
+    if (
+      !isDefined(associatedGroupByField) ||
+      !isDefined(nestedFieldMetadata) ||
+      !isDefined(nestedFieldOrderByValue)
+    ) {
+      return null;
+    }
+
+    // Handle composite fields
+    if (isCompositeFieldMetadataType(nestedFieldMetadata.type)) {
+      if (!isObject(nestedFieldOrderByValue)) {
+        throw new UserInputError(
+          `Composite field "${nestedFieldMetadata.name}" requires a subfield to be specified`,
+        );
+      }
+
+      const compositeSubFields = Object.keys(nestedFieldOrderByValue);
+
+      if (compositeSubFields.length > 1) {
+        throw new UserInputError(
+          'Please provide composite subfield criteria one by one in orderBy array',
+        );
+      }
+
+      const nestedSubFieldName = compositeSubFields[0];
+      const orderByDirection = (
+        nestedFieldOrderByValue as Record<string, OrderByDirection>
+      )[nestedSubFieldName];
+
+      if (!isDefined(orderByDirection)) {
+        return null;
+      }
+
+      if (
+        !isDefined(associatedGroupByField.nestedSubFieldName) ||
+        associatedGroupByField.nestedSubFieldName !== nestedSubFieldName
+      ) {
+        throw new UserInputError(
+          `Cannot order by a composite subfield that is not in groupBy criteria: ${nestedSubFieldName}`,
+        );
+      }
+
+      const joinAlias = fieldMetadata.name;
+      const nestedColumnName = formatColumnNamesFromCompositeFieldAndSubfields(
+        nestedFieldMetadata.name,
+        [nestedSubFieldName],
+      )[0];
+
+      const columnNameWithQuotes = `"${joinAlias}"."${nestedColumnName}"`;
+
+      return {
+        [columnNameWithQuotes]:
+          convertOrderByToFindOptionsOrder(orderByDirection),
+      };
+    }
+
+    const isGroupByDateField =
+      (nestedFieldMetadata.type === FieldMetadataType.DATE ||
+        nestedFieldMetadata.type === FieldMetadataType.DATE_TIME) &&
+      isObject(nestedFieldOrderByValue) &&
+      'orderBy' in nestedFieldOrderByValue &&
+      'granularity' in nestedFieldOrderByValue;
+
+    if (isGroupByDateField) {
+      const orderByDirection = (
+        nestedFieldOrderByValue as {
+          orderBy: OrderByDirection;
+          granularity: ObjectRecordGroupByDateGranularity;
+        }
+      ).orderBy;
+      const granularity = (
+        nestedFieldOrderByValue as {
+          orderBy: OrderByDirection;
+          granularity: ObjectRecordGroupByDateGranularity;
+        }
+      ).granularity;
+
+      if (
+        !isDefined(associatedGroupByField.dateGranularity) ||
+        associatedGroupByField.dateGranularity !== granularity
+      ) {
+        throw new UserInputError(
+          `Cannot order by a date granularity that is not in groupBy criteria: ${granularity}`,
+        );
+      }
+
+      const joinAlias = fieldMetadata.name;
+      const nestedColumnName = formatColumnNamesFromCompositeFieldAndSubfields(
+        nestedFieldMetadata.name,
+        associatedGroupByField.nestedSubFieldName
+          ? [associatedGroupByField.nestedSubFieldName]
+          : undefined,
+      )[0];
+
+      const columnNameWithQuotes = `"${joinAlias}"."${nestedColumnName}"`;
+
+      const expression = getGroupByExpression({
+        groupByField: associatedGroupByField,
+        columnNameWithQuotes,
+      });
+
+      return {
+        [expression]: convertOrderByToFindOptionsOrder(orderByDirection),
+      };
+    }
+
+    // Handle regular nested fields
+    if (
+      typeof nestedFieldOrderByValue === 'string' &&
+      Object.values(OrderByDirection).includes(
+        nestedFieldOrderByValue as OrderByDirection,
+      )
+    ) {
+      const orderByDirection = nestedFieldOrderByValue as OrderByDirection;
+
+      const joinAlias = fieldMetadata.name;
+      const nestedColumnName = formatColumnNamesFromCompositeFieldAndSubfields(
+        nestedFieldMetadata.name,
+        associatedGroupByField.nestedSubFieldName
+          ? [associatedGroupByField.nestedSubFieldName]
+          : undefined,
+      )[0];
+
+      const columnNameWithQuotes = `"${joinAlias}"."${nestedColumnName}"`;
+
+      return {
+        [columnNameWithQuotes]:
+          convertOrderByToFindOptionsOrder(orderByDirection),
+      };
+    }
+
+    return null;
+  };
+
+  isObjectRecordOrderByForRelationField = (
+    orderByArg:
+      | ObjectRecordOrderByForScalarField
+      | ObjectRecordOrderByForCompositeField
+      | ObjectRecordOrderByWithGroupByDateField
+      | ObjectRecordOrderByForRelationField,
+    fieldMetadata: FieldMetadataEntity,
+  ): orderByArg is ObjectRecordOrderByForRelationField => {
+    if (!isFieldMetadataRelationOrMorphRelation(fieldMetadata)) {
+      return false;
+    }
+
+    const relationFieldOrderByValue = Object.values(orderByArg)[0];
+
+    if (!isObject(relationFieldOrderByValue)) {
+      return false;
+    }
+
+    return Object.keys(relationFieldOrderByValue).length > 0;
   };
 }

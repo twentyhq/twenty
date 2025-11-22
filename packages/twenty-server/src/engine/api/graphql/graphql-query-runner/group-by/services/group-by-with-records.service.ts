@@ -7,6 +7,7 @@ import { type ObjectLiteral } from 'typeorm';
 
 import { ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
@@ -156,8 +157,10 @@ export class GroupByWithRecordsService {
       queryBuilderForSubQuery,
     );
 
+    const objectAlias = getObjectAlias(objectMetadataItemWithFieldMaps);
+
     const recordSelectWithAlias = Object.keys(columnsToSelect)
-      .map((col) => `"${col}" as "${SUB_QUERY_PREFIX}${col}"`)
+      .map((col) => `"${objectAlias}"."${col}" as "${SUB_QUERY_PREFIX}${col}"`)
       .join(', ');
 
     const groupBySelectWithAlias = groupByDefinitions

@@ -23,6 +23,8 @@ import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/w
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
 import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
@@ -37,11 +39,21 @@ export class ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator {
     private readonly typeMapperService: TypeMapperService,
   ) {}
 
+  private objectMetadataMaps?: ObjectMetadataMaps;
+
   public buildAndStore({
     objectMetadata,
+    objectMetadataCollection,
   }: {
     objectMetadata: ObjectMetadataEntity;
+    objectMetadataCollection?: ObjectMetadataEntity[];
   }) {
+    if (isDefined(objectMetadataCollection)) {
+      this.objectMetadataMaps = generateObjectMetadataMaps(
+        objectMetadataCollection,
+      );
+    }
+
     const inputType = new GraphQLInputObjectType({
       name: `${pascalCase(objectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.OrderByWithGroupBy.toString()}Input`,
       description: objectMetadata.description,
@@ -86,6 +98,7 @@ export class ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator {
             {
               fieldMetadata,
               typeOptions,
+              objectMetadataMaps: this.objectMetadataMaps,
             },
           );
       } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {
@@ -124,6 +137,7 @@ export class ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator {
       objectMetadata,
       logger: this.logger,
       orderByDateGranularity: true,
+      objectMetadataMaps: this.objectMetadataMaps,
     });
   }
 
