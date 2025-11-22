@@ -1,8 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import {
+  ActorMetadata,
   FieldMetadataType,
   RelationOnDeleteAction,
-  ActorMetadata,
 } from 'twenty-shared/types';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
@@ -68,6 +68,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Attachment type (deprecated - use fileCategory)`,
     icon: 'IconList',
   })
+  @WorkspaceIsNullable()
   type: string;
 
   @WorkspaceField({

@@ -7,8 +7,7 @@ import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ObjectPermissions } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
-import { isEmptyObject } from '~/utils/isEmptyObject';
+import { capitalize, isEmptyObject } from 'twenty-shared/utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export type GetRecordFromCacheArgs = {

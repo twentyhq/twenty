@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import isEmpty from 'lodash.isempty';
 import {
-  type FieldMetadataType,
   type CompositeType,
   compositeTypeDefinitions,
+  type FieldMetadataType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, type QueryRunner, Repository } from 'typeorm';
@@ -19,7 +19,6 @@ import {
 } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.exception';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { type IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { computeUniqueIndexWhereClause } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-index-where-clause.util';
 import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
@@ -197,7 +196,6 @@ export class IndexMetadataService {
         computeObjectTargetTable(objectMetadata),
         updatedFieldMetadata.name,
       ])}`,
-      indexWhereClause: computeUniqueIndexWhereClause(updatedFieldMetadata),
     });
 
     return {

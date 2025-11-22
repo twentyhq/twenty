@@ -46,7 +46,7 @@ describe('WorkspaceMigrationIndexFactory', () => {
     expect(firstMigration.indexes[0].columns).toEqual(['simpleField']);
     expect(firstMigration.indexes[0].type).toBe('BTREE');
     expect(firstMigration.indexes[0].isUnique).toBe(true);
-    expect(firstMigration.indexes[0].where).toBe('"simpleField" != \'\'');
+    expect(firstMigration.indexes[0].where).toBeNull();
   });
 
   it('should create index migrations for relation fields', async () => {

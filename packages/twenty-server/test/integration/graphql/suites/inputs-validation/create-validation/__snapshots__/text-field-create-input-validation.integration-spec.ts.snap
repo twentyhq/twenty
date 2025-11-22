@@ -6,8 +6,6 @@ exports[`Create input validation - TEXT Gql create input - failure TEXT - should
 
 exports[`Create input validation - TEXT Gql create input - failure TEXT - should fail with : {"textField":1} 1`] = `"String cannot represent a non string value: 1"`;
 
-exports[`Create input validation - TEXT Gql create input - failure TEXT - should fail with : {"textField":null} 1`] = `"null value in column "textField" of relation "_apiInputValidationTestObject" violates not-null constraint"`;
-
 exports[`Create input validation - TEXT Gql create input - failure TEXT - should fail with : {"textField":true} 1`] = `"String cannot represent a non string value: true"`;
 
 exports[`Create input validation - TEXT Rest create input - failure TEXT - should fail with : {"textField":[]} 1`] = `"["Invalid string value [] for text field \\"textField\\""]"`;
@@ -15,7 +13,5 @@ exports[`Create input validation - TEXT Rest create input - failure TEXT - shoul
 exports[`Create input validation - TEXT Rest create input - failure TEXT - should fail with : {"textField":{}} 1`] = `"["Invalid string value {} for text field \\"textField\\""]"`;
 
 exports[`Create input validation - TEXT Rest create input - failure TEXT - should fail with : {"textField":1} 1`] = `"["Invalid string value 1 for text field \\"textField\\""]"`;
-
-exports[`Create input validation - TEXT Rest create input - failure TEXT - should fail with : {"textField":null} 1`] = `"["null value in column \\"textField\\" of relation \\"_apiInputValidationTestObject\\" violates not-null constraint"]"`;
 
 exports[`Create input validation - TEXT Rest create input - failure TEXT - should fail with : {"textField":true} 1`] = `"["Invalid string value true for text field \\"textField\\""]"`;

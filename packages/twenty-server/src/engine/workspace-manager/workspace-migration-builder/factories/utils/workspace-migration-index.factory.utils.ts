@@ -1,7 +1,7 @@
 import {
-  FieldMetadataType,
   type CompositeType,
   compositeTypeDefinitions,
+  FieldMetadataType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -92,17 +92,13 @@ export const createIndexMigration = async (
         .flat()
         .filter(isDefined);
 
-      const defaultWhereClause = indexMetadata.isUnique
-        ? `${columns.map((column) => `"${column}"`).join(" != '' AND ")} != ''`
-        : null;
-
       return {
         name: indexMetadata.name,
         action: WorkspaceMigrationIndexActionType.CREATE,
         isUnique: indexMetadata.isUnique,
         columns,
         type: indexMetadata.indexType,
-        where: indexMetadata.indexWhereClause ?? defaultWhereClause,
+        where: indexMetadata.indexWhereClause,
       };
     });
 

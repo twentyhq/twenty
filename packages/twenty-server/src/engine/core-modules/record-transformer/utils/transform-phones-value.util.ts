@@ -6,16 +6,16 @@ import {
 } from 'libphonenumber-js';
 import isEmpty from 'lodash.isempty';
 import {
+  type AdditionalPhoneMetadata,
+  type PhonesMetadata,
+} from 'twenty-shared/types';
+import {
   getCountryCodesForCallingCode,
   isDefined,
   isValidCountryCode,
   parseJson,
   removeUndefinedFields,
 } from 'twenty-shared/utils';
-import {
-  type AdditionalPhoneMetadata,
-  type PhonesMetadata,
-} from 'twenty-shared/types';
 
 import {
   RecordTransformerException,

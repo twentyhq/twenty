@@ -1,8 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import {
+  ActorMetadata,
   FieldMetadataType,
   RelationOnDeleteAction,
-  ActorMetadata,
   type RichTextV2Metadata,
 } from 'twenty-shared/types';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
@@ -74,6 +74,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Task title`,
     icon: 'IconNotes',
   })
+  @WorkspaceIsNullable()
   title: string;
 
   @WorkspaceField({

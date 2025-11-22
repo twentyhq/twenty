@@ -4,7 +4,7 @@ import {
   TEST_UUID_FIELD_VALUE,
 } from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 export const successfulFilterInputByFieldMetadataType: {
   [K in FieldMetadataTypesToTestForFilterInputValidation]: {
@@ -803,7 +803,10 @@ export const successfulFilterInputByFieldMetadataType: {
       gqlFilterInput: { multiSelectField: { is: 'NULL' } },
       restFilterInput: 'multiSelectField[is]:NULL',
       validateFilter: (record: Record<string, any>) => {
-        return record.multiSelectField === null;
+        return (
+          Array.isArray(record.multiSelectField) &&
+          record.multiSelectField.length === 0
+        );
       },
     },
     {
@@ -892,7 +895,7 @@ export const successfulFilterInputByFieldMetadataType: {
       gqlFilterInput: { rawJsonField: { is: 'NULL' } },
       restFilterInput: 'rawJsonField[is]:NULL',
       validateFilter: (record: Record<string, any>) => {
-        return record.rawJsonField === null;
+        return isEmptyObject(record.rawJsonField);
       },
     },
     {
@@ -923,7 +926,9 @@ export const successfulFilterInputByFieldMetadataType: {
       gqlFilterInput: { arrayField: { is: 'NULL' } },
       restFilterInput: 'arrayField[is]:NULL',
       validateFilter: (record: Record<string, any>) => {
-        return record.arrayField === null;
+        return (
+          Array.isArray(record.arrayField) && record.arrayField.length === 0
+        );
       },
     },
     //TODO - null and empty array should be equivalent

@@ -44,6 +44,8 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { transformEmailsValue } from 'src/engine/core-modules/record-transformer/utils/transform-emails-value.util';
 import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
@@ -55,7 +57,10 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 
 @Injectable()
 export class DataArgProcessor {
-  constructor(private readonly recordPositionService: RecordPositionService) {}
+  constructor(
+    private readonly recordPositionService: RecordPositionService,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {}
 
   async process({
     partialRecordInputs,
@@ -75,6 +80,12 @@ export class DataArgProcessor {
     const workspace = authContext.workspace;
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+
+    const isNullEquivalenceEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED,
+        workspace.id,
+      );
 
     const processedRecords: Partial<ObjectRecord>[] = [];
 
@@ -115,6 +126,7 @@ export class DataArgProcessor {
           fieldMetadata,
           key,
           value,
+          isNullEquivalenceEnabled,
         );
       }
       processedRecords.push(processedRecord);
@@ -139,6 +151,7 @@ export class DataArgProcessor {
     fieldMetadata: FieldMetadataEntity,
     key: string,
     value: unknown,
+    isNullEquivalenceEnabled: boolean,
   ): Promise<unknown> {
     switch (fieldMetadata.type) {
       case FieldMetadataType.POSITION:
@@ -154,7 +167,7 @@ export class DataArgProcessor {
       case FieldMetadataType.TEXT: {
         const validatedValue = validateTextFieldOrThrow(value, key);
 
-        return transformTextField(validatedValue);
+        return transformTextField(validatedValue, isNullEquivalenceEnabled);
       }
       case FieldMetadataType.DATE_TIME:
       case FieldMetadataType.DATE:
@@ -179,19 +192,19 @@ export class DataArgProcessor {
           fieldMetadata.options?.map((option) => option.value),
         );
 
-        return transformArrayField(validatedValue);
+        return transformArrayField(validatedValue, isNullEquivalenceEnabled);
       }
       case FieldMetadataType.UUID:
         return validateUUIDFieldOrThrow(value, key);
       case FieldMetadataType.ARRAY: {
         const validatedValue = validateArrayFieldOrThrow(value, key);
 
-        return transformArrayField(validatedValue);
+        return transformArrayField(validatedValue, isNullEquivalenceEnabled);
       }
       case FieldMetadataType.RAW_JSON: {
         const validatedValue = validateRawJsonFieldOrThrow(value, key);
 
-        return transformRawJsonField(validatedValue);
+        return transformRawJsonField(validatedValue, isNullEquivalenceEnabled);
       }
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
@@ -222,18 +235,18 @@ export class DataArgProcessor {
       case FieldMetadataType.EMAILS: {
         const validatedValue = validateEmailsFieldOrThrow(value, key);
 
-        return transformEmailsValue(validatedValue);
+        return transformEmailsValue(validatedValue, isNullEquivalenceEnabled);
       }
       case FieldMetadataType.FULL_NAME: {
         const validatedValue = validateFullNameFieldOrThrow(value, key);
 
-        return transformFullNameField(validatedValue);
+        return transformFullNameField(validatedValue, isNullEquivalenceEnabled);
       }
 
       case FieldMetadataType.ADDRESS: {
         const validatedValue = validateAddressFieldOrThrow(value, key);
 
-        return transformAddressField(validatedValue);
+        return transformAddressField(validatedValue, isNullEquivalenceEnabled);
       }
       case FieldMetadataType.CURRENCY: {
         const validatedValue = validateCurrencyFieldOrThrow(value, key);
@@ -243,7 +256,7 @@ export class DataArgProcessor {
       case FieldMetadataType.ACTOR: {
         const validatedValue = validateActorFieldOrThrow(value, key);
 
-        return transformActorField(validatedValue);
+        return transformActorField(validatedValue, isNullEquivalenceEnabled);
       }
       case FieldMetadataType.RICH_TEXT_V2: {
         const validatedValue = validateRichTextV2FieldOrThrow(value, key);

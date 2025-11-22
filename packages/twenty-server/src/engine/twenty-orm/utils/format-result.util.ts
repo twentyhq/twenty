@@ -1,11 +1,18 @@
 import { isPlainObject } from '@nestjs/common/utils/shared.utils';
 
+import { isNull } from '@sniptt/guards';
 import {
   FieldMetadataType,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE,
+  DEFAULT_COMPOSITE_FIELDS_NULL_EQUIVALENT_VALUE,
+  DEFAULT_RAW_JSON_FIELD_NULL_EQUIVALENT_VALUE,
+  DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE,
+} from 'src/engine/api/common/common-args-processors/data-arg-processor/constants/null-equivalent-values.constant';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -46,7 +53,11 @@ export function formatResult<T>(
   for (const [key, value] of Object.entries(data)) {
     const compositePropertyArgs = compositeFieldMetadataMap.get(key);
 
-    const fieldMetadataId = objectMetadataItemWithFieldMaps.fieldIdByName[key];
+    const fieldMetadataId =
+      objectMetadataItemWithFieldMaps.fieldIdByName[key] ||
+      objectMetadataItemWithFieldMaps.fieldIdByName[
+        compositePropertyArgs?.parentField ?? ''
+      ];
 
     const fieldMetadata = objectMetadataItemWithFieldMaps.fieldsById[
       fieldMetadataId
@@ -66,7 +77,7 @@ export function formatResult<T>(
         );
       } else if (fieldMetadata) {
         // @ts-expect-error legacy noImplicitAny
-        newData[key] = formatFieldMetadataValue(value, fieldMetadata);
+        newData[key] = formatFieldMetadataValue(value, fieldMetadata.type);
       } else {
         // @ts-expect-error legacy noImplicitAny
         newData[key] = value;
@@ -99,7 +110,7 @@ export function formatResult<T>(
       );
     }
 
-    if (!compositePropertyArgs) {
+    if (!compositePropertyArgs || !isDefined(fieldMetadata)) {
       continue;
     }
 
@@ -112,7 +123,13 @@ export function formatResult<T>(
     }
 
     // @ts-expect-error legacy noImplicitAny
-    newData[parentField][compositeProperty.name] = value;
+    newData[parentField][compositeProperty.name] = isNull(value)
+      ? transformCompositeFieldNullValue(
+          value,
+          compositeProperty.name,
+          fieldMetadata,
+        )
+      : value;
   }
 
   const fieldMetadataItemsOfTypeDateOnly = Object.values(
@@ -162,17 +179,50 @@ export function getCompositeFieldMetadataMap(
 function formatFieldMetadataValue(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
-  fieldMetadata: FieldMetadataEntity,
+  fieldMetadataType: FieldMetadataType,
 ) {
   if (
     typeof value === 'string' &&
-    (fieldMetadata.type === FieldMetadataType.MULTI_SELECT ||
-      fieldMetadata.type === FieldMetadataType.ARRAY)
+    (fieldMetadataType === FieldMetadataType.MULTI_SELECT ||
+      fieldMetadataType === FieldMetadataType.ARRAY)
   ) {
     const cleanedValue = value.replace(/{|}/g, '').trim();
 
     return cleanedValue ? cleanedValue.split(',') : [];
   }
 
+  if (isNull(value)) {
+    if (
+      fieldMetadataType === FieldMetadataType.MULTI_SELECT ||
+      fieldMetadataType === FieldMetadataType.ARRAY
+    ) {
+      return DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE;
+    }
+
+    if (fieldMetadataType === FieldMetadataType.RAW_JSON) {
+      return DEFAULT_RAW_JSON_FIELD_NULL_EQUIVALENT_VALUE;
+    }
+
+    if (fieldMetadataType === FieldMetadataType.TEXT) {
+      return DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE;
+    }
+
+    return value;
+  }
+
   return value;
+}
+
+function transformCompositeFieldNullValue(
+  value: unknown,
+  compositePropertyName: string,
+  fieldMetadata: FieldMetadataEntity,
+) {
+  if (!isNull(value)) return value;
+
+  return (
+    DEFAULT_COMPOSITE_FIELDS_NULL_EQUIVALENT_VALUE[fieldMetadata.type]?.[
+      compositePropertyName
+    ] ?? value
+  );
 }
