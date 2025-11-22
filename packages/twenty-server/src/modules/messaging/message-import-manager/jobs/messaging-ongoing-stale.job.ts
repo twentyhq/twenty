@@ -42,6 +42,8 @@ export class MessagingOngoingStaleJob {
         syncStage: In([
           MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
           MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
+          MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
+          MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
         ]),
       },
     });
@@ -61,11 +63,13 @@ export class MessagingOngoingStaleJob {
 
         switch (messageChannel.syncStage) {
           case MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING:
+          case MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED:
             await this.messageChannelSyncStatusService.scheduleMessageListFetch(
               [messageChannel.id],
             );
             break;
           case MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING:
+          case MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED:
             await this.messageChannelSyncStatusService.scheduleMessagesImport([
               messageChannel.id,
             ]);

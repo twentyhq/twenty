@@ -10,6 +10,7 @@ import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common
 import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
+  MessageChannelPendingGroupEmailsAction,
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
   MessageChannelType,
@@ -157,6 +158,7 @@ describe('ImapSmtpCalDavAPIService', () => {
           syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
           syncCursor: '',
           syncStageStartedAt: null,
+          pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
         },
         {},
       );
@@ -299,6 +301,7 @@ describe('ImapSmtpCalDavAPIService', () => {
           syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
           syncCursor: '',
           syncStageStartedAt: null,
+          pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
         },
         {},
       );
