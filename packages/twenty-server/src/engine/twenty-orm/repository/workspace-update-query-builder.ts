@@ -144,6 +144,7 @@ export class WorkspaceUpdateQueryBuilder<
         this.internalContext,
         this.shouldBypassPermissionChecks,
         this.authContext,
+        this.featureFlagMap,
       );
 
       if (isDefined(this.relationNestedConfig)) {
@@ -275,6 +276,7 @@ export class WorkspaceUpdateQueryBuilder<
         this.internalContext,
         this.shouldBypassPermissionChecks,
         this.authContext,
+        this.featureFlagMap,
       );
 
       this.relationNestedConfig =
