@@ -29,10 +29,8 @@ export const commonQueryRunnerToRestApiExceptionHandler = (
     case CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND:
       throw new NotFoundException('Record not found');
     case CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT:
-    case CommonQueryRunnerExceptionCode.PERMISSION_DENIED:
       throw new UnauthorizedException(error.message);
     case CommonQueryRunnerExceptionCode.MISSING_SYSTEM_FIELD:
-    case CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR:
       throw new InternalServerErrorException(error.message);
     default: {
       return assertUnreachable(error.code);

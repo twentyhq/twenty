@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -120,15 +122,15 @@ export class WorkspaceUpdateQueryBuilder<
 
       const before = await eventSelectQueryBuilder.getMany();
 
-      // if (before.length > QUERY_MAX_RECORDS) {
-      //   throw new TwentyORMException(
-      //     `Cannot update more than ${QUERY_MAX_RECORDS} records at once`,
-      //     TwentyORMExceptionCode.TOO_MANY_RECORDS_TO_UPDATE,
-      //     {
-      //       userFriendlyMessage: msg`You can only update up to ${QUERY_MAX_RECORDS} records at once.`,
-      //     },
-      //   );
-      // }
+      if (before.length > QUERY_MAX_RECORDS) {
+        throw new TwentyORMException(
+          `Cannot update more than ${QUERY_MAX_RECORDS} records at once`,
+          TwentyORMExceptionCode.TOO_MANY_RECORDS_TO_UPDATE,
+          {
+            userFriendlyMessage: msg`You can only update up to ${QUERY_MAX_RECORDS} records at once.`,
+          },
+        );
+      }
 
       this.expressionMap.wheres = applyTableAliasOnWhereCondition({
         condition: this.expressionMap.wheres,
@@ -244,27 +246,18 @@ export class WorkspaceUpdateQueryBuilder<
         this.internalContext,
       );
 
-      const eventSelectQueryBuilder = new WorkspaceSelectQueryBuilder(
-        this as unknown as WorkspaceSelectQueryBuilder<T>,
-        this.objectRecordsPermissions,
-        this.internalContext,
-        true,
-        this.authContext,
-        this.featureFlagMap,
-      );
+      const eventSelectQueryBuilder = computeEventSelectQueryBuilder<T>({
+        queryBuilder: this,
+        authContext: this.authContext,
+        internalContext: this.internalContext,
+        featureFlagMap: this.featureFlagMap,
+        expressionMap: this.expressionMap,
+        objectRecordsPermissions: this.objectRecordsPermissions,
+      });
 
       eventSelectQueryBuilder.whereInIds(
         this.manyInputs.map((input) => input.criteria),
       );
-      eventSelectQueryBuilder.expressionMap.aliases =
-        this.expressionMap.aliases;
-      eventSelectQueryBuilder.expressionMap.orderBys = {
-        id: {
-          order: 'ASC',
-          nulls: 'NULLS LAST',
-        },
-      };
-      eventSelectQueryBuilder.setParameters(this.getParameters());
 
       const beforeRecords = await eventSelectQueryBuilder.getMany();
 

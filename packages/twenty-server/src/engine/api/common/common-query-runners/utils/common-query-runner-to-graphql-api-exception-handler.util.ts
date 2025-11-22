@@ -6,7 +6,6 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import {
   AuthenticationError,
-  ForbiddenError,
   InternalServerError,
   NotFoundError,
   UserInputError,
@@ -30,10 +29,7 @@ export const commonQueryRunnerToGraphqlApiExceptionHandler = (
       throw new UserInputError(error);
     case CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT:
       throw new AuthenticationError(error);
-    case CommonQueryRunnerExceptionCode.PERMISSION_DENIED:
-      throw new ForbiddenError(error);
     case CommonQueryRunnerExceptionCode.MISSING_SYSTEM_FIELD:
-    case CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR:
       throw new InternalServerError(error);
     default: {
       return assertUnreachable(error.code);
