@@ -26,7 +26,7 @@ import { useRecoilCallback } from 'recoil';
 
 type RecordTitleCellProps = {
   loading?: boolean;
-  sizeVariant?: 'xs' | 'md';
+  sizeVariant?: 'xs' | 'sm' | 'md';
   containerType: RecordTitleCellContainerType;
 };
 

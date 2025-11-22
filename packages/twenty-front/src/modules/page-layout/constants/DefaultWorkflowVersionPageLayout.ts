@@ -15,6 +15,7 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   deletedAt: null,
+  defaultTabIdToFocusOnMobileAndSidePanel: 'workflow-version-tab-flow',
   tabs: [
     // Fields tab (position 100)
     {

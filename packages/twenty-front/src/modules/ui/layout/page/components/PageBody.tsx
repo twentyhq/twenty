@@ -6,6 +6,7 @@ import { PagePanel } from './PagePanel';
 
 type PageBodyProps = {
   children: ReactNode;
+  className?: string;
 };
 
 const StyledMainContainer = styled.div`
@@ -38,8 +39,8 @@ const StyledLeftContainer = styled.div<LeftContainerProps>`
   width: 100%;
 `;
 
-export const PageBody = ({ children }: PageBodyProps) => (
-  <StyledMainContainer>
+export const PageBody = ({ children, className }: PageBodyProps) => (
+  <StyledMainContainer className={className}>
     <StyledLeftContainer>
       <PagePanel>{children}</PagePanel>
     </StyledLeftContainer>

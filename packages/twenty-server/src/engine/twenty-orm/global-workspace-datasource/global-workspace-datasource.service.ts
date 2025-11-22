@@ -43,7 +43,6 @@ export class GlobalWorkspaceDataSourceService
         },
       },
       this.workspaceEventEmitter,
-      this.entitySchemaFactory,
     );
 
     await this.globalWorkspaceDataSource.initialize();

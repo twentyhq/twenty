@@ -2,6 +2,7 @@ import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLin
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { renderHook } from '@testing-library/react';
 import { type ThemeType } from 'twenty-ui/theme';
+
 import { useLineChartData } from '../useLineChartData';
 
 describe('useLineChartData', () => {
@@ -75,22 +76,6 @@ describe('useLineChartData', () => {
       label: 'Costs',
     },
   ];
-
-  it('should create data map', () => {
-    const { result } = renderHook(() =>
-      useLineChartData({
-        data: mockData,
-        colorRegistry: mockColorRegistry,
-        id: 'test-chart',
-        instanceId: 'instance-1',
-        enableArea: false,
-        theme: mockTheme,
-      }),
-    );
-
-    expect(result.current.dataMap.series1).toBe(mockData[0]);
-    expect(result.current.dataMap.series2).toBe(mockData[1]);
-  });
 
   it('should enrich series with color schemes', () => {
     const { result } = renderHook(() =>
@@ -305,31 +290,6 @@ describe('useLineChartData', () => {
     ]);
   });
 
-  it('should detect clickable items', () => {
-    const dataWithLinks: LineChartSeries[] = [
-      {
-        id: 'series1',
-        data: [
-          { x: 'Jan', y: 100, to: '/january' },
-          { x: 'Feb', y: 120 },
-        ],
-      },
-    ];
-
-    const { result } = renderHook(() =>
-      useLineChartData({
-        data: dataWithLinks,
-        colorRegistry: mockColorRegistry,
-        id: 'test-chart',
-        instanceId: 'instance-1',
-        enableArea: false,
-        theme: mockTheme,
-      }),
-    );
-
-    expect(result.current.hasClickableItems).toBe(true);
-  });
-
   it('should handle empty data', () => {
     const { result } = renderHook(() =>
       useLineChartData({
@@ -342,14 +302,12 @@ describe('useLineChartData', () => {
       }),
     );
 
-    expect(result.current.dataMap).toEqual({});
     expect(result.current.enrichedSeries).toEqual([]);
     expect(result.current.nivoData).toEqual([]);
     expect(result.current.defs).toEqual([]);
     expect(result.current.fill).toEqual([]);
     expect(result.current.colors).toEqual([]);
     expect(result.current.legendItems).toEqual([]);
-    expect(result.current.hasClickableItems).toBe(false);
   });
 
   it('should use series id as label when label is not provided', () => {

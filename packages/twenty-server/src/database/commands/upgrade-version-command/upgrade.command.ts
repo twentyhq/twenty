@@ -33,6 +33,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
+import { SetStandardApplicationNotUninstallableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-set-standard-application-not-uninstallable.command';
 
 @Command({
   name: 'upgrade',
@@ -77,6 +78,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly cleanOrphanedUserWorkspacesCommand: CleanOrphanedUserWorkspacesCommand,
     protected readonly cleanOrphanedRoleTargetsCommand: CleanOrphanedRoleTargetsCommand,
     protected readonly seedStandardApplicationsCommand: CreateTwentyStandardApplicationCommand,
+
+    // 1.12 Commands
+    protected readonlysetStandardApplicationNotUninstallableCommand: SetStandardApplicationNotUninstallableCommand,
   ) {
     super(
       workspaceRepository,
@@ -133,12 +137,20 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       ],
     };
 
+    const commands_1120: VersionCommands = {
+      beforeSyncMetadata: [],
+      afterSyncMetadata: [
+        this.readonlysetStandardApplicationNotUninstallableCommand,
+      ],
+    };
+
     this.allCommands = {
       '1.6.0': commands_160,
       '1.7.0': commands_170,
       '1.8.0': commands_180,
       '1.10.0': commands_1100,
       '1.11.0': commands_1110,
+      '1.12.0': commands_1120,
     };
   }
 

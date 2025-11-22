@@ -1,12 +1,9 @@
-import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type WorkflowIteratorAction } from '@/workflow/types/Workflow';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { ITERATOR_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/IteratorAction';
-import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useLingui } from '@lingui/react/macro';
 import { isArray, isString } from '@sniptt/guards';
@@ -44,12 +41,6 @@ export const WorkflowEditActionIterator = ({
   action,
   actionOptions,
 }: WorkflowEditActionIteratorProps) => {
-  const { headerTitle, headerIcon, headerIconColor, headerType, getIcon } =
-    useWorkflowActionHeader({
-      action,
-      defaultTitle: ITERATOR_ACTION.defaultLabel,
-    });
-
   const { t } = useLingui();
 
   const defaultItems = isDefined(action.settings.input.items)
@@ -100,28 +91,8 @@ export const WorkflowEditActionIterator = ({
     saveAction(updatedFormData);
   };
 
-  const handleTitleChange = (newName: string) => {
-    if (actionOptions.readonly === true) {
-      return;
-    }
-
-    actionOptions.onActionUpdate?.({
-      ...action,
-      name: newName,
-    });
-  };
-
   return (
     <>
-      <SidePanelHeader
-        onTitleChange={handleTitleChange}
-        Icon={getIcon(headerIcon || 'IconRepeat')}
-        iconColor={headerIconColor}
-        initialTitle={headerTitle}
-        headerType={headerType}
-        disabled={actionOptions.readonly}
-        iconTooltip={ITERATOR_ACTION.defaultLabel}
-      />
       <WorkflowStepBody>
         <FormArrayFieldInput
           label={t`Items to iterate over`}

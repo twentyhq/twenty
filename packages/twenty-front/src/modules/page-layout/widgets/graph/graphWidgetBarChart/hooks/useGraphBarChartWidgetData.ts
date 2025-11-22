@@ -1,4 +1,5 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
@@ -25,6 +26,7 @@ type UseGraphBarChartWidgetDataResult = {
   loading: boolean;
   error?: Error;
   hasTooManyGroups: boolean;
+  objectMetadataItem: ObjectMetadataItem;
 };
 
 // TODO: Remove this once backend returns total group count
@@ -63,6 +65,7 @@ export const useGraphBarChartWidgetData = ({
 
   return {
     ...transformedData,
+    objectMetadataItem,
     loading,
     error,
   };

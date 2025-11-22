@@ -5,14 +5,12 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { type BarDatum, type ComputedDatum } from '@nivo/bar';
+import { type ComputedDatum } from '@nivo/bar';
 import { isDefined } from 'twenty-shared/utils';
 
 type GetBarChartTooltipDataParameters = {
-  datum: ComputedDatum<BarDatum>;
+  datum: ComputedDatum<BarChartDataItem>;
   enrichedKeys: BarChartEnrichedKey[];
-  data: BarChartDataItem[];
-  indexBy: string;
   formatOptions: GraphValueFormatOptions;
   enableGroupTooltip?: boolean;
   layout?: 'vertical' | 'horizontal';
@@ -22,22 +20,15 @@ type BarChartTooltipData = {
   tooltipItems: GraphWidgetTooltipItem[];
   indexLabel: string;
   hoveredKey: string | undefined;
-  linkTo: string | undefined;
 };
 
 export const getBarChartTooltipData = ({
   datum,
   enrichedKeys,
-  data,
-  indexBy,
   formatOptions,
   enableGroupTooltip = true,
   layout = 'vertical',
 }: GetBarChartTooltipDataParameters): BarChartTooltipData | null => {
-  const dataItem = data.find(
-    (dataRow) => dataRow[indexBy] === datum.indexValue,
-  );
-
   let keysToShow: BarChartEnrichedKey[];
 
   if (enableGroupTooltip) {
@@ -72,6 +63,5 @@ export const getBarChartTooltipData = ({
     tooltipItems,
     indexLabel: String(datum.indexValue),
     hoveredKey: enableGroupTooltip ? String(datum.id) : undefined,
-    linkTo: isDefined(dataItem?.to) ? String(dataItem.to) : undefined,
   };
 };

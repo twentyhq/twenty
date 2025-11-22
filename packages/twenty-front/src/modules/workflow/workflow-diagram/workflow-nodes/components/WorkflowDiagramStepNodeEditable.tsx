@@ -57,6 +57,7 @@ export const WorkflowDiagramStepNodeEditable = ({
             workflowVisualizerWorkflowId,
             data.name,
             getIcon(getWorkflowNodeIconKey(data)),
+            id,
           );
 
           return;

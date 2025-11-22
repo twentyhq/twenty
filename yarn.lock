@@ -24709,6 +24709,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.startcase@npm:^4":
+  version: 4.4.9
+  resolution: "@types/lodash.startcase@npm:4.4.9"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: 10c0/9d31900b2a7096f307f30b765fcd50fe83c5270c9f730c8f5006c4560628f979fefb7a5d04bced817863707bc0587f2d8b743a9318707983ebc42d944e0030cb
+  languageName: node
+  linkType: hard
+
 "@types/lodash.uniq@npm:^4.5.9":
   version: 4.5.9
   resolution: "@types/lodash.uniq@npm:4.5.9"
@@ -42880,6 +42889,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.startcase@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "lodash.startcase@npm:4.4.0"
+  checksum: 10c0/bd82aa87a45de8080e1c5ee61128c7aee77bf7f1d86f4ff94f4a6d7438fc9e15e5f03374b947be577a93804c8ad6241f0251beaf1452bf716064eeb657b3a9f0
+  languageName: node
+  linkType: hard
+
 "lodash.topath@npm:^4.5.2":
   version: 4.5.2
   resolution: "lodash.topath@npm:4.5.2"
@@ -56062,6 +56078,7 @@ __metadata:
     "@types/lodash.camelcase": "npm:^4.3.7"
     "@types/lodash.capitalize": "npm:^4"
     "@types/lodash.kebabcase": "npm:^4.1.7"
+    "@types/lodash.startcase": "npm:^4"
     "@types/node": "npm:^20.0.0"
     ajv: "npm:^8.12.0"
     ajv-formats: "npm:^2.1.1"
@@ -56078,6 +56095,7 @@ __metadata:
     lodash.camelcase: "npm:^4.3.0"
     lodash.capitalize: "npm:^4.2.1"
     lodash.kebabcase: "npm:^4.1.1"
+    lodash.startcase: "npm:^4.4.0"
     tsx: "npm:^4.7.0"
     typescript: "npm:^5.9.2"
     uuid: "npm:^13.0.0"
@@ -56252,8 +56270,6 @@ __metadata:
   resolution: "twenty-sdk@workspace:packages/twenty-sdk"
   dependencies:
     "@types/node": "npm:^24.0.0"
-    glob: "npm:^11.1.0"
-    twenty-shared: "workspace:*"
     typescript: "npm:5.9.2"
     vite: "npm:^7.0.0"
     vite-plugin-dts: "npm:3.8.1"
