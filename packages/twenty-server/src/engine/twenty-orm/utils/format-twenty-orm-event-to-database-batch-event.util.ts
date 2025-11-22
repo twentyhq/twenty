@@ -1,5 +1,5 @@
-import { isDefined } from 'twenty-shared/utils';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectLiteral } from 'typeorm';
 
@@ -13,6 +13,10 @@ import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/t
 import { ObjectRecordUpsertEvent } from 'src/engine/core-modules/event-emitter/types/object-record-upsert.event';
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import type { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import {
+  TwentyORMException,
+  TwentyORMExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type DatabaseBatchEventInput } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 export const formatTwentyOrmEventToDatabaseBatchEvent = <
@@ -65,14 +69,21 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
       break;
     case DatabaseEventAction.UPDATED:
       events = entityArray
-        .map((after, idx) => {
+        .map((after) => {
           if (!beforeEntities) {
             throw new Error('beforeEntities is required for UPDATED action');
           }
 
           const before = Array.isArray(beforeEntities)
-            ? beforeEntities?.[idx]
+            ? beforeEntities.find((before) => before.id === after.id)
             : beforeEntities;
+
+          if (!isDefined(before)) {
+            throw new TwentyORMException(
+              'Record mismatch detected while computing event data for UPDATED action',
+              TwentyORMExceptionCode.ORM_EVENT_DATA_CORRUPTED,
+            );
+          }
 
           const diff = objectRecordChangedValues(
             before,
@@ -127,7 +138,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
       });
       break;
     case DatabaseEventAction.UPSERTED:
-      events = entityArray.map((after, index) => {
+      events = entityArray.map((after) => {
         const event = new ObjectRecordUpsertEvent<T>();
 
         event.userId = authContext?.user?.id;
@@ -136,7 +147,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
 
         const before = beforeEntities
           ? Array.isArray(beforeEntities)
-            ? beforeEntities[index]
+            ? beforeEntities.find((before) => before.id === after.id)
             : beforeEntities
           : undefined;
 

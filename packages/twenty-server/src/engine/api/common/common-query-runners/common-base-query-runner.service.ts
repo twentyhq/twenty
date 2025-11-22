@@ -12,6 +12,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { ormToCommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/utils/orm-to-common-query-runner.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
@@ -222,10 +223,16 @@ export abstract class CommonBaseQueryRunnerService<
           queryRunnerContext,
         );
 
-    const results = await this.run(processedArgs, {
-      ...extendedQueryRunnerContext,
-      commonQueryParser,
-    });
+    let results: Output;
+
+    try {
+      results = await this.run(processedArgs, {
+        ...extendedQueryRunnerContext,
+        commonQueryParser,
+      });
+    } catch (error) {
+      throw ormToCommonQueryRunnerException(error);
+    }
 
     return this.enrichResultsWithGettersAndHooks({
       results,
