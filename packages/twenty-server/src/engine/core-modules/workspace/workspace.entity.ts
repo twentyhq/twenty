@@ -32,7 +32,6 @@ import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public
 import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WebhookEntity } from 'src/engine/core-modules/webhook/webhook.entity';
-import { AgentHandoffEntity } from 'src/engine/metadata-modules/agent/agent-handoff.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
@@ -172,11 +171,6 @@ export class WorkspaceEntity {
   })
   agents: Relation<AgentEntity[]>;
 
-  @OneToMany(() => AgentHandoffEntity, (handoff) => handoff.workspace, {
-    onDelete: 'CASCADE',
-  })
-  agentHandoffs: Relation<AgentHandoffEntity[]>;
-
   @OneToMany(() => WebhookEntity, (webhook) => webhook.workspace)
   webhooks: Relation<WebhookEntity[]>;
 
@@ -285,6 +279,10 @@ export class WorkspaceEntity {
   @Field(() => String, { nullable: false })
   @Column({ type: 'varchar', nullable: false, default: 'auto' })
   routerModel: ModelId;
+
+  @Field(() => String, { nullable: false })
+  @Column({ type: 'varchar', nullable: false, default: 'auto' })
+  plannerModel: ModelId;
 
   // TODO prastoin
   // Temporarily setting as nullable for retro compatibility, not udpating TypeScript types

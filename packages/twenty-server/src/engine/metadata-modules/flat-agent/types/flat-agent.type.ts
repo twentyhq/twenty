@@ -3,8 +3,6 @@ import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/typ
 
 export const agentEntityRelationProperties = [
   'workspace',
-  'outgoingHandoffs',
-  'incomingHandoffs',
   'application',
 ] as const;
 

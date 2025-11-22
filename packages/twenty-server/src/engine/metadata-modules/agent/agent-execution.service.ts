@@ -20,7 +20,6 @@ import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent-handoff-tool.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
@@ -31,7 +30,6 @@ import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modu
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
-import { AgentExecutionContext } from './agent-handoff-executor.service';
 import { AgentModelConfigService } from './agent-model-config.service';
 import { AgentToolGeneratorService } from './agent-tool-generator.service';
 import { AgentEntity } from './agent.entity';
@@ -55,11 +53,10 @@ export interface StreamChatResponseResult {
 }
 
 @Injectable()
-export class AgentExecutionService implements AgentExecutionContext {
+export class AgentExecutionService {
   private readonly logger = new Logger(AgentExecutionService.name);
 
   constructor(
-    private readonly agentHandoffToolService: AgentHandoffToolService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
@@ -67,8 +64,8 @@ export class AgentExecutionService implements AgentExecutionContext {
     private readonly agentToolGeneratorService: AgentToolGeneratorService,
     private readonly agentModelConfigService: AgentModelConfigService,
     private readonly aiBillingService: AIBillingService,
-    private readonly agentActorContextService: AgentActorContextService,
-    private readonly agentService: AgentService,
+    public readonly agentActorContextService: AgentActorContextService,
+    public readonly agentService: AgentService,
   ) {}
 
   async prepareAIRequestConfig({
@@ -77,7 +74,6 @@ export class AgentExecutionService implements AgentExecutionContext {
     agent,
     actorContext,
     roleIds,
-    excludeHandoffTools = false,
     toolHints,
   }: {
     system: string;
@@ -85,7 +81,6 @@ export class AgentExecutionService implements AgentExecutionContext {
     messages: UIMessage<unknown, UIDataTypes, UITools>[];
     actorContext?: ActorMetadata;
     roleIds?: string[];
-    excludeHandoffTools?: boolean;
     toolHints?: ToolHints;
   }) {
     try {
@@ -111,24 +106,13 @@ export class AgentExecutionService implements AgentExecutionContext {
             toolHints,
           );
 
-        let handoffTools = {};
-
-        if (!excludeHandoffTools) {
-          handoffTools =
-            await this.agentHandoffToolService.generateHandoffTools(
-              agent.id,
-              agent.workspaceId,
-              this, // Pass execution context
-            );
-        }
-
         const nativeModelTools =
           this.agentModelConfigService.getNativeModelTools(
             registeredModel,
             agent,
           );
 
-        tools = { ...baseTools, ...handoffTools, ...nativeModelTools };
+        tools = { ...baseTools, ...nativeModelTools };
 
         providerOptions = this.agentModelConfigService.getProviderOptions(
           registeredModel,
@@ -309,7 +293,9 @@ export class AgentExecutionService implements AgentExecutionContext {
     };
   }> {
     try {
-      const agent = await this.agentService.findOneAgent(agentId, workspace.id);
+      const agent = await this.agentService.findOneAgent(workspace.id, {
+        id: agentId,
+      });
 
       const contextBuildStart = Date.now();
       let contextPart = '';
@@ -345,7 +331,7 @@ export class AgentExecutionService implements AgentExecutionContext {
       const aiRequestPrepStart = Date.now();
 
       const aiRequestConfig = await this.prepareAIRequestConfig({
-        system: `${AGENT_SYSTEM_PROMPTS.AGENT_CHAT}\n\n${agent.prompt}${contextString}`,
+        system: `${AGENT_SYSTEM_PROMPTS.BASE}\n${AGENT_SYSTEM_PROMPTS.CHAT_ADDITIONS}\n\n${agent.prompt}${contextString}`,
         agent,
         messages,
         actorContext,

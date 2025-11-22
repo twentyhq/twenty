@@ -115,7 +115,7 @@ export class AiAgentExecutorService {
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
 
       const textResponse = await generateText({
-        system: `You are executing as part of a workflow automation. ${agent ? agent.prompt : ''}`,
+        system: `${AGENT_SYSTEM_PROMPTS.BASE}\n${AGENT_SYSTEM_PROMPTS.WORKFLOW_ADDITIONS}\n\n${agent ? agent.prompt : ''}`,
         tools,
         model: registeredModel.model,
         prompt: userPrompt,

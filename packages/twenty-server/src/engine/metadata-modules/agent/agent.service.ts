@@ -67,21 +67,40 @@ export class AgentService {
     });
   }
 
-  async findOneAgent(id: string, workspaceId: string) {
+  async findOneAgent(
+    workspaceId: string,
+    { id, name }: { id?: string; name?: string },
+  ) {
+    if (!id && !name) {
+      throw new AgentException(
+        'Either id or name must be provided',
+        AgentExceptionCode.AGENT_NOT_FOUND,
+      );
+    }
+
+    if (id && name) {
+      throw new AgentException(
+        'Cannot specify both id and name',
+        AgentExceptionCode.AGENT_NOT_FOUND,
+      );
+    }
+
     const agent = await this.agentRepository.findOne({
-      where: { id, workspaceId },
+      where: id ? { id, workspaceId } : { name, workspaceId },
     });
 
     if (!agent) {
+      const identifier = id ? `id "${id}"` : `name "${name}"`;
+
       throw new AgentException(
-        `Agent with id ${id} not found`,
+        `Agent with ${identifier} not found`,
         AgentExceptionCode.AGENT_NOT_FOUND,
       );
     }
 
     const roleTarget = await this.roleTargetsRepository.findOne({
       where: {
-        agentId: id,
+        agentId: agent.id,
         workspaceId,
       },
       select: ['roleId'],
@@ -114,11 +133,11 @@ export class AgentService {
       });
     }
 
-    return this.findOneAgent(createdAgent.id, workspaceId);
+    return this.findOneAgent(workspaceId, { id: createdAgent.id });
   }
 
   async updateOneAgent(input: UpdateAgentInput, workspaceId: string) {
-    const agent = await this.findOneAgent(input.id, workspaceId);
+    const agent = await this.findOneAgent(workspaceId, { id: input.id });
 
     const updateData: Partial<AgentEntity> = {
       ...agent,
@@ -152,11 +171,11 @@ export class AgentService {
       });
     }
 
-    return this.findOneAgent(updatedAgent.id, workspaceId);
+    return this.findOneAgent(workspaceId, { id: updatedAgent.id });
   }
 
   async deleteOneAgent(id: string, workspaceId: string) {
-    const agent = await this.findOneAgent(id, workspaceId);
+    const agent = await this.findOneAgent(workspaceId, { id });
 
     await this.agentRepository.softDelete({ id: agent.id });
 

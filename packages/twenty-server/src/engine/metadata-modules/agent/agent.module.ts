@@ -31,11 +31,8 @@ import { AgentChatThreadEntity } from './agent-chat-thread.entity';
 import { AgentChatResolver } from './agent-chat.resolver';
 import { AgentChatService } from './agent-chat.service';
 import { AgentExecutionService } from './agent-execution.service';
-import { AgentHandoffExecutorService } from './agent-handoff-executor.service';
-import { AgentHandoffToolService } from './agent-handoff-tool.service';
-import { AgentHandoffEntity } from './agent-handoff.entity';
-import { AgentHandoffService } from './agent-handoff.service';
 import { AgentModelConfigService } from './agent-model-config.service';
+import { AgentPlanExecutorService } from './agent-plan-executor.service';
 import { AgentStreamingService } from './agent-streaming.service';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { AgentToolGeneratorService } from './agent-tool-generator.service';
@@ -49,7 +46,6 @@ import { AgentActorContextService } from './services/agent-actor-context.service
   imports: [
     TypeOrmModule.forFeature([
       AgentEntity,
-      AgentHandoffEntity,
       RoleEntity,
       RoleTargetsEntity,
       AgentChatMessageEntity,
@@ -85,20 +81,18 @@ import { AgentActorContextService } from './services/agent-actor-context.service
     AgentExecutionService,
     AgentModelConfigService,
     AgentToolGeneratorService,
-    AgentHandoffToolService,
     AgentChatService,
+    AgentPlanExecutorService,
     AgentStreamingService,
     AgentTitleGenerationService,
-    AgentHandoffExecutorService,
-    AgentHandoffService,
     AgentActorContextService,
   ],
   exports: [
     AgentService,
     AgentExecutionService,
     AgentToolGeneratorService,
-    AgentHandoffToolService,
     AgentChatService,
+    AgentPlanExecutorService,
     AgentStreamingService,
     AgentTitleGenerationService,
     TypeOrmModule.forFeature([
@@ -107,8 +101,6 @@ import { AgentActorContextService } from './services/agent-actor-context.service
       AgentChatMessagePartEntity,
       AgentChatThreadEntity,
     ]),
-    AgentHandoffExecutorService,
-    AgentHandoffService,
   ],
 })
 export class AgentModule {}

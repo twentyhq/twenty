@@ -6,7 +6,6 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -18,8 +17,6 @@ import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentResponseFormat } from 'src/engine/metadata-modules/agent/types/agent-response-format.type';
 import { ModelConfiguration } from 'src/engine/metadata-modules/agent/types/modelConfiguration';
-
-import { AgentHandoffEntity } from './agent-handoff.entity';
 
 @Entity('agent')
 @Index('IDX_AGENT_ID_DELETED_AT', ['id', 'deletedAt'])
@@ -69,12 +66,6 @@ export class AgentEntity
   })
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<WorkspaceEntity>;
-
-  @OneToMany(() => AgentHandoffEntity, (handoff) => handoff.fromAgent)
-  outgoingHandoffs: Relation<AgentHandoffEntity[]>;
-
-  @OneToMany(() => AgentHandoffEntity, (handoff) => handoff.toAgent)
-  incomingHandoffs: Relation<AgentHandoffEntity[]>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

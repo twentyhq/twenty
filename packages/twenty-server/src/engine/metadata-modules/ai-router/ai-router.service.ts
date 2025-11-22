@@ -7,36 +7,26 @@ import {
   type UIMessage,
   type UITools,
 } from 'ai';
-import { type Repository } from 'typeorm';
+import { IsNull, type Repository } from 'typeorm';
 import { z } from 'zod';
 
 import { type ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-related-object.util';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { DATA_MANIPULATOR_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/data-manipulator-agent';
 import { HELPER_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/helper-agent';
 
-import { type ToolHints } from './types/tool-hints.interface';
+import { type UnifiedRouterResult } from './types/router-result.interface';
 
 export interface AiRouterContext {
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
   workspaceId: string;
   routerModel: ModelId;
-}
-
-export interface AiRouterResult {
-  agent: AgentEntity | null;
-  toolHints?: ToolHints;
-  debugInfo?: {
-    availableAgents: Array<{ id: string; label: string }>;
-    routerModel: string;
-    promptTokens?: number;
-    completionTokens?: number;
-    totalTokens?: number;
-  };
+  plannerModel: ModelId;
 }
 
 @Injectable()
@@ -50,36 +40,49 @@ export class AiRouterService {
     private readonly objectMetadataService: ObjectMetadataServiceV2,
   ) {}
 
-  // Routes a user message to the most appropriate agent
-  // Uses AI to analyze the conversation and select the best agent
-  // Returns the selected agent along with tool hints for optimization
   async routeMessage(
     context: AiRouterContext,
     includeDebugInfo = false,
-  ): Promise<AiRouterResult> {
+  ): Promise<UnifiedRouterResult> {
     try {
-      const { messages, workspaceId, routerModel } = context;
+      const { messages, workspaceId, routerModel, plannerModel } = context;
 
       const availableAgents = await this.getAvailableAgents(workspaceId);
 
       if (availableAgents.length === 0) {
         this.logger.warn('No agents available for routing');
 
-        return { agent: null };
+        const helperAgent = await this.getHelperAgent(workspaceId);
+
+        if (!helperAgent) {
+          throw new Error('No helper agent available');
+        }
+
+        return {
+          strategy: 'simple',
+          agent: helperAgent,
+        };
       }
 
-      const debugInfo: AiRouterResult['debugInfo'] = includeDebugInfo
+      const debugInfo = includeDebugInfo
         ? {
             availableAgents: availableAgents.map((agent) => ({
               id: agent.id,
               label: agent.label,
             })),
-            routerModel: String(routerModel),
+            routerModel: String(plannerModel ?? routerModel),
+            promptTokens: 0,
+            completionTokens: 0,
+            totalTokens: 0,
           }
         : undefined;
 
       if (availableAgents.length === 1) {
-        return { agent: availableAgents[0], debugInfo };
+        return {
+          strategy: 'simple',
+          agent: availableAgents[0],
+          debugInfo,
+        };
       }
 
       const conversationHistory = messages
@@ -97,7 +100,8 @@ export class AiRouterService {
           (part) => part.type === 'text',
         )?.text || '';
 
-      const model = this.getRouterModel(routerModel);
+      const modelToUse = plannerModel ?? routerModel;
+      const model = this.getRouterModel(modelToUse);
       const workspaceObjectsList =
         await this.buildWorkspaceObjectsList(workspaceId);
       const agentDescriptions = this.buildAgentDescriptions(
@@ -111,48 +115,63 @@ export class AiRouterService {
         currentMessage,
       );
 
-      const agentIds = availableAgents.map((agent) => agent.id);
+      const agentNames = availableAgents.map((agent) => agent.name);
 
-      if (agentIds.length === 0) {
-        throw new Error('No agent IDs available for routing schema');
+      if (agentNames.length === 0) {
+        throw new Error('No agent names available for routing schema');
       }
 
-      const routerDecisionSchema = z.object({
-        agentId: z
-          .enum([agentIds[0], ...agentIds.slice(1)])
-          .describe('The ID of the most suitable agent to handle this message'),
-        toolHints: z
-          .object({
-            relevantObjects: z
-              .array(z.string())
-              .optional()
-              .describe(
-                'Names of the specific objects mentioned in the query (e.g., "person", "company")',
-              ),
-            operations: z
-              .array(z.enum(['find', 'create', 'update', 'delete']))
-              .optional()
-              .describe(
-                'Specific operations needed: find (search/query), create (new records), update (modify), delete (remove)',
-              ),
-          })
-          .optional(),
+      const planStepSchema = z.object({
+        stepNumber: z.number().describe('Step number in execution order'),
+        agentName: z
+          .enum([agentNames[0], ...agentNames.slice(1)])
+          .describe('Agent name to execute this step'),
+        task: z.string().describe('Specific task for this agent'),
+        expectedOutput: z.string().describe('Expected output from this step'),
+        dependsOn: z
+          .array(z.number())
+          .optional()
+          .describe('Step numbers this step depends on'),
       });
 
-      const ROUTER_TEMPERATURE = 0.1; // Low temperature for deterministic routing
+      const unifiedRouterSchema = z.discriminatedUnion('strategy', [
+        z.object({
+          strategy: z.literal('simple'),
+          agentName: z
+            .enum([agentNames[0], ...agentNames.slice(1)])
+            .describe('The name of the agent to handle this message'),
+          toolHints: z
+            .object({
+              relevantObjects: z
+                .array(z.string())
+                .optional()
+                .describe('Names of objects mentioned in the query'),
+              operations: z
+                .array(z.enum(['find', 'create', 'update', 'delete']))
+                .optional()
+                .describe('Required operations'),
+            })
+            .optional(),
+        }),
+        z.object({
+          strategy: z.literal('planned'),
+          plan: z.object({
+            steps: z.array(planStepSchema).describe('Execution steps'),
+            reasoning: z.string().describe('Why planning is needed'),
+          }),
+        }),
+      ]);
+
+      const ROUTER_TEMPERATURE = 0.1;
 
       const result = await generateObject({
         model,
         system: systemPrompt,
         prompt: userPrompt,
-        schema: routerDecisionSchema,
+        schema: unifiedRouterSchema,
         temperature: ROUTER_TEMPERATURE,
         experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
-
-      const selectedAgent = availableAgents.find(
-        (agent) => agent.id === result.object.agentId,
-      );
 
       if (includeDebugInfo && debugInfo) {
         try {
@@ -178,20 +197,45 @@ export class AiRouterService {
         }
       }
 
-      return {
-        agent: selectedAgent ?? null,
-        toolHints: result.object.toolHints,
-        debugInfo,
-      };
+      if (result.object.strategy === 'simple') {
+        const simpleResult = result.object;
+        const selectedAgent = availableAgents.find(
+          (agent) => agent.name === simpleResult.agentName,
+        );
+
+        if (!selectedAgent) {
+          throw new Error(`Selected agent ${simpleResult.agentName} not found`);
+        }
+
+        return {
+          strategy: 'simple',
+          agent: selectedAgent,
+          toolHints: simpleResult.toolHints,
+          debugInfo,
+        };
+      } else {
+        return {
+          strategy: 'planned',
+          plan: result.object.plan,
+          debugInfo,
+        };
+      }
     } catch (error) {
       this.logger.error(
-        'Routing to agent failed, falling back to Helper agent:',
+        'Routing with planning failed, falling back to Helper agent:',
         error,
       );
 
       const helperAgent = await this.getHelperAgent(context.workspaceId);
 
-      return { agent: helperAgent };
+      if (!helperAgent) {
+        throw new Error('No helper agent available for fallback');
+      }
+
+      return {
+        strategy: 'simple',
+        agent: helperAgent,
+      };
     }
   }
 
@@ -199,7 +243,7 @@ export class AiRouterService {
     workspaceId: string,
   ): Promise<AgentEntity[]> {
     const agents = await this.agentRepository.find({
-      where: { workspaceId, deletedAt: undefined },
+      where: { workspaceId, deletedAt: IsNull() },
       order: { createdAt: 'ASC' },
     });
 
@@ -275,7 +319,7 @@ export class AiRouterService {
   ): string {
     return agents
       .map((agent) => {
-        const baseDescription = `- ${agent.label} (${agent.id}): ${agent.description}`;
+        const baseDescription = `- ${agent.label} (${agent.name}): ${agent.description}`;
 
         if (
           agent.standardId === DATA_MANIPULATOR_AGENT.standardId &&
@@ -293,30 +337,7 @@ ${workspaceObjectsList}`;
   }
 
   private buildRouterSystemPrompt(agentDescriptions: string): string {
-    return `You are an AI router that decides which agent should handle a user's message.
-
-Available agents:
-${agentDescriptions}
-
-Your task is to:
-1. Select the most appropriate agent
-2. Identify specific objects mentioned in the query (if any)
-3. Determine which operations are needed
-
-For toolHints:
-- relevantObjects: Extract object names the user is asking about (e.g., if asking about "companies and people", return ["company", "person"])
-- operations: Array of needed operations from: ["find", "create", "update", "delete"]
-  - "find": for searching, querying, or reading data
-  - "create": for creating new records
-  - "update": for modifying existing records
-  - "delete": for removing records
-
-Examples:
-- "Show me all companies" → operations: ["find"]
-- "Create a task for John" → operations: ["create"]
-- "Update the company name" → operations: ["find", "update"]
-
-This helps optimize the agent's tool context by only loading relevant tools.`;
+    return AGENT_SYSTEM_PROMPTS.ROUTER(agentDescriptions);
   }
 
   private buildRouterUserPrompt(

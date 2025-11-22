@@ -24,6 +24,7 @@ import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
+import { AgentPlanExecutorService } from 'src/engine/metadata-modules/agent/agent-plan-executor.service';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { AiRouterService } from 'src/engine/metadata-modules/ai-router/ai-router.service';
 
@@ -51,6 +52,7 @@ export class AgentStreamingService {
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
     private readonly agentChatService: AgentChatService,
     private readonly agentExecutionService: AgentExecutionService,
+    private readonly agentPlanExecutorService: AgentPlanExecutorService,
     private readonly aiRouterService: AiRouterService,
     private readonly aiBillingService: AIBillingService,
   ) {}
@@ -99,29 +101,14 @@ export class AgentStreamingService {
               messages,
               workspaceId: workspace.id,
               routerModel: workspace.routerModel,
+              plannerModel: workspace.plannerModel,
             },
             includeDebugInfo,
           );
 
           const routingTime = Date.now() - routingStart;
-          const { agent, debugInfo, toolHints } = routeResult;
 
-          if (!agent) {
-            writer.write({
-              type: 'data-routing-status' as const,
-              id: 'routing-status',
-              data: {
-                text: '',
-                state: 'error',
-              },
-            });
-            throw new AgentException(
-              'No agents available for routing',
-              AgentExceptionCode.AGENT_EXECUTION_FAILED,
-            );
-          }
-
-          this.logger.log(`Using agent ${agent.id} for message routing`);
+          const { debugInfo } = routeResult;
 
           let routingCostInCredits: number | undefined;
 
@@ -148,6 +135,86 @@ export class AgentStreamingService {
               this.logger.warn('Failed to calculate routing cost:', error);
             }
           }
+
+          if (routeResult.strategy === 'planned') {
+            writer.write({
+              type: 'data-routing-status' as const,
+              id: 'routing-status',
+              data: {
+                text: `Executing multi-step plan with ${routeResult.plan.steps.length} steps`,
+                state: 'routed',
+                debug: {
+                  routingTimeMs: routingTime,
+                  planReasoning: routeResult.plan.reasoning,
+                  totalSteps: routeResult.plan.steps.length,
+                },
+              },
+            });
+
+            const planResult = await this.agentPlanExecutorService.executePlan({
+              steps: routeResult.plan.steps,
+              reasoning: routeResult.plan.reasoning,
+              workspace,
+              userWorkspaceId,
+              recordIdsByObjectMetadataNameSingular,
+              onProgress: (progress) => {
+                if (progress.type === 'step-started') {
+                  writer.write({
+                    type: 'data-routing-status' as const,
+                    id: `step-${progress.stepNumber}`,
+                    data: {
+                      text: `Step ${progress.stepNumber}: ${progress.task}`,
+                      state: 'loading',
+                    },
+                  });
+                } else if (progress.type === 'step-completed') {
+                  writer.write({
+                    type: 'data-routing-status' as const,
+                    id: `step-${progress.stepNumber}`,
+                    data: {
+                      text: `Step ${progress.stepNumber}: Completed`,
+                      state: 'routed',
+                    },
+                  });
+                }
+              },
+            });
+
+            await this.agentChatService.addMessage({
+              threadId,
+              uiMessage: {
+                role: AgentChatMessageRole.USER,
+                parts: [
+                  {
+                    type: 'text',
+                    text:
+                      messages[messages.length - 1].parts.find(
+                        (part) => part.type === 'text',
+                      )?.text ?? '',
+                  },
+                ],
+              },
+            });
+
+            await this.agentChatService.addMessage({
+              threadId,
+              uiMessage: {
+                role: AgentChatMessageRole.ASSISTANT,
+                parts: [
+                  {
+                    type: 'text',
+                    text: planResult.finalOutput,
+                  },
+                ],
+              },
+            });
+
+            return;
+          }
+
+          const { agent, toolHints } = routeResult;
+
+          this.logger.log(`Using agent ${agent.id} for message routing`);
 
           const agentExecutionStart = Date.now();
 

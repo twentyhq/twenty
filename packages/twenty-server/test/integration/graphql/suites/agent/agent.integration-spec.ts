@@ -3,8 +3,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
 import { AgentChatService } from 'src/engine/metadata-modules/agent/agent-chat.service';
-import { AgentHandoffEntity } from 'src/engine/metadata-modules/agent/agent-handoff.entity';
-import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import {
   AgentException,
@@ -50,30 +48,12 @@ describe('agentResolver', () => {
           },
         },
         {
-          provide: AgentHandoffService,
-          useValue: {
-            getHandoffTargets: jest.fn(),
-            canHandoffTo: jest.fn(),
-            createHandoff: jest.fn(),
-            removeHandoff: jest.fn(),
-          },
-        },
-        {
           provide: getRepositoryToken(AgentEntity),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
             save: jest.fn(),
             softDelete: jest.fn(),
-          },
-        },
-        {
-          provide: getRepositoryToken(AgentHandoffEntity),
-          useValue: {
-            find: jest.fn(),
-            findOne: jest.fn(),
-            save: jest.fn(),
-            delete: jest.fn(),
           },
         },
         {
