@@ -3,11 +3,7 @@ import { v4 } from 'uuid';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import {
-  BASE_OBJECT_STANDARD_FIELD_IDS,
-  CUSTOM_OBJECT_STANDARD_FIELD_IDS,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
+import { BASE_OBJECT_STANDARD_FIELD_IDS, CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 
 type BuildDefaultFlatFieldMetadataForCustomObjectArgs = {
@@ -24,9 +20,10 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   flatObjectMetadata: { id: objectMetadataId, applicationId },
 }: BuildDefaultFlatFieldMetadataForCustomObjectArgs) => {
   const createdAt = new Date();
+  const idFieldId = v4();
   const idField: FlatFieldMetadata<FieldMetadataType.UUID> = {
     type: FieldMetadataType.UUID,
-    id: v4(),
+    id: idFieldId,
     viewFieldIds: [],
     viewGroupIds: [],
     kanbanAggregateOperationViewIds: [],
@@ -34,10 +31,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isLabelSyncedWithName: false,
     isUnique: true,
     objectMetadataId,
-    universalIdentifier: createDeterministicUuid([
-      objectMetadataId,
-      BASE_OBJECT_STANDARD_FIELD_IDS.id,
-    ]),
+    universalIdentifier: idFieldId,
     workspaceId,
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.id,
     name: 'id',
@@ -63,9 +57,10 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     applicationId: applicationId ?? null,
   };
 
+  const nameFieldId = v4();
   const nameField: FlatFieldMetadata<FieldMetadataType.TEXT> = {
     type: FieldMetadataType.TEXT,
-    id: v4(),
+    id: nameFieldId,
     viewFieldIds: [],
     viewGroupIds: [],
     kanbanAggregateOperationViewIds: [],
@@ -73,10 +68,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
-    universalIdentifier: createDeterministicUuid([
-      objectMetadataId,
-      CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
-    ]),
+    universalIdentifier: nameFieldId,
     workspaceId,
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
     name: 'name',
@@ -102,9 +94,10 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     applicationId: applicationId ?? null,
   };
 
+  const createdAtFieldId = v4();
   const createdAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
     type: FieldMetadataType.DATE_TIME,
-    id: v4(),
+    id: createdAtFieldId,
     viewFieldIds: [],
     viewGroupIds: [],
     kanbanAggregateOperationViewIds: [],
@@ -112,10 +105,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
-    universalIdentifier: createDeterministicUuid([
-      objectMetadataId,
-      BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
-    ]),
+    universalIdentifier: createdAtFieldId,
     workspaceId,
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
     name: 'createdAt',
@@ -141,9 +131,10 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     applicationId: applicationId ?? null,
   };
 
+  const updatedAtFieldId = v4();
   const updatedAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
     type: FieldMetadataType.DATE_TIME,
-    id: v4(),
+    id: updatedAtFieldId,
     viewFieldIds: [],
     viewGroupIds: [],
     kanbanAggregateOperationViewIds: [],
@@ -151,10 +142,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
-    universalIdentifier: createDeterministicUuid([
-      objectMetadataId,
-      BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
-    ]),
+    universalIdentifier: updatedAtFieldId,
     workspaceId,
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
     name: 'updatedAt',
@@ -180,9 +168,10 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     applicationId: applicationId ?? null,
   };
 
+  const deletedAtFieldId = v4();
   const deletedAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
     type: FieldMetadataType.DATE_TIME,
-    id: v4(),
+    id: deletedAtFieldId,
     viewFieldIds: [],
     viewGroupIds: [],
     kanbanAggregateOperationViewIds: [],
@@ -190,10 +179,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
-    universalIdentifier: createDeterministicUuid([
-      objectMetadataId,
-      BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
-    ]),
+    universalIdentifier: deletedAtFieldId,
     workspaceId,
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
     name: 'deletedAt',
@@ -219,9 +205,10 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     applicationId: applicationId ?? null,
   };
 
+  const createdByFieldId = v4();
   const createdByField: FlatFieldMetadata<FieldMetadataType.ACTOR> = {
     type: FieldMetadataType.ACTOR,
-    id: v4(),
+    id: createdByFieldId,
     viewFieldIds: [],
     viewGroupIds: [],
     kanbanAggregateOperationViewIds: [],
@@ -229,10 +216,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
-    universalIdentifier: createDeterministicUuid([
-      objectMetadataId,
-      CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
-    ]),
+    universalIdentifier: createdByFieldId,
     workspaceId,
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
     name: 'createdBy',
@@ -257,9 +241,10 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     applicationId: applicationId ?? null,
   };
 
+  const positionFieldId = v4();
   const positionField: FlatFieldMetadata<FieldMetadataType.POSITION> = {
     type: FieldMetadataType.POSITION,
-    id: v4(),
+    id: positionFieldId,
     viewFieldIds: [],
     viewGroupIds: [],
     kanbanAggregateOperationViewIds: [],
@@ -267,10 +252,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
-    universalIdentifier: createDeterministicUuid([
-      objectMetadataId,
-      CUSTOM_OBJECT_STANDARD_FIELD_IDS.position,
-    ]),
+    universalIdentifier: positionFieldId,
     workspaceId,
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.position,
     name: 'position',
@@ -296,20 +278,18 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     applicationId: applicationId ?? null,
   };
 
+  const searchVectorFieldId = v4();
   const searchVectorField: FlatFieldMetadata<FieldMetadataType.TS_VECTOR> = {
     type: FieldMetadataType.TS_VECTOR,
     viewFieldIds: [],
     viewGroupIds: [],
     kanbanAggregateOperationViewIds: [],
     calendarViewIds: [],
-    id: v4(),
+    id: searchVectorFieldId,
     isLabelSyncedWithName: false,
     isUnique: false,
     objectMetadataId,
-    universalIdentifier: createDeterministicUuid([
-      objectMetadataId,
-      CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,
-    ]),
+    universalIdentifier: searchVectorFieldId,
     workspaceId,
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,
     name: 'searchVector',

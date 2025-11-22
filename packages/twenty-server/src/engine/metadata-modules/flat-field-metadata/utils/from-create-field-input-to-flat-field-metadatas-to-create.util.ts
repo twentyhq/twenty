@@ -25,12 +25,14 @@ import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-m
 export type FromCreateFieldInputToFlatObjectMetadataArgs = {
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
   workspaceId: string;
+  workspaceCustomApplicationId: string;
 } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>;
 
 export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
   createFieldInput: rawCreateFieldInput,
   workspaceId,
   flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+  workspaceCustomApplicationId,
 }: FromCreateFieldInputToFlatObjectMetadataArgs): Promise<
   FieldInputTranspilationResult<{
     flatFieldMetadatas: FlatFieldMetadata[];
@@ -71,6 +73,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     createFieldInput,
     workspaceId,
     fieldMetadataId,
+    workspaceCustomApplicationId,
   });
 
   switch (createFieldInput.type) {
@@ -83,6 +86,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
         existingFlatObjectMetadataMaps,
         sourceFlatObjectMetadata: parentFlatObjectMetadata,
         workspaceId,
+        workspaceCustomApplicationId,
       });
     }
     case FieldMetadataType.RELATION: {
@@ -94,6 +98,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
           type: createFieldInput.type,
         },
         workspaceId,
+        workspaceCustomApplicationId,
       });
     }
     case FieldMetadataType.RATING: {

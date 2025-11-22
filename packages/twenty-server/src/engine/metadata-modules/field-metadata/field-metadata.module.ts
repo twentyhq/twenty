@@ -9,6 +9,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -60,6 +61,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         DataSourceModule,
         TypeORMModule,
         ActorModule,
+        ApplicationModule,
         FeatureFlagModule,
         ViewModule,
         ViewFieldModule,

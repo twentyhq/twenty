@@ -9,6 +9,7 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -37,6 +38,7 @@ export class SeedDashboardViewCommand extends ActiveOrSuspendedWorkspacesMigrati
     private readonly dataSourceRepository: Repository<DataSourceEntity>,
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
+    private readonly applicationService: ApplicationService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -59,7 +61,17 @@ export class SeedDashboardViewCommand extends ActiveOrSuspendedWorkspacesMigrati
       );
     }
 
-    const views = [dashboardsAllView([dashboardObjectMetadata], true)];
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+    const views = [
+      dashboardsAllView({
+        objectMetadataItems: [dashboardObjectMetadata],
+        useCoreNaming: true,
+        twentyStandardFlatApplication,
+      }),
+    ];
 
     const schema = await this.dataSourceRepository.findOne({
       where: {
@@ -99,7 +111,12 @@ export class SeedDashboardViewCommand extends ActiveOrSuspendedWorkspacesMigrati
 
     await queryRunner.connect();
 
-    const createdViews = await createCoreViews(queryRunner, workspaceId, views);
+    const createdViews = await createCoreViews(
+      queryRunner,
+      workspaceId,
+      views,
+      twentyStandardFlatApplication,
+    );
 
     await prefillWorkspaceFavorites(
       createdViews.map((view) => view.id),

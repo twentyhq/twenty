@@ -1,19 +1,25 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { CreateWorkspaceCustomApplicationCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-create-workspace-custom-application.command';
 import { SetStandardApplicationNotUninstallableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-set-standard-application-not-uninstallable.command';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([WorkspaceEntity, ApplicationEntity]),
+    TypeOrmModule.forFeature([WorkspaceEntity]),
     WorkspaceSchemaManagerModule,
     ApplicationModule,
   ],
-  providers: [SetStandardApplicationNotUninstallableCommand],
-  exports: [SetStandardApplicationNotUninstallableCommand],
+  providers: [
+    CreateWorkspaceCustomApplicationCommand,
+    SetStandardApplicationNotUninstallableCommand,
+  ],
+  exports: [
+    CreateWorkspaceCustomApplicationCommand,
+    SetStandardApplicationNotUninstallableCommand,
+  ],
 })
 export class V1_12_UpgradeVersionCommandModule {}

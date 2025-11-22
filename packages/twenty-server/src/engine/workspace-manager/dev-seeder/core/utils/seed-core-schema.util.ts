@@ -13,7 +13,6 @@ import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/u
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { createWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
-import { computeWorkspaceCustomCreateApplicationInput } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-workspace-custom-create-application-input';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 type SeedCoreSchemaArgs = {
@@ -36,14 +35,6 @@ export const seedCoreSchema = async ({
   const schemaName = 'core';
 
   const createWorkspaceStaticInput = SEEDER_CREATE_WORKSPACE_INPUT[workspaceId];
-  const workspaceCustomApplicationCreateInput =
-    computeWorkspaceCustomCreateApplicationInput({
-      workspace: {
-        id: workspaceId,
-        displayName: createWorkspaceStaticInput.displayName,
-      },
-    });
-
   const version = extractVersionMajorMinorPatch(appVersion);
   const queryRunner = dataSource.createQueryRunner();
 
@@ -51,13 +42,14 @@ export const seedCoreSchema = async ({
   await queryRunner.startTransaction();
 
   try {
-    const customWorkspaceApplication = await applicationService.create(
-      {
-        ...workspaceCustomApplicationCreateInput,
-        serverlessFunctionLayerId: null,
-      },
-      queryRunner,
-    );
+    const customWorkspaceApplication =
+      await applicationService.createWorkspaceCustomApplication(
+        {
+          workspaceId,
+          workspaceDisplayName: createWorkspaceStaticInput.displayName,
+        },
+        queryRunner,
+      );
 
     await createWorkspace({
       queryRunner,
@@ -76,6 +68,7 @@ export const seedCoreSchema = async ({
     await applicationService.createTwentyStandardApplication(
       {
         workspaceId,
+        skipCacheInvalidation: true,
       },
       queryRunner,
     );

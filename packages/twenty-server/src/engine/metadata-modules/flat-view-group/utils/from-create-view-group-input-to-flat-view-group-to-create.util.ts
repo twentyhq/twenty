@@ -7,9 +7,11 @@ import { type CreateViewGroupInput } from 'src/engine/metadata-modules/view-grou
 export const fromCreateViewGroupInputToFlatViewGroupToCreate = ({
   createViewGroupInput: rawCreateViewGroupInput,
   workspaceId,
+  workspaceCustomApplicationId,
 }: {
   createViewGroupInput: CreateViewGroupInput;
   workspaceId: string;
+  workspaceCustomApplicationId: string;
 }): FlatViewGroup => {
   const { fieldMetadataId, viewId, ...createViewGroupInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -33,6 +35,6 @@ export const fromCreateViewGroupInputToFlatViewGroupToCreate = ({
     isVisible: createViewGroupInput.isVisible ?? true,
     fieldValue: createViewGroupInput.fieldValue,
     position: createViewGroupInput.position ?? 0,
-    applicationId: createViewGroupInput.applicationId ?? null,
+    applicationId: workspaceCustomApplicationId,
   };
 };

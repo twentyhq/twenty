@@ -8,20 +8,12 @@ export const TWENTY_STANDARD_APPLICATION = {
   version: '1.0.0',
   sourcePath: 'cli-sync',
   sourceType: 'local',
-  canBeUninstalled: false,
-} as const satisfies CreateApplicationInput;
-
-export type CreateApplicationInput = Omit<
+} as const satisfies Pick<
   ApplicationEntity,
-  | 'workspaceId'
-  | 'serverlessFunctionLayerId'
-  | 'id'
-  | 'createdAt'
-  | 'updatedAt'
-  | 'deletedAt'
-  | 'workspace'
-  | 'agents'
-  | 'applicationVariables'
-  | 'objects'
-  | 'serverlessFunctions'
+  | 'universalIdentifier'
+  | 'name'
+  | 'description'
+  | 'version'
+  | 'sourcePath'
+  | 'sourceType'
 >;
