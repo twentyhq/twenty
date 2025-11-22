@@ -44,12 +44,6 @@ export const computeEventSelectQueryBuilder = <T extends ObjectLiteral>({
 
   eventSelectQueryBuilder.expressionMap.wheres = expressionMap.wheres;
   eventSelectQueryBuilder.expressionMap.aliases = expressionMap.aliases;
-  eventSelectQueryBuilder.expressionMap.orderBys = {
-    id: {
-      order: 'ASC',
-      nulls: 'NULLS LAST',
-    },
-  };
   eventSelectQueryBuilder.setParameters(expressionMap.parameters);
 
   return eventSelectQueryBuilder;

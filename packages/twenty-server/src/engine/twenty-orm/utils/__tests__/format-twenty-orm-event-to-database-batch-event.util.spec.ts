@@ -1,6 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { type ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
@@ -51,12 +52,10 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
         {
           id: 'record-1',
           name: 'John Doe Updated',
-          email: 'john.updated@example.com',
         },
         {
           id: 'record-2',
           name: 'Jane Doe Updated',
-          email: 'jane.updated@example.com',
         },
       ];
 
@@ -64,12 +63,10 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
         {
           id: 'record-1',
           name: 'John Doe',
-          email: 'john@example.com',
         },
         {
           id: 'record-3',
           name: 'Bob Smith',
-          email: 'bob@example.com',
         },
       ];
 
@@ -93,20 +90,26 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
       }
     });
 
-    it('should successfully create update events when matching before entities are found', () => {
+    it('should successfully create update events when matching before entities are found and in the right order', () => {
       const afterEntities = [
         {
           id: 'record-1',
           name: 'John Doe Updated',
-          email: 'john.updated@example.com',
+        },
+        {
+          id: 'record-2',
+          name: 'Jane Doe Updated',
         },
       ];
 
       const beforeEntities = [
         {
+          id: 'record-2',
+          name: 'Jane Doe',
+        },
+        {
           id: 'record-1',
           name: 'John Doe',
-          email: 'john@example.com',
         },
       ];
 
@@ -121,23 +124,33 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
 
       expect(result).toBeDefined();
       expect(result?.action).toBe(DatabaseEventAction.UPDATED);
-      expect(result?.events).toHaveLength(1);
-      expect(result?.events[0].recordId).toBe('record-1');
-      expect(result?.events[0].userId).toBe('user-id');
-      expect(result?.events[0].workspaceMemberId).toBe('workspace-member-id');
+      expect(result?.events).toHaveLength(2);
+
+      const updateEvent1 = result?.events[0] as ObjectRecordUpdateEvent<
+        (typeof afterEntities)[0]
+      >;
+      const updateEvent2 = result?.events[1] as ObjectRecordUpdateEvent<
+        (typeof afterEntities)[1]
+      >;
+
+      expect(updateEvent1.recordId).toBe('record-1');
+      expect(updateEvent2.recordId).toBe('record-2');
+
+      expect(updateEvent1.properties?.before?.name).toBe('John Doe');
+      expect(updateEvent1.properties?.after?.name).toBe('John Doe Updated');
+      expect(updateEvent2.properties?.before?.name).toBe('Jane Doe');
+      expect(updateEvent2.properties?.after?.name).toBe('Jane Doe Updated');
     });
 
     it('should handle single entity (non-array) for both before and after', () => {
       const afterEntity = {
         id: 'record-1',
         name: 'John Doe Updated',
-        email: 'john.updated@example.com',
       };
 
       const beforeEntity = {
         id: 'record-1',
         name: 'John Doe',
-        email: 'john@example.com',
       };
 
       const result = formatTwentyOrmEventToDatabaseBatchEvent({
