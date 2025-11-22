@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Rename an object metadata with morph relation should succeed should update indexes on ONE_TO_MANY morph field related target object name update 1`] = `
+{
+  "indexFieldMetadataList": [
+    {
+      "createdAt": Any<String>,
+      "fieldMetadataId": Any<String>,
+      "id": Any<String>,
+      "order": 0,
+      "updatedAt": Any<String>,
+    },
+  ],
+  "indexType": "BTREE",
+  "isCustom": true,
+  "isUnique": false,
+  "name": "IDX_d46ee05346f12228875612c7a2a",
+}
+`;
+
+exports[`Rename an object metadata with morph relation should succeed should update indexes on ONE_TO_MANY morph field related target object name update 2`] = `
+{
+  "indexFieldMetadataList": [
+    {
+      "createdAt": Any<String>,
+      "fieldMetadataId": Any<String>,
+      "id": Any<String>,
+      "order": 0,
+      "updatedAt": Any<String>,
+    },
+  ],
+  "indexType": "BTREE",
+  "isCustom": true,
+  "isUnique": false,
+  "name": "IDX_270c22872e92d429bb4f07a15dd",
+}
+`;
+
+exports[`Rename an object metadata with morph relation should succeed should update indexes on ONE_TO_MANY morph field related target object name update 3`] = `
+{
+  "indexFieldMetadataList": [
+    {
+      "createdAt": Any<String>,
+      "fieldMetadataId": Any<String>,
+      "id": Any<String>,
+      "order": 0,
+      "updatedAt": Any<String>,
+    },
+  ],
+  "indexType": "BTREE",
+  "isCustom": true,
+  "isUnique": false,
+  "name": "IDX_aabda09e5917c5a7cbe5b6c84fc",
+}
+`;
+
+exports[`Rename an object metadata with morph relation should succeed should update indexes on ONE_TO_MANY morph field related target object name update 4`] = `
+{
+  "indexFieldMetadataList": [
+    {
+      "createdAt": Any<String>,
+      "fieldMetadataId": Any<String>,
+      "id": Any<String>,
+      "order": 0,
+      "updatedAt": Any<String>,
+    },
+  ],
+  "indexType": "BTREE",
+  "isCustom": true,
+  "isUnique": false,
+  "name": "IDX_270c22872e92d429bb4f07a15dd",
+}
+`;

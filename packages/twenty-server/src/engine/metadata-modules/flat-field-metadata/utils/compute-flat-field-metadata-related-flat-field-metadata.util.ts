@@ -33,11 +33,14 @@ export const computeFlatFieldMetadataRelatedFlatFieldMetadata = ({
       FieldMetadataType.MORPH_RELATION,
     )
   ) {
-    return findFlatFieldMetadatasRelatedToMorphRelationOrThrow({
-      flatFieldMetadata,
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
-    });
+    const { morphRelationFlatFieldMetadatas, relationFlatFieldMetadatas } =
+      findFlatFieldMetadatasRelatedToMorphRelationOrThrow({
+        flatFieldMetadata,
+        flatFieldMetadataMaps,
+        flatObjectMetadata,
+      });
+
+    return [...morphRelationFlatFieldMetadatas, ...relationFlatFieldMetadatas];
   }
 
   return [];

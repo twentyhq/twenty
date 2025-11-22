@@ -1,11 +1,11 @@
 import { type FromTo } from 'twenty-shared/types';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { findFieldRelatedIndexes } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-field-related-index.util';
 import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { recomputeIndexOnFlatFieldMetadataNameUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-index-on-flat-field-metadata-name-update.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -52,7 +52,7 @@ export const handleIndexChangesDuringFieldUpdate = ({
     flatEntityId: fromFlatFieldMetadata.objectMetadataId,
   });
 
-  const relatedIndexes = findRelatedIndexes({
+  const relatedIndexes = findFieldRelatedIndexes({
     flatFieldMetadata: fromFlatFieldMetadata,
     flatObjectMetadata,
     flatIndexMaps,
@@ -80,27 +80,6 @@ const hasIndexRelevantChanges = ({
 }: FromTo<FlatFieldMetadata, 'flatFieldMetadata'>): boolean =>
   fromFlatFieldMetadata.name !== toFlatFieldMetadata.name ||
   fromFlatFieldMetadata.isUnique !== toFlatFieldMetadata.isUnique;
-
-const findRelatedIndexes = ({
-  flatFieldMetadata,
-  flatObjectMetadata,
-  flatIndexMaps,
-}: {
-  flatFieldMetadata: FlatFieldMetadata;
-  flatObjectMetadata: FlatObjectMetadata;
-  flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
-}): FlatIndexMetadata[] => {
-  const objectIndexes = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-    flatEntityMaps: flatIndexMaps,
-    flatEntityIds: flatObjectMetadata.indexMetadataIds,
-  });
-
-  return objectIndexes.filter((index) =>
-    index.flatIndexFieldMetadatas.some(
-      (indexField) => indexField.fieldMetadataId === flatFieldMetadata.id,
-    ),
-  );
-};
 
 const handleNoExistingIndexes = ({
   toFlatFieldMetadata,
@@ -139,7 +118,10 @@ const handleExistingIndexes = ({
   FlatFieldMetadata,
   'flatFieldMetadata'
 >): FieldMetadataUpdateIndexSideEffect => {
-  if (toFlatFieldMetadata.isUnique === false) {
+  if (
+    toFlatFieldMetadata.isUnique === false &&
+    !isMorphOrRelationFlatFieldMetadata(fromFlatFieldMetadata)
+  ) {
     const expectedUniqueIndex = generateIndexForFlatFieldMetadata({
       flatFieldMetadata: {
         ...fromFlatFieldMetadata,
@@ -160,7 +142,6 @@ const handleExistingIndexes = ({
         : [],
     };
   }
-
   const updatedIndexes = recomputeIndexOnFlatFieldMetadataNameUpdate({
     flatFieldMetadataMaps,
     flatObjectMetadata,
