@@ -81,7 +81,7 @@ export class WorkspaceRepository<
       this.objectRecordsPermissions,
       this.internalContext,
       this.shouldBypassPermissionChecks,
-      this.authContext,
+      this.authContext ?? {},
       this.featureFlagMap,
     );
   }

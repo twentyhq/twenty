@@ -13,6 +13,7 @@ export const twentyORMGraphqlApiExceptionHandler = (
     case TwentyORMExceptionCode.CONNECT_RECORD_NOT_FOUND:
     case TwentyORMExceptionCode.CONNECT_NOT_ALLOWED:
     case TwentyORMExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR:
+    case TwentyORMExceptionCode.TOO_MANY_RECORDS_TO_UPDATE:
       throw new UserInputError(error.message, {
         userFriendlyMessage: error.userFriendlyMessage,
       });

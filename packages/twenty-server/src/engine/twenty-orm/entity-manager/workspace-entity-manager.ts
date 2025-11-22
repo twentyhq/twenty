@@ -196,7 +196,7 @@ export class WorkspaceEntityManager extends EntityManager {
       options?.objectRecordsPermissions ?? {},
       this.internalContext,
       options?.shouldBypassPermissionChecks ?? false,
-      undefined,
+      {},
       this.getFeatureFlagMap(),
     );
   }
