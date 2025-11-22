@@ -12,7 +12,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { ormToCommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/utils/orm-to-common-query-runner.util';
+import { ormToCommonQueryRunnerExceptionHandler } from 'src/engine/api/common/common-query-runners/utils/orm-to-common-query-runner-exception-handler.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
@@ -49,6 +49,7 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { TwentyORMException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -230,8 +231,12 @@ export abstract class CommonBaseQueryRunnerService<
         ...extendedQueryRunnerContext,
         commonQueryParser,
       });
-    } catch (error) {
-      throw ormToCommonQueryRunnerException(error);
+    } catch (error: unknown) {
+      if (error instanceof TwentyORMException) {
+        throw ormToCommonQueryRunnerExceptionHandler(error);
+      }
+
+      throw error;
     }
 
     return this.enrichResultsWithGettersAndHooks({

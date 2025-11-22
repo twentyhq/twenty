@@ -9,7 +9,7 @@ import {
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 
-export const ormToCommonQueryRunnerException = (
+export const ormToCommonQueryRunnerExceptionHandler = (
   error: TwentyORMException,
 ): never => {
   switch (error.code) {
