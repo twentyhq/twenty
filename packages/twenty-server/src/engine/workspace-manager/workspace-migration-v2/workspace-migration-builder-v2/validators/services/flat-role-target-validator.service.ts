@@ -10,6 +10,7 @@ import { RoleTargetExceptionCode } from 'src/engine/metadata-modules/role/except
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class FlatRoleTargetValidatorService {
@@ -19,6 +20,7 @@ export class FlatRoleTargetValidatorService {
     flatEntityToValidate: flatRoleTargetToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRoleTargetMaps: optimisticFlatRoleTargetMaps,
+      flatRoleMaps,
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.roleTarget
@@ -41,6 +43,19 @@ export class FlatRoleTargetValidatorService {
         code: RoleTargetExceptionCode.INVALID_ROLE_TARGET_DATA,
         message: t`Role target with this id already exists`,
         userFriendlyMessage: msg`Role target with this id already exists`,
+      });
+    }
+
+    const referencedRole = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatRoleTargetToValidate.roleId,
+      flatEntityMaps: flatRoleMaps,
+    });
+
+    if (!isDefined(referencedRole)) {
+      validationResult.errors.push({
+        code: RoleTargetExceptionCode.INVALID_ROLE_TARGET_DATA,
+        message: t`Role not found`,
+        userFriendlyMessage: msg`Role not found`,
       });
     }
 
@@ -83,8 +98,10 @@ export class FlatRoleTargetValidatorService {
 
   validateFlatRoleTargetUpdate({
     flatEntityId,
+    flatEntityUpdates,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRoleTargetMaps: optimisticFlatRoleTargetMaps,
+      flatRoleMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.roleTarget
@@ -107,6 +124,26 @@ export class FlatRoleTargetValidatorService {
       });
 
       return validationResult;
+    }
+
+    const updatedFlatRoleTarget = {
+      ...existingRoleTarget,
+      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
+        updates: flatEntityUpdates,
+      }),
+    };
+
+    const referencedRole = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: updatedFlatRoleTarget.roleId,
+      flatEntityMaps: flatRoleMaps,
+    });
+
+    if (!isDefined(referencedRole)) {
+      validationResult.errors.push({
+        code: RoleTargetExceptionCode.INVALID_ROLE_TARGET_DATA,
+        message: t`Role not found`,
+        userFriendlyMessage: msg`Role not found`,
+      });
     }
 
     return validationResult;
