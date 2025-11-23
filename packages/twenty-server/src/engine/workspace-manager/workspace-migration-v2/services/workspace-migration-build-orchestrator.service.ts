@@ -548,6 +548,38 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatRoleTargetMaps)) {
+      const { from: fromFlatRoleTargetMaps, to: toFlatRoleTargetMaps } =
+        flatRoleTargetMaps;
+
+      const roleTargetResult =
+        await this.workspaceMigrationV2RoleTargetActionsBuilderService.validateAndBuild(
+          {
+            from: fromFlatRoleTargetMaps,
+            to: toFlatRoleTargetMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: {
+              flatRoleMaps: optimisticAllFlatEntityMaps.flatRoleMaps,
+            },
+            workspaceId,
+          },
+        );
+
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            roleTargetResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
+
+      if (roleTargetResult.status === 'fail') {
+        orchestratorFailureReport.roleTarget.push(...roleTargetResult.errors);
+      } else {
+        orchestratorActionsReport.roleTarget = roleTargetResult.actions;
+      }
+    }
+
     const allErrors = Object.values(orchestratorFailureReport);
 
     if (allErrors.some((report) => report.length > 0)) {
@@ -620,20 +652,21 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ///
 
           // Route triggers
-          ...orchestratorActionsReport.routeTrigger.deleted,
-          ...orchestratorActionsReport.routeTrigger.created,
-          ...orchestratorActionsReport.routeTrigger.updated,
+          ...aggregatedOrchestratorActionsReport.routeTrigger.deleted,
+          ...aggregatedOrchestratorActionsReport.routeTrigger.created,
+          ...aggregatedOrchestratorActionsReport.routeTrigger.updated,
           ///
 
           // Roles
-          ...orchestratorActionsReport.role.deleted,
-          ...orchestratorActionsReport.role.created,
-          ...orchestratorActionsReport.role.updated,
+          ...aggregatedOrchestratorActionsReport.role.deleted,
+          ...aggregatedOrchestratorActionsReport.role.created,
+          ...aggregatedOrchestratorActionsReport.role.updated,
+          ///
 
           // Role targets
-          ...orchestratorActionsReport.roleTarget.deleted,
-          ...orchestratorActionsReport.roleTarget.created,
-          ...orchestratorActionsReport.roleTarget.updated,
+          ...aggregatedOrchestratorActionsReport.roleTarget.deleted,
+          ...aggregatedOrchestratorActionsReport.roleTarget.created,
+          ...aggregatedOrchestratorActionsReport.roleTarget.updated,
           ///
         ],
         workspaceId,
