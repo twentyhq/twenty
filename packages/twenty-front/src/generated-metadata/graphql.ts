@@ -113,13 +113,6 @@ export type AgentChatThread = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type AgentHandoff = {
-  __typename?: 'AgentHandoff';
-  description?: Maybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  toAgent: Agent;
-};
-
 export type AgentIdInput = {
   /** The id of the agent. */
   id: Scalars['UUID'];
@@ -753,12 +746,6 @@ export type CoreViewSort = {
   updatedAt: Scalars['DateTime'];
   viewId: Scalars['UUID'];
   workspaceId: Scalars['UUID'];
-};
-
-export type CreateAgentHandoffInput = {
-  description?: InputMaybe<Scalars['String']>;
-  fromAgentId: Scalars['UUID'];
-  toAgentId: Scalars['UUID'];
 };
 
 export type CreateAgentInput = {
@@ -1753,7 +1740,6 @@ export type Mutation = {
   checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
-  createAgentHandoff: Scalars['Boolean'];
   createApiKey: ApiKey;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createChatThread: AgentChatThread;
@@ -1851,7 +1837,6 @@ export type Mutation = {
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
   publishServerlessFunction: ServerlessFunction;
-  removeAgentHandoff: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
@@ -1975,11 +1960,6 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
-};
-
-
-export type MutationCreateAgentHandoffArgs = {
-  input: CreateAgentHandoffInput;
 };
 
 
@@ -2445,11 +2425,6 @@ export type MutationInitiateOtpProvisioningArgs = {
 
 export type MutationPublishServerlessFunctionArgs = {
   input: PublishServerlessFunctionInput;
-};
-
-
-export type MutationRemoveAgentHandoffArgs = {
-  input: RemoveAgentHandoffInput;
 };
 
 
@@ -3199,8 +3174,6 @@ export type Query = {
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
-  findAgentHandoffTargets: Array<Agent>;
-  findAgentHandoffs: Array<AgentHandoff>;
   findDistantTablesWithStatus: Array<RemoteTable>;
   findManyAgents: Array<Agent>;
   findManyApplications: Array<Application>;
@@ -3313,16 +3286,6 @@ export type QueryFieldArgs = {
 export type QueryFieldsArgs = {
   filter?: FieldFilter;
   paging?: CursorPaging;
-};
-
-
-export type QueryFindAgentHandoffTargetsArgs = {
-  input: AgentIdInput;
-};
-
-
-export type QueryFindAgentHandoffsArgs = {
-  input: AgentIdInput;
 };
 
 
@@ -3725,11 +3688,6 @@ export enum RemoteTableStatus {
   NOT_SYNCED = 'NOT_SYNCED',
   SYNCED = 'SYNCED'
 }
-
-export type RemoveAgentHandoffInput = {
-  fromAgentId: Scalars['UUID'];
-  toAgentId: Scalars['UUID'];
-};
 
 export type ResendEmailVerificationTokenOutput = {
   __typename?: 'ResendEmailVerificationTokenOutput';
@@ -4817,6 +4775,7 @@ export type Workspace = {
   isTwoFactorAuthenticationEnforced: Scalars['Boolean'];
   logo?: Maybe<Scalars['String']>;
   metadataVersion: Scalars['Float'];
+  plannerModel: Scalars['String'];
   routerModel: Scalars['String'];
   subdomain: Scalars['String'];
   trashRetentionDays: Scalars['Float'];
@@ -4942,13 +4901,6 @@ export type AssignRoleToAgentMutationVariables = Exact<{
 
 export type AssignRoleToAgentMutation = { __typename?: 'Mutation', assignRoleToAgent: boolean };
 
-export type CreateAgentHandoffMutationVariables = Exact<{
-  input: CreateAgentHandoffInput;
-}>;
-
-
-export type CreateAgentHandoffMutation = { __typename?: 'Mutation', createAgentHandoff: boolean };
-
 export type CreateChatThreadMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -4968,13 +4920,6 @@ export type DeleteOneAgentMutationVariables = Exact<{
 
 export type DeleteOneAgentMutation = { __typename?: 'Mutation', deleteOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
-export type RemoveAgentHandoffMutationVariables = Exact<{
-  input: RemoveAgentHandoffInput;
-}>;
-
-
-export type RemoveAgentHandoffMutation = { __typename?: 'Mutation', removeAgentHandoff: boolean };
-
 export type RemoveRoleFromAgentMutationVariables = Exact<{
   agentId: Scalars['UUID'];
 }>;
@@ -4988,20 +4933,6 @@ export type UpdateOneAgentMutationVariables = Exact<{
 
 
 export type UpdateOneAgentMutation = { __typename?: 'Mutation', updateOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string } };
-
-export type FindAgentHandoffTargetsQueryVariables = Exact<{
-  input: AgentIdInput;
-}>;
-
-
-export type FindAgentHandoffTargetsQuery = { __typename?: 'Query', findAgentHandoffTargets: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, modelId: string, prompt: string, isCustom: boolean, createdAt: string, updatedAt: string }> };
-
-export type FindAgentHandoffsQueryVariables = Exact<{
-  input: AgentIdInput;
-}>;
-
-
-export type FindAgentHandoffsQuery = { __typename?: 'Query', findAgentHandoffs: Array<{ __typename?: 'AgentHandoff', id: string, description?: string | null, toAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, modelId: string, prompt: string, isCustom: boolean, createdAt: string, updatedAt: string } }> };
 
 export type FindManyAgentsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -7163,37 +7094,6 @@ export function useAssignRoleToAgentMutation(baseOptions?: Apollo.MutationHookOp
 export type AssignRoleToAgentMutationHookResult = ReturnType<typeof useAssignRoleToAgentMutation>;
 export type AssignRoleToAgentMutationResult = Apollo.MutationResult<AssignRoleToAgentMutation>;
 export type AssignRoleToAgentMutationOptions = Apollo.BaseMutationOptions<AssignRoleToAgentMutation, AssignRoleToAgentMutationVariables>;
-export const CreateAgentHandoffDocument = gql`
-    mutation CreateAgentHandoff($input: CreateAgentHandoffInput!) {
-  createAgentHandoff(input: $input)
-}
-    `;
-export type CreateAgentHandoffMutationFn = Apollo.MutationFunction<CreateAgentHandoffMutation, CreateAgentHandoffMutationVariables>;
-
-/**
- * __useCreateAgentHandoffMutation__
- *
- * To run a mutation, you first call `useCreateAgentHandoffMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateAgentHandoffMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createAgentHandoffMutation, { data, loading, error }] = useCreateAgentHandoffMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateAgentHandoffMutation(baseOptions?: Apollo.MutationHookOptions<CreateAgentHandoffMutation, CreateAgentHandoffMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateAgentHandoffMutation, CreateAgentHandoffMutationVariables>(CreateAgentHandoffDocument, options);
-      }
-export type CreateAgentHandoffMutationHookResult = ReturnType<typeof useCreateAgentHandoffMutation>;
-export type CreateAgentHandoffMutationResult = Apollo.MutationResult<CreateAgentHandoffMutation>;
-export type CreateAgentHandoffMutationOptions = Apollo.BaseMutationOptions<CreateAgentHandoffMutation, CreateAgentHandoffMutationVariables>;
 export const CreateChatThreadDocument = gql`
     mutation CreateChatThread {
   createChatThread {
@@ -7295,37 +7195,6 @@ export function useDeleteOneAgentMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteOneAgentMutationHookResult = ReturnType<typeof useDeleteOneAgentMutation>;
 export type DeleteOneAgentMutationResult = Apollo.MutationResult<DeleteOneAgentMutation>;
 export type DeleteOneAgentMutationOptions = Apollo.BaseMutationOptions<DeleteOneAgentMutation, DeleteOneAgentMutationVariables>;
-export const RemoveAgentHandoffDocument = gql`
-    mutation RemoveAgentHandoff($input: RemoveAgentHandoffInput!) {
-  removeAgentHandoff(input: $input)
-}
-    `;
-export type RemoveAgentHandoffMutationFn = Apollo.MutationFunction<RemoveAgentHandoffMutation, RemoveAgentHandoffMutationVariables>;
-
-/**
- * __useRemoveAgentHandoffMutation__
- *
- * To run a mutation, you first call `useRemoveAgentHandoffMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemoveAgentHandoffMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [removeAgentHandoffMutation, { data, loading, error }] = useRemoveAgentHandoffMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useRemoveAgentHandoffMutation(baseOptions?: Apollo.MutationHookOptions<RemoveAgentHandoffMutation, RemoveAgentHandoffMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RemoveAgentHandoffMutation, RemoveAgentHandoffMutationVariables>(RemoveAgentHandoffDocument, options);
-      }
-export type RemoveAgentHandoffMutationHookResult = ReturnType<typeof useRemoveAgentHandoffMutation>;
-export type RemoveAgentHandoffMutationResult = Apollo.MutationResult<RemoveAgentHandoffMutation>;
-export type RemoveAgentHandoffMutationOptions = Apollo.BaseMutationOptions<RemoveAgentHandoffMutation, RemoveAgentHandoffMutationVariables>;
 export const RemoveRoleFromAgentDocument = gql`
     mutation RemoveRoleFromAgent($agentId: UUID!) {
   removeRoleFromAgent(agentId: $agentId)
@@ -7390,98 +7259,6 @@ export function useUpdateOneAgentMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateOneAgentMutationHookResult = ReturnType<typeof useUpdateOneAgentMutation>;
 export type UpdateOneAgentMutationResult = Apollo.MutationResult<UpdateOneAgentMutation>;
 export type UpdateOneAgentMutationOptions = Apollo.BaseMutationOptions<UpdateOneAgentMutation, UpdateOneAgentMutationVariables>;
-export const FindAgentHandoffTargetsDocument = gql`
-    query FindAgentHandoffTargets($input: AgentIdInput!) {
-  findAgentHandoffTargets(input: $input) {
-    id
-    name
-    label
-    description
-    icon
-    modelId
-    prompt
-    isCustom
-    createdAt
-    updatedAt
-  }
-}
-    `;
-
-/**
- * __useFindAgentHandoffTargetsQuery__
- *
- * To run a query within a React component, call `useFindAgentHandoffTargetsQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindAgentHandoffTargetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindAgentHandoffTargetsQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useFindAgentHandoffTargetsQuery(baseOptions: Apollo.QueryHookOptions<FindAgentHandoffTargetsQuery, FindAgentHandoffTargetsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindAgentHandoffTargetsQuery, FindAgentHandoffTargetsQueryVariables>(FindAgentHandoffTargetsDocument, options);
-      }
-export function useFindAgentHandoffTargetsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindAgentHandoffTargetsQuery, FindAgentHandoffTargetsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindAgentHandoffTargetsQuery, FindAgentHandoffTargetsQueryVariables>(FindAgentHandoffTargetsDocument, options);
-        }
-export type FindAgentHandoffTargetsQueryHookResult = ReturnType<typeof useFindAgentHandoffTargetsQuery>;
-export type FindAgentHandoffTargetsLazyQueryHookResult = ReturnType<typeof useFindAgentHandoffTargetsLazyQuery>;
-export type FindAgentHandoffTargetsQueryResult = Apollo.QueryResult<FindAgentHandoffTargetsQuery, FindAgentHandoffTargetsQueryVariables>;
-export const FindAgentHandoffsDocument = gql`
-    query FindAgentHandoffs($input: AgentIdInput!) {
-  findAgentHandoffs(input: $input) {
-    id
-    description
-    toAgent {
-      id
-      name
-      label
-      description
-      icon
-      modelId
-      prompt
-      isCustom
-      createdAt
-      updatedAt
-    }
-  }
-}
-    `;
-
-/**
- * __useFindAgentHandoffsQuery__
- *
- * To run a query within a React component, call `useFindAgentHandoffsQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindAgentHandoffsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindAgentHandoffsQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useFindAgentHandoffsQuery(baseOptions: Apollo.QueryHookOptions<FindAgentHandoffsQuery, FindAgentHandoffsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindAgentHandoffsQuery, FindAgentHandoffsQueryVariables>(FindAgentHandoffsDocument, options);
-      }
-export function useFindAgentHandoffsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindAgentHandoffsQuery, FindAgentHandoffsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindAgentHandoffsQuery, FindAgentHandoffsQueryVariables>(FindAgentHandoffsDocument, options);
-        }
-export type FindAgentHandoffsQueryHookResult = ReturnType<typeof useFindAgentHandoffsQuery>;
-export type FindAgentHandoffsLazyQueryHookResult = ReturnType<typeof useFindAgentHandoffsLazyQuery>;
-export type FindAgentHandoffsQueryResult = Apollo.QueryResult<FindAgentHandoffsQuery, FindAgentHandoffsQueryVariables>;
 export const FindManyAgentsDocument = gql`
     query FindManyAgents {
   findManyAgents {

@@ -113,13 +113,6 @@ export type AgentChatThread = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type AgentHandoff = {
-  __typename?: 'AgentHandoff';
-  description?: Maybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  toAgent: Agent;
-};
-
 export type AgentIdInput = {
   /** The id of the agent. */
   id: Scalars['UUID'];
@@ -753,12 +746,6 @@ export type CoreViewSort = {
   updatedAt: Scalars['DateTime'];
   viewId: Scalars['UUID'];
   workspaceId: Scalars['UUID'];
-};
-
-export type CreateAgentHandoffInput = {
-  description?: InputMaybe<Scalars['String']>;
-  fromAgentId: Scalars['UUID'];
-  toAgentId: Scalars['UUID'];
 };
 
 export type CreateAgentInput = {
@@ -1729,7 +1716,6 @@ export type Mutation = {
   checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
-  createAgentHandoff: Scalars['Boolean'];
   createApiKey: ApiKey;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createChatThread: AgentChatThread;
@@ -1825,7 +1811,6 @@ export type Mutation = {
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
   publishServerlessFunction: ServerlessFunction;
-  removeAgentHandoff: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
@@ -1945,11 +1930,6 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
-};
-
-
-export type MutationCreateAgentHandoffArgs = {
-  input: CreateAgentHandoffInput;
 };
 
 
@@ -2400,11 +2380,6 @@ export type MutationInitiateOtpProvisioningArgs = {
 
 export type MutationPublishServerlessFunctionArgs = {
   input: PublishServerlessFunctionInput;
-};
-
-
-export type MutationRemoveAgentHandoffArgs = {
-  input: RemoveAgentHandoffInput;
 };
 
 
@@ -3134,8 +3109,6 @@ export type Query = {
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
-  findAgentHandoffTargets: Array<Agent>;
-  findAgentHandoffs: Array<AgentHandoff>;
   findManyAgents: Array<Agent>;
   findManyApplications: Array<Application>;
   findManyCronTriggers: Array<CronTrigger>;
@@ -3234,16 +3207,6 @@ export type QueryCheckUserExistsArgs = {
 
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
-};
-
-
-export type QueryFindAgentHandoffTargetsArgs = {
-  input: AgentIdInput;
-};
-
-
-export type QueryFindAgentHandoffsArgs = {
-  input: AgentIdInput;
 };
 
 
@@ -3595,11 +3558,6 @@ export enum RemoteTableStatus {
   NOT_SYNCED = 'NOT_SYNCED',
   SYNCED = 'SYNCED'
 }
-
-export type RemoveAgentHandoffInput = {
-  fromAgentId: Scalars['UUID'];
-  toAgentId: Scalars['UUID'];
-};
 
 export type ResendEmailVerificationTokenOutput = {
   __typename?: 'ResendEmailVerificationTokenOutput';
@@ -4669,6 +4627,7 @@ export type Workspace = {
   isTwoFactorAuthenticationEnforced: Scalars['Boolean'];
   logo?: Maybe<Scalars['String']>;
   metadataVersion: Scalars['Float'];
+  plannerModel: Scalars['String'];
   routerModel: Scalars['String'];
   subdomain: Scalars['String'];
   trashRetentionDays: Scalars['Float'];
