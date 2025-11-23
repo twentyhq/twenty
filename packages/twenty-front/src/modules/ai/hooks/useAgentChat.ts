@@ -109,7 +109,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
       },
     }),
     messages: uiMessages,
-    id: `${currentAIChatThread}-${uiMessages.length}`,
+    id: currentAIChatThread,
   });
 
   const isStreaming = status === 'streaming';
