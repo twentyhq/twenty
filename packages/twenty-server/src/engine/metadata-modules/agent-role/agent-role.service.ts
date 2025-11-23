@@ -8,6 +8,7 @@ import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
+import { RoleTargetServiceV2 } from 'src/engine/metadata-modules/role-target/services/role-target-v2.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
@@ -20,6 +21,7 @@ export class AgentRoleService {
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
+    private readonly roleTargetService: RoleTargetServiceV2,
   ) {}
 
   public async assignRoleToAgent({
@@ -41,16 +43,13 @@ export class AgentRoleService {
       return;
     }
 
-    const newRoleTarget = await this.roleTargetsRepository.save({
-      roleId,
-      agentId,
+    await this.roleTargetService.create({
+      createRoleTargetInput: {
+        roleId,
+        targetId: agentId,
+        targetMetadataForeignKey: 'agentId',
+      },
       workspaceId,
-    });
-
-    await this.roleTargetsRepository.delete({
-      agentId,
-      workspaceId,
-      id: Not(newRoleTarget.id),
     });
   }
 
@@ -88,10 +87,19 @@ export class AgentRoleService {
     workspaceId: string;
     agentId: string;
   }): Promise<void> {
-    await this.roleTargetsRepository.delete({
-      agentId,
-      workspaceId,
+    const existingRoleTarget = await this.roleTargetsRepository.findOne({
+      where: {
+        agentId,
+        workspaceId,
+      },
     });
+
+    if (existingRoleTarget) {
+      await this.roleTargetService.delete({
+        id: existingRoleTarget.id,
+        workspaceId,
+      });
+    }
   }
 
   public async getAgentsAssignedToRole(

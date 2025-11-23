@@ -1,4 +1,4 @@
-import { RoleTargetForeignKeyProperties } from 'src/engine/metadata-modules/role-target/types/role-target-foreign-key-properties.type';
+import { RoleTargetForeignKeyProperties } from 'src/engine/metadata-modules/flat-role-target/types/role-target-foreign-key-properties.type';
 
 export type CreateRoleTargetInput = {
   roleId: string;
