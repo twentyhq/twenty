@@ -10,6 +10,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { RoleTargetServiceV2 } from 'src/engine/metadata-modules/role-target/role-target-v2.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
@@ -27,6 +28,7 @@ export class UserRoleService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly roleTargetService: RoleTargetServiceV2,
   ) {}
 
   public async assignRoleToUserWorkspace({
@@ -48,12 +50,14 @@ export class UserRoleService {
       return;
     }
 
-    const newRoleTarget = await this.roleTargetsRepository.save({
+    await this.roleTargetService.create({
       roleId,
-      userWorkspaceId,
       workspaceId,
+      targetId: userWorkspaceId,
+      targetMetadata: 'userWorkspaceId',
     });
 
+    // What does this mean ? a user can only have one role ?
     await this.roleTargetsRepository.delete({
       userWorkspaceId,
       workspaceId,
@@ -237,32 +241,6 @@ export class UserRoleService {
         PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND,
         {
           userFriendlyMessage: msg`Your workspace membership could not be found. You may no longer have access to this workspace.`,
-        },
-      );
-    }
-
-    const role = await this.roleRepository.findOne({
-      where: {
-        id: roleId,
-      },
-    });
-
-    if (!isDefined(role)) {
-      throw new PermissionsException(
-        'Role not found',
-        PermissionsExceptionCode.ROLE_NOT_FOUND,
-        {
-          userFriendlyMessage: msg`The role you are trying to assign could not be found. It may have been deleted.`,
-        },
-      );
-    }
-
-    if (!role.canBeAssignedToUsers) {
-      throw new PermissionsException(
-        `Role "${role.label}" cannot be assigned to users`,
-        PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
-        {
-          userFriendlyMessage: msg`This role cannot be assigned to users. Please select a different role.`,
         },
       );
     }
