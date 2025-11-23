@@ -1,3 +1,5 @@
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+
 import {
   ATTACHMENT_STANDARD_FIELD_IDS,
   BLOCKLIST_STANDARD_FIELD_IDS,
@@ -35,7 +37,6 @@ import {
   WORKFLOW_VERSION_STANDARD_FIELD_IDS,
   WORKSPACE_MEMBER_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 export const STANDARD_OBJECTS = {
   attachment: {
