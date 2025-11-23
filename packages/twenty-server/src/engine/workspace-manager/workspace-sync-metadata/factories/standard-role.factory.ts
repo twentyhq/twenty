@@ -31,6 +31,7 @@ export class StandardRoleFactory {
           ...flatRole,
           id: existingRole.id,
           universalIdentifier: roleDefinition.standardId || existingRole.id,
+          createdAt: existingRole.createdAt,
         });
       } else {
         computedRoles.push({
