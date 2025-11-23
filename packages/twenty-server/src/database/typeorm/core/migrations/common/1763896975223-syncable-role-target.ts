@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class SyncableRoleTarget1763896975223 implements MigrationInterface {
   name = 'SyncableRoleTarget1763896975223';

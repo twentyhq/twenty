@@ -329,6 +329,7 @@ export class WorkspacePermissionsCacheService {
     });
 
     const initialAccumulator: UserWorkspaceRoleMap = {};
+
     return roleTargetsMap.reduce(
       (acc, roleTarget) => ({
         ...acc,

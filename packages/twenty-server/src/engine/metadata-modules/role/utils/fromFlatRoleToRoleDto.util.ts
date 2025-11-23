@@ -1,5 +1,5 @@
-import { FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
 export const fromFlatRoleToRoleDto = ({
   canAccessAllTools,

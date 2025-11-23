@@ -53,4 +53,3 @@ export class WorkspaceFlatRoleTargetMapCacheService extends WorkspaceFlatMapCach
     return flatRoleTargetMaps;
   }
 }
-
