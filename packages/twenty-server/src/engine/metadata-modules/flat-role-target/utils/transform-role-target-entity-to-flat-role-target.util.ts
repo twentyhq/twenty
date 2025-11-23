@@ -4,6 +4,8 @@ import { type RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-ta
 export const fromRoleTargetsEntityToFlatRoleTarget = (
   roleTarget: RoleTargetsEntity,
 ): FlatRoleTarget => {
+  const createdAt = new Date();
+
   return {
     id: roleTarget.id,
     workspaceId: roleTarget.workspaceId,
@@ -13,5 +15,7 @@ export const fromRoleTargetsEntityToFlatRoleTarget = (
     apiKeyId: roleTarget.apiKeyId,
     applicationId: roleTarget.applicationId,
     universalIdentifier: roleTarget.universalIdentifier ?? roleTarget.id,
+    createdAt,
+    updatedAt: createdAt,
   };
 };

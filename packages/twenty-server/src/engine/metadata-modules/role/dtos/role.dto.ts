@@ -55,7 +55,7 @@ export class RoleDTO {
   canBeAssignedToApiKeys: boolean;
 
   @HideField()
-  roleTargets?: Relation<RoleTargetsEntity[]>;
+  roleTargets: Relation<RoleTargetsEntity[]>;
 
   @Field(() => [WorkspaceMemberDTO], { nullable: true })
   workspaceMembers?: WorkspaceMemberDTO[];

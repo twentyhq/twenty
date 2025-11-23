@@ -1,7 +1,7 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 } from 'uuid';
 
-import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
 
 export const fromCreateRoleInputToFlatRoleToCreate = ({
   createRoleInput,
@@ -12,12 +12,13 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
 }): FlatRole => {
   const now = new Date();
 
+  const id = createRoleInput.id ?? v4();
   return {
-    id: createRoleInput.id ?? uuidv4(),
-    standardId: '',
+    id,
+    standardId: null,
     label: createRoleInput.label,
-    description: createRoleInput.description ?? '',
-    icon: createRoleInput.icon ?? '',
+    description: createRoleInput.description ?? null,
+    icon: createRoleInput.icon ?? null,
     canUpdateAllSettings: createRoleInput.canUpdateAllSettings ?? false,
     canAccessAllTools: createRoleInput.canAccessAllTools ?? false,
     canReadAllObjectRecords: createRoleInput.canReadAllObjectRecords ?? false,
@@ -34,7 +35,7 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
     workspaceId,
     createdAt: now,
     updatedAt: now,
-    universalIdentifier: '',
+    universalIdentifier: id,
     applicationId: null,
     roleTargetIds: [],
     objectPermissionIds: [],
