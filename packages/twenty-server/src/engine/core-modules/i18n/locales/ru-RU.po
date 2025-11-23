@@ -74,6 +74,11 @@ msgstr "Папка избранного"
 msgid "A group of related messages (e.g. email thread, chat thread)"
 msgstr "Группа связанных сообщений (например, цепочка электронных писем, чат)"
 
+#. js-lingui-id: 1Pylbk
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
+msgid "A many to one relation field should always declare a join column"
+msgstr ""
+
 #. js-lingui-id: vZj1Xc
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
@@ -88,6 +93,11 @@ msgstr "Заметка"
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "A note target"
 msgstr "Цель заметки"
+
+#. js-lingui-id: MtcxLV
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
+msgid "A one to many relation field should never declare a join column"
+msgstr ""
 
 #. js-lingui-id: Io42ej
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -802,6 +812,11 @@ msgstr "Не удалось найти связанные метаданные �
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Could not find index related object metadata"
 msgstr "Не удалось найти метаданные связанного объекта индекса"
+
+#. js-lingui-id: YzCaIm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
+msgid "Could not find relation field parent flat object"
+msgstr ""
 
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1693,6 +1708,11 @@ msgstr "Неверный ввод метаданных объекта."
 msgid "Invalid relation creation payload"
 msgstr "Недействительная полезная нагрузка создания связи"
 
+#. js-lingui-id: iWv3nK
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Invalid relation field target"
+msgstr ""
+
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid setting type provided in cron trigger"
@@ -2166,15 +2186,20 @@ msgstr "Имя"
 msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
 msgstr "Имя \"{computedMetadataNameFromLabel}\" не может быть одинаковым с обеих сторон отношения"
 
-#. js-lingui-id: Ge9TXE
+#. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{flatFieldMetadataName}\" is not available"
-msgstr "Имя \"{flatFieldMetadataName}\" недоступно"
+msgid "Name \"{name}\" is not available"
+msgstr ""
 
-#. js-lingui-id: h8ic2G
+#. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
-msgstr "Имя \"{flatFieldMetadataName}\" недоступно, так как уже используется другим полем"
+msgid "Name \"{name}\" is not available as it is already used by another field"
+msgstr ""
+
+#. js-lingui-id: dBDpp2
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
+msgid "Name \"{name}\" is not available as it is already used by join column name"
+msgstr ""
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -4165,6 +4190,11 @@ msgstr "Неверный пароль"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "X"
+
+#. js-lingui-id: 4ysDL0
+#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
+msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
+msgstr ""
 
 #. js-lingui-id: 1SQnFB
 #: src/engine/metadata-modules/role/role.resolver.ts

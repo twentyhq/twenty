@@ -66,6 +66,7 @@ export const CommandMenuWorkflowEditStepTypeContent = () => {
       workflowVisualizerWorkflowId,
       updatedStep.name,
       getIcon(getActionIcon(updatedStep.type as WorkflowActionType)),
+      updatedStep.id,
     );
   };
 

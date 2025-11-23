@@ -56,7 +56,7 @@ export const SettingsApplicationDetailContentTab = ({
             title={t`Application agents`}
             description={t`Agents created by application`}
           />
-          <SettingsAIAgentsTable withSearchBar={false} />
+          <SettingsAIAgentsTable />
         </Section>
       )}
       {shouldDisplayObjects && (

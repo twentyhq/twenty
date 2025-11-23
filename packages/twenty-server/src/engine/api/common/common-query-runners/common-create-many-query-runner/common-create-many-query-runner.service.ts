@@ -51,7 +51,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     if (args.data.length > QUERY_MAX_RECORDS) {
       throw new CommonQueryRunnerException(
         `Maximum number of records to upsert is ${QUERY_MAX_RECORDS}.`,
-        CommonQueryRunnerExceptionCode.UPSERT_MAX_RECORDS_EXCEEDED,
+        CommonQueryRunnerExceptionCode.TOO_MANY_RECORDS_TO_UPDATE,
         {
           userFriendlyMessage: msg`Maximum number of records to upsert is ${QUERY_MAX_RECORDS}.`,
         },

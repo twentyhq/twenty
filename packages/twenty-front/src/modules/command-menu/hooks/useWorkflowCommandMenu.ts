@@ -1,12 +1,15 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowIdComponentState';
 import { commandMenuWorkflowRunIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowRunIdComponentState';
+import { commandMenuWorkflowStepIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowStepIdComponentState';
 import { commandMenuWorkflowVersionIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowVersionIdComponentState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { useSetInitialWorkflowRunRightDrawerTab } from '@/workflow/workflow-diagram/hooks/useSetInitialWorkflowRunRightDrawerTab';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { t } from '@lingui/core/macro';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconBolt,
   type IconComponent,
@@ -67,7 +70,12 @@ export const useWorkflowCommandMenu = () => {
 
   const openWorkflowEditStepInCommandMenu = useRecoilCallback(
     ({ set }) => {
-      return (workflowId: string, title: string, icon: IconComponent) => {
+      return (
+        workflowId: string,
+        title: string,
+        icon: IconComponent,
+        stepId?: string,
+      ) => {
         const pageId = v4();
 
         set(
@@ -76,6 +84,22 @@ export const useWorkflowCommandMenu = () => {
           }),
           workflowId,
         );
+
+        if (isDefined(stepId)) {
+          set(
+            commandMenuWorkflowStepIdComponentState.atomFamily({
+              instanceId: pageId,
+            }),
+            stepId,
+          );
+
+          set(
+            workflowSelectedNodeComponentState.atomFamily({
+              instanceId: workflowId,
+            }),
+            stepId,
+          );
+        }
 
         navigateCommandMenu({
           page: CommandMenuPages.WorkflowStepEdit,
@@ -118,11 +142,13 @@ export const useWorkflowCommandMenu = () => {
         workflowVersionId,
         title,
         icon,
+        stepId,
       }: {
         workflowId: string;
         workflowVersionId: string;
         title: string;
         icon: IconComponent;
+        stepId?: string;
       }) => {
         const pageId = v4();
 
@@ -138,6 +164,22 @@ export const useWorkflowCommandMenu = () => {
           }),
           workflowVersionId,
         );
+
+        if (isDefined(stepId)) {
+          set(
+            commandMenuWorkflowStepIdComponentState.atomFamily({
+              instanceId: pageId,
+            }),
+            stepId,
+          );
+
+          set(
+            workflowSelectedNodeComponentState.atomFamily({
+              instanceId: workflowVersionId,
+            }),
+            stepId,
+          );
+        }
 
         navigateCommandMenu({
           page: CommandMenuPages.WorkflowStepView,
@@ -180,6 +222,19 @@ export const useWorkflowCommandMenu = () => {
             instanceId: pageId,
           }),
           workflowRunId,
+        );
+        set(
+          commandMenuWorkflowStepIdComponentState.atomFamily({
+            instanceId: pageId,
+          }),
+          workflowSelectedNode,
+        );
+
+        set(
+          workflowSelectedNodeComponentState.atomFamily({
+            instanceId: workflowRunId,
+          }),
+          workflowSelectedNode,
         );
 
         navigateCommandMenu({

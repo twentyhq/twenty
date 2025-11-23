@@ -1,3 +1,4 @@
+import { type CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment } from 'react/jsx-runtime';
@@ -54,6 +55,10 @@ export type CommandMenuContextChipProps = {
   testId?: string;
   maxWidth?: string;
   forceEmptyText?: boolean;
+  page?: {
+    page: CommandMenuPages;
+    pageId: string;
+  };
 };
 
 export const CommandMenuContextChip = ({

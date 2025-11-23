@@ -217,6 +217,7 @@ export type Application = {
   __typename?: 'Application';
   agents: Array<Agent>;
   applicationVariables: Array<ApplicationVariable>;
+  canBeUninstalled: Scalars['Boolean'];
   description: Scalars['String'];
   id: Scalars['UUID'];
   name: Scalars['String'];
@@ -1765,7 +1766,6 @@ export type Mutation = {
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
   createWorkflowVersionStep: WorkflowVersionStepChanges;
   deactivateWorkflowVersion: Scalars['Boolean'];
-  deleteApplication: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCoreView: Scalars['Boolean'];
   deleteCoreViewField: CoreViewField;
@@ -1853,6 +1853,7 @@ export type Mutation = {
   syncApplication: Scalars['Boolean'];
   testHttpRequest: TestHttpRequestOutput;
   trackAnalytics: Analytics;
+  uninstallApplication: Scalars['Boolean'];
   updateApiKey?: Maybe<ApiKey>;
   updateCoreView: CoreView;
   updateCoreViewField: CoreViewField;
@@ -2125,11 +2126,6 @@ export type MutationCreateWorkflowVersionStepArgs = {
 
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['UUID'];
-};
-
-
-export type MutationDeleteApplicationArgs = {
-  universalIdentifier: Scalars['String'];
 };
 
 
@@ -2544,6 +2540,11 @@ export type MutationTrackAnalyticsArgs = {
   name?: InputMaybe<Scalars['String']>;
   properties?: InputMaybe<Scalars['JSON']>;
   type: AnalyticsType;
+};
+
+
+export type MutationUninstallApplicationArgs = {
+  universalIdentifier: Scalars['String'];
 };
 
 
@@ -4027,11 +4028,11 @@ export type UpdateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
-  label: Scalars['String'];
+  label?: InputMaybe<Scalars['String']>;
   modelConfiguration?: InputMaybe<Scalars['JSON']>;
-  modelId: Scalars['String'];
-  name: Scalars['String'];
-  prompt: Scalars['String'];
+  modelId?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  prompt?: InputMaybe<Scalars['String']>;
   responseFormat?: InputMaybe<Scalars['JSON']>;
   roleId?: InputMaybe<Scalars['UUID']>;
 };

@@ -18,6 +18,15 @@ export const useSettingsAgentFormState = (mode: 'create' | 'edit') => {
     prompt: '',
     isCustom: true,
     modelConfiguration: {},
+    responseFormat: {
+      type: 'text',
+      schema: {
+        type: 'object' as const,
+        properties: {},
+        required: [],
+        additionalProperties: false as const,
+      },
+    },
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -52,6 +61,15 @@ export const useSettingsAgentFormState = (mode: 'create' | 'edit') => {
         prompt: '',
         isCustom: true,
         modelConfiguration: {},
+        responseFormat: {
+          type: 'text',
+          schema: {
+            type: 'object' as const,
+            properties: {},
+            required: [],
+            additionalProperties: false as const,
+          },
+        },
       });
     }
   };

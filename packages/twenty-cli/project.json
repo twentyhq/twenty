@@ -19,8 +19,7 @@
       "options": {
         "cwd": "packages/twenty-cli",
         "commands": [
-          "cp -R src/constants/base-application-project dist/constants",
-          "cp -R src/constants/schemas dist/constants"
+          "cp -R src/constants/base-application-project dist/constants"
         ]
       },
       "dependsOn": ["before-build"]

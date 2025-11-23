@@ -144,7 +144,7 @@ msgid "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} o
 msgstr "{advancedFilterCount, plural, one {{advancedFilterCount} haladó szabály} other {{advancedFilterCount} haladó szabályok}}"
 
 #. js-lingui-id: ROdDR9
-#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
+#: src/modules/object-record/record-aggregate/utils/getAggregateLabelWithFieldName.ts
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} a(z) {fieldLabel} alapján"
 
@@ -189,8 +189,7 @@ msgid "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted f
 msgstr "{grantedBy, plural, one {Engedélyezve {grantedBy} objektumra} other {Engedélyezve {grantedBy} objektumokra}}"
 
 #. js-lingui-id: 2EPGDl
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphFilter.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "{graphTypeLabel} Chart"
 msgstr "{graphTypeLabel} diagram"
 
@@ -483,6 +482,7 @@ msgstr "ACS URL vágólapra másolva"
 
 #. js-lingui-id: bwRvnp
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
 msgid "Action"
 msgstr "Művelet"
 
@@ -711,8 +711,6 @@ msgstr "Hozzáadás a Kedvencekhez"
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Add to favorites"
 msgstr "Hozzáadás a kedvencekhez"
 
@@ -874,6 +872,7 @@ msgstr "MI"
 #. js-lingui-id: kNfr85
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "AI Model"
 msgstr "AI modell"
 
@@ -1209,6 +1208,11 @@ msgstr "Alkalmazás objektumai"
 msgid "Application serverless functions"
 msgstr "Alkalmazás serverless funkciói"
 
+#. js-lingui-id: +tE2x9
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+msgid "Application successfully uninstalled."
+msgstr ""
+
 #. js-lingui-id: fL7WXr
 #: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
@@ -1233,16 +1237,6 @@ msgstr "Jóváhagyott tartományok"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
 msgstr "Arab"
-
-#. js-lingui-id: 2BZAqa
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
-msgid "Are you sure you want to delete these records? They can be recovered from the Command menu."
-msgstr "Biztosan törölni szeretné ezeket a rekordokat? Visszaállíthatók a Parancs menüből."
-
-#. js-lingui-id: yb2hF4
-#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
-msgid "Are you sure you want to delete this record? It can be recovered from the Command menu."
-msgstr "Biztosan törölni szeretné ezt a rekordot? Visszaállítható a Parancs menüből."
 
 #. js-lingui-id: OJOR8q
 #: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
@@ -1686,13 +1680,11 @@ msgstr "Nem tud beolvasni? Másolja a"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
-#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Cancel"
 msgstr "Mégse"
 
 #. js-lingui-id: HYLdMN
-#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Cancel Edition"
 msgstr "Szerkesztés törlése"
@@ -1820,6 +1812,7 @@ msgstr "Változásnapló"
 
 #. js-lingui-id: nuBbBr
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Chart"
 msgstr "Diagram"
 
@@ -2201,6 +2194,16 @@ msgstr "Kapcsolat sikeresen létrehozva"
 msgid "Connection successfully updated"
 msgstr "Kapcsolat sikeresen frissítve"
 
+#. js-lingui-id: JdGr7p
+#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+msgid "Consider adding a filter or changing the date granularity to display more data."
+msgstr ""
+
+#. js-lingui-id: G++HwN
+#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+msgid "Consider adding a filter to display more data."
+msgstr ""
+
 #. js-lingui-id: Y2y0mC
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -2508,6 +2511,11 @@ msgstr "Hozza létre munkaterületét"
 msgid "Create, edit, and delete workspace views"
 msgstr "Munkaterület nézetek létrehozása, szerkesztése és törlése"
 
+#. js-lingui-id: 4fBuqE
+#: src/modules/command-menu/components/CommandMenuRecordInfo.tsx
+msgid "Created {beautifiedCreatedAt}"
+msgstr ""
+
 #. js-lingui-id: fR16ki
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Creating your data model..."
@@ -2644,6 +2652,7 @@ msgstr "Cseh"
 #. js-lingui-id: Zz6Cxn
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -2742,7 +2751,6 @@ msgstr "adatbázis kiváltó"
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx
-#: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Date"
 msgstr "Dátum"
 
@@ -2998,27 +3006,10 @@ msgstr "Mező törlése"
 msgid "Delete node"
 msgstr "Csomópont törlése"
 
-#. js-lingui-id: 4dpwsE
-#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
-msgid "Delete record"
-msgstr "Rekord törlése"
-
-#. js-lingui-id: LUsa0/
-#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
-#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
-msgid "Delete Record"
-msgstr "Rekord törlése"
-
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete records"
 msgstr "Rekordok t\\u00f6rl\\u00e9se"
-
-#. js-lingui-id: rMgHjD
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
-msgid "Delete Records"
-msgstr "Rekordok törlése"
 
 #. js-lingui-id: mcXHCJ
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -3363,7 +3354,6 @@ msgstr "Legkor\\u00e1bbi d\\u00e1tum"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
-#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Edit"
 msgstr "Szerkesztés"
@@ -3409,11 +3399,6 @@ msgstr "Diagram szerkesztése"
 #: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
 msgid "Edit iFrame"
 msgstr "iFrame szerkesztése"
-
-#. js-lingui-id: NZubw3
-#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
-msgid "Edit Layout"
-msgstr "Elrendezés szerkesztése"
 
 #. js-lingui-id: IaSCqp
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
@@ -3807,6 +3792,11 @@ msgstr "Hiba az api kulcs \\u00fajragener\\u00e1l\\u00e1sa sor\\u00e1n."
 msgid "Error resending invitation"
 msgstr "Hiba a meghívás újraküldése közben"
 
+#. js-lingui-id: 5Vy8D1
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+msgid "Error uninstalling application."
+msgstr ""
+
 #. js-lingui-id: lX3Yil
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error updating role"
@@ -4079,11 +4069,6 @@ msgstr ""
 msgid "Export members"
 msgstr ""
 
-#. js-lingui-id: G5DJkP
-#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
-msgid "Export record"
-msgstr "Rekord exportálása"
-
 #. js-lingui-id: ep2rbf
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export records"
@@ -4327,6 +4312,7 @@ msgstr "A(z) \"{fileName}\" fájl meghaladja a(z) {maxUploadSize} méretet"
 #. js-lingui-id: o7J4JM
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+#: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
@@ -4830,7 +4816,7 @@ msgid "iFrame Settings"
 msgstr "iFrame beállítások"
 
 #. js-lingui-id: mO+Bte
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "iFrame Widget"
 msgstr "iFrame widget"
 
@@ -5299,6 +5285,11 @@ msgstr "john.doe@example.com"
 msgid "Join {workspaceName} team"
 msgstr "Csatlakozzon a(z) {workspaceName} csapathoz"
 
+#. js-lingui-id: B2Zb/F
+#: src/pages/settings/ai/components/SettingsAgentResponseFormat.tsx
+msgid "JSON"
+msgstr ""
+
 #. js-lingui-id: OGXtL8
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -5665,16 +5656,6 @@ msgstr "Oszlopok egyeztetése"
 msgid "Max"
 msgstr "Max"
 
-#. js-lingui-id: Zgn/wP
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "Max {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter"
-msgstr "Max {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} oszlop diagramonként. Fontolja meg egy szűrő hozzáadását."
-
-#. js-lingui-id: LH1Pjg
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "Max {LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart. Consider adding a filter"
-msgstr ""
-
 #. js-lingui-id: HFjNu6
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Max import capacity: {formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API."
@@ -6000,7 +5981,6 @@ msgid "Navigate to next dashboard"
 msgstr "Navigálás a következő irányítópultra"
 
 #. js-lingui-id: 2T8KCk
-#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to next record"
 msgstr "Navigálás a következő rekordra"
@@ -6021,7 +6001,6 @@ msgid "Navigate to previous dashboard"
 msgstr "Navigálás az előző irányítópultra"
 
 #. js-lingui-id: 2tw9bo
-#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to previous record"
 msgstr "Navigálás az előző rekordra"
@@ -6173,11 +6152,6 @@ msgstr "Nem"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RelationManyToOneFieldInput.tsx
 msgid "No {fieldLabel}"
 msgstr "Nincs {fieldLabel}"
-
-#. js-lingui-id: vhsJG1
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
-msgid "No Agent"
-msgstr "Nincs ügynök"
 
 #. js-lingui-id: f9b1sj
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -6939,7 +6913,6 @@ msgid "Permanently destroy dashboard"
 msgstr "Irányítópult végleges megsemmisítése"
 
 #. js-lingui-id: Bv3y5w
-#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Permanently destroy record"
 msgstr "Rekord végleges megsemmisítése"
@@ -7029,11 +7002,6 @@ msgstr "Kérem ellenőrizze a cron kifejezés szintaxisát."
 msgid "Please check your email for a verification link."
 msgstr "Ellenőrizze a e-mailjét a megerősítő hivatkozásért."
 
-#. js-lingui-id: K/TMbW
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
-msgid "Please create agents in the AI settings to use in workflows."
-msgstr "Kérjük, hozzon létre ügynököket a MI beállításaiban, hogy használhassa őket a munkafolyamatokban."
-
 #. js-lingui-id: jEw0Mr
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 msgid "Please enter a valid URL"
@@ -7064,6 +7032,11 @@ msgstr "Kérjük, először indítsa el az előfizetését"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 msgstr "Kérjük, gépelje be a(z) \"{confirmationValue}\" szöveget, hogy megerősítse, szeretné törölni ezt az API kulcsot. Tudomásul vegye, hogy minden olyan szkript, amely ezt a kulcsot használja, megáll a működésben."
+
+#. js-lingui-id: L0SEpC
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+msgid "Please type \"{confirmationValue}\" to confirm you want to uninstall this application."
+msgstr ""
 
 #. js-lingui-id: GbtYRD
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -7486,6 +7459,11 @@ msgstr "Visszaállítás alapértelmezettre"
 msgid "Reset variable"
 msgstr "Változó visszaállítása"
 
+#. js-lingui-id: WMdA7Y
+#: src/pages/settings/ai/components/SettingsAgentResponseFormat.tsx
+msgid "Response Format"
+msgstr ""
+
 #. js-lingui-id: WHiaOl
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -7515,7 +7493,6 @@ msgid "Restore dashboard"
 msgstr "Irányítópult visszaállítása"
 
 #. js-lingui-id: y4Ib1n
-#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore record"
 msgstr "Rekord visszaállítása"
@@ -7662,7 +7639,6 @@ msgstr "Szombat"
 #. js-lingui-id: tfDRzk
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
-#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Save"
 msgstr "Mentés"
@@ -7676,11 +7652,6 @@ msgstr "Mentés új nézetként"
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Save Dashboard"
 msgstr "Irányítópult mentése"
-
-#. js-lingui-id: j6v3nO
-#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
-msgid "Save Layout"
-msgstr "Elrendezés mentése"
 
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
@@ -8017,11 +7988,6 @@ msgstr "Válasszon műveletet"
 msgid "Select Action"
 msgstr "Válasszon műveletet"
 
-#. js-lingui-id: JDdVYO
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
-msgid "Select Agent"
-msgstr "Ügynök kiválasztása"
-
 #. js-lingui-id: hVPa4O
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn.tsx
 msgid "Select an option"
@@ -8098,6 +8064,7 @@ msgid "Send an invite email to your team"
 msgstr "Invitáló e-mail küldése a csapatnak"
 
 #. js-lingui-id: i/TzEU
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Send Email"
 msgstr "E-mail küldése"
@@ -8525,6 +8492,11 @@ msgstr "Megszemélyesítés leállítása"
 msgid "Stored in database"
 msgstr "Adatbázisban tárolva"
 
+#. js-lingui-id: UJNV7l
+#: src/pages/settings/ai/components/SettingsAgentResponseFormat.tsx
+msgid "String"
+msgstr ""
+
 #. js-lingui-id: WIUeUf
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "Sub-Fields"
@@ -8769,7 +8741,7 @@ msgid "System settings - Sunday"
 msgstr "Rendszer beállítások - Vasárnap"
 
 #. js-lingui-id: HuA3RU
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Tab"
 msgstr "Fül"
 
@@ -9168,6 +9140,7 @@ msgstr "A próbaidőszak lejárt. Kérjük, frissítse a számlázási adatait."
 #. js-lingui-id: H2Sfhg
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
+#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
 msgid "Trigger"
 msgstr "Kiváltó"
 
@@ -9267,10 +9240,10 @@ msgstr "Kétfaktoros hitelesítési beállítás sikeresen befejezve!"
 msgid "Type"
 msgstr "Típus"
 
-#. js-lingui-id: U83IeL
+#. js-lingui-id: qzD6hf
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
-msgid "Type anything"
-msgstr "Írjon be bármit"
+msgid "Type anything..."
+msgstr ""
 
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -9286,6 +9259,32 @@ msgstr ""
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
 msgstr "Nem sikerült elérni a háttérszolgáltatást"
+
+#. js-lingui-id: ZjTKHy
+#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+msgid "Undisplayed data: max {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart."
+msgstr ""
+
+#. js-lingui-id: 29HVk/
+#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+msgid "Undisplayed data: max {LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart."
+msgstr ""
+
+#. js-lingui-id: fo0VXg
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+msgid "Uninstall"
+msgstr ""
+
+#. js-lingui-id: Qtg9Qc
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+msgid "Uninstall Application?"
+msgstr ""
+
+#. js-lingui-id: u+6vfA
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+msgid "Uninstall this application"
+msgstr ""
 
 #. js-lingui-id: wSXm5S
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
@@ -9790,6 +9789,11 @@ msgstr "Widget típus"
 msgid "Worker"
 msgstr "Dolgozó"
 
+#. js-lingui-id: Kqs5vQ
+#: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
+msgid "Workflow agents"
+msgstr ""
+
 #. js-lingui-id: 2jzcC5
 #: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
 msgid "Workflow duplicated successfully"
@@ -9953,6 +9957,7 @@ msgstr ""
 
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "yes"

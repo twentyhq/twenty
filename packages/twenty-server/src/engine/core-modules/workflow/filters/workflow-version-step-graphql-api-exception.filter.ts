@@ -21,6 +21,7 @@ export const handleWorkflowVersionStepException = (
     case WorkflowVersionStepExceptionCode.NOT_FOUND:
       throw new NotFoundError(exception);
     case WorkflowVersionStepExceptionCode.CODE_STEP_FAILURE:
+    case WorkflowVersionStepExceptionCode.AI_AGENT_STEP_FAILURE:
       throw new InternalServerError(exception);
     default: {
       assertUnreachable(exception.code);

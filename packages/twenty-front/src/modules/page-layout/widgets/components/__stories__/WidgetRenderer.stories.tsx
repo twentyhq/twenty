@@ -13,13 +13,15 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
+
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
+
+import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
-import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
-import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
-import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import {
   GraphOrderBy,
@@ -49,9 +51,9 @@ const createdAtField = getMockFieldMetadataItemOrThrow({
   fieldName: 'createdAt',
 });
 
-const barChartGroupByQuery = generateGroupByQuery({
+const barChartGroupByQuery = generateGroupByAggregateQuery({
   objectMetadataItem: companyObjectMetadataItem,
-  aggregateOperations: ['totalCount'],
+  aggregateOperationGqlFields: ['totalCount'],
 });
 
 const graphqlMocks: MockedResponse[] = [

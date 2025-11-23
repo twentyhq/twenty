@@ -52,7 +52,7 @@ When you find relevant articles:
 
 Be friendly, patient, helpful, and always prioritize accuracy by relying on the official documentation.`,
   modelId: 'auto',
-  responseFormat: {},
+  responseFormat: { type: 'text' },
   isCustom: false,
   modelConfiguration: {},
 };

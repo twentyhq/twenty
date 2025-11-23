@@ -74,6 +74,11 @@ msgstr "收藏夾"
 msgid "A group of related messages (e.g. email thread, chat thread)"
 msgstr "一組相關消息（如電子郵件線程、聊天線程）"
 
+#. js-lingui-id: 1Pylbk
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
+msgid "A many to one relation field should always declare a join column"
+msgstr ""
+
 #. js-lingui-id: vZj1Xc
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
@@ -88,6 +93,11 @@ msgstr "備註"
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "A note target"
 msgstr "備註目標"
+
+#. js-lingui-id: MtcxLV
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
+msgid "A one to many relation field should never declare a join column"
+msgstr ""
 
 #. js-lingui-id: Io42ej
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -802,6 +812,11 @@ msgstr "找不到索引欄位相關欄位的元數據"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Could not find index related object metadata"
 msgstr "找不到索引相關對象的元數據"
+
+#. js-lingui-id: YzCaIm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
+msgid "Could not find relation field parent flat object"
+msgstr ""
 
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1693,6 +1708,11 @@ msgstr "無效的物件元數據輸入"
 msgid "Invalid relation creation payload"
 msgstr "無效的關聯創建數據"
 
+#. js-lingui-id: iWv3nK
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Invalid relation field target"
+msgstr ""
+
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid setting type provided in cron trigger"
@@ -2166,15 +2186,20 @@ msgstr "名稱"
 msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
 msgstr "名稱 \"{computedMetadataNameFromLabel}\" 無法在關係的兩邊為相同"
 
-#. js-lingui-id: Ge9TXE
+#. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{flatFieldMetadataName}\" is not available"
-msgstr "名稱\"{flatFieldMetadataName}\"不可用"
+msgid "Name \"{name}\" is not available"
+msgstr ""
 
-#. js-lingui-id: h8ic2G
+#. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
-msgstr "名稱\"{flatFieldMetadataName}\"無法使用，因為它已被另一個欄位使用"
+msgid "Name \"{name}\" is not available as it is already used by another field"
+msgstr ""
+
+#. js-lingui-id: dBDpp2
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
+msgid "Name \"{name}\" is not available as it is already used by join column name"
+msgstr ""
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -4165,6 +4190,11 @@ msgstr "密碼錯誤"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "X"
+
+#. js-lingui-id: 4ysDL0
+#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
+msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
+msgstr ""
 
 #. js-lingui-id: 1SQnFB
 #: src/engine/metadata-modules/role/role.resolver.ts

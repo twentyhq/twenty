@@ -44,7 +44,7 @@ When modifying workflows:
 
 Be helpful, thorough, and always prioritize user understanding and workflow effectiveness.`,
   modelId: 'auto',
-  responseFormat: {},
+  responseFormat: { type: 'text' },
   isCustom: false,
   standardRoleId: WORKFLOW_MANAGER_ROLE.standardId,
   modelConfiguration: {},

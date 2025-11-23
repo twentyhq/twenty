@@ -1,4 +1,5 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
 import { transformGroupByDataToLineChartData } from '@/page-layout/widgets/graph/utils/transformGroupByDataToLineChartData';
@@ -18,6 +19,7 @@ type UseGraphLineChartWidgetDataResult = {
   hasTooManyGroups: boolean;
   loading: boolean;
   error?: Error;
+  objectMetadataItem: ObjectMetadataItem;
 };
 
 export const useGraphLineChartWidgetData = ({
@@ -51,6 +53,7 @@ export const useGraphLineChartWidgetData = ({
 
   return {
     ...transformedData,
+    objectMetadataItem,
     loading,
     error,
   };

@@ -104,7 +104,6 @@ export const GraphWidgetGaugeChart = ({
     label: data.label || t`Value`,
     colorScheme,
     formatOptions,
-    to: data.to,
   });
 
   const formattedValue = formatGraphValue(data.value, formatOptions);
@@ -120,12 +119,7 @@ export const GraphWidgetGaugeChart = ({
 
   const renderTooltip = () => {
     const tooltipData = createTooltipData();
-    return (
-      <GraphWidgetTooltip
-        items={[tooltipData.tooltipItem]}
-        linkTo={tooltipData.linkTo}
-      />
-    );
+    return <GraphWidgetTooltip items={[tooltipData.tooltipItem]} />;
   };
 
   return (

@@ -9,7 +9,6 @@ import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
@@ -28,12 +27,10 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type WorkflowFindRecordsAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { FIND_RECORDS_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/FindRecordsAction';
 import { WorkflowFindRecordsFilters } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFilters';
 import { WorkflowFindRecordsFiltersEffect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFiltersEffect';
 import { WorkflowFindRecordsSorts } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts';
 import { WorkflowObjectDropdown } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdown';
-import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 
 const StyledLabel = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -218,12 +215,6 @@ export const WorkflowEditActionFindRecords = ({
     };
   }, [saveAction]);
 
-  const { headerTitle, headerIcon, headerIconColor, headerType } =
-    useWorkflowActionHeader({
-      action,
-      defaultTitle: FIND_RECORDS_ACTION.defaultLabel,
-    });
-
   const handleOptionClick = (value: string) => {
     if (actionOptions.readonly === true) {
       return;
@@ -258,24 +249,6 @@ export const WorkflowEditActionFindRecords = ({
 
   return (
     <>
-      <SidePanelHeader
-        onTitleChange={(newName: string) => {
-          if (actionOptions.readonly === true) {
-            return;
-          }
-
-          actionOptions.onActionUpdate({
-            ...action,
-            name: newName,
-          });
-        }}
-        Icon={getIcon(headerIcon)}
-        iconColor={headerIconColor}
-        initialTitle={headerTitle}
-        headerType={headerType}
-        disabled={isFormDisabled}
-        iconTooltip={FIND_RECORDS_ACTION.defaultLabel}
-      />
       <WorkflowStepBody>
         <StyledRecordTypeSelectContainer fullWidth>
           <StyledLabel>Object</StyledLabel>

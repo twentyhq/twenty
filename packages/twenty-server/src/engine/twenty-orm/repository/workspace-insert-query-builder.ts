@@ -38,8 +38,8 @@ export class WorkspaceInsertQueryBuilder<
   private objectRecordsPermissions: ObjectsPermissions;
   private shouldBypassPermissionChecks: boolean;
   private internalContext: WorkspaceInternalContext;
-  private authContext?: AuthContext;
-  private featureFlagMap?: FeatureFlagMap;
+  private authContext: AuthContext;
+  private featureFlagMap: FeatureFlagMap;
   private relationNestedQueries: RelationNestedQueries;
   private relationNestedConfig:
     | [RelationConnectQueryConfig[], RelationDisconnectQueryFieldsByEntityIndex]
@@ -50,8 +50,8 @@ export class WorkspaceInsertQueryBuilder<
     objectRecordsPermissions: ObjectsPermissions,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
-    authContext?: AuthContext,
-    featureFlagMap?: FeatureFlagMap,
+    authContext: AuthContext,
+    featureFlagMap: FeatureFlagMap,
   ) {
     super(queryBuilder);
     this.objectRecordsPermissions = objectRecordsPermissions;
@@ -123,6 +123,7 @@ export class WorkspaceInsertQueryBuilder<
           this.internalContext,
           this.shouldBypassPermissionChecks,
           this.authContext,
+          this.featureFlagMap,
         );
 
         const updatedValues =
