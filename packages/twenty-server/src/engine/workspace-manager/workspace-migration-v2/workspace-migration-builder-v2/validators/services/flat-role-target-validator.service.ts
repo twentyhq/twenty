@@ -1,0 +1,115 @@
+import { Injectable } from '@nestjs/common';
+
+import { msg, t } from '@lingui/core/macro';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
+
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
+import { RoleTargetExceptionCode } from 'src/engine/metadata-modules/role/exceptions/role-target.exception';
+import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+
+@Injectable()
+export class FlatRoleTargetValidatorService {
+  constructor() {}
+
+  validateFlatRoleTargetCreation({
+    flatEntityToValidate: flatRoleTargetToValidate,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatRoleTargetMaps: optimisticFlatRoleTargetMaps,
+    },
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.roleTarget
+  >): FailedFlatEntityValidation<FlatRoleTarget> {
+    const validationResult: FailedFlatEntityValidation<FlatRoleTarget> = {
+      type: 'create_role_target',
+      errors: [],
+      flatEntityMinimalInformation: {
+        id: flatRoleTargetToValidate.id,
+      },
+    };
+
+    const existingRoleTarget = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatRoleTargetToValidate.id,
+      flatEntityMaps: optimisticFlatRoleTargetMaps,
+    });
+
+    if (isDefined(existingRoleTarget)) {
+      validationResult.errors.push({
+        code: RoleTargetExceptionCode.INVALID_ROLE_TARGET_DATA,
+        message: t`Role target with this id already exists`,
+        userFriendlyMessage: msg`Role target with this id already exists`,
+      });
+    }
+
+    return validationResult;
+  }
+
+  validateFlatRoleTargetDeletion({
+    flatEntityToValidate: flatRoleTargetToValidate,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatRoleTargetMaps: optimisticFlatRoleTargetMaps,
+    },
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.roleTarget
+  >): FailedFlatEntityValidation<FlatRoleTarget> {
+    const validationResult: FailedFlatEntityValidation<FlatRoleTarget> = {
+      type: 'delete_role_target',
+      errors: [],
+      flatEntityMinimalInformation: {
+        id: flatRoleTargetToValidate.id,
+      },
+    };
+
+    const existingRoleTarget = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatRoleTargetToValidate.id,
+      flatEntityMaps: optimisticFlatRoleTargetMaps,
+    });
+
+    if (!isDefined(existingRoleTarget)) {
+      validationResult.errors.push({
+        code: RoleTargetExceptionCode.ROLE_TARGET_NOT_FOUND,
+        message: t`Role target not found`,
+        userFriendlyMessage: msg`Role target not found`,
+      });
+
+      return validationResult;
+    }
+
+    return validationResult;
+  }
+
+  validateFlatRoleTargetUpdate({
+    flatEntityId,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatRoleTargetMaps: optimisticFlatRoleTargetMaps,
+    },
+  }: FlatEntityUpdateValidationArgs<
+    typeof ALL_METADATA_NAME.roleTarget
+  >): FailedFlatEntityValidation<FlatRoleTarget> {
+    const validationResult: FailedFlatEntityValidation<FlatRoleTarget> = {
+      type: 'update_role_target',
+      errors: [],
+      flatEntityMinimalInformation: {
+        id: flatEntityId,
+      },
+    };
+
+    const existingRoleTarget = optimisticFlatRoleTargetMaps.byId[flatEntityId];
+
+    if (!isDefined(existingRoleTarget)) {
+      validationResult.errors.push({
+        code: RoleTargetExceptionCode.ROLE_TARGET_NOT_FOUND,
+        message: t`Role target not found`,
+        userFriendlyMessage: msg`Role target not found`,
+      });
+
+      return validationResult;
+    }
+
+    return validationResult;
+  }
+}
+

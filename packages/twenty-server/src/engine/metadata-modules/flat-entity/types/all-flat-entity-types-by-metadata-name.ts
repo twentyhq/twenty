@@ -6,6 +6,7 @@ import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-meta
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
@@ -13,6 +14,7 @@ import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { type RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { type FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
@@ -46,6 +48,11 @@ import {
   type DeleteObjectAction,
   type UpdateObjectAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/types/workspace-migration-object-action-v2';
+import {
+  type CreateRoleTargetAction,
+  type DeleteRoleTargetAction,
+  type UpdateRoleTargetAction,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/role-target/types/workspace-migration-role-target-action-v2.type';
 import {
   type CreateRoleAction,
   type DeleteRoleAction,
@@ -190,5 +197,14 @@ export type AllFlatEntityTypesByMetadataName = {
     };
     flatEntity: FlatRole;
     entity: RoleEntity;
+  };
+  roleTarget: {
+    actions: {
+      created: CreateRoleTargetAction;
+      updated: UpdateRoleTargetAction;
+      deleted: DeleteRoleTargetAction;
+    };
+    flatEntity: FlatRoleTarget;
+    entity: RoleTargetsEntity;
   };
 };
