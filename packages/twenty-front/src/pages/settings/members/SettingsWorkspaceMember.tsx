@@ -9,7 +9,6 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -21,11 +20,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import {
-  buildSignedPath,
-  getSettingsPath,
-  isDefined,
-} from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   H2Title,
   IconInfoCircle,
@@ -39,15 +34,15 @@ import { Section } from 'twenty-ui/layout';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-import { ImageInput } from '@/ui/input/components/ImageInput';
+import { MemberEmailField } from '@/settings/members/components/MemberEmailField';
+import { MemberNameFields } from '@/settings/members/components/MemberNameFields';
+import { MemberPictureUploader } from '@/settings/members/components/MemberPictureUploader';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   useDeleteUserWorkspaceMutation,
   useGetRolesQuery,
   useUpdateWorkspaceMemberRoleMutation,
-  useUploadProfilePictureMutation,
 } from '~/generated-metadata/graphql';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type WorkspaceMemberWithRoles = WorkspaceMember & {
   roles?: { id: string; label: string; icon?: string | null }[];
@@ -62,12 +57,6 @@ const SETTINGS_WORKSPACE_MEMBER_TABS = {
 } as const;
 
 const DELETE_MEMBER_MODAL_ID = 'workspace-member-delete-modal';
-
-const StyledNameRow = styled.div`
-  display: grid;
-  gap: ${({ theme }) => theme.spacing(3)};
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-`;
 
 const StyledRoleCard = styled.div`
   align-items: center;
@@ -86,14 +75,18 @@ const StyledRoleInfo = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledNameRow = styled.div`
+  display: grid;
+  gap: ${({ theme }) => theme.spacing(3)};
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+`;
+
 const SettingsWorkspaceMemberInfosTab = ({
   member,
-  onAvatarChange,
   onNameChange,
   onDelete,
 }: {
   member: WorkspaceMemberWithRoles;
-  onAvatarChange: (action: 'upload' | 'remove', file?: File) => Promise<void>;
   onNameChange: (firstName: string, lastName: string) => void;
   onDelete: () => void;
   isDeleting: boolean;
@@ -103,8 +96,6 @@ const SettingsWorkspaceMemberInfosTab = ({
   const [avatarUrl, setAvatarUrl] = useState<string | null | undefined>(
     member.avatarUrl,
   );
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
 
   useEffect(() => {
     setFirstName(member.name.firstName);
@@ -112,45 +103,14 @@ const SettingsWorkspaceMemberInfosTab = ({
     setAvatarUrl(member.avatarUrl);
   }, [member]);
 
-  const handleUpload = async (file: File) => {
-    setIsUploading(true);
-    setUploadError(null);
-    try {
-      await onAvatarChange('upload', file);
-    } catch (error) {
-      setUploadError(
-        error instanceof Error ? error.message : t`Failed to upload picture`,
-      );
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const handleRemove = async () => {
-    setIsUploading(true);
-    setUploadError(null);
-    try {
-      await onAvatarChange('remove');
-    } catch (error) {
-      setUploadError(
-        error instanceof Error ? error.message : t`Failed to remove picture`,
-      );
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
   return (
     <>
       <Section>
         <H2Title title={t`Picture`} />
-        <ImageInput
-          picture={avatarUrl}
-          onUpload={handleUpload}
-          onRemove={handleRemove}
-          onAbort={() => setIsUploading(false)}
-          isUploading={isUploading}
-          errorMessage={uploadError}
+        <MemberPictureUploader
+          memberId={member.id}
+          avatarUrl={avatarUrl}
+          onAvatarUpdated={(url) => setAvatarUrl(url)}
         />
       </Section>
 
@@ -160,25 +120,14 @@ const SettingsWorkspaceMemberInfosTab = ({
           description={t`Your name as it will be displayed`}
         />
         <StyledNameRow>
-          <SettingsTextInput
-            instanceId={`workspace-member-first-name-${member.id}`}
-            label={t`First Name`}
-            value={firstName}
-            onChange={(value) => {
-              setFirstName(value);
-              onNameChange(value, lastName);
+          <MemberNameFields
+            firstName={firstName}
+            lastName={lastName}
+            onChange={(first, last) => {
+              setFirstName(first);
+              setLastName(last);
+              onNameChange(first, last);
             }}
-            fullWidth
-          />
-          <SettingsTextInput
-            instanceId={`workspace-member-last-name-${member.id}`}
-            label={t`Last name`}
-            value={lastName}
-            onChange={(value) => {
-              setLastName(value);
-              onNameChange(firstName, value);
-            }}
-            fullWidth
           />
         </StyledNameRow>
       </Section>
@@ -188,13 +137,7 @@ const SettingsWorkspaceMemberInfosTab = ({
           title={t`Email`}
           description={t`The email associated to this account`}
         />
-        <SettingsTextInput
-          instanceId={`workspace-member-email-${member.id}`}
-          value={member.userEmail}
-          disabled
-          fullWidth
-          type="email"
-        />
+        <MemberEmailField email={member.userEmail} />
       </Section>
 
       <Section>
@@ -308,6 +251,7 @@ export const SettingsWorkspaceMember = () => {
       objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
       objectRecordId: workspaceMemberId,
       recordGqlFields: {
+        id: true,
         name: { firstName: true, lastName: true },
         avatarUrl: true,
         userEmail: true,
@@ -338,7 +282,6 @@ export const SettingsWorkspaceMember = () => {
   const [deleteUserFromWorkspace, { loading: isDeleting }] =
     useDeleteUserWorkspaceMutation();
 
-  const [uploadPicture] = useUploadProfilePictureMutation();
   const [updateWorkspaceMemberRole, { loading: isAssigningRole }] =
     useUpdateWorkspaceMemberRoleMutation();
 
@@ -370,47 +313,6 @@ export const SettingsWorkspaceMember = () => {
     },
     400,
   );
-
-  const handleAvatarChange = async (
-    action: 'upload' | 'remove',
-    file?: File,
-  ) => {
-    if (!memberData?.id) return;
-
-    try {
-      if (action === 'upload') {
-        if (isUndefinedOrNull(file)) return;
-        const { data } = await uploadPicture({
-          variables: { file },
-        });
-        const signedFile = data?.uploadProfilePicture;
-        if (!isDefined(signedFile)) {
-          throw new Error('Avatar URL not found');
-        }
-        const signedPath = buildSignedPath(signedFile);
-        await updateOneRecord({
-          idToUpdate: memberData.id,
-          updateOneRecordInput: {
-            avatarUrl: signedFile.path,
-          },
-        });
-        setMemberData({ ...memberData, avatarUrl: signedPath });
-      } else {
-        await updateOneRecord({
-          idToUpdate: memberData.id,
-          updateOneRecordInput: { avatarUrl: '' },
-        });
-        setMemberData({ ...memberData, avatarUrl: null });
-      }
-    } catch (error) {
-      enqueueErrorSnackBar({
-        message:
-          error instanceof Error
-            ? error.message
-            : t`Error while updating profile picture`,
-      });
-    }
-  };
 
   const handleDeleteMember = async () => {
     if (!memberData?.id) return;
@@ -508,7 +410,6 @@ export const SettingsWorkspaceMember = () => {
         {activeTabId === SETTINGS_WORKSPACE_MEMBER_TABS.TABS_IDS.INFOS && (
           <SettingsWorkspaceMemberInfosTab
             member={memberData}
-            onAvatarChange={handleAvatarChange}
             onNameChange={(first, last) => debouncedUpdateName(first, last)}
             onDelete={() => openModal(DELETE_MEMBER_MODAL_ID)}
             isDeleting={isDeleting}
