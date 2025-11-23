@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { DataSource, IsNull, Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
@@ -14,6 +14,7 @@ import {
 import { type ApiKeyToken } from 'src/engine/core-modules/auth/dto/api-key-token.dto';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { RoleTargetServiceV2 } from 'src/engine/metadata-modules/role-target/services/role-target-v2.service';
 
 @Injectable()
 export class ApiKeyService {
@@ -22,33 +23,24 @@ export class ApiKeyService {
     private readonly apiKeyRepository: Repository<ApiKeyEntity>,
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
-    @InjectDataSource()
-    private readonly dataSource: DataSource,
+    private readonly roleTargetService: RoleTargetServiceV2,
   ) {}
 
   async create(
     apiKeyData: Partial<ApiKeyEntity> & { roleId: string },
   ): Promise<ApiKeyEntity> {
     const { roleId, ...apiKeyFields } = apiKeyData;
+    const savedApiKey = await this.apiKeyRepository.save(apiKeyFields);
+    await this.roleTargetService.create({
+      createRoleTargetInput: {
+        roleId,
+        targetId: savedApiKey.id,
+        targetMetadataForeignKey: 'apiKeyId',
+      },
+      workspaceId: savedApiKey.workspaceId,
+    });
 
-    return await this.dataSource
-      .transaction(async (manager) => {
-        const apiKey = manager.create(ApiKeyEntity, apiKeyFields);
-        const savedApiKey = await manager.save(apiKey);
-
-        await this.apiKeyRoleService.assignRoleToApiKeyWithManager(manager, {
-          apiKeyId: savedApiKey.id,
-          roleId,
-          workspaceId: savedApiKey.workspaceId,
-        });
-
-        return savedApiKey;
-      })
-      .then(async (savedApiKey) => {
-        await this.apiKeyRoleService.recomputeCache(savedApiKey.workspaceId);
-
-        return savedApiKey;
-      });
+    return savedApiKey;
   }
 
   async findById(

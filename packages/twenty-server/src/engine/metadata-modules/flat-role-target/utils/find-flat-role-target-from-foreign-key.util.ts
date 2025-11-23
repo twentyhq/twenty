@@ -7,7 +7,7 @@ type FindAllFlatRoleTargetOfArgs = {
   targetMetadataForeignKey: RoleTargetForeignKeyProperties;
   targetId: string;
 } & Pick<AllFlatEntityMaps, 'flatRoleTargetMaps'>;
-export const findFlatRoleTargetOf = ({
+export const findFlatRoleTargetFromForeignKey = ({
   flatRoleTargetMaps,
   targetMetadataForeignKey,
   targetId,

@@ -73,6 +73,7 @@ export class FlatRoleTargetValidatorService {
       });
     }
 
+    // TODO prastoin centralize and improve
     if (isDefined(referencedRole)) {
       if (isDefined(flatRoleTargetToValidate.agentId)) {
         if (!referencedRole.canBeAssignedToAgents) {
