@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Not, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import {
@@ -10,8 +10,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { RoleTargetServiceV2 } from 'src/engine/metadata-modules/role-target/role-target-v2.service';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetServiceV2 } from 'src/engine/metadata-modules/role-target/services/role-target-v2.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -20,10 +19,6 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 export class UserRoleService {
   constructor(
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(RoleTargetsEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -51,24 +46,13 @@ export class UserRoleService {
     }
 
     await this.roleTargetService.create({
-      roleId,
-      workspaceId,
-      targetId: userWorkspaceId,
-      targetMetadata: 'userWorkspaceId',
-    });
-
-    // What does this mean ? a user can only have one role ?
-    await this.roleTargetsRepository.delete({
-      userWorkspaceId,
-      workspaceId,
-      id: Not(newRoleTarget.id),
-    });
-
-    await this.workspacePermissionsCacheService.recomputeUserWorkspaceRoleMapCache(
-      {
-        workspaceId,
+      createRoleTargetInput: {
+        roleId,
+        targetId: userWorkspaceId,
+        targetMetadataForeignKey: 'userWorkspaceId',
       },
-    );
+      workspaceId,
+    });
   }
 
   public async getRoleIdForUserWorkspace({
