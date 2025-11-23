@@ -8,5 +8,5 @@ export type RoleTargetsEntityRelationProperties =
 
 export type FlatRoleTarget = FlatEntityFrom<
   RoleTargetsEntity,
-  RoleTargetsEntityRelationProperties | 'createdAt' | 'updatedAt'
+  RoleTargetsEntityRelationProperties
 >;
