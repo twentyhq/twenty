@@ -164,9 +164,6 @@ export class AgentExecutionService {
     }
   }
 
-  // Fetches and formats record data to provide context for AI agents
-  // Respects permissions and field restrictions based on user role
-  // Returns a JSON string with record data and workspace URLs
   async getContextForSystemPrompt(
     workspace: WorkspaceEntity,
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType,

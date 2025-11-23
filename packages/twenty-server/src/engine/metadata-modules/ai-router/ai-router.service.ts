@@ -101,7 +101,6 @@ export class AiRouterService {
         `[ROUTER] User message: "${currentMessage.substring(0, 100)}..."`,
       );
 
-      // Decide strategy (simple vs planned)
       const strategyDecision = await this.strategyDecider.decideStrategy({
         messages,
         availableAgents,
@@ -139,7 +138,6 @@ export class AiRouterService {
         };
       }
 
-      // Generate execution plan
       const plan = await this.planGenerator.generatePlan({
         messages,
         availableAgents,
@@ -147,7 +145,6 @@ export class AiRouterService {
         plannerModel,
       });
 
-      // If plan has only 1 step, convert to simple strategy
       if (plan.steps.length === 1) {
         this.logger.log(
           `[ROUTER] Plan has only 1 step, converting to simple strategy`,

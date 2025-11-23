@@ -217,7 +217,6 @@ export class AgentPlanExecutorService {
       (s) => s.stepNumber === lastStep.stepNumber,
     );
 
-    // Check if the last step's agent has 'direct' output strategy
     if (lastStepDefinition) {
       const agentDefinition = standardAgentDefinitions.find(
         (def) => def.name === lastStepDefinition.agentName,
@@ -228,7 +227,6 @@ export class AgentPlanExecutorService {
       }
     }
 
-    // Default: synthesize all steps
     const summary = stepResults
       .map((result) => {
         const step = steps.find((s) => s.stepNumber === result.stepNumber);
