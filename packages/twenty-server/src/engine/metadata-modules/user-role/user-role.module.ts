@@ -13,7 +13,7 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
     TypeOrmModule.forFeature([RoleEntity, RoleTargetsEntity]),
     TypeOrmModule.forFeature([UserWorkspaceEntity]),
     WorkspacePermissionsCacheModule,
-    RoleTargetV2Module
+    RoleTargetV2Module,
   ],
   providers: [UserRoleService],
   exports: [UserRoleService],

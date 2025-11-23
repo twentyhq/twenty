@@ -31,6 +31,7 @@ export class ApiKeyService {
   ): Promise<ApiKeyEntity> {
     const { roleId, ...apiKeyFields } = apiKeyData;
     const savedApiKey = await this.apiKeyRepository.save(apiKeyFields);
+
     await this.roleTargetService.create({
       createRoleTargetInput: {
         roleId,

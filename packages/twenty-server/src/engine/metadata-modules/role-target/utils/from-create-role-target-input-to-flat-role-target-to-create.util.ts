@@ -1,10 +1,10 @@
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
-import { CreateRoleTargetInput } from 'src/engine/metadata-modules/role-target/types/create-role-target.input';
-import { isDefined } from 'twenty-shared/utils';
+import { type CreateRoleTargetInput } from 'src/engine/metadata-modules/role-target/types/create-role-target.input';
 
 export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
   createRoleTargetInput,
@@ -40,6 +40,7 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
     targetMetadataForeignKey,
     targetId,
   });
+
   return {
     flatRoleTargetToCreate: flatRoleTargetToCreate,
     flatRoleTargetsToDelete: isDefined(flatRoleTargetToDelete)
