@@ -19,6 +19,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleResolver } from 'src/engine/metadata-modules/role/role.resolver';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { WorkspaceFlatRoleMapCacheService } from 'src/engine/metadata-modules/role/services/workspace-flat-role-map-cache.service';
+import { WorkspaceFlatRoleTargetMapCacheService } from 'src/engine/metadata-modules/flat-role-target/services/workspace-flat-role-target-map-cache.service';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -48,7 +49,16 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     FileModule,
     ApplicationModule,
   ],
-  providers: [RoleService, RoleResolver, WorkspaceFlatRoleMapCacheService],
-  exports: [RoleService, WorkspaceFlatRoleMapCacheService],
+  providers: [
+    RoleService,
+    RoleResolver,
+    WorkspaceFlatRoleMapCacheService,
+    WorkspaceFlatRoleTargetMapCacheService,
+  ],
+  exports: [
+    RoleService,
+    WorkspaceFlatRoleMapCacheService,
+    WorkspaceFlatRoleTargetMapCacheService,
+  ],
 })
 export class RoleModule {}

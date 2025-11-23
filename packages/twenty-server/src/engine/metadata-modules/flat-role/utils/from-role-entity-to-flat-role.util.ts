@@ -4,7 +4,7 @@ import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 export const fromRoleEntityToFlatRole = (role: RoleEntity): FlatRole => {
   return {
     id: role.id,
-    standardId: role.standardId ?? '',
+    standardId: role.standardId,
     label: role.label,
     description: role.description,
     icon: role.icon,
