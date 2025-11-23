@@ -14,6 +14,7 @@ import {
   WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { aggregateOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/utils/aggregate-orchestrator-actions-report.util';
+import { WorkspaceMigrationV2AgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/agent/workspace-migration-v2-agent-actions-builder.service';
 import { WorkspaceMigrationV2CronTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/workspace-migration-v2-cron-trigger-action-builder.service';
 import { WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/workspace-migration-v2-database-event-trigger-actions-builder.service';
 import { WorkspaceMigrationV2FieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/workspace-migration-v2-field-actions-builder.service';
@@ -29,6 +30,7 @@ import { WorkspaceMigrationV2ViewActionsBuilderService } from 'src/engine/worksp
 @Injectable()
 export class WorkspaceMigrationBuildOrchestratorService {
   constructor(
+    private readonly workspaceMigrationV2AgentActionsBuilderService: WorkspaceMigrationV2AgentActionsBuilderService,
     private readonly workspaceMigrationV2ObjectActionsBuilderService: WorkspaceMigrationV2ObjectActionsBuilderService,
     private readonly workspaceMigrationV2IndexActionsBuilderService: WorkspaceMigrationV2IndexActionsBuilderService,
     private readonly workspaceMigrationV2ViewActionsBuilderService: WorkspaceMigrationV2ViewActionsBuilderService,
@@ -114,6 +116,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       dependencyAllFlatEntityMaps,
     });
     const {
+      flatAgentMaps,
       flatObjectMetadataMaps,
       flatViewFieldMaps,
       flatViewMaps,
@@ -210,6 +213,35 @@ export class WorkspaceMigrationBuildOrchestratorService {
         orchestratorFailureReport.fieldMetadata.push(...fieldResult.errors);
       } else {
         orchestratorActionsReport.fieldMetadata = fieldResult.actions;
+      }
+    }
+
+    if (isDefined(flatAgentMaps)) {
+      const { from: fromFlatAgentMaps, to: toFlatAgentMaps } = flatAgentMaps;
+
+      const agentResult =
+        await this.workspaceMigrationV2AgentActionsBuilderService.validateAndBuild(
+          {
+            from: fromFlatAgentMaps,
+            to: toFlatAgentMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: undefined,
+            workspaceId,
+          },
+        );
+
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            agentResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
+
+      if (agentResult.status === 'fail') {
+        orchestratorFailureReport.agent.push(...agentResult.errors);
+      } else {
+        orchestratorActionsReport.agent = agentResult.actions;
       }
     }
 
@@ -572,6 +604,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.viewGroup.deleted,
           ...aggregatedOrchestratorActionsReport.viewGroup.created,
           ...aggregatedOrchestratorActionsReport.viewGroup.updated,
+          ///
+
+          // Agents
+          ...aggregatedOrchestratorActionsReport.agent.deleted,
+          ...aggregatedOrchestratorActionsReport.agent.created,
+          ...aggregatedOrchestratorActionsReport.agent.updated,
           ///
 
           // Serverless functions
