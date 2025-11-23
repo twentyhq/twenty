@@ -5,8 +5,8 @@ import { In, IsNull, Not, Repository } from 'typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
-  ApiKeyException,
-  ApiKeyExceptionCode,
+    ApiKeyException,
+    ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
 import { RoleTargetServiceV2 } from 'src/engine/metadata-modules/role-target/services/role-target-v2.service';
 import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
