@@ -59,4 +59,3 @@ export class DeleteRoleTargetActionHandlerService extends WorkspaceMigrationRunn
     return;
   }
 }
-

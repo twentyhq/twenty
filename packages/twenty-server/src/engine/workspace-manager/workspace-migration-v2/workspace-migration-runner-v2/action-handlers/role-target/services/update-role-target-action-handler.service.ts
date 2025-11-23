@@ -68,4 +68,3 @@ export class UpdateRoleTargetActionHandlerService extends WorkspaceMigrationRunn
     return;
   }
 }
-
