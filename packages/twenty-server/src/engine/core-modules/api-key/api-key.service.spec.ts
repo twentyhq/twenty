@@ -1,5 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { IsNull } from 'typeorm';
 
@@ -186,13 +186,9 @@ describe('ApiKeyService', () => {
         roleId: 'mock-role-id',
       };
 
-      mockApiKeyRepository.save.mockRejectedValue(
-        new Error('Save failed'),
-      );
+      mockApiKeyRepository.save.mockRejectedValue(new Error('Save failed'));
 
-      await expect(service.create(apiKeyData)).rejects.toThrow(
-        'Save failed',
-      );
+      await expect(service.create(apiKeyData)).rejects.toThrow('Save failed');
 
       expect(mockApiKeyRepository.save).toHaveBeenCalled();
       expect(mockRoleTargetServiceV2.create).not.toHaveBeenCalled();
