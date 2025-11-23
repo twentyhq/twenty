@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { RoleTargetServiceV2 } from './services/role-target-v2.service';
 
@@ -9,6 +10,7 @@ import { RoleTargetServiceV2 } from './services/role-target-v2.service';
   imports: [
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationV2Module,
+    ApplicationModule
   ],
   providers: [RoleTargetServiceV2],
   exports: [RoleTargetServiceV2],
