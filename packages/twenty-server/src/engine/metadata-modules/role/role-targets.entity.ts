@@ -14,6 +14,7 @@ import {
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
 @Entity('roleTargets')
 @Unique('IDX_ROLE_TARGETS_UNIQUE', [
@@ -29,7 +30,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
   'CHK_role_targets_single_entity',
   '("agentId" IS NOT NULL AND "userWorkspaceId" IS NULL AND "apiKeyId" IS NULL) OR ("agentId" IS NULL AND "userWorkspaceId" IS NOT NULL AND "apiKeyId" IS NULL) OR ("agentId" IS NULL AND "userWorkspaceId" IS NULL AND "apiKeyId" IS NOT NULL)',
 )
-export class RoleTargetsEntity {
+export class RoleTargetsEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

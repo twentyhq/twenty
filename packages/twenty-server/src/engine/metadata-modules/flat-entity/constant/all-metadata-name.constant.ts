@@ -11,4 +11,5 @@ export const ALL_METADATA_NAME = {
   routeTrigger: 'routeTrigger',
   viewFilter: 'viewFilter',
   role: 'role',
+  roleTarget: 'roleTarget',
 } as const;
