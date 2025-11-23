@@ -37,7 +37,7 @@ export class RoleTargetServiceV2 {
     createRoleTargetInput: CreateRoleTargetInput;
     workspaceId: string;
   }): Promise<FlatRoleTarget> {
-    const { flatRoleTargetMaps: existingFlatRoleTargetMaps, flatRoleMaps } =
+    const { flatRoleTargetMaps, flatRoleMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
@@ -59,6 +59,7 @@ export class RoleTargetServiceV2 {
             createRoleTargetInput.applicationId ??
             workspaceCustomFlatApplication.id,
         },
+        flatRoleTargetMaps,
         workspaceId,
       });
 
@@ -67,7 +68,7 @@ export class RoleTargetServiceV2 {
         {
           fromToAllFlatEntityMaps: {
             flatRoleTargetMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatRoleTargetMaps,
+              flatEntityMaps: flatRoleTargetMaps,
               flatEntityToCreate: [flatRoleTargetToCreate],
               flatEntityToDelete: flatRoleTargetsToDelete,
               flatEntityToUpdate: [],
