@@ -12,6 +12,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { RoleTargetV2Module } from 'src/engine/metadata-modules/role-target/role-target-v2.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
@@ -31,6 +32,7 @@ import { ApiKeyController } from './controllers/api-key.controller';
     WorkspaceCacheStorageModule,
     PermissionsModule,
     FeatureFlagModule,
+    RoleTargetV2Module,
   ],
   providers: [ApiKeyService, ApiKeyResolver, ApiKeyRoleService],
   controllers: [ApiKeyController],

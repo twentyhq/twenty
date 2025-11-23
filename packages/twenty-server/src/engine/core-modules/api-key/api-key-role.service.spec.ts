@@ -153,63 +153,6 @@ describe('ApiKeyRoleService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('assignRoleToApiKeyWithManager', () => {
-    it('should assign role using provided transaction manager', async () => {
-      const mockManagerDelete = jest.fn().mockResolvedValue({ affected: 1 });
-      const mockManagerCreate = jest.fn().mockReturnValue(mockNewRoleTarget);
-      const mockManagerSave = jest.fn().mockResolvedValue(mockNewRoleTarget);
-
-      const mockManager = {
-        delete: mockManagerDelete,
-        create: mockManagerCreate,
-        save: mockManagerSave,
-      };
-
-      await service.assignRoleToApiKeyWithManager(mockManager as any, {
-        apiKeyId: mockApiKeyId,
-        roleId: mockNewRoleId,
-        workspaceId: mockWorkspaceId,
-      });
-
-      expect(mockManagerDelete).toHaveBeenCalledWith(RoleTargetsEntity, {
-        apiKeyId: mockApiKeyId,
-        workspaceId: mockWorkspaceId,
-      });
-      expect(mockManagerCreate).toHaveBeenCalledWith(RoleTargetsEntity, {
-        apiKeyId: mockApiKeyId,
-        roleId: mockNewRoleId,
-        workspaceId: mockWorkspaceId,
-      });
-      expect(mockManagerSave).toHaveBeenCalledWith(mockNewRoleTarget);
-    });
-
-    it('should handle manager operation failures', async () => {
-      const mockManagerDelete = jest
-        .fn()
-        .mockRejectedValue(new Error('Delete failed'));
-      const mockManagerCreate = jest.fn();
-      const mockManagerSave = jest.fn();
-
-      const mockManager = {
-        delete: mockManagerDelete,
-        create: mockManagerCreate,
-        save: mockManagerSave,
-      };
-
-      await expect(
-        service.assignRoleToApiKeyWithManager(mockManager as any, {
-          apiKeyId: mockApiKeyId,
-          roleId: mockNewRoleId,
-          workspaceId: mockWorkspaceId,
-        }),
-      ).rejects.toThrow('Delete failed');
-
-      expect(mockManagerDelete).toHaveBeenCalled();
-      expect(mockManagerCreate).not.toHaveBeenCalled();
-      expect(mockManagerSave).not.toHaveBeenCalled();
-    });
-  });
-
   describe('assignRoleToApiKey', () => {
     it('should assign a new role to API key using transaction', async () => {
       mockApiKeyRepository.findOne.mockResolvedValue(mockApiKey);
