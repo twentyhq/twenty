@@ -144,7 +144,7 @@ msgid "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} o
 msgstr "{advancedFilterCount, plural, zero {{advancedFilterCount} قواعد متقدمة} one {{advancedFilterCount} قاعدة متقدمة} two {{advancedFilterCount} قاعدتان متقدمتان} few {{advancedFilterCount} قواعد متقدمة} many {{advancedFilterCount} قواعد متقدمة} other {{advancedFilterCount} قواعد متقدمة}}"
 
 #. js-lingui-id: ROdDR9
-#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
+#: src/modules/object-record/record-aggregate/utils/getAggregateLabelWithFieldName.ts
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} من {fieldLabel}"
 
