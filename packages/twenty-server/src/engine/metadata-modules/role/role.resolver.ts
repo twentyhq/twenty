@@ -12,6 +12,7 @@ import { msg } from '@lingui/core/macro';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -72,6 +73,7 @@ export class RoleResolver {
     private readonly agentRoleService: AiAgentRoleService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly fieldPermissionService: FieldPermissionService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   @Query(() => [RoleDTO])
@@ -141,9 +143,18 @@ export class RoleResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('createRoleInput') createRoleInput: CreateRoleInput,
   ): Promise<RoleDTO> {
+    const { id: workspaceId } = workspace;
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     return await this.roleService.createRole({
-      workspaceId: workspace.id,
+      workspaceId,
       input: createRoleInput,
+      applicationId: workspaceCustomFlatApplication.id,
     });
   }
 

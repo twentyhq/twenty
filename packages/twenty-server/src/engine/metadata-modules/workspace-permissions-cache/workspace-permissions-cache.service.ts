@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Record } from 'cloudflare/core';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
@@ -9,7 +10,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -328,11 +328,14 @@ export class WorkspacePermissionsCacheService {
       },
     });
 
-    return roleTargetsMap.reduce((acc, roleTarget) => {
-      acc[roleTarget.userWorkspaceId] = roleTarget.roleId;
-
-      return acc;
-    }, {} as UserWorkspaceRoleMap);
+    const initialAccumulator: UserWorkspaceRoleMap = {};
+    return roleTargetsMap.reduce(
+      (acc, roleTarget) => ({
+        ...acc,
+        [roleTarget.userWorkspaceId as string]: roleTarget.roleId,
+      }),
+      initialAccumulator,
+    );
   }
 
   private hasWorkflowsPermissions(role: RoleEntity): boolean {
