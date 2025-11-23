@@ -48,13 +48,13 @@ export class RoleTargetsEntity extends SyncableEntity {
   role: Relation<RoleEntity>;
 
   @Column({ nullable: true, type: 'uuid' })
-  userWorkspaceId: string;
+  userWorkspaceId: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
-  agentId: string;
+  agentId: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
-  apiKeyId: string;
+  apiKeyId: string | null;
 
   @ManyToOne(() => ApiKeyEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'apiKeyId' })

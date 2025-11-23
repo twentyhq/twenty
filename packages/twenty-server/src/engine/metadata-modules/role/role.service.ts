@@ -5,7 +5,6 @@ import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { id } from 'date-fns/locale';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -78,9 +77,11 @@ export class RoleService {
   public async createRole({
     input,
     workspaceId,
+    applicationId,
   }: {
     input: CreateRoleInput;
     workspaceId: string;
+    applicationId: string;
   }): Promise<RoleDTO> {
     const { flatRoleMaps: existingFlatRoleMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -93,8 +94,7 @@ export class RoleService {
     const flatRoleToCreate = fromCreateRoleInputToFlatRoleToCreate({
       createRoleInput: input,
       workspaceId,
-      applicationId: workspaceCustomFlatApplication.id,
-      universalIdentifier: id,
+      applicationId,
     });
 
     const validateAndBuildResult =
@@ -308,10 +308,8 @@ export class RoleService {
         canBeAssignedToAgents: false,
         canBeAssignedToApiKeys: false,
       },
-      workspaceId,
       applicationId,
-      id,
-      universalIdentifier: id,
+      workspaceId,
     });
   }
 
@@ -320,6 +318,7 @@ export class RoleService {
     applicationId,
   }: {
     workspaceId: string;
+    applicationId: string;
   }): Promise<RoleDTO> {
     return this.createRole({
       input: {
@@ -338,8 +337,6 @@ export class RoleService {
       },
       workspaceId,
       applicationId,
-      id,
-      universalIdentifier: id,
     });
   }
 
