@@ -59,6 +59,20 @@ export class FlatRoleTargetValidatorService {
       });
     }
 
+    const definedIdentifiersCount = [
+      isDefined(flatRoleTargetToValidate.apiKeyId),
+      isDefined(flatRoleTargetToValidate.userWorkspaceId),
+      isDefined(flatRoleTargetToValidate.agentId),
+    ].filter(Boolean).length;
+
+    if (definedIdentifiersCount !== 1) {
+      validationResult.errors.push({
+        code: RoleTargetExceptionCode.ROLE_TARGET_MISSING_IDENTIFIER,
+        message: t`Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId`,
+        userFriendlyMessage: msg`Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId`,
+      });
+    }
+
     return validationResult;
   }
 
@@ -143,6 +157,20 @@ export class FlatRoleTargetValidatorService {
         code: RoleTargetExceptionCode.INVALID_ROLE_TARGET_DATA,
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
+      });
+    }
+
+    const definedIdentifiersCount = [
+      isDefined(updatedFlatRoleTarget.apiKeyId),
+      isDefined(updatedFlatRoleTarget.userWorkspaceId),
+      isDefined(updatedFlatRoleTarget.agentId),
+    ].filter(Boolean).length;
+
+    if (definedIdentifiersCount !== 1) {
+      validationResult.errors.push({
+        code: RoleTargetExceptionCode.ROLE_TARGET_MISSING_IDENTIFIER,
+        message: t`Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId`,
+        userFriendlyMessage: msg`Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId`,
       });
     }
 

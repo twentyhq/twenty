@@ -10,4 +10,5 @@ export class RoleTargetException extends CustomException {
 export enum RoleTargetExceptionCode {
   ROLE_TARGET_NOT_FOUND = 'ROLE_TARGET_NOT_FOUND',
   INVALID_ROLE_TARGET_DATA = 'INVALID_ROLE_TARGET_DATA',
+  ROLE_TARGET_MISSING_IDENTIFIER = 'ROLE_TARGET_MISSING_IDENTIFIER',
 }

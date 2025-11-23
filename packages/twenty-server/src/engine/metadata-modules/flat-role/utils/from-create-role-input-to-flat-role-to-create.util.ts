@@ -2,23 +2,36 @@ import { v4 } from 'uuid';
 
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
+import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 
 export const fromCreateRoleInputToFlatRoleToCreate = ({
   createRoleInput,
   workspaceId,
+  applicationId,
 }: {
   createRoleInput: CreateRoleInput;
   workspaceId: string;
+  applicationId: string;
 }): FlatRole => {
   const now = new Date();
 
-  const id = createRoleInput.id ?? v4();
+  const {
+    label,
+    description,
+    icon,
+    id: inputId,
+  } = trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
+    createRoleInput,
+    ['description', 'icon', 'id', 'label'],
+  );
+  const id = inputId ?? v4();
+
   return {
     id,
     standardId: null,
-    label: createRoleInput.label,
-    description: createRoleInput.description ?? null,
-    icon: createRoleInput.icon ?? null,
+    label: label,
+    description: description ?? null,
+    icon: icon ?? null,
     canUpdateAllSettings: createRoleInput.canUpdateAllSettings ?? false,
     canAccessAllTools: createRoleInput.canAccessAllTools ?? false,
     canReadAllObjectRecords: createRoleInput.canReadAllObjectRecords ?? false,
@@ -36,7 +49,7 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
     createdAt: now,
     updatedAt: now,
     universalIdentifier: id,
-    applicationId: null,
+    applicationId,
     roleTargetIds: [],
     objectPermissionIds: [],
     permissionFlagIds: [],

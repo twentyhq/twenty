@@ -116,8 +116,10 @@ export class DevSeederPermissionsService {
         roleId: guestRole.id,
       });
 
-      const limitedRole =
-        await this.createLimitedRoleForSeedWorkspace(workspaceId);
+      const limitedRole = await this.createLimitedRoleForSeedWorkspace({
+        workspaceId,
+        applicationId: twentyStandardApplication.id,
+      });
 
       await this.userRoleService.assignRoleToUserWorkspace({
         workspaceId,
@@ -164,8 +166,15 @@ export class DevSeederPermissionsService {
     }
   }
 
-  private async createLimitedRoleForSeedWorkspace(workspaceId: string) {
+  private async createLimitedRoleForSeedWorkspace({
+    applicationId,
+    workspaceId,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+  }) {
     const customRole = await this.roleService.createRole({
+      applicationId,
       workspaceId,
       input: {
         label: 'Object-restricted',
