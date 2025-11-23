@@ -166,13 +166,15 @@ const SettingsAgentForm = lazy(() =>
 );
 
 const SettingsWorkspaceMembers = lazy(() =>
-  import('~/pages/settings/SettingsWorkspaceMembers').then((module) => ({
-    default: module.SettingsWorkspaceMembers,
-  })),
+  import('~/pages/settings/members/SettingsWorkspaceMembers').then(
+    (module) => ({
+      default: module.SettingsWorkspaceMembers,
+    }),
+  ),
 );
 
 const SettingsWorkspaceMember = lazy(() =>
-  import('~/pages/settings/SettingsWorkspaceMember').then((module) => ({
+  import('~/pages/settings/members/SettingsWorkspaceMember').then((module) => ({
     default: module.SettingsWorkspaceMember,
   })),
 );
