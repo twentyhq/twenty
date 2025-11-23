@@ -102,5 +102,10 @@ export const ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY = {
     },
   },
   role: {},
-  roleTarget: {},
+  roleTarget: {
+    roleId: {
+      metadataName: 'role',
+      flatEntityForeignKeyAggregator: 'roleTargetIds',
+    },
+  },
 } as const satisfies MetadataNameAndRelations;

@@ -23,7 +23,7 @@ export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
   id: string;
 
   @Column({ nullable: true, type: 'uuid' })
-  standardId: string;
+  standardId: string | null;
 
   @Column({ nullable: false })
   label: string;
@@ -47,10 +47,10 @@ export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
   canDestroyAllObjectRecords: boolean;
 
   @Column({ nullable: true, type: 'text' })
-  description: string;
+  description: string | null;
 
   @Column({ nullable: true })
-  icon: string;
+  icon: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
