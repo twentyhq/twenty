@@ -214,6 +214,7 @@ export const PageLayoutTabList = ({
       setTabSettingsOpenTabId(tabId);
       navigatePageLayoutCommandMenu({
         commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
+        resetNavigationStack: true,
       });
     },
     [setTabSettingsOpenTabId, navigatePageLayoutCommandMenu],
