@@ -308,18 +308,6 @@ describe('ApiKeyRoleService', () => {
     });
   });
 
-  describe('recomputeCache', () => {
-    it('should trigger cache recomputation', async () => {
-      await service.recomputeCache(mockWorkspaceId);
-
-      expect(
-        mockWorkspacePermissionsCacheService.recomputeApiKeyRoleMapCache,
-      ).toHaveBeenCalledWith({
-        workspaceId: mockWorkspaceId,
-      });
-    });
-  });
-
   describe('getRolesByApiKeys', () => {
     it('should return empty map for empty API key IDs', async () => {
       const result = await service.getRolesByApiKeys({

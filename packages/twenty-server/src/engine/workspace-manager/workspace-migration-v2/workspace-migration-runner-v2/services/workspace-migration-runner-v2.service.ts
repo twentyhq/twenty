@@ -98,7 +98,7 @@ export class WorkspaceMigrationRunnerV2Service {
       );
     }
 
-    const shouldInvalidateUserWorkspaceRoleMapCache = actions.some((action) => {
+    const shouldInvalidateRoleMapCache = actions.some((action) => {
       switch (action.type) {
         case 'create_role':
         case 'delete_role':
@@ -116,7 +116,7 @@ export class WorkspaceMigrationRunnerV2Service {
 
     if (
       shouldIncrementMetadataGraphqlSchemaVersion ||
-      shouldInvalidateUserWorkspaceRoleMapCache
+      shouldInvalidateRoleMapCache
     ) {
       asyncOperations.push(
         this.workspacePermissionsCacheService.recomputeUserWorkspaceRoleMapCache(
@@ -124,6 +124,14 @@ export class WorkspaceMigrationRunnerV2Service {
             workspaceId,
           },
         ),
+      );
+    }
+
+    if (shouldInvalidateRoleMapCache) {
+      asyncOperations.push(
+        this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache({
+          workspaceId,
+        }),
       );
     }
 

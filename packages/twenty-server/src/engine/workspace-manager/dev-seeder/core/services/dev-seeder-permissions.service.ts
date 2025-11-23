@@ -9,6 +9,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
+import { RoleTargetServiceV2 } from 'src/engine/metadata-modules/role-target/services/role-target-v2.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -38,6 +39,7 @@ export class DevSeederPermissionsService {
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly fieldPermissionService: FieldPermissionService,
+    private readonly roleTargetService: RoleTargetServiceV2,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {}
@@ -63,28 +65,15 @@ export class DevSeederPermissionsService {
     }
 
     try {
-      await this.coreDataSource
-        .createQueryBuilder()
-        .insert()
-        .into('core.roleTargets', ['roleId', 'apiKeyId', 'workspaceId'])
-        .orIgnore()
-        .values([
-          {
-            roleId: adminRole.id,
-            apiKeyId: API_KEY_DATA_SEED_IDS.ID_1,
-            workspaceId: workspaceId,
-          },
-        ])
-        .execute();
-
-      await this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache({
+      await this.roleTargetService.create({
+        createRoleTargetInput: {
+          roleId: adminRole.id,
+          targetId: API_KEY_DATA_SEED_IDS.ID_1,
+          targetMetadataForeignKey: 'apiKeyId',
+          applicationId: twentyStandardApplication.id,
+        },
         workspaceId,
       });
-      await this.workspacePermissionsCacheService.recomputeUserWorkspaceRoleMapCache(
-        {
-          workspaceId,
-        },
-      );
     } catch (error) {
       this.logger.error(
         `Could not assign role to test API key: ${error.message}`,
