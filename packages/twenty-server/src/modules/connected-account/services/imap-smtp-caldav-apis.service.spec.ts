@@ -160,7 +160,6 @@ describe('ImapSmtpCalDavAPIService', () => {
           pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
           syncCursor: '',
           syncStageStartedAt: null,
-          pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
         },
         {},
       );
@@ -305,7 +304,6 @@ describe('ImapSmtpCalDavAPIService', () => {
           pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
           syncCursor: '',
           syncStageStartedAt: null,
-          pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
         },
         {},
       );
