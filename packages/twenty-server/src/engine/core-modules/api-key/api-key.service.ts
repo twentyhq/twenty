@@ -39,6 +39,7 @@ export class ApiKeyService {
       },
       workspaceId: savedApiKey.workspaceId,
     });
+    await this.apiKeyRoleService.recomputeCache(savedApiKey.workspaceId);
 
     return savedApiKey;
   }
