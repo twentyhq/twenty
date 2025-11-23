@@ -7,7 +7,6 @@ import {
   WorkspaceQueryRunnerException,
   WorkspaceQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -29,7 +28,6 @@ export class WorkspaceMigrationRunnerV2Service {
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly logger: LoggerService,
-    private readonly apiKeyRoleService: ApiKeyRoleService,
   ) {}
 
   private getLegacyCacheInvalidationPromises({
@@ -127,10 +125,6 @@ export class WorkspaceMigrationRunnerV2Service {
           },
         ),
       );
-    }
-
-    if (shouldInvalidateUserWorkspaceRoleMapCache) {
-      asyncOperations.push(this.apiKeyRoleService.recomputeCache(workspaceId));
     }
 
     return asyncOperations;
