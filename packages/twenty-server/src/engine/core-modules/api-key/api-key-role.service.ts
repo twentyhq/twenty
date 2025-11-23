@@ -56,10 +56,6 @@ export class ApiKeyRoleService {
       },
       workspaceId,
     });
-
-    await this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache({
-      workspaceId,
-    });
   }
 
   async getRoleIdForApiKey(
@@ -81,12 +77,6 @@ export class ApiKeyRoleService {
     }
 
     return roleId;
-  }
-
-  async recomputeCache(workspaceId: string): Promise<void> {
-    await this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache({
-      workspaceId,
-    });
   }
 
   private async validateAssignRoleInput({
