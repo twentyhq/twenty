@@ -19,45 +19,13 @@ import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-ac
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
-
-const StyledWorkflowStepInfoContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(0.5)};
-`;
-
-const StyledWorkflowStepIcon = styled.div<{ iconColor: string }>`
-  align-items: center;
-  background: ${({ theme }) => theme.background.transparent.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ iconColor }) => iconColor};
-  display: flex;
-  flex-shrink: 0;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledWorkflowStepTitleContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  min-width: 0;
-`;
-
-const StyledWorkflowStepType = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  white-space: nowrap;
-`;
+import { CommandMenuPageInfoLayout } from './CommandMenuPageInfoLayout';
 
 export const CommandMenuWorkflowStepInfo = ({
   commandMenuPageInstanceId,
@@ -221,13 +189,14 @@ export const CommandMenuWorkflowStepInfo = ({
   };
 
   return (
-    <StyledWorkflowStepInfoContainer>
-      {headerIcon && (
-        <StyledWorkflowStepIcon iconColor={headerIconColor}>
+    <CommandMenuPageInfoLayout
+      icon={
+        headerIcon ? (
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        </StyledWorkflowStepIcon>
-      )}
-      <StyledWorkflowStepTitleContainer>
+        ) : undefined
+      }
+      iconColor={headerIconColor}
+      title={
         <TitleInput
           instanceId={`workflow-step-title-${commandMenuPageInstanceId}`}
           disabled={isReadonly}
@@ -241,10 +210,8 @@ export const CommandMenuWorkflowStepInfo = ({
           onTab={saveTitle}
           onShiftTab={saveTitle}
         />
-      </StyledWorkflowStepTitleContainer>
-      <StyledWorkflowStepType>
-        {isTrigger ? t`Trigger` : t`Action`}
-      </StyledWorkflowStepType>
-    </StyledWorkflowStepInfoContainer>
+      }
+      label={isTrigger ? t`Trigger` : t`Action`}
+    />
   );
 };
