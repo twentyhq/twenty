@@ -15,7 +15,7 @@ export const DATA_MANIPULATOR_ROLE: StandardRoleDefinition = {
   canBeAssignedToUsers: false,
   canBeAssignedToAgents: true,
   canBeAssignedToApiKeys: false,
-  applicationId: null,
+  applicationId: null, // TODO: Replace with Twenty application ID
   createdAt: new Date(),
   updatedAt: new Date(),
   roleTargetIds: [],
