@@ -157,6 +157,7 @@ export class ApplicationService {
         ...TWENTY_STANDARD_APPLICATION,
         serverlessFunctionLayerId: null,
         workspaceId,
+        canBeUninstalled: false,
       },
       queryRunner,
     );
@@ -191,6 +192,7 @@ export class ApplicationService {
         workspaceId: workspaceId,
         id: applicationId,
         serverlessFunctionLayerId: null,
+        canBeUninstalled: false,
       },
       queryRunner,
     );
@@ -199,16 +201,7 @@ export class ApplicationService {
   }
 
   async create(
-    data: {
-      id?: string;
-      universalIdentifier?: string;
-      name: string;
-      description?: string;
-      version?: string;
-      serverlessFunctionLayerId: string | null;
-      sourcePath: string;
-      workspaceId: string;
-    },
+    data: Partial<ApplicationEntity> & { workspaceId: string },
     queryRunner?: QueryRunner,
   ): Promise<ApplicationEntity> {
     const application = this.applicationRepository.create({
