@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isNumber } from '@sniptt/guards';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
@@ -30,7 +30,7 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { WorkflowFindRecordsFilters } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFilters';
 import { WorkflowFindRecordsFiltersEffect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFiltersEffect';
 import { WorkflowFindRecordsSorts } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts';
-import { WorkflowObjectDropdown } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdown';
+import { WorkflowObjectDropdownContent } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent';
 
 const StyledLabel = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -81,74 +81,14 @@ export const WorkflowEditActionFindRecords = ({
   actionOptions,
 }: WorkflowEditActionFindRecordsProps) => {
   const theme = useTheme();
-  const { getIcon } = useIcons();
   const { t } = useLingui();
   const maxRecordsFormatted = QUERY_MAX_RECORDS.toLocaleString();
-  const [searchInputValue, setSearchInputValue] = useState('');
-  const [isSystemObjectsOpen, setIsSystemObjectsOpen] = useState(false);
+
   const dropdownId = 'workflow-edit-action-record-find-records-object-name';
 
   const { closeDropdown } = useCloseDropdown();
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
-
-  const activeStandardObjectOptions = useMemo(
-    () =>
-      objectMetadataItems
-        .filter(
-          (objectMetadataItem) =>
-            objectMetadataItem.isActive && !objectMetadataItem.isSystem,
-        )
-        .map((objectMetadataItem) => ({
-          Icon: getIcon(objectMetadataItem.icon),
-          label: objectMetadataItem.labelPlural,
-          value: objectMetadataItem.nameSingular,
-        })),
-    [objectMetadataItems, getIcon],
-  );
-
-  const activeSystemObjectOptions = useMemo(
-    () =>
-      objectMetadataItems
-        .filter(
-          (objectMetadataItem) =>
-            objectMetadataItem.isActive && objectMetadataItem.isSystem,
-        )
-        .map((objectMetadataItem) => ({
-          Icon: getIcon(objectMetadataItem.icon),
-          label: objectMetadataItem.labelPlural,
-          value: objectMetadataItem.nameSingular,
-        })),
-    [objectMetadataItems, getIcon],
-  );
-
-  const selectedOption = useMemo(
-    () =>
-      [...activeStandardObjectOptions, ...activeSystemObjectOptions].find(
-        (option) => option.value === action.settings.input.objectName,
-      ) || DEFAULT_SELECTED_OPTION,
-    [
-      activeStandardObjectOptions,
-      activeSystemObjectOptions,
-      action.settings.input.objectName,
-    ],
-  );
-
-  const filteredStandardObjectOptions = useMemo(
-    () =>
-      activeStandardObjectOptions.filter((option) =>
-        option.label.toLowerCase().includes(searchInputValue.toLowerCase()),
-      ),
-    [activeStandardObjectOptions, searchInputValue],
-  );
-
-  const filteredSystemObjectOptions = useMemo(
-    () =>
-      activeSystemObjectOptions.filter((option) =>
-        option.label.toLowerCase().includes(searchInputValue.toLowerCase()),
-      ),
-    [activeSystemObjectOptions, searchInputValue],
-  );
 
   const [formData, setFormData] = useState<FindRecordsFormData>(() => ({
     objectNameSingular: action.settings.input.objectName,
@@ -160,6 +100,7 @@ export const WorkflowEditActionFindRecords = ({
     filter: action.settings.input.filter as FindRecordsActionFilter,
     orderBy: action.settings.input.orderBy as FindRecordsActionOrderBy,
   }));
+
   const [limitError, setLimitError] = useState<string | undefined>(undefined);
   const isFormDisabled = actionOptions.readonly ?? false;
   const instanceId = `workflow-edit-action-record-find-records-${action.id}-${formData.objectNameSingular}`;
@@ -167,6 +108,15 @@ export const WorkflowEditActionFindRecords = ({
   const selectedObjectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === formData.objectNameSingular,
   );
+  const { getIcon } = useIcons();
+
+  const selectedOption = selectedObjectMetadataItem
+    ? {
+        Icon: getIcon(selectedObjectMetadataItem?.icon),
+        label: selectedObjectMetadataItem?.labelPlural,
+        value: selectedObjectMetadataItem?.nameSingular,
+      }
+    : DEFAULT_SELECTED_OPTION;
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
@@ -230,23 +180,6 @@ export const WorkflowEditActionFindRecords = ({
     closeDropdown(dropdownId);
   };
 
-  const handleSystemObjectsClick = () => {
-    setIsSystemObjectsOpen(true);
-    setSearchInputValue('');
-  };
-
-  const handleBack = () => {
-    setIsSystemObjectsOpen(false);
-    setSearchInputValue('');
-  };
-
-  const handleSearchInputChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchInputValue(event.target.value);
-    },
-    [],
-  );
-
   return (
     <>
       <WorkflowStepBody>
@@ -263,21 +196,8 @@ export const WorkflowEditActionFindRecords = ({
             }
             dropdownComponents={
               !isFormDisabled && (
-                <WorkflowObjectDropdown
-                  isSystemObjectsView={isSystemObjectsOpen}
-                  searchInputValue={searchInputValue}
-                  filteredOptions={
-                    isSystemObjectsOpen
-                      ? filteredSystemObjectOptions
-                      : filteredStandardObjectOptions
-                  }
-                  onSearchInputChange={handleSearchInputChange}
+                <WorkflowObjectDropdownContent
                   onOptionClick={handleOptionClick}
-                  onBack={isSystemObjectsOpen ? handleBack : undefined}
-                  onAdvancedClick={
-                    !isSystemObjectsOpen ? handleSystemObjectsClick : undefined
-                  }
-                  showAdvancedOption={!isSystemObjectsOpen}
                 />
               )
             }
