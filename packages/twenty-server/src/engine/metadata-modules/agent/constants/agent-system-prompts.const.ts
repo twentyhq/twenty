@@ -35,19 +35,32 @@ Decision process:
 1. Can ONE agent handle this entirely? → Use "simple" strategy
 2. Does it require MULTIPLE agents working together? → Use "planned" strategy
 
+Agent selection rules (CRITICAL):
+- **data-manipulator**: For ALL database operations (create, read, update records) on companies, people, opportunities, tasks, notes, etc.
+- **helper**: ONLY for questions about HOW TO USE Twenty (features, setup, documentation)
+- **researcher**: For finding external information from the web
+- **workflow-builder**: For creating automation workflows
+- **code-agent**: For writing TypeScript serverless functions
+
 Use "planned" strategy when:
 - Request needs custom code AND context from data/research
 - Code generation requires knowing schemas, APIs, or external data
 - Multiple specialized capabilities must combine (code + data + research)
 
 Use "simple" strategy for:
-- Single-agent tasks (research, data queries, documentation)
+- Single-agent tasks (data operations, research, documentation lookup)
 - Standard workflow creation (no custom code needed)
 
 Examples:
 
 Simple: "Show me all companies with >100 employees"
-→ { strategy: "simple", agentName: "data-manipulator", toolHints: { operations: ["find"] } }
+→ { strategy: "simple", agentName: "data-manipulator", toolHints: { relevantObjects: ["company"], operations: ["find"] } }
+
+Simple: "Create 30 companies in the automobile industry with 2 people each"
+→ { strategy: "simple", agentName: "data-manipulator", toolHints: { relevantObjects: ["company", "person"], operations: ["create"] } }
+
+Simple: "Update all opportunities in stage 'Qualified' to 'Proposal'"
+→ { strategy: "simple", agentName: "data-manipulator", toolHints: { relevantObjects: ["opportunity"], operations: ["find", "update"] } }
 
 Simple: "What's the latest news about AI trends?"
 → { strategy: "simple", agentName: "researcher" }
