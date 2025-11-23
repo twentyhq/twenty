@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
+import { CreateAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/agent/services/create-agent-action-handler.service';
+import { DeleteAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/agent/services/delete-agent-action-handler.service';
+import { UpdateAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/agent/services/update-agent-action-handler.service';
 import { CreateCronTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/cron-trigger/services/create-cron-trigger-action-handler.service';
 import { DeleteCronTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/cron-trigger/services/delete-cron-trigger-action-handler.service';
 import { UpdateCronTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/cron-trigger/services/update-cron-trigger-action-handler.service';
@@ -37,6 +40,10 @@ import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/wor
 @Module({
   imports: [WorkspaceSchemaManagerModule],
   providers: [
+    CreateAgentActionHandlerService,
+    UpdateAgentActionHandlerService,
+    DeleteAgentActionHandlerService,
+
     CreateFieldActionHandlerService,
     UpdateFieldActionHandlerService,
     DeleteFieldActionHandlerService,
