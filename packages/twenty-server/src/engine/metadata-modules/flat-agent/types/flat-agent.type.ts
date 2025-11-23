@@ -13,5 +13,5 @@ export type AgentEntityRelationProperties =
 
 export type FlatAgent = FlatEntityFrom<
   AgentEntity,
-  AgentEntityRelationProperties | 'createdAt' | 'updatedAt' | 'deletedAt'
+  AgentEntityRelationProperties
 >;

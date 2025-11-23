@@ -1,8 +1,10 @@
+import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { type CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { type FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { type DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -70,12 +72,26 @@ import {
   type UpdateViewGroupAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-group/types/workspace-migration-view-group-action-v2.type';
 import {
+  type CreateAgentAction,
+  type DeleteAgentAction,
+  type UpdateAgentAction,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/agent/types/workspace-migration-agent-action-v2.type';
+import {
   type CreateViewAction,
   type DeleteViewAction,
   type UpdateViewAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/types/workspace-migration-view-action-v2.type';
 
 export type AllFlatEntityTypesByMetadataName = {
+  agent: {
+    actions: {
+      created: CreateAgentAction;
+      updated: UpdateAgentAction;
+      deleted: DeleteAgentAction;
+    };
+    flatEntity: FlatAgent;
+    entity: AgentEntity;
+  };
   fieldMetadata: {
     actions: {
       created: CreateFieldAction;
