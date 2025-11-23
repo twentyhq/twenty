@@ -73,6 +73,34 @@ export class FlatRoleTargetValidatorService {
       });
     }
 
+    if (isDefined(referencedRole)) {
+      if (isDefined(flatRoleTargetToValidate.agentId)) {
+        if (!referencedRole.canBeAssignedToAgents) {
+          validationResult.errors.push({
+            code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
+            message: t`Role "${referencedRole.label}" cannot be assigned to agents`,
+            userFriendlyMessage: msg`Role "${referencedRole.label}" cannot be assigned to agents`,
+          });
+        }
+      } else if (isDefined(flatRoleTargetToValidate.userWorkspaceId)) {
+        if (!referencedRole.canBeAssignedToUsers) {
+          validationResult.errors.push({
+            code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
+            message: t`Role "${referencedRole.label}" cannot be assigned to users`,
+            userFriendlyMessage: msg`Role "${referencedRole.label}" cannot be assigned to users`,
+          });
+        }
+      } else if (isDefined(flatRoleTargetToValidate.apiKeyId)) {
+        if (!referencedRole.canBeAssignedToApiKeys) {
+          validationResult.errors.push({
+            code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
+            message: t`Role "${referencedRole.label}" cannot be assigned to API keys`,
+            userFriendlyMessage: msg`Role "${referencedRole.label}" cannot be assigned to API keys`,
+          });
+        }
+      }
+    }
+
     return validationResult;
   }
 
@@ -172,6 +200,34 @@ export class FlatRoleTargetValidatorService {
         message: t`Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId`,
         userFriendlyMessage: msg`Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId`,
       });
+    }
+
+    if (isDefined(referencedRole)) {
+      if (isDefined(updatedFlatRoleTarget.agentId)) {
+        if (!referencedRole.canBeAssignedToAgents) {
+          validationResult.errors.push({
+            code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
+            message: t`Role "${referencedRole.label}" cannot be assigned to agents`,
+            userFriendlyMessage: msg`Role "${referencedRole.label}" cannot be assigned to agents`,
+          });
+        }
+      } else if (isDefined(updatedFlatRoleTarget.userWorkspaceId)) {
+        if (!referencedRole.canBeAssignedToUsers) {
+          validationResult.errors.push({
+            code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
+            message: t`Role "${referencedRole.label}" cannot be assigned to users`,
+            userFriendlyMessage: msg`Role "${referencedRole.label}" cannot be assigned to users`,
+          });
+        }
+      } else if (isDefined(updatedFlatRoleTarget.apiKeyId)) {
+        if (!referencedRole.canBeAssignedToApiKeys) {
+          validationResult.errors.push({
+            code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
+            message: t`Role "${referencedRole.label}" cannot be assigned to API keys`,
+            userFriendlyMessage: msg`Role "${referencedRole.label}" cannot be assigned to API keys`,
+          });
+        }
+      }
     }
 
     return validationResult;
