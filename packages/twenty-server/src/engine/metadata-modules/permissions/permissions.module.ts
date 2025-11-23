@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';

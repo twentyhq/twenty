@@ -138,13 +138,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     );
 
     if (!userWorkspace) {
-      userWorkspace = await this.create(
-        {
-          userId: user.id,
-          workspaceId: workspace.id,
-          isExistingUser: true,
-        },
-      );
+      userWorkspace = await this.create({
+        userId: user.id,
+        workspaceId: workspace.id,
+        isExistingUser: true,
+      });
 
       await this.createWorkspaceMember(workspace.id, user);
 
@@ -157,13 +155,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         );
       }
 
-      await this.userRoleService.assignRoleToUserWorkspace(
-        {
-          workspaceId: workspace.id,
-          userWorkspaceId: userWorkspace.id,
-          roleId: defaultRoleId,
-        },
-      );
+      await this.userRoleService.assignRoleToUserWorkspace({
+        workspaceId: workspace.id,
+        userWorkspaceId: userWorkspace.id,
+        roleId: defaultRoleId,
+      });
 
       await this.workspaceInvitationService.invalidateWorkspaceInvitation(
         workspace.id,
