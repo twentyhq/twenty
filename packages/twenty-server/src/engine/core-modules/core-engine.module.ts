@@ -53,6 +53,7 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WebhookModule } from 'src/engine/core-modules/webhook/webhook.module';
 import { WorkflowApiModule } from 'src/engine/core-modules/workflow/workflow-api.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
+import { WorkspaceMemberModule } from 'src/engine/core-modules/workspace-member/workspace-member.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
@@ -136,6 +137,7 @@ import { FileModule } from './file/file.module';
     PageLayoutModule,
     ImpersonationModule,
     TrashCleanupModule,
+    WorkspaceMemberModule,
   ],
   exports: [
     AuditModule,
