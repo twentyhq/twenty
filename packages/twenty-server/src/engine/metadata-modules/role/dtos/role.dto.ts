@@ -37,10 +37,10 @@ export class RoleDTO {
   label: string;
 
   @Field({ nullable: true })
-  description: string;
+  description?: string;
 
   @Field({ nullable: true })
-  icon: string;
+  icon?: string;
 
   @Field({ nullable: false })
   isEditable: boolean;
@@ -55,7 +55,7 @@ export class RoleDTO {
   canBeAssignedToApiKeys: boolean;
 
   @HideField()
-  roleTargets: Relation<RoleTargetsEntity[]>;
+  roleTargets?: Relation<RoleTargetsEntity[]>;
 
   @Field(() => [WorkspaceMemberDTO], { nullable: true })
   workspaceMembers?: WorkspaceMemberDTO[];

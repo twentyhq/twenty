@@ -11,6 +11,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { fromCreateRoleInputToFlatRoleToCreate } from 'src/engine/metadata-modules/flat-role/utils/from-create-role-input-to-flat-role-to-create.util';
 import { fromDeleteRoleInputToFlatRoleOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-delete-role-input-to-flat-role-or-throw.util';
 import { fromUpdateRoleInputToFlatRoleToUpdateOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util';
@@ -23,6 +24,7 @@ import {
 import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
+import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
@@ -49,7 +51,9 @@ export class RoleService {
         },
       );
 
-    return Object.values(flatRoleMaps.byId).filter(isDefined);
+    return Object.values(flatRoleMaps.byId)
+      .filter(isDefined)
+      .map(fromFlatRoleToRoleDto);
   }
 
   public async getRoleById(
@@ -63,8 +67,12 @@ export class RoleService {
           flatMapsKeys: ['flatRoleMaps'],
         },
       );
+    const flatRole = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatRoleMaps,
+    });
 
-    return flatRoleMaps.byId[id] ?? null;
+    return isDefined(flatRole) ? fromFlatRoleToRoleDto(flatRole) : null;
   }
 
   public async createRole({
@@ -123,10 +131,12 @@ export class RoleService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatRoleToCreate.id,
-      flatEntityMaps: recomputedFlatRoleMaps,
-    });
+    return fromFlatRoleToRoleDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: flatRoleToCreate.id,
+        flatEntityMaps: recomputedFlatRoleMaps,
+      }),
+    );
   }
 
   public async updateRole({
@@ -183,10 +193,12 @@ export class RoleService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: input.id,
-      flatEntityMaps: recomputedFlatRoleMaps,
-    });
+    return fromFlatRoleToRoleDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: input.id,
+        flatEntityMaps: recomputedFlatRoleMaps,
+      }),
+    );
   }
 
   public async deleteRole({
@@ -271,7 +283,7 @@ export class RoleService {
       );
     }
 
-    return flatRoleToDelete;
+    return fromFlatRoleToRoleDto(flatRoleToDelete);
   }
 
   public async createMemberRole({
