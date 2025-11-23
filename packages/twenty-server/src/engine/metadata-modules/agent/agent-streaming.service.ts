@@ -157,6 +157,7 @@ export class AgentStreamingService {
               workspace,
               userWorkspaceId,
               recordIdsByObjectMetadataNameSingular,
+              writer,
               onProgress: (progress) => {
                 if (progress.type === 'step-started') {
                   writer.write({
@@ -172,7 +173,7 @@ export class AgentStreamingService {
                     type: 'data-routing-status' as const,
                     id: `step-${progress.stepNumber}`,
                     data: {
-                      text: `Step ${progress.stepNumber}: Completed`,
+                      text: `Step ${progress.stepNumber}: ✓ ${progress.agentName}`,
                       state: 'routed',
                     },
                   });

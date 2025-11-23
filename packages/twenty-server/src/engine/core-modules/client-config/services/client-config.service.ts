@@ -62,9 +62,17 @@ export class ClientConfigService {
     );
 
     if (aiModels.length > 0) {
+      const defaultModel =
+        this.aiModelRegistryService.getDefaultPerformanceModel();
+      const defaultModelConfig = AI_MODELS.find(
+        (m) => m.modelId === defaultModel?.modelId,
+      );
+      const defaultModelLabel =
+        defaultModelConfig?.label || defaultModel?.modelId || 'Default';
+
       aiModels.unshift({
         modelId: 'auto',
-        label: 'Auto',
+        label: `Auto (${defaultModelLabel})`,
         provider: ModelProvider.NONE,
         inputCostPer1kTokensInCredits: 0,
         outputCostPer1kTokensInCredits: 0,

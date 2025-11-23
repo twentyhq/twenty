@@ -1,10 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { generateText } from 'ai';
-
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { type PlanStep } from 'src/engine/metadata-modules/ai-router/types/router-result.interface';
+import { standardAgentDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents';
 
 import { AgentExecutionService } from './agent-execution.service';
 
@@ -40,9 +39,9 @@ export class AgentPlanExecutorService {
     reasoning,
     workspace,
     userWorkspaceId,
-    recordIdsByObjectMetadataNameSingular:
-      _recordIdsByObjectMetadataNameSingular,
+    recordIdsByObjectMetadataNameSingular,
     onProgress,
+    writer,
   }: {
     steps: PlanStep[];
     reasoning: string;
@@ -50,6 +49,10 @@ export class AgentPlanExecutorService {
     userWorkspaceId: string;
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
     onProgress?: (progress: PlanExecutionProgress) => void;
+    writer?: {
+      write: (chunk: unknown) => void;
+      merge: (stream: unknown) => void;
+    };
   }): Promise<PlanExecutionResult> {
     this.logger.log(`Executing plan with ${steps.length} steps`);
 
@@ -83,16 +86,11 @@ export class AgentPlanExecutorService {
             { name: step.agentName },
           );
 
-        const { actorContext, roleId } =
-          await this.agentExecutionService.agentActorContextService.buildUserAndAgentActorContext(
+        const { stream: stepStream } =
+          await this.agentExecutionService.streamChatResponse({
+            workspace,
+            agentId: agent.id,
             userWorkspaceId,
-            workspace.id,
-          );
-
-        const aiRequestConfig =
-          await this.agentExecutionService.prepareAIRequestConfig({
-            system: agent.prompt,
-            agent,
             messages: [
               {
                 id: `step-${step.stepNumber}`,
@@ -100,23 +98,49 @@ export class AgentPlanExecutorService {
                 parts: [{ type: 'text' as const, text: promptWithContext }],
               },
             ],
-            actorContext,
-            roleIds: [roleId, ...(agent?.roleId ? [agent?.roleId] : [])],
+            recordIdsByObjectMetadataNameSingular,
           });
 
-        const response = await generateText(aiRequestConfig);
+        let stepOutput = '';
+
+        if (writer) {
+          writer.merge(
+            stepStream.toUIMessageStream({
+              onError: (error) => {
+                return error instanceof Error ? error.message : String(error);
+              },
+              sendStart: false,
+              onFinish: async ({ responseMessage }) => {
+                stepOutput = responseMessage.parts
+                  .filter((part) => part.type === 'text')
+                  .map((part) => {
+                    if (part.type === 'text') {
+                      return part.text;
+                    }
+
+                    return '';
+                  })
+                  .join('');
+              },
+            }),
+          );
+
+          await stepStream.text;
+        } else {
+          stepOutput = await stepStream.text;
+        }
 
         stepResults.push({
           stepNumber: step.stepNumber,
           agentName: step.agentName,
-          output: response.text,
+          output: stepOutput,
         });
 
         onProgress?.({
           type: 'step-completed',
           stepNumber: step.stepNumber,
           agentName: step.agentName,
-          output: response.text,
+          output: stepOutput,
         });
 
         this.logger.log(
@@ -193,10 +217,18 @@ export class AgentPlanExecutorService {
       (s) => s.stepNumber === lastStep.stepNumber,
     );
 
-    if (lastStepDefinition?.agentName.includes('workflow-builder')) {
-      return lastStep.output;
+    // Check if the last step's agent has 'direct' output strategy
+    if (lastStepDefinition) {
+      const agentDefinition = standardAgentDefinitions.find(
+        (def) => def.name === lastStepDefinition.agentName,
+      );
+
+      if (agentDefinition?.outputStrategy === 'direct') {
+        return lastStep.output;
+      }
     }
 
+    // Default: synthesize all steps
     const summary = stepResults
       .map((result) => {
         const step = steps.find((s) => s.stepNumber === result.stepNumber);

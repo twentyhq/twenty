@@ -8,7 +8,10 @@ export const useAiModelOptions = (): SelectOption<string>[] => {
   return aiModels
     .map((model) => ({
       value: model.modelId,
-      label: `${model.label} (${model.provider})`,
+      label:
+        model.modelId === 'auto'
+          ? model.label
+          : `${model.label} (${model.provider})`,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 };

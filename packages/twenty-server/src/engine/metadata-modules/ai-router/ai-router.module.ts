@@ -7,6 +7,8 @@ import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 
 import { AiRouterService } from './ai-router.service';
+import { AiRouterPlanGeneratorService } from './services/ai-router-plan-generator.service';
+import { AiRouterStrategyDeciderService } from './services/ai-router-strategy-decider.service';
 
 @Module({
   imports: [
@@ -14,7 +16,11 @@ import { AiRouterService } from './ai-router.service';
     AiModule,
     ObjectMetadataModule,
   ],
-  providers: [AiRouterService],
+  providers: [
+    AiRouterService,
+    AiRouterStrategyDeciderService,
+    AiRouterPlanGeneratorService,
+  ],
   exports: [AiRouterService],
 })
 export class AiRouterModule {}

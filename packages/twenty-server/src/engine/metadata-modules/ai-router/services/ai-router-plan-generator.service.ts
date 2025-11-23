@@ -1,0 +1,159 @@
+import { Injectable, Logger } from '@nestjs/common';
+
+import {
+  generateObject,
+  type UIDataTypes,
+  type UIMessage,
+  type UITools,
+} from 'ai';
+import { z } from 'zod';
+
+import { type ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
+import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
+import { type AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
+import { type ExecutionPlan } from 'src/engine/metadata-modules/ai-router/types/router-result.interface';
+
+@Injectable()
+export class AiRouterPlanGeneratorService {
+  private readonly logger = new Logger(AiRouterPlanGeneratorService.name);
+
+  constructor(
+    private readonly aiModelRegistryService: AiModelRegistryService,
+  ) {}
+
+  async generatePlan({
+    messages,
+    availableAgents,
+    agentDescriptions,
+    plannerModel,
+  }: {
+    messages: UIMessage<unknown, UIDataTypes, UITools>[];
+    availableAgents: AgentEntity[];
+    agentDescriptions: string;
+    plannerModel: ModelId;
+  }): Promise<ExecutionPlan> {
+    const model = this.getPlannerModel(plannerModel);
+    const agentNames = availableAgents.map((agent) => agent.name);
+
+    const conversationHistory = messages
+      .slice(0, -1)
+      .map((msg) => {
+        const textContent =
+          msg.parts.find((part) => part.type === 'text')?.text || '';
+
+        return `${msg.role}: ${textContent}`;
+      })
+      .join('\n');
+
+    const currentMessage =
+      messages[messages.length - 1]?.parts.find((part) => part.type === 'text')
+        ?.text || '';
+
+    const systemPrompt = AGENT_SYSTEM_PROMPTS.ROUTER(agentDescriptions);
+    const userPrompt = this.buildUserPrompt(
+      conversationHistory,
+      currentMessage,
+    );
+
+    const planStepSchema = z.object({
+      stepNumber: z.number().describe('Step number in execution order'),
+      agentName: z
+        .enum([agentNames[0], ...agentNames.slice(1)])
+        .describe('Agent name to execute this step'),
+      task: z.string().describe('Specific task for this agent'),
+      expectedOutput: z.string().describe('Expected output from this step'),
+      dependsOn: z
+        .array(z.number())
+        .optional()
+        .describe('Step numbers this step depends on'),
+    });
+
+    const planSchema = z.object({
+      steps: z.array(planStepSchema).describe('Execution steps in order'),
+      reasoning: z.string().describe('Why multi-agent planning is needed'),
+    });
+
+    const PLANNER_TEMPERATURE = 0.1;
+
+    const result = await generateObject({
+      model,
+      system: systemPrompt,
+      prompt: userPrompt,
+      schema: planSchema,
+      temperature: PLANNER_TEMPERATURE,
+      experimental_telemetry: AI_TELEMETRY_CONFIG,
+    });
+
+    this.logger.log(
+      `[PLANNER] Generated plan with ${result.object.steps.length} steps`,
+    );
+
+    this.validatePlan(result.object);
+
+    return result.object as ExecutionPlan;
+  }
+
+  private validatePlan(plan: ExecutionPlan): void {
+    const stepNumbers = new Set(plan.steps.map((s) => s.stepNumber));
+
+    for (const step of plan.steps) {
+      if (step.dependsOn) {
+        // Check for self-dependency
+        if (step.dependsOn.includes(step.stepNumber)) {
+          throw new Error(`Step ${step.stepNumber} cannot depend on itself`);
+        }
+
+        // Check dependencies exist and come before
+        for (const dep of step.dependsOn) {
+          if (!stepNumbers.has(dep)) {
+            throw new Error(`Invalid dependency: step ${dep} not found`);
+          }
+          if (dep >= step.stepNumber) {
+            throw new Error(
+              `Step ${step.stepNumber} depends on future step ${dep}`,
+            );
+          }
+        }
+      }
+    }
+
+    this.logger.log(`[PLANNER] Plan validation passed`);
+  }
+
+  private getPlannerModel(modelId: ModelId) {
+    if (modelId === 'auto') {
+      const registeredModel =
+        this.aiModelRegistryService.getDefaultPerformanceModel();
+
+      if (!registeredModel) {
+        throw new Error('No planner model available');
+      }
+
+      return registeredModel.model;
+    }
+
+    const registeredModel = this.aiModelRegistryService.getModel(modelId);
+
+    if (!registeredModel) {
+      throw new Error(`Planner model "${modelId}" not available`);
+    }
+
+    return registeredModel.model;
+  }
+
+  private buildUserPrompt(
+    conversationHistory: string,
+    currentMessage: string,
+  ): string {
+    return `Conversation history:
+${conversationHistory || 'No previous conversation'}
+
+Current user message:
+${currentMessage}
+
+Create a multi-step plan to handle this request.`;
+  }
+}
+

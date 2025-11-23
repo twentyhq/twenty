@@ -39,4 +39,5 @@ Prioritize user understanding and workflow effectiveness.`,
   isCustom: false,
   standardRoleId: WORKFLOW_MANAGER_ROLE.standardId,
   modelConfiguration: {},
+  outputStrategy: 'direct',
 };
