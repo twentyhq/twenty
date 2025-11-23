@@ -10,6 +10,8 @@ import { RoleTargetExceptionCode } from 'src/engine/metadata-modules/role/except
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { validateFlatRoleTargetAssignationAvailability } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util';
+import { validateFlatRoleTargetTargetsOnlyOneEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-targets-only-one-entity.util';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
@@ -46,6 +48,12 @@ export class FlatRoleTargetValidatorService {
       });
     }
 
+    validationResult.errors.push(
+      ...validateFlatRoleTargetTargetsOnlyOneEntity({
+        flatRoleTarget: flatRoleTargetToValidate,
+      }),
+    );
+
     const referencedRole = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatRoleTargetToValidate.roleId,
       flatEntityMaps: flatRoleMaps,
@@ -57,49 +65,13 @@ export class FlatRoleTargetValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
-    }
-
-    const definedIdentifiersCount = [
-      isDefined(flatRoleTargetToValidate.apiKeyId),
-      isDefined(flatRoleTargetToValidate.userWorkspaceId),
-      isDefined(flatRoleTargetToValidate.agentId),
-    ].filter(Boolean).length;
-
-    if (definedIdentifiersCount !== 1) {
-      validationResult.errors.push({
-        code: RoleTargetExceptionCode.ROLE_TARGET_MISSING_IDENTIFIER,
-        message: t`Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId`,
-        userFriendlyMessage: msg`Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId`,
-      });
-    }
-
-    // TODO prastoin centralize and improve
-    if (isDefined(referencedRole)) {
-      if (isDefined(flatRoleTargetToValidate.agentId)) {
-        if (!referencedRole.canBeAssignedToAgents) {
-          validationResult.errors.push({
-            code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
-            message: t`Role "${referencedRole.label}" cannot be assigned to agents`,
-            userFriendlyMessage: msg`Role "${referencedRole.label}" cannot be assigned to agents`,
-          });
-        }
-      } else if (isDefined(flatRoleTargetToValidate.userWorkspaceId)) {
-        if (!referencedRole.canBeAssignedToUsers) {
-          validationResult.errors.push({
-            code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
-            message: t`Role "${referencedRole.label}" cannot be assigned to users`,
-            userFriendlyMessage: msg`Role "${referencedRole.label}" cannot be assigned to users`,
-          });
-        }
-      } else if (isDefined(flatRoleTargetToValidate.apiKeyId)) {
-        if (!referencedRole.canBeAssignedToApiKeys) {
-          validationResult.errors.push({
-            code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
-            message: t`Role "${referencedRole.label}" cannot be assigned to API keys`,
-            userFriendlyMessage: msg`Role "${referencedRole.label}" cannot be assigned to API keys`,
-          });
-        }
-      }
+    } else {
+      validationResult.errors.push(
+        ...validateFlatRoleTargetAssignationAvailability({
+          flatRole: referencedRole,
+          flatRoleTarget: flatRoleTargetToValidate,
+        }),
+      );
     }
 
     return validationResult;
@@ -176,6 +148,12 @@ export class FlatRoleTargetValidatorService {
       }),
     };
 
+    validationResult.errors.push(
+      ...validateFlatRoleTargetTargetsOnlyOneEntity({
+        flatRoleTarget: updatedFlatRoleTarget,
+      }),
+    );
+
     const referencedRole = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: updatedFlatRoleTarget.roleId,
       flatEntityMaps: flatRoleMaps,
@@ -187,48 +165,13 @@ export class FlatRoleTargetValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
-    }
-
-    const definedIdentifiersCount = [
-      isDefined(updatedFlatRoleTarget.apiKeyId),
-      isDefined(updatedFlatRoleTarget.userWorkspaceId),
-      isDefined(updatedFlatRoleTarget.agentId),
-    ].filter(Boolean).length;
-
-    if (definedIdentifiersCount !== 1) {
-      validationResult.errors.push({
-        code: RoleTargetExceptionCode.ROLE_TARGET_MISSING_IDENTIFIER,
-        message: t`Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId`,
-        userFriendlyMessage: msg`Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId`,
-      });
-    }
-
-    if (isDefined(referencedRole)) {
-      if (isDefined(updatedFlatRoleTarget.agentId)) {
-        if (!referencedRole.canBeAssignedToAgents) {
-          validationResult.errors.push({
-            code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
-            message: t`Role "${referencedRole.label}" cannot be assigned to agents`,
-            userFriendlyMessage: msg`Role "${referencedRole.label}" cannot be assigned to agents`,
-          });
-        }
-      } else if (isDefined(updatedFlatRoleTarget.userWorkspaceId)) {
-        if (!referencedRole.canBeAssignedToUsers) {
-          validationResult.errors.push({
-            code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
-            message: t`Role "${referencedRole.label}" cannot be assigned to users`,
-            userFriendlyMessage: msg`Role "${referencedRole.label}" cannot be assigned to users`,
-          });
-        }
-      } else if (isDefined(updatedFlatRoleTarget.apiKeyId)) {
-        if (!referencedRole.canBeAssignedToApiKeys) {
-          validationResult.errors.push({
-            code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
-            message: t`Role "${referencedRole.label}" cannot be assigned to API keys`,
-            userFriendlyMessage: msg`Role "${referencedRole.label}" cannot be assigned to API keys`,
-          });
-        }
-      }
+    } else {
+      validationResult.errors.push(
+        ...validateFlatRoleTargetAssignationAvailability({
+          flatRole: referencedRole,
+          flatRoleTarget: updatedFlatRoleTarget,
+        }),
+      );
     }
 
     return validationResult;
