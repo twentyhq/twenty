@@ -126,6 +126,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         isSyncEnabled: true,
         syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
         syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
+        pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
         syncCursor: '',
         syncStageStartedAt: null,
       };
@@ -156,6 +157,7 @@ describe('ImapSmtpCalDavAPIService', () => {
           isSyncEnabled: true,
           syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
           syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
+          pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
           syncCursor: '',
           syncStageStartedAt: null,
           pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
@@ -281,6 +283,7 @@ describe('ImapSmtpCalDavAPIService', () => {
       const expectedCalendarChannel = {
         id: 'mocked-uuid',
         connectedAccountId: 'mocked-uuid',
+
         handle: 'test@example.com',
       };
 
@@ -299,6 +302,7 @@ describe('ImapSmtpCalDavAPIService', () => {
           isSyncEnabled: false,
           syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
           syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
+          pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
           syncCursor: '',
           syncStageStartedAt: null,
           pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,

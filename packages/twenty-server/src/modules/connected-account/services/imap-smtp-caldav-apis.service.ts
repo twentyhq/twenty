@@ -149,6 +149,7 @@ export class ImapSmtpCalDavAPIService {
         isSyncEnabled: shouldEnableSync,
         syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
         syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
+        pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
         syncCursor: '',
         syncStageStartedAt: null,
         pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
