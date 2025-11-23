@@ -137,16 +137,28 @@ export class AgentStreamingService {
           }
 
           if (routeResult.strategy === 'planned') {
+            this.logger.log(
+              `Executing planned strategy with ${routeResult.plan.steps.length} steps`,
+            );
+            this.logger.log(
+              `Plan steps: ${routeResult.plan.steps.map((s) => `${s.stepNumber}. ${s.agentName}: ${s.task}`).join('; ')}`,
+            );
+
             writer.write({
               type: 'data-routing-status' as const,
               id: 'routing-status',
               data: {
-                text: `Executing multi-step plan with ${routeResult.plan.steps.length} steps`,
+                text: `Executing ${routeResult.plan.steps.length}-step plan`,
                 state: 'routed',
                 debug: {
                   routingTimeMs: routingTime,
                   planReasoning: routeResult.plan.reasoning,
                   totalSteps: routeResult.plan.steps.length,
+                  steps: routeResult.plan.steps.map((s) => ({
+                    stepNumber: s.stepNumber,
+                    agent: s.agentName,
+                    task: s.task,
+                  })),
                 },
               },
             });
@@ -160,20 +172,26 @@ export class AgentStreamingService {
               writer,
               onProgress: (progress) => {
                 if (progress.type === 'step-started') {
+                  this.logger.log(
+                    `Starting step ${progress.stepNumber}: ${progress.agentName} - ${progress.task}`,
+                  );
                   writer.write({
                     type: 'data-routing-status' as const,
                     id: `step-${progress.stepNumber}`,
                     data: {
-                      text: `Step ${progress.stepNumber}: ${progress.task}`,
+                      text: `Step ${progress.stepNumber}/${routeResult.plan.steps.length}: ${progress.agentName} → ${progress.task}`,
                       state: 'loading',
                     },
                   });
                 } else if (progress.type === 'step-completed') {
+                  this.logger.log(
+                    `Completed step ${progress.stepNumber}: ${progress.agentName}`,
+                  );
                   writer.write({
                     type: 'data-routing-status' as const,
                     id: `step-${progress.stepNumber}`,
                     data: {
-                      text: `Step ${progress.stepNumber}: ✓ ${progress.agentName}`,
+                      text: `Step ${progress.stepNumber}/${routeResult.plan.steps.length}: ✓ ${progress.agentName} completed`,
                       state: 'routed',
                     },
                   });

@@ -66,6 +66,20 @@ export class AgentPlanExecutorService {
 
     for (const step of steps) {
       try {
+        this.logger.log(
+          `[PLAN EXECUTION] Step ${step.stepNumber}: Looking up agent "${step.agentName}"`,
+        );
+
+        const agent =
+          await this.agentExecutionService.agentService.findOneAgent(
+            workspace.id,
+            { name: step.agentName },
+          );
+
+        this.logger.log(
+          `[PLAN EXECUTION] Step ${step.stepNumber}: Found agent "${agent.label}" (${agent.id})`,
+        );
+
         onProgress?.({
           type: 'step-started',
           stepNumber: step.stepNumber,
@@ -79,12 +93,6 @@ export class AgentPlanExecutorService {
         );
 
         const promptWithContext = this.buildStepPrompt(step, dependencyOutputs);
-
-        const agent =
-          await this.agentExecutionService.agentService.findOneAgent(
-            workspace.id,
-            { name: step.agentName },
-          );
 
         const { stream: stepStream } =
           await this.agentExecutionService.streamChatResponse({

@@ -51,11 +51,20 @@ export class AiRouterPlanGeneratorService {
       messages[messages.length - 1]?.parts.find((part) => part.type === 'text')
         ?.text || '';
 
-    const systemPrompt = AGENT_SYSTEM_PROMPTS.ROUTER(agentDescriptions);
-    const userPrompt = this.buildUserPrompt(
-      conversationHistory,
-      currentMessage,
-    );
+    const systemPrompt = `You are an AI planner that creates execution plans for multi-agent tasks.
+
+Available agents:
+${agentDescriptions}
+
+Create a step-by-step execution plan. Each step should:
+- Assign to the most appropriate agent
+- Have a clear, specific task
+- Specify expected output
+- List dependencies on previous steps (if any)
+
+Keep plans focused and efficient.`;
+
+    const userPrompt = `${conversationHistory ? `Conversation history:\n${conversationHistory}\n\n` : ''}Current request:\n${currentMessage}\n\nCreate a detailed execution plan with specific steps.`;
 
     const planStepSchema = z.object({
       stepNumber: z.number().describe('Step number in execution order'),

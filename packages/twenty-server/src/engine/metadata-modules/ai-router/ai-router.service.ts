@@ -8,7 +8,6 @@ import { type ModelId } from 'src/engine/core-modules/ai/constants/ai-models.con
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-related-object.util';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
-import { DATA_MANIPULATOR_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/data-manipulator-agent';
 import { HELPER_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/helper-agent';
 
 import { AiRouterPlanGeneratorService } from './services/ai-router-plan-generator.service';
@@ -254,22 +253,19 @@ export class AiRouterService {
     agents: AgentEntity[],
     workspaceObjectsList: string,
   ): string {
-    return agents
+    const agentDescriptions = agents
       .map((agent) => {
-        const baseDescription = `- ${agent.label} (${agent.name}): ${agent.description}`;
-
-        if (
-          agent.standardId === DATA_MANIPULATOR_AGENT.standardId &&
-          workspaceObjectsList
-        ) {
-          return `${baseDescription}
-
-Available workspace objects:
-${workspaceObjectsList}`;
-        }
-
-        return baseDescription;
+        return `- ${agent.label} (${agent.name}): ${agent.description}`;
       })
       .join('\n');
+
+    if (workspaceObjectsList) {
+      return `${agentDescriptions}
+
+Available workspace objects for data-manipulator:
+${workspaceObjectsList}`;
+    }
+
+    return agentDescriptions;
   }
 }
