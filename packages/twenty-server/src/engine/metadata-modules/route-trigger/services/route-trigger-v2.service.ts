@@ -30,6 +30,11 @@ export class RouteTriggerV2Service {
   async createOne(
     routeTriggerInput: CreateRouteTriggerInput,
     workspaceId: string,
+    /**
+     * @deprecated do not use call validateBuildAndRunWorkspaceMigration contextually
+     * when interacting with another application than workspace custom one
+     * */
+    applicationId?: string,
   ) {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -52,7 +57,8 @@ export class RouteTriggerV2Service {
       fromCreateRouteTriggerInputToFlatRouteTrigger({
         createRouteTriggerInput: routeTriggerInput,
         workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        workspaceCustomApplicationId:
+          applicationId ?? workspaceCustomFlatApplication.id,
       });
 
     const validateAndBuildResult =

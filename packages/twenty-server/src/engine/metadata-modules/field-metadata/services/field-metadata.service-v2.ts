@@ -41,13 +41,20 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
   async createOneField({
     createFieldInput,
     workspaceId,
+    applicationId,
   }: {
     createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
     workspaceId: string;
+    /**
+     * @deprecated do not use call validateBuildAndRunWorkspaceMigration contextually
+     * when interacting with another application than workspace custom one
+     * */
+    applicationId?: string;
   }): Promise<FlatFieldMetadata> {
     const [createdFieldMetadata] = await this.createManyFields({
       workspaceId,
       createFieldInputs: [createFieldInput],
+      applicationId,
     });
 
     if (!isDefined(createdFieldMetadata)) {
@@ -285,9 +292,15 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
   async createManyFields({
     createFieldInputs,
     workspaceId,
+    applicationId,
   }: {
     createFieldInputs: Omit<CreateFieldInput, 'workspaceId'>[];
     workspaceId: string;
+    /**
+     * @deprecated do not use call validateBuildAndRunWorkspaceMigration contextually
+     * when interacting with another application than workspace custom one
+     * */
+    applicationId?: string;
   }): Promise<FlatFieldMetadata[]> {
     if (createFieldInputs.length === 0) {
       return [];
@@ -325,7 +338,8 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
           flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
           createFieldInput,
           workspaceId,
-          workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+          workspaceCustomApplicationId:
+            applicationId ?? workspaceCustomFlatApplication.id,
         }),
       );
     }

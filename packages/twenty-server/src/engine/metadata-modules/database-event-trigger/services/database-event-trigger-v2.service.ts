@@ -30,6 +30,11 @@ export class DatabaseEventTriggerV2Service {
   async createOne(
     databaseEventTriggerInput: CreateDatabaseEventTriggerInput,
     workspaceId: string,
+    /**
+     * @deprecated do not use call validateBuildAndRunWorkspaceMigration contextually
+     * when interacting with another application than workspace custom one
+     * */
+    applicationId?: string,
   ) {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -56,7 +61,8 @@ export class DatabaseEventTriggerV2Service {
       fromCreateDatabaseEventTriggerInputToFlatDatabaseEventTrigger({
         createDatabaseEventTriggerInput: databaseEventTriggerInput,
         workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        workspaceCustomApplicationId:
+          applicationId ?? workspaceCustomFlatApplication.id,
       });
 
     const validateAndBuildResult =

@@ -325,9 +325,15 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
   async createOneObject({
     createObjectInput,
     workspaceId,
+    applicationId,
   }: {
     createObjectInput: CreateObjectInput;
     workspaceId: string;
+    /**
+     * @deprecated do not use call validateBuildAndRunWorkspaceMigration contextually
+     * when interacting with another application than workspace custom one
+     * */
+    applicationId?: string;
   }): Promise<FlatObjectMetadata> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -362,7 +368,8 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
     } = fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
       createObjectInput,
       workspaceId,
-      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+      workspaceCustomApplicationId:
+        applicationId ?? workspaceCustomFlatApplication.id,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
     });
 
