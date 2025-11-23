@@ -1,8 +1,8 @@
 import { v4 } from 'uuid';
+import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
-import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 
 export const fromCreateRoleInputToFlatRoleToCreate = ({
   createRoleInput,

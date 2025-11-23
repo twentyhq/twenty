@@ -80,7 +80,6 @@ export class ApiKeyRoleService {
       workspaceId: string;
     },
   ): Promise<void> {
-
     await manager.delete(RoleTargetsEntity, {
       apiKeyId,
       workspaceId,
