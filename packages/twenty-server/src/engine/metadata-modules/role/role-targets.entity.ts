@@ -12,9 +12,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
+
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
 @Entity('roleTargets')
 @Unique('IDX_ROLE_TARGETS_UNIQUE', [

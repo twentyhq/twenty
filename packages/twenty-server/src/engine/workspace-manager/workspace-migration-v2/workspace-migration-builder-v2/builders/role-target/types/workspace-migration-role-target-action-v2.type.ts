@@ -24,4 +24,3 @@ export type WorkspaceMigrationRoleTargetActionV2 =
 
 export type WorkspaceMigrationRoleTargetActionTypeV2 =
   WorkspaceMigrationRoleTargetActionV2['type'];
-

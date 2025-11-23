@@ -6,4 +6,3 @@ export const FLAT_ROLE_TARGET_EDITABLE_PROPERTIES = [
   'agentId',
   'apiKeyId',
 ] as const satisfies (keyof FlatRoleTarget)[];
-

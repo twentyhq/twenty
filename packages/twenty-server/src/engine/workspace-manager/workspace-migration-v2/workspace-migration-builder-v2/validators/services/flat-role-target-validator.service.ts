@@ -149,4 +149,3 @@ export class FlatRoleTargetValidatorService {
     return validationResult;
   }
 }
-

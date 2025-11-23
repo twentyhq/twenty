@@ -15,4 +15,3 @@ export const fromRoleTargetsEntityToFlatRoleTarget = (
     universalIdentifier: roleTarget.universalIdentifier ?? roleTarget.id,
   };
 };
-
