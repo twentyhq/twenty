@@ -24,6 +24,7 @@ export const useMetadataErrorHandler = () => {
     databaseEventTrigger: t`database trigger`,
     routeTrigger: t`route trigger`,
     role: t`role`,
+    roleTarget: t`role target`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = useCallback(

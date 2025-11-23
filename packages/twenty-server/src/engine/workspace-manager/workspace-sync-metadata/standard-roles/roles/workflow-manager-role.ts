@@ -17,7 +17,7 @@ export const WORKFLOW_MANAGER_ROLE: StandardRoleDefinition = {
   canBeAssignedToAgents: true,
   canBeAssignedToApiKeys: false,
   permissionFlags: [PermissionFlagType.WORKFLOWS],
-  applicationId: null,
+  applicationId: null, // TODO: Replace with Twenty application ID
   createdAt: new Date(),
   updatedAt: new Date(),
   roleTargetIds: [],
