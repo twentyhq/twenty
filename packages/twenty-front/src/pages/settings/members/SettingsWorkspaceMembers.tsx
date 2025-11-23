@@ -7,6 +7,7 @@ import { useInView } from 'react-intersection-observer';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useDebounce } from 'use-debounce';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -114,6 +115,7 @@ export const SettingsWorkspaceMembers = () => {
   const navigateSettings = useNavigateSettings();
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const [debouncedSearchFilter] = useDebounce(searchFilter, 300);
 
@@ -409,7 +411,9 @@ export const SettingsWorkspaceMembers = () => {
                     </TableCell>
                     <TableCell align="right">
                       <StyledChevronWrapper>
-                        <IconChevronRight size={theme.icon.size.sm} />
+                        {currentWorkspaceMember?.id !== workspaceMember.id && (
+                          <IconChevronRight size={theme.icon.size.sm} />
+                        )}
                       </StyledChevronWrapper>
                     </TableCell>
                   </StyledClickableTableRow>
