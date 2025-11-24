@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type UIDataTypes, type UIMessage, type UITools } from 'ai';
 import { IsNull, type Repository } from 'typeorm';
 
-import { type ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
-import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-related-object.util';
+import { type ModelId } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
+import { AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
+import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai-agent/utils/is-workflow-related-object.util';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { HELPER_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/helper-agent';
 

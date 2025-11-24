@@ -1,4 +1,4 @@
-import { type AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { type AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
 
 import { type ToolHints } from './tool-hints.interface';
 

@@ -4,7 +4,7 @@ import { IsBoolean, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/applicationVariable/dtos/application-variable.dto';
-import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
+import { AgentDTO } from 'src/engine/metadata-modules/ai-agent/dtos/agent.dto';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { ServerlessFunctionDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
 

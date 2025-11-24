@@ -5,7 +5,9 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
-import { AiModule } from 'src/engine/core-modules/ai/ai.module';
+import { AiModelsModule } from 'src/engine/metadata-modules/ai-models/ai-models.module';
+import { AiToolsModule } from 'src/engine/metadata-modules/ai-tools/ai-tools.module';
+import { AiBillingModule } from 'src/engine/metadata-modules/ai-billing/ai-billing.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -125,7 +127,9 @@ import { FileModule } from './file/file.module';
       wildcard: true,
     }),
     CacheStorageModule,
-    AiModule,
+    AiModelsModule,
+    AiToolsModule,
+    AiBillingModule,
     ServerlessModule.forRootAsync({
       useFactory: serverlessModuleFactory,
       inject: [TwentyConfigService, FileStorageService],

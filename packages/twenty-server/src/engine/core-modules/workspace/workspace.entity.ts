@@ -19,7 +19,7 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { ModelId } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -32,7 +32,7 @@ import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public
 import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WebhookEntity } from 'src/engine/core-modules/webhook/webhook.entity';
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';

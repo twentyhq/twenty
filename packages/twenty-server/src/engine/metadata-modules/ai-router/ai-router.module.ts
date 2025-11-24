@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AiModule } from 'src/engine/core-modules/ai/ai.module';
+import { AiModelsModule } from 'src/engine/metadata-modules/ai-models/ai-models.module';
+import { AiToolsModule } from 'src/engine/metadata-modules/ai-tools/ai-tools.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 
 import { AiRouterService } from './ai-router.service';
@@ -14,7 +15,8 @@ import { AiRouterStrategyDeciderService } from './services/ai-router-strategy-de
 @Module({
   imports: [
     TypeOrmModule.forFeature([AgentEntity, WorkspaceEntity]),
-    AiModule,
+    AiModelsModule,
+    AiToolsModule,
     ObjectMetadataModule,
   ],
   providers: [

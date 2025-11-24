@@ -8,9 +8,9 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 import {
   AI_MODELS,
   ModelProvider,
-} from 'src/engine/core-modules/ai/constants/ai-models.const';
-import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
-import { convertCentsToBillingCredits } from 'src/engine/core-modules/ai/utils/convert-cents-to-billing-credits.util';
+} from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai-models/services/ai-model-registry.service';
+import { convertCentsToBillingCredits } from 'src/engine/metadata-modules/ai-billing/utils/convert-cents-to-billing-credits.util';
 import {
   type ClientAIModelConfig,
   type ClientConfig,

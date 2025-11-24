@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AiModule } from 'src/engine/core-modules/ai/ai.module';
+import { AiModelsModule } from 'src/engine/metadata-modules/ai-models/ai-models.module';
+import { AiToolsModule } from 'src/engine/metadata-modules/ai-tools/ai-tools.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
@@ -15,7 +16,8 @@ import { AiAgentWorkflowAction } from './ai-agent.workflow-action';
 
 @Module({
   imports: [
-    AiModule,
+    AiModelsModule,
+    AiToolsModule,
     TypeOrmModule.forFeature([AgentEntity, RoleTargetsEntity]),
     WorkflowRunModule,
     UserWorkspaceModule,

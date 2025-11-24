@@ -6,12 +6,12 @@ import { Repository } from 'typeorm';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { AIBillingService } from 'src/engine/metadata-modules/ai-billing/services/ai-billing.service';
+import { AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
 import {
   AgentException,
   AgentExceptionCode,
-} from 'src/engine/metadata-modules/agent/agent.exception';
+} from 'src/engine/metadata-modules/ai-agent/agent.exception';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,

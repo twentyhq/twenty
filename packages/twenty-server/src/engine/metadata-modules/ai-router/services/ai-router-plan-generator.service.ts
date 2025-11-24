@@ -8,10 +8,10 @@ import {
 } from 'ai';
 import { z } from 'zod';
 
-import { type ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
-import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
-import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
-import { type AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { type ModelId } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
+import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai-models/constants/ai-telemetry.const';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai-models/services/ai-model-registry.service';
+import { type AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
 import { type ExecutionPlan } from 'src/engine/metadata-modules/ai-router/types/router-result.interface';
 
 @Injectable()
