@@ -8956,7 +8956,8 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid "This action cannot be undone. This will permanently delete your\n"
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Această acțiune nu poate fi anulată. Acest lucru va șterge definitiv întregul tău cont."
 

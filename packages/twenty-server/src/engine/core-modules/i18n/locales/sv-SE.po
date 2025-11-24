@@ -2136,7 +2136,8 @@ msgstr "Saknas obligatoriska fält: minst en unik begränsning måste vara fulls
 #. js-lingui-id: hty0d5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Monday"
-msgstr "M\n"
+msgstr ""
+"M\n"
 "ndags"
 
 #. js-lingui-id: FqzlX4
@@ -2891,7 +2892,8 @@ msgstr "K\"or"
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
-msgstr "L\n"
+msgstr ""
+"L\n"
 "urdag"
 
 #. js-lingui-id: N/rFzD
@@ -3031,7 +3033,8 @@ msgstr "\"amnet"
 #. js-lingui-id: DBC3t5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Sunday"
-msgstr "S\n"
+msgstr ""
+"S\n"
 "nd"
 
 #. js-lingui-id: oyJYg7
