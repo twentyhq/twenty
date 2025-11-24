@@ -11,9 +11,9 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
-  name: '1-10-create-view-kanban-field-metadata-id-foreign-key-migration',
+  name: '1-12-workspace-custom-application-id-non-nullable-migration',
   description:
-    'Create FK_b3cc95732479f7a1337350c398f foreign key on view kanban field metadata id column',
+    'Create FK_3b1acb13a5dac9956d1a4b32755 foreign key',
 })
 export class WorkspaceCustomApplicationIdNonNullableCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   private hasRunOnce = false;
