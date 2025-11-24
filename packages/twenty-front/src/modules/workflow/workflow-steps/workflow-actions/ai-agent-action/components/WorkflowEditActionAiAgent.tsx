@@ -1,26 +1,34 @@
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
-import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { Select } from '@/ui/input/components/Select';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
-import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { WorkflowAiAgentPermissionsTab } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab';
+import { WORKFLOW_AI_AGENT_TABS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentTabs';
+import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import {
   type AgentResponseSchema,
   type ModelConfiguration,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
+import { IconLock, IconSparkles } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   useFindOneAgentQuery,
   useUpdateOneAgentMutation,
 } from '~/generated-metadata/graphql';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
-import { SettingsAgentModelCapabilities } from '~/pages/settings/ai/components/SettingsAgentModelCapabilities';
-import { SettingsAgentResponseFormat } from '~/pages/settings/ai/components/SettingsAgentResponseFormat';
+import { WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID } from '../constants/WorkflowAiAgentTabListComponentId';
+import { WorkflowAiAgentPromptTab } from './WorkflowAiAgentPromptTab';
+
+export type WorkflowAiAgentTabId =
+  (typeof WORKFLOW_AI_AGENT_TABS)[keyof typeof WORKFLOW_AI_AGENT_TABS];
 
 type WorkflowEditActionAiAgentProps = {
   action: WorkflowAiAgentAction;
@@ -32,10 +40,16 @@ type WorkflowEditActionAiAgentProps = {
       };
 };
 
+const StyledTabList = styled(TabList)`
+  background-color: ${({ theme }) => theme.background.secondary};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const WorkflowEditActionAiAgent = ({
   action,
   actionOptions,
 }: WorkflowEditActionAiAgentProps) => {
+  const componentInstanceId = `${WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID}-${action.id}`;
   const agentId = action.settings.input.agentId;
   const { data: agentData, loading: agentLoading } = useFindOneAgentQuery({
     variables: { id: agentId || '' },
@@ -130,6 +144,26 @@ export const WorkflowEditActionAiAgent = ({
     300,
   );
 
+  const tabs: SingleTabProps[] = [
+    {
+      id: WORKFLOW_AI_AGENT_TABS.PROMPT,
+      title: t`Prompt`,
+      Icon: IconSparkles,
+    },
+    {
+      id: WORKFLOW_AI_AGENT_TABS.PERMISSIONS,
+      title: t`Permissions`,
+      Icon: IconLock,
+    },
+  ];
+
+  const activeTabId = useRecoilComponentValue(
+    activeTabIdComponentState,
+    componentInstanceId,
+  );
+  const currentTabId =
+    (activeTabId as WorkflowAiAgentTabId) ?? WORKFLOW_AI_AGENT_TABS.PROMPT;
+
   const handleAgentResponseFormatChange = async (format: {
     type: 'text' | 'json';
     schema?: AgentResponseSchema;
@@ -146,43 +180,24 @@ export const WorkflowEditActionAiAgent = ({
     <RightDrawerSkeletonLoader />
   ) : (
     <>
+      <StyledTabList
+        tabs={tabs}
+        componentInstanceId={componentInstanceId}
+        behaveAsLinks={false}
+      />
       <WorkflowStepBody>
-        <FormTextFieldInput
-          multiline
-          VariablePicker={WorkflowVariablePicker}
-          label={t`Instructions for AI`}
-          placeholder={t`Describe what you want the AI to do...`}
-          defaultValue={agent?.prompt || ''}
-          onChange={handleAgentPromptChange}
-          readonly={actionOptions.readonly}
-        />
-
-        {isDefined(agent) && (
-          <>
-            <Select
-              dropdownId="select-agent-model"
-              label={t`AI Model`}
-              options={aiModelOptions}
-              value={agent.modelId}
-              onChange={handleAgentModelChange}
-              disabled={actionOptions.readonly}
-            />
-
-            <SettingsAgentModelCapabilities
-              selectedModelId={agent.modelId}
-              modelConfiguration={agent.modelConfiguration || {}}
-              onConfigurationChange={handleModelConfigurationChange}
-              disabled={actionOptions.readonly}
-            />
-
-            <SettingsAgentResponseFormat
-              responseFormat={
-                agent.responseFormat || { type: 'text', schema: {} }
-              }
-              onResponseFormatChange={handleAgentResponseFormatChange}
-              disabled={actionOptions.readonly}
-            />
-          </>
+        {currentTabId === WORKFLOW_AI_AGENT_TABS.PERMISSIONS ? (
+          <WorkflowAiAgentPermissionsTab />
+        ) : (
+          <WorkflowAiAgentPromptTab
+            agent={agent}
+            readonly={actionOptions.readonly === true}
+            aiModelOptions={aiModelOptions}
+            onPromptChange={handleAgentPromptChange}
+            onModelChange={handleAgentModelChange}
+            onModelConfigurationChange={handleModelConfigurationChange}
+            onResponseFormatChange={handleAgentResponseFormatChange}
+          />
         )}
       </WorkflowStepBody>
       {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
