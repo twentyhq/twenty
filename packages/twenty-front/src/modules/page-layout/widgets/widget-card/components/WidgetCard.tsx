@@ -1,25 +1,7 @@
-import { type PageLayoutTabLayoutMode } from '@/page-layout/types/PageLayoutTabLayoutMode';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type PageLayoutType } from '~/generated/graphql';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
-
-export type WidgetCardProps = {
-  children?: ReactNode;
-  pageLayoutType: PageLayoutType;
-  layoutMode: PageLayoutTabLayoutMode;
-  onClick?: () => void;
-  isEditing: boolean;
-  isDragging: boolean;
-  isInPinnedTab: boolean;
-  isResizing?: boolean;
-  className?: string;
-  onMouseEnter?: () => void;
-  onMouseLeave?: () => void;
-  widgetId: string;
-};
 
 const StyledWidgetCard = styled.div<{
   variant: WidgetCardVariant;
