@@ -15,6 +15,11 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
+
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
+
+import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
@@ -23,10 +28,7 @@ import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPag
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
-import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
-import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -59,9 +61,9 @@ const createdAtField = getMockFieldMetadataItemOrThrow({
   fieldName: 'createdAt',
 });
 
-const barChartGroupByQuery = generateGroupByQuery({
+const barChartGroupByQuery = generateGroupByAggregateQuery({
   objectMetadataItem: companyObjectMetadataItem,
-  aggregateOperations: ['totalCount'],
+  aggregateOperationGqlFields: ['totalCount'],
 });
 
 const graphqlMocks: MockedResponse[] = [

@@ -144,7 +144,7 @@ msgid "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} o
 msgstr "{advancedFilterCount, plural, other {{advancedFilterCount} 件の高度なルール}}"
 
 #. js-lingui-id: ROdDR9
-#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
+#: src/modules/object-record/record-aggregate/utils/getAggregateLabelWithFieldName.ts
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{fieldLabel}の{aggregateLabel}"
 
@@ -8956,8 +8956,7 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "この操作は取り消せません。これにより、アカウント全体が永久に削除されます。"
 
@@ -9243,7 +9242,7 @@ msgstr "タイプ"
 #. js-lingui-id: qzD6hf
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
 msgid "Type anything..."
-msgstr ""
+msgstr "何でも入力..."
 
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx

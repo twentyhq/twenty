@@ -144,7 +144,7 @@ msgid "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} o
 msgstr "{advancedFilterCount, plural, one {{advancedFilterCount} haladó szabály} other {{advancedFilterCount} haladó szabályok}}"
 
 #. js-lingui-id: ROdDR9
-#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
+#: src/modules/object-record/record-aggregate/utils/getAggregateLabelWithFieldName.ts
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} a(z) {fieldLabel} alapján"
 
@@ -8956,8 +8956,7 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Ez a művelet nem visszavonható. Ez véglegesen törli az egész fiókját."
 
@@ -9243,7 +9242,7 @@ msgstr "Típus"
 #. js-lingui-id: qzD6hf
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
 msgid "Type anything..."
-msgstr ""
+msgstr "Írjon be bármit..."
 
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx

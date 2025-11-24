@@ -1,5 +1,5 @@
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
-import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowIdComponentState';
+import { useCommandMenuWorkflowIdOrThrow } from '@/command-menu/pages/workflow/hooks/useCommandMenuWorkflowIdOrThrow';
 import { commandMenuWorkflowStepIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowStepIdComponentState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
@@ -7,10 +7,12 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { getAgentIdFromStep } from '@/workflow/utils/getAgentIdFromStep';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
+import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { useUpdateAgentLabel } from '@/workflow/workflow-steps/hooks/useUpdateAgentLabel';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
@@ -18,45 +20,13 @@ import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-ac
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
-
-const StyledWorkflowStepInfoContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(0.5)};
-`;
-
-const StyledWorkflowStepIcon = styled.div<{ iconColor: string }>`
-  align-items: center;
-  background: ${({ theme }) => theme.background.transparent.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ iconColor }) => iconColor};
-  display: flex;
-  flex-shrink: 0;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledWorkflowStepTitleContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  min-width: 0;
-`;
-
-const StyledWorkflowStepType = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  white-space: nowrap;
-`;
+import { CommandMenuPageInfoLayout } from './CommandMenuPageInfoLayout';
 
 export const CommandMenuWorkflowStepInfo = ({
   commandMenuPageInstanceId,
@@ -68,10 +38,7 @@ export const CommandMenuWorkflowStepInfo = ({
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);
 
-  const workflowId = useRecoilComponentValue(
-    commandMenuWorkflowIdComponentState,
-    commandMenuPageInstanceId,
-  );
+  const workflowId = useCommandMenuWorkflowIdOrThrow();
 
   const workflowStepId = useRecoilComponentValue(
     commandMenuWorkflowStepIdComponentState,
@@ -85,6 +52,13 @@ export const CommandMenuWorkflowStepInfo = ({
     commandMenuPage === CommandMenuPages.WorkflowRunStepView;
 
   const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
+
+  const instanceId = getWorkflowVisualizerComponentInstanceId({
+    recordId: workflowId,
+  });
+  const { getUpdatableWorkflowVersion } =
+    useGetUpdatableWorkflowVersionOrThrow(instanceId);
+
   const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
   const { updateOneRecord: updateOneWorkflowVersion } =
     useUpdateOneRecord<WorkflowVersion>({
@@ -166,7 +140,7 @@ export const CommandMenuWorkflowStepInfo = ({
   const Icon = getIcon(headerIcon ?? 'IconDefault');
 
   const saveTitle = async () => {
-    if (!isDefined(workflowVersionId)) {
+    if (!isDefined(workflowVersionId) || !isDefined(workflowId)) {
       return;
     }
 
@@ -175,9 +149,11 @@ export const CommandMenuWorkflowStepInfo = ({
       pageIcon: Icon,
     });
 
+    const targetWorkflowVersionId = await getUpdatableWorkflowVersion();
+
     if (isTrigger) {
       await updateOneWorkflowVersion({
-        idToUpdate: workflowVersionId,
+        idToUpdate: targetWorkflowVersionId,
         updateOneRecordInput: {
           trigger: {
             ...stepDefinition.definition,
@@ -187,7 +163,7 @@ export const CommandMenuWorkflowStepInfo = ({
       });
     } else {
       await updateWorkflowVersionStep({
-        workflowVersionId,
+        workflowVersionId: targetWorkflowVersionId,
         step: {
           ...stepDefinition.definition,
           name: title,
@@ -201,13 +177,14 @@ export const CommandMenuWorkflowStepInfo = ({
   };
 
   return (
-    <StyledWorkflowStepInfoContainer>
-      {headerIcon && (
-        <StyledWorkflowStepIcon iconColor={headerIconColor}>
+    <CommandMenuPageInfoLayout
+      icon={
+        headerIcon ? (
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        </StyledWorkflowStepIcon>
-      )}
-      <StyledWorkflowStepTitleContainer>
+        ) : undefined
+      }
+      iconColor={headerIconColor}
+      title={
         <TitleInput
           instanceId={`workflow-step-title-${commandMenuPageInstanceId}`}
           disabled={isReadonly}
@@ -221,10 +198,8 @@ export const CommandMenuWorkflowStepInfo = ({
           onTab={saveTitle}
           onShiftTab={saveTitle}
         />
-      </StyledWorkflowStepTitleContainer>
-      <StyledWorkflowStepType>
-        {isTrigger ? t`Trigger` : t`Action`}
-      </StyledWorkflowStepType>
-    </StyledWorkflowStepInfoContainer>
+      }
+      label={isTrigger ? t`Trigger` : t`Action`}
+    />
   );
 };

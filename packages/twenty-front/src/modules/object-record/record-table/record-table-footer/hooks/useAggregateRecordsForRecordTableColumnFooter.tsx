@@ -1,10 +1,13 @@
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
-import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
+import { transformAggregateRawValueIntoAggregateDisplayValue } from '@/object-record/record-aggregate/utils/transformAggregateRawValueIntoAggregateDisplayValue';
+import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
+
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
+import { getRecordAggregateDisplayLabel } from '@/object-record/record-index/utils/getRecordndexAggregateDisplayLabel';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
@@ -15,8 +18,10 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
+import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import {
   computeRecordGqlOperationFilter,
+  findById,
   isDefined,
   isFieldMetadataDateKind,
   turnAnyFieldFilterIntoRecordGqlFilter,
@@ -24,7 +29,7 @@ import {
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 export const useAggregateRecordsForRecordTableColumnFooter = (
-  fieldMetadataId: string,
+  aggregateFieldMetadataId: string,
 ) => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
   const { recordGroupFilter } = useRecordGroupFilter(objectMetadataItem.fields);
@@ -53,7 +58,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   );
 
   const fieldMetadataItem = objectMetadataItem.fields.find(
-    (field) => field.id === fieldMetadataId,
+    (field) => field.id === aggregateFieldMetadataId,
   );
 
   // TODO: This shouldn't be set with impossible values,
@@ -109,20 +114,53 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
 
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
 
-  const { value, label } = computeAggregateValueAndLabel({
-    data,
-    objectMetadataItem,
-    fieldMetadataId: fieldMetadataId,
+  const aggregateFieldMetadataItem = objectMetadataItem.fields.find(
+    findById(aggregateFieldMetadataId),
+  );
+
+  if (!isDefined(aggregateFieldMetadataItem)) {
+    return {
+      aggregateValue:
+        data?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
+          AggregateOperations.COUNT
+        ],
+      aggregateLabel: getAggregateOperationLabel(AggregateOperations.COUNT),
+      isLoading: loading,
+    };
+  }
+
+  if (!isDefined(aggregateOperationForViewField)) {
+    return {
+      aggregateValue: null,
+      aggregateLabel: null,
+      isLoading: loading,
+    };
+  }
+
+  const aggregateRawValue =
+    data[aggregateFieldMetadataItem.name]?.[aggregateOperationForViewField];
+
+  const aggregateDisplayValue =
+    transformAggregateRawValueIntoAggregateDisplayValue({
+      aggregateFieldMetadataItem: aggregateFieldMetadataItem,
+      aggregateOperation: aggregateOperationForViewField,
+      aggregateRawValue: aggregateRawValue,
+      dateFormat,
+      localeCatalog: dateLocale.localeCatalog,
+      timeFormat,
+      timeZone,
+    });
+
+  const { aggregateLabel } = getRecordAggregateDisplayLabel({
+    aggregateFieldMetadataItem,
     aggregateOperation: aggregateOperationForViewField,
-    dateFormat,
-    timeFormat,
-    timeZone,
-    localeCatalog: dateLocale.localeCatalog,
   });
 
   return {
-    aggregateValue: value,
-    aggregateLabel: isDefined(value) ? label : undefined,
+    aggregateValue: aggregateDisplayValue,
+    aggregateLabel: isDefined(aggregateDisplayValue)
+      ? aggregateLabel
+      : undefined,
     isLoading: loading,
   };
 };

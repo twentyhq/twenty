@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -22,6 +23,7 @@ export class ViewFilterV2Service {
   constructor(
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async createOne({
@@ -31,6 +33,13 @@ export class ViewFilterV2Service {
     createViewFilterInput: CreateViewFilterInput;
     workspaceId: string;
   }): Promise<ViewFilterDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const {
       flatViewFilterMaps: existingFlatViewFilterMaps,
       flatViewMaps,
@@ -52,6 +61,7 @@ export class ViewFilterV2Service {
       fromCreateViewFilterInputToFlatViewFilterToCreate({
         createViewFilterInput,
         workspaceId,
+        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
       });
 
     const validateAndBuildResult =

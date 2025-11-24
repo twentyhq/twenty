@@ -229,7 +229,6 @@ msgstr "Zagregowane / filtrowane zdarzenie do wyświetlenia na osi czasu"
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/messages-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/message-threads-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/calendar-events-all.view.ts
 msgid "All {objectLabelPlural}"
@@ -525,7 +524,6 @@ msgid "Body"
 msgstr "Treść"
 
 #. js-lingui-id: 6+byWT
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
 msgid "By Stage"
 msgstr "Według etapu"
@@ -2189,12 +2187,12 @@ msgstr "Nazwa \"{computedMetadataNameFromLabel}\" nie może być taka sama po ob
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
-msgstr ""
+msgstr "Nazwa \"{name}\" jest niedostępna"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr ""
+msgstr "Nazwa \"{name}\" jest niedostępna, ponieważ jest już używana przez inne pole"
 
 #. js-lingui-id: dBDpp2
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
@@ -4190,6 +4188,11 @@ msgstr "Nieprawidłowe hasło"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "X"
+
+#. js-lingui-id: 4ysDL0
+#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
+msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
+msgstr ""
 
 #. js-lingui-id: 1SQnFB
 #: src/engine/metadata-modules/role/role.resolver.ts

@@ -144,7 +144,7 @@ msgid "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} o
 msgstr "{advancedFilterCount, plural, one {{advancedFilterCount} regola avanzata} other {{advancedFilterCount} regole avanzate}}"
 
 #. js-lingui-id: ROdDR9
-#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
+#: src/modules/object-record/record-aggregate/utils/getAggregateLabelWithFieldName.ts
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} di {fieldLabel}"
 
@@ -8956,11 +8956,9 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
-msgstr ""
-"Questa azione non può essere annullata. Questo eliminerà definitivamente\n"
+msgstr "Questa azione non può essere annullata. Questo eliminerà definitivamente\n"
 "tutto il tuo account."
 
 #. js-lingui-id: bNY3MH
@@ -9245,7 +9243,7 @@ msgstr "Tipo"
 #. js-lingui-id: qzD6hf
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
 msgid "Type anything..."
-msgstr ""
+msgstr "Digita qualsiasi cosa..."
 
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
