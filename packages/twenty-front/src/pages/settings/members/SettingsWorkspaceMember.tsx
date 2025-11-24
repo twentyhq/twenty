@@ -11,14 +11,10 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconInfoCircle } from 'twenty-ui/display';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -31,12 +27,12 @@ import {
 } from '~/generated-metadata/graphql';
 import { PermissionFlagType } from '~/generated/graphql';
 
-const SETTINGS_WORKSPACE_MEMBER_TABS = {
-  COMPONENT_INSTANCE_ID: 'settings-workspace-member-tabs',
-  TABS_IDS: {
-    INFOS: 'infos',
-  },
-};
+// const SETTINGS_WORKSPACE_MEMBER_TABS = {
+//   COMPONENT_INSTANCE_ID: 'settings-workspace-member-tabs',
+//   TABS_IDS: {
+//     INFOS: 'infos',
+//   },
+// };
 
 const DELETE_MEMBER_MODAL_ID = 'workspace-member-delete-modal';
 
@@ -64,11 +60,11 @@ export const SettingsWorkspaceMember = () => {
     },
   });
 
-  const tabListComponentId = `${SETTINGS_WORKSPACE_MEMBER_TABS.COMPONENT_INSTANCE_ID}-${workspaceMemberId}`;
-  const activeTabId = useRecoilComponentValue(
-    activeTabIdComponentState,
-    tabListComponentId,
-  );
+  // const tabListComponentId = `${SETTINGS_WORKSPACE_MEMBER_TABS.COMPONENT_INSTANCE_ID}-${workspaceMemberId}`;
+  // const activeTabId = useRecoilComponentValue(
+  //   activeTabIdComponentState,
+  //   tabListComponentId,
+  // );
 
   const { updateOneRecord } = useUpdateOneRecord<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -171,7 +167,7 @@ export const SettingsWorkspaceMember = () => {
       ]}
     >
       <SettingsPageContainer>
-        <TabList
+        {/* <TabList
           tabs={[
             {
               id: SETTINGS_WORKSPACE_MEMBER_TABS.TABS_IDS.INFOS,
@@ -180,16 +176,16 @@ export const SettingsWorkspaceMember = () => {
             },
           ]}
           componentInstanceId={tabListComponentId}
-        />
+        /> */}
 
-        {activeTabId === SETTINGS_WORKSPACE_MEMBER_TABS.TABS_IDS.INFOS && (
-          <MemberInfosTab
-            member={member}
-            onImpersonate={canImpersonate ? handleImpersonate : undefined}
-            onNameChange={debouncedUpdateName}
-            onDelete={() => openModal(DELETE_MEMBER_MODAL_ID)}
-          />
-        )}
+        {/* {activeTabId === SETTINGS_WORKSPACE_MEMBER_TABS.TABS_IDS.INFOS && ( */}
+        <MemberInfosTab
+          member={member}
+          onImpersonate={canImpersonate ? handleImpersonate : undefined}
+          onNameChange={debouncedUpdateName}
+          onDelete={() => openModal(DELETE_MEMBER_MODAL_ID)}
+        />
+        {/* )} */}
       </SettingsPageContainer>
 
       <ConfirmationModal
