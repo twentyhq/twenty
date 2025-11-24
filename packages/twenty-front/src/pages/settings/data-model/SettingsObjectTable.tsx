@@ -22,7 +22,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
@@ -81,7 +81,7 @@ export const SettingsObjectTable = ({
     },
   );
 
-  const [currentWorkspace] = useRecoilState(currentWorkspaceState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const allObjectSettingsArray = useMemo(
     () =>

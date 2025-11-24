@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/customWorkspaceApplicationMock.constant';
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
@@ -18,7 +19,7 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   onInitializeRecoilSnapshot: ({ set }) => {
     set(currentWorkspaceState, {
       workspaceCustomApplication: {
-        id: 'dc75f982-35a2-4c1b-a63d-bd1131215377',
+        id: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
       },
       id: '1',
       featureFlags: [],

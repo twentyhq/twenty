@@ -68,7 +68,7 @@ export const SettingsObjectDetailPage = () => {
     findObjectMetadataItemByNamePlural(objectNamePlural) ??
     findObjectMetadataItemByNamePlural(updatedObjectNamePlural);
 
-  const [currentWorkspace] = useRecoilState(currentWorkspaceState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const readonly = isObjectMetadataSettingsReadOnly({
     objectMetadataItem,
     workspaceCustomApplicationId:

@@ -20,6 +20,7 @@ export const isObjectMetadataSettingsReadOnly = ({
   return (
     isObjectMetadataReadOnly({ objectPermissions, objectMetadataItem }) ||
     (isDefined(objectMetadataItem?.applicationId) &&
+      isDefined(workspaceCustomApplicationId) &&
       objectMetadataItem.applicationId !== workspaceCustomApplicationId)
   );
 };

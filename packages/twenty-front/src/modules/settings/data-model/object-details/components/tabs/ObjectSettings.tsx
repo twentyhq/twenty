@@ -7,7 +7,7 @@ import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/ob
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { H2Title, IconArchive } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -30,7 +30,7 @@ const StyledFormSection = styled(Section)`
 
 export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
   const { t } = useLingui();
-  const [currentWorkspace] = useRecoilState(currentWorkspaceState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const readonly = isObjectMetadataSettingsReadOnly({
     objectMetadataItem,
     workspaceCustomApplicationId:

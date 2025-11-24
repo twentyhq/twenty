@@ -26,7 +26,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title, IconArchive, IconArchiveOff } from 'twenty-ui/display';
@@ -65,7 +65,7 @@ export const SettingsObjectFieldEdit = () => {
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
-  const [currentWorkspace] = useRecoilState(currentWorkspaceState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const readonly = isObjectMetadataSettingsReadOnly({
     objectMetadataItem,
     workspaceCustomApplicationId:

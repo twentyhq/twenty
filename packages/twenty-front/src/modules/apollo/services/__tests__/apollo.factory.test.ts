@@ -1,6 +1,7 @@
 import { ApolloError, gql, InMemoryCache } from '@apollo/client';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
+import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/customWorkspaceApplicationMock.constant';
 import { WorkspaceActivationStatus } from '~/generated/graphql';
 import { ApolloFactory, type Options } from '../apollo.factory';
 
@@ -62,19 +63,8 @@ const mockWorkspace = {
   isTwoFactorAuthenticationEnforced: false,
   trashRetentionDays: 14,
   routerModel: 'auto',
-  workspaceCustomApplication: {
-    id: 'dc75f982-35a2-4c1b-a63d-bd1131215377',
-    agents: [],
-    applicationVariables: [],
-    canBeUninstalled: false,
-    description: '',
-    name: '',
-    objects: [],
-    serverlessFunctions: [],
-    universalIdentifier: '',
-    version: '',
-  },
-  workspaceCustomApplicationId: 'dc75f982-35a2-4c1b-a63d-bd1131215377',
+  workspaceCustomApplication: CUSTOM_WORKSPACE_APPLICATION_MOCK,
+  workspaceCustomApplicationId: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
 };
 
 const createMockOptions = (): Options<any> => ({
