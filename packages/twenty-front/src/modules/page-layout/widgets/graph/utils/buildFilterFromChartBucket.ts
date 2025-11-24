@@ -17,17 +17,24 @@ type ChartFilter = {
 type BuildFilterFromChartBucketParams = {
   fieldMetadataItem: FieldMetadataItem;
   bucketRawValue: unknown;
-  dateGranularity?: ObjectRecordGroupByDateGranularity | null;
+  dateGranularity?: ObjectRecordGroupByDateGranularity | null; // Will be used for date filtering
   subFieldName?: string | null;
-  timezone?: string;
+  timezone?: string; // Will be used for date filtering
 };
 
 const selectChartFilterOperand = (
   fieldType: FilterableAndTSVectorFieldType,
 ): ViewFilterOperand => {
-  const textLikeFields: FilterableAndTSVectorFieldType[] = ['TEXT'];
+  const fieldsUsingContainsOperand: FilterableAndTSVectorFieldType[] = [
+    'TEXT',
+    'FULL_NAME',
+    'EMAILS',
+    'PHONES',
+    'LINKS',
+    'RAW_JSON',
+  ];
 
-  const isOperandFields: FilterableAndTSVectorFieldType[] = [
+  const fieldsUsingIsOperand: FilterableAndTSVectorFieldType[] = [
     'SELECT',
     'BOOLEAN',
     'NUMBER',
@@ -36,11 +43,11 @@ const selectChartFilterOperand = (
     'RELATION',
   ];
 
-  if (textLikeFields.includes(fieldType)) {
+  if (fieldsUsingContainsOperand.includes(fieldType)) {
     return ViewFilterOperand.CONTAINS;
   }
 
-  if (isOperandFields.includes(fieldType)) {
+  if (fieldsUsingIsOperand.includes(fieldType)) {
     return ViewFilterOperand.IS;
   }
 
@@ -84,7 +91,7 @@ export const buildFilterFromChartBucket = ({
     ];
   }
 
-  // TODO: Implement Date/Time filtering in PR 3
+  // TODO: Implement Date/Time filtering
   if (
     fieldMetadataItem.type === FieldMetadataType.DATE ||
     fieldMetadataItem.type === FieldMetadataType.DATE_TIME
@@ -92,16 +99,11 @@ export const buildFilterFromChartBucket = ({
     return [];
   }
 
-  // TODO: Implement complex types (Address, Currency, etc) in PR 4
+  // TODO: Implement complex types (Address, Currency, etc)
   const complexTypes = [
     FieldMetadataType.CURRENCY,
     FieldMetadataType.ADDRESS,
     FieldMetadataType.ACTOR,
-    FieldMetadataType.FULL_NAME,
-    FieldMetadataType.EMAILS,
-    FieldMetadataType.PHONES,
-    FieldMetadataType.LINKS,
-    FieldMetadataType.RAW_JSON,
     FieldMetadataType.MULTI_SELECT,
     FieldMetadataType.ARRAY,
   ];
