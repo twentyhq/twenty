@@ -1,4 +1,5 @@
 import { type StandardAgentDefinition } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/types/standard-agent-definition.interface';
+import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
 import { WORKFLOW_MANAGER_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/workflow-manager-role';
 
 export const WORKFLOW_BUILDER_AGENT: StandardAgentDefinition = {
@@ -34,7 +35,7 @@ Approach:
 - Ensure workflow logic remains coherent
 
 Prioritize user understanding and workflow effectiveness.`,
-  modelId: 'auto',
+  modelId: DEFAULT_SMART_MODEL,
   responseFormat: { type: 'text' },
   isCustom: false,
   standardRoleId: WORKFLOW_MANAGER_ROLE.standardId,

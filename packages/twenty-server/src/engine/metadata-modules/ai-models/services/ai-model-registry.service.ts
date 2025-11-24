@@ -232,7 +232,9 @@ export class AiModelRegistryService {
   }
 
   async resolveModelForAgent(agent: { modelId: string } | null) {
-    const aiModel = this.getEffectiveModelConfig(agent?.modelId ?? 'auto');
+    const aiModel = this.getEffectiveModelConfig(
+      agent?.modelId ?? DEFAULT_SMART_MODEL,
+    );
 
     await this.validateApiKey(aiModel.provider);
     const registeredModel = this.getModel(aiModel.modelId);

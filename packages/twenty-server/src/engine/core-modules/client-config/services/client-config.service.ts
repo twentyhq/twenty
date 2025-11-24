@@ -6,20 +6,20 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
 import {
-  AI_MODELS,
-  DEFAULT_FAST_MODEL,
-  DEFAULT_SMART_MODEL,
-  ModelProvider,
-} from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
-import { AiModelRegistryService } from 'src/engine/metadata-modules/ai-models/services/ai-model-registry.service';
-import { convertCentsToBillingCredits } from 'src/engine/metadata-modules/ai-billing/utils/convert-cents-to-billing-credits.util';
-import {
   type ClientAIModelConfig,
   type ClientConfig,
 } from 'src/engine/core-modules/client-config/client-config.entity';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { convertCentsToBillingCredits } from 'src/engine/metadata-modules/ai-billing/utils/convert-cents-to-billing-credits.util';
+import {
+  AI_MODELS,
+  DEFAULT_FAST_MODEL,
+  DEFAULT_SMART_MODEL,
+  ModelProvider,
+} from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai-models/services/ai-model-registry.service';
 
 @Injectable()
 export class ClientConfigService {
@@ -87,14 +87,14 @@ export class ClientConfigService {
       aiModels.unshift(
         {
           modelId: DEFAULT_SMART_MODEL,
-          label: `Auto - Smart (${defaultPerformanceModelLabel})`,
+          label: `Smart (${defaultPerformanceModelLabel})`,
           provider: ModelProvider.NONE,
           inputCostPer1kTokensInCredits: 0,
           outputCostPer1kTokensInCredits: 0,
         },
         {
           modelId: DEFAULT_FAST_MODEL,
-          label: `Auto - Fast (${defaultSpeedModelLabel})`,
+          label: `Fast (${defaultSpeedModelLabel})`,
           provider: ModelProvider.NONE,
           inputCostPer1kTokensInCredits: 0,
           outputCostPer1kTokensInCredits: 0,

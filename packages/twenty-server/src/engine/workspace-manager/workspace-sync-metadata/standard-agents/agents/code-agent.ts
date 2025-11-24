@@ -1,3 +1,4 @@
+import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
 import { type StandardAgentDefinition } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/types/standard-agent-definition.interface';
 
 export const CODE_AGENT: StandardAgentDefinition = {
@@ -24,7 +25,7 @@ Code requirements:
 - Consider edge cases
 
 Output valid, runnable TypeScript code with clear explanations.`,
-  modelId: 'auto',
+  modelId: DEFAULT_SMART_MODEL,
   responseFormat: {
     type: 'json',
     schema: {

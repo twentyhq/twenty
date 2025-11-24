@@ -1,3 +1,4 @@
+import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
 import { type StandardAgentDefinition } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/types/standard-agent-definition.interface';
 
 export const HELPER_AGENT: StandardAgentDefinition = {
@@ -31,7 +32,7 @@ Response format:
 - Use markdown for readability
 
 Always base answers on official Twenty documentation. Be patient and helpful.`,
-  modelId: 'auto',
+  modelId: DEFAULT_SMART_MODEL,
   responseFormat: { type: 'text' },
   isCustom: false,
   modelConfiguration: {},

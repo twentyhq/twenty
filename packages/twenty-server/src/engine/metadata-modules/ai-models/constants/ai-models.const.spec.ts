@@ -1,9 +1,13 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { AiModelRegistryService } from 'src/engine/metadata-modules/ai-models/services/ai-model-registry.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai-models/services/ai-model-registry.service';
 
-import { AI_MODELS, ModelProvider } from './ai-models.const';
+import {
+  AI_MODELS,
+  DEFAULT_SMART_MODEL,
+  ModelProvider,
+} from './ai-models.const';
 
 describe('AI_MODELS', () => {
   it('should contain all expected models', () => {
@@ -44,15 +48,15 @@ describe('AiModelRegistryService', () => {
     SERVICE = MODULE.get<AiModelRegistryService>(AiModelRegistryService);
   });
 
-  it('should return effective model config for auto', () => {
+  it('should return effective model config for DEFAULT_SMART_MODEL', () => {
     MOCK_CONFIG_SERVICE.get.mockReturnValue('gpt-4o');
 
-    expect(() => SERVICE.getEffectiveModelConfig('auto')).toThrow(
+    expect(() => SERVICE.getEffectiveModelConfig(DEFAULT_SMART_MODEL)).toThrow(
       'No AI models are available. Please configure at least one provider.',
     );
   });
 
-  it('should return effective model config for auto when models are available', () => {
+  it('should return effective model config for DEFAULT_SMART_MODEL when models are available', () => {
     MOCK_CONFIG_SERVICE.get.mockReturnValue('gpt-4o');
 
     jest.spyOn(SERVICE, 'getAvailableModels').mockReturnValue([
@@ -69,14 +73,14 @@ describe('AiModelRegistryService', () => {
       model: {} as any,
     });
 
-    const RESULT = SERVICE.getEffectiveModelConfig('auto');
+    const RESULT = SERVICE.getEffectiveModelConfig(DEFAULT_SMART_MODEL);
 
     expect(RESULT).toBeDefined();
     expect(RESULT.modelId).toBe('gpt-4o');
     expect(RESULT.provider).toBe(ModelProvider.OPENAI);
   });
 
-  it('should return effective model config for auto with custom model', () => {
+  it('should return effective model config for DEFAULT_SMART_MODEL with custom model', () => {
     MOCK_CONFIG_SERVICE.get.mockReturnValue('mistral');
 
     jest.spyOn(SERVICE, 'getAvailableModels').mockReturnValue([
@@ -93,7 +97,7 @@ describe('AiModelRegistryService', () => {
       model: {} as any,
     });
 
-    const RESULT = SERVICE.getEffectiveModelConfig('auto');
+    const RESULT = SERVICE.getEffectiveModelConfig(DEFAULT_SMART_MODEL);
 
     expect(RESULT).toBeDefined();
     expect(RESULT.modelId).toBe('mistral');

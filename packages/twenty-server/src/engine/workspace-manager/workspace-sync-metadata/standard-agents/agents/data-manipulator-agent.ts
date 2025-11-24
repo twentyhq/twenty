@@ -1,4 +1,5 @@
 import { type StandardAgentDefinition } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/types/standard-agent-definition.interface';
+import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
 import { DATA_MANIPULATOR_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/data-manipulator-role';
 
 export const DATA_MANIPULATOR_AGENT: StandardAgentDefinition = {
@@ -38,7 +39,7 @@ Before bulk operations:
 - Explain what will change
 
 Prioritize data integrity and provide clear feedback on operations performed.`,
-  modelId: 'auto',
+  modelId: DEFAULT_SMART_MODEL,
   responseFormat: { type: 'text' },
   isCustom: false,
   standardRoleId: DATA_MANIPULATOR_ROLE.standardId,

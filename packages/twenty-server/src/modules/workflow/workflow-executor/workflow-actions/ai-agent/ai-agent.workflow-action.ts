@@ -21,6 +21,7 @@ import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { AiAgentExecutorService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/ai-agent-executor.service';
+import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
 
 import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.guard';
 
@@ -89,7 +90,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
 
       await this.aiBillingService.calculateAndBillUsage(
-        agent?.modelId ?? 'auto',
+        agent?.modelId ?? DEFAULT_SMART_MODEL,
         usage,
         workspaceId,
       );

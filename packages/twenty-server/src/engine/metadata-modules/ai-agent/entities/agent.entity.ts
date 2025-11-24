@@ -13,7 +13,10 @@ import {
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
-import { ModelId } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
+import {
+  ModelId,
+  DEFAULT_SMART_MODEL,
+} from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentResponseFormat } from 'src/engine/metadata-modules/ai-agent/types/agent-response-format.type';
 import { ModelConfiguration } from 'src/engine/metadata-modules/ai-agent/types/modelConfiguration';
@@ -49,7 +52,7 @@ export class AgentEntity
   @Column({ nullable: false, type: 'text' })
   prompt: string;
 
-  @Column({ nullable: false, type: 'varchar', default: 'auto' })
+  @Column({ nullable: false, type: 'varchar', default: DEFAULT_SMART_MODEL })
   modelId: ModelId;
 
   @Column({ nullable: true, type: 'jsonb', default: { type: 'text' } })
