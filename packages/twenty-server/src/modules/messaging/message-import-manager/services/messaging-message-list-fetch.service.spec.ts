@@ -16,6 +16,7 @@ import { MessagingGetMessageListService } from 'src/modules/messaging/message-im
 import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
+import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 
 describe('MessagingMessageListFetchService', () => {
   let messagingMessageListFetchService: MessagingMessageListFetchService;
@@ -229,6 +230,12 @@ describe('MessagingMessageListFetchService', () => {
           provide: SyncMessageFoldersService,
           useValue: {
             syncMessageFolders: jest.fn().mockResolvedValue(undefined),
+          },
+        },
+        {
+          provide: MessagingProcessGroupEmailActionsService,
+          useValue: {
+            processGroupEmailActions: jest.fn().mockResolvedValue(undefined),
           },
         },
       ],

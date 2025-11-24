@@ -13,13 +13,15 @@ import crypto from 'crypto';
 
 import { msg } from '@lingui/core/macro';
 import { GraphQLJSONObject } from 'graphql-type-json';
-import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
+
+import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import {
   AuthException,

@@ -1,0 +1,19 @@
+{
+  "name": "self-hosting",
+  "version": "0.0.1",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "packageManager": "yarn@4.9.2",
+  "dependencies": {
+    "twenty-sdk": "0.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2"
+  },
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/appManifest.schema.json",
+  "universalIdentifier": "a7070f46-3158-4b40-828f-8e6b1febc233"
+}

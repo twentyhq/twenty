@@ -172,6 +172,7 @@ export const CommandMenuMessageThreadPage = () => {
       {canReply && !messageChannelLoading && (
         <StyledButtonContainer isMobile={isMobile}>
           <Button
+            size="small"
             onClick={handleReplyClick}
             title={t`Reply`}
             Icon={IconArrowBackUp}

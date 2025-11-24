@@ -1,8 +1,8 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
 import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
 import { useGraphWidgetQueryCommon } from '@/page-layout/widgets/graph/hooks/useGraphWidgetQueryCommon';
 import { type GroupByChartConfiguration } from '@/page-layout/widgets/graph/types/GroupByChartConfiguration';
-import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
 import { generateGroupByQueryVariablesFromChartConfiguration } from '@/page-layout/widgets/graph/utils/generateGroupByQueryVariablesFromChartConfiguration';
 import { useQuery } from '@apollo/client';
 import { useMemo } from 'react';
@@ -12,9 +12,11 @@ import { isDefined } from 'twenty-shared/utils';
 export const useGraphWidgetGroupByQuery = ({
   objectMetadataItemId,
   configuration,
+  limit = DEFAULT_NUMBER_OF_GROUPS_LIMIT,
 }: {
   objectMetadataItemId: string;
   configuration: GroupByChartConfiguration;
+  limit?: number;
 }) => {
   const { objectMetadataItem, aggregateField, gqlOperationFilter } =
     useGraphWidgetQueryCommon({
@@ -48,22 +50,22 @@ export const useGraphWidgetGroupByQuery = ({
       objectMetadataItem,
       chartConfiguration: configuration,
       aggregateOperation: aggregateOperation,
+      limit,
     });
 
   const variables = {
     ...groupByQueryVariables,
     filter: gqlOperationFilter,
-    limit: DEFAULT_NUMBER_OF_GROUPS_LIMIT,
   };
 
-  const query = generateGroupByQuery({
+  const groupByAggregateQuery = generateGroupByAggregateQuery({
     objectMetadataItem,
-    aggregateOperations: [aggregateOperation],
+    aggregateOperationGqlFields: [aggregateOperation],
   });
 
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data, loading, error, refetch } = useQuery(query, {
+  const { data, loading, error, refetch } = useQuery(groupByAggregateQuery, {
     client: apolloCoreClient,
     variables,
   });

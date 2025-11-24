@@ -1,5 +1,3 @@
-import { randomUUID } from 'crypto';
-import { getSchemaUrls } from './schema-validator';
 import * as fs from 'fs-extra';
 import { BASE_APPLICATION_PROJECT_PATH } from '../constants/constants-path';
 import { writeJsoncFile } from '../utils/jsonc-parser';
@@ -77,10 +75,7 @@ const createBasePackageJson = async ({
 }) => {
   const base = JSON.parse(await readBaseApplicationProjectFile('package.json'));
 
-  const schemas = getSchemaUrls();
-
-  base['$schema'] = schemas.appManifest;
-  base['universalIdentifier'] = randomUUID();
+  base['universalIdentifier'] = v4();
   base['name'] = appName;
 
   await writeJsoncFile(join(appDirectory, 'package.json'), base);

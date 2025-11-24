@@ -58,7 +58,6 @@ export class CalendarEventListFetchJob {
 
     switch (calendarChannel.syncStage) {
       case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED:
-      case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING:
         await this.calendarFetchEventsService.fetchCalendarEvents(
           calendarChannel,
           calendarChannel.connectedAccount,

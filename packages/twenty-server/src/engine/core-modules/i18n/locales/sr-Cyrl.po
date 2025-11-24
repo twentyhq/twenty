@@ -229,7 +229,6 @@ msgstr "Агрегирани / филтрирани догађај који се
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/messages-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/message-threads-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/calendar-events-all.view.ts
 msgid "All {objectLabelPlural}"
@@ -525,7 +524,6 @@ msgid "Body"
 msgstr "Садржај"
 
 #. js-lingui-id: 6+byWT
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
 msgid "By Stage"
 msgstr "По фази"
@@ -4190,6 +4188,11 @@ msgstr "Погрешна лозинка"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "Х"
+
+#. js-lingui-id: 4ysDL0
+#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
+msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
+msgstr ""
 
 #. js-lingui-id: 1SQnFB
 #: src/engine/metadata-modules/role/role.resolver.ts

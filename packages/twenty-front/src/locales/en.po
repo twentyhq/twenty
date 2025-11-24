@@ -139,7 +139,7 @@ msgid "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} o
 msgstr "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} other {{advancedFilterCount} advanced rules}}"
 
 #. js-lingui-id: ROdDR9
-#: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
+#: src/modules/object-record/record-aggregate/utils/getAggregateLabelWithFieldName.ts
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} of {fieldLabel}"
 
@@ -184,8 +184,7 @@ msgid "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted f
 msgstr "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted for {grantedBy} objects}}"
 
 #. js-lingui-id: 2EPGDl
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphFilter.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "{graphTypeLabel} Chart"
 msgstr "{graphTypeLabel} Chart"
 
@@ -478,6 +477,7 @@ msgstr "ACS Url copied to clipboard"
 
 #. js-lingui-id: bwRvnp
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
 msgid "Action"
 msgstr "Action"
 
@@ -1203,6 +1203,11 @@ msgstr "Application objects"
 msgid "Application serverless functions"
 msgstr "Application serverless functions"
 
+#. js-lingui-id: +tE2x9
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+msgid "Application successfully uninstalled."
+msgstr "Application successfully uninstalled."
+
 #. js-lingui-id: fL7WXr
 #: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
@@ -1227,16 +1232,6 @@ msgstr "Approved Domains"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
 msgstr "Arabic"
-
-#. js-lingui-id: 2BZAqa
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
-msgid "Are you sure you want to delete these records? They can be recovered from the Command menu."
-msgstr "Are you sure you want to delete these records? They can be recovered from the Command menu."
-
-#. js-lingui-id: yb2hF4
-#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
-msgid "Are you sure you want to delete this record? It can be recovered from the Command menu."
-msgstr "Are you sure you want to delete this record? It can be recovered from the Command menu."
 
 #. js-lingui-id: OJOR8q
 #: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
@@ -1812,6 +1807,7 @@ msgstr "Changelog"
 
 #. js-lingui-id: nuBbBr
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Chart"
 msgstr "Chart"
 
@@ -2193,6 +2189,16 @@ msgstr "Connection successfully created"
 msgid "Connection successfully updated"
 msgstr "Connection successfully updated"
 
+#. js-lingui-id: JdGr7p
+#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+msgid "Consider adding a filter or changing the date granularity to display more data."
+msgstr "Consider adding a filter or changing the date granularity to display more data."
+
+#. js-lingui-id: G++HwN
+#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+msgid "Consider adding a filter to display more data."
+msgstr "Consider adding a filter to display more data."
+
 #. js-lingui-id: Y2y0mC
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -2500,6 +2506,11 @@ msgstr "Create your workspace"
 msgid "Create, edit, and delete workspace views"
 msgstr "Create, edit, and delete workspace views"
 
+#. js-lingui-id: 4fBuqE
+#: src/modules/command-menu/components/CommandMenuRecordInfo.tsx
+msgid "Created {beautifiedCreatedAt}"
+msgstr "Created {beautifiedCreatedAt}"
+
 #. js-lingui-id: fR16ki
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Creating your data model..."
@@ -2636,6 +2647,7 @@ msgstr "Czech"
 #. js-lingui-id: Zz6Cxn
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -2989,22 +3001,10 @@ msgstr "Delete field"
 msgid "Delete node"
 msgstr "Delete node"
 
-#. js-lingui-id: LUsa0/
-#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
-#: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
-msgid "Delete Record"
-msgstr "Delete Record"
-
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete records"
 msgstr "Delete records"
-
-#. js-lingui-id: rMgHjD
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
-#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
-msgid "Delete Records"
-msgstr "Delete Records"
 
 #. js-lingui-id: mcXHCJ
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -3786,6 +3786,11 @@ msgstr "Error regenerating api key."
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Error resending invitation"
 msgstr "Error resending invitation"
+
+#. js-lingui-id: 5Vy8D1
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+msgid "Error uninstalling application."
+msgstr "Error uninstalling application."
 
 #. js-lingui-id: lX3Yil
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4806,7 +4811,7 @@ msgid "iFrame Settings"
 msgstr "iFrame Settings"
 
 #. js-lingui-id: mO+Bte
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "iFrame Widget"
 msgstr "iFrame Widget"
 
@@ -5645,16 +5650,6 @@ msgstr "Match Columns"
 #: src/modules/command-menu/pages/page-layout/constants/settings/RangeMaxSetting.ts
 msgid "Max"
 msgstr "Max"
-
-#. js-lingui-id: Zgn/wP
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "Max {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter"
-msgstr "Max {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter"
-
-#. js-lingui-id: LH1Pjg
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "Max {LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart. Consider adding a filter"
-msgstr "Max {LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart. Consider adding a filter"
 
 #. js-lingui-id: HFjNu6
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -7033,6 +7028,11 @@ msgstr "Please start your subscription first"
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 msgstr "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 
+#. js-lingui-id: L0SEpC
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+msgid "Please type \"{confirmationValue}\" to confirm you want to uninstall this application."
+msgstr "Please type \"{confirmationValue}\" to confirm you want to uninstall this application."
+
 #. js-lingui-id: GbtYRD
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Please type \"yes\" to confirm you want to delete this webhook."
@@ -8059,6 +8059,7 @@ msgid "Send an invite email to your team"
 msgstr "Send an invite email to your team"
 
 #. js-lingui-id: i/TzEU
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Send Email"
 msgstr "Send Email"
@@ -8735,7 +8736,7 @@ msgid "System settings - Sunday"
 msgstr "System settings - Sunday"
 
 #. js-lingui-id: HuA3RU
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Tab"
 msgstr "Tab"
 
@@ -9136,6 +9137,7 @@ msgstr "Trial expired. Please update your billing details."
 #. js-lingui-id: H2Sfhg
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
+#: src/modules/command-menu/components/CommandMenuWorkflowStepInfo.tsx
 msgid "Trigger"
 msgstr "Trigger"
 
@@ -9235,10 +9237,10 @@ msgstr "Two-factor authentication setup completed successfully!"
 msgid "Type"
 msgstr "Type"
 
-#. js-lingui-id: U83IeL
+#. js-lingui-id: qzD6hf
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
-msgid "Type anything"
-msgstr "Type anything"
+msgid "Type anything..."
+msgstr "Type anything..."
 
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -9254,6 +9256,32 @@ msgstr "ul"
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
 msgstr "Unable to Reach Back-end"
+
+#. js-lingui-id: ZjTKHy
+#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+msgid "Undisplayed data: max {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart."
+msgstr "Undisplayed data: max {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart."
+
+#. js-lingui-id: 29HVk/
+#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+msgid "Undisplayed data: max {LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart."
+msgstr "Undisplayed data: max {LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart."
+
+#. js-lingui-id: fo0VXg
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+msgid "Uninstall"
+msgstr "Uninstall"
+
+#. js-lingui-id: Qtg9Qc
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+msgid "Uninstall Application?"
+msgstr "Uninstall Application?"
+
+#. js-lingui-id: u+6vfA
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
+msgid "Uninstall this application"
+msgstr "Uninstall this application"
 
 #. js-lingui-id: wSXm5S
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
@@ -9926,6 +9954,7 @@ msgstr "years"
 
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "yes"
