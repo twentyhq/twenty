@@ -167,6 +167,14 @@ export class FieldMetadataValidationService {
     objectMetadata,
     existingFieldMetadata,
   }: ValidateFieldMetadataArgs): Promise<void> {
+        // Prevent NUMERIC field type from being created via API
+    if (fieldMetadataType === FieldMetadataType.NUMERIC) {
+      throw new FieldMetadataException(
+        'NUMERIC field type cannot be created via API. Please use NUMBER type instead.',
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
+    }
+
     if (fieldMetadataInput.name) {
       try {
         validateMetadataNameOrThrow(fieldMetadataInput.name);
