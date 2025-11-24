@@ -26,6 +26,7 @@ type ManagedItemTagInfo = {
   labelColor: 'sky';
 };
 
+//  We should add currentWorkspaceCustomApplicationId here too
 export const getItemTagInfo = ({
   isCustom,
   isRemote,
