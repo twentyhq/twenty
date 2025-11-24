@@ -96,9 +96,9 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   const targetCreateFieldInput: CreateFieldInput = {
     icon: relationCreationPayload.targetFieldIcon ?? 'Icon123',
     label: relationCreationPayload.targetFieldLabel,
-    name: computeMetadataNameFromLabel(
-      relationCreationPayload.targetFieldLabel,
-    ),
+    name:
+      relationCreationPayload.targetFieldName ??
+      computeMetadataNameFromLabel(relationCreationPayload.targetFieldLabel),
     objectMetadataId: targetFlatObjectMetadata.id,
     type: FieldMetadataType.RELATION,
     workspaceId,
