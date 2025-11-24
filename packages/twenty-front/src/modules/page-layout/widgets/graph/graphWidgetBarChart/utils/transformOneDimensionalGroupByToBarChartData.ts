@@ -72,7 +72,7 @@ export const transformOneDimensionalGroupByToBarChartData = ({
       : '';
 
     if (isDefined(dimensionValues?.[0])) {
-      dimensionMetadata.set(xValue, dimensionValues[0]);
+      dimensionMetadata.set(xValue, dimensionValues[0] as RawDimensionValue);
     }
 
     const aggregateValue = computeAggregateValueFromGroupByResult({

@@ -79,7 +79,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     });
 
     if (isDefined(dimensionValues[0])) {
-      dimensionMetadata.set(xValue, dimensionValues[0]);
+      dimensionMetadata.set(xValue, dimensionValues[0] as RawDimensionValue);
     }
 
     // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)
