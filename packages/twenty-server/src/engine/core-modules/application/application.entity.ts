@@ -44,6 +44,7 @@ export class ApplicationEntity {
   @Column({ nullable: true, type: 'text' })
   description: string | null;
 
+  // TODO should not be nullable
   @Column({ nullable: true, type: 'text' })
   version: string | null;
 

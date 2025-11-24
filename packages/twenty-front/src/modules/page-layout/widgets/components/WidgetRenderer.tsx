@@ -103,6 +103,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
       isResizing={isResizing}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      data-widget-id={widget.id}
     >
       {showHeader && (
         <WidgetCardHeader
