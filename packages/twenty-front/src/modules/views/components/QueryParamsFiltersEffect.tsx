@@ -91,5 +91,5 @@ export const QueryParamsFiltersEffect = () => {
     setCurrentRecordFilters,
   ]);
 
-  return <></>;
+  return null;
 };

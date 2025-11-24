@@ -1,6 +1,5 @@
 import { isNonEmptyString, isObject } from '@sniptt/guards';
 import qs from 'qs';
-import { useRecoilCallback } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
@@ -10,6 +9,8 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { filterUrlQueryParamsSchema } from '@/views/schemas/filterUrlQueryParamsSchema';
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { deserializeUrlRecursiveFilterGroup } from '@/views/utils/deserializeUrlRecursiveFilterGroup';
+import { splitFieldNameIntoBaseAndSubField } from '@/views/utils/splitFieldNameIntoBaseAndSubField';
+import { useCallback } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { type ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined, isExpectedSubFieldName } from 'twenty-shared/utils';
@@ -28,115 +29,106 @@ export const useFiltersFromQueryParams = () => {
     qs.parse(searchParams.toString()),
   );
 
-  const getFiltersFromQueryParams = useRecoilCallback(() => {
-    const fetchFiltersFromQueryParams = async (): Promise<ViewFilter[]> => {
-      if (!queryParamsValidation.success) return [];
+  const getFiltersFromQueryParams = useCallback(async (): Promise<
+    ViewFilter[]
+  > => {
+    if (!queryParamsValidation.success) return [];
 
-      const filterQueryParams = queryParamsValidation.data.filter;
+    const filterQueryParams = queryParamsValidation.data.filter;
 
-      if (
-        !isDefined(filterQueryParams) ||
-        Object.entries(filterQueryParams).length === 0
-      ) {
-        return [];
-      }
+    if (
+      !isDefined(filterQueryParams) ||
+      Object.entries(filterQueryParams).length === 0
+    ) {
+      return [];
+    }
 
-      const promises: Promise<ViewFilter | null>[] = [];
+    const promises: Promise<ViewFilter | null>[] = [];
 
-      for (const [fieldName, filterFromURL] of Object.entries(
-        filterQueryParams,
+    for (const [fieldName, filterFromURL] of Object.entries(
+      filterQueryParams,
+    )) {
+      for (const [filterOperandFromURL, filterValueFromURL] of Object.entries(
+        filterFromURL,
       )) {
-        for (const [filterOperandFromURL, filterValueFromURL] of Object.entries(
-          filterFromURL,
-        )) {
-          const promise = (async (): Promise<ViewFilter | null> => {
-            // Split field name to handle subfields (e.g., "name.firstName" -> "name" + "firstName")
-            const fieldParts = fieldName.split('.');
-            const baseFieldName = fieldParts[0];
-            const subFieldName =
-              fieldParts.length > 1 ? fieldParts.slice(1).join('.') : undefined;
+        const promise = (async (): Promise<ViewFilter | null> => {
+          const { baseFieldName, subFieldName } =
+            splitFieldNameIntoBaseAndSubField(fieldName);
 
-            const fieldMetadataItem = objectMetadataItem.fields.find(
-              (field) => field.name === baseFieldName,
-            );
+          const fieldMetadataItem = objectMetadataItem.fields.find(
+            (field) => field.name === baseFieldName,
+          );
 
-            if (!fieldMetadataItem) return null;
+          if (!fieldMetadataItem) return null;
 
-            if (isDefined(subFieldName) && isNonEmptyString(subFieldName)) {
-              if (!isCompositeFieldType(fieldMetadataItem.type)) {
-                return null;
-              }
-
-              if (
-                !isExpectedSubFieldName(
-                  fieldMetadataItem.type as Parameters<
-                    typeof isExpectedSubFieldName
-                  >[0],
-                  subFieldName as Parameters<typeof isExpectedSubFieldName>[1],
-                  subFieldName,
-                )
-              ) {
-                return null;
-              }
+          if (isDefined(subFieldName) && isNonEmptyString(subFieldName)) {
+            if (!isCompositeFieldType(fieldMetadataItem.type)) {
+              return null;
             }
 
-            const filterValueAsString =
-              Array.isArray(filterValueFromURL) || isObject(filterValueFromURL)
-                ? JSON.stringify(filterValueFromURL)
-                : (filterValueFromURL as string);
+            if (
+              !isExpectedSubFieldName(
+                fieldMetadataItem.type as Parameters<
+                  typeof isExpectedSubFieldName
+                >[0],
+                subFieldName as Parameters<typeof isExpectedSubFieldName>[1],
+                subFieldName,
+              )
+            ) {
+              return null;
+            }
+          }
 
-            const displayValue = filterValueAsString;
+          const filterValueAsString =
+            Array.isArray(filterValueFromURL) || isObject(filterValueFromURL)
+              ? JSON.stringify(filterValueFromURL)
+              : (filterValueFromURL as string);
 
-            return {
-              __typename: 'ViewFilter',
-              id: `tmp-${[
-                fieldName,
-                filterOperandFromURL,
-                filterValueFromURL,
-              ].join('-')}`,
-              fieldMetadataId: fieldMetadataItem.id,
-              operand: filterOperandFromURL as ViewFilterOperand,
-              value: filterValueAsString,
-              displayValue,
-              subFieldName: subFieldName
-                ? (subFieldName as ViewFilter['subFieldName'])
-                : undefined,
-            };
-          })();
+          const displayValue = filterValueAsString;
 
-          promises.push(promise);
-        }
+          return {
+            __typename: 'ViewFilter',
+            id: `tmp-${[
+              fieldName,
+              filterOperandFromURL,
+              filterValueFromURL,
+            ].join('-')}`,
+            fieldMetadataId: fieldMetadataItem.id,
+            operand: filterOperandFromURL as ViewFilterOperand,
+            value: filterValueAsString,
+            displayValue,
+            subFieldName: subFieldName
+              ? (subFieldName as ViewFilter['subFieldName'])
+              : undefined,
+          };
+        })();
+
+        promises.push(promise);
       }
+    }
 
-      return (await Promise.all(promises)).filter(isDefined);
-    };
-
-    return fetchFiltersFromQueryParams;
+    return (await Promise.all(promises)).filter(isDefined);
   }, [queryParamsValidation, objectMetadataItem.fields]);
 
   const filterGroupQueryParams = queryParamsValidation.success
     ? queryParamsValidation.data.filterGroup
     : undefined;
 
-  const getFilterGroupsFromQueryParams = useRecoilCallback(() => {
-    const fetchFilterGroupsFromQueryParams = async (): Promise<{
-      recordFilters: RecordFilter[];
-      recordFilterGroups: RecordFilterGroup[];
-    }> => {
-      if (!isDefined(filterGroupQueryParams)) {
-        return { recordFilters: [], recordFilterGroups: [] };
-      }
+  const getFilterGroupsFromQueryParams = useCallback(async (): Promise<{
+    recordFilters: RecordFilter[];
+    recordFilterGroups: RecordFilterGroup[];
+  }> => {
+    if (!isDefined(filterGroupQueryParams)) {
+      return { recordFilters: [], recordFilterGroups: [] };
+    }
 
-      return deserializeUrlRecursiveFilterGroup({
-        urlRecursiveFilterGroup: filterGroupQueryParams as Parameters<
-          typeof deserializeUrlRecursiveFilterGroup
-        >[0]['urlRecursiveFilterGroup'],
-        objectMetadataItem,
-        positionInParent: 0,
-      });
-    };
-
-    return fetchFilterGroupsFromQueryParams;
+    return deserializeUrlRecursiveFilterGroup({
+      urlRecursiveFilterGroup: filterGroupQueryParams as Parameters<
+        typeof deserializeUrlRecursiveFilterGroup
+      >[0]['urlRecursiveFilterGroup'],
+      objectMetadataItem,
+      positionInParent: 0,
+    });
   }, [filterGroupQueryParams, objectMetadataItem]);
 
   return {
