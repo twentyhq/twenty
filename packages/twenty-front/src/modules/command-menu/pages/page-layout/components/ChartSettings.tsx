@@ -73,7 +73,6 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   const { updateGraphTypeConfig } = useUpdateGraphTypeConfig({
     pageLayoutId,
     widget,
-    configuration,
   });
 
   const isGroupByEnabled = getChartSettingsValues(
