@@ -6,6 +6,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -21,12 +22,14 @@ import { IconInfoCircle } from 'twenty-ui/display';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isImpersonatingState } from '@/auth/states/isImpersonatingState';
 import { MemberInfosTab } from '@/settings/members/components/MemberInfosTab';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   useDeleteUserWorkspaceMutation,
   useImpersonateMutation,
 } from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated/graphql';
 
 const SETTINGS_WORKSPACE_MEMBER_TABS = {
   COMPONENT_INSTANCE_ID: 'settings-workspace-member-tabs',
@@ -45,6 +48,9 @@ export const SettingsWorkspaceMember = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { executeImpersonationAuth } = useImpersonationAuth();
   const [impersonate] = useImpersonateMutation();
+  const isImpersonating = useRecoilValue(isImpersonatingState);
+  const canImpersonate =
+    useHasPermissionFlag(PermissionFlagType.IMPERSONATE) && !isImpersonating;
 
   const { record: member, loading } = useFindOneRecord<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -173,7 +179,7 @@ export const SettingsWorkspaceMember = () => {
         {activeTabId === SETTINGS_WORKSPACE_MEMBER_TABS.TABS_IDS.INFOS && (
           <MemberInfosTab
             member={member}
-            onImpersonate={handleImpersonate}
+            onImpersonate={canImpersonate ? handleImpersonate : undefined}
             onNameChange={debouncedUpdateName}
             onDelete={() => openModal(DELETE_MEMBER_MODAL_ID)}
           />
