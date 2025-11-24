@@ -13,6 +13,7 @@ import {
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
+  MessageChannelPendingGroupEmailsAction,
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
   MessageChannelType,
@@ -148,6 +149,7 @@ export class ImapSmtpCalDavAPIService {
         isSyncEnabled: shouldEnableSync,
         syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
         syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
+        pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
         syncCursor: '',
         syncStageStartedAt: null,
       },

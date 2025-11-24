@@ -211,19 +211,26 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         optimisticFlatFieldMetadata.options = update.to ?? [];
       }
       if (
-        isMorphOrRelationFlatFieldMetadata(optimisticFlatFieldMetadata) &&
-        update.property === 'settings'
+        isPropertyUpdate(update, 'settings') &&
+        isDefined(update.from?.joinColumnName) &&
+        isDefined(update.to?.joinColumnName) &&
+        update.from.joinColumnName !== update.to.joinColumnName &&
+        isMorphOrRelationFlatFieldMetadata(optimisticFlatFieldMetadata)
       ) {
-        await this.handleMorphOrRelationSettingsUpdate({
-          flatFieldMetadata: optimisticFlatFieldMetadata,
+        await this.workspaceSchemaManagerService.columnManager.renameColumn({
           queryRunner,
           schemaName,
           tableName,
-          update: update as PropertyUpdate<
-            FlatFieldMetadata<MorphOrRelationFieldMetadataType>,
-            'settings'
-          >,
+          oldColumnName: update.from.joinColumnName,
+          newColumnName: update.to.joinColumnName,
         });
+        optimisticFlatFieldMetadata = {
+          ...optimisticFlatFieldMetadata,
+          settings: {
+            ...optimisticFlatFieldMetadata.settings,
+            joinColumnName: update.to.joinColumnName,
+          },
+        };
       }
     }
   }
@@ -263,20 +270,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           newColumnName: toCompositeColumnName,
         });
       }
-    } else {
-      if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
-        throw new WorkspaceMigrationRunnerException(
-          'Relation field metadata name update is not supported yet',
-          WorkspaceMigrationRunnerExceptionCode.NOT_SUPPORTED,
-        );
-      }
-      await this.workspaceSchemaManagerService.columnManager.renameColumn({
-        queryRunner,
-        schemaName,
-        tableName,
-        oldColumnName: update.from,
-        newColumnName: update.to,
-      });
     }
 
     const enumOperations = collectEnumOperationsForField({
@@ -440,8 +433,8 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     }
 
     await this.workspaceSchemaManagerService.columnManager.renameColumn({
-      newColumnName: fromJoinColumnName,
-      oldColumnName: toJoinColumnName,
+      oldColumnName: fromJoinColumnName,
+      newColumnName: toJoinColumnName,
       queryRunner,
       schemaName,
       tableName,

@@ -6,7 +6,10 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  NotFoundError,
+  UserInputError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 @Catch(ApplicationException)
 export class ApplicationExceptionFilter implements ExceptionFilter {
@@ -18,6 +21,8 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
       case ApplicationExceptionCode.APPLICATION_NOT_FOUND:
       case ApplicationExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND:
         throw new NotFoundError(exception);
+      case ApplicationExceptionCode.FORBIDDEN:
+        throw new UserInputError(exception);
       default: {
         assertUnreachable(exception.code);
       }

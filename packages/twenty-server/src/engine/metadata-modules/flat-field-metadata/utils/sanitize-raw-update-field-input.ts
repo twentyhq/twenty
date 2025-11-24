@@ -2,6 +2,7 @@ import {
   extractAndSanitizeObjectStringFields,
   isDefined,
 } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-standard-overrides-properties.constant';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -32,6 +33,15 @@ export const sanitizeRawUpdateFieldInput = ({
       ]),
     ],
   );
+
+  updatedEditableFieldProperties.options = !isDefined(
+    updatedEditableFieldProperties.options,
+  )
+    ? updatedEditableFieldProperties.options
+    : updatedEditableFieldProperties.options.map((option) => ({
+        id: v4(),
+        ...option,
+      }));
 
   if (!isStandardField) {
     return {

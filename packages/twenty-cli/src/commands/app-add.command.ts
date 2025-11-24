@@ -1,16 +1,12 @@
 import chalk from 'chalk';
-import { randomUUID } from 'crypto';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
-import path from 'path';
+import { join } from 'path';
 import camelcase from 'lodash.camelcase';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
-import { getSchemaUrls } from '../utils/schema-validator';
-import { BASE_SCHEMAS_PATH } from '../constants/constants-path';
-import { getObjectMetadataDecoratedClass } from '../utils/get-object-metadata-decorated-class';
+import { getObjectDecoratedClass } from '../utils/get-object-decorated-class';
 import { getServerlessFunctionBaseFile } from '../utils/get-serverless-function-base-file';
-
-const ROOT_FOLDER = 'src';
+import { convertToLabel } from '../utils/convert-to-label';
 
 export enum SyncableEntity {
   AGENT = 'agent',
@@ -23,35 +19,34 @@ export const isSyncableEntity = (value: string): value is SyncableEntity => {
 };
 
 export class AppAddCommand {
-  async execute(entityType?: SyncableEntity): Promise<void> {
+  async execute(entityType?: SyncableEntity, path?: string): Promise<void> {
     try {
-      const appPath = path.join(CURRENT_EXECUTION_DIRECTORY, ROOT_FOLDER);
+      const appPath = join(CURRENT_EXECUTION_DIRECTORY, path ?? '');
 
       await fs.ensureDir(appPath);
 
       const entity = entityType ?? (await this.getEntity());
 
-      const entityName = await this.getEntityName(entity);
-
-      const entityData = await this.getEntityToCreateData(entity, entityName);
-
       if (entity === SyncableEntity.OBJECT) {
-        delete entityData['standardId'];
-        delete entityData['$schema'];
+        const entityData = await this.getObjectData();
 
-        const objectFileName = `${camelcase(entityName)}.ts`;
+        const name = entityData.nameSingular;
 
-        const decoratedObject = getObjectMetadataDecoratedClass({
+        const objectFileName = `${camelcase(name)}.ts`;
+
+        const decoratedObject = getObjectDecoratedClass({
           data: entityData,
-          name: entityName,
+          name,
         });
 
-        await fs.writeFile(path.join(appPath, objectFileName), decoratedObject);
+        await fs.writeFile(join(appPath, objectFileName), decoratedObject);
 
         return;
       }
 
       if (entity === SyncableEntity.SERVERLESS_FUNCTION) {
+        const entityName = await this.getEntityName(entity);
+
         const objectFileName = `${camelcase(entityName)}.ts`;
 
         const decoratedServerlessFunction = getServerlessFunctionBaseFile({
@@ -59,7 +54,7 @@ export class AppAddCommand {
         });
 
         await fs.writeFile(
-          path.join(appPath, objectFileName),
+          join(appPath, objectFileName),
           decoratedServerlessFunction,
         );
 
@@ -71,27 +66,6 @@ export class AppAddCommand {
         error instanceof Error ? error.message : error,
       );
       process.exit(1);
-    }
-  }
-
-  private async addEntityInitFiles(entity: SyncableEntity, entityPath: string) {
-    switch (entity) {
-      case SyncableEntity.SERVERLESS_FUNCTION: {
-        const srcPath = path.join(entityPath, 'src');
-        await fs.ensureDir(srcPath);
-
-        await fs.writeFile(
-          path.join(srcPath, 'index.ts'),
-          'export const main = async (params: {\n  a: string;\n  b: number;\n}): Promise<object> => {\n  const { a, b } = params;\n\n  // Rename the parameters and code below with your own logic\n  // This is just an example\n  const message = `Hello, input: ${a} and ${b}`;\n\n\n\n  return { message };\n};',
-        );
-
-        return;
-      }
-      case SyncableEntity.AGENT:
-      case SyncableEntity.OBJECT:
-        return;
-      default:
-        throw new Error(`Unknown entity type: ${entity}`);
     }
   }
 
@@ -133,58 +107,63 @@ export class AppAddCommand {
     return name;
   }
 
-  private async getEntityToCreateData(
-    entity: SyncableEntity,
-    entityName: string,
-  ) {
-    const schemas = getSchemaUrls();
-
-    const uuid = randomUUID();
-
-    const entityToCreateData: Record<string, string> = {
-      $schema: schemas[entity],
-      universalIdentifier: uuid,
-    };
-
-    if (entity === SyncableEntity.OBJECT || entity === SyncableEntity.AGENT) {
-      entityToCreateData.standardId = uuid;
-    }
-
-    const schemaPath = path.join(BASE_SCHEMAS_PATH, `${entity}.schema.json`);
-
-    const schema = await fs.readJson(schemaPath);
-
-    const requiredFields = schema.required;
-
-    for (const requiredField of requiredFields) {
-      if (requiredField === 'name') {
-        entityToCreateData.name = entityName;
-        continue;
-      }
-
-      if (Object.keys(entityToCreateData).includes(requiredField)) {
-        continue;
-      }
-
-      const answer = await inquirer.prompt<{ [key: string]: string }>([
-        {
-          type: 'input',
-          name: requiredField,
-          message: `Enter a ${requiredField} for your new ${entity}:`,
-          default: '',
-          validate: (input) => {
-            try {
-              return input.length > 0;
-            } catch {
-              return 'Please enter non empty string';
-            }
-          },
+  private async getObjectData() {
+    return inquirer.prompt([
+      {
+        type: 'input',
+        name: 'nameSingular',
+        message: 'Enter a name singular for your object (eg: company):',
+        default: '',
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
         },
-      ]);
-
-      entityToCreateData[requiredField] = answer[requiredField];
-    }
-
-    return entityToCreateData;
+      },
+      {
+        type: 'input',
+        name: 'namePlural',
+        message: 'Enter a name plural for your object (eg: companies):',
+        default: '',
+        validate: (input: string, answers?: any) => {
+          if (input.trim() === answers?.nameSingular.trim()) {
+            return 'Name plural must be different from name singular';
+          }
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'labelSingular',
+        message: 'Enter a label singular for your object:',
+        default: (answers: any) => {
+          return convertToLabel(answers.nameSingular);
+        },
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'labelPlural',
+        message: 'Enter a label plural for your object:',
+        default: (answers: any) => {
+          return convertToLabel(answers.namePlural);
+        },
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+    ]);
   }
 }

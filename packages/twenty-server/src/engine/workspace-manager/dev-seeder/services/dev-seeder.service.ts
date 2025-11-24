@@ -5,6 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/core-modules/application/constants/twenty-standard-applications';
+import { WorkspaceFlatApplicationMapCacheService } from 'src/engine/core-modules/application/services/workspace-flat-application-map-cache.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -21,7 +23,6 @@ import { seedPageLayoutWidgets } from 'src/engine/workspace-manager/dev-seeder/c
 import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 @Injectable()
@@ -38,6 +39,7 @@ export class DevSeederService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly devSeederDataService: DevSeederDataService,
     private readonly applicationService: ApplicationService,
+    private readonly workspaceFlatApplicationMapCacheService: WorkspaceFlatApplicationMapCacheService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {}
@@ -58,6 +60,10 @@ export class DevSeederService {
       await this.workspaceDataSourceService.createWorkspaceDBSchema(
         workspaceId,
       );
+
+    await this.workspaceFlatApplicationMapCacheService.invalidateCache({
+      workspaceId,
+    });
 
     const dataSourceMetadata =
       await this.dataSourceService.createDataSourceMetadata(
@@ -80,6 +86,13 @@ export class DevSeederService {
       );
     }
 
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId: workspaceId,
       dataSourceId: dataSourceMetadata.id,
@@ -90,13 +103,17 @@ export class DevSeederService {
       dataSourceMetadata,
       workspaceId,
       featureFlags,
+      twentyStandardFlatApplication,
     });
 
     await this.devSeederMetadataService.seedRelations({
       workspaceId,
     });
 
-    await this.devSeederPermissionsService.initPermissions(workspaceId);
+    await this.devSeederPermissionsService.initPermissions({
+      workspaceId,
+      twentyStandardApplication,
+    });
 
     await seedPageLayouts(this.coreDataSource, 'core', workspaceId);
     await seedPageLayoutTabs(this.coreDataSource, 'core', workspaceId);
