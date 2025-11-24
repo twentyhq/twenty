@@ -5,13 +5,18 @@ import { InformationBannerKeys } from '@/information-banner/types/InformationBan
 import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
 import { IconRefresh } from 'twenty-ui/display';
 
+const COMPONENT_INSTANCE_ID =
+  'information-banner-reconnect-account-email-aliases';
+
 export const InformationBannerReconnectAccountEmailAliases = () => {
   const { accountToReconnect } = useAccountToReconnect(
     InformationBannerKeys.ACCOUNTS_TO_RECONNECT_EMAIL_ALIASES,
   );
 
   const { triggerProviderReconnect } = useTriggerProviderReconnect();
-  const { dismissReconnectAccountBanner } = useDismissReconnectAccountBanner();
+  const { dismissReconnectAccountBanner } = useDismissReconnectAccountBanner(
+    COMPONENT_INSTANCE_ID,
+  );
 
   if (!accountToReconnect) {
     return null;
@@ -23,6 +28,7 @@ export const InformationBannerReconnectAccountEmailAliases = () => {
 
   return (
     <InformationBanner
+      componentInstanceId={COMPONENT_INSTANCE_ID}
       message={`Please reconnect your mailbox ${accountToReconnect.handle} to update your email aliases:`}
       buttonTitle="Reconnect"
       buttonIcon={IconRefresh}
