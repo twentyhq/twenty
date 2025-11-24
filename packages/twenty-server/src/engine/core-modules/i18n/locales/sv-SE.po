@@ -2136,8 +2136,7 @@ msgstr "Saknas obligatoriska fält: minst en unik begränsning måste vara fulls
 #. js-lingui-id: hty0d5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Monday"
-msgstr ""
-"M\n"
+msgstr "M\n"
 "ndags"
 
 #. js-lingui-id: FqzlX4
@@ -2189,12 +2188,12 @@ msgstr "Namnet \"{computedMetadataNameFromLabel}\" kan inte vara detsamma på b�
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
-msgstr ""
+msgstr "Namnet \"{name}\" är inte tillgängligt"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr ""
+msgstr "Namnet \"{name}\" är inte tillgängligt då det redan används av ett annat fält"
 
 #. js-lingui-id: dBDpp2
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
@@ -2892,8 +2891,7 @@ msgstr "K\"or"
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
-msgstr ""
-"L\n"
+msgstr "L\n"
 "urdag"
 
 #. js-lingui-id: N/rFzD
@@ -3033,8 +3031,7 @@ msgstr "\"amnet"
 #. js-lingui-id: DBC3t5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Sunday"
-msgstr ""
-"S\n"
+msgstr "S\n"
 "nd"
 
 #. js-lingui-id: oyJYg7

@@ -319,7 +319,7 @@ msgstr "ID de usuario asociado"
 #. js-lingui-id: scLx/y
 #: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
 msgid "At least one folder must be synced."
-msgstr ""
+msgstr "Al menos una carpeta debe estar sincronizada."
 
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -1018,7 +1018,7 @@ msgstr "Opción duplicada {field}"
 #. js-lingui-id: AcnTuz
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "Email already in use"
-msgstr ""
+msgstr "El correo electrónico ya está en uso"
 
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -1028,7 +1028,7 @@ msgstr "El correo electrónico ya está verificado."
 #. js-lingui-id: LT5dFi
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "Email can only be updated when you belong to a single workspace."
-msgstr ""
+msgstr "El correo electrónico solo se puede actualizar cuando usted pertenece a un solo espacio de trabajo."
 
 #. js-lingui-id: xw6iqb
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
@@ -2038,7 +2038,7 @@ msgstr "Política de importación de carpetas de mensajes"
 #. js-lingui-id: aIgrkW
 #: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
 msgid "Message folder not found"
-msgstr ""
+msgstr "Carpeta de mensaje no encontrada"
 
 #. js-lingui-id: p4ANpY
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2187,12 +2187,12 @@ msgstr "El nombre \"{computedMetadataNameFromLabel}\" no puede ser el mismo en a
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
-msgstr ""
+msgstr "El nombre \"{name}\" no está disponible"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr ""
+msgstr "El nombre \"{name}\" no está disponible ya que ya lo utiliza otro campo"
 
 #. js-lingui-id: dBDpp2
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
@@ -2248,7 +2248,7 @@ msgstr "Los nombres no están sincronizados con las etiquetas."
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "New email must be different from current email"
-msgstr ""
+msgstr "El nuevo correo electrónico debe ser diferente del actual"
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2694,7 +2694,7 @@ msgstr "Por favor, revise su configuración de conexión. Asegúrese de que el h
 #. js-lingui-id: mqzu5F
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Please confirm your updated email"
-msgstr ""
+msgstr "Por favor, confirma tu correo electrónico actualizado"
 
 #. js-lingui-id: v0iiWr
 #: src/engine/core-modules/webhook/webhook.service.ts
