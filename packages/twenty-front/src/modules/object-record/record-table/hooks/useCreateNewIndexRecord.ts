@@ -74,7 +74,7 @@ export const useCreateNewIndexRecord = ({
               instanceId: getRecordFieldInputInstanceId({
                 recordId,
                 fieldName: labelIdentifierFieldMetadataItem.name,
-                prefix: RecordTitleCellContainerType.ShowPage,
+                prefix: RecordTitleCellContainerType.PageHeader,
               }),
             });
           }

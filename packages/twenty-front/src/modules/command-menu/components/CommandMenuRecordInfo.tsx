@@ -11,7 +11,6 @@ import { recordStoreIdentifierFamilySelector } from '@/object-record/record-stor
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
@@ -19,37 +18,7 @@ import { Avatar } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
-
-const StyledRecordInfoContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(0.5)};
-`;
-
-const StyledRecordAvatar = styled.div`
-  align-items: center;
-  background: ${({ theme }) => theme.background.transparent.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  display: flex;
-  flex-shrink: 0;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledRecordTitleContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  min-width: 0;
-`;
-
-const StyledRecordDate = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  white-space: nowrap;
-`;
+import { CommandMenuPageInfoLayout } from './CommandMenuPageInfoLayout';
 
 export const CommandMenuRecordInfo = ({
   commandMenuPageInstanceId,
@@ -122,9 +91,9 @@ export const CommandMenuRecordInfo = ({
   };
 
   return (
-    <StyledRecordInfoContainer>
-      {recordIdentifier && (
-        <StyledRecordAvatar>
+    <CommandMenuPageInfoLayout
+      icon={
+        recordIdentifier ? (
           <Avatar
             avatarUrl={recordIdentifier.avatarUrl}
             placeholder={recordIdentifier.name}
@@ -132,9 +101,9 @@ export const CommandMenuRecordInfo = ({
             size="md"
             type={recordIdentifier.avatarType}
           />
-        </StyledRecordAvatar>
-      )}
-      <StyledRecordTitleContainer>
+        ) : undefined
+      }
+      title={
         <FieldContext.Provider
           value={{
             recordId: objectRecordId,
@@ -151,12 +120,12 @@ export const CommandMenuRecordInfo = ({
             containerType={RecordTitleCellContainerType.PageHeader}
           />
         </FieldContext.Provider>
-      </StyledRecordTitleContainer>
-      {beautifiedCreatedAt && (
-        <StyledRecordDate>
+      }
+      label={
+        beautifiedCreatedAt ? (
           <Trans>Created {beautifiedCreatedAt}</Trans>
-        </StyledRecordDate>
-      )}
-    </StyledRecordInfoContainer>
+        ) : undefined
+      }
+    />
   );
 };

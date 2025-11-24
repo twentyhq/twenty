@@ -7,7 +7,7 @@ import {
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
+import { DashboardWidgetPlaceholder } from '@/page-layout/widgets/components/DashboardWidgetPlaceholder';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { type MutableSnapshot } from 'recoil';
@@ -26,9 +26,9 @@ const mockPageLayout: PageLayout = {
   updatedAt: '2024-01-01T00:00:00.000Z',
 };
 
-const meta: Meta<typeof WidgetPlaceholder> = {
-  title: 'Modules/PageLayout/Widgets/WidgetPlaceholder',
-  component: WidgetPlaceholder,
+const meta: Meta<typeof DashboardWidgetPlaceholder> = {
+  title: 'Modules/PageLayout/Widgets/DashboardWidgetPlaceholder',
+  component: DashboardWidgetPlaceholder,
   decorators: [
     (Story) => {
       const initializeState = (snapshot: MutableSnapshot) => {
@@ -78,7 +78,7 @@ const meta: Meta<typeof WidgetPlaceholder> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof WidgetPlaceholder>;
+type Story = StoryObj<typeof DashboardWidgetPlaceholder>;
 
 export const Default: Story = {
   parameters: {

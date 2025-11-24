@@ -720,13 +720,13 @@ msgid "Add view"
 msgstr "Voeg aansig by"
 
 #. js-lingui-id: 8sZiWP
-#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+#: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
 msgid "Add widget"
 msgstr "Voeg widget by"
 
 #. js-lingui-id: iRpDWj
 #: src/modules/page-layout/widgets/widget-card/components/WidgetCardHeader.tsx
-#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+#: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Add Widget"
 msgstr "Voeg widget by"
@@ -779,6 +779,8 @@ msgstr "Admin Paneel"
 
 #. js-lingui-id: sxkWRg
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent.tsx
 msgid "Advanced"
 msgstr "Gevorderd"
 
@@ -1923,7 +1925,7 @@ msgid "Click on the checkmark to apply your changes."
 msgstr "Klik op die regmerkie om jou veranderinge toe te pas."
 
 #. js-lingui-id: WTlZnA
-#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+#: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
 msgid "Click to add your first widget"
 msgstr "Klik om jou eerste hulptoepassing by te voeg"
 
@@ -9243,7 +9245,7 @@ msgstr "Tipe"
 #. js-lingui-id: qzD6hf
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
 msgid "Type anything..."
-msgstr ""
+msgstr "Tik enigiets..."
 
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
