@@ -8,6 +8,7 @@ import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { buildPrimaryDimensionMetadata } from '@/page-layout/widgets/graph/utils/buildPrimaryDimensionMetadata';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
@@ -55,7 +56,13 @@ export const transformOneDimensionalGroupByToBarChartData = ({
   // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
   const limitedResults = rawResults.slice(0, BAR_CHART_MAXIMUM_NUMBER_OF_BARS);
 
-  const dimensionMetadata = new Map<string, RawDimensionValue>();
+  const dimensionMetadata = buildPrimaryDimensionMetadata({
+    groupByRawResults: limitedResults,
+    primaryAxisGroupByField: groupByFieldX,
+    primaryAxisDateGranularity:
+      configuration.primaryAxisDateGranularity ?? undefined,
+    primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
+  });
 
   const data: BarChartDataItem[] = limitedResults.map((result) => {
     const dimensionValues = result.groupByDimensionValues;
@@ -70,10 +77,6 @@ export const transformOneDimensionalGroupByToBarChartData = ({
             configuration.primaryAxisGroupBySubFieldName ?? undefined,
         })
       : '';
-
-    if (isDefined(dimensionValues?.[0])) {
-      dimensionMetadata.set(xValue, dimensionValues[0] as RawDimensionValue);
-    }
 
     const aggregateValue = computeAggregateValueFromGroupByResult({
       rawResult: result,
