@@ -6,11 +6,13 @@ export const buildFormattedToRawLookup = (
 ): Map<string, RawDimensionValue> => {
   const lookup = new Map<string, RawDimensionValue>();
 
-  formattedValues.forEach(({ formatted, raw }) => {
-    if (!lookup.has(formatted)) {
-      lookup.set(formatted, raw);
-    }
-  });
+  formattedValues.forEach(
+    ({ formattedPrimaryDimensionValue, rawPrimaryDimensionValue }) => {
+      if (!lookup.has(formattedPrimaryDimensionValue)) {
+        lookup.set(formattedPrimaryDimensionValue, rawPrimaryDimensionValue);
+      }
+    },
+  );
 
   return lookup;
 };
