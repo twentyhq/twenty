@@ -79,6 +79,7 @@ export const Default: Story = {
   },
   render: (args) => (
     <WidgetCard
+      widgetId="story-widget"
       pageLayoutType={args.pageLayoutType}
       layoutMode={args.layoutMode}
       isInPinnedTab={args.isInPinnedTab}
@@ -187,6 +188,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetCard> = {
       <PageLayoutTestWrapper>
         <EditModeWrapper isInEditMode={!isReadMode}>
           <WidgetCard
+            widgetId="catalog-widget"
             className={args.className}
             isDragging={args.isDragging ?? false}
             isEditing={args.isEditing ?? false}

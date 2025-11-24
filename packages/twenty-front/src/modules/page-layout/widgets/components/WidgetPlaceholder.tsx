@@ -50,6 +50,7 @@ export const WidgetPlaceholder = () => {
 
   return (
     <WidgetCard
+      widgetId="widget-placeholder"
       layoutMode={layoutMode}
       pageLayoutType={currentPageLayout.type}
       isInPinnedTab={isInPinnedTab}

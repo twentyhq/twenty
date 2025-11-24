@@ -10,12 +10,12 @@ import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/componen
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
+import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
-import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { useTheme } from '@emotion/react';
 import { type MouseEvent } from 'react';
 import { IconLock } from 'twenty-ui/display';
@@ -97,6 +97,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
       onClick={isPageLayoutInEditMode ? handleClick : undefined}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      widgetId={widget.id}
     >
       {showHeader && (
         <WidgetCardHeader

@@ -19,6 +19,7 @@ export type WidgetCardProps = {
   className?: string;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
+  widgetId: string;
 };
 
 const StyledWidgetCard = styled.div<{
@@ -159,6 +160,7 @@ export const WidgetCard = ({
   className,
   onMouseEnter,
   onMouseLeave,
+  widgetId,
 }: WidgetCardProps) => {
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
@@ -177,6 +179,7 @@ export const WidgetCard = ({
       className={className}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      data-widget-id={widgetId}
     >
       {children}
     </StyledWidgetCard>

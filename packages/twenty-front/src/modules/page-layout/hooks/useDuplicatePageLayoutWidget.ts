@@ -1,5 +1,3 @@
-import { PAGE_LAYOUT_GRID_MARGIN } from '@/page-layout/constants/PageLayoutGridMargin';
-import { PAGE_LAYOUT_GRID_ROW_HEIGHT } from '@/page-layout/constants/PageLayoutGridRowHeight';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -125,13 +123,17 @@ export const useDuplicatePageLayoutWidget = (
         const { scrollWrapperElement } = getScrollWrapperElement();
 
         if (isDefined(scrollWrapperElement)) {
-          const scrollPosition =
-            newLayout.y *
-            (PAGE_LAYOUT_GRID_ROW_HEIGHT + PAGE_LAYOUT_GRID_MARGIN);
+          requestAnimationFrame(() => {
+            const widgetElement = scrollWrapperElement.querySelector(
+              `[data-widget-id="${newWidgetId}"]`,
+            );
 
-          scrollWrapperElement.scrollTo({
-            top: scrollPosition,
-            behavior: 'smooth',
+            if (isDefined(widgetElement)) {
+              widgetElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+              });
+            }
           });
         }
 
