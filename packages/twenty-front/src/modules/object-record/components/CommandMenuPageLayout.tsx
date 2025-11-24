@@ -1,6 +1,8 @@
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { COMMAND_MENU_SIDE_PANEL_WIDTH } from '@/command-menu/constants/CommandMenuSidePanelWidth';
+import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
+import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { ModalContainerContext } from '@/ui/layout/modal/contexts/ModalContainerContext';
@@ -66,6 +68,9 @@ export const CommandMenuPageLayout = ({
   const theme = useTheme();
   const isMobile = useIsMobile();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
+  const isCommandMenuClosing = useRecoilValue(isCommandMenuClosingState);
+  const { commandMenuCloseAnimationCompleteCleanup } =
+    useCommandMenuCloseAnimationCompleteCleanup();
   const [modalContainer, setModalContainer] = useState<HTMLDivElement | null>(
     null,
   );
@@ -82,6 +87,10 @@ export const CommandMenuPageLayout = ({
   const handleAnimationComplete = () => {
     if (!isCommandMenuOpened) {
       setShouldRenderContent(false);
+    }
+
+    if (isCommandMenuClosing) {
+      commandMenuCloseAnimationCompleteCleanup();
     }
 
     setTableWidthResizeIsActive(true);
