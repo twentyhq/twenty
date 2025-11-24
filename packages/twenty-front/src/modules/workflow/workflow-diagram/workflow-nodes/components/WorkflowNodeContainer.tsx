@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 const StyledNodeContainer = styled.div<{
   runStatus?: WorkflowRunStepStatus;
   isConnectable?: boolean;
+  selected: boolean;
 }>`
   align-items: center;
   display: flex;
@@ -21,30 +22,31 @@ const StyledNodeContainer = styled.div<{
   position: relative;
   transition: border-color 0.1s;
 
-  &:hover {
-    background: linear-gradient(
-        0deg,
-        ${({ theme }) => theme.background.transparent.lighter} 0%,
-        ${({ theme }) => theme.background.transparent.lighter} 100%
-      ),
-      ${({ theme }) => theme.background.secondary};
-    ${({ theme, isConnectable }) =>
-      isConnectable &&
-      css`
-        border-color: ${theme.color.blue} !important;
-      `};
-  }
-
-  ${({ theme, runStatus }) => {
+  ${({ theme, runStatus, selected, isConnectable }) => {
     const colors = getWorkflowDiagramColors({ theme, runStatus });
 
-    return css`
-      border-color: ${colors.unselected.borderColor};
-      background: ${colors.unselected.background};
+    const background = selected
+      ? colors.selected.background
+      : colors.unselected.background;
 
-      .selected & {
-        background-color: ${colors.selected.background};
-        border-color: ${colors.selected.borderColor};
+    return css`
+      background: ${background};
+      border-color: ${selected
+        ? colors.selected.borderColor
+        : colors.unselected.borderColor};
+
+      &:hover {
+        background: linear-gradient(
+            0deg,
+            ${theme.background.transparent.lighter} 0%,
+            ${theme.background.transparent.lighter} 100%
+          ),
+          ${background};
+
+        ${isConnectable &&
+        css`
+          border-color: ${theme.color.blue} !important;
+        `};
       }
     `;
   }}
