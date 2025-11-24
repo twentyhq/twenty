@@ -1,6 +1,7 @@
 import { AsyncLocalStorage } from 'async_hooks';
 
 import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
+import { type EntitySchema } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
@@ -13,6 +14,7 @@ export type WorkspaceContext = {
   metadataVersion: number;
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
   permissionsPerRoleId: ObjectsPermissionsByRoleId;
+  entitySchemas: EntitySchema[];
 };
 
 export const workspaceContextStorage =

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isString } from '@sniptt/guards';
 import { isDefined, isValidVariable } from 'twenty-shared/utils';
@@ -11,9 +12,11 @@ import {
   SingleRecordAvailability,
   TRIGGER_STEP_ID,
 } from 'twenty-shared/workflow';
+import { Repository } from 'typeorm';
 
 import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
+import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { DEFAULT_ITERATOR_CURRENT_ITEM } from 'src/modules/workflow/workflow-builder/workflow-schema/constants/default-iterator-current-item.const';
@@ -42,6 +45,8 @@ import {
 export class WorkflowSchemaWorkspaceService {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    @InjectRepository(AgentEntity)
+    private readonly agentRepository: Repository<AgentEntity>,
   ) {}
 
   async computeStepOutputSchema({
@@ -122,6 +127,39 @@ export class WorkflowSchemaWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.AI_AGENT: {
+        const agentId = step.settings.input.agentId;
+
+        if (!isDefined(agentId) || agentId === '') {
+          return {};
+        }
+
+        const agent = await this.agentRepository.findOne({
+          where: { id: agentId, workspaceId },
+        });
+
+        if (
+          !isDefined(agent) ||
+          agent.responseFormat?.type !== 'json' ||
+          !isDefined(agent.responseFormat.schema)
+        ) {
+          return {};
+        }
+
+        return Object.fromEntries(
+          Object.entries(agent.responseFormat.schema.properties).map(
+            ([key, field]) => [
+              key,
+              {
+                isLeaf: true,
+                type: field.type,
+                label: field.description || key,
+                value: null,
+              },
+            ],
+          ),
+        ) as OutputSchema;
+      }
       case WorkflowActionType.CODE: // StepOutput schema is computed on serverlessFunction draft execution
       default:
         return {};
@@ -139,13 +177,12 @@ export class WorkflowSchemaWorkspaceService {
   }): Promise<WorkflowAction> {
     // We don't enrich on the fly for code and HTTP request workflow actions.
     // For code actions, OutputSchema is computed and updated when testing the serverless function.
-    // For HTTP requests and AI agent, OutputSchema is determined by the example response input
+    // For HTTP requests, OutputSchema is determined by the example response input
+    // AI agent OutputSchema is enriched from agent's responseFormat
     if (
-      [
-        WorkflowActionType.CODE,
-        WorkflowActionType.HTTP_REQUEST,
-        WorkflowActionType.AI_AGENT,
-      ].includes(step.type)
+      [WorkflowActionType.CODE, WorkflowActionType.HTTP_REQUEST].includes(
+        step.type,
+      )
     ) {
       return step;
     }

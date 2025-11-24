@@ -27,7 +27,18 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { SidePanelInformationBanner } from 'twenty-ui/display';
 
-import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
+import {
+  FieldMetadataType,
+  GraphType,
+  type PageLayoutWidget,
+} from '~/generated/graphql';
+
+const StyledCommandMenuContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+`;
 
 const StyledSidePanelInformationBanner = styled(SidePanelInformationBanner)`
   margin-top: ${({ theme }) => theme.spacing(2)};
@@ -118,73 +129,95 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
       .map((item) => item.id),
   );
 
+  const primaryAxisFieldMetadataId =
+    configuration.__typename === 'BarChartConfiguration' ||
+    configuration.__typename === 'LineChartConfiguration'
+      ? configuration.primaryAxisGroupByFieldMetadataId
+      : null;
+
+  const primaryAxisField = objectMetadataItem?.fields?.find(
+    (field) => field.id === primaryAxisFieldMetadataId,
+  );
+
+  const isPrimaryAxisDate =
+    primaryAxisField?.type === FieldMetadataType.DATE ||
+    primaryAxisField?.type === FieldMetadataType.DATE_TIME;
+
   return (
-    <CommandMenuList commandGroups={[]} selectableItemIds={visibleItemIds}>
-      <ChartTypeSelectionSection
-        currentGraphType={currentGraphType}
-        setCurrentGraphType={handleGraphTypeChange}
-      />
-      {hasWidgetTooManyGroups && (
-        <StyledSidePanelInformationBanner
-          message={
-            currentGraphType === GraphType.LINE
-              ? t`Max ${LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart. Consider adding a filter`
-              : t`Max ${BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter`
-          }
+    <StyledCommandMenuContainer>
+      <CommandMenuList commandGroups={[]} selectableItemIds={visibleItemIds}>
+        <ChartTypeSelectionSection
+          currentGraphType={currentGraphType}
+          setCurrentGraphType={handleGraphTypeChange}
         />
-      )}
-      {chartSettings.map((group) => {
-        const visibleItems = group.items.filter(
-          (item) =>
-            !shouldHideChartSetting(
-              item,
-              widget.objectMetadataId,
-              isGroupByEnabled as boolean,
-              configuration,
-              objectMetadataItem,
-            ),
-        );
+        {hasWidgetTooManyGroups && (
+          <StyledSidePanelInformationBanner
+            message={
+              currentGraphType === GraphType.LINE
+                ? t`Undisplayed data: max ${LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart.`
+                : t`Undisplayed data: max ${BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart.`
+            }
+            tooltipMessage={
+              isPrimaryAxisDate
+                ? t`Consider adding a filter or changing the date granularity to display more data.`
+                : t`Consider adding a filter to display more data.`
+            }
+            variant="warning"
+          />
+        )}
+        {chartSettings.map((group) => {
+          const visibleItems = group.items.filter(
+            (item) =>
+              !shouldHideChartSetting(
+                item,
+                widget.objectMetadataId,
+                isGroupByEnabled as boolean,
+                configuration,
+                objectMetadataItem,
+              ),
+          );
 
-        return (
-          <CommandGroup key={group.heading} heading={group.heading}>
-            {visibleItems.map((item) => {
-              const handleItemToggleChange = () => {
-                setSelectedItemId(item.id);
-                updateChartSettingToggle(item.id);
-              };
+          return (
+            <CommandGroup key={group.heading} heading={group.heading}>
+              {visibleItems.map((item) => {
+                const handleItemToggleChange = () => {
+                  setSelectedItemId(item.id);
+                  updateChartSettingToggle(item.id);
+                };
 
-              const handleItemInputChange = (value: number | null) => {
-                updateChartSettingInput(item.id, value);
-              };
+                const handleItemInputChange = (value: number | null) => {
+                  updateChartSettingInput(item.id, value);
+                };
 
-              const handleItemDropdownOpen = () => {
-                openDropdown({
-                  dropdownComponentInstanceIdFromProps: item.id,
-                });
-              };
+                const handleItemDropdownOpen = () => {
+                  openDropdown({
+                    dropdownComponentInstanceIdFromProps: item.id,
+                  });
+                };
 
-              const handleFilterClick = () => {
-                navigatePageLayoutCommandMenu({
-                  commandMenuPage: CommandMenuPages.PageLayoutGraphFilter,
-                });
-              };
+                const handleFilterClick = () => {
+                  navigatePageLayoutCommandMenu({
+                    commandMenuPage: CommandMenuPages.PageLayoutGraphFilter,
+                  });
+                };
 
-              return (
-                <ChartSettingItem
-                  key={item.id}
-                  item={item}
-                  configuration={configuration}
-                  getChartSettingsValues={getChartSettingsValues}
-                  onToggleChange={handleItemToggleChange}
-                  onInputChange={handleItemInputChange}
-                  onDropdownOpen={handleItemDropdownOpen}
-                  onFilterClick={handleFilterClick}
-                />
-              );
-            })}
-          </CommandGroup>
-        );
-      })}
-    </CommandMenuList>
+                return (
+                  <ChartSettingItem
+                    key={item.id}
+                    item={item}
+                    configuration={configuration}
+                    getChartSettingsValues={getChartSettingsValues}
+                    onToggleChange={handleItemToggleChange}
+                    onInputChange={handleItemInputChange}
+                    onDropdownOpen={handleItemDropdownOpen}
+                    onFilterClick={handleFilterClick}
+                  />
+                );
+              })}
+            </CommandGroup>
+          );
+        })}
+      </CommandMenuList>
+    </StyledCommandMenuContainer>
   );
 };

@@ -66,6 +66,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
         workflowId,
         defaultLabel,
         getIcon(icon),
+        TRIGGER_STEP_ID,
       );
     };
   };

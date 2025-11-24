@@ -74,6 +74,11 @@ msgstr "Una carpeta de favoritos"
 msgid "A group of related messages (e.g. email thread, chat thread)"
 msgstr "Un grupo de mensajes relacionados (p. ej., hilo de correo electrónico, hilo de chat)"
 
+#. js-lingui-id: 1Pylbk
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
+msgid "A many to one relation field should always declare a join column"
+msgstr ""
+
 #. js-lingui-id: vZj1Xc
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "A message sent or received through a messaging channel (email, chat, etc.)"
@@ -88,6 +93,11 @@ msgstr "Una nota"
 #: src/modules/note/standard-objects/note-target.workspace-entity.ts
 msgid "A note target"
 msgstr "Un objetivo de nota"
+
+#. js-lingui-id: MtcxLV
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
+msgid "A one to many relation field should never declare a join column"
+msgstr ""
 
 #. js-lingui-id: Io42ej
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -219,7 +229,6 @@ msgstr "Evento agregado / filtrado que se mostrará en la línea de tiempo"
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/messages-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/message-threads-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/calendar-events-all.view.ts
 msgid "All {objectLabelPlural}"
@@ -310,7 +319,7 @@ msgstr "ID de usuario asociado"
 #. js-lingui-id: scLx/y
 #: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
 msgid "At least one folder must be synced."
-msgstr ""
+msgstr "Al menos una carpeta debe estar sincronizada."
 
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -515,7 +524,6 @@ msgid "Body"
 msgstr "Cuerpo"
 
 #. js-lingui-id: 6+byWT
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
 msgid "By Stage"
 msgstr "Por Etapa"
@@ -803,6 +811,11 @@ msgstr "No se pudo encontrar el metadato del campo relacionado con el índice"
 msgid "Could not find index related object metadata"
 msgstr "No se pudo encontrar el metadato del objeto relacionado con el índice"
 
+#. js-lingui-id: YzCaIm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
+msgid "Could not find relation field parent flat object"
+msgstr ""
+
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -1005,7 +1018,7 @@ msgstr "Opción duplicada {field}"
 #. js-lingui-id: AcnTuz
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "Email already in use"
-msgstr ""
+msgstr "El correo electrónico ya está en uso"
 
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -1015,7 +1028,7 @@ msgstr "El correo electrónico ya está verificado."
 #. js-lingui-id: LT5dFi
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "Email can only be updated when you belong to a single workspace."
-msgstr ""
+msgstr "El correo electrónico solo se puede actualizar cuando usted pertenece a un solo espacio de trabajo."
 
 #. js-lingui-id: xw6iqb
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
@@ -1693,6 +1706,11 @@ msgstr "Entrada de metadatos de objeto inválida."
 msgid "Invalid relation creation payload"
 msgstr "Carga útil de creación de relación no válida"
 
+#. js-lingui-id: iWv3nK
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Invalid relation field target"
+msgstr ""
+
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid setting type provided in cron trigger"
@@ -2020,7 +2038,7 @@ msgstr "Política de importación de carpetas de mensajes"
 #. js-lingui-id: aIgrkW
 #: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
 msgid "Message folder not found"
-msgstr ""
+msgstr "Carpeta de mensaje no encontrada"
 
 #. js-lingui-id: p4ANpY
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2166,15 +2184,20 @@ msgstr "Nombre"
 msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
 msgstr "El nombre \"{computedMetadataNameFromLabel}\" no puede ser el mismo en ambos lados de la relación"
 
-#. js-lingui-id: Ge9TXE
+#. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{flatFieldMetadataName}\" is not available"
-msgstr "El nombre \"{flatFieldMetadataName}\" no está disponible"
+msgid "Name \"{name}\" is not available"
+msgstr "El nombre \"{name}\" no está disponible"
 
-#. js-lingui-id: h8ic2G
+#. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
-msgstr "El nombre \"{flatFieldMetadataName}\" no está disponible ya que ya lo utiliza otro campo"
+msgid "Name \"{name}\" is not available as it is already used by another field"
+msgstr "El nombre \"{name}\" no está disponible ya que ya lo utiliza otro campo"
+
+#. js-lingui-id: dBDpp2
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
+msgid "Name \"{name}\" is not available as it is already used by join column name"
+msgstr ""
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2225,7 +2248,7 @@ msgstr "Los nombres no están sincronizados con las etiquetas."
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "New email must be different from current email"
-msgstr ""
+msgstr "El nuevo correo electrónico debe ser diferente del actual"
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2671,7 +2694,7 @@ msgstr "Por favor, revise su configuración de conexión. Asegúrese de que el h
 #. js-lingui-id: mqzu5F
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Please confirm your updated email"
-msgstr ""
+msgstr "Por favor, confirma tu correo electrónico actualizado"
 
 #. js-lingui-id: v0iiWr
 #: src/engine/core-modules/webhook/webhook.service.ts
@@ -4165,6 +4188,11 @@ msgstr "Contraseña incorrecta"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "X"
+
+#. js-lingui-id: 4ysDL0
+#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
+msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
+msgstr ""
 
 #. js-lingui-id: 1SQnFB
 #: src/engine/metadata-modules/role/role.resolver.ts

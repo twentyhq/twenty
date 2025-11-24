@@ -44,6 +44,7 @@ export class ApplicationEntity {
   @Column({ nullable: true, type: 'text' })
   description: string | null;
 
+  // TODO should not be nullable
   @Column({ nullable: true, type: 'text' })
   version: string | null;
 
@@ -58,6 +59,9 @@ export class ApplicationEntity {
 
   @Column({ nullable: true, type: 'uuid' })
   serverlessFunctionLayerId: string | null;
+
+  @Column({ nullable: false, type: 'boolean', default: true })
+  canBeUninstalled: boolean;
 
   @ManyToOne(() => WorkspaceEntity, {
     onDelete: 'CASCADE',

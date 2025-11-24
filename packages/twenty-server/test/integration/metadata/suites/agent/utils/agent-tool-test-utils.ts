@@ -243,7 +243,7 @@ export const createAgentToolTestModule =
       description: 'Test agent for integration tests',
       prompt: 'You are a test agent',
       modelId: 'gpt-4o',
-      responseFormat: {},
+      responseFormat: { type: 'text' },
       workspaceId: testWorkspaceId,
       workspace: {} as any,
       roleId: testRoleId,

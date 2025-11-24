@@ -8,10 +8,11 @@ import { type RecordBoardColumnHeaderAggregateContentId } from '@/object-record/
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DROPDOWN_OFFSET_Y } from '@/ui/layout/dropdown/constants/DropdownOffsetY';
 import styled from '@emotion/styled';
+import { type Nullable } from 'twenty-shared/types';
 
 type RecordBoardColumnHeaderAggregateDropdownProps = {
-  aggregateValue?: string | number;
-  aggregateLabel?: string;
+  aggregateValue?: Nullable<string | number>;
+  aggregateLabel?: Nullable<string>;
   objectMetadataItem: ObjectMetadataItem;
   dropdownId: string;
 };

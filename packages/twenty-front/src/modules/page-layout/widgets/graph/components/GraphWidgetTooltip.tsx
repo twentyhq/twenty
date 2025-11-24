@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { IconArrowUpRight } from 'twenty-ui/display';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledTooltip = styled.div`
   background: ${({ theme }) => theme.background.primary};
@@ -133,14 +134,14 @@ type GraphWidgetTooltipProps = {
   items: GraphWidgetTooltipItem[];
   indexLabel?: string;
   highlightedKey?: string;
-  linkTo?: string;
+  onGraphWidgetTooltipClick?: () => void;
 };
 
 export const GraphWidgetTooltip = ({
   items,
   indexLabel,
   highlightedKey,
-  linkTo,
+  onGraphWidgetTooltipClick,
 }: GraphWidgetTooltipProps) => {
   const theme = useTheme();
 
@@ -149,11 +150,14 @@ export const GraphWidgetTooltip = ({
   );
 
   const shouldHighlight = filteredItems.length > 1;
-  const hasLink = isNonEmptyString(linkTo);
+  const hasGraphWidgetTooltipClick = isDefined(onGraphWidgetTooltipClick);
 
   return (
     <StyledTooltip>
-      <StyledHorizontalSectionPadding addTop addBottom={!hasLink}>
+      <StyledHorizontalSectionPadding
+        addTop
+        addBottom={!hasGraphWidgetTooltipClick}
+      >
         <StyledTooltipContent>
           {indexLabel && (
             <StyledTooltipHeader>{indexLabel}</StyledTooltipHeader>
@@ -179,15 +183,11 @@ export const GraphWidgetTooltip = ({
           </StyledTooltipRowContainer>
         </StyledTooltipContent>
       </StyledHorizontalSectionPadding>
-      {hasLink && (
+      {hasGraphWidgetTooltipClick && (
         <>
           <StyledTooltipSeparator />
           <StyledHorizontalSectionPadding addBottom>
-            <StyledTooltipLink
-              onClick={() => {
-                window.location.href = String(linkTo);
-              }}
-            >
+            <StyledTooltipLink onClick={onGraphWidgetTooltipClick}>
               <span>{t`Click to see data`}</span>
               <IconArrowUpRight size={theme.icon.size.sm} />
             </StyledTooltipLink>

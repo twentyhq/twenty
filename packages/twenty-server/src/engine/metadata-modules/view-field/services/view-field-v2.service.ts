@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -32,6 +33,7 @@ export class ViewFieldV2Service {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     @InjectRepository(ViewFieldEntity)
     private readonly viewFieldRepository: Repository<ViewFieldEntity>,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async createOne({
@@ -67,6 +69,13 @@ export class ViewFieldV2Service {
       return [];
     }
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const {
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewMaps,
@@ -89,6 +98,7 @@ export class ViewFieldV2Service {
         fromCreateViewFieldInputToFlatViewFieldToCreate({
           createViewFieldInput,
           workspaceId,
+          workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
         }),
     );
 

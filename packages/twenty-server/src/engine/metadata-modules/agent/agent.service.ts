@@ -120,17 +120,20 @@ export class AgentService {
   async updateOneAgent(input: UpdateAgentInput, workspaceId: string) {
     const agent = await this.findOneAgent(input.id, workspaceId);
 
-    let updatedName = input.name;
+    const updateData: Partial<AgentEntity> = {
+      ...agent,
+      ...Object.fromEntries(
+        Object.entries(input).filter(([_, value]) => value !== undefined),
+      ),
+    };
 
-    if (input.label) {
-      updatedName = computeMetadataNameFromLabel(input.label);
+    if (input.label !== undefined) {
+      updateData.name = computeMetadataNameFromLabel(input.label);
+    } else if (input.name !== undefined) {
+      updateData.name = input.name;
     }
 
-    const updatedAgent = await this.agentRepository.save({
-      ...agent,
-      ...input,
-      name: updatedName,
-    });
+    const updatedAgent = await this.agentRepository.save(updateData);
 
     if (!('roleId' in input)) {
       return updatedAgent;

@@ -6,5 +6,3 @@ export const BASE_APPLICATION_PROJECT_PATH = join(
   BASE_PATH,
   'base-application-project',
 );
-
-export const BASE_SCHEMAS_PATH = join(BASE_PATH, 'schemas');

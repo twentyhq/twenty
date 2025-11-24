@@ -53,7 +53,11 @@ export const parseGmailMessagesImportError = (
 
     case 404:
     case 410:
-      return undefined;
+      return new MessageImportDriverException(
+        message,
+        MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+        { cause: options?.cause },
+      );
 
     case 429:
       return new MessageImportDriverException(
