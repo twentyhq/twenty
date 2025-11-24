@@ -64,6 +64,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
         setTokenPair(tokenPair);
       },
       onUnauthenticatedError: () => {
+        console.log('onUnauthenticatedError, resetting state');
         setTokenPair(null);
         setCurrentUser(null);
         setCurrentWorkspaceMember(null);
