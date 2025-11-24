@@ -83,17 +83,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
 
       this.logger.log('Database migrations completed successfully');
     } catch (error) {
-      this.logger.log(
-        this.currentAppVersion.major + '.' + this.currentAppVersion.minor,
-      );
       this.logger.error('Error running database migrations:', error);
-      if (
-        this.currentAppVersion.major === 1 &&
-        this.currentAppVersion.minor === 12
-      ) {
-        this.logger.error('Swallowing migration errors');
-        return;
-      }
       throw error;
     }
   }
