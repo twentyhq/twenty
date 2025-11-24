@@ -37,7 +37,7 @@ export const GraphWidgetLineChartRenderer = ({
     showDataLabels,
     hasTooManyGroups,
     loading,
-    dimensionMetadata,
+    formattedToRawLookup,
     objectMetadataItem,
   } = useGraphLineChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
@@ -71,7 +71,7 @@ export const GraphWidgetLineChartRenderer = ({
 
   const handlePointClick = (point: Point<LineSeries>) => {
     const xValue = (point.data as LineChartDataPoint).x;
-    const rawValue = dimensionMetadata.get(xValue as string) ?? null;
+    const rawValue = formattedToRawLookup.get(xValue as string) ?? null;
 
     const queryParams = buildChartDrilldownQueryParams({
       objectMetadataItem,

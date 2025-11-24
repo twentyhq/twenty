@@ -41,7 +41,7 @@ export const GraphWidgetBarChartRenderer = ({
     layout,
     loading,
     hasTooManyGroups,
-    dimensionMetadata,
+    formattedToRawLookup,
     objectMetadataItem,
   } = useGraphBarChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
@@ -72,7 +72,7 @@ export const GraphWidgetBarChartRenderer = ({
 
   const handleBarClick = (datum: ComputedDatum<BarChartDataItem>) => {
     const displayValue = datum.data[indexBy];
-    const rawValue = dimensionMetadata.get(displayValue as string) ?? null;
+    const rawValue = formattedToRawLookup.get(displayValue as string) ?? null;
 
     const queryParams = buildChartDrilldownQueryParams({
       objectMetadataItem,

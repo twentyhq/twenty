@@ -39,7 +39,7 @@ type TransformGroupByDataToBarChartDataResult = {
   showDataLabels: boolean;
   layout?: BarChartLayout;
   hasTooManyGroups: boolean;
-  dimensionMetadata: Map<string, RawDimensionValue>;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
 const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
@@ -52,7 +52,7 @@ const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
   showDataLabels: false,
   layout: BarChartLayout.VERTICAL,
   hasTooManyGroups: false,
-  dimensionMetadata: new Map(),
+  formattedToRawLookup: new Map(),
 };
 
 export const transformGroupByDataToBarChartData = ({
@@ -198,6 +198,6 @@ export const transformGroupByDataToBarChartData = ({
     showDataLabels,
     layout,
     hasTooManyGroups: baseResult.hasTooManyGroups || dateRangeWasTruncated,
-    dimensionMetadata: baseResult.dimensionMetadata,
+    formattedToRawLookup: baseResult.formattedToRawLookup,
   };
 };

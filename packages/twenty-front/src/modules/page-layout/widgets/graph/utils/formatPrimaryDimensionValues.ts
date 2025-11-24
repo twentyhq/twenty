@@ -5,20 +5,25 @@ import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDi
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectRecordGroupByDateGranularity } from '~/generated/graphql';
 
-type BuildPrimaryDimensionMetadataParameters = {
+type FormatPrimaryDimensionValuesParameters = {
   groupByRawResults: GroupByRawResult[];
   primaryAxisGroupByField: FieldMetadataItem;
   primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity;
   primaryAxisGroupBySubFieldName?: string;
 };
 
-export const buildPrimaryDimensionMetadata = ({
+export type FormattedDimensionValue = {
+  formattedPrimaryDimensionValue: string;
+  rawPrimaryDimensionValue: RawDimensionValue;
+};
+
+export const formatPrimaryDimensionValues = ({
   groupByRawResults,
   primaryAxisGroupByField,
   primaryAxisDateGranularity,
   primaryAxisGroupBySubFieldName,
-}: BuildPrimaryDimensionMetadataParameters): Map<string, RawDimensionValue> => {
-  const primaryDimensionMetadata = new Map<string, RawDimensionValue>();
+}: FormatPrimaryDimensionValuesParameters): FormattedDimensionValue[] => {
+  const formattedValues: FormattedDimensionValue[] = [];
 
   groupByRawResults.forEach((rawResult) => {
     const groupByDimensionValues = rawResult.groupByDimensionValues;
@@ -27,20 +32,21 @@ export const buildPrimaryDimensionMetadata = ({
       return;
     }
 
+    const rawPrimaryDimensionValue =
+      groupByDimensionValues[0] as RawDimensionValue;
+
     const formattedPrimaryDimensionValue = formatDimensionValue({
-      value: groupByDimensionValues[0],
+      value: rawPrimaryDimensionValue,
       fieldMetadata: primaryAxisGroupByField,
       dateGranularity: primaryAxisDateGranularity,
       subFieldName: primaryAxisGroupBySubFieldName,
     });
 
-    if (!primaryDimensionMetadata.has(formattedPrimaryDimensionValue)) {
-      primaryDimensionMetadata.set(
-        formattedPrimaryDimensionValue,
-        groupByDimensionValues[0] as RawDimensionValue,
-      );
-    }
+    formattedValues.push({
+      formattedPrimaryDimensionValue,
+      rawPrimaryDimensionValue,
+    });
   });
 
-  return primaryDimensionMetadata;
+  return formattedValues;
 };

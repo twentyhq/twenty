@@ -26,7 +26,7 @@ type UseGraphBarChartWidgetDataResult = {
   loading: boolean;
   error?: Error;
   hasTooManyGroups: boolean;
-  dimensionMetadata: Map<string, RawDimensionValue>;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
   objectMetadataItem: ReturnType<
     typeof useObjectMetadataItemById
   >['objectMetadataItem'];

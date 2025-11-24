@@ -8,6 +8,8 @@ import { sortBarChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/g
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
+import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
@@ -35,7 +37,7 @@ type TransformTwoDimensionalGroupByToBarChartDataResult = {
   keys: string[];
   series: BarChartSeries[];
   hasTooManyGroups: boolean;
-  dimensionMetadata: Map<string, RawDimensionValue>;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
 export const transformTwoDimensionalGroupByToBarChartData = ({
@@ -56,7 +58,14 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
   const dataMap = new Map<string, BarChartDataItem>();
   const xValues = new Set<string>();
   const yValues = new Set<string>();
-  const dimensionMetadata = new Map<string, RawDimensionValue>();
+  const formattedValues = formatPrimaryDimensionValues({
+    groupByRawResults: rawResults,
+    primaryAxisGroupByField: groupByFieldX,
+    primaryAxisDateGranularity:
+      configuration.primaryAxisDateGranularity ?? undefined,
+    primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
+  });
+  const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
 
   let hasTooManyGroups = false;
 
@@ -79,7 +88,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     });
 
     if (isDefined(dimensionValues[0])) {
-      dimensionMetadata.set(xValue, dimensionValues[0] as RawDimensionValue);
+      formattedToRawLookup.set(xValue, dimensionValues[0] as RawDimensionValue);
     }
 
     // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)
@@ -158,6 +167,6 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     keys,
     series,
     hasTooManyGroups,
-    dimensionMetadata,
+    formattedToRawLookup,
   };
 };

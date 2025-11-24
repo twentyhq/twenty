@@ -7,7 +7,8 @@ import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLin
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
-import { buildPrimaryDimensionMetadata } from '@/page-layout/widgets/graph/utils/buildPrimaryDimensionMetadata';
+import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
+import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { sortLineChartSeries } from '@/page-layout/widgets/graph/utils/sortLineChartSeries';
@@ -28,7 +29,7 @@ type TransformTwoDimensionalGroupByToLineChartDataParams = {
 type TransformTwoDimensionalGroupByToLineChartDataResult = {
   series: LineChartSeries[];
   hasTooManyGroups: boolean;
-  dimensionMetadata: Map<string, RawDimensionValue>;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
 export const transformTwoDimensionalGroupByToLineChartData = ({
@@ -44,13 +45,14 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
   const seriesMap = new Map<string, Map<string, number>>();
   const allXValues: string[] = [];
   const xValueSet = new Set<string>();
-  const dimensionMetadata = buildPrimaryDimensionMetadata({
+  const formattedValues = formatPrimaryDimensionValues({
     groupByRawResults: rawResults,
     primaryAxisGroupByField: groupByFieldX,
     primaryAxisDateGranularity:
       configuration.primaryAxisDateGranularity ?? undefined,
     primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
   });
+  const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
   let hasTooManyGroups = false;
 
   rawResults.forEach((result) => {
@@ -132,6 +134,6 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
   return {
     series,
     hasTooManyGroups,
-    dimensionMetadata,
+    formattedToRawLookup,
   };
 };

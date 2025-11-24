@@ -17,7 +17,7 @@ type UseGraphLineChartWidgetDataResult = {
   yAxisLabel?: string;
   showDataLabels: boolean;
   hasTooManyGroups: boolean;
-  dimensionMetadata: Map<string, RawDimensionValue>;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
   loading: boolean;
   error?: Error;
   objectMetadataItem: ReturnType<

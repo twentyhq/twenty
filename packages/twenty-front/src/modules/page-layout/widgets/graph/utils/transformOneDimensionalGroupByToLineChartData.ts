@@ -2,13 +2,14 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
-import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMaximumNumberOfDataPoints.constant';
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
-import { buildPrimaryDimensionMetadata } from '@/page-layout/widgets/graph/utils/buildPrimaryDimensionMetadata';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
+import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,7 +28,7 @@ type TransformOneDimensionalGroupByToLineChartDataParams = {
 type TransformOneDimensionalGroupByToLineChartDataResult = {
   series: LineChartSeries[];
   hasTooManyGroups: boolean;
-  dimensionMetadata: Map<string, RawDimensionValue>;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
 export const transformOneDimensionalGroupByToLineChartData = ({
@@ -45,13 +46,15 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
   );
 
-  const dimensionMetadata = buildPrimaryDimensionMetadata({
+  const formattedValues = formatPrimaryDimensionValues({
     groupByRawResults: limitedResults,
     primaryAxisGroupByField: groupByFieldX,
     primaryAxisDateGranularity:
       configuration.primaryAxisDateGranularity ?? undefined,
     primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
   });
+
+  const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
 
   const data: LineChartDataPoint[] = limitedResults
     .map((result) => {
@@ -101,6 +104,6 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     series,
     hasTooManyGroups:
       rawResults.length > LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
-    dimensionMetadata,
+    formattedToRawLookup,
   };
 };

@@ -28,7 +28,7 @@ type TransformGroupByDataToLineChartDataResult = {
   yAxisLabel?: string;
   showDataLabels: boolean;
   hasTooManyGroups: boolean;
-  dimensionMetadata: Map<string, RawDimensionValue>;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
 const EMPTY_LINE_CHART_RESULT: TransformGroupByDataToLineChartDataResult = {
@@ -37,7 +37,7 @@ const EMPTY_LINE_CHART_RESULT: TransformGroupByDataToLineChartDataResult = {
   yAxisLabel: undefined,
   showDataLabels: false,
   hasTooManyGroups: false,
-  dimensionMetadata: new Map(),
+  formattedToRawLookup: new Map(),
 };
 
 export const transformGroupByDataToLineChartData = ({
@@ -140,6 +140,6 @@ export const transformGroupByDataToLineChartData = ({
     xAxisLabel,
     yAxisLabel,
     showDataLabels,
-    dimensionMetadata: baseResult.dimensionMetadata,
+    formattedToRawLookup: baseResult.formattedToRawLookup,
   };
 };
