@@ -108,8 +108,7 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
         const fieldDefaultDefaultValue = generateDefaultValue(field.type);
 
         if (
-          field.isNullable === false &&
-          field.defaultValue !== null &&
+          isDefined(field.defaultValue) &&
           ((typeof field.defaultValue === 'string' &&
             field.defaultValue === fieldDefaultDefaultValue) ||
             this.objectEquals(field.defaultValue, fieldDefaultDefaultValue)) &&
@@ -122,7 +121,7 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
           if (isCompositeFieldMetadataType(field.type)) {
             const compositeType = compositeTypeDefinitions.get(field.type);
 
-            if (compositeType) {
+            if (isDefined(compositeType)) {
               for (const property of compositeType.properties) {
                 if (!isDryRun) {
                   const columnName = computeCompositeColumnName(
