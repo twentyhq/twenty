@@ -30,10 +30,16 @@ export class ServerlessFunctionV2Service {
   async createOne({
     createServerlessFunctionInput,
     workspaceId,
+    applicationId,
   }: {
     createServerlessFunctionInput: CreateServerlessFunctionInput & {
       serverlessFunctionLayerId: string;
     };
+    /**
+     * @deprecated do not use call validateBuildAndRunWorkspaceMigration contextually
+     * when interacting with another application than workspace custom one
+     * */
+    applicationId?: string;
     workspaceId: string;
   }) {
     const { workspaceCustomFlatApplication } =
@@ -58,7 +64,8 @@ export class ServerlessFunctionV2Service {
       fromCreateServerlessFunctionInputToFlatServerlessFunction({
         createServerlessFunctionInput,
         workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        workspaceCustomApplicationId:
+          applicationId ?? workspaceCustomFlatApplication.id,
       });
 
     const validateAndBuildResult =

@@ -1,8 +1,8 @@
-import chalk from 'chalk';
 import { generate } from '@genql/cli';
+import chalk from 'chalk';
 import { join, resolve } from 'path';
-import { ConfigService } from './config.service';
 import { ApiService } from './api.service';
+import { ConfigService } from './config.service';
 
 export const GENERATED_FOLDER_NAME = 'generated';
 
@@ -38,7 +38,11 @@ export class GenerateService {
     console.log(chalk.gray(`API URL: ${url}`));
     console.log(chalk.gray(`Output: ${outputPath}`));
 
-    const { data: schema } = await this.apiService.getSchema();
+    const getSchemaResponse = await this.apiService.getSchema();
+    if (!getSchemaResponse.success) {
+      return;
+    }
+    const { data: schema } = getSchemaResponse;
 
     await generate({
       schema,
