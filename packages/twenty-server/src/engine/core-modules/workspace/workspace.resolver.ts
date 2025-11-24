@@ -261,7 +261,7 @@ export class WorkspaceResolver {
       );
     } catch {
       // Temporary should be removed after CreateWorkspaceCustomApplicationCommand is run
-      return null
+      return null;
     }
   }
 

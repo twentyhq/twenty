@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class WorkspaceCustomApplicationIdNonNullable1763977334519
   implements MigrationInterface
@@ -17,6 +17,7 @@ export class WorkspaceCustomApplicationIdNonNullable1763977334519
         `ALTER TABLE "core"."workspace" ADD CONSTRAINT "FK_3b1acb13a5dac9956d1a4b32755" FOREIGN KEY ("workspaceCustomApplicationId") REFERENCES "core"."application"("id") ON DELETE RESTRICT ON UPDATE NO ACTION`,
       );
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error(
         'Swallowing WorkspaceCustomApplicationIdNonNullable1763977334519 error',
         e,

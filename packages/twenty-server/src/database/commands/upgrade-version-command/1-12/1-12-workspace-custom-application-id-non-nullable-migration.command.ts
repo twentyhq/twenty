@@ -12,8 +12,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 
 @Command({
   name: '1-12-workspace-custom-application-id-non-nullable-migration',
-  description:
-    'Create FK_3b1acb13a5dac9956d1a4b32755 foreign key',
+  description: 'Create FK_3b1acb13a5dac9956d1a4b32755 foreign key',
 })
 export class WorkspaceCustomApplicationIdNonNullableCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   private hasRunOnce = false;
@@ -40,6 +39,7 @@ export class WorkspaceCustomApplicationIdNonNullableCommand extends ActiveOrSusp
     }
 
     const queryRunner = this.coreDataSource.createQueryRunner();
+
     await queryRunner.connect();
     await queryRunner.startTransaction();
     if (!options.dryRun) {
