@@ -4680,7 +4680,8 @@ export type Workspace = {
   viewGroups?: Maybe<Array<CoreViewGroup>>;
   viewSorts?: Maybe<Array<CoreViewSort>>;
   views?: Maybe<Array<CoreView>>;
-  workspaceCustomApplicationId?: Maybe<Scalars['String']>;
+  workspaceCustomApplication?: Maybe<Application>;
+  workspaceCustomApplicationId: Scalars['String'];
   workspaceMembersCount?: Maybe<Scalars['Float']>;
   workspaceUrls: WorkspaceUrls;
 };

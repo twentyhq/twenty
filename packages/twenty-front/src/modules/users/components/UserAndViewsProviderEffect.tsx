@@ -118,6 +118,9 @@ export const UserAndViewsProviderEffect = () => {
         ...userQueryData.currentUser.currentWorkspace,
         defaultRole:
           userQueryData.currentUser.currentWorkspace.defaultRole ?? null,
+        workspaceCustomApplication:
+          userQueryData.currentUser.currentWorkspace
+            .workspaceCustomApplication ?? null,
       });
     }
 

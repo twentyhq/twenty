@@ -23,6 +23,7 @@ import { CleanOrphanedUserWorkspacesCommand } from 'src/database/commands/upgrad
 import { CreateTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-create-twenty-standard-application.command';
 import { CreateWorkspaceCustomApplicationCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-create-workspace-custom-application.command';
 import { SetStandardApplicationNotUninstallableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-set-standard-application-not-uninstallable.command';
+import { WorkspaceCustomApplicationIdNonNullableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-workspace-custom-application-id-non-nullable-migration.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
 import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-deduplicate-unique-fields.command';
@@ -79,9 +80,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly seedStandardApplicationsCommand: CreateTwentyStandardApplicationCommand,
 
     // 1.12 Commands
-    protected readonlysetStandardApplicationNotUninstallableCommand: SetStandardApplicationNotUninstallableCommand,
+    protected readonly setStandardApplicationNotUninstallableCommand: SetStandardApplicationNotUninstallableCommand,
     protected readonly createTwentyStandardApplicationCommand: CreateTwentyStandardApplicationCommand,
     protected readonly createWorkspaceCustomApplicationCommand: CreateWorkspaceCustomApplicationCommand,
+    protected readonly workspaceCustomApplicationIdNonNullableCommand: WorkspaceCustomApplicationIdNonNullableCommand,
   ) {
     super(
       workspaceRepository,
@@ -138,10 +140,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_1120: VersionCommands = {
-      beforeSyncMetadata: [this.createWorkspaceCustomApplicationCommand],
-      afterSyncMetadata: [
-        this.readonlysetStandardApplicationNotUninstallableCommand,
+      beforeSyncMetadata: [
+        this.createWorkspaceCustomApplicationCommand,
+        this.workspaceCustomApplicationIdNonNullableCommand,
       ],
+      afterSyncMetadata: [this.setStandardApplicationNotUninstallableCommand],
     };
 
     this.allCommands = {
