@@ -8,7 +8,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -22,66 +22,47 @@ export const WorkflowObjectDropdownContent = ({
   showAdvancedOption = true,
 }: WorkflowObjectDropdownContentProps) => {
   const { getIcon } = useIcons();
-
-  const { objectMetadataItems } = useFilteredObjectMetadataItems();
-
-  const activeStandardObjectOptions = useMemo(
-    () =>
-      objectMetadataItems
-        .filter(
-          (objectMetadataItem) =>
-            objectMetadataItem.isActive && !objectMetadataItem.isSystem,
-        )
-        .map((objectMetadataItem) => ({
-          Icon: getIcon(objectMetadataItem.icon),
-          label: objectMetadataItem.labelPlural,
-          value: objectMetadataItem.nameSingular,
-        })),
-    [objectMetadataItems, getIcon],
-  );
-
-  const activeSystemObjectOptions = useMemo(
-    () =>
-      objectMetadataItems
-        .filter(
-          (objectMetadataItem) =>
-            objectMetadataItem.isActive && objectMetadataItem.isSystem,
-        )
-        .map((objectMetadataItem) => ({
-          Icon: getIcon(objectMetadataItem.icon),
-          label: objectMetadataItem.labelPlural,
-          value: objectMetadataItem.nameSingular,
-        })),
-    [objectMetadataItems, getIcon],
-  );
-
   const [searchInputValue, setSearchInputValue] = useState('');
   const [isSystemObjectsOpen, setIsSystemObjectsOpen] = useState(false);
+
+  const { objectMetadataItems } = useFilteredObjectMetadataItems();
+  const nonSystemObjectMetadataItems = objectMetadataItems.filter(
+    (objectMetadataItem) =>
+      objectMetadataItem.isActive && !objectMetadataItem.isSystem,
+  );
+  const systemObjectMetadataItems = objectMetadataItems.filter(
+    (objectMetadataItem) =>
+      objectMetadataItem.isActive && objectMetadataItem.isSystem,
+  );
 
   const shouldShowAdvanced =
     showAdvancedOption &&
     (!isNonEmptyString(searchInputValue) ||
       searchInputValue.toLowerCase().includes('advanced'));
 
-  const filteredStandardObjectOptions = useMemo(
-    () =>
-      activeStandardObjectOptions.filter((option) =>
-        option.label.toLowerCase().includes(searchInputValue.toLowerCase()),
-      ),
-    [activeStandardObjectOptions, searchInputValue],
+  const filteredNonSystemObjects = nonSystemObjectMetadataItems.filter(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular
+        .toLowerCase()
+        .includes(searchInputValue.toLowerCase()),
   );
 
-  const filteredSystemObjectOptions = useMemo(
-    () =>
-      activeSystemObjectOptions.filter((option) =>
-        option.label.toLowerCase().includes(searchInputValue.toLowerCase()),
-      ),
-    [activeSystemObjectOptions, searchInputValue],
+  const filteredSystemObjects = systemObjectMetadataItems.filter(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular
+        .toLowerCase()
+        .includes(searchInputValue.toLowerCase()),
   );
 
-  const filteredOptions = isSystemObjectsOpen
-    ? filteredSystemObjectOptions
-    : filteredStandardObjectOptions;
+  const filteredObjects = isSystemObjectsOpen
+    ? filteredSystemObjects
+    : filteredNonSystemObjects;
+
+  const filteredOptions = filteredObjects.map((objectMetadataItem) => ({
+    Icon: getIcon(objectMetadataItem.icon),
+    label: objectMetadataItem.labelPlural,
+    value: objectMetadataItem.nameSingular,
+  }));
 
   const handleSystemObjectsClick = () => {
     setIsSystemObjectsOpen(true);
