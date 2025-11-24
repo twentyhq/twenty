@@ -290,7 +290,7 @@ export class WorkspaceEntity {
   @Column({ nullable: false, type: 'uuid' })
   workspaceCustomApplicationId: string;
 
-  @Field(() => ApplicationDTO, { nullable: false })
+  @Field(() => ApplicationDTO, { nullable: true })
   @ManyToOne(() => ApplicationEntity, {
     onDelete: 'RESTRICT',
     nullable: false,

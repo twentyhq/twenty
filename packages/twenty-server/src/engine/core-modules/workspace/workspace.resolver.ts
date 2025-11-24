@@ -244,18 +244,25 @@ export class WorkspaceResolver {
     return workspace.routerModel;
   }
 
-  @ResolveField(() => ApplicationDTO, { nullable: false })
+  @ResolveField(() => ApplicationDTO, { nullable: true })
   async workspaceCustomApplication(
     @Parent() workspace: WorkspaceEntity,
-  ): Promise<ApplicationDTO> {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspace,
-        },
-      );
+  ): Promise<ApplicationDTO | null> {
+    try {
+      const { workspaceCustomFlatApplication } =
+        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+          {
+            workspace,
+          },
+        );
 
-    return fromFlatApplicationToApplicationDto(workspaceCustomFlatApplication);
+      return fromFlatApplicationToApplicationDto(
+        workspaceCustomFlatApplication,
+      );
+    } catch {
+      // Temporary should be removed after CreateWorkspaceCustomApplicationCommand is run
+      return null
+    }
   }
 
   @ResolveField(() => BillingSubscriptionEntity, { nullable: true })
