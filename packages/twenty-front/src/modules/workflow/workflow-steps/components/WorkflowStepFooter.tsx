@@ -44,9 +44,12 @@ export const WorkflowStepFooter = ({
 
   const handleChangeNodeType = () => {
     closeDropdown(dropdownId);
-    stepId === TRIGGER_STEP_ID
-      ? openWorkflowTriggerTypeInCommandMenu(workflowId)
-      : openWorkflowEditStepTypeInCommandMenu(workflowId);
+
+    if (stepId === TRIGGER_STEP_ID) {
+      openWorkflowTriggerTypeInCommandMenu(workflowId);
+    } else {
+      openWorkflowEditStepTypeInCommandMenu(workflowId);
+    }
   };
 
   const handleDuplicateNode = () => {
