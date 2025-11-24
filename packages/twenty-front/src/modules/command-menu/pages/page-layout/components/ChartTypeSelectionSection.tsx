@@ -3,6 +3,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { FeatureFlagKey, GraphType } from '~/generated-metadata/graphql';
 
+import { t } from '@lingui/core/macro';
 import { MenuPicker } from 'twenty-ui/navigation';
 
 const graphTypeOptions = [
@@ -46,6 +47,7 @@ export const ChartTypeSelectionSection = ({
 
         return (
           <MenuPicker
+            id={graphType}
             selected={currentGraphType === graphType}
             key={graphType}
             icon={GRAPH_TYPE_INFORMATION[graphType].icon}
@@ -54,6 +56,7 @@ export const ChartTypeSelectionSection = ({
             }}
             showLabel
             disabled={isDisabled}
+            tooltipContent={t(GRAPH_TYPE_INFORMATION[graphType].label)}
           />
         );
       })}
