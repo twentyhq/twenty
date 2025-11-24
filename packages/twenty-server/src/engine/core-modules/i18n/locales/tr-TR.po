@@ -2187,12 +2187,12 @@ msgstr "İlişkinin her iki tarafında da Ad \"{computedMetadataNameFromLabel}\"
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
-msgstr ""
+msgstr "İsim \"{name}\" mevcut değil"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr ""
+msgstr "İsim \"{name}\" başka bir alan tarafından kullanıldığından mevcut değil"
 
 #. js-lingui-id: dBDpp2
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts

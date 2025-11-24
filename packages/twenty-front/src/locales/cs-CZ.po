@@ -8956,8 +8956,7 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Tato akce je nevratná. Tímto bude váš účet trvale smazán."
 
@@ -9243,7 +9242,7 @@ msgstr "Typ"
 #. js-lingui-id: qzD6hf
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
 msgid "Type anything..."
-msgstr ""
+msgstr "Napište cokoli..."
 
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx

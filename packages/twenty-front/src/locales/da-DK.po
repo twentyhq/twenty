@@ -8956,11 +8956,9 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
-msgstr ""
-"Denne handling kan ikke fortrydes. Dette vil permanent slette din\n"
+msgstr "Denne handling kan ikke fortrydes. Dette vil permanent slette din\n"
 "            hele konto."
 
 #. js-lingui-id: bNY3MH
@@ -9245,7 +9243,7 @@ msgstr "Type"
 #. js-lingui-id: qzD6hf
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
 msgid "Type anything..."
-msgstr ""
+msgstr "Skriv noget..."
 
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
