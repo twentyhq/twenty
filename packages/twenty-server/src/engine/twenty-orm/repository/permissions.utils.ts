@@ -293,12 +293,12 @@ const validatePermissionsForJoinsAndReturnSelectsWithoutJoins = ({
       (alias) => alias.type === 'join' && alias.name === joinedAlias,
     )?.metadata;
 
-    if (entity) {
+    if (isDefined(entity)) {
       for (const [index, select] of expressionMap.selects.entries()) {
         const regex = /"(\w+)"\."(\w+)"/;
         const extractedAlias = select.selection.match(regex)?.[1]; // "person"."name" -> "person"
 
-        if (extractedAlias === joinedAlias) {
+        if (isDefined(extractedAlias) && extractedAlias === joinedAlias) {
           indexesOfSelectsForJoinedAlias.push(index);
 
           const selectedColumns = getSelectedColumnsFromExpressionMap({
