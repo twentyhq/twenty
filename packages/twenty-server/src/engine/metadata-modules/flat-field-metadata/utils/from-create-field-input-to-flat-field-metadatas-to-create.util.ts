@@ -1,4 +1,5 @@
-import { msg } from '@lingui/core/macro';
+157
+  import { msg } from '@lingui/core/macro';
 import {
   FieldMetadataType,
   type FieldMetadataOptions,
@@ -154,6 +155,15 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
           message: 'TS Vector is not supported for field creation',
         },
       };
+          case FieldMetadataType.NUMERIC: {
+      return {
+        status: 'fail',
+        error: {
+          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          message: 'NUMERIC field type cannot be created via API. Please use NUMBER type instead.',
+        },
+      };
+    }
     }
     case FieldMetadataType.UUID:
     case FieldMetadataType.TEXT:
@@ -163,7 +173,6 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     case FieldMetadataType.DATE:
     case FieldMetadataType.BOOLEAN:
     case FieldMetadataType.NUMBER:
-    case FieldMetadataType.NUMERIC:
     case FieldMetadataType.LINKS:
     case FieldMetadataType.CURRENCY:
     case FieldMetadataType.FULL_NAME:
