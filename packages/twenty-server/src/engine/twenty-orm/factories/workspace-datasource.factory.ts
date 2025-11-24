@@ -10,8 +10,11 @@ import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interf
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
+import { buildObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-metadata-item-with-field-maps.util';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache-storage.service';
 import {
   ROLES_PERMISSIONS,
@@ -45,7 +48,7 @@ export class WorkspaceDatasourceFactory {
     private readonly dataSourceService: DataSourceService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly entitySchemaFactory: EntitySchemaFactory,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
@@ -126,13 +129,45 @@ export class WorkspaceDatasourceFactory {
           let cachedEntitySchemas: EntitySchema[];
 
           const {
-            objectMetadataMaps: cachedObjectMetadataMaps,
-            metadataVersion: metadataVersionForFinalUpToDateCheck,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            flatIndexMaps,
           } =
-            await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+            await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
               {
                 workspaceId,
+                flatMapsKeys: [
+                  'flatObjectMetadataMaps',
+                  'flatFieldMetadataMaps',
+                  'flatIndexMaps',
+                ],
               },
+            );
+
+          const { idByNameSingular } = buildObjectIdByNameMaps(
+            flatObjectMetadataMaps,
+          );
+          const cachedObjectMetadataMaps: ObjectMetadataMaps = {
+            byId: {},
+            idByNameSingular,
+          };
+
+          for (const [id, flatObj] of Object.entries(
+            flatObjectMetadataMaps.byId,
+          )) {
+            if (isDefined(flatObj)) {
+              cachedObjectMetadataMaps.byId[id] =
+                buildObjectMetadataItemWithFieldMaps(
+                  flatObj,
+                  flatFieldMetadataMaps,
+                  flatIndexMaps,
+                );
+            }
+          }
+
+          const metadataVersionForFinalUpToDateCheck =
+            await this.workspaceCacheStorageService.getMetadataVersion(
+              workspaceId,
             );
 
           if (

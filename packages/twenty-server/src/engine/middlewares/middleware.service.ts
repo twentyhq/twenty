@@ -13,7 +13,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { INTERNAL_SERVER_ERROR } from 'src/engine/middlewares/constants/default-error-message.constant';
 import {
   handleException,
@@ -27,7 +27,7 @@ export class MiddlewareService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly workspaceStorageCacheService: WorkspaceCacheStorageService,
-    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly dataSourceService: DataSourceService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly jwtWrapperService: JwtWrapperService,
@@ -107,8 +107,13 @@ export class MiddlewareService {
       : undefined;
 
     if (metadataVersion === undefined && isDefined(data.workspace)) {
-      await this.workspaceMetadataCacheService.recomputeMetadataCache({
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
         workspaceId: data.workspace.id,
+        flatMapsKeys: [
+          'flatObjectMetadataMaps',
+          'flatFieldMetadataMaps',
+          'flatIndexMaps',
+        ],
       });
       throw new Error('Metadata cache version not found');
     }

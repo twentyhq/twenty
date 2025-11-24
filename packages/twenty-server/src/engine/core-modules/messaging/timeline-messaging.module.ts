@@ -5,8 +5,10 @@ import { TimelineMessagingService } from 'src/engine/core-modules/messaging/serv
 import { TimelineMessagingResolver } from 'src/engine/core-modules/messaging/timeline-messaging.resolver';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
+
 @Module({
-  imports: [WorkspaceDataSourceModule, UserModule],
+  imports: [WorkspaceDataSourceModule, UserModule, ConnectedAccountModule],
   exports: [],
   providers: [
     TimelineMessagingResolver,

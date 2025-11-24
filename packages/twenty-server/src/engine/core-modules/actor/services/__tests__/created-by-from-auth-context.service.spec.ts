@@ -13,7 +13,7 @@ import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-contex
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -59,28 +59,29 @@ describe('CreatedByFromAuthContextService', () => {
           },
         },
         {
-          provide: WorkspaceMetadataCacheService,
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
           useValue: {
-            getExistingOrRecomputeMetadataMaps: jest.fn().mockResolvedValue({
-              objectMetadataMaps: {
+            getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
+              flatObjectMetadataMaps: {
                 byId: {
                   'person-id': {
                     id: 'person-id',
                     nameSingular: 'person',
-                    fieldsById: {
-                      createdBy: {
-                        id: 'createdBy-id',
-                        name: 'createdBy',
-                      },
-                    },
-                    fieldIdByName: {
-                      createdBy: 'createdBy-id',
-                    },
+                    fieldMetadataIds: ['createdBy-id'],
                   },
                 },
-                idByNameSingular: {
-                  person: 'person-id',
+              },
+              flatFieldMetadataMaps: {
+                byId: {
+                  'createdBy-id': {
+                    id: 'createdBy-id',
+                    name: 'createdBy',
+                    objectMetadataId: 'person-id',
+                  },
                 },
+              },
+              flatIndexMaps: {
+                byId: {},
               },
             }),
           },

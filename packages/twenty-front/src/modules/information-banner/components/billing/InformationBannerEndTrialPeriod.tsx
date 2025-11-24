@@ -13,6 +13,7 @@ export const InformationBannerEndTrialPeriod = () => {
 
   return (
     <InformationBanner
+      componentInstanceId="information-banner-end-trial-period"
       variant="danger"
       message={
         hasPermissionToEndTrialPeriod

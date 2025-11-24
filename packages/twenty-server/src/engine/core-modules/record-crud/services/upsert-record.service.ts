@@ -128,11 +128,13 @@ export class UpsertRecordService {
           ? conflictPathsUniqueFieldsToUpdate
           : ['id'];
 
+      //TODO : To delete once IS_NULL_EQUIVALENCE_ENABLED feature flag removed
       const indexPredicate = uniqueFieldsToUpdate
         .map((field) =>
           computeUniqueIndexWhereClause({
             type: field.type,
             name: field.name,
+            defaultValue: field.defaultValue,
           }),
         )
         .filter(isDefined);

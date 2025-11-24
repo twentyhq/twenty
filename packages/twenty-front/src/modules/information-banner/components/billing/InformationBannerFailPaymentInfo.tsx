@@ -30,6 +30,7 @@ export const InformationBannerFailPaymentInfo = () => {
 
   return (
     <InformationBanner
+      componentInstanceId="information-banner-fail-payment-info"
       variant="danger"
       message={
         hasPermissionToUpdateBillingDetails
