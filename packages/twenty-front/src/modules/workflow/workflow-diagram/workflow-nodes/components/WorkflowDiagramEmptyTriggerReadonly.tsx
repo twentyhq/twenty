@@ -1,8 +1,8 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
@@ -20,7 +20,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 
-export const WorkflowDiagramEmptyTriggerReadonly = () => {
+export const WorkflowDiagramEmptyTriggerReadonly = ({ id }: { id: string }) => {
   const { getIcon } = useIcons();
   const { t } = useLingui();
 
@@ -31,17 +31,18 @@ export const WorkflowDiagramEmptyTriggerReadonly = () => {
     workflowVisualizerWorkflowVersionIdComponentState,
   );
 
+  const [workflowSelectedNode, setWorkflowSelectedNode] =
+    useRecoilComponentState(workflowSelectedNodeComponentState);
+
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const { openWorkflowViewStepInCommandMenu } = useWorkflowCommandMenu();
 
-  const setWorkflowSelectedNode = useSetRecoilComponentState(
-    workflowSelectedNodeComponentState,
-  );
-
   const setCommandMenuNavigationStack = useSetRecoilState(
     commandMenuNavigationStackState,
   );
+
+  const selected = workflowSelectedNode === id;
 
   const handleClick = () => {
     if (
@@ -72,15 +73,20 @@ export const WorkflowDiagramEmptyTriggerReadonly = () => {
     <WorkflowNodeContainer
       data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
       onClick={handleClick}
+      selected={selected}
     >
       <WorkflowNodeIconContainer />
 
       <WorkflowNodeRightPart>
         <WorkflowNodeLabelWithCounterPart>
-          <WorkflowNodeLabel>{t`Trigger`}</WorkflowNodeLabel>
+          <WorkflowNodeLabel
+            selected={selected}
+          >{t`Trigger`}</WorkflowNodeLabel>
         </WorkflowNodeLabelWithCounterPart>
 
-        <WorkflowNodeTitle>{t`Add a Trigger`}</WorkflowNodeTitle>
+        <WorkflowNodeTitle
+          selected={selected}
+        >{t`Add a Trigger`}</WorkflowNodeTitle>
       </WorkflowNodeRightPart>
     </WorkflowNodeContainer>
   );

@@ -1,8 +1,8 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -16,11 +16,9 @@ import { useIcons } from 'twenty-ui/display';
 export const WorkflowDiagramStepNodeEditable = ({
   id,
   data,
-  selected,
 }: {
   id: string;
   data: WorkflowDiagramStepNodeData;
-  selected?: boolean;
 }) => {
   const { getIcon } = useIcons();
 
@@ -28,9 +26,10 @@ export const WorkflowDiagramStepNodeEditable = ({
     workflowVisualizerWorkflowIdComponentState,
   );
 
-  const setWorkflowSelectedNode = useSetRecoilComponentState(
-    workflowSelectedNodeComponentState,
-  );
+  const [workflowSelectedNode, setWorkflowSelectedNode] =
+    useRecoilComponentState(workflowSelectedNodeComponentState);
+
+  const selected = workflowSelectedNode === id;
 
   const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
 
@@ -44,7 +43,7 @@ export const WorkflowDiagramStepNodeEditable = ({
     <WorkflowDiagramStepNodeEditableContent
       id={id}
       data={data}
-      selected={selected ?? false}
+      selected={selected}
       onClick={() => {
         if (!isInRightDrawer) {
           setCommandMenuNavigationStack([]);
