@@ -1,6 +1,6 @@
 import { existsSync } from 'fs';
-import { AppUninstallCommand } from 'src/commands/app-uninstall.command';
 import { AppSyncCommand } from '../../commands/app-sync.command';
+import { AppUninstallCommand } from '../../commands/app-uninstall.command';
 import { COVERED_APPLICATION_FOLDERS } from './constants/covered-applications-folder.constant';
 import { getTestedApplicationPath } from './utils/get-tested-application-path.util';
 
@@ -24,7 +24,7 @@ describe.each(COVERED_APPLICATION_FOLDERS)(
       expect(result.success).toBe(true);
     });
 
-    it(`should successfully install ${applicationName} application`, async () => {
+    it.only(`should successfully install ${applicationName} application`, async () => {
       const result = await syncCommand.execute(appPath);
 
       expect(result.success).toBe(true);

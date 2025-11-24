@@ -1,9 +1,10 @@
 import chalk from 'chalk';
+import { writeFileSync } from 'fs';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
 import { ApiService } from '../services/api.service';
+import { GenerateService } from '../services/generate.service';
 import { ApiResponse } from '../types/config.types';
 import { loadManifest } from '../utils/load-manifest';
-import { GenerateService } from '../services/generate.service';
 
 export class AppSyncCommand {
   private apiService = new ApiService();
@@ -37,6 +38,13 @@ export class AppSyncCommand {
       yarnLock,
     });
 
+    if (!serverlessSyncResult.success) {
+      writeFileSync(
+        `${Date.now()}-first.json`,
+        JSON.stringify(serverlessSyncResult.error, null, 2),
+      );
+    }
+
     if (shouldGenerate) {
       await this.generateService.generateClient(appPath);
 
@@ -50,6 +58,10 @@ export class AppSyncCommand {
     }
 
     if (!serverlessSyncResult.success) {
+      writeFileSync(
+        `${Date.now()}-second.json`,
+        JSON.stringify(serverlessSyncResult.error, null, 2),
+      );
       console.error(
         chalk.red('❌ Serverless functions Sync failed:'),
         serverlessSyncResult.error,

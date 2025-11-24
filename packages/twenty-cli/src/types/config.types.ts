@@ -96,9 +96,16 @@ export type ObjectManifest = {
   fields: FieldMetadata[];
 };
 
-export interface ApiResponse<T = any> {
-  success: boolean;
-  data?: T;
-  error?: string;
+export type SuccessfulApiResponse<T = unknown> = {
+  success: true;
+  data: T;
   message?: string;
-}
+};
+export type FailingApiResponse = {
+  success: false;
+  error?: unknown;
+  message?: string;
+};
+export type ApiResponse<T = unknown> =
+  | SuccessfulApiResponse<T>
+  | FailingApiResponse;
