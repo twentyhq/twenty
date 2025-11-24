@@ -6,16 +6,16 @@ import { getBarChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetB
 import { getTooltipReferenceFromBarChartElementAnchor } from '@/page-layout/widgets/graph/utils/getTooltipReferenceFromBarChartElementAnchor';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type ComputedDatum } from '@nivo/bar';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphBarChartTooltipProps = {
   containerId: string;
   enrichedKeys: BarChartEnrichedKey[];
-  data: BarChartDataItem[];
-  indexBy: string;
   formatOptions: GraphValueFormatOptions;
   enableGroupTooltip?: boolean;
   layout?: 'vertical' | 'horizontal';
+  onBarClick?: (datum: ComputedDatum<BarChartDataItem>) => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 };
@@ -23,11 +23,10 @@ type GraphBarChartTooltipProps = {
 export const GraphBarChartTooltip = ({
   containerId,
   enrichedKeys,
-  data,
-  indexBy,
   formatOptions,
   enableGroupTooltip = true,
   layout = 'vertical',
+  onBarClick,
   onMouseEnter,
   onMouseLeave,
 }: GraphBarChartTooltipProps) => {
@@ -35,13 +34,19 @@ export const GraphBarChartTooltip = ({
     graphWidgetBarTooltipComponentState,
   );
 
+  const handleTooltipClick: (() => void) | undefined = isDefined(onBarClick)
+    ? () => {
+        if (isDefined(tooltipState)) {
+          onBarClick(tooltipState.datum);
+        }
+      }
+    : undefined;
+
   const tooltipData = !isDefined(tooltipState)
     ? null
     : getBarChartTooltipData({
         datum: tooltipState.datum,
         enrichedKeys,
-        data,
-        indexBy,
         formatOptions,
         enableGroupTooltip,
         layout,
@@ -79,7 +84,7 @@ export const GraphBarChartTooltip = ({
       items={tooltipData.tooltipItems}
       indexLabel={tooltipData.indexLabel}
       highlightedKey={tooltipData.hoveredKey}
-      linkTo={tooltipData.linkTo}
+      onGraphWidgetTooltipClick={handleTooltipClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     />

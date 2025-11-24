@@ -1,14 +1,19 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { usePersistView } from '@/views/hooks/internal/usePersistView';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
-import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
-import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { coreViewsState } from '@/views/states/coreViewState';
+import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { useRecoilCallback } from 'recoil';
+import {
+  isDefined,
+  upsertIntoArrayOfObjectsComparingId,
+} from 'twenty-shared/utils';
+import { type CoreView } from '~/generated/graphql';
 
 export const useUpdateViewAggregate = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
@@ -16,62 +21,64 @@ export const useUpdateViewAggregate = () => {
     contextStoreCurrentViewIdComponentState,
   );
   const { updateView } = usePersistView();
+  const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
-  const setRecordIndexKanbanAggregateOperationState = useSetRecoilState(
-    recordIndexKanbanAggregateOperationState,
-  );
-
-  const { refreshCoreViewsByObjectMetadataId } =
-    useRefreshCoreViewsByObjectMetadataId();
-
-  const updateViewAggregate = useCallback(
-    ({
-      kanbanAggregateOperationFieldMetadataId,
-      kanbanAggregateOperation,
-      objectMetadataId,
-    }: {
-      kanbanAggregateOperationFieldMetadataId: string | null;
-      kanbanAggregateOperation: ExtendedAggregateOperations | null;
-      objectMetadataId: string;
-    }) => {
-      if (!canPersistChanges) {
-        return;
-      }
-
-      const convertedKanbanAggregateOperation = isDefined(
+  const updateViewAggregate = useRecoilCallback(
+    ({ set }) =>
+      async ({
+        kanbanAggregateOperationFieldMetadataId,
         kanbanAggregateOperation,
-      )
-        ? convertExtendedAggregateOperationToAggregateOperation(
-            kanbanAggregateOperation,
-          )
-        : null;
+        objectMetadataItem,
+      }: {
+        kanbanAggregateOperationFieldMetadataId: string | null;
+        kanbanAggregateOperation: ExtendedAggregateOperations | null;
+        objectMetadataItem: ObjectMetadataItem;
+      }) => {
+        if (!canPersistChanges) {
+          return;
+        }
 
-      if (!isDefined(currentViewId)) {
-        return;
-      }
+        const convertedKanbanAggregateOperation = isDefined(
+          kanbanAggregateOperation,
+        )
+          ? convertExtendedAggregateOperationToAggregateOperation(
+              kanbanAggregateOperation,
+            )
+          : null;
 
-      updateView({
-        id: currentViewId,
-        input: {
-          kanbanAggregateOperationFieldMetadataId,
-          kanbanAggregateOperation: convertedKanbanAggregateOperation,
-        },
-      });
+        if (!isDefined(currentViewId)) {
+          return;
+        }
 
-      setRecordIndexKanbanAggregateOperationState({
-        operation: kanbanAggregateOperation,
-        fieldMetadataId: kanbanAggregateOperationFieldMetadataId,
-      });
+        const updatedViewResult = await updateView({
+          id: currentViewId,
+          input: {
+            kanbanAggregateOperationFieldMetadataId,
+            kanbanAggregateOperation: convertedKanbanAggregateOperation,
+          },
+        });
 
-      refreshCoreViewsByObjectMetadataId(objectMetadataId);
-    },
-    [
-      canPersistChanges,
-      currentViewId,
-      updateView,
-      setRecordIndexKanbanAggregateOperationState,
-      refreshCoreViewsByObjectMetadataId,
-    ],
+        if (updatedViewResult.status === 'successful') {
+          const updatedCoreView = updatedViewResult.response.data
+            ?.updateCoreView as CoreView;
+
+          if (!isDefined(updatedCoreView)) {
+            return;
+          }
+
+          set(coreViewsState, (currentCoreViews) =>
+            upsertIntoArrayOfObjectsComparingId(
+              currentCoreViews,
+              updatedCoreView,
+            ),
+          );
+
+          const updatedView = convertCoreViewToView(updatedCoreView);
+
+          loadRecordIndexStates(updatedView, objectMetadataItem);
+        }
+      },
+    [canPersistChanges, currentViewId, updateView, loadRecordIndexStates],
   );
 
   return {

@@ -1,15 +1,18 @@
 import { useDeleteOneFieldMetadataItemMutation } from '~/generated-metadata/graphql';
 
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
+import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateFieldMetadataItemComponentState';
+import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
-import { useRecoilState } from 'recoil';
 
 export const useDeleteOneFieldMetadataItem = () => {
   const [deleteOneFieldMetadataItemMutation] =
@@ -23,19 +26,25 @@ export const useDeleteOneFieldMetadataItem = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
+  const setRecordIndexGroupAggregateOperation = useSetRecoilComponentState(
+    recordIndexGroupAggregateOperationComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
+
   const [
-    recordIndexKanbanAggregateOperation,
-    setRecordIndexKanbanAggregateOperation,
-  ] = useRecoilState(recordIndexKanbanAggregateOperationState);
+    recordIndexGroupAggregateFieldMetadataItem,
+    setRecordIndexGroupAggregateFieldMetadataItem,
+  ] = useRecoilComponentState(
+    recordIndexGroupAggregateFieldMetadataItemComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
 
   const resetRecordIndexKanbanAggregateOperation = async (
     idToDelete: string,
   ) => {
-    if (recordIndexKanbanAggregateOperation?.fieldMetadataId === idToDelete) {
-      setRecordIndexKanbanAggregateOperation({
-        operation: AggregateOperations.COUNT,
-        fieldMetadataId: null,
-      });
+    if (recordIndexGroupAggregateFieldMetadataItem?.id === idToDelete) {
+      setRecordIndexGroupAggregateOperation(AggregateOperations.COUNT);
+      setRecordIndexGroupAggregateFieldMetadataItem(null);
     }
   };
 
@@ -57,6 +66,7 @@ export const useDeleteOneFieldMetadataItem = () => {
         },
       });
 
+      // TODO: see if we can remove this lin altogether
       await resetRecordIndexKanbanAggregateOperation(idToDelete);
 
       await refreshObjectMetadataItems();

@@ -1,4 +1,4 @@
-import { ActionModal } from '@/action-menu/actions/components/ActionModal';
+import { Action } from '@/action-menu/actions/components/Action';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
 import { computeProgressText } from '@/action-menu/utils/computeProgressText';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
@@ -14,7 +14,6 @@ import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -92,12 +91,7 @@ export const DeleteMultipleRecordsAction = () => {
 
   return (
     <ActionConfigContext.Provider value={actionConfigWithProgress}>
-      <ActionModal
-        title={t`Delete Records`}
-        subtitle={t`Are you sure you want to delete these records? They can be recovered from the Command menu.`}
-        onConfirmClick={handleDeleteClick}
-        confirmButtonText={t`Delete Records`}
-      />
+      <Action onClick={handleDeleteClick} />
     </ActionConfigContext.Provider>
   );
 };

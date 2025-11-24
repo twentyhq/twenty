@@ -1,5 +1,4 @@
 import { type ReactNode, useContext } from 'react';
-import { createPortal } from 'react-dom';
 
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
@@ -63,19 +62,17 @@ export const ActionModal = ({
   return (
     <>
       <ActionDisplay onClick={handleClick} />
-      {isModalOpened &&
-        createPortal(
-          <ConfirmationModal
-            modalId={modalId}
-            title={title}
-            subtitle={subtitle}
-            onConfirmClick={handleConfirmClick}
-            confirmButtonText={confirmButtonText}
-            confirmButtonAccent={confirmButtonAccent}
-            loading={isLoading}
-          />,
-          document.body,
-        )}
+      {isModalOpened && (
+        <ConfirmationModal
+          modalId={modalId}
+          title={title}
+          subtitle={subtitle}
+          onConfirmClick={handleConfirmClick}
+          confirmButtonText={confirmButtonText}
+          confirmButtonAccent={confirmButtonAccent}
+          loading={isLoading}
+        />
+      )}
     </>
   );
 };

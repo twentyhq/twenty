@@ -8,7 +8,7 @@ import { RecordTitleFullNameFieldInput } from '@/object-record/record-title-cell
 
 type RecordTitleCellFieldInputProps = {
   instanceId: string;
-  sizeVariant?: 'xs' | 'md';
+  sizeVariant?: 'xs' | 'sm' | 'md';
 };
 
 export const RecordTitleCellFieldInput = ({

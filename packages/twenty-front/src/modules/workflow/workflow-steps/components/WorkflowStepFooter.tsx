@@ -106,6 +106,7 @@ export const WorkflowStepFooter = ({
 
   const deleteButton = (
     <Button
+      size="small"
       title={t`Delete`}
       onClick={() => {
         deleteStep(stepId);
