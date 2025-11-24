@@ -27,15 +27,21 @@ export class ApplicationService {
   ) {}
 
   async findWorkspaceTwentyStandardAndCustomApplicationOrThrow({
+    workspace: workspaceInput,
     workspaceId,
-  }: {
-    workspaceId: string;
-  }) {
-    const workspace = await this.workspaceRepository.findOne({
-      where: {
-        id: workspaceId,
-      },
-    });
+  }:
+    | {
+        workspaceId: string;
+        workspace?: never;
+      }
+    | { workspace: WorkspaceEntity; workspaceId?: never }) {
+    const workspace = isDefined(workspaceInput)
+      ? workspaceInput
+      : await this.workspaceRepository.findOne({
+          where: {
+            id: workspaceId,
+          },
+        });
 
     if (!isDefined(workspace)) {
       throw new ApplicationException(
@@ -47,7 +53,7 @@ export class ApplicationService {
     const flatApplicationMaps =
       await this.workspaceFlatApplicationMapCacheService.getExistingOrRecomputeFlatMaps(
         {
-          workspaceId,
+          workspaceId: workspace.id,
         },
       );
     const twentyStandardApplicationId =
