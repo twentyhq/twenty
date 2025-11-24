@@ -3,13 +3,18 @@ import {
   Banner,
   type BannerVariant,
   type IconComponent,
+  IconX,
 } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { Button, IconButton } from 'twenty-ui/input';
 
 const StyledText = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const StyledCloseButton = styled(IconButton)`
+  margin-left: auto;
 `;
 
 export const InformationBanner = ({
@@ -19,6 +24,7 @@ export const InformationBanner = ({
   buttonIcon,
   buttonOnClick,
   isButtonDisabled = false,
+  onClose,
 }: {
   message: string;
   variant?: BannerVariant;
@@ -26,6 +32,7 @@ export const InformationBanner = ({
   buttonIcon?: IconComponent;
   buttonOnClick?: () => void;
   isButtonDisabled?: boolean;
+  onClose?: () => void;
 }) => {
   return (
     <Banner variant={variant}>
@@ -39,6 +46,15 @@ export const InformationBanner = ({
           inverted
           onClick={buttonOnClick}
           disabled={isButtonDisabled}
+        />
+      )}
+      {onClose && (
+        <StyledCloseButton
+          Icon={IconX}
+          size="small"
+          variant="tertiary"
+          onClick={onClose}
+          ariaLabel="Close banner"
         />
       )}
     </Banner>
