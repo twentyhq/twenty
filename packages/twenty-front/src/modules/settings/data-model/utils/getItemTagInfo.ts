@@ -26,17 +26,21 @@ type ManagedItemTagInfo = {
   labelColor: 'sky';
 };
 
-//  We should add currentWorkspaceCustomApplicationId here too
 export const getItemTagInfo = ({
-  isCustom,
-  isRemote,
-  applicationId,
+  objectMetadataItem: { isCustom, isRemote, applicationId },
+  workspaceCustomApplicationId,
 }: {
-  isCustom?: boolean;
-  isRemote?: boolean;
-  applicationId?: string | null;
+  objectMetadataItem: {
+    isCustom?: boolean;
+    isRemote?: boolean;
+    applicationId?: string | null;
+  };
+  workspaceCustomApplicationId?: string;
 }): ItemTagInfo => {
-  if (isDefined(applicationId)) {
+  if (
+    isDefined(applicationId) &&
+    applicationId !== workspaceCustomApplicationId
+  ) {
     return { labelText: 'Managed', labelColor: 'sky' };
   }
 

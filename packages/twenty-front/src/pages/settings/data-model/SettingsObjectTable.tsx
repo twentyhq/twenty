@@ -1,3 +1,4 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -21,7 +22,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
@@ -80,6 +81,8 @@ export const SettingsObjectTable = ({
     },
   );
 
+  const [currentWorkspace] = useRecoilState(currentWorkspaceState);
+
   const allObjectSettingsArray = useMemo(
     () =>
       objectMetadataItems.map(
@@ -87,7 +90,11 @@ export const SettingsObjectTable = ({
           ({
             objectMetadataItem,
             labelPlural: objectMetadataItem.labelPlural,
-            objectTypeLabel: getItemTagInfo(objectMetadataItem).labelText,
+            objectTypeLabel: getItemTagInfo({
+              objectMetadataItem,
+              workspaceCustomApplicationId:
+                currentWorkspace?.workspaceCustomApplication?.id,
+            }).labelText,
             fieldsCount: objectMetadataItem.fields.filter(
               (field) => !field.isSystem,
             ).length,

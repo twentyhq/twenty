@@ -30,6 +30,7 @@ export type CurrentWorkspace = Pick<
   | 'trashRetentionDays'
   | 'routerModel'
   | 'editableProfileFields'
+  | 'workspaceCustomApplication'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;
 };

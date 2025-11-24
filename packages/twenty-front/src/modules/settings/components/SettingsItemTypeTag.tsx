@@ -16,12 +16,11 @@ export const SettingsItemTypeTag = ({
   className,
   item: { isCustom, isRemote, applicationId },
 }: SettingsItemTypeTagProps) => {
-  const itemTagInfo = getItemTagInfo({ isCustom, isRemote, applicationId });
-  const [currentWorkspace] = useRecoilState(
-    currentWorkspaceState,
-  );
-
-  console.log(currentWorkspace)
+  const [currentWorkspace] = useRecoilState(currentWorkspaceState);
+  const itemTagInfo = getItemTagInfo({
+    objectMetadataItem: { isCustom, isRemote, applicationId },
+    workspaceCustomApplicationId: currentWorkspace?.workspaceCustomApplication?.id
+  });
 
   return (
     <Tag
