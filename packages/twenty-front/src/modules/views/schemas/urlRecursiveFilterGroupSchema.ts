@@ -11,7 +11,7 @@ type UrlRecursiveFilterGroupSchemaType = {
 export const urlRecursiveFilterGroupSchema: z.ZodType<UrlRecursiveFilterGroupSchemaType> =
   z.lazy(() =>
     z.object({
-      operator: z.nativeEnum(RecordFilterGroupLogicalOperator),
+      operator: z.enum(RecordFilterGroupLogicalOperator),
       filters: z.array(urlSingleFilterSchema).optional(),
       groups: z.array(urlRecursiveFilterGroupSchema).optional(),
     }),
