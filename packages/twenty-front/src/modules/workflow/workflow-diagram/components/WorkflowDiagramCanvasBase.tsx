@@ -217,12 +217,6 @@ export const WorkflowDiagramCanvasBase = ({
   };
 
   useListenToSidePanelClosing(() => {
-    reactflow.setNodes((nodes) =>
-      nodes.map((node) => ({ ...node, selected: false })),
-    );
-    reactflow.setEdges((edges) =>
-      edges.map((edge) => ({ ...edge, selected: false })),
-    );
     setWorkflowInsertStepIds({
       parentStepId: undefined,
       nextStepId: undefined,
