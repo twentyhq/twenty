@@ -77,7 +77,7 @@ msgstr "Eine Gruppe zusammenhängender Nachrichten (z. B. E-Mail-Thread, Chat-Th
 #. js-lingui-id: 1Pylbk
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
 msgid "A many to one relation field should always declare a join column"
-msgstr ""
+msgstr "Ein viele-zu-eins Verknüpfung muss ein Beziehungsfeld deklarieren"
 
 #. js-lingui-id: vZj1Xc
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -97,7 +97,7 @@ msgstr "Ein Notiz-Ziel"
 #. js-lingui-id: MtcxLV
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
 msgid "A one to many relation field should never declare a join column"
-msgstr ""
+msgstr "Eine eins-zu-viele Verknüpfung darf niemals ein Beziehungsfeld deklarieren"
 
 #. js-lingui-id: Io42ej
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -229,7 +229,6 @@ msgstr "Aggregiertes / gefiltertes Ereignis, das auf der Zeitleiste angezeigt we
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/messages-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/message-threads-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/calendar-events-all.view.ts
 msgid "All {objectLabelPlural}"
@@ -320,7 +319,7 @@ msgstr "Zugehörige Benutzer-ID"
 #. js-lingui-id: scLx/y
 #: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
 msgid "At least one folder must be synced."
-msgstr ""
+msgstr "Mindestens ein Ordner muss synchronisiert werden."
 
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -525,7 +524,6 @@ msgid "Body"
 msgstr "Inhalt"
 
 #. js-lingui-id: 6+byWT
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
 msgid "By Stage"
 msgstr "Nach Phase"
@@ -816,7 +814,7 @@ msgstr "Konnte keine zugehörigen Metadaten für Indexobjekt finden"
 #. js-lingui-id: YzCaIm
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
 msgid "Could not find relation field parent flat object"
-msgstr ""
+msgstr "Konnte das übergeordnete Objekt für das Beziehungsfeld nicht finden"
 
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1020,7 +1018,7 @@ msgstr "Doppelte Option {field}"
 #. js-lingui-id: AcnTuz
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "Email already in use"
-msgstr ""
+msgstr "Die E-Mail-Adresse wird bereits genutzt"
 
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -1030,7 +1028,7 @@ msgstr "E-Mail bereits verifiziert."
 #. js-lingui-id: LT5dFi
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "Email can only be updated when you belong to a single workspace."
-msgstr ""
+msgstr "Die E-Mail-Adresse kann nur dann aktualisiert werden, wenn du einem einzigen Arbeitsbereich zugeordnet bist."
 
 #. js-lingui-id: xw6iqb
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
@@ -1711,7 +1709,7 @@ msgstr "Ungültige Nutzlast zur Erstellung von Beziehungen"
 #. js-lingui-id: iWv3nK
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid relation field target"
-msgstr ""
+msgstr "Ungültiges Ziel für das Beziehungsfeld"
 
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2040,7 +2038,7 @@ msgstr "Richtlinie für den Import von Nachrichtenordnern"
 #. js-lingui-id: aIgrkW
 #: src/modules/messaging/message-folder-manager/query-hooks/message-folder-update-one.pre-query.hook.ts
 msgid "Message folder not found"
-msgstr ""
+msgstr "Nachrichtenordner nicht gefunden"
 
 #. js-lingui-id: p4ANpY
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2189,17 +2187,17 @@ msgstr "Name \"{computedMetadataNameFromLabel}\" darf nicht auf beiden Seiten de
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
-msgstr ""
+msgstr "Name \"{name}\" ist nicht verfügbar"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr ""
+msgstr "Name \"{name}\" ist nicht verfügbar, da er bereits von einem anderen Feld verwendet wird"
 
 #. js-lingui-id: dBDpp2
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available as it is already used by join column name"
-msgstr ""
+msgstr "Der Name \"{name}\" kann nicht gewählt werden, weil er bereits für eine Verknüpfung genutzt wird"
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2250,7 +2248,7 @@ msgstr "Namen sind nicht mit Bezeichnungen synchronisiert"
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "New email must be different from current email"
-msgstr ""
+msgstr "Die neue E-Mail-Adresse muss sich von der bisherigen unterscheiden"
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2696,7 +2694,7 @@ msgstr "Bitte überprüfen Sie Ihre Verbindungseinstellungen. Stellen Sie sicher
 #. js-lingui-id: mqzu5F
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Please confirm your updated email"
-msgstr ""
+msgstr "Bitte bestätige deine aktualisierte E-Mail-Adresse"
 
 #. js-lingui-id: v0iiWr
 #: src/engine/core-modules/webhook/webhook.service.ts
@@ -4190,6 +4188,11 @@ msgstr "Falsches Passwort"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "X"
+
+#. js-lingui-id: 4ysDL0
+#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
+msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
+msgstr ""
 
 #. js-lingui-id: 1SQnFB
 #: src/engine/metadata-modules/role/role.resolver.ts

@@ -284,6 +284,7 @@ export class ApplicationSyncService {
       await this.fieldMetadataServiceV2.createOneField({
         createFieldInput,
         workspaceId,
+        applicationId,
       });
     }
   }
@@ -406,6 +407,7 @@ export class ApplicationSyncService {
 
       const createdObject = await this.objectMetadataServiceV2.createOneObject({
         createObjectInput,
+        applicationId,
         workspaceId,
       });
 
@@ -526,18 +528,21 @@ export class ApplicationSyncService {
         serverlessFunctionId: serverlessFunctionToUpdate.id,
         triggersToSync: serverlessFunctionToSync.triggers || [],
         workspaceId,
+        applicationId,
       });
 
       await this.syncCronTriggersForServerlessFunction({
         serverlessFunctionId: serverlessFunctionToUpdate.id,
         triggersToSync: serverlessFunctionToSync.triggers || [],
         workspaceId,
+        applicationId,
       });
 
       await this.syncRouteTriggersForServerlessFunction({
         serverlessFunctionId: serverlessFunctionToUpdate.id,
         triggersToSync: serverlessFunctionToSync.triggers || [],
         workspaceId,
+        applicationId,
       });
     }
 
@@ -567,18 +572,21 @@ export class ApplicationSyncService {
         serverlessFunctionId: createdServerlessFunction.id,
         triggersToSync: serverlessFunctionToCreate.triggers || [],
         workspaceId,
+        applicationId,
       });
 
       await this.syncCronTriggersForServerlessFunction({
         serverlessFunctionId: createdServerlessFunction.id,
         triggersToSync: serverlessFunctionToCreate.triggers || [],
         workspaceId,
+        applicationId,
       });
 
       await this.syncRouteTriggersForServerlessFunction({
         serverlessFunctionId: createdServerlessFunction.id,
         triggersToSync: serverlessFunctionToCreate.triggers || [],
         workspaceId,
+        applicationId,
       });
     }
   }
@@ -587,10 +595,12 @@ export class ApplicationSyncService {
     serverlessFunctionId,
     triggersToSync,
     workspaceId,
+    applicationId,
   }: {
     serverlessFunctionId: string;
     triggersToSync: ServerlessFunctionTriggerManifest[];
     workspaceId: string;
+    applicationId: string;
   }) {
     const databaseEventTriggersToSync = triggersToSync.filter(
       (trigger) => trigger.type === 'databaseEvent',
@@ -695,6 +705,7 @@ export class ApplicationSyncService {
       await this.databaseEventTriggerV2Service.createOne(
         createDatabaseEventTriggerInput,
         workspaceId,
+        applicationId,
       );
     }
   }
@@ -703,10 +714,12 @@ export class ApplicationSyncService {
     serverlessFunctionId,
     triggersToSync,
     workspaceId,
+    applicationId,
   }: {
     serverlessFunctionId: string;
     triggersToSync: ServerlessFunctionTriggerManifest[];
     workspaceId: string;
+    applicationId: string;
   }) {
     const cronTriggersToSync = triggersToSync.filter(
       (trigger) => trigger.type === 'cron',
@@ -808,6 +821,7 @@ export class ApplicationSyncService {
       await this.cronTriggerV2Service.createOne(
         createCronTriggerInput,
         workspaceId,
+        applicationId,
       );
     }
   }
@@ -816,10 +830,12 @@ export class ApplicationSyncService {
     serverlessFunctionId,
     triggersToSync,
     workspaceId,
+    applicationId,
   }: {
     serverlessFunctionId: string;
     triggersToSync: ServerlessFunctionTriggerManifest[];
     workspaceId: string;
+    applicationId: string;
   }) {
     const routeTriggersToSync = triggersToSync.filter(
       (trigger) => trigger.type === 'route',
@@ -922,11 +938,12 @@ export class ApplicationSyncService {
       await this.routeTriggerV2Service.createOne(
         createRouteTriggerInput,
         workspaceId,
+        applicationId,
       );
     }
   }
 
-  public async deleteApplication({
+  public async uninstallApplication({
     workspaceId,
     applicationUniversalIdentifier,
   }: {
@@ -956,6 +973,13 @@ export class ApplicationSyncService {
       throw new ApplicationException(
         `Application with universalIdentifier ${applicationUniversalIdentifier} not found`,
         ApplicationExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+
+    if (!application.canBeUninstalled) {
+      throw new ApplicationException(
+        'This application cannot be uninstalled.',
+        ApplicationExceptionCode.FORBIDDEN,
       );
     }
 

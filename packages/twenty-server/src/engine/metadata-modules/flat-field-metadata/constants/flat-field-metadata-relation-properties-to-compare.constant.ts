@@ -6,4 +6,6 @@ export const FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE = [
   'isActive',
   'standardOverrides',
   'icon',
+  'name',
+  'settings',
 ] as const satisfies (typeof ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY.fieldMetadata.propertiesToCompare)[number][];

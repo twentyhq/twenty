@@ -8,6 +8,8 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { IconDotsVertical } from 'twenty-ui/display';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
@@ -83,5 +85,46 @@ describe('useCommandMenu', () => {
     });
 
     expect(result.current.isCommandMenuOpened).toBe(false);
+  });
+
+  it('should navigate command menu and reset navigation stack when resetNavigationStack is true', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.commandMenu.navigateCommandMenu({
+        page: CommandMenuPages.Root,
+        pageTitle: 'First Page',
+        pageIcon: IconDotsVertical,
+        resetNavigationStack: false,
+      });
+    });
+
+    expect(result.current.commandMenuPage).toBe(CommandMenuPages.Root);
+    expect(result.current.commandMenuPageInfo.title).toBe('First Page');
+    expect(result.current.commandMenuNavigationStack).toHaveLength(1);
+
+    act(() => {
+      result.current.commandMenu.navigateCommandMenu({
+        page: CommandMenuPages.SearchRecords,
+        pageTitle: 'Second Page',
+        pageIcon: IconDotsVertical,
+        resetNavigationStack: false,
+      });
+    });
+
+    expect(result.current.commandMenuNavigationStack).toHaveLength(2);
+
+    act(() => {
+      result.current.commandMenu.navigateCommandMenu({
+        page: CommandMenuPages.Root,
+        pageTitle: 'Reset Page',
+        pageIcon: IconDotsVertical,
+        resetNavigationStack: true,
+      });
+    });
+
+    expect(result.current.commandMenuPage).toBe(CommandMenuPages.Root);
+    expect(result.current.commandMenuPageInfo.title).toBe('Reset Page');
+    expect(result.current.commandMenuNavigationStack).toHaveLength(1);
   });
 });

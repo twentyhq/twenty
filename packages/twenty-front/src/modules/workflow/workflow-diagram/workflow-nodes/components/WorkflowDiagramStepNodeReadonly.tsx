@@ -75,6 +75,7 @@ export const WorkflowDiagramStepNodeReadonly = ({
       workflowVersionId: workflowVisualizerWorkflowVersionId,
       title: data.name,
       icon: getIcon(getWorkflowNodeIconKey(data)),
+      stepId: id,
     });
   };
 

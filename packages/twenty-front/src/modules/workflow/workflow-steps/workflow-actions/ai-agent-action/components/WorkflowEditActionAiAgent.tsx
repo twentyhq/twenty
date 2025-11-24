@@ -1,5 +1,4 @@
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
-import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
@@ -7,8 +6,6 @@ import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
-import { AI_AGENT_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/AiAgentAction';
-import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
 import {
@@ -16,7 +13,6 @@ import {
   type ModelConfiguration,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   useFindOneAgentQuery,
@@ -40,13 +36,6 @@ export const WorkflowEditActionAiAgent = ({
   action,
   actionOptions,
 }: WorkflowEditActionAiAgentProps) => {
-  const { getIcon } = useIcons();
-  const { headerTitle, headerIcon, headerIconColor, headerType } =
-    useWorkflowActionHeader({
-      action,
-      defaultTitle: AI_AGENT_ACTION.defaultLabel,
-    });
-
   const agentId = action.settings.input.agentId;
   const { data: agentData, loading: agentLoading } = useFindOneAgentQuery({
     variables: { id: agentId || '' },
@@ -157,34 +146,6 @@ export const WorkflowEditActionAiAgent = ({
     <RightDrawerSkeletonLoader />
   ) : (
     <>
-      <SidePanelHeader
-        onTitleChange={async (newName: string) => {
-          if (actionOptions.readonly === true) {
-            return;
-          }
-
-          actionOptions.onActionUpdate?.({ ...action, name: newName });
-
-          // Also update agent label
-          if (isDefined(agent)) {
-            await updateAgent({
-              variables: {
-                input: {
-                  id: agent.id,
-                  label: newName,
-                },
-              },
-              refetchQueries: ['FindOneAgent'],
-            });
-          }
-        }}
-        Icon={getIcon(headerIcon)}
-        iconColor={headerIconColor}
-        initialTitle={headerTitle}
-        headerType={headerType}
-        disabled={actionOptions.readonly}
-        iconTooltip={AI_AGENT_ACTION.defaultLabel}
-      />
       <WorkflowStepBody>
         <FormTextFieldInput
           multiline

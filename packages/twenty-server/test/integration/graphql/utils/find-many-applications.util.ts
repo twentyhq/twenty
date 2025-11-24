@@ -12,6 +12,7 @@ export const APPLICATION_GQL_FIELDS = `
   description
   version
   universalIdentifier
+  canBeUninstalled
 `;
 
 export const findManyApplications = async ({

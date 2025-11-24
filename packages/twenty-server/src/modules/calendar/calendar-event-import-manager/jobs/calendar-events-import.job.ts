@@ -57,7 +57,7 @@ export class CalendarEventsImportJob {
 
     if (
       calendarChannel.syncStage !==
-      CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING
+      CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED
     ) {
       return;
     }

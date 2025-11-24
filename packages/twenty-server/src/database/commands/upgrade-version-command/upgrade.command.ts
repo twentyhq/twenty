@@ -18,10 +18,11 @@ import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands
 import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-type-to-file-category.command';
 import { MigrateChannelPartialFullSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-channel-partial-full-sync-stages.command';
 import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-search-vectors.command';
-import { SeedDashboardViewCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-seed-dashboard-view.command';
 import { CleanOrphanedRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-role-targets.command';
 import { CleanOrphanedUserWorkspacesCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-user-workspaces.command';
 import { CreateTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-create-twenty-standard-application.command';
+import { CreateWorkspaceCustomApplicationCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-create-workspace-custom-application.command';
+import { SetStandardApplicationNotUninstallableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-set-standard-application-not-uninstallable.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
 import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-deduplicate-unique-fields.command';
@@ -69,7 +70,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly cleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand: CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
     protected readonly migrateChannelPartialFullSyncStagesCommand: MigrateChannelPartialFullSyncStagesCommand,
     protected readonly makeSureDashboardNamingAvailableCommand: MakeSureDashboardNamingAvailableCommand,
-    protected readonly seedDashboardViewCommand: SeedDashboardViewCommand,
     protected readonly createViewKanbanFieldMetadataIdForeignKeyMigrationCommand: CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand,
     protected readonly flushWorkspaceCacheCommand: FlushCacheCommand,
 
@@ -77,6 +77,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly cleanOrphanedUserWorkspacesCommand: CleanOrphanedUserWorkspacesCommand,
     protected readonly cleanOrphanedRoleTargetsCommand: CleanOrphanedRoleTargetsCommand,
     protected readonly seedStandardApplicationsCommand: CreateTwentyStandardApplicationCommand,
+
+    // 1.12 Commands
+    protected readonlysetStandardApplicationNotUninstallableCommand: SetStandardApplicationNotUninstallableCommand,
+    protected readonly createTwentyStandardApplicationCommand: CreateTwentyStandardApplicationCommand,
+    protected readonly createWorkspaceCustomApplicationCommand: CreateWorkspaceCustomApplicationCommand,
   ) {
     super(
       workspaceRepository,
@@ -120,16 +125,22 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [
         this.migrateAttachmentAuthorToCreatedByCommand,
         this.migrateAttachmentTypeToFileCategoryCommand,
-        this.seedDashboardViewCommand,
         this.flushWorkspaceCacheCommand,
       ],
     };
 
     const commands_1110: VersionCommands = {
-      beforeSyncMetadata: [this.seedStandardApplicationsCommand],
+      beforeSyncMetadata: [this.createTwentyStandardApplicationCommand],
       afterSyncMetadata: [
         this.cleanOrphanedUserWorkspacesCommand,
         this.cleanOrphanedRoleTargetsCommand,
+      ],
+    };
+
+    const commands_1120: VersionCommands = {
+      beforeSyncMetadata: [this.createWorkspaceCustomApplicationCommand],
+      afterSyncMetadata: [
+        this.readonlysetStandardApplicationNotUninstallableCommand,
       ],
     };
 
@@ -139,6 +150,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '1.8.0': commands_180,
       '1.10.0': commands_1100,
       '1.11.0': commands_1110,
+      '1.12.0': commands_1120,
     };
   }
 

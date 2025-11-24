@@ -88,6 +88,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
       fromFlatObjectMetadata: existingFlatObjectMetadata,
       toFlatObjectMetadata,
       flatFieldMetadataMaps,
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatIndexMaps,
       flatViewFieldMaps,
       flatViewMaps,

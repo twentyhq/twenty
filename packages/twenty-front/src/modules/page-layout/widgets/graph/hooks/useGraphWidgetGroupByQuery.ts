@@ -1,8 +1,8 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
 import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
 import { useGraphWidgetQueryCommon } from '@/page-layout/widgets/graph/hooks/useGraphWidgetQueryCommon';
 import { type GroupByChartConfiguration } from '@/page-layout/widgets/graph/types/GroupByChartConfiguration';
-import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
 import { generateGroupByQueryVariablesFromBarOrLineChartConfiguration } from '@/page-layout/widgets/graph/utils/generateGroupByQueryVariablesFromBarOrLineChartConfiguration';
 import { generateGroupByQueryVariablesFromPieChartConfiguration } from '@/page-layout/widgets/graph/utils/generateGroupByQueryVariablesFromPieChartConfiguration';
 import { useQuery } from '@apollo/client';
@@ -78,14 +78,14 @@ export const useGraphWidgetGroupByQuery = ({
     filter: gqlOperationFilter,
   };
 
-  const query = generateGroupByQuery({
+  const groupByAggregateQuery = generateGroupByAggregateQuery({
     objectMetadataItem,
-    aggregateOperations: [aggregateOperation],
+    aggregateOperationGqlFields: [aggregateOperation],
   });
 
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data, loading, error, refetch } = useQuery(query, {
+  const { data, loading, error, refetch } = useQuery(groupByAggregateQuery, {
     client: apolloCoreClient,
     variables,
   });
