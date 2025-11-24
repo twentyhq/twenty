@@ -1,4 +1,5 @@
 import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceState';
+import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/customWorkspaceApplicationMock.constant';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   FeatureFlagKey,
@@ -55,19 +56,8 @@ const PRO_METERED_MONTHLY_PRICE = PRO_METERED_PRODUCT?.prices?.find(
 )!;
 
 export const mockCurrentWorkspace = {
-  workspaceCustomApplication: {
-    id: 'dc75f982-35a2-4c1b-a63d-bd1131215377',
-    agents: [],
-    applicationVariables: [],
-    canBeUninstalled: false,
-    description: '',
-    name: '',
-    objects: [],
-    serverlessFunctions: [],
-    universalIdentifier: '',
-    version: '',
-  },
-  workspaceCustomApplicationId: 'dc75f982-35a2-4c1b-a63d-bd1131215377',
+  workspaceCustomApplication: CUSTOM_WORKSPACE_APPLICATION_MOCK,
+  workspaceCustomApplicationId: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
   subdomain: 'acme.twenty.com',
   id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6w',
   displayName: 'Twenty',
