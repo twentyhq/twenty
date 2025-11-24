@@ -54,7 +54,20 @@ const PRO_METERED_MONTHLY_PRICE = PRO_METERED_PRODUCT?.prices?.find(
   (pr) => pr.recurringInterval === 'Month',
 )!;
 
-export const mockCurrentWorkspace: Workspace = {
+export const mockCurrentWorkspace = {
+  workspaceCustomApplication: {
+    id: 'dc75f982-35a2-4c1b-a63d-bd1131215377',
+    agents: [],
+    applicationVariables: [],
+    canBeUninstalled: false,
+    description: '',
+    name: '',
+    objects: [],
+    serverlessFunctions: [],
+    universalIdentifier: '',
+    version: '',
+  },
+  workspaceCustomApplicationId: 'dc75f982-35a2-4c1b-a63d-bd1131215377',
   subdomain: 'acme.twenty.com',
   id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6w',
   displayName: 'Twenty',
@@ -158,7 +171,7 @@ export const mockCurrentWorkspace: Workspace = {
   databaseUrl: '',
   isTwoFactorAuthenticationEnforced: false,
   __typename: 'Workspace',
-};
+} as const satisfies Workspace;
 
 export const mockedWorkspaceMemberData: WorkspaceMember = {
   __typename: 'WorkspaceMember',

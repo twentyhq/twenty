@@ -62,6 +62,19 @@ const mockWorkspace = {
   isTwoFactorAuthenticationEnforced: false,
   trashRetentionDays: 14,
   routerModel: 'auto',
+  workspaceCustomApplication: {
+    id: 'dc75f982-35a2-4c1b-a63d-bd1131215377',
+    agents: [],
+    applicationVariables: [],
+    canBeUninstalled: false,
+    description: '',
+    name: '',
+    objects: [],
+    serverlessFunctions: [],
+    universalIdentifier: '',
+    version: '',
+  },
+  workspaceCustomApplicationId: 'dc75f982-35a2-4c1b-a63d-bd1131215377',
 };
 
 const createMockOptions = (): Options<any> => ({

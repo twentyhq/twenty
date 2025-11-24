@@ -104,7 +104,11 @@ export const SettingsObjectTable = ({
               ] ?? 0,
           }) satisfies SettingsObjectTableItem,
       ),
-    [objectMetadataItems, totalCountByObjectMetadataItemNamePlural, currentWorkspace],
+    [
+      objectMetadataItems,
+      totalCountByObjectMetadataItemNamePlural,
+      currentWorkspace,
+    ],
   );
 
   const sortedObjectSettingsItems = useSortedArray(

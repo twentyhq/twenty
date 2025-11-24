@@ -17,6 +17,9 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   contextStoreCurrentObjectMetadataNameSingular: 'company',
   onInitializeRecoilSnapshot: ({ set }) => {
     set(currentWorkspaceState, {
+      workspaceCustomApplication: {
+        id: 'dc75f982-35a2-4c1b-a63d-bd1131215377',
+      },
       id: '1',
       featureFlags: [],
       allowImpersonation: false,
