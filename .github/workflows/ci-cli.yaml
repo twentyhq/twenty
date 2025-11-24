@@ -90,6 +90,8 @@ jobs:
       - name: Server / Create Test DB
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+      - name: Should be removed and handled by nx dependency tree
+        run: npx nx build twenty-sdk
       - name: CLI / Run E2E Tests
         run: npx nx test:e2e twenty-cli
   ci-cli-status-check:
