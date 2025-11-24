@@ -64,6 +64,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
         setTokenPair(tokenPair);
       },
       onUnauthenticatedError: () => {
+        // eslint-disable-next-line no-console
         console.log('onUnauthenticatedError, resetting state');
         setTokenPair(null);
         setCurrentUser(null);
