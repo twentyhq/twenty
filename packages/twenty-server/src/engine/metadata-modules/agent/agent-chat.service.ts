@@ -134,19 +134,9 @@ export class AgentChatService {
     const thread = await this.threadRepository.findOne({
       where: { id: threadId },
       select: ['id', 'title'],
-      relations: ['messages'],
     });
 
     if (!thread || thread.title || !messageContent) {
-      return;
-    }
-
-    // Only generate title if this is the first user message
-    const userMessageCount = thread.messages?.filter(
-      (msg) => msg.role === AgentChatMessageRole.USER,
-    ).length || 0;
-
-    if (userMessageCount > 1) {
       return;
     }
 
