@@ -11,7 +11,11 @@ import { useObjectMetadataFromRoute } from '@/views/hooks/internal/useObjectMeta
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { mapUrlFilterGroupToRecordFilterGroup } from '@/views/utils/deserializeFiltersFromUrl';
 import { ViewFilterOperand } from 'twenty-shared/types';
-import { isDefined, isExpectedSubFieldName } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isExpectedSubFieldName,
+  relationFilterValueSchemaObject,
+} from 'twenty-shared/utils';
 
 const urlFilterSchema = z.object({
   field: z.string(),
@@ -42,7 +46,7 @@ const filterQueryParamsSchema = z.object({
       z.string(),
       z.partialRecord(
         z.enum(ViewFilterOperand),
-        z.string().or(z.array(z.string())),
+        z.string().or(z.array(z.string())).or(relationFilterValueSchemaObject),
       ),
     )
     .optional(),
