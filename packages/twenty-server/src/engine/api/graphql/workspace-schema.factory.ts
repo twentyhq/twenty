@@ -17,10 +17,13 @@ import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-contex
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
-  WorkspaceMetadataCacheException,
-  WorkspaceMetadataCacheExceptionCode,
-} from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
+import { buildObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-metadata-item-with-field-maps.util';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
@@ -33,7 +36,7 @@ export class WorkspaceSchemaFactory {
     private readonly workspaceGraphQLSchemaGenerator: WorkspaceGraphQLSchemaGenerator,
     private readonly workspaceResolverFactory: WorkspaceResolverFactory,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -51,20 +54,6 @@ export class WorkspaceSchemaFactory {
       return new GraphQLSchema({});
     }
 
-    const { objectMetadataMaps, metadataVersion } =
-      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-        {
-          workspaceId: authContext.workspace.id,
-        },
-      );
-
-    if (!objectMetadataMaps) {
-      throw new WorkspaceMetadataCacheException(
-        'Object metadata collection not found',
-        WorkspaceMetadataCacheExceptionCode.OBJECT_METADATA_COLLECTION_NOT_FOUND,
-      );
-    }
-
     const workspaceId = authContext.workspace.id;
 
     if (!workspaceId) {
@@ -74,8 +63,56 @@ export class WorkspaceSchemaFactory {
       );
     }
 
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatObjectMetadataMaps',
+            'flatFieldMetadataMaps',
+            'flatIndexMaps',
+          ],
+        },
+      );
+
+    if (!isDefined(flatObjectMetadataMaps)) {
+      throw new FlatEntityMapsException(
+        'Object metadata collection not found',
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+
     const workspaceFeatureFlagsMap =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+
+    let metadataVersion =
+      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
+
+    if (!isDefined(metadataVersion)) {
+      metadataVersion = authContext.workspace.metadataVersion ?? 0;
+      await this.workspaceCacheStorageService.setMetadataVersion(
+        workspaceId,
+        metadataVersion,
+      );
+    }
+
+    const { idByNameSingular } = buildObjectIdByNameMaps(
+      flatObjectMetadataMaps,
+    );
+    const objectMetadataMaps: ObjectMetadataMaps = {
+      byId: {},
+      idByNameSingular,
+    };
+
+    for (const [id, flatObj] of Object.entries(flatObjectMetadataMaps.byId)) {
+      if (isDefined(flatObj)) {
+        objectMetadataMaps.byId[id] = buildObjectMetadataItemWithFieldMaps(
+          flatObj,
+          flatFieldMetadataMaps,
+          flatIndexMaps,
+        );
+      }
+    }
 
     const objectMetadataCollection = Object.values(objectMetadataMaps.byId)
       .filter(isDefined)
