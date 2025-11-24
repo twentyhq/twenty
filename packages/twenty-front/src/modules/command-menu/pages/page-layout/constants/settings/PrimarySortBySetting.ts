@@ -4,10 +4,10 @@ import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layou
 import { type ChartSettingsItem } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 import { IconArrowsSort } from 'twenty-ui/display';
 
-export const SORT_BY_X_SETTING: ChartSettingsItem = {
+export const PRIMARY_SORT_BY_SETTING: ChartSettingsItem = {
   isBoolean: false,
   Icon: IconArrowsSort,
-  label: CHART_CONFIGURATION_SETTING_LABELS.SORT_BY_X,
-  id: CHART_CONFIGURATION_SETTING_IDS.SORT_BY_X,
+  label: CHART_CONFIGURATION_SETTING_LABELS.PRIMARY_SORT_BY,
+  id: CHART_CONFIGURATION_SETTING_IDS.PRIMARY_BY_X,
   DropdownContent: ChartSortBySelectionDropdownContent,
 };

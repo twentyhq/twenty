@@ -1,7 +1,10 @@
-import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
+import {
+  type BarChartConfiguration,
+  type LineChartConfiguration,
+} from '~/generated/graphql';
 
 export const convertBarOrLineChartConfigToPieChart = (
-  configuration: ChartConfiguration,
+  configuration: BarChartConfiguration | LineChartConfiguration,
 ): Record<string, any> => {
   const configToUpdate: Record<string, any> = {};
 

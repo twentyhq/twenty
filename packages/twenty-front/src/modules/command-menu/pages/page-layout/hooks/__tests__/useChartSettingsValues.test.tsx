@@ -141,7 +141,7 @@ describe('useChartSettingsValues', () => {
       const { result } = renderUseChartSettingsValues(verticalBarConfig);
 
       const value = result.current.getChartSettingsValues(
-        CHART_CONFIGURATION_SETTING_IDS.SORT_BY_X,
+        CHART_CONFIGURATION_SETTING_IDS.PRIMARY_BY_X,
       );
 
       expect(value).toBeDefined();
@@ -203,7 +203,7 @@ describe('useChartSettingsValues', () => {
       const { result } = renderUseChartSettingsValues(horizontalBarConfig);
 
       const value = result.current.getChartSettingsValues(
-        CHART_CONFIGURATION_SETTING_IDS.SORT_BY_X,
+        CHART_CONFIGURATION_SETTING_IDS.PRIMARY_BY_X,
       );
 
       expect(value).toBeDefined();
@@ -451,7 +451,7 @@ describe('useChartSettingsValues', () => {
       const { result } = renderUseChartSettingsValues(config);
 
       const value = result.current.getChartSettingsValues(
-        CHART_CONFIGURATION_SETTING_IDS.SORT_BY_X,
+        CHART_CONFIGURATION_SETTING_IDS.PRIMARY_BY_X,
       );
 
       expect(value).toBeUndefined();
@@ -573,7 +573,7 @@ describe('useChartSettingsValues', () => {
         CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_X,
         CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_Y,
         CHART_CONFIGURATION_SETTING_IDS.GROUP_BY,
-        CHART_CONFIGURATION_SETTING_IDS.SORT_BY_X,
+        CHART_CONFIGURATION_SETTING_IDS.PRIMARY_BY_X,
         CHART_CONFIGURATION_SETTING_IDS.SORT_BY_GROUP_BY_FIELD,
         CHART_CONFIGURATION_SETTING_IDS.AXIS_NAME,
         CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS,
