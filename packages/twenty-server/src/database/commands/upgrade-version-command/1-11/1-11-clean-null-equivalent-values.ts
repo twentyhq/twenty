@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import deepEqual from 'deep-equal';
 import { Command } from 'nest-commander';
 import {
+  CompositeType,
   compositeTypeDefinitions,
   FieldMetadataType,
 } from 'twenty-shared/types';
@@ -137,12 +138,8 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
                   );
 
                   await dataSource.query(
-                    `UPDATE "${schemaName}"."${tableName}" SET "${columnName}" = NULL WHERE "${columnName}" = $1`,
-                    [
-                      field.defaultValue[
-                        property.name as keyof typeof field.defaultValue
-                      ],
-                    ],
+                    `UPDATE "${schemaName}"."${tableName}" SET "${columnName}" = NULL WHERE "${columnName}" = ${field.defaultValue[property.name as keyof typeof field.defaultValue]}`,
+                    [],
                     undefined,
                     { shouldBypassPermissionChecks: true },
                   );
@@ -159,8 +156,8 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
               );
 
               await dataSource.query(
-                `UPDATE "${schemaName}"."${tableName}" SET "${field.name}" = NULL WHERE "${field.name}" = $1`,
-                [field.defaultValue],
+                `UPDATE "${schemaName}"."${tableName}" SET "${field.name}" = NULL WHERE "${field.name}" = ${field.defaultValue}`,
+                [],
                 undefined,
                 { shouldBypassPermissionChecks: true },
               );
@@ -191,16 +188,36 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
                 indexWhereClause: null,
               });
 
-              const columns = index.indexFieldMetadatas
-                .sort((a, b) => a.order - b.order)
-                .map((ifm) => {
-                  const field = objectMetadata.fields.find(
-                    (f) => f.id === ifm.fieldMetadataId,
+              const columnNames = index.indexFieldMetadatas.flatMap(
+                (indexFieldMetadata) => {
+                  const fieldMetadata = objectMetadata.fields.find(
+                    (f) => f.id === indexFieldMetadata.fieldMetadataId,
                   );
 
-                  return field?.name;
-                })
-                .filter((name): name is string => !!name);
+                  if (!isDefined(fieldMetadata)) {
+                    throw new Error(
+                      `Field metadata not found for index field metadata ${indexFieldMetadata.id}`,
+                    );
+                  }
+
+                  if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+                    const compositeType = compositeTypeDefinitions.get(
+                      field.type,
+                    ) as CompositeType;
+
+                    const uniqueCompositeProperties =
+                      compositeType.properties.filter(
+                        (property) => property.isIncludedInUniqueConstraint,
+                      );
+
+                    return uniqueCompositeProperties.map((subField) =>
+                      computeCompositeColumnName(field.name, subField),
+                    );
+                  }
+
+                  return [field.name];
+                },
+              );
 
               const dropIndexAction: WorkspaceMigrationIndexAction = {
                 action: WorkspaceMigrationIndexActionType.DROP,
@@ -212,7 +229,7 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
               const createIndexAction: WorkspaceMigrationIndexAction = {
                 action: WorkspaceMigrationIndexActionType.CREATE,
                 name: index.name,
-                columns,
+                columns: columnNames,
                 isUnique: true,
               };
 
