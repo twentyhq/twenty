@@ -35,6 +35,11 @@ export type DataMessagePart = {
       // Plan execution
       planReasoning?: string;
       totalSteps?: number;
+      steps?: Array<{
+        stepNumber: number;
+        agent: string;
+        task: string;
+      }>;
     };
   };
 };
