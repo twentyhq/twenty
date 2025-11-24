@@ -39,8 +39,12 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     withSoftDeleted,
   });
 
-  const [findOneRecord, { loading, error, data, called }] =
-    useLazyQuery(findOneRecordQuery);
+  const [findOneRecord, { loading, error, data, called }] = useLazyQuery(
+    findOneRecordQuery,
+    {
+      client: apolloCoreClient,
+    },
+  );
 
   return {
     findOneRecord: async ({
@@ -50,7 +54,6 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
       await findOneRecord({
         variables: { objectRecordId },
         fetchPolicy,
-        client: apolloCoreClient,
         onCompleted: (data) => {
           const record = getRecordFromRecordNode<T>({
             recordNode: data[objectNameSingular],
