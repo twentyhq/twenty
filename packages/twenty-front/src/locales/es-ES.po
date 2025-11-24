@@ -8956,9 +8956,11 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid "This action cannot be undone. This will permanently delete your\n"
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
 "            entire account."
-msgstr "Esta acción no se puede deshacer. Esto eliminará permanentemente su\n"
+msgstr ""
+"Esta acción no se puede deshacer. Esto eliminará permanentemente su\n"
 "            cuenta completa."
 
 #. js-lingui-id: bNY3MH

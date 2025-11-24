@@ -8956,7 +8956,8 @@ msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid "This action cannot be undone. This will permanently delete your\n"
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "이 작업은 취소할 수 없습니다. 이렇게 하면 계정 전체가 영구적으로 삭제됩니다."
 
