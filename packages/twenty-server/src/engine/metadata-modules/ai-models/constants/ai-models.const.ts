@@ -6,8 +6,12 @@ export enum ModelProvider {
   XAI = 'xai',
 }
 
+export const DEFAULT_FAST_MODEL = 'default-fast-model' as const;
+export const DEFAULT_SMART_MODEL = 'default-smart-model' as const;
+
 export type ModelId =
-  | 'auto'
+  | typeof DEFAULT_FAST_MODEL
+  | typeof DEFAULT_SMART_MODEL
   | 'gpt-4o'
   | 'gpt-4o-mini'
   | 'gpt-4-turbo'

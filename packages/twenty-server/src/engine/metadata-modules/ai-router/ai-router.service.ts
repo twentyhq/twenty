@@ -24,8 +24,8 @@ import { type ToolHints } from './types/tool-hints.interface';
 export interface AiRouterContext {
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
   workspaceId: string;
-  routerModel: ModelId;
-  plannerModel: ModelId;
+  fastModel: ModelId;
+  smartModel: ModelId;
 }
 
 @Injectable()
@@ -45,7 +45,7 @@ export class AiRouterService {
     includeDebugInfo = false,
   ): Promise<UnifiedRouterResult> {
     try {
-      const { messages, workspaceId, routerModel, plannerModel } = context;
+      const { messages, workspaceId, fastModel, smartModel } = context;
       const availableAgents = await this.getAvailableAgents(workspaceId);
 
       this.logger.log(
@@ -59,8 +59,8 @@ export class AiRouterService {
       const debugInfo = this.createDebugInfo(
         includeDebugInfo,
         availableAgents,
-        plannerModel,
-        routerModel,
+        smartModel,
+        fastModel,
       );
 
       if (availableAgents.length === 1) {
@@ -71,8 +71,8 @@ export class AiRouterService {
         messages,
         workspaceId,
         availableAgents,
-        routerModel,
-        plannerModel,
+        fastModel,
+        smartModel,
         debugInfo,
       });
     } catch (error) {
@@ -100,8 +100,8 @@ export class AiRouterService {
   private createDebugInfo(
     includeDebugInfo: boolean,
     availableAgents: AgentEntity[],
-    plannerModel: ModelId,
-    routerModel: ModelId,
+    smartModel: ModelId,
+    fastModel: ModelId,
   ): RouterDebugInfo | undefined {
     if (!includeDebugInfo) {
       return undefined;
@@ -112,7 +112,7 @@ export class AiRouterService {
         id: agent.id,
         label: agent.label,
       })),
-      routerModel: String(plannerModel ?? routerModel),
+      routerModel: String(smartModel ?? fastModel),
       promptTokens: 0,
       completionTokens: 0,
       totalTokens: 0,
@@ -136,16 +136,16 @@ export class AiRouterService {
     messages: UIMessage<unknown, UIDataTypes, UITools>[];
     workspaceId: string;
     availableAgents: AgentEntity[];
-    routerModel: ModelId;
-    plannerModel: ModelId;
+    fastModel: ModelId;
+    smartModel: ModelId;
     debugInfo?: RouterDebugInfo;
   }): Promise<UnifiedRouterResult> {
     const {
       messages,
       workspaceId,
       availableAgents,
-      routerModel,
-      plannerModel,
+      fastModel,
+      smartModel,
       debugInfo,
     } = params;
 
@@ -162,7 +162,7 @@ export class AiRouterService {
       messages,
       availableAgents,
       agentDescriptions,
-      routerModel,
+      fastModel,
     });
 
     if (strategyDecision.strategy === 'simple') {
@@ -177,7 +177,7 @@ export class AiRouterService {
       messages,
       availableAgents,
       agentDescriptions,
-      plannerModel,
+      smartModel,
       debugInfo,
     });
   }
@@ -226,14 +226,14 @@ export class AiRouterService {
     messages: UIMessage<unknown, UIDataTypes, UITools>[];
     availableAgents: AgentEntity[];
     agentDescriptions: string;
-    plannerModel: ModelId;
+    smartModel: ModelId;
     debugInfo?: RouterDebugInfo;
   }): Promise<UnifiedRouterResult> {
     const {
       messages,
       availableAgents,
       agentDescriptions,
-      plannerModel,
+      smartModel,
       debugInfo,
     } = params;
 
@@ -241,7 +241,7 @@ export class AiRouterService {
       messages,
       availableAgents,
       agentDescriptions,
-      plannerModel,
+      smartModel,
     });
 
     if (plan.steps.length === 1) {

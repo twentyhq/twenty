@@ -1,6 +1,10 @@
 import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceState';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
+  DEFAULT_FAST_MODEL,
+  DEFAULT_SMART_MODEL,
+} from '@/ai/constants/aiModelConstants';
+import {
   FeatureFlagKey,
   OnboardingStatus,
   PermissionFlagType,
@@ -89,8 +93,8 @@ export const mockCurrentWorkspace: Workspace = {
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   metadataVersion: 1,
   trashRetentionDays: 14,
-  routerModel: 'auto',
-  plannerModel: 'auto',
+  fastModel: DEFAULT_FAST_MODEL,
+  smartModel: DEFAULT_SMART_MODEL,
   currentBillingSubscription: {
     __typename: 'BillingSubscription',
     id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',

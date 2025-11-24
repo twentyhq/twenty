@@ -12,6 +12,7 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
 import { AiAgentModule } from 'src/engine/metadata-modules/ai-agent/ai-agent.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai-billing/ai-billing.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai-models/ai-models.module';
+import { AiRouterModule } from 'src/engine/metadata-modules/ai-router/ai-router.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 
@@ -34,6 +35,7 @@ import { AgentStreamingService } from './services/agent-streaming.service';
     ]),
     AiModelsModule,
     AiBillingModule,
+    AiRouterModule,
     AiAgentModule,
     ThrottlerModule,
     FeatureFlagModule,

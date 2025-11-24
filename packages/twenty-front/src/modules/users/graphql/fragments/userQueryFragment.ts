@@ -80,7 +80,8 @@ export const USER_QUERY_FRAGMENT = gql`
       defaultRole {
         ...RoleFragment
       }
-      routerModel
+      fastModel
+      smartModel
       isTwoFactorAuthenticationEnforced
       trashRetentionDays
       editableProfileFields

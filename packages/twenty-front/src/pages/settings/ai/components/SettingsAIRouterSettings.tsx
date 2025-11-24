@@ -2,6 +2,10 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
+import {
+  DEFAULT_FAST_MODEL,
+  DEFAULT_SMART_MODEL,
+} from '@/ai/constants/aiModelConstants';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   StyledSettingsOptionCardContent,
@@ -13,7 +17,7 @@ import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOpti
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { t } from '@lingui/core/macro';
-import { H2Title, IconCpu } from 'twenty-ui/display';
+import { H2Title, IconBolt, IconBrain } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
 
@@ -39,39 +43,76 @@ export const SettingsAIRouterSettings = () => {
   const modelOptions = useAiModelOptions();
   const noModelsAvailable = modelOptions.length === 0;
 
-  const handleModelChange = async (value: string) => {
+  const handleFastModelChange = async (value: string) => {
     if (!currentWorkspace?.id) {
       return;
     }
 
     const newValue = value;
-    const previousValue = currentWorkspace?.routerModel || 'auto';
+    const previousValue = currentWorkspace?.fastModel || DEFAULT_FAST_MODEL;
 
     try {
       setCurrentWorkspace({
         ...currentWorkspace,
-        routerModel: newValue,
+        fastModel: newValue,
       });
 
       await updateWorkspace({
         variables: {
           input: {
-            routerModel: newValue,
+            fastModel: newValue,
           },
         },
       });
 
       enqueueSuccessSnackBar({
-        message: t`Router model updated successfully`,
+        message: t`Fast model updated successfully`,
       });
     } catch {
       setCurrentWorkspace({
         ...currentWorkspace,
-        routerModel: previousValue,
+        fastModel: previousValue,
       });
 
       enqueueErrorSnackBar({
-        message: t`Failed to update router model`,
+        message: t`Failed to update fast model`,
+      });
+    }
+  };
+
+  const handleSmartModelChange = async (value: string) => {
+    if (!currentWorkspace?.id) {
+      return;
+    }
+
+    const newValue = value;
+    const previousValue = currentWorkspace?.smartModel || DEFAULT_SMART_MODEL;
+
+    try {
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        smartModel: newValue,
+      });
+
+      await updateWorkspace({
+        variables: {
+          input: {
+            smartModel: newValue,
+          },
+        },
+      });
+
+      enqueueSuccessSnackBar({
+        message: t`Smart model updated successfully`,
+      });
+    } catch {
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        smartModel: previousValue,
+      });
+
+      enqueueErrorSnackBar({
+        message: t`Failed to update smart model`,
       });
     }
   };
@@ -79,40 +120,67 @@ export const SettingsAIRouterSettings = () => {
   return (
     <Section>
       <H2Title
-        title={t`Router`}
-        description={t`Router is used in the chat to dispatch to the right agent`}
+        title={t`AI Models`}
+        description={t`Configure AI models for routing and planning`}
       />
 
-      <Card rounded>
-        <StyledSettingsOptionCardContent>
-          <StyledSettingsOptionCardIcon>
-            <SettingsOptionIconCustomizer Icon={IconCpu} />
-          </StyledSettingsOptionCardIcon>
-          <div>
-            <StyledSettingsOptionCardTitle>
-              {t`Router Model`}
-            </StyledSettingsOptionCardTitle>
-            <StyledSettingsOptionCardDescription>
-              {t`Fast model to route to the right agent`}
-            </StyledSettingsOptionCardDescription>
-          </div>
-          <StyledSelectContainer>
-            {noModelsAvailable ? (
-              <StyledErrorMessage>
-                {t`No models available. Please configure AI models in your workspace settings.`}
-              </StyledErrorMessage>
-            ) : (
+      {noModelsAvailable ? (
+        <Card rounded>
+          <StyledSettingsOptionCardContent>
+            <StyledErrorMessage>
+              {t`No models available. Please configure AI models in your workspace settings.`}
+            </StyledErrorMessage>
+          </StyledSettingsOptionCardContent>
+        </Card>
+      ) : (
+        <Card rounded>
+          <StyledSettingsOptionCardContent>
+            <StyledSettingsOptionCardIcon>
+              <SettingsOptionIconCustomizer Icon={IconBolt} />
+            </StyledSettingsOptionCardIcon>
+            <div>
+              <StyledSettingsOptionCardTitle>
+                {t`Fast Model`}
+              </StyledSettingsOptionCardTitle>
+              <StyledSettingsOptionCardDescription>
+                {t`Quick model for routing decisions`}
+              </StyledSettingsOptionCardDescription>
+            </div>
+            <StyledSelectContainer>
               <Select
-                dropdownId="router-model-select"
-                value={currentWorkspace?.routerModel || 'auto'}
-                onChange={handleModelChange}
+                dropdownId="fast-model-select"
+                value={currentWorkspace?.fastModel || DEFAULT_FAST_MODEL}
+                onChange={handleFastModelChange}
                 options={modelOptions}
                 selectSizeVariant="small"
               />
-            )}
-          </StyledSelectContainer>
-        </StyledSettingsOptionCardContent>
-      </Card>
+            </StyledSelectContainer>
+          </StyledSettingsOptionCardContent>
+
+          <StyledSettingsOptionCardContent>
+            <StyledSettingsOptionCardIcon>
+              <SettingsOptionIconCustomizer Icon={IconBrain} />
+            </StyledSettingsOptionCardIcon>
+            <div>
+              <StyledSettingsOptionCardTitle>
+                {t`Smart Model`}
+              </StyledSettingsOptionCardTitle>
+              <StyledSettingsOptionCardDescription>
+                {t`Advanced model for complex planning`}
+              </StyledSettingsOptionCardDescription>
+            </div>
+            <StyledSelectContainer>
+              <Select
+                dropdownId="smart-model-select"
+                value={currentWorkspace?.smartModel || DEFAULT_SMART_MODEL}
+                onChange={handleSmartModelChange}
+                options={modelOptions}
+                selectSizeVariant="small"
+              />
+            </StyledSelectContainer>
+          </StyledSettingsOptionCardContent>
+        </Card>
+      )}
     </Section>
   );
 };

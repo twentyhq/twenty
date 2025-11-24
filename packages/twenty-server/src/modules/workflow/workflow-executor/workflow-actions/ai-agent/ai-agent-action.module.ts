@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AiBillingModule } from 'src/engine/metadata-modules/ai-billing/ai-billing.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai-models/ai-models.module';
 import { AiToolsModule } from 'src/engine/metadata-modules/ai-tools/ai-tools.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
@@ -16,6 +17,7 @@ import { AiAgentWorkflowAction } from './ai-agent.workflow-action';
 
 @Module({
   imports: [
+    AiBillingModule,
     AiModelsModule,
     AiToolsModule,
     TypeOrmModule.forFeature([AgentEntity, RoleTargetsEntity]),

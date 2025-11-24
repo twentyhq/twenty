@@ -7,6 +7,8 @@ import { type LanguageModel } from 'ai';
 
 import {
   AI_MODELS,
+  DEFAULT_FAST_MODEL,
+  DEFAULT_SMART_MODEL,
   ModelProvider,
   type AIModelConfig,
 } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
@@ -169,8 +171,11 @@ export class AiModelRegistryService {
   }
 
   getEffectiveModelConfig(modelId: string): AIModelConfig {
-    if (modelId === 'auto') {
-      const defaultModel = this.getDefaultPerformanceModel();
+    if (modelId === DEFAULT_FAST_MODEL || modelId === DEFAULT_SMART_MODEL) {
+      const defaultModel =
+        modelId === DEFAULT_FAST_MODEL
+          ? this.getDefaultSpeedModel()
+          : this.getDefaultPerformanceModel();
 
       if (!defaultModel) {
         throw new Error(

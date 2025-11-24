@@ -4,6 +4,10 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
+  DEFAULT_FAST_MODEL,
+  DEFAULT_SMART_MODEL,
+} from '@/ai/constants/aiModelConstants';
+import {
   SubscriptionInterval,
   SubscriptionStatus,
   WorkspaceActivationStatus,
@@ -54,7 +58,8 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
       ],
       isTwoFactorAuthenticationEnforced: false,
       trashRetentionDays: 14,
-      routerModel: 'auto',
+      fastModel: DEFAULT_FAST_MODEL,
+      smartModel: DEFAULT_SMART_MODEL,
     });
   },
 });

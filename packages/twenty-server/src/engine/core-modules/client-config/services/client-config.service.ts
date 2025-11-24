@@ -7,6 +7,8 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 
 import {
   AI_MODELS,
+  DEFAULT_FAST_MODEL,
+  DEFAULT_SMART_MODEL,
   ModelProvider,
 } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai-models/services/ai-model-registry.service';
@@ -62,21 +64,42 @@ export class ClientConfigService {
     );
 
     if (aiModels.length > 0) {
-      const defaultModel =
-        this.aiModelRegistryService.getDefaultPerformanceModel();
-      const defaultModelConfig = AI_MODELS.find(
-        (m) => m.modelId === defaultModel?.modelId,
+      const defaultSpeedModel =
+        this.aiModelRegistryService.getDefaultSpeedModel();
+      const defaultSpeedModelConfig = AI_MODELS.find(
+        (m) => m.modelId === defaultSpeedModel?.modelId,
       );
-      const defaultModelLabel =
-        defaultModelConfig?.label || defaultModel?.modelId || 'Default';
+      const defaultSpeedModelLabel =
+        defaultSpeedModelConfig?.label ||
+        defaultSpeedModel?.modelId ||
+        'Default';
 
-      aiModels.unshift({
-        modelId: 'auto',
-        label: `Auto (${defaultModelLabel})`,
-        provider: ModelProvider.NONE,
-        inputCostPer1kTokensInCredits: 0,
-        outputCostPer1kTokensInCredits: 0,
-      });
+      const defaultPerformanceModel =
+        this.aiModelRegistryService.getDefaultPerformanceModel();
+      const defaultPerformanceModelConfig = AI_MODELS.find(
+        (m) => m.modelId === defaultPerformanceModel?.modelId,
+      );
+      const defaultPerformanceModelLabel =
+        defaultPerformanceModelConfig?.label ||
+        defaultPerformanceModel?.modelId ||
+        'Default';
+
+      aiModels.unshift(
+        {
+          modelId: DEFAULT_SMART_MODEL,
+          label: `Auto - Smart (${defaultPerformanceModelLabel})`,
+          provider: ModelProvider.NONE,
+          inputCostPer1kTokensInCredits: 0,
+          outputCostPer1kTokensInCredits: 0,
+        },
+        {
+          modelId: DEFAULT_FAST_MODEL,
+          label: `Auto - Fast (${defaultSpeedModelLabel})`,
+          provider: ModelProvider.NONE,
+          inputCostPer1kTokensInCredits: 0,
+          outputCostPer1kTokensInCredits: 0,
+        },
+      );
     }
 
     const clientConfig: ClientConfig = {

@@ -1,6 +1,10 @@
 import { ApolloError, gql, InMemoryCache } from '@apollo/client';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
+import {
+  DEFAULT_FAST_MODEL,
+  DEFAULT_SMART_MODEL,
+} from '@/ai/constants/aiModelConstants';
 import { WorkspaceActivationStatus } from '~/generated/graphql';
 import { ApolloFactory, type Options } from '../apollo.factory';
 
@@ -61,7 +65,8 @@ const mockWorkspace = {
   },
   isTwoFactorAuthenticationEnforced: false,
   trashRetentionDays: 14,
-  routerModel: 'auto',
+  fastModel: DEFAULT_FAST_MODEL,
+  smartModel: DEFAULT_SMART_MODEL,
 };
 
 const createMockOptions = (): Options<any> => ({

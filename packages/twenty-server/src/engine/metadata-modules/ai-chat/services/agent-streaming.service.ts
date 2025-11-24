@@ -100,8 +100,8 @@ export class AgentStreamingService {
             {
               messages,
               workspaceId: workspace.id,
-              routerModel: workspace.routerModel,
-              plannerModel: workspace.plannerModel,
+              fastModel: workspace.fastModel,
+              smartModel: workspace.smartModel,
             },
             includeDebugInfo,
           );

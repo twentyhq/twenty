@@ -8,7 +8,10 @@ import {
 } from 'ai';
 import { z } from 'zod';
 
-import { type ModelId } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
+import {
+  DEFAULT_SMART_MODEL,
+  type ModelId,
+} from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai-models/services/ai-model-registry.service';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
@@ -26,14 +29,14 @@ export class AiRouterPlanGeneratorService {
     messages,
     availableAgents,
     agentDescriptions,
-    plannerModel,
+    smartModel,
   }: {
     messages: UIMessage<unknown, UIDataTypes, UITools>[];
     availableAgents: AgentEntity[];
     agentDescriptions: string;
-    plannerModel: ModelId;
+    smartModel: ModelId;
   }): Promise<ExecutionPlan> {
-    const model = this.getPlannerModel(plannerModel);
+    const model = this.getSmartModel(smartModel);
     const agentNames = availableAgents.map((agent) => agent.name);
 
     const conversationHistory = messages
@@ -158,30 +161,30 @@ Keep plans focused and efficient.`;
     }
   }
 
-  private getPlannerModel(modelId: ModelId) {
-    if (modelId === 'auto') {
-      return this.getDefaultPlannerModel();
+  private getSmartModel(modelId: ModelId) {
+    if (modelId === DEFAULT_SMART_MODEL) {
+      return this.getDefaultSmartModel();
     }
 
-    return this.getSpecificPlannerModel(modelId);
+    return this.getSpecificSmartModel(modelId);
   }
 
-  private getDefaultPlannerModel() {
+  private getDefaultSmartModel() {
     const registeredModel =
       this.aiModelRegistryService.getDefaultPerformanceModel();
 
     if (!registeredModel) {
-      throw new Error('No planner model available');
+      throw new Error('No smart model available');
     }
 
     return registeredModel.model;
   }
 
-  private getSpecificPlannerModel(modelId: ModelId) {
+  private getSpecificSmartModel(modelId: ModelId) {
     const registeredModel = this.aiModelRegistryService.getModel(modelId);
 
     if (!registeredModel) {
-      throw new Error(`Planner model "${modelId}" not available`);
+      throw new Error(`Smart model "${modelId}" not available`);
     }
 
     return registeredModel.model;
