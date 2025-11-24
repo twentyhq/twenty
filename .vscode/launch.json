@@ -35,7 +35,8 @@
         "nx",
         "run",
         "twenty-server:command",
-        "upgrade:1-11:clean-null-equivalent-values"
+        "my-command",
+        "--my-parameter value"
       ],
       "outputCapture": "std",
       "internalConsoleOptions": "openOnSessionStart",

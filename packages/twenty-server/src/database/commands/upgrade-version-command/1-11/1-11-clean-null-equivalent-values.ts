@@ -173,8 +173,7 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
               index.isUnique &&
               index.indexFieldMetadatas.some(
                 (ifm) => ifm.fieldMetadataId === field.id,
-              ) &&
-              isDefined(index.indexWhereClause),
+              ),
           );
 
           for (const index of relevantIndexes) {
