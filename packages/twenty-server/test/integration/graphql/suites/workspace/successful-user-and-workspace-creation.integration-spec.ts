@@ -192,7 +192,6 @@ describe('Successful user and workspace creation', () => {
       'serverlessFunction',
       'serverlessFunctionLayer',
       'agent',
-      'agentHandoff',
       'remoteServer',
       'remoteTable',
       'databaseEventTrigger',

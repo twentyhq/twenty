@@ -1,4 +1,3 @@
-import { CODE_AGENT } from './agents/code-agent';
 import { DATA_MANIPULATOR_AGENT } from './agents/data-manipulator-agent';
 import { HELPER_AGENT } from './agents/helper-agent';
 import { RESEARCHER_AGENT } from './agents/researcher-agent';
@@ -10,5 +9,5 @@ export const standardAgentDefinitions = [
   DATA_MANIPULATOR_AGENT,
   HELPER_AGENT,
   RESEARCHER_AGENT,
-  CODE_AGENT,
+  // CODE_AGENT,
 ] as const satisfies StandardAgentDefinition[];

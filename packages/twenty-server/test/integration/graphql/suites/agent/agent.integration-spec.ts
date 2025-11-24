@@ -124,10 +124,9 @@ describe('agentResolver', () => {
       } as any);
 
       // Verify the service was called with the correct parameters
-      expect(agentService.findOneAgent).toHaveBeenCalledWith(
-        testAgentId,
-        workspaceId,
-      );
+      expect(agentService.findOneAgent).toHaveBeenCalledWith(workspaceId, {
+        id: testAgentId,
+      });
 
       // Verify the result matches our expectations
       expect(result).toBeDefined();
