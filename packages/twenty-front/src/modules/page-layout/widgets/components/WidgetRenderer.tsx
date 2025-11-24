@@ -11,6 +11,7 @@ import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetCo
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
+import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
@@ -19,7 +20,7 @@ import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component
 import { useTheme } from '@emotion/react';
 import { type MouseEvent } from 'react';
 import { IconLock } from 'twenty-ui/display';
-import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
+import { type PageLayoutWidget } from '~/generated/graphql';
 
 type WidgetRendererProps = {
   widget: PageLayoutWidget;
@@ -86,18 +87,23 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     setIsHovered(false);
   };
 
+  const variant = getWidgetCardVariant({
+    layoutMode,
+    isInPinnedTab,
+    pageLayoutType: currentPageLayout.type,
+  });
+
   return (
     <WidgetCard
+      variant={variant}
+      isEditable={isPageLayoutInEditMode}
+      onClick={isPageLayoutInEditMode ? handleClick : undefined}
+      isEditing={isEditing}
       isDragging={isDragging}
       isResizing={isResizing}
-      layoutMode={layoutMode}
-      isEditing={isEditing}
-      pageLayoutType={currentPageLayout.type}
-      isInPinnedTab={isInPinnedTab}
-      onClick={isPageLayoutInEditMode ? handleClick : undefined}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      widgetId={widget.id}
+      data-widget-id={widget.id}
     >
       {showHeader && (
         <WidgetCardHeader
@@ -117,14 +123,9 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
         />
       )}
 
-      <WidgetCardContent
-        layoutMode={layoutMode}
-        pageLayoutType={currentPageLayout.type}
-        isInPinnedTab={isInPinnedTab}
-        isPageLayoutInEditMode={isPageLayoutInEditMode}
-      >
+      <WidgetCardContent variant={variant}>
         {hasAccess && <WidgetContentRenderer widget={widget} />}
-        {!hasAccess && currentPageLayout.type === PageLayoutType.DASHBOARD && (
+        {!hasAccess && (
           <IconLock
             color={theme.font.color.tertiary}
             stroke={theme.icon.stroke.sm}
