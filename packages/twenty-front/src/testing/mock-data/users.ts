@@ -1,5 +1,5 @@
 import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceState';
-import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/customWorkspaceApplicationMock.constant';
+import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   FeatureFlagKey,

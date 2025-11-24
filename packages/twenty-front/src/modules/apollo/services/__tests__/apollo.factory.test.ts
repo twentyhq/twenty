@@ -1,7 +1,7 @@
 import { ApolloError, gql, InMemoryCache } from '@apollo/client';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
-import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/customWorkspaceApplicationMock.constant';
+import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { WorkspaceActivationStatus } from '~/generated/graphql';
 import { ApolloFactory, type Options } from '../apollo.factory';
 
