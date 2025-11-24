@@ -14,7 +14,7 @@ const StyledContainer = styled.div`
   height: 100%;
 `;
 
-export const CommandMenuPageLayoutGraphTypeSelect = () => {
+export const CommandMenuPageLayoutChartSettings = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
   const draftPageLayout = useRecoilComponentValue(
@@ -27,21 +27,12 @@ export const CommandMenuPageLayoutGraphTypeSelect = () => {
     pageLayoutId,
   );
 
-  if (!isDefined(pageLayoutEditingWidgetId)) {
-    throw new Error('Widget ID must be present while editing the widget');
-  }
-
   const widgetInEditMode = draftPageLayout.tabs
     .flatMap((tab) => tab.widgets)
     .find((widget) => widget.id === pageLayoutEditingWidgetId);
 
-  if (!isDefined(widgetInEditMode)) {
-    throw new Error(
-      `Widget with ID ${pageLayoutEditingWidgetId} not found in page layout`,
-    );
-  }
-
   if (
+    !isDefined(widgetInEditMode) ||
     !isDefined(widgetInEditMode.configuration) ||
     !('graphType' in widgetInEditMode.configuration)
   ) {
