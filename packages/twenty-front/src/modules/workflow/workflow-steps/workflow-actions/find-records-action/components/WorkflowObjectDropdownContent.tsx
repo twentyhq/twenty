@@ -37,6 +37,7 @@ export const WorkflowObjectDropdownContent = ({
 
   const shouldShowAdvanced =
     showAdvancedOption &&
+    !isSystemObjectsOpen &&
     (!isNonEmptyString(searchInputValue) ||
       searchInputValue.toLowerCase().includes('advanced'));
 
