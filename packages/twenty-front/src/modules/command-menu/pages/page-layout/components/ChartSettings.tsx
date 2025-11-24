@@ -11,7 +11,7 @@ import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pa
 import { useUpdateChartSettingInput } from '@/command-menu/pages/page-layout/hooks/useUpdateChartSettingInput';
 import { useUpdateChartSettingToggle } from '@/command-menu/pages/page-layout/hooks/useUpdateChartSettingToggle';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
-import { useUpdateGraphTypeConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateGraphTypeConfig';
+import { useGetConfigToUpdateAfterGraphTypeChange } from '@/command-menu/pages/page-layout/hooks/useUpdateGraphTypeConfig';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { shouldHideChartSetting } from '@/command-menu/pages/page-layout/utils/shouldHideChartSetting';
@@ -70,10 +70,11 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
 
   const { updateChartSettingInput } = useUpdateChartSettingInput(pageLayoutId);
 
-  const { updateGraphTypeConfig } = useUpdateGraphTypeConfig({
-    pageLayoutId,
-    widget,
-  });
+  const { getConfigToUpdateAfterGraphTypeChange } =
+    useGetConfigToUpdateAfterGraphTypeChange({
+      pageLayoutId,
+      widget,
+    });
 
   const isGroupByEnabled = getChartSettingsValues(
     CHART_CONFIGURATION_SETTING_IDS.GROUP_BY,
@@ -82,7 +83,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
     useRecoilComponentState(hasWidgetTooManyGroupsComponentState);
 
   const handleGraphTypeChange = (graphType: GraphType) => {
-    const configToUpdate = updateGraphTypeConfig(graphType);
+    const configToUpdate = getConfigToUpdateAfterGraphTypeChange(graphType);
 
     updateCurrentWidgetConfig({
       configToUpdate,

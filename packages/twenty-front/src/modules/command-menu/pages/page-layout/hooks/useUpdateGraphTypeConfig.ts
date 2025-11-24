@@ -15,7 +15,7 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
 
-export const useUpdateGraphTypeConfig = ({
+export const useGetConfigToUpdateAfterGraphTypeChange = ({
   pageLayoutId,
   widget,
 }: {
@@ -46,7 +46,7 @@ export const useUpdateGraphTypeConfig = ({
     pageLayoutId,
   );
 
-  const updateGraphTypeConfig = useRecoilCallback(
+  const getConfigToUpdateAfterGraphTypeChange = useRecoilCallback(
     ({ set, snapshot }) =>
       (graphType: GraphType) => {
         const currentlyEditingWidgetId = snapshot
@@ -156,5 +156,5 @@ export const useUpdateGraphTypeConfig = ({
     ],
   );
 
-  return { updateGraphTypeConfig };
+  return { getConfigToUpdateAfterGraphTypeChange };
 };
