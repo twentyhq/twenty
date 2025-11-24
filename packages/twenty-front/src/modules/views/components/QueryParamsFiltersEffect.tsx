@@ -1,20 +1,35 @@
 import { useEffect } from 'react';
 
-import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
-import { useApplyViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyViewFiltersToCurrentRecordFilters';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useFiltersFromQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
+import { useHasFiltersInQueryParams } from '@/views/hooks/internal/useHasFiltersInQueryParams';
+import { useObjectMetadataFromRoute } from '@/views/hooks/internal/useObjectMetadataFromRoute';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { useMapViewFiltersToFilters } from '@/views/hooks/useMapViewFiltersToFilters';
+import { isDefined } from 'twenty-shared/utils';
 
 export const QueryParamsFiltersEffect = () => {
-  const {
-    hasFiltersQueryParams,
-    getFiltersFromQueryParams,
-    objectMetadataItem,
-  } = useViewFromQueryParams();
+  const { getFiltersFromQueryParams, getFilterGroupsFromQueryParams } =
+    useFiltersFromQueryParams();
+  const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
+  const { objectMetadataItem } = useObjectMetadataFromRoute();
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const { applyViewFiltersToCurrentRecordFilters } =
-    useApplyViewFiltersToCurrentRecordFilters();
+  const { mapViewFiltersToRecordFilters } = useMapViewFiltersToFilters();
+
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+  const setCurrentRecordFilters = useSetRecoilComponentState(
+    currentRecordFiltersComponentState,
+    recordIndexId,
+  );
+  const setCurrentRecordFilterGroups = useSetRecoilComponentState(
+    currentRecordFilterGroupsComponentState,
+    recordIndexId,
+  );
 
   const currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem =
     currentView?.objectMetadataId !== objectMetadataItem.id;
@@ -27,16 +42,44 @@ export const QueryParamsFiltersEffect = () => {
       return;
     }
 
-    getFiltersFromQueryParams().then((filtersFromParams) => {
-      if (Array.isArray(filtersFromParams)) {
-        applyViewFiltersToCurrentRecordFilters(filtersFromParams);
+    Promise.all([
+      getFiltersFromQueryParams(),
+      getFilterGroupsFromQueryParams(),
+    ]).then(([filtersFromParams, filterGroupsFromParams]) => {
+      const allRecordFilters = [];
+
+      if (
+        isDefined(filterGroupsFromParams) &&
+        filterGroupsFromParams.recordFilters.length > 0
+      ) {
+        allRecordFilters.push(...filterGroupsFromParams.recordFilters);
+      }
+
+      if (Array.isArray(filtersFromParams) && filtersFromParams.length > 0) {
+        const simpleRecordFilters =
+          mapViewFiltersToRecordFilters(filtersFromParams);
+        allRecordFilters.push(...simpleRecordFilters);
+      }
+
+      if (
+        isDefined(filterGroupsFromParams) &&
+        filterGroupsFromParams.recordFilterGroups.length > 0
+      ) {
+        setCurrentRecordFilterGroups(filterGroupsFromParams.recordFilterGroups);
+      }
+
+      if (allRecordFilters.length > 0) {
+        setCurrentRecordFilters(allRecordFilters);
       }
     });
   }, [
     currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem,
-    applyViewFiltersToCurrentRecordFilters,
+    mapViewFiltersToRecordFilters,
     getFiltersFromQueryParams,
+    getFilterGroupsFromQueryParams,
     hasFiltersQueryParams,
+    setCurrentRecordFilterGroups,
+    setCurrentRecordFilters,
   ]);
 
   return <></>;

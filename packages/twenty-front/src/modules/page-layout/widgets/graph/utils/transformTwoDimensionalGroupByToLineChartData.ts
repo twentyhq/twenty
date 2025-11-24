@@ -6,6 +6,8 @@ import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidget
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { buildPrimaryDimensionMetadata } from '@/page-layout/widgets/graph/utils/buildPrimaryDimensionMetadata';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { sortLineChartSeries } from '@/page-layout/widgets/graph/utils/sortLineChartSeries';
@@ -26,6 +28,7 @@ type TransformTwoDimensionalGroupByToLineChartDataParams = {
 type TransformTwoDimensionalGroupByToLineChartDataResult = {
   series: LineChartSeries[];
   hasTooManyGroups: boolean;
+  dimensionMetadata: Map<string, RawDimensionValue>;
 };
 
 export const transformTwoDimensionalGroupByToLineChartData = ({
@@ -41,6 +44,13 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
   const seriesMap = new Map<string, Map<string, number>>();
   const allXValues: string[] = [];
   const xValueSet = new Set<string>();
+  const dimensionMetadata = buildPrimaryDimensionMetadata({
+    groupByRawResults: rawResults,
+    primaryAxisGroupByField: groupByFieldX,
+    primaryAxisDateGranularity:
+      configuration.primaryAxisDateGranularity ?? undefined,
+    primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
+  });
   let hasTooManyGroups = false;
 
   rawResults.forEach((result) => {
@@ -70,8 +80,10 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
       allXValues.push(xValue);
     }
 
+    const seriesRawValue = dimensionValues[1];
+
     const seriesKey = formatDimensionValue({
-      value: dimensionValues[1],
+      value: seriesRawValue,
       fieldMetadata: groupByFieldY,
       dateGranularity:
         configuration.secondaryAxisGroupByDateGranularity ?? undefined,
@@ -120,5 +132,6 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
   return {
     series,
     hasTooManyGroups,
+    dimensionMetadata,
   };
 };

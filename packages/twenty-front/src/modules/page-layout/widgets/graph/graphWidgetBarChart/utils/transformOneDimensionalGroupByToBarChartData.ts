@@ -7,6 +7,7 @@ import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBa
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
@@ -29,6 +30,7 @@ type TransformOneDimensionalGroupByToBarChartDataResult = {
   keys: string[];
   series: BarChartSeries[];
   hasTooManyGroups: boolean;
+  dimensionMetadata: Map<string, RawDimensionValue>;
 };
 
 export const transformOneDimensionalGroupByToBarChartData = ({
@@ -53,6 +55,8 @@ export const transformOneDimensionalGroupByToBarChartData = ({
   // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
   const limitedResults = rawResults.slice(0, BAR_CHART_MAXIMUM_NUMBER_OF_BARS);
 
+  const dimensionMetadata = new Map<string, RawDimensionValue>();
+
   const data: BarChartDataItem[] = limitedResults.map((result) => {
     const dimensionValues = result.groupByDimensionValues;
 
@@ -66,6 +70,10 @@ export const transformOneDimensionalGroupByToBarChartData = ({
             configuration.primaryAxisGroupBySubFieldName ?? undefined,
         })
       : '';
+
+    if (isDefined(dimensionValues?.[0])) {
+      dimensionMetadata.set(xValue, dimensionValues[0]);
+    }
 
     const aggregateValue = computeAggregateValueFromGroupByResult({
       rawResult: result,
@@ -96,5 +104,6 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     keys: [aggregateValueKey],
     series,
     hasTooManyGroups: rawResults.length > BAR_CHART_MAXIMUM_NUMBER_OF_BARS,
+    dimensionMetadata,
   };
 };

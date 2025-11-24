@@ -1,7 +1,7 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { transformGroupByDataToLineChartData } from '@/page-layout/widgets/graph/utils/transformGroupByDataToLineChartData';
 import { useMemo } from 'react';
 import { type LineChartConfiguration } from '~/generated/graphql';
@@ -17,9 +17,12 @@ type UseGraphLineChartWidgetDataResult = {
   yAxisLabel?: string;
   showDataLabels: boolean;
   hasTooManyGroups: boolean;
+  dimensionMetadata: Map<string, RawDimensionValue>;
   loading: boolean;
   error?: Error;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: ReturnType<
+    typeof useObjectMetadataItemById
+  >['objectMetadataItem'];
 };
 
 export const useGraphLineChartWidgetData = ({

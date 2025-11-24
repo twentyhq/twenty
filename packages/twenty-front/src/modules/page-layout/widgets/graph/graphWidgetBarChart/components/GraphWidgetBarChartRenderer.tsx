@@ -3,14 +3,14 @@ import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/gr
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
+import { buildChartDrilldownUrl } from '@/page-layout/widgets/graph/utils/buildChartDrilldownUrl';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { type ComputedDatum } from '@nivo/bar';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { AppPath } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import {
   type BarChartConfiguration,
   type PageLayoutWidget,
@@ -40,6 +40,7 @@ export const GraphWidgetBarChartRenderer = ({
     layout,
     loading,
     hasTooManyGroups,
+    dimensionMetadata,
     objectMetadataItem,
   } = useGraphBarChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
@@ -68,17 +69,32 @@ export const GraphWidgetBarChartRenderer = ({
     }),
   );
 
-  const handleBarClick = (_datum: ComputedDatum<BarChartDataItem>) => {
-    return navigate(
-      getAppPath(
-        AppPath.RecordIndexPage,
-        {
-          objectNamePlural: objectMetadataItem.namePlural,
+  const handleBarClick = useCallback(
+    (datum: ComputedDatum<BarChartDataItem>) => {
+      const displayValue = datum.data[indexBy];
+      const rawValue = dimensionMetadata.get(displayValue as string) ?? null;
+
+      const url = buildChartDrilldownUrl({
+        objectMetadataItem,
+        configuration,
+        clickedData: {
+          primaryBucketRawValue: rawValue,
         },
-        isDefined(indexViewId) ? { viewId: indexViewId } : undefined,
-      ),
-    );
-  };
+        viewId: indexViewId,
+        timezone: configuration.timezone ?? undefined,
+      });
+
+      navigate(url);
+    },
+    [
+      dimensionMetadata,
+      indexBy,
+      objectMetadataItem,
+      configuration,
+      indexViewId,
+      navigate,
+    ],
+  );
 
   if (loading) {
     return <ChartSkeletonLoader />;
