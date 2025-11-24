@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   generateObject,
+  type LanguageModel,
   type UIDataTypes,
   type UIMessage,
   type UITools,
@@ -43,28 +44,13 @@ export class AiRouterStrategyDeciderService {
     routerModel: ModelId;
   }): Promise<StrategyDecision> {
     if (availableAgents.length === 1) {
-      return {
-        strategy: 'simple',
-        agentName: availableAgents[0].name,
-      };
+      return this.createSingleAgentDecision(availableAgents[0]);
     }
 
     const model = this.getRouterModel(routerModel);
     const agentNames = availableAgents.map((agent) => agent.name);
-
-    const conversationHistory = messages
-      .slice(0, -1)
-      .map((msg) => {
-        const textContent =
-          msg.parts.find((part) => part.type === 'text')?.text || '';
-
-        return `${msg.role}: ${textContent}`;
-      })
-      .join('\n');
-
-    const currentMessage =
-      messages[messages.length - 1]?.parts.find((part) => part.type === 'text')
-        ?.text || '';
+    const conversationHistory = this.buildConversationHistory(messages);
+    const currentMessage = this.extractCurrentMessage(messages);
 
     const systemPrompt = AGENT_SYSTEM_PROMPTS.ROUTER(agentDescriptions);
     const userPrompt = this.buildUserPrompt(
@@ -72,7 +58,53 @@ export class AiRouterStrategyDeciderService {
       currentMessage,
     );
 
-    const strategySchema = z.object({
+    const strategySchema = this.buildStrategySchema(agentNames);
+    const decision = await this.generateStrategyDecision(
+      model,
+      systemPrompt,
+      userPrompt,
+      strategySchema,
+    );
+
+    this.logger.log(
+      `[STRATEGY] Decision: ${JSON.stringify(decision, null, 2)}`,
+    );
+
+    return decision;
+  }
+
+  private createSingleAgentDecision(agent: AgentEntity): StrategyDecision {
+    return {
+      strategy: 'simple',
+      agentName: agent.name,
+    };
+  }
+
+  private buildConversationHistory(
+    messages: UIMessage<unknown, UIDataTypes, UITools>[],
+  ): string {
+    return messages
+      .slice(0, -1)
+      .map((message) => {
+        const textContent =
+          message.parts.find((part) => part.type === 'text')?.text || '';
+
+        return `${message.role}: ${textContent}`;
+      })
+      .join('\n');
+  }
+
+  private extractCurrentMessage(
+    messages: UIMessage<unknown, UIDataTypes, UITools>[],
+  ): string {
+    return (
+      messages[messages.length - 1]?.parts.find((part) => part.type === 'text')
+        ?.text || ''
+    );
+  }
+
+  private buildStrategySchema(agentNames: string[]) {
+    return z.object({
       strategy: z
         .enum(['simple', 'planned'])
         .describe(
@@ -98,37 +130,47 @@ export class AiRouterStrategyDeciderService {
         .optional()
         .describe('Tool hints for simple strategy (optional)'),
     });
+  }
 
+  private async generateStrategyDecision(
+    model: LanguageModel,
+    systemPrompt: string,
+    userPrompt: string,
+    schema: z.ZodTypeAny,
+  ): Promise<StrategyDecision> {
     const ROUTER_TEMPERATURE = 0.1;
 
     const result = await generateObject({
       model,
       system: systemPrompt,
       prompt: userPrompt,
-      schema: strategySchema,
+      schema,
       temperature: ROUTER_TEMPERATURE,
       experimental_telemetry: AI_TELEMETRY_CONFIG,
     });
-
-    this.logger.log(
-      `[STRATEGY] Decision: ${JSON.stringify(result.object, null, 2)}`,
-    );
 
     return result.object as StrategyDecision;
   }
 
   private getRouterModel(modelId: ModelId) {
     if (modelId === 'auto') {
-      const registeredModel =
-        this.aiModelRegistryService.getDefaultSpeedModel();
-
-      if (!registeredModel) {
-        throw new Error('No router model available');
-      }
-
-      return registeredModel.model;
+      return this.getDefaultRouterModel();
     }
 
+    return this.getSpecificRouterModel(modelId);
+  }
+
+  private getDefaultRouterModel() {
+    const registeredModel = this.aiModelRegistryService.getDefaultSpeedModel();
+
+    if (!registeredModel) {
+      throw new Error('No router model available');
+    }
+
+    return registeredModel.model;
+  }
+
+  private getSpecificRouterModel(modelId: ModelId) {
     const registeredModel = this.aiModelRegistryService.getModel(modelId);
 
     if (!registeredModel) {

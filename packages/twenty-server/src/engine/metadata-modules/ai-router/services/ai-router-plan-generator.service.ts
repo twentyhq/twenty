@@ -107,41 +107,77 @@ Keep plans focused and efficient.`;
     const stepNumbers = new Set(plan.steps.map((s) => s.stepNumber));
 
     for (const step of plan.steps) {
-      if (step.dependsOn) {
-        // Check for self-dependency
-        if (step.dependsOn.includes(step.stepNumber)) {
-          throw new Error(`Step ${step.stepNumber} cannot depend on itself`);
-        }
-
-        // Check dependencies exist and come before
-        for (const dep of step.dependsOn) {
-          if (!stepNumbers.has(dep)) {
-            throw new Error(`Invalid dependency: step ${dep} not found`);
-          }
-          if (dep >= step.stepNumber) {
-            throw new Error(
-              `Step ${step.stepNumber} depends on future step ${dep}`,
-            );
-          }
-        }
-      }
+      this.validateStepDependencies(step, stepNumbers);
     }
 
     this.logger.log(`[PLANNER] Plan validation passed`);
   }
 
-  private getPlannerModel(modelId: ModelId) {
-    if (modelId === 'auto') {
-      const registeredModel =
-        this.aiModelRegistryService.getDefaultPerformanceModel();
-
-      if (!registeredModel) {
-        throw new Error('No planner model available');
-      }
-
-      return registeredModel.model;
+  private validateStepDependencies(
+    step: { stepNumber: number; dependsOn?: number[] },
+    validStepNumbers: Set<number>,
+  ): void {
+    if (!step.dependsOn) {
+      return;
     }
 
+    this.checkForSelfDependency(step);
+
+    for (const dependency of step.dependsOn) {
+      this.validateDependencyExists(dependency, validStepNumbers);
+      this.validateDependencyOrder(step.stepNumber, dependency);
+    }
+  }
+
+  private checkForSelfDependency(step: {
+    stepNumber: number;
+    dependsOn?: number[];
+  }): void {
+    if (step.dependsOn?.includes(step.stepNumber)) {
+      throw new Error(`Step ${step.stepNumber} cannot depend on itself`);
+    }
+  }
+
+  private validateDependencyExists(
+    dependency: number,
+    validStepNumbers: Set<number>,
+  ): void {
+    if (!validStepNumbers.has(dependency)) {
+      throw new Error(`Invalid dependency: step ${dependency} not found`);
+    }
+  }
+
+  private validateDependencyOrder(
+    currentStepNumber: number,
+    dependency: number,
+  ): void {
+    if (dependency >= currentStepNumber) {
+      throw new Error(
+        `Step ${currentStepNumber} depends on future step ${dependency}`,
+      );
+    }
+  }
+
+  private getPlannerModel(modelId: ModelId) {
+    if (modelId === 'auto') {
+      return this.getDefaultPlannerModel();
+    }
+
+    return this.getSpecificPlannerModel(modelId);
+  }
+
+  private getDefaultPlannerModel() {
+    const registeredModel =
+      this.aiModelRegistryService.getDefaultPerformanceModel();
+
+    if (!registeredModel) {
+      throw new Error('No planner model available');
+    }
+
+    return registeredModel.model;
+  }
+
+  private getSpecificPlannerModel(modelId: ModelId) {
     const registeredModel = this.aiModelRegistryService.getModel(modelId);
 
     if (!registeredModel) {
@@ -149,18 +185,5 @@ Keep plans focused and efficient.`;
     }
 
     return registeredModel.model;
-  }
-
-  private buildUserPrompt(
-    conversationHistory: string,
-    currentMessage: string,
-  ): string {
-    return `Conversation history:
-${conversationHistory || 'No previous conversation'}
-
-Current user message:
-${currentMessage}
-
-Create a multi-step plan to handle this request.`;
   }
 }

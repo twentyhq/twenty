@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { In, Repository } from 'typeorm';
 
 import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
@@ -32,6 +33,18 @@ export class AgentService {
       return [];
     }
 
+    const agentRoleMap = await this.buildAgentRoleMap(workspaceId, agents);
+
+    return agents.map((agent) => ({
+      ...agent,
+      roleId: agentRoleMap.get(agent.id) || null,
+    }));
+  }
+
+  private async buildAgentRoleMap(
+    workspaceId: string,
+    agents: AgentEntity[],
+  ): Promise<Map<string, string>> {
     const roleTargets = await this.roleTargetsRepository.find({
       where: {
         workspaceId,
@@ -47,10 +60,7 @@ export class AgentService {
       }
     });
 
-    return agents.map((agent) => ({
-      ...agent,
-      roleId: agentRoleMap.get(agent.id) || null,
-    }));
+    return agentRoleMap;
   }
 
   async findOneByApplicationAndStandardId({
@@ -71,20 +81,41 @@ export class AgentService {
     workspaceId: string,
     { id, name }: { id?: string; name?: string },
   ) {
-    if (!id && !name) {
+    this.validateAgentIdentifier(id, name);
+
+    const agent = await this.fetchAgent(workspaceId, id, name);
+    const roleId = await this.fetchAgentRoleId(workspaceId, agent.id);
+
+    return {
+      ...agent,
+      roleId,
+    };
+  }
+
+  private validateAgentIdentifier(
+    id: string | undefined,
+    name: string | undefined,
+  ): void {
+    if (!isNonEmptyString(id) && !isNonEmptyString(name)) {
       throw new AgentException(
         'Either id or name must be provided',
         AgentExceptionCode.AGENT_NOT_FOUND,
       );
     }
 
-    if (id && name) {
+    if (isNonEmptyString(id) && isNonEmptyString(name)) {
       throw new AgentException(
         'Cannot specify both id and name',
         AgentExceptionCode.AGENT_NOT_FOUND,
       );
     }
+  }
 
+  private async fetchAgent(
+    workspaceId: string,
+    id: string | undefined,
+    name: string | undefined,
+  ): Promise<AgentEntity> {
     const agent = await this.agentRepository.findOne({
       where: id ? { id, workspaceId } : { name, workspaceId },
     });
@@ -98,47 +129,86 @@ export class AgentService {
       );
     }
 
+    return agent;
+  }
+
+  private async fetchAgentRoleId(
+    workspaceId: string,
+    agentId: string,
+  ): Promise<string | null> {
     const roleTarget = await this.roleTargetsRepository.findOne({
       where: {
-        agentId: agent.id,
+        agentId,
         workspaceId,
       },
       select: ['roleId'],
     });
 
-    return {
-      ...agent,
-      roleId: roleTarget?.roleId || null,
-    };
+    return roleTarget?.roleId || null;
   }
 
   async createOneAgent(
     input: CreateAgentInput & { isCustom: boolean },
     workspaceId: string,
   ) {
-    const agent = this.agentRepository.create({
-      ...input,
-      name: input.name || computeMetadataNameFromLabel(input.label),
-      workspaceId,
-      isCustom: input.isCustom,
-    });
-
+    const agent = this.buildNewAgent(input, workspaceId);
     const createdAgent = await this.agentRepository.save(agent);
 
-    if (input.roleId) {
-      await this.agentRoleService.assignRoleToAgent({
+    if (isNonEmptyString(input.roleId)) {
+      await this.assignRoleToNewAgent(
         workspaceId,
-        agentId: createdAgent.id,
-        roleId: input.roleId,
-      });
+        createdAgent.id,
+        input.roleId,
+      );
     }
 
     return this.findOneAgent(workspaceId, { id: createdAgent.id });
   }
 
+  private buildNewAgent(
+    input: CreateAgentInput & { isCustom: boolean },
+    workspaceId: string,
+  ): AgentEntity {
+    return this.agentRepository.create({
+      ...input,
+      name: isNonEmptyString(input.name)
+        ? input.name
+        : computeMetadataNameFromLabel(input.label),
+      workspaceId,
+      isCustom: input.isCustom,
+    });
+  }
+
+  private async assignRoleToNewAgent(
+    workspaceId: string,
+    agentId: string,
+    roleId: string,
+  ): Promise<void> {
+    await this.agentRoleService.assignRoleToAgent({
+      workspaceId,
+      agentId,
+      roleId,
+    });
+  }
+
   async updateOneAgent(input: UpdateAgentInput, workspaceId: string) {
     const agent = await this.findOneAgent(workspaceId, { id: input.id });
+    const updateData = this.buildUpdateData(agent, input);
+    const updatedAgent = await this.agentRepository.save(updateData);
 
+    if (!('roleId' in input)) {
+      return updatedAgent;
+    }
+
+    await this.updateAgentRole(workspaceId, agent.id, input.roleId);
+
+    return this.findOneAgent(workspaceId, { id: updatedAgent.id });
+  }
+
+  private buildUpdateData(
+    agent: AgentEntity & { roleId: string | null },
+    input: UpdateAgentInput,
+  ): Partial<AgentEntity> {
     const updateData: Partial<AgentEntity> = {
       ...agent,
       ...Object.fromEntries(
@@ -152,26 +222,28 @@ export class AgentService {
       updateData.name = input.name;
     }
 
-    const updatedAgent = await this.agentRepository.save(updateData);
+    return updateData;
+  }
 
-    if (!('roleId' in input)) {
-      return updatedAgent;
-    }
-
-    if (input.roleId) {
+  private async updateAgentRole(
+    workspaceId: string,
+    agentId: string,
+    roleId: string | null | undefined,
+  ): Promise<void> {
+    if (isNonEmptyString(roleId)) {
       await this.agentRoleService.assignRoleToAgent({
         workspaceId,
-        agentId: agent.id,
-        roleId: input.roleId,
+        agentId,
+        roleId,
       });
-    } else {
-      await this.agentRoleService.removeRoleFromAgent({
-        workspaceId,
-        agentId: agent.id,
-      });
+
+      return;
     }
 
-    return this.findOneAgent(workspaceId, { id: updatedAgent.id });
+    await this.agentRoleService.removeRoleFromAgent({
+      workspaceId,
+      agentId,
+    });
   }
 
   async deleteOneAgent(id: string, workspaceId: string) {
