@@ -1,3 +1,4 @@
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { COMMAND_MENU_SIDE_PANEL_WIDTH } from '@/command-menu/constants/CommandMenuSidePanelWidth';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
@@ -45,6 +46,7 @@ import {
 import '@xyflow/react/dist/style.css';
 import React, {
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -195,6 +197,7 @@ export const WorkflowDiagramCanvasBase = ({
   }, [workflowDiagram]);
 
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
+  const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const handleEdgesChange = (
     edgeChanges: Array<EdgeChange<WorkflowDiagramEdge>>,
@@ -236,10 +239,12 @@ export const WorkflowDiagramCanvasBase = ({
         workflowDiagramFlowInitialized,
         isCommandMenuOpened,
         workflowDiagram,
+        isInRightDrawer,
       }: {
         workflowDiagramFlowInitialized: boolean;
         isCommandMenuOpened: boolean;
         workflowDiagram: WorkflowDiagram | undefined;
+        isInRightDrawer: boolean;
       }) => {
         if (
           !isDefined(containerRef.current) ||
@@ -266,10 +271,11 @@ export const WorkflowDiagramCanvasBase = ({
         const hasViewportBeenMoved = currentViewport.x !== 0;
 
         let adjustedContainerWidth = baseContainerWidth;
-        if (isCommandMenuOpened) {
+
+        if (!isInRightDrawer && isCommandMenuOpened) {
           adjustedContainerWidth =
             baseContainerWidth - COMMAND_MENU_SIDE_PANEL_WIDTH;
-        } else if (hasViewportBeenMoved) {
+        } else if (!isInRightDrawer && hasViewportBeenMoved) {
           adjustedContainerWidth =
             baseContainerWidth + COMMAND_MENU_SIDE_PANEL_WIDTH;
         }
@@ -295,11 +301,14 @@ export const WorkflowDiagramCanvasBase = ({
       ({
         workflowDiagramFlowInitialized,
         isCommandMenuOpened,
+        isInRightDrawer,
       }: {
         workflowDiagramFlowInitialized: boolean;
         isCommandMenuOpened: boolean;
+        isInRightDrawer: boolean;
       }) => {
         setFlowViewport({
+          isInRightDrawer,
           isCommandMenuOpened,
           workflowDiagramFlowInitialized,
           workflowDiagram: getSnapshotValue(snapshot, workflowDiagramState),
@@ -312,11 +321,13 @@ export const WorkflowDiagramCanvasBase = ({
     handleSetFlowViewportOnChange({
       workflowDiagramFlowInitialized,
       isCommandMenuOpened,
+      isInRightDrawer,
     });
   }, [
     handleSetFlowViewportOnChange,
     isCommandMenuOpened,
     workflowDiagramFlowInitialized,
+    isInRightDrawer,
   ]);
 
   const handleNodesChanges = useRecoilCallback(
@@ -348,6 +359,7 @@ export const WorkflowDiagramCanvasBase = ({
           isCommandMenuOpened,
           workflowDiagramFlowInitialized,
           workflowDiagram: updatedWorkflowDiagram,
+          isInRightDrawer,
         });
       },
     [
@@ -356,6 +368,7 @@ export const WorkflowDiagramCanvasBase = ({
       workflowDiagramFlowInitialized,
       workflowDiagramState,
       workflowDiagramWaitingNodesDimensionsState,
+      isInRightDrawer,
     ],
   );
 

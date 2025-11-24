@@ -107,7 +107,13 @@ export const useLoadCurrentUser = () => {
       );
     }
 
-    const workspace = user.currentWorkspace ?? null;
+    const workspace = isDefined(user.currentWorkspace)
+      ? {
+          ...user.currentWorkspace,
+          workspaceCustomApplication:
+            user.currentWorkspace.workspaceCustomApplication ?? null,
+        }
+      : null;
 
     setCurrentWorkspace(workspace);
 

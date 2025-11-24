@@ -566,6 +566,7 @@ export class ApplicationSyncService {
         await this.serverlessFunctionV2Service.createOne({
           createServerlessFunctionInput,
           workspaceId,
+          applicationId,
         });
 
       await this.syncDatabaseEventTriggersForServerlessFunction({

@@ -720,13 +720,13 @@ msgid "Add view"
 msgstr "Agregar vista"
 
 #. js-lingui-id: 8sZiWP
-#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+#: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
 msgid "Add widget"
 msgstr "Agregar widget"
 
 #. js-lingui-id: iRpDWj
 #: src/modules/page-layout/widgets/widget-card/components/WidgetCardHeader.tsx
-#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+#: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Add Widget"
 msgstr "Agregar widget"
@@ -779,6 +779,8 @@ msgstr "Panel de administración"
 
 #. js-lingui-id: sxkWRg
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent.tsx
 msgid "Advanced"
 msgstr "Avanzado"
 
@@ -832,7 +834,7 @@ msgstr "Agente no encontrado"
 #. js-lingui-id: 77hGcG
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Agent roles"
-msgstr ""
+msgstr "Roles de Agente"
 
 #. js-lingui-id: 8Uv5e6
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -1112,7 +1114,7 @@ msgstr "Clave API copiada al portapapeles"
 #. js-lingui-id: Widx6n
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "API key roles"
-msgstr ""
+msgstr "Roles de Claves API"
 
 #. js-lingui-id: 5h8ooz
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
@@ -1562,12 +1564,12 @@ msgstr "Breve explicación de este campo de salida"
 #. js-lingui-id: VkwIHa
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "bullet"
-msgstr ""
+msgstr "viñeta"
 
 #. js-lingui-id: s1c0ja
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Bullet List"
-msgstr ""
+msgstr "Lista con Viñetas"
 
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -1733,7 +1735,7 @@ msgstr "Cancelar su suscripción"
 #: src/modules/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar.ts
 #: src/modules/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar.ts
 msgid "Cannot display message"
-msgstr ""
+msgstr "No se puede mostrar el mensaje"
 
 #. js-lingui-id: W3MumH
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -1884,7 +1886,7 @@ msgstr "Elige el formato utilizado para mostrar el valor de la fecha"
 #. js-lingui-id: 02EFne
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
-msgstr ""
+msgstr "Elegir qué campos de perfil pueden modificar los usuarios con el permiso Editar Perfil"
 
 #. js-lingui-id: 9qP96p
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
@@ -1923,7 +1925,7 @@ msgid "Click on the checkmark to apply your changes."
 msgstr "Haga clic en la marca de verificación para aplicar sus cambios."
 
 #. js-lingui-id: WTlZnA
-#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+#: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
 msgid "Click to add your first widget"
 msgstr "Haga clic para añadir su primer widget"
 
@@ -2394,7 +2396,7 @@ msgstr "Crear {targetObjectLabelSingular}"
 #. js-lingui-id: ZITKtg
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
 msgid "Create a role to define permissions for this agent."
-msgstr ""
+msgstr "Crear un rol para definir los permisos de este agente."
 
 #. js-lingui-id: zNoOC2
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
@@ -2559,7 +2561,7 @@ msgstr "''"
 #. js-lingui-id: zovbHa
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Cron will be triggered at UTC time"
-msgstr ""
+msgstr "Cron se activará a la hora UTC"
 
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -3298,17 +3300,22 @@ msgstr "Suelta el archivo aquí..."
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Duplicate"
-msgstr ""
+msgstr "Duplicar"
 
 #. js-lingui-id: qaE1sk
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Duplicate node"
 msgstr "Nodo duplicado"
 
+#. js-lingui-id: mMsEuG
+#: src/modules/command-menu/pages/page-layout/components/WidgetSettingsFooter.tsx
+msgid "Duplicate widget"
+msgstr ""
+
 #. js-lingui-id: 2RpRNn
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Duplicate Workflow"
-msgstr ""
+msgstr "Duplicar Workflow"
 
 #. js-lingui-id: cheWPw
 #: src/modules/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection.tsx
@@ -3403,7 +3410,7 @@ msgstr "Editar iFrame"
 #. js-lingui-id: IaSCqp
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Edit own profile information"
-msgstr ""
+msgstr "Edita tu información del perfil"
 
 #. js-lingui-id: h2KoTu
 #: src/modules/billing/components/SettingsBillingContent.tsx
@@ -3413,7 +3420,7 @@ msgstr "Editar la forma de pago, ver sus facturas y más"
 #. js-lingui-id: QJQd1J
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Edit Profile"
-msgstr ""
+msgstr "Editar Perfil"
 
 #. js-lingui-id: 6n2zpV
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -3428,7 +3435,7 @@ msgstr "Edite el nombre de su subdominio o establezca un dominio personalizado."
 #. js-lingui-id: xMkLkW
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Editable Profile Fields"
-msgstr ""
+msgstr "Campos de Perfil Editables"
 
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -3665,7 +3672,7 @@ msgstr "Ingresar en formato <0>Unicode</0>"
 #. js-lingui-id: uV9utd
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Enter limit"
-msgstr ""
+msgstr "Introducir límite"
 
 #. js-lingui-id: O6t21f
 #: src/modules/advanced-text-editor/components/EditLinkPopover.tsx
@@ -3693,7 +3700,7 @@ msgstr "Introduce un número mayor que 1"
 #. js-lingui-id: yZMXC2
 #: src/modules/advanced-text-editor/hooks/useAdvancedTextEditor.ts
 msgid "Enter text or Type '/' for commands"
-msgstr ""
+msgstr "Introduce texto o escribe '/' para comandos"
 
 #. js-lingui-id: XJU8BD
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -4062,12 +4069,12 @@ msgstr "Exportar tablero"
 #: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
 msgid "Export member"
-msgstr ""
+msgstr "Exportar miembro"
 
 #. js-lingui-id: D0b3Ip
 #: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
 msgid "Export members"
-msgstr ""
+msgstr "Exportar miembros"
 
 #. js-lingui-id: ep2rbf
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4160,7 +4167,7 @@ msgstr "Error al eliminar trabajos. Por favor, inténtelo de nuevo más tarde."
 #. js-lingui-id: WYXxQF
 #: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
 msgid "Failed to duplicate workflow"
-msgstr ""
+msgstr "Error al duplicar el flujo de trabajo"
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AIChatErrorMessage.tsx
@@ -4190,7 +4197,7 @@ msgstr "No se pudieron reintentar los trabajos. Por favor, inténtelo de nuevo m
 #. js-lingui-id: y3HIOa
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Failed to save role permissions: {errorMessage}"
-msgstr ""
+msgstr "Error al guardar los permisos de rol: {errorMessage}"
 
 #. js-lingui-id: HnBqPY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -4606,17 +4613,17 @@ msgstr "Agrupar ordenamiento"
 #. js-lingui-id: eKiSkN
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h1"
-msgstr ""
+msgstr "h1"
 
 #. js-lingui-id: DM6L2V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h2"
-msgstr ""
+msgstr "h2"
 
 #. js-lingui-id: aNHeda
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "h3"
-msgstr ""
+msgstr "h3"
 
 #. js-lingui-id: /Oqu/V
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -4633,22 +4640,22 @@ msgstr "Transferencia eliminada con éxito"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "heading"
-msgstr ""
+msgstr "encabezado"
 
 #. js-lingui-id: lXKZGw
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Heading 1"
-msgstr ""
+msgstr "Encabezado 1"
 
 #. js-lingui-id: El7NbA
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Heading 2"
-msgstr ""
+msgstr "Encabezado 2"
 
 #. js-lingui-id: SFN6dN
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Heading 3"
-msgstr ""
+msgstr "Encabezado 3"
 
 #. js-lingui-id: I1IOmb
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -4690,7 +4697,7 @@ msgstr "Ocultar eliminado"
 #. js-lingui-id: OTmbll
 #: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
 msgid "Hide deleted members"
-msgstr ""
+msgstr "Ocultar miembros eliminados"
 
 #. js-lingui-id: FHhlye
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4853,7 +4860,7 @@ msgstr "Servidor IMAP"
 #. js-lingui-id: atF3YG
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "IMAP Username (Optional)"
-msgstr ""
+msgstr "Nombre de usuario IMAP (opcional)"
 
 #. js-lingui-id: +8jOVa
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5319,7 +5326,7 @@ msgstr "Idioma"
 #. js-lingui-id: 59o/ag
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Large section heading"
-msgstr ""
+msgstr "Encabezado de sección grande"
 
 #. js-lingui-id: DU27lO
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
@@ -5451,12 +5458,12 @@ msgstr "Claro"
 #. js-lingui-id: yRkqG9
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Limit"
-msgstr ""
+msgstr "Límite"
 
 #. js-lingui-id: JoxPqI
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Limit cannot exceed {maxRecordsFormatted} records."
-msgstr ""
+msgstr "El límite no puede exceder {maxRecordsFormatted} registros."
 
 #. js-lingui-id: Qds9fe
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
@@ -5466,7 +5473,7 @@ msgstr "Limitar cuántos valores se pueden agregar a este campo"
 #. js-lingui-id: a4SJUE
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Limit must be greater than 0."
-msgstr ""
+msgstr "El límite debe ser mayor que 0."
 
 #. js-lingui-id: rjuFFw
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
@@ -5486,7 +5493,7 @@ msgstr "Enlace copiado al portapapeles"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "list"
-msgstr ""
+msgstr "lista"
 
 #. js-lingui-id: HhVDr2
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -5602,7 +5609,7 @@ msgstr "Gestionar favorito"
 #. js-lingui-id: 8XlVuA
 #: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
 msgid "Manage in settings"
-msgstr ""
+msgstr "Gestionar en configuración"
 
 #. js-lingui-id: T6YjCk
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -5612,7 +5619,7 @@ msgstr "Gestionar miembros"
 #. js-lingui-id: 5hEFxA
 #: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
 msgid "Manage members in settings"
-msgstr ""
+msgstr "Gestionar miembros en configuración"
 
 #. js-lingui-id: eGGH1l
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -5709,7 +5716,7 @@ msgstr "Yo"
 #. js-lingui-id: IAcjOi
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Medium section heading"
-msgstr ""
+msgstr "Encabezado de sección mediana"
 
 #. js-lingui-id: Sma10A
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx
@@ -6262,7 +6269,7 @@ msgstr "Todavía no ha habido intercambio de correos electrónicos con este regi
 #. js-lingui-id: RM6uKY
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 msgid "No fields selected"
-msgstr ""
+msgstr "No hay campos seleccionados"
 
 #. js-lingui-id: 23Rceg
 #: src/modules/activities/files/components/FilesCard.tsx
@@ -6525,12 +6532,12 @@ msgstr "Tipo de número"
 #. js-lingui-id: OC5fb9
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "numbered"
-msgstr ""
+msgstr "numerado"
 
 #. js-lingui-id: M3G9ZD
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Numbered list"
-msgstr ""
+msgstr "Lista numerada"
 
 #. js-lingui-id: pNEViR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -6593,7 +6600,7 @@ msgstr "Fuera del camino trillado"
 #. js-lingui-id: ec0+nM
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "ol"
-msgstr ""
+msgstr "ol"
 
 #. js-lingui-id: +rvV4v
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -6735,13 +6742,12 @@ msgid "Optional secret used to compute the HMAC signature for webhook payloads"
 msgstr "Secreto opcional utilizado para calcular la firma HMAC de los datos del webhook"
 
 #. js-lingui-id: 0zpgxV
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+#: src/modules/ui/layout/dropdown/components/OptionsDropdownMenu.tsx
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
-#: src/modules/action-menu/components/CommandMenuActionMenuDropdown.tsx
 msgid "Options"
 msgstr "Opciones"
 
@@ -6758,12 +6764,12 @@ msgstr "O"
 #. js-lingui-id: VWupWc
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "ordered"
-msgstr ""
+msgstr "ordenada"
 
 #. js-lingui-id: Uci+Ph
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Ordered List"
-msgstr ""
+msgstr "Lista ordenada"
 
 #. js-lingui-id: ucgZ0o
 #: src/modules/billing/hooks/useBillingWording.ts
@@ -6810,7 +6816,7 @@ msgstr "Sobrescribir Borrador"
 #. js-lingui-id: y3tCDg
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "p"
-msgstr ""
+msgstr "p"
 
 #. js-lingui-id: 6WdDG7
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -6825,7 +6831,7 @@ msgstr "Página no encontrada"
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "paragraph"
-msgstr ""
+msgstr "párrafo"
 
 #. js-lingui-id: 8ZsakT
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -6980,7 +6986,7 @@ msgstr "Tarta"
 #. js-lingui-id: fQtTho
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Plain text paragraph"
-msgstr ""
+msgstr "Párrafo de texto plano"
 
 #. js-lingui-id: GdgCoi
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -7154,7 +7160,7 @@ msgstr "Perfil - Ajustes"
 #. js-lingui-id: Szskbr
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 msgid "Profile Picture"
-msgstr ""
+msgstr "Foto de perfil"
 
 #. js-lingui-id: GVxbU6
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -7558,7 +7564,7 @@ msgstr "Rol"
 #. js-lingui-id: l2yKTq
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
 msgid "Role for {agentLabel} agent"
-msgstr ""
+msgstr "Rol para el agente {agentLabel}"
 
 #. js-lingui-id: iSfzXo
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -7893,7 +7899,7 @@ msgstr "Ver versión activa"
 #. js-lingui-id: 8O9AJI
 #: src/modules/action-menu/actions/record-actions/constants/WorkspaceMembersActionsConfig.tsx
 msgid "See deleted members"
-msgstr ""
+msgstr "Ver miembros eliminados"
 
 #. js-lingui-id: BxIUpp
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -8307,7 +8313,7 @@ msgstr "Omitir"
 #. js-lingui-id: Ik7fz5
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Small section heading"
-msgstr ""
+msgstr "Encabezado de sección pequeña"
 
 #. js-lingui-id: w+rJId
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -8430,7 +8436,7 @@ msgstr "Barras apiladas"
 #. js-lingui-id: bQSDyq
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Stacked lines"
-msgstr ""
+msgstr "Líneas apiladas"
 
 #. js-lingui-id: ErU1td
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -8521,7 +8527,7 @@ msgstr "Subdominio actualizado"
 #. js-lingui-id: Rcm+OU
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "subheading"
-msgstr ""
+msgstr "sub encabezado"
 
 #. js-lingui-id: 97eDN2
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -8589,7 +8595,7 @@ msgstr "La suscripción se cambiará a mensual el {beautifiedRenewDate}."
 #. js-lingui-id: pEToQK
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "subtitle"
-msgstr ""
+msgstr "subtítulo"
 
 #. js-lingui-id: OjK1bU
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
@@ -8691,7 +8697,7 @@ msgstr "Sistema"
 #. js-lingui-id: 0apULK
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
 msgid "System objects"
-msgstr ""
+msgstr "Objetos del sistema"
 
 #. js-lingui-id: FHPe8O
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
@@ -9245,7 +9251,7 @@ msgstr "Tipo"
 #. js-lingui-id: qzD6hf
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
 msgid "Type anything..."
-msgstr ""
+msgstr "Escribe cualquier cosa..."
 
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -9255,7 +9261,7 @@ msgstr "Ucraniano"
 #. js-lingui-id: GNgAlk
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "ul"
-msgstr ""
+msgstr "ul"
 
 #. js-lingui-id: l+ALBd
 #: src/modules/client-config/components/ClientConfigProvider.tsx
@@ -9328,12 +9334,12 @@ msgstr "No listadas"
 #. js-lingui-id: eQMhFX
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "unordered"
-msgstr ""
+msgstr "desordenado"
 
 #. js-lingui-id: 9dX/SD
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Unordered list with bullets"
-msgstr ""
+msgstr "Lista sin ordenar con puntos"
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AIChatThreadGroup.tsx
@@ -9799,7 +9805,7 @@ msgstr ""
 #. js-lingui-id: 2jzcC5
 #: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
 msgid "Workflow duplicated successfully"
-msgstr ""
+msgstr "Se duplicó el Workflow con éxito"
 
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx

@@ -2187,12 +2187,12 @@ msgstr "El nom \"{computedMetadataNameFromLabel}\" no pot ser el mateix a ambdó
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
-msgstr ""
+msgstr "Aquest nom no està disponible \"{name}\"."
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr ""
+msgstr "Aquest nom no està disponible \"{name}\" ja que ja és utilitzat per un altre camp."
 
 #. js-lingui-id: dBDpp2
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts

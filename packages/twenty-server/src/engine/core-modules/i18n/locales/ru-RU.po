@@ -2187,12 +2187,12 @@ msgstr "Имя \"{computedMetadataNameFromLabel}\" не может быть од
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
-msgstr ""
+msgstr "Имя \"{name}\" недоступно"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr ""
+msgstr "Имя \"{name}\" недоступно, так как уже используется другим полем"
 
 #. js-lingui-id: dBDpp2
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts

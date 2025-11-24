@@ -2187,12 +2187,12 @@ msgstr "השם \"{computedMetadataNameFromLabel}\" אינו יכול להיות 
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
-msgstr ""
+msgstr "השם \"{name}\" אינו זמין"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr ""
+msgstr "שם זה \"{name}\" אינו זמין שכן כבר בשימוש על ידי שדה אחר"
 
 #. js-lingui-id: dBDpp2
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts

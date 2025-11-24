@@ -715,13 +715,13 @@ msgid "Add view"
 msgstr ""
 
 #. js-lingui-id: 8sZiWP
-#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+#: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
 msgid "Add widget"
 msgstr ""
 
 #. js-lingui-id: iRpDWj
 #: src/modules/page-layout/widgets/widget-card/components/WidgetCardHeader.tsx
-#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+#: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Add Widget"
 msgstr ""
@@ -774,6 +774,8 @@ msgstr ""
 
 #. js-lingui-id: sxkWRg
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent.tsx
 msgid "Advanced"
 msgstr ""
 
@@ -1918,7 +1920,7 @@ msgid "Click on the checkmark to apply your changes."
 msgstr ""
 
 #. js-lingui-id: WTlZnA
-#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+#: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
 msgid "Click to add your first widget"
 msgstr ""
 
@@ -3298,6 +3300,11 @@ msgstr ""
 #. js-lingui-id: qaE1sk
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Duplicate node"
+msgstr ""
+
+#. js-lingui-id: mMsEuG
+#: src/modules/command-menu/pages/page-layout/components/WidgetSettingsFooter.tsx
+msgid "Duplicate widget"
 msgstr ""
 
 #. js-lingui-id: 2RpRNn
@@ -6730,13 +6737,12 @@ msgid "Optional secret used to compute the HMAC signature for webhook payloads"
 msgstr ""
 
 #. js-lingui-id: 0zpgxV
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+#: src/modules/ui/layout/dropdown/components/OptionsDropdownMenu.tsx
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
-#: src/modules/action-menu/components/CommandMenuActionMenuDropdown.tsx
 msgid "Options"
 msgstr ""
 
