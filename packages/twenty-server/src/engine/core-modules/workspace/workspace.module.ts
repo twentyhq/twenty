@@ -28,6 +28,7 @@ import { WorkspaceWorkspaceMemberListener } from 'src/engine/core-modules/worksp
 import { workspaceAutoResolverOpts } from 'src/engine/core-modules/workspace/workspace.auto-resolver-opts';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.resolver';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { AgentModule } from 'src/engine/metadata-modules/agent/agent.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -72,6 +73,7 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
         CustomDomainManagerModule,
         ViewModule,
         WorkspaceManyOrAllFlatEntityMapsCacheModule,
+        ApplicationModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,

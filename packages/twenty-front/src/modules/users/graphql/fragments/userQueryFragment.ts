@@ -60,7 +60,9 @@ export const USER_QUERY_FRAGMENT = gql`
       isPasswordAuthBypassEnabled
       subdomain
       hasValidEnterpriseKey
-      customDomain
+      workspaceCustomApplication {
+        id
+      }
       isCustomDomainEnabled
       workspaceUrls {
         ...WorkspaceUrlsFragment
