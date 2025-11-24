@@ -14,6 +14,9 @@ import {
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isFieldMetadataTypeRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation.util';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { buildObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-metadata-item-with-field-maps.util';
 import { type UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import {
@@ -24,7 +27,6 @@ import {
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class FieldPermissionService {
@@ -36,7 +38,7 @@ export class FieldPermissionService {
     @InjectRepository(FieldPermissionEntity)
     private readonly fieldPermissionsRepository: Repository<FieldPermissionEntity>,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   public async upsertFieldPermissions({
@@ -60,10 +62,25 @@ export class FieldPermissionService {
       role,
     });
 
-    const { byId: objectMetadataMapsById } =
-      await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
-        workspaceId,
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
       );
+
+    const objectMetadataMapsById: ObjectMetadataMaps['byId'] = {};
+
+    for (const [id, flatObj] of Object.entries(flatObjectMetadataMaps.byId)) {
+      if (isDefined(flatObj)) {
+        objectMetadataMapsById[id] = buildObjectMetadataItemWithFieldMaps(
+          flatObj,
+          flatFieldMetadataMaps,
+          createEmptyFlatEntityMaps(),
+        );
+      }
+    }
 
     const existingFieldPermissions = await this.fieldPermissionsRepository.find(
       {

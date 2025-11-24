@@ -10,6 +10,7 @@ import {
   objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
@@ -20,7 +21,6 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 
 describe('FieldPermissionService', () => {
@@ -31,7 +31,7 @@ describe('FieldPermissionService', () => {
   let roleRepository: jest.Mocked<Repository<RoleEntity>>;
   let fieldMetadataRepository: jest.Mocked<Repository<FieldMetadataEntity>>;
   let workspacePermissionsCacheService: jest.Mocked<WorkspacePermissionsCacheService>;
-  let workspaceCacheStorageService: jest.Mocked<WorkspaceCacheStorageService>;
+  let workspaceManyOrAllFlatEntityMapsCacheService: jest.Mocked<WorkspaceManyOrAllFlatEntityMapsCacheService>;
 
   const testWorkspaceId = '20202020-0000-0000-0000-000000000000';
   const testRoleId = '20202020-0000-0000-0000-000000000001';
@@ -98,9 +98,9 @@ describe('FieldPermissionService', () => {
           },
         },
         {
-          provide: WorkspaceCacheStorageService,
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
           useValue: {
-            getObjectMetadataMapsOrThrow: jest.fn(),
+            getOrRecomputeManyOrAllFlatEntityMaps: jest.fn(),
           },
         },
         {
@@ -123,7 +123,9 @@ describe('FieldPermissionService', () => {
     workspacePermissionsCacheService = module.get(
       WorkspacePermissionsCacheService,
     );
-    workspaceCacheStorageService = module.get(WorkspaceCacheStorageService);
+    workspaceManyOrAllFlatEntityMapsCacheService = module.get(
+      WorkspaceManyOrAllFlatEntityMapsCacheService,
+    );
 
     // Setup default mocks
     roleRepository.findOne.mockResolvedValue(mockRole);
@@ -137,39 +139,49 @@ describe('FieldPermissionService', () => {
         data: mockRolesPermissions,
       },
     );
-    workspaceCacheStorageService.getObjectMetadataMapsOrThrow.mockResolvedValue(
+    const testFieldMetadata = getMockFieldMetadataEntity({
+      ...fieldTextMock,
+      label: 'Test Field',
+      objectMetadataId: testObjectMetadataId,
+      workspaceId: testWorkspaceId,
+      id: '20202020-0000-0000-0000-000000000003',
+    });
+
+    workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
       {
-        byId: {
-          [testObjectMetadataId]: {
-            ...objectMetadataItemMock,
-            fieldsById: {
-              [fieldTextMock.id]: getMockFieldMetadataEntity({
-                ...fieldTextMock,
-                label: 'Test Field',
-                objectMetadataId: testObjectMetadataId,
-                workspaceId: testWorkspaceId,
-                id: '20202020-0000-0000-0000-000000000003',
-              }),
-            },
-            fieldIdByJoinColumnName: {},
-            fieldIdByName: {},
-            indexMetadatas: [],
+        flatObjectMetadataMaps: {
+          byId: {
+            [testObjectMetadataId]: {
+              ...objectMetadataItemMock,
+              id: testObjectMetadataId,
+              fieldMetadataIds: [testFieldMetadata.id],
+              indexMetadataIds: [],
+              viewIds: [],
+              universalIdentifier: testObjectMetadataId,
+              applicationId: null,
+            } as any,
+            [fieldRelationMock.objectMetadataId]: {
+              ...objectMetadataItemMock,
+              id: fieldRelationMock.objectMetadataId,
+              fieldMetadataIds: [fieldRelationMock.id],
+              indexMetadataIds: [],
+              viewIds: [],
+              universalIdentifier: fieldRelationMock.objectMetadataId,
+              applicationId: null,
+            } as any,
           },
-          [fieldRelationMock.objectMetadataId]: {
-            ...objectMetadataItemMock,
-            id: fieldRelationMock.objectMetadataId,
-            fieldsById: {
-              [fieldRelationMock.id]: fieldRelationMock,
-            },
-            fieldIdByJoinColumnName: {},
-            fieldIdByName: {},
-            indexMetadatas: [],
+          idByUniversalIdentifier: {},
+          universalIdentifiersByApplicationId: {},
+        },
+        flatFieldMetadataMaps: {
+          byId: {
+            [testFieldMetadata.id]: testFieldMetadata as any,
+            [fieldRelationMock.id]: fieldRelationMock as any,
           },
+          idByUniversalIdentifier: {},
+          universalIdentifiersByApplicationId: {},
         },
-        idByNameSingular: {
-          testObject: testObjectMetadataId,
-        },
-      },
+      } as any,
     );
     fieldPermissionsRepository.find.mockResolvedValue([]);
     fieldPermissionsRepository.upsert.mockResolvedValue({} as any);
@@ -386,11 +398,19 @@ describe('FieldPermissionService', () => {
       });
 
       it('should throw error when object metadata is not found', async () => {
-        workspaceCacheStorageService.getObjectMetadataMapsOrThrow.mockResolvedValue(
+        workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
           {
-            byId: {},
-            idByNameSingular: {},
-          },
+            flatObjectMetadataMaps: {
+              byId: {},
+              idByUniversalIdentifier: {},
+              universalIdentifiersByApplicationId: {},
+            },
+            flatFieldMetadataMaps: {
+              byId: {},
+              idByUniversalIdentifier: {},
+              universalIdentifiersByApplicationId: {},
+            },
+          } as any,
         );
 
         const input = createUpsertInput([
@@ -420,21 +440,29 @@ describe('FieldPermissionService', () => {
           isSystem: true,
         };
 
-        workspaceCacheStorageService.getObjectMetadataMapsOrThrow.mockResolvedValue(
+        workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
           {
-            byId: {
-              [testObjectMetadataId]: {
-                ...systemObjectMetadata,
-                fieldsById: {},
-                fieldIdByJoinColumnName: {},
-                fieldIdByName: {},
-                indexMetadatas: [],
+            flatObjectMetadataMaps: {
+              byId: {
+                [testObjectMetadataId]: {
+                  ...systemObjectMetadata,
+                  id: testObjectMetadataId,
+                  fieldMetadataIds: [],
+                  indexMetadataIds: [],
+                  viewIds: [],
+                  universalIdentifier: testObjectMetadataId,
+                  applicationId: null,
+                } as any,
               },
+              idByUniversalIdentifier: {},
+              universalIdentifiersByApplicationId: {},
             },
-            idByNameSingular: {
-              testObject: testObjectMetadataId,
+            flatFieldMetadataMaps: {
+              byId: {},
+              idByUniversalIdentifier: {},
+              universalIdentifiersByApplicationId: {},
             },
-          },
+          } as any,
         );
 
         const input = createUpsertInput([
@@ -458,23 +486,29 @@ describe('FieldPermissionService', () => {
       });
 
       it('should throw error when field metadata is not found', async () => {
-        const objectMetadataWithoutField = {
-          ...objectMetadataItemMock,
-          fieldsById: {},
-          fieldIdByJoinColumnName: {},
-          fieldIdByName: {},
-          indexMetadatas: [],
-        };
-
-        workspaceCacheStorageService.getObjectMetadataMapsOrThrow.mockResolvedValue(
+        workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
           {
-            byId: {
-              [testObjectMetadataId]: objectMetadataWithoutField,
+            flatObjectMetadataMaps: {
+              byId: {
+                [testObjectMetadataId]: {
+                  ...objectMetadataItemMock,
+                  id: testObjectMetadataId,
+                  fieldMetadataIds: [],
+                  indexMetadataIds: [],
+                  viewIds: [],
+                  universalIdentifier: testObjectMetadataId,
+                  applicationId: null,
+                } as any,
+              },
+              idByUniversalIdentifier: {},
+              universalIdentifiersByApplicationId: {},
             },
-            idByNameSingular: {
-              testObject: testObjectMetadataId,
+            flatFieldMetadataMaps: {
+              byId: {},
+              idByUniversalIdentifier: {},
+              universalIdentifiersByApplicationId: {},
             },
-          },
+          } as any,
         );
 
         const input = createUpsertInput([

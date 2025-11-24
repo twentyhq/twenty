@@ -13,7 +13,10 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
+import { buildObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-metadata-item-with-field-maps.util';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 @Resolver()
 @UseFilters(SearchApiExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
@@ -22,7 +25,7 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 export class SearchResolver {
   constructor(
     private readonly searchService: SearchService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   @Query(() => SearchResultConnectionDTO)
@@ -38,10 +41,35 @@ export class SearchResolver {
       after,
     }: SearchArgs,
   ) {
-    const objectMetadataMaps =
-      await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
-        workspace.id,
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId: workspace.id,
+          flatMapsKeys: [
+            'flatObjectMetadataMaps',
+            'flatFieldMetadataMaps',
+            'flatIndexMaps',
+          ],
+        },
       );
+
+    const { idByNameSingular } = buildObjectIdByNameMaps(
+      flatObjectMetadataMaps,
+    );
+    const objectMetadataMaps: ObjectMetadataMaps = {
+      byId: {},
+      idByNameSingular,
+    };
+
+    for (const [id, flatObj] of Object.entries(flatObjectMetadataMaps.byId)) {
+      if (isDefined(flatObj)) {
+        objectMetadataMaps.byId[id] = buildObjectMetadataItemWithFieldMaps(
+          flatObj,
+          flatFieldMetadataMaps,
+          flatIndexMaps,
+        );
+      }
+    }
 
     const filteredObjectMetadataItems =
       this.searchService.filterObjectMetadataItems({
