@@ -23,6 +23,9 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
+import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
@@ -103,6 +106,7 @@ export class WorkspaceResolver {
     private readonly viewService: ViewService,
     private readonly dnsManagerService: DnsManagerService,
     private readonly customDomainManagerService: CustomDomainManagerService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   @Query(() => WorkspaceEntity)
@@ -238,6 +242,20 @@ export class WorkspaceResolver {
     @Parent() workspace: WorkspaceEntity,
   ): Promise<string | null> {
     return workspace.routerModel;
+  }
+
+  @ResolveField(() => ApplicationDTO, { nullable: false })
+  async workspaceCustomApplication(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<ApplicationDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspace,
+        },
+      );
+
+    return fromFlatApplicationToApplicationDto(workspaceCustomFlatApplication);
   }
 
   @ResolveField(() => BillingSubscriptionEntity, { nullable: true })

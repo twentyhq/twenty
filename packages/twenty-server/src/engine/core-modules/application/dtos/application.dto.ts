@@ -21,11 +21,11 @@ export class ApplicationDTO {
 
   @IsString()
   @Field()
-  description: string;
+  description?: string;
 
   @IsString()
   @Field()
-  version: string;
+  version?: string;
 
   @IsString()
   @Field()
@@ -36,14 +36,14 @@ export class ApplicationDTO {
   canBeUninstalled: boolean;
 
   @Field(() => [AgentDTO])
-  agents: AgentDTO[];
+  agents?: AgentDTO[];
 
   @Field(() => [ServerlessFunctionDTO])
-  serverlessFunctions: ServerlessFunctionDTO[];
+  serverlessFunctions?: ServerlessFunctionDTO[];
 
   @Field(() => [ObjectMetadataDTO])
-  objects: ObjectMetadataDTO[];
+  objects?: ObjectMetadataDTO[];
 
   @Field(() => [ApplicationVariableEntityDTO])
-  applicationVariables: ApplicationVariableEntityDTO[];
+  applicationVariables?: ApplicationVariableEntityDTO[];
 }
