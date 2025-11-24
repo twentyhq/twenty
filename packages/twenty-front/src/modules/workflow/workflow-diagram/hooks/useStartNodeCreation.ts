@@ -3,7 +3,9 @@ import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandM
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowStepConnectionOptions';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { useCallback, useContext } from 'react';
@@ -15,6 +17,10 @@ export const useStartNodeCreation = () => {
 
   const [workflowInsertStepIds, setWorkflowInsertStepIds] =
     useRecoilComponentState(workflowInsertStepIdsComponentState);
+
+  const setWorkflowSelectedNode = useSetRecoilComponentState(
+    workflowSelectedNodeComponentState,
+  );
 
   const { openWorkflowCreateStepInCommandMenu } = useWorkflowCommandMenu();
 
@@ -49,6 +55,8 @@ export const useStartNodeCreation = () => {
         connectionOptions,
       });
 
+      setWorkflowSelectedNode(undefined);
+
       if (!isDefined(workflowVisualizerWorkflowId)) {
         return;
       }
@@ -61,6 +69,7 @@ export const useStartNodeCreation = () => {
     },
     [
       setWorkflowInsertStepIds,
+      setWorkflowSelectedNode,
       workflowVisualizerWorkflowId,
       isInRightDrawer,
       openWorkflowCreateStepInCommandMenu,

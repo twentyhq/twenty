@@ -3,6 +3,8 @@ import { FieldActorSource } from 'twenty-shared/types';
 
 import { validateRatingAndSelectFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util';
 import { validateRawJsonFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util';
+import { validateTextFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util';
+import { validateUUIDFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-uuid-field-or-throw.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -27,6 +29,12 @@ export const validateActorFieldOrThrow = (
         break;
       case 'context':
         validateRawJsonFieldOrThrow(subFieldValue, `${fieldName}.${subField}`);
+        break;
+      case 'name':
+        validateTextFieldOrThrow(subFieldValue, `${fieldName}.${subField}`);
+        break;
+      case 'workspaceMemberId':
+        validateUUIDFieldOrThrow(subFieldValue, `${fieldName}.${subField}`);
         break;
       default:
         throw new CommonQueryRunnerException(

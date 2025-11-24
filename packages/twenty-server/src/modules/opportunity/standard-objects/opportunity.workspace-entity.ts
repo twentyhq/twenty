@@ -1,9 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import {
-  FieldMetadataType,
-  RelationOnDeleteAction,
   ActorMetadata,
   type CurrencyMetadata,
+  FieldMetadataType,
+  RelationOnDeleteAction,
 } from 'twenty-shared/types';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
@@ -63,6 +63,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The opportunity name`,
     icon: 'IconTargetArrow',
   })
+  @WorkspaceIsNullable()
   name: string;
 
   @WorkspaceField({
