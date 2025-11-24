@@ -28,9 +28,9 @@ export const transformEmailsValue = (
             : additionalEmails
       ) as string[];
 
-      additionalEmails = JSON.stringify(
-        emailArray.map((email) => email.toLowerCase()),
-      );
+      additionalEmails = isNull(emailArray)
+        ? null
+        : JSON.stringify(emailArray.map((email) => email.toLowerCase()));
     } catch {
       /* empty */
     }
