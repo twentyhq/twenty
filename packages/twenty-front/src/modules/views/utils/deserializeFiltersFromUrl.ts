@@ -63,11 +63,13 @@ const convertUrlFilterToRecordFilter = ({
     }
   }
 
+  const displayValue = urlFilter.value;
+
   const recordFilter: RecordFilter = {
     id: uuidv4(),
     fieldMetadataId: fieldMetadataItem.id,
     value: urlFilter.value,
-    displayValue: urlFilter.value,
+    displayValue,
     type: fieldMetadataItem.type as RecordFilter['type'],
     operand: urlFilter.op,
     label: fieldMetadataItem.label,

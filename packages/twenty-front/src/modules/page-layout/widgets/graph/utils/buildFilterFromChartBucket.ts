@@ -1,11 +1,11 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   ViewFilterOperand,
-  type FilterableAndTSVectorFieldType,
   type ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type ChartFilter = {
@@ -20,38 +20,6 @@ type BuildFilterFromChartBucketParams = {
   dateGranularity?: ObjectRecordGroupByDateGranularity | null; // Will be used for date filtering
   subFieldName?: string | null;
   timezone?: string; // Will be used for date filtering
-};
-
-const selectChartFilterOperand = (
-  fieldType: FilterableAndTSVectorFieldType,
-): ViewFilterOperand => {
-  const fieldsUsingContainsOperand: FilterableAndTSVectorFieldType[] = [
-    'TEXT',
-    'FULL_NAME',
-    'EMAILS',
-    'PHONES',
-    'LINKS',
-    'RAW_JSON',
-  ];
-
-  const fieldsUsingIsOperand: FilterableAndTSVectorFieldType[] = [
-    'SELECT',
-    'BOOLEAN',
-    'NUMBER',
-    'RATING',
-    'UUID',
-    'RELATION',
-  ];
-
-  if (fieldsUsingContainsOperand.includes(fieldType)) {
-    return ViewFilterOperand.CONTAINS;
-  }
-
-  if (fieldsUsingIsOperand.includes(fieldType)) {
-    return ViewFilterOperand.IS;
-  }
-
-  return ViewFilterOperand.IS;
 };
 
 const formatChartFilterValue = (
@@ -91,42 +59,16 @@ export const buildFilterFromChartBucket = ({
     ];
   }
 
-  // TODO: Implement Date/Time filtering
-  if (
-    fieldMetadataItem.type === FieldMetadataType.DATE ||
-    fieldMetadataItem.type === FieldMetadataType.DATE_TIME
-  ) {
+  const availableOperands = getRecordFilterOperands({
+    filterType: getFilterTypeFromFieldType(fieldMetadataItem.type),
+    subFieldName: subFieldName ?? undefined,
+  });
+
+  if (availableOperands.length === 0) {
     return [];
   }
 
-  // TODO: Implement complex types (Address, Currency, etc)
-  const complexTypes = [
-    FieldMetadataType.CURRENCY,
-    FieldMetadataType.ADDRESS,
-    FieldMetadataType.ACTOR,
-    FieldMetadataType.MULTI_SELECT,
-    FieldMetadataType.ARRAY,
-  ];
-
-  if (complexTypes.includes(fieldMetadataItem.type)) {
-    return [];
-  }
-
-  const nonFilterableTypes = [
-    FieldMetadataType.POSITION,
-    FieldMetadataType.MORPH_RELATION,
-    FieldMetadataType.TS_VECTOR,
-    FieldMetadataType.RICH_TEXT,
-    FieldMetadataType.RICH_TEXT_V2,
-  ];
-
-  if (nonFilterableTypes.includes(fieldMetadataItem.type)) {
-    return [];
-  }
-
-  const operand = selectChartFilterOperand(
-    fieldMetadataItem.type as FilterableAndTSVectorFieldType,
-  );
+  const operand = availableOperands[0];
 
   const value = formatChartFilterValue(
     fieldMetadataItem.type,

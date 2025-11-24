@@ -3,27 +3,15 @@ import qs from 'qs';
 import { useMemo } from 'react';
 import { useRecoilCallback } from 'recoil';
 import z from 'zod';
-import { logError } from '~/utils/logError';
 
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import { useObjectMetadataFromRoute } from '@/views/hooks/internal/useObjectMetadataFromRoute';
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { mapUrlFilterGroupToRecordFilterGroup } from '@/views/utils/deserializeFiltersFromUrl';
-import { type ObjectPermissions, ViewFilterOperand } from 'twenty-shared/types';
-import {
-  isDefined,
-  isExpectedSubFieldName,
-  relationFilterValueSchemaObject,
-} from 'twenty-shared/utils';
+import { ViewFilterOperand } from 'twenty-shared/types';
+import { isDefined, isExpectedSubFieldName } from 'twenty-shared/utils';
 
 const urlFilterSchema = z.object({
   field: z.string(),
@@ -54,7 +42,7 @@ const filterQueryParamsSchema = z.object({
       z.string(),
       z.partialRecord(
         z.enum(ViewFilterOperand),
-        z.string().or(z.array(z.string())).or(relationFilterValueSchemaObject),
+        z.string().or(z.array(z.string())),
       ),
     )
     .optional(),
@@ -62,7 +50,6 @@ const filterQueryParamsSchema = z.object({
 });
 
 export const useFiltersFromQueryParams = () => {
-  const apolloCoreClient = useApolloCoreClient();
   const { searchParams, objectMetadataItem } = useObjectMetadataFromRoute();
 
   const queryParamsValidation = filterQueryParamsSchema.safeParse(
@@ -79,193 +66,82 @@ export const useFiltersFromQueryParams = () => {
     isDefined(filterQueryParams) &&
     Object.entries(filterQueryParams).length > 0;
 
-  const getFiltersFromQueryParams = useRecoilCallback(
-    ({ snapshot }) => {
-      const fetchFiltersFromQueryParams = async (): Promise<ViewFilter[]> => {
-        if (!hasFiltersQueryParams) return [];
+  const getFiltersFromQueryParams = useRecoilCallback(() => {
+    const fetchFiltersFromQueryParams = async (): Promise<ViewFilter[]> => {
+      if (!hasFiltersQueryParams) return [];
 
-        const objectMetadataItems = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue();
+      const promises: Promise<ViewFilter | null>[] = [];
 
-        const currentUserWorkspace = snapshot
-          .getLoadable(currentUserWorkspaceState)
-          .getValue();
-
-        const objectsPermissions = currentUserWorkspace?.objectsPermissions;
-
-        const objectPermissionsByObjectMetadataId =
-          objectsPermissions?.reduce(
-            (
-              accumulator: Record<
-                string,
-                ObjectPermissions & { objectMetadataId: string }
-              >,
-              objectPermission,
-            ) => {
-              accumulator[objectPermission.objectMetadataId] = objectPermission;
-              return accumulator;
-            },
-            {},
-          ) ?? {};
-
-        const promises: Promise<ViewFilter | null>[] = [];
-
-        for (const [fieldName, filterFromURL] of Object.entries(
-          filterQueryParams,
+      for (const [fieldName, filterFromURL] of Object.entries(
+        filterQueryParams,
+      )) {
+        for (const [filterOperandFromURL, filterValueFromURL] of Object.entries(
+          filterFromURL,
         )) {
-          for (const [
-            filterOperandFromURL,
-            filterValueFromURL,
-          ] of Object.entries(filterFromURL)) {
-            const promise = (async (): Promise<ViewFilter | null> => {
-              // Split field name to handle subfields (e.g., "name.firstName" -> "name" + "firstName")
-              const fieldParts = fieldName.split('.');
-              const baseFieldName = fieldParts[0];
-              const subFieldName =
-                fieldParts.length > 1
-                  ? fieldParts.slice(1).join('.')
-                  : undefined;
+          const promise = (async (): Promise<ViewFilter | null> => {
+            // Split field name to handle subfields (e.g., "name.firstName" -> "name" + "firstName")
+            const fieldParts = fieldName.split('.');
+            const baseFieldName = fieldParts[0];
+            const subFieldName =
+              fieldParts.length > 1 ? fieldParts.slice(1).join('.') : undefined;
 
-              const fieldMetadataItem = objectMetadataItem.fields.find(
-                (field) => field.name === baseFieldName,
-              );
+            const fieldMetadataItem = objectMetadataItem.fields.find(
+              (field) => field.name === baseFieldName,
+            );
 
-              if (!fieldMetadataItem) return null;
+            if (!fieldMetadataItem) return null;
 
-              if (isDefined(subFieldName) && isNonEmptyString(subFieldName)) {
-                if (!isCompositeFieldType(fieldMetadataItem.type)) {
-                  return null;
-                }
-
-                if (
-                  !isExpectedSubFieldName(
-                    fieldMetadataItem.type as Parameters<
-                      typeof isExpectedSubFieldName
-                    >[0],
-                    subFieldName as Parameters<
-                      typeof isExpectedSubFieldName
-                    >[1],
-                    subFieldName,
-                  )
-                ) {
-                  return null;
-                }
+            if (isDefined(subFieldName) && isNonEmptyString(subFieldName)) {
+              if (!isCompositeFieldType(fieldMetadataItem.type)) {
+                return null;
               }
-
-              const relationObjectMetadataNameSingular =
-                fieldMetadataItem.relation?.targetObjectMetadata?.nameSingular;
-
-              const relationObjectMetadataNamePlural =
-                fieldMetadataItem.relation?.targetObjectMetadata?.namePlural;
-
-              const relationObjectMetadataItem =
-                relationObjectMetadataNameSingular
-                  ? snapshot
-                      .getLoadable(
-                        objectMetadataItemFamilySelector({
-                          objectName: relationObjectMetadataNameSingular,
-                          objectNameType: 'singular',
-                        }),
-                      )
-                      .getValue()
-                  : null;
-
-              const satisfiesRelationFilterSchema =
-                relationFilterValueSchemaObject.safeParse(
-                  filterValueFromURL,
-                )?.success;
-
-              const relationRecordNames: string[] = [];
 
               if (
-                isNonEmptyString(relationObjectMetadataNamePlural) &&
-                isDefined(relationObjectMetadataItem) &&
-                (Array.isArray(filterValueFromURL) ||
-                  satisfiesRelationFilterSchema)
+                !isExpectedSubFieldName(
+                  fieldMetadataItem.type as Parameters<
+                    typeof isExpectedSubFieldName
+                  >[0],
+                  subFieldName as Parameters<typeof isExpectedSubFieldName>[1],
+                  subFieldName,
+                )
               ) {
-                try {
-                  const queryResult = await apolloCoreClient.query<
-                    Record<string, { edges: { node: ObjectRecord }[] }>
-                  >({
-                    query: generateFindManyRecordsQuery({
-                      objectMetadataItem: relationObjectMetadataItem,
-                      objectMetadataItems,
-                      objectPermissionsByObjectMetadataId,
-                    }),
-                    variables: {
-                      filter: {
-                        id: {
-                          in: satisfiesRelationFilterSchema
-                            ? (
-                                filterValueFromURL as {
-                                  selectedRecordIds: string[];
-                                }
-                              )?.selectedRecordIds
-                            : filterValueFromURL,
-                        },
-                      },
-                    },
-                  });
-
-                  const relationRecordNamesFromQuery = queryResult.data?.[
-                    relationObjectMetadataNamePlural
-                  ]?.edges.map(
-                    ({ node: record }) =>
-                      getObjectRecordIdentifier({
-                        objectMetadataItem: relationObjectMetadataItem,
-                        record,
-                      }).name,
-                  );
-
-                  relationRecordNames.push(...relationRecordNamesFromQuery);
-                } catch (error) {
-                  logError(
-                    `useFiltersFromQueryParams: Failed to fetch relation records for filter - ${error}`,
-                  );
-                }
+                return null;
               }
+            }
 
-              const filterValueAsString =
-                Array.isArray(filterValueFromURL) ||
-                isObject(filterValueFromURL)
-                  ? JSON.stringify(filterValueFromURL)
-                  : (filterValueFromURL as string);
+            const filterValueAsString =
+              Array.isArray(filterValueFromURL) || isObject(filterValueFromURL)
+                ? JSON.stringify(filterValueFromURL)
+                : (filterValueFromURL as string);
 
-              return {
-                __typename: 'ViewFilter',
-                id: `tmp-${[
-                  fieldName,
-                  filterOperandFromURL,
-                  filterValueFromURL,
-                ].join('-')}`,
-                fieldMetadataId: fieldMetadataItem.id,
-                operand: filterOperandFromURL as ViewFilterOperand,
-                value: filterValueAsString,
-                displayValue:
-                  relationRecordNames?.join(', ') ?? filterValueAsString,
-                subFieldName: subFieldName
-                  ? (subFieldName as ViewFilter['subFieldName'])
-                  : undefined,
-              };
-            })();
+            const displayValue = filterValueAsString;
 
-            promises.push(promise);
-          }
+            return {
+              __typename: 'ViewFilter',
+              id: `tmp-${[
+                fieldName,
+                filterOperandFromURL,
+                filterValueFromURL,
+              ].join('-')}`,
+              fieldMetadataId: fieldMetadataItem.id,
+              operand: filterOperandFromURL as ViewFilterOperand,
+              value: filterValueAsString,
+              displayValue,
+              subFieldName: subFieldName
+                ? (subFieldName as ViewFilter['subFieldName'])
+                : undefined,
+            };
+          })();
+
+          promises.push(promise);
         }
+      }
 
-        return (await Promise.all(promises)).filter(isDefined);
-      };
+      return (await Promise.all(promises)).filter(isDefined);
+    };
 
-      return fetchFiltersFromQueryParams;
-    },
-    [
-      apolloCoreClient,
-      filterQueryParams,
-      hasFiltersQueryParams,
-      objectMetadataItem.fields,
-    ],
-  );
+    return fetchFiltersFromQueryParams;
+  }, [filterQueryParams, hasFiltersQueryParams, objectMetadataItem.fields]);
 
   const filterGroupQueryParams = useMemo(
     () =>
