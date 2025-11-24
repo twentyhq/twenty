@@ -1,5 +1,5 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'class-validator';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 export const transformEmailsValue = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
