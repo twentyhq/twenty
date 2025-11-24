@@ -10,9 +10,6 @@ export class RemoveAgentHandoffTable1763805513241
       `DROP TABLE IF EXISTS "core"."agentHandoff" CASCADE`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."workspace" ADD "plannerModel" character varying NOT NULL DEFAULT 'auto'`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "core"."agent" ALTER COLUMN "responseFormat" SET DEFAULT '{"type":"text"}'`,
     );
   }
@@ -20,9 +17,6 @@ export class RemoveAgentHandoffTable1763805513241
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "core"."agent" ALTER COLUMN "responseFormat" DROP DEFAULT`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."workspace" DROP COLUMN "plannerModel"`,
     );
     await queryRunner.query(`CREATE TABLE "core"."agentHandoff" (
             "id" uuid NOT NULL DEFAULT uuid_generate_v4(),

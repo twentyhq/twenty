@@ -13,7 +13,8 @@ export type DataMessagePart = {
       selectedAgentId?: string;
       selectedAgentLabel?: string;
       availableAgents?: Array<{ id: string; label: string }>;
-      routerModel?: string;
+      fastModel?: string;
+      smartModel?: string;
       agentModel?: string;
       context?: string;
       contextRecordCount?: number;

@@ -15,6 +15,7 @@ import { AiModelsModule } from 'src/engine/metadata-modules/ai-models/ai-models.
 import { AiRouterModule } from 'src/engine/metadata-modules/ai-router/ai-router.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 import { AgentChatController } from './controllers/agent-chat.controller';
 import { AgentChatMessagePartEntity } from './entities/agent-chat-message-part.entity';
@@ -43,6 +44,7 @@ import { AgentStreamingService } from './services/agent-streaming.service';
     FileModule,
     PermissionsModule,
     WorkspacePermissionsCacheModule,
+    WorkspaceCacheStorageModule,
     TokenModule,
     UserWorkspaceModule,
   ],

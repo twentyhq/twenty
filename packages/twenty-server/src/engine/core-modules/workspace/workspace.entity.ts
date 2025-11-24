@@ -294,6 +294,13 @@ export class WorkspaceEntity {
   @Column({ nullable: true, type: 'uuid' })
   workspaceCustomApplicationId: string;
 
+  // TODO: delete
+  // This is deprecated
+  // If we are in December 2025 you can remove this column from DB
+  @Field(() => String, { nullable: false })
+  @Column({ type: 'varchar', nullable: false, default: 'auto' })
+  routerModel: ModelId;
+
   @ManyToOne(() => ApplicationEntity, {
     onDelete: 'RESTRICT',
     nullable: false,
