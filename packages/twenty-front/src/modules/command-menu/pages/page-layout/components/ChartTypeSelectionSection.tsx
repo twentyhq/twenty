@@ -3,7 +3,6 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { FeatureFlagKey, GraphType } from '~/generated-metadata/graphql';
 
-import { t } from '@lingui/core/macro';
 import { MenuPicker } from 'twenty-ui/navigation';
 
 const graphTypeOptions = [
@@ -53,9 +52,6 @@ export const ChartTypeSelectionSection = ({
             onClick={() => {
               setCurrentGraphType(graphType);
             }}
-            label={
-              isDisabled ? t`Soon` : t(GRAPH_TYPE_INFORMATION[graphType].label)
-            }
             showLabel
             disabled={isDisabled}
           />

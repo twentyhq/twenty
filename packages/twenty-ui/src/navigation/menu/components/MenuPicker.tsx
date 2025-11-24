@@ -1,6 +1,7 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type IconComponent } from '@ui/display';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledMenuPicker = styled.button<{
   selected: boolean;
@@ -104,7 +105,7 @@ export type MenuPickerProps = {
   className?: string;
   disabled?: boolean;
   icon: IconComponent;
-  label: string;
+  label?: string;
   onClick?: () => void;
   selected?: boolean;
   showLabel?: boolean;
@@ -138,7 +139,7 @@ export const MenuPicker = ({
         <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       </StyledIconContainer>
 
-      {showLabel && (
+      {isDefined(label) && showLabel && (
         <StyledLabel selected={selected} disabled={disabled}>
           {label}
         </StyledLabel>
