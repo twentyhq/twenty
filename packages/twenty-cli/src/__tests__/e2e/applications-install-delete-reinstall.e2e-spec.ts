@@ -24,7 +24,7 @@ describe.each(COVERED_APPLICATION_FOLDERS)(
       expect(result.success).toBe(true);
     });
 
-    it.only(`should successfully install ${applicationName} application`, async () => {
+    it(`should successfully install ${applicationName} application`, async () => {
       const result = await syncCommand.execute(appPath);
 
       expect(result.success).toBe(true);
