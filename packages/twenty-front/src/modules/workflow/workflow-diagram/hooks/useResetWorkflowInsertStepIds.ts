@@ -8,13 +8,9 @@ export const useResetWorkflowInsertStepIds = () => {
   );
 
   const resetWorkflowInsertStepIds = useRecoilCallback(
-    ({ set }) =>
+    ({ reset }) =>
       () => {
-        set(workflowInsertStepIdsState, {
-          parentStepId: undefined,
-          nextStepId: undefined,
-          position: undefined,
-        });
+        reset(workflowInsertStepIdsState);
       },
     [workflowInsertStepIdsState],
   );
