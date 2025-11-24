@@ -15,6 +15,7 @@ import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/ro
 import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.module';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
+import { ObjectMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/object-metadata/interceptors/object-metadata-graphql-api-exception.interceptor';
 
 @Module({
   imports: [
@@ -32,7 +33,11 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     WorkspaceMigrationV2Module,
     PermissionsModule,
   ],
-  providers: [ApplicationResolver, ApplicationSyncService],
+  providers: [
+    ApplicationResolver,
+    ApplicationSyncService,
+    ObjectMetadataGraphqlApiExceptionInterceptor,
+  ],
   exports: [ApplicationSyncService],
 })
 export class ApplicationSyncModule {}
