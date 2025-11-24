@@ -12,6 +12,40 @@ export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
 export { AppBasePath } from './AppBasePath';
 export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
+export type { ActorMetadata } from './composite-types/actor.composite-type';
+export {
+  FieldActorSource,
+  actorCompositeType,
+} from './composite-types/actor.composite-type';
+export type { AddressMetadata } from './composite-types/address.composite-type';
+export { addressCompositeType } from './composite-types/address.composite-type';
+export { compositeTypeDefinitions } from './composite-types/composite-type-definitions';
+export type {
+  CompositeProperty,
+  CompositeType,
+} from './composite-types/composite-type.interface';
+export type { CurrencyMetadata } from './composite-types/currency.composite-type';
+export { currencyCompositeType } from './composite-types/currency.composite-type';
+export type { EmailsMetadata } from './composite-types/emails.composite-type';
+export { emailsCompositeType } from './composite-types/emails.composite-type';
+export type { FullNameMetadata } from './composite-types/full-name.composite-type';
+export { fullNameCompositeType } from './composite-types/full-name.composite-type';
+export type {
+  LinkMetadata,
+  LinksMetadata,
+  LinkMetadataNullable,
+} from './composite-types/links.composite-type';
+export { linksCompositeType } from './composite-types/links.composite-type';
+export type {
+  AdditionalPhoneMetadata,
+  PhonesMetadata,
+} from './composite-types/phones.composite-type';
+export { phonesCompositeType } from './composite-types/phones.composite-type';
+export type { RichTextV2Metadata } from './composite-types/rich-text-v2.composite-type';
+export {
+  richTextV2CompositeType,
+  richTextV2ValueSchema,
+} from './composite-types/rich-text-v2.composite-type';
 export type { CompositeFieldSubFieldName } from './CompositeFieldSubFieldNameType';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
@@ -146,5 +180,6 @@ export type {
 } from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
+export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.validator';
 export { ViewFilterOperand } from './ViewFilterOperand';
 export { ViewFilterOperandDeprecated } from './ViewFilterOperandDeprecated';

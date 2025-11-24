@@ -1,0 +1,99 @@
+---
+title: 노트
+info: 레코드 페이지 내에서 노트를 효율적으로 관리하는 방법을 Twenty에서 탐색합니다.
+image: /images/user-guide/notes/notes_header.png
+sectionInfo: 노트와 작업을 활용하여 팀과 더 나은 협업을 할 수 있는 방법을 발견하세요.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+강력한 **노트** 기능을 사용하여 레코드와 연결된 노트를 효율적으로 관리하세요. 이 가이드는 레코드 페이지 내에서 노트를 생성, 포맷, 댓글 작성 및 삭제하는 방법을 쉽게 안내합니다.
+
+## 일반적인 사용 사례
+
+### 회의 문서화
+
+- **회의록**: 클라이언트 통화의 주요 논의 사항, 결정 사항 및 행동 항목을 기록합니다.
+- **Call Summaries**: Record important details from sales conversations or support calls
+- **후속 메모**: 회의 중 합의된 다음 단계 및 약속 문서화
+
+### 고객 상호작용
+
+- **지원 이력**: 고객 문제 추적, 제공된 솔루션 및 해결 상태
+- **Sales Context**: Record customer preferences, pain points, and buying signals
+- **관계 구축**: 관계 강화를 위한 연락처의 개인적인 세부 사항 기록
+
+### 프로젝트 관리
+
+- **상태 업데이트**: 프로젝트 진행 상황과 마일스톤 성과 문서화
+- **문제 추적**: 발생한 문제 및 구현된 솔루션 기록
+- **팀 인계**: 팀원 간 계정 전환 시 컨텍스트 공유
+
+### 자동화된 노트 생성
+
+[워크플로우](/l/ko/user-guide/workflows/getting-started-workflows)를 사용하여 노트를 자동으로 생성합니다:
+
+- **콜 녹음 통합**: 녹취된 콜에서 자동으로 회의 요약 생성
+- **거래 인계 노트**: 새로운 고객을 구현 팀에 넘길 때 판매 주기 요약 자동 생성
+
+## 노트 기능
+
+### 관계 필드
+
+노트에는 여러 다른 객체의 여러 기록과 연결할 수 있는 **관계** 필드가 포함되어 있습니다. 예를 들어, 하나의 회의 노트를 다음과 연결할 수 있습니다:
+
+- 만난 사람
+- 그들이 대표하는 회사
+- 논의 중인 기회
+- 관련된 태스크 또는 기타 기록
+
+This morph many relationship ensures important information is accessible from all relevant record pages.
+
+### 사용자 태그
+
+**참고**: 노트 내 사용자 태깅은 현재 지원되지 않습니다. 이 기능은 2026년에 도입될 예정이며, 이를 통해 팀원을 언급하고 알림을 트리거할 수 있습니다.
+
+## 노트 생성
+
+시스템에서 노트를 만드는 것은 직관적이며 동적입니다. 다음 두 가지 방법 중 하나로 가능합니다:
+
+- 노트 뷰로 이동하여 새 기록을 만드십시오.
+- `기록 페이지`로 이동하여 노트 탭을 선택하고 `새 노트` 버튼을 누르십시오.
+
+<img src="/images/user-guide/notes/add-note.png"style={{width:'100%'}}/>
+
+### 콘텐츠 추가
+
+직접 입력을 시작하거나 `/` 키를 눌러 제목, 파일 또는 이미지를 즉시 추가하십시오.
+
+### 콘텐츠 포맷
+
+편집기에서 바로 노트를 포맷할 수 있습니다. Markdown 구문을 사용하거나 `/` 키를 누르거나 편집기의 `+` 아이콘을 클릭하여 제목, 테이블 및 목록과 같은 다양한 블록 옵션을 확인하세요. 이미지를 노트에 첨부할 수도 있습니다.
+
+Highlight the text to see more formatting options like bold, italics, and alignment options.
+
+노트에서 중요한 내용을 강조 표시하기 위해 각 블록의 배경색과 텍스트 색을 변경할 수도 있습니다. To do so, hover over the block you want to format and click on the `⋮` icon besides the `+` icon. `색상`을 클릭하여 텍스트와 배경의 모든 색상 옵션을 엽니다.
+
+<VimeoEmbed videoId="927896302" title="Format note content" />
+
+## 노트 보기
+
+시스템은 특정 기록과 연결된 모든 노트를 해당 `기록 페이지`의 노트 섹션 아래에 표시합니다.
+
+## 저장 및 삭제
+
+노트에 대한 모든 편집 및 추가 사항은 자동으로 저장됩니다.
+
+노트를 삭제하려면:
+
+1. `기록 페이지`에서 노트를 클릭하여 삭제할 노트를 엽니다.
+2. 노트 탭에서 삭제할 노트를 선택하십시오.
+3. 하단 오른쪽 모서리의 `옵션` 버튼을 사용하여 삭제를 포함한 추가 작업을 실행합니다.
+4. 확인 모달이 나타나면 삭제를 완료합니다.
+
+다른 방법으로 노트를 삭제하는 방법은 일반 레코드처럼 노트 뷰를 통해 삭제하는 것입니다. 노트를 삭제하면 영구적으로 사라지며 되돌릴 수 없으니 주의하십시오.
+

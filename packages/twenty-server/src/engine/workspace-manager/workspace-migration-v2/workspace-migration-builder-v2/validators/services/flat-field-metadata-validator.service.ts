@@ -108,6 +108,7 @@ export class FlatFieldMetadataValidatorService {
       });
     }
 
+    // Should be moved in relation field validator
     if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadataToValidate)) {
       const relationNonEditableUpdatedProperties = updates.flatMap(
         ({ property }) =>
@@ -126,12 +127,13 @@ export class FlatFieldMetadataValidatorService {
         });
       }
     }
+    ///
 
     if (updates.some((update) => update.property === 'name')) {
       validationResult.errors.push(
         ...validateFlatFieldMetadataName(flatFieldMetadataToValidate.name),
         ...validateFlatFieldMetadataNameAvailability({
-          flatFieldMetadata: flatFieldMetadataToValidate,
+          name: flatFieldMetadataToValidate.name,
           flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
           flatObjectMetadata,
         }),
@@ -152,6 +154,7 @@ export class FlatFieldMetadataValidatorService {
     const fieldMetadataTypeValidationErrors =
       await this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
+          updates,
           optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
             flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
             flatObjectMetadataMaps,
@@ -313,9 +316,8 @@ export class FlatFieldMetadataValidatorService {
 
       validationResult.errors.push(
         ...validateFlatFieldMetadataNameAvailability({
-          flatFieldMetadata: flatFieldMetadataToValidate,
+          name: flatFieldMetadataToValidate.name,
           flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
-          remainingFlatEntityMapsToValidate,
           flatObjectMetadata: parentFlatObjectMetadata,
         }),
       );

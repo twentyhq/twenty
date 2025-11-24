@@ -1,5 +1,3 @@
-import { useRecoilValue } from 'recoil';
-
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -11,9 +9,11 @@ import { RecordBoardHotkeyEffect } from '@/object-record/record-board/components
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
 import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
-import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataItemComponentState';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { isDefined } from 'twenty-shared/utils';
+
 type RecordIndexBoardContainerProps = {
   recordBoardId: string;
   viewBarId: string;
@@ -32,12 +32,8 @@ export const RecordIndexBoardContainer = ({
     objectMetadataItem.id,
   );
 
-  const recordIndexKanbanFieldMetadataId = useRecoilValue(
-    recordIndexKanbanFieldMetadataIdState,
-  );
-
-  const selectFieldMetadataItem = objectMetadataItem.fields.find(
-    (field) => field.id === recordIndexKanbanFieldMetadataId,
+  const recordIndexGroupFieldMetadataItem = useRecoilComponentValue(
+    recordIndexGroupFieldMetadataItemComponentState,
   );
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
@@ -52,15 +48,15 @@ export const RecordIndexBoardContainer = ({
     RECORD_INDEX_REMOVE_SORTING_MODAL_ID,
   );
 
-  if (!selectFieldMetadataItem) {
-    return;
+  if (!isDefined(recordIndexGroupFieldMetadataItem)) {
+    return null;
   }
 
   return (
     <RecordBoardContext.Provider
       value={{
         objectMetadataItem,
-        selectFieldMetadataItem,
+        selectFieldMetadataItem: recordIndexGroupFieldMetadataItem,
         createOneRecord,
         updateOneRecord,
         deleteOneRecord,

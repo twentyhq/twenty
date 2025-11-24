@@ -28,6 +28,7 @@ import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/ser
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('auth/microsoft-apis')
@@ -45,14 +46,22 @@ export class MicrosoftAPIsAuthController {
   ) {}
 
   @Get()
-  @UseGuards(MicrosoftAPIsOauthRequestCodeGuard, PublicEndpointGuard)
+  @UseGuards(
+    MicrosoftAPIsOauthRequestCodeGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   async MicrosoftAuth() {
     // As this method is protected by Microsoft Auth guard, it will trigger Microsoft SSO flow
     return;
   }
 
   @Get('get-access-token')
-  @UseGuards(MicrosoftAPIsOauthExchangeCodeForTokenGuard, PublicEndpointGuard)
+  @UseGuards(
+    MicrosoftAPIsOauthExchangeCodeForTokenGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   async MicrosoftAuthGetAccessToken(
     @Req() req: MicrosoftAPIsRequest,
     @Res() res: Response,

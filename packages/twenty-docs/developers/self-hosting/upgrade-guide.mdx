@@ -8,9 +8,9 @@ image: /images/user-guide/notes/notes_header.png
 
 ## General guidelines
 
-**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it <db_container_name_or_id> pg_dumpall -U <postgres_user> > databases_backup.sql`.
+**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
 
-To restore backup, run `cat databases_backup.sql | docker exec -i <db_container_name_or_id> psql -U <postgres_user>`.
+To restore backup, run `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
 
 If you used Docker Compose, follow these steps:
 
@@ -156,7 +156,7 @@ If you want to migrate your database to the new postgres:16 image, please follow
 1. Dump your database from the old postgres-spilo container
 
 ```
-docker exec -it twenty-db-1 sh 
+docker exec -it twenty-db-1 sh
 pg_dump -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} > databases_backup.sql
 exit
 docker cp twenty-db-1:/home/postgres/databases_backup.sql .
@@ -249,7 +249,7 @@ The `yarn command:prod upgrade-0.34` takes care of the data migration of all wor
 - Removed: `FRONT_BASE_URL`
 - Added: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
 
-We have updated the way we handle the frontend URL. 
+We have updated the way we handle the frontend URL.
 You can now set the frontend URL using the `FRONT_DOMAIN`, `FRONT_PROTOCOL` and `FRONT_PORT` variables.
 If FRONT_DOMAIN is not set, the frontend URL will fall back to `SERVER_URL`.
 
@@ -321,7 +321,7 @@ The `yarn command:prod upgrade-0.31` takes care of the data migration of all wor
 
 Upgrade your Twenty instance to use v0.30.0 image
 
-**Breaking change**: 
+**Breaking change**:
 To enhance performances, Twenty now requires redis cache to be configured. We have updated our [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) to reflect this.
 Make sure to update your configuration and to update your environment variables accordingly:
 ```
@@ -330,7 +330,7 @@ REDIS_PORT={your-redis-port}
 CACHE_STORAGE_TYPE=redis
 ```
 
-**Schema and data migration**: 
+**Schema and data migration**:
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.30

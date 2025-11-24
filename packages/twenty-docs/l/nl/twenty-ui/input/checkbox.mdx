@@ -1,0 +1,47 @@
+---
+title: Checkbox
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Wordt gebruikt wanneer een gebruiker meerdere waarden uit verschillende opties moet selecteren.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Checkbox } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+    <Checkbox
+      checked={true}
+      indeterminate={false}
+      onChange={() => console.log("onChange function fired")}
+      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      variant="primary"
+      size="small"
+      shape="squared"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props           | Soort      | Beschrijving                                                                                                                              |
+| --------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| aangevinkt      | booleaan   | Geeft aan of de checkbox is aangevinkt.                                                                                   |
+| onbepaald       | booleaan   | Geeft aan of de checkbox zich in een onbepaalde staat bevindt (noch aangevinkt, noch niet aangevinkt). |
+| onChange        | functie    | De callback-functie die u wilt activeren wanneer de status van de checkbox verandert                                                      |
+| onCheckedChange | functie    | De callback-functie die u wilt activeren wanneer de `aangevinkt`-status verandert                                                         |
+| variant         | tekenreeks | De visuele stijlvariant van het vakje. Opties omvatten: `primair`, `secundair` en `tertiair`              |
+| grootte         | tekenreeks | De grootte van de checkbox. Heeft twee opties: `klein` en `groot`                                         |
+| vorm            | tekenreeks | De vorm van de checkbox. Heeft twee opties: `vierkant` en `afgerond`                                      |
+
+</Tab>
+</Tabs>

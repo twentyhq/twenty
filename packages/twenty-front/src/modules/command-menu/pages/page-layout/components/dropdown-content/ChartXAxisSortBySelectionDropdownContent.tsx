@@ -56,14 +56,22 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
     closeDropdown();
   };
 
+  const isLineChart = configuration.__typename === 'LineChartConfiguration';
+  const availableOptions = X_SORT_BY_OPTIONS.filter((option) => {
+    if (isLineChart) {
+      return option.value !== 'VALUE_ASC' && option.value !== 'VALUE_DESC';
+    }
+    return true;
+  });
+
   return (
     <DropdownMenuItemsContainer>
       <SelectableList
         selectableListInstanceId={dropdownId}
         focusId={dropdownId}
-        selectableItemIdArray={X_SORT_BY_OPTIONS.map((option) => option.value)}
+        selectableItemIdArray={availableOptions.map((option) => option.value)}
       >
-        {X_SORT_BY_OPTIONS.map((sortOption) => (
+        {availableOptions.map((sortOption) => (
           <SelectableListItem
             key={sortOption.value}
             itemId={sortOption.value}

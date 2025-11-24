@@ -1,0 +1,458 @@
+---
+title: Menu Item
+image: /afbeeldingen/gebruiker-gids/kanban-views/kanban.png
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+Een veelzijdig menupunt ontworpen om te gebruiken in een menu of navigatielijst.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItem } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
+
+  const handleButtonClick = (event) => {
+    console.log("Icon button clicked!", event);
+  };
+
+  return (
+    <MenuItem
+      LeftIcon={IconBell}
+      accent="default"
+      text="Menu item text"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={true}
+      testId="menu-item-1"
+      onClick={handleMenuItemClick}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props            | Soort              | Beschrijving                                                                                                                          |
+| ---------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| LinkerIcoon      | PictogramComponent | Een optioneel linkericoon dat vóór de tekst in het menupunt wordt weergegeven.                                        |
+| accent           | tekenreeks         | Specificeert de accentkleur van het menupunt. Options include: `default`, `danger`, and `placeholder` |
+| tekst            | tekenreeks         | De tekstinhoud van het menupunt                                                                                                       |
+| pictogramKnoppen | lijst              | Een array met objecten die extra icoonknoppen vertegenwoordigen die aan het menupunt zijn gekoppeld.                  |
+| isTooltipOpen    | booleaan           | Bepaalt de zichtbaarheid van de tooltip die met het menupunt is verbonden                                                             |
+| testId           | tekenreeks         | Het data-testid attribuut voor testdoeleinden                                                                                         |
+| onClick          | functie            | Callback-functie die wordt geactiveerd wanneer het menupunt wordt aangeklikt.                                         |
+| className        | tekenreeks         | Optionele naam voor extra styling                                                                                                     |
+
+</Tab>
+</Tabs>
+
+## Varianten
+
+De verschillende varianten van het menupuntcomponent omvatten de volgende:
+
+### Commando
+
+Een commandostijl menupunt binnen een menu om toetsenbordsneltoetsen aan te geven.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemCommand } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleCommandClick = () => {
+    console.log("Command clicked!");
+  };
+
+  return (
+    <MenuItemCommand
+      LeftIcon={IconBell}
+      text="First Option"
+      firstHotKey="⌘"
+      secondHotKey="1"
+      isSelected={true}
+      onClick={handleCommandClick}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props          | Soort              | Beschrijving                                                                                   |
+| -------------- | ------------------ | ---------------------------------------------------------------------------------------------- |
+| LinkerIcoon    | PictogramComponent | Een optioneel linkericoon dat vóór de tekst in het menupunt wordt weergegeven. |
+| tekst          | tekenreeks         | De tekstinhoud van het menupunt                                                                |
+| firstHotKey    | tekenreeks         | De eerste toetsencombinatie die aan het commando is gekoppeld                                  |
+| secondHotKey   | tekenreeks         | De tweede toetsencombinatie die aan het commando is gekoppeld                                  |
+| isGeselecteerd | booleaan           | Geeft aan of het menupunt is geselecteerd of gemarkeerd                                        |
+| onClick        | functie            | Callback-functie die wordt geactiveerd wanneer het menupunt wordt aangeklikt.  |
+| className      | tekenreeks         | Optionele naam voor extra styling                                                              |
+
+</Tab>
+</Tabs>
+
+### Draggable
+
+A draggable menu item component designed to be used in a menu or list where items can be dragged, and additional actions can be performed through icon buttons.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItemDraggable } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
+
+  return (
+    <MenuItemDraggable
+      LeftIcon={IconBell}
+      accent="default"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={false}
+      onClick={handleMenuItemClick}
+      text="Menu item draggable"
+      isDragDisabled={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props                | Soort              | Beschrijving                                                                                                         |
+| -------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| LinkerIcoon          | PictogramComponent | Een optioneel linkericoon dat vóór de tekst in het menupunt wordt weergegeven.                       |
+| accent               | tekenreeks         | De accentkleur van het menupunt. It can either be `default`, `placeholder`, and `danger`             |
+| pictogramKnoppen     | lijst              | Een array met objecten die extra icoonknoppen vertegenwoordigen die aan het menupunt zijn gekoppeld. |
+| isTooltipOpen        | booleaan           | Bepaalt de zichtbaarheid van de tooltip die met het menupunt is verbonden                                            |
+| onClick              | functie            | Callback-functie die wordt geactiveerd wanneer de link wordt aangeklikt                                              |
+| tekst                | tekenreeks         | De tekstinhoud van het menupunt                                                                                      |
+| isSleepUitgeschakeld | booleaan           | Geeft aan of slepen is uitgeschakeld                                                                                 |
+| className            | tekenreeks         | Optionele naam voor extra styling                                                                                    |
+
+</Tab>
+</Tabs>
+
+### Multi Select
+
+Biedt een manier om multi-select functionaliteit te implementeren met een bijbehorend selectievakje.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemMultiSelect } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  return (
+    <MenuItemMultiSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props          | Soort              | Beschrijving                                                                                   |
+| -------------- | ------------------ | ---------------------------------------------------------------------------------------------- |
+| LinkerIcoon    | PictogramComponent | Een optioneel linkericoon dat vóór de tekst in het menupunt wordt weergegeven. |
+| tekst          | tekenreeks         | De tekstinhoud van het menupunt                                                                |
+| geselecteerd   | booleaan           | Geeft aan of het menupunt is geselecteerd (aangevinkt)                      |
+| onSelectChange | functie            | Callback-functie die wordt geactiveerd wanneer de status van het selectievakje verandert       |
+| className      | tekenreeks         | Optionele naam voor extra styling                                                              |
+
+</Tab>
+</Tabs>
+
+### Multi Select Avatar
+
+Een multi-select menupunt met een avatar, een selectievakje voor selectie en tekstuele inhoud.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+  return (
+    <MenuItemMultiSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props          | Soort       | Beschrijving                                                                             |
+| -------------- | ----------- | ---------------------------------------------------------------------------------------- |
+| avatar         | `ReactNode` | De avatar of het pictogram dat aan de linkerkant van het menupunt wordt weergegeven      |
+| tekst          | tekenreeks  | De tekstinhoud van het menupunt                                                          |
+| geselecteerd   | booleaan    | Geeft aan of het menupunt is geselecteerd (aangevinkt)                |
+| onSelectChange | functie     | Callback-functie die wordt geactiveerd wanneer de status van het selectievakje verandert |
+| className      | tekenreeks  | Optionele naam voor extra styling                                                        |
+
+</Tab>
+</Tabs>
+
+### Navigeren
+
+Een menu-item met een optioneel linkericoon, tekstuele inhoud en een naar rechts wijzend chevron-pictogram.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemNavigate } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleNavigation = () => {
+    console.log("Navigate to another page");
+  };
+
+  return (
+    <MenuItemNavigate
+      LeftIcon={IconBell}
+      text="First Option"
+      onClick={handleNavigation}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props       | Soort              | Beschrijving                                                                                   |
+| ----------- | ------------------ | ---------------------------------------------------------------------------------------------- |
+| LinkerIcoon | PictogramComponent | Een optioneel linkericoon dat vóór de tekst in het menupunt wordt weergegeven. |
+| tekst       | tekenreeks         | De tekstinhoud van het menupunt                                                                |
+| onClick     | functie            | Callback-functie die wordt geactiveerd wanneer het menupunt wordt aangeklikt                   |
+| className   | tekenreeks         | Optionele naam voor extra styling                                                              |
+
+</Tab>
+</Tabs>
+
+### Selecteren
+
+Een selecteerbaar menu-item met optionele linkerinhoud (icoon en tekst) en een indicator (check-pictogram) voor de geselecteerde status.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemSelect } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props         | Soort              | Beschrijving                                                                                   |
+| ------------- | ------------------ | ---------------------------------------------------------------------------------------------- |
+| LinkerIcoon   | PictogramComponent | Een optioneel linkericoon dat vóór de tekst in het menupunt wordt weergegeven. |
+| tekst         | tekenreeks         | De tekstinhoud van het menupunt                                                                |
+| geselecteerd  | booleaan           | Geeft aan of het menupunt is geselecteerd (aangevinkt)                      |
+| uitgeschakeld | booleaan           | Geeft aan of het menupunt is uitgeschakeld                                                     |
+| gehoverd      | booleaan           | Geeft aan of het menupunt momenteel zweeft                                                     |
+| onClick       | functie            | Callback-functie die wordt geactiveerd wanneer het menupunt wordt aangeklikt                   |
+| className     | tekenreeks         | Optionele naam voor extra styling                                                              |
+
+</Tab>
+</Tabs>
+
+### Select Avatar
+
+Een selecteerbaar menuproduct met een avatar, met optionele linkerinhoud (avatar en tekst) en een indicator (check-pictogram) voor de geselecteerde status.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemSelectAvatar } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      testId="menu-item-test"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props         | Soort       | Beschrijving                                                                        |
+| ------------- | ----------- | ----------------------------------------------------------------------------------- |
+| avatar        | `ReactNode` | De avatar of het pictogram dat aan de linkerkant van het menupunt wordt weergegeven |
+| tekst         | tekenreeks  | De tekstinhoud van het menupunt                                                     |
+| geselecteerd  | booleaan    | Geeft aan of het menupunt is geselecteerd (aangevinkt)           |
+| uitgeschakeld | booleaan    | Geeft aan of het menupunt is uitgeschakeld                                          |
+| gehoverd      | booleaan    | Geeft aan of het menupunt momenteel zweeft                                          |
+| testId        | tekenreeks  | Het data-testid attribuut voor testdoeleinden                                       |
+| onClick       | functie     | Callback-functie die wordt geactiveerd wanneer het menupunt wordt aangeklikt        |
+| className     | tekenreeks  | Optionele naam voor extra styling                                                   |
+
+</Tab>
+</Tabs>
+
+### Kleur selecteren
+
+Een selecteerbaar menupunt met een kleurstaal voor scenario's waarin u wilt dat gebruikers een kleur uit een menu kiezen.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemSelectColor } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelectColor
+      color="green"
+      selected={true}
+      disabled={false}
+      hovered={true}
+      variant="default"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props         | Soort      | Beschrijving                                                                                                                                                                                                              |
+| ------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| kleur         | tekenreeks | De themakleur die als voorbeeld in het menupunt wordt weergegeven. Opties zijn onder andere: `groen`, `turquoise`, `hemel`, `blauw`, `paars`, `roze`, `rood`, `oranje`, `geel` en `grijs` |
+| geselecteerd  | booleaan   | Geeft aan of het menupunt is geselecteerd (aangevinkt)                                                                                                                                                 |
+| uitgeschakeld | booleaan   | Geeft aan of het menupunt is uitgeschakeld                                                                                                                                                                                |
+| gehoverd      | booleaan   | Geeft aan of het menupunt momenteel zweeft                                                                                                                                                                                |
+| variant       | tekenreeks | De variant van het kleurstaal. Het kan ofwel `standaard` of `pijplijn` zijn                                                                                                                               |
+| onClick       | functie    | Callback-functie die wordt geactiveerd wanneer het menupunt wordt aangeklikt                                                                                                                                              |
+| className     | tekenreeks | Optionele naam voor extra styling                                                                                                                                                                                         |
+
+</Tab>
+</Tabs>
+
+### Schakelaar
+
+Een menupunt met een bijbehorende tuimelschakelaar om gebruikers in staat te stellen een specifieke functie in of uit te schakelen
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from '@tabler/icons-react';
+
+import { MenuItemToggle } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+
+  return (
+    <MenuItemToggle
+      LeftIcon={IconBell}
+      text="First Option"
+      toggled={true}
+      toggleSize="small"
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props              | Soort              | Beschrijving                                                                                   |
+| ------------------ | ------------------ | ---------------------------------------------------------------------------------------------- |
+| LinkerIcoon        | PictogramComponent | Een optioneel linkericoon dat vóór de tekst in het menupunt wordt weergegeven. |
+| tekst              | tekenreeks         | De tekstinhoud van het menupunt                                                                |
+| omgeschakeld       | booleaan           | Geeft aan of de tuimelschakelaar in de "aan" of "uit" stand staat                              |
+| bijToggleWijziging | functie            | Callback-functie geactiveerd wanneer de status van de tuimelschakelaar verandert               |
+| schakelGrootte     | tekenreeks         | The size of the toggle switch. It can be either \                             |
+| className          | tekenreeks         | Optionele naam voor extra styling                                                              |
+
+</Tab>
+</Tabs>

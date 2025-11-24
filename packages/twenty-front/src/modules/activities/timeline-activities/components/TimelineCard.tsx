@@ -7,6 +7,7 @@ import { useTimelineActivities } from '@/activities/timeline-activities/hooks/us
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { t } from '@lingui/core/macro';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -85,7 +86,7 @@ export const TimelineCard = () => {
     <StyledMainContainer>
       <EventList
         targetableObject={targetRecord}
-        title="All"
+        title={t`All`}
         events={timelineActivities ?? []}
       />
       <CustomResolverFetchMoreLoader

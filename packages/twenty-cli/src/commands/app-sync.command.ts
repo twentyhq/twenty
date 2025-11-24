@@ -1,13 +1,14 @@
 import chalk from 'chalk';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
 import { ApiService } from '../services/api.service';
+import { GenerateService } from '../services/generate.service';
 import { ApiResponse } from '../types/config.types';
 import { loadManifest } from '../utils/load-manifest';
 
 export class AppSyncCommand {
   private apiService = new ApiService();
+  private generateService = new GenerateService();
 
-  // TODO improve typing
   async execute(
     appPath: string = CURRENT_EXECUTION_DIRECTORY,
   ): Promise<ApiResponse<any>> {
@@ -16,21 +17,7 @@ export class AppSyncCommand {
       console.log(chalk.gray(`📁 App Path: ${appPath}`));
       console.log('');
 
-      const { manifest, packageJson, yarnLock } = await loadManifest(appPath);
-
-      const result = await this.apiService.syncApplication({
-        manifest,
-        packageJson,
-        yarnLock,
-      });
-
-      if (!result.success) {
-        console.error(chalk.red('❌ Sync failed:'), result.error);
-      } else {
-        console.log(chalk.green('✅ Application synced successfully'));
-      }
-
-      return result;
+      return await this.synchronize({ appPath });
     } catch (error) {
       console.error(
         chalk.red('Sync failed:'),
@@ -38,5 +25,39 @@ export class AppSyncCommand {
       );
       throw error;
     }
+  }
+
+  private async synchronize({ appPath }: { appPath: string }) {
+    const { manifest, packageJson, yarnLock, shouldGenerate } =
+      await loadManifest(appPath);
+
+    let serverlessSyncResult = await this.apiService.syncApplication({
+      manifest,
+      packageJson,
+      yarnLock,
+    });
+
+    if (shouldGenerate) {
+      await this.generateService.generateClient(appPath);
+
+      const { manifest: manifestWithClient } = await loadManifest(appPath);
+
+      serverlessSyncResult = await this.apiService.syncApplication({
+        manifest: manifestWithClient,
+        packageJson,
+        yarnLock,
+      });
+    }
+
+    if (!serverlessSyncResult.success) {
+      console.error(
+        chalk.red('❌ Serverless functions Sync failed:'),
+        serverlessSyncResult.error,
+      );
+    } else {
+      console.log(chalk.green('✅ Serverless functions synced successfully'));
+    }
+
+    return serverlessSyncResult;
   }
 }

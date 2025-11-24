@@ -1,0 +1,104 @@
+---
+title: Importovat/Exportovat Data
+info: "Zde se naučíte, jak importovat a exportovat data."
+image: /images/user-guide/import-export-data/cloud.png
+sectionInfo: Objevte Twenty, open-source CRM.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="Header" />
+</Frame>
+
+## Importovat data
+
+- Můžete importovat data pro jakýkoliv objekt pomocí souborů .csv, .xlsx, nebo .xls.
+- Každý z nahraných souborů musí obsahovat **pouze jeden typ objektu** (například pouze záznamy Osob).
+- Import můžete použít k **vytváření nebo aktualizaci záznamů**.
+
+### Download a sample file to match the expected formatting
+
+1. Přejděte na zobrazení s objektem, který se chystáte importovat.
+2. Klikněte na ikonu `⋮` v pravém horním rohu a vyberte `Importovat záznamy`.
+3. Klikněte na `Stáhnout vzorový soubor`.
+
+### Připravte si svůj csv
+
+Níže jsou některé položky, které je potřeba zkontrolovat před nahráním souboru.
+
+- Omezte počet záznamů na **10,000 na soubor**.
+- **Odstraňte duplikáty** ze souboru.
+  - The unicity on `People` is set by default by the `id` and the `email`. You also have the ability to define custom fields from `People` as unique when configuring your data model.
+  - The unicity on `Companies` is set by default by the `id` and the `domain`. You also have the ability to define custom fields from `Companies` as unique when configuring your data model.
+  - Pro jakékoliv jiné objekty, včetně vlastních objektů, máte možnost definovat pole jako jedinečné. Ujistěte se, že při přípravě souborů nezahrnujete duplikáty.
+- Doporučujeme používat syntaxi `https://domain.com` při nahrávání vašich domén, protože toto je syntaxe používaná našim konektorem pro váš mailbox a kalendář.
+- Můžete **importovat relace mezi objekty** tím, že poskytujete jedno z jedinečných polí souvisejícího záznamu.
+  - Příklad: Chcete připojit osobu ke společnosti. Přidejte do souboru sloupec obsahující všechny záznamy `Osob`, který obsahuje `id` společnosti -- nebo její `doménu`. Toto pole budete moci namapovat při nahrávání.
+    <Warning>
+
+**Důležité upozornění:**
+
+- Relace mezi objekty v Twenty jsou "Jedna k Mnoha". To znamená, že každý záznam objektu A může být připojen k několika záznamům objektu B. Ale každý záznam objektu B může patřit pouze jednomu záznamu objektu A.
+  _Například, jedna společnost může být připojena k několika osobám. A jedna osoba může patřit pouze jedné společnosti._
+
+- Pro nahrání relací přes funkci Import musíte do souboru obsahujícího záznamy na "Mnohostranné straně" vztahu dodat `id` (nebo jiná jedinečná pole) připojeného objektu.  
+  _Například, poskytnete `id` nebo `doménu` společnosti při nahrávání záznamů osob. Neuvádějte `id` osob (nebo `email`) při nahrávání souboru se společnostmi._
+  </Warning>
+
+### Nahrajte svůj soubor
+
+1. Přejděte na zobrazení s objektem, který se chystáte importovat.
+2. Klikněte na ikonu `⋮` v pravém horním rohu a vyberte `Importovat záznamy`.
+3. Klikněte na `Vybrat soubor`.
+4. Ověřte mapování polí.
+
+- Nemusíte importovat všechny, můžete zvolit možnost "Nemapovat".
+- Pro vztahy je doporučeno mapovat pouze jedno z jedinečných polí.
+- Možná bude také nutné namapovat hodnoty pro vaše pole typu select a multi-select.
+
+5. Klikněte na `Další kroky` a `Prohlédněte řádky s chybami`. Buňky s problémem jsou zvýrazněny. **Řádek můžete buď odstranit nebo upravit buňku přímo tam**.
+6. Jakmile jste hotovi, klikněte na `Potvrdit`
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}}/>
+
+### Import FAQ
+
+<details><summary>Při nahrávání souboru vidím problémy s duplikáty. Co mám dělat?</summary>
+
+Prosím, podívejte se na sekci **Připravte si svůj csv** výše v tomto článku, kde naleznete pokyny, co bude považováno za duplikát.
+
+</details>
+
+<details><summary>Mohu importovat relace mezi objekty?</summary>
+
+Ano, prosím podívejte se na sekci **Připravte si svůj csv** výše v tomto článku, která obsahuje informace o importu relací.
+
+</details>
+
+<details><summary>Mohu aktualizovat existující záznamy pomocí funkce Import?</summary>
+
+Ano, můžete aktualizovat existující záznamy pomocí funkce Import. Ujistěte se, že při opětovném nahrávání vašich záznamů uvádíte `id` (nebo jiné jedinečné pole).
+
+</details>
+
+<details><summary>Mohu migrovat `id` z mých jiných nástrojů?</summary>
+
+Ano. Musíte vytvořit pole, které budete definovat jako jedinečné v datovém modelu a které bude obsahovat `id` z vašich jiných nástrojů. Vezměte prosím na vědomí, že název `id` je chráněn, protože je používán pro identifikaci Twenty.  
+Pokud chcete vytvářet relace mezi objekty pomocí tohoto pole, podívejte se na sekci **Připravte si svůj csv** výše v tomto článku. It contains a section about the import of relations.
+
+</details>
+
+## Exportovat Data
+
+Můžete stahovat data z většiny vašich objektů až do 20,000 záznamů na export.
+K exportu dat z objektu:
+
+1. Navštivte index objektu.
+2. Zvolte zobrazení pro export dat. Konfigurujte sloupce, které chcete stáhnout, skrytím nebo přidáním sloupců a najděte potřebné záznamy filtrováním svého zobrazení.
+3. Přistupte ke bočnímu panelu kliknutím na ikonu `⋮` v pravém horním rohu.
+4. Klikněte na `Exportovat zobrazení`.
+5. Vyberte místo uložení datového souboru CSV. Všimněte si, že exportování může trvat delší dobu při velkém počtu záznamů.
+
+<VimeoEmbed videoId="926226303" title="Video demonstration" />
+

@@ -49,6 +49,7 @@ import { type DeepPartialWithNestedRelationFields } from 'src/engine/twenty-orm/
 import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { getEntityTarget } from 'src/engine/twenty-orm/entity-manager/utils/get-entity-target';
 import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
+import { type GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { RelationNestedQueries } from 'src/engine/twenty-orm/relation-nested-queries/relation-nested-queries';
 import {
   type OperationType,
@@ -76,7 +77,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
   constructor(
     internalContext: WorkspaceInternalContext,
-    connection: WorkspaceDataSource,
+    connection: WorkspaceDataSource | GlobalWorkspaceDataSource,
     queryRunner?: QueryRunner,
   ) {
     super(connection, queryRunner);
@@ -195,7 +196,7 @@ export class WorkspaceEntityManager extends EntityManager {
       options?.objectRecordsPermissions ?? {},
       this.internalContext,
       options?.shouldBypassPermissionChecks ?? false,
-      undefined,
+      {},
       this.getFeatureFlagMap(),
     );
   }

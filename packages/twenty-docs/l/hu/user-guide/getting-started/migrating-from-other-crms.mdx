@@ -1,0 +1,91 @@
+---
+title: Migráció más CRM-rendszerekből
+info: Lépésről-lépésre útmutató az adatok és folyamatok migrációjáról más CRM rendszerekből a Twenty-be.
+image: /images/user-guide/what-is-twenty/migrating_crm.png
+sectionInfo: Rövid útmutató a Twenty alapvető elemeinek megértéséhez
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/migrating_crm.png" alt="Header" />
+</Frame>
+
+## Mielőtt elkezdené
+
+### 1. Ellenőrizze a jelenlegi adatokat
+
+- **Válassza ki a néhány migrálandó objektumot és mezőt**: ez a migráció lehetőséget biztosít egy új kezdetre
+- **Exportálja ezeket az adatokat** a jelenlegi CRM-jéből
+- **Távolítsa el a duplikátumokat** és a lejárt rekordokat
+- **Sorolja fel az aktív munkafolyamatokat** és automatizálásokat
+
+### 2. Hozzon létre új adatmodellt
+
+Kövesse adatmodell útmutatónkat, amely leírja:
+
+- **Tervezze meg a szükséges adatmodellt**
+- **Térképezze fel a meglévő mezőket** a Twenty szabvány objektumaira / mezőire
+- **Határozza meg a szükséges egyedi objektumokat / mezőket**
+- **Hozza létre ezeket** a Beállítások → Adatmodell menüpont alatt
+
+## Migrációs folyamat
+
+### 1. Importálja az adatokat
+
+**Javasolt sorrend:**
+
+1. **Vállalatok** először (mint alap rekordok)
+2. **Személyek** másodszor (kapcsolódnak a vállalatokhoz)
+3. **Lehetőségek** harmadszor (kapcsolódnak a személyek/a vállalatokhoz)
+
+Használja a CSV importálást a Parancsmenü segítségével  `Cmd + K` (Mac) vagy `Ctrl + K` (Windows). Nézze meg adatimportálási útmutatónkat részletes útmutatókhoz.
+
+### 2. Munkafolyamatok újrateremtése
+
+- **Kezdje egyszerűen** - hozzon létre újra a legkritikusabb automatizálásait
+- **Használja a Twenty munkafolyamat-építőt** a meglévő automatizálások cseréjére
+
+## Gyakori kihívások
+
+### Adat formázási problémák
+
+- **Email címek** - távolítsa el a duplikátumokat (Személy objektum követelmény)
+- **Domain** - távolítsa el a duplikátumokat (Vállalatok objektum követelmény)
+
+<Warning>
+Please note that domain URLs created by the synchronization with your mailbox and calendar have the following format ```https://domain.com```
+</Warning>
+
+- **Dátumformátumok** - gondoskodjon az egységes formázásról (YYYY-MM-DD) vagy módosítsa ezt a formátumot a Beállítások → Élmény menüpont alatt
+- **Telefonszámok** - használja a nemzetközi formátumot (+1234567890)
+
+### Kapcsolati térkép
+
+Hogy importálja a rekordok közti kapcsolatokat a csv import funkció segítségével, használja a következő mezőket
+
+- **Használja a Twenty ID-ket** összetett kapcsolatokhoz
+- **Használjon email címeket** a Személy rekordok összekapcsolásához
+- **Használjon domain neveket** a Vállalat rekordok összekapcsolásához
+- **Használjon bármilyen más mezőt, amelyet egyedinek állított be**, amelyet megtehet az Adatmodell szekcióban.
+  Olvassa el import-export adatútmutatónkat részletes utasításokért a kapcsolatok létrehozásához CSV importálás esetén.
+
+## Szakmai segítség
+
+### Szolgáltatásaink
+
+- **4 órás bevezető csomagok** a vezetett migrációhoz
+- **Megvalósítási partnerek** haladóbb projektekhez
+
+Fedezze fel megvalósítási szolgáltatásainkat.
+
+## Migráció az otthoni tárolóról a felhőbe
+
+Ha a Twenty otthoni tárhelyről a Twenty Cloud-ra vált:
+
+1. **Exportálja adatait** otthoni tárhelyéből
+2. **Kövesse az alap migrációs folyamatot** felül
+3. **Örülnénk, ha segíthetnénk a migrációban**, vegye fel velünk a kapcsolatot
+
+## Poszt-Migrációs Ellenőrzőlista
+
+<input type="checkbox" /> All data imported successfully <input type="checkbox" /> Custom fields working correctly <input type="checkbox" /> User permissions configured <input type="checkbox" /> Email/calendar sync connected <input type="checkbox" /> Critical workflows recreated and tested <input type="checkbox" /> Team trained on new system
+

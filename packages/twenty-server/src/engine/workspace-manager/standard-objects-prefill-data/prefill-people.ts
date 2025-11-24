@@ -1,6 +1,6 @@
 import { type EntityManager } from 'typeorm';
+import { FieldActorSource } from 'twenty-shared/types';
 
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import {
   AIRBNB_ID,
   ANTHROPIC_ID,

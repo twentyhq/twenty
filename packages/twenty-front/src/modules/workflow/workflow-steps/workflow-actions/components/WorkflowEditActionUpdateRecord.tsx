@@ -1,4 +1,3 @@
-import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
@@ -10,8 +9,6 @@ import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpd
 import { type WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { UPDATE_RECORD_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/UpdateRecordAction';
-import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { type UpdateRecordFormData } from '@/workflow/workflow-steps/workflow-actions/types/update-record-form-data.type';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
@@ -70,12 +67,6 @@ export const WorkflowEditActionUpdateRecord = ({
   });
 
   const isFormDisabled = actionOptions.readonly === true;
-
-  const { headerTitle, headerIcon, headerIconColor, headerType } =
-    useWorkflowActionHeader({
-      action,
-      defaultTitle: UPDATE_RECORD_ACTION.defaultLabel,
-    });
 
   const handleFieldChange = (
     fieldName: keyof UpdateRecordFormData,
@@ -156,24 +147,6 @@ export const WorkflowEditActionUpdateRecord = ({
 
   return (
     <>
-      <SidePanelHeader
-        onTitleChange={(newName: string) => {
-          if (actionOptions.readonly === true) {
-            return;
-          }
-
-          actionOptions.onActionUpdate({
-            ...action,
-            name: newName,
-          });
-        }}
-        Icon={getIcon(headerIcon)}
-        iconColor={headerIconColor}
-        initialTitle={headerTitle}
-        headerType={headerType}
-        disabled={isFormDisabled}
-        iconTooltip={UPDATE_RECORD_ACTION.defaultLabel}
-      />
       <WorkflowStepBody>
         <Select
           dropdownId="workflow-update-record-object-name"

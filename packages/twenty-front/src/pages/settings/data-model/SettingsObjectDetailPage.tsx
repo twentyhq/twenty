@@ -14,6 +14,8 @@ import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -34,7 +36,6 @@ import { FeatureFlagKey } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
-import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 
 const StyledContentContainer = styled.div`
   flex: 1;
@@ -57,17 +58,22 @@ export const SettingsObjectDetailPage = () => {
   const { t } = useLingui();
 
   const { objectNamePlural = '' } = useParams();
-  const { findActiveObjectMetadataItemByNamePlural } =
+  const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
   const [updatedObjectNamePlural, setUpdatedObjectNamePlural] = useRecoilState(
     updatedObjectNamePluralState,
   );
   const objectMetadataItem =
-    findActiveObjectMetadataItemByNamePlural(objectNamePlural) ??
-    findActiveObjectMetadataItemByNamePlural(updatedObjectNamePlural);
+    findObjectMetadataItemByNamePlural(objectNamePlural) ??
+    findObjectMetadataItemByNamePlural(updatedObjectNamePlural);
 
-  const readonly = isObjectMetadataSettingsReadOnly({ objectMetadataItem });
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const readonly = isObjectMetadataSettingsReadOnly({
+    objectMetadataItem,
+    workspaceCustomApplicationId:
+      currentWorkspace?.workspaceCustomApplication?.id,
+  });
 
   const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,

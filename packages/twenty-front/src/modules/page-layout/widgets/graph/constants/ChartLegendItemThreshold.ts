@@ -1,0 +1,1 @@
+export const CHART_LEGEND_ITEM_THRESHOLD = 10;

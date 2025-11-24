@@ -2,6 +2,7 @@ import { SummaryCard } from '@/object-record/record-show/components/SummaryCard'
 import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
+import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
 import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -18,14 +19,11 @@ export const PageLayoutLeftPanel = ({
   const { currentPageLayout } = useCurrentPageLayout();
   const targetRecordIdentifier = useTargetRecord();
   const { isInRightDrawer } = useLayoutRenderingContext();
+  const pinnedTab = usePageLayoutTabWithVisibleWidgetsOrThrow(pinnedLeftTabId);
 
   if (currentPageLayout?.type !== PageLayoutType.RECORD_PAGE) {
     return null;
   }
-
-  const pinnedTab = currentPageLayout.tabs.find(
-    (tab) => tab.id === pinnedLeftTabId,
-  );
 
   const layoutMode = getTabLayoutMode({
     tab: pinnedTab,

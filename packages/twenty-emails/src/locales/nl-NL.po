@@ -90,13 +90,18 @@ msgstr "Uitnodiging accepteren"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
 msgstr "Bevestig uw e-mailadres"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr "Bedankt voor uw registratie voor een account op Twenty! Voordat we beginnen, moeten we gewoon bevestigen dat dit u bent. Klik hieronder om uw e-mailadres te verifiëren."
+msgid "Confirm new email"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -131,7 +136,7 @@ msgstr "Reset uw wachtwoord 🗝"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
-msgstr ""
+msgstr "Stel uw wachtwoord in 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -141,7 +146,7 @@ msgstr "Resetten"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set"
-msgstr ""
+msgstr "Instellen"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

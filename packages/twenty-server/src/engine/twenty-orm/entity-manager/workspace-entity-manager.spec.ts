@@ -140,6 +140,7 @@ describe('WorkspaceEntityManager', () => {
         IS_WORKFLOW_RUN_STOPPAGE_ENABLED: false,
         IS_DASHBOARD_V2_ENABLED: false,
         IS_TIMELINE_ACTIVITY_MIGRATED: false,
+        IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED: false,
       },
       eventEmitterService: {
         emitMutationEvent: jest.fn(),
@@ -158,7 +159,6 @@ describe('WorkspaceEntityManager', () => {
         IS_AI_ENABLED: false,
         IS_APPLICATION_ENABLED: false,
         IS_IMAP_SMTP_CALDAV_ENABLED: false,
-        IS_MORPH_RELATION_ENABLED: false,
         IS_WORKSPACE_MIGRATION_V2_ENABLED: false,
         IS_PAGE_LAYOUT_ENABLED: false,
         IS_RECORD_PAGE_LAYOUT_ENABLED: false,
@@ -167,6 +167,7 @@ describe('WorkspaceEntityManager', () => {
         IS_EMAILING_DOMAIN_ENABLED: false,
         IS_WORKFLOW_RUN_STOPPAGE_ENABLED: false,
         IS_DASHBOARD_V2_ENABLED: false,
+        IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED: false,
       },
       permissionsPerRoleId: {},
     } as WorkspaceDataSource;

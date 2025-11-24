@@ -119,6 +119,7 @@ export class MessagingMessagesImportService {
         [...connectedAccountWithFreshTokens.handleAliases.split(',')],
         allMessages,
         blocklist.map((blocklistItem) => blocklistItem.handle),
+        messageChannel.excludeGroupEmails,
       );
 
       if (messagesToSave.length > 0) {

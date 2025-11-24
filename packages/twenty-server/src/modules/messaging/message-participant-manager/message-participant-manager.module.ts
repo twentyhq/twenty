@@ -17,7 +17,6 @@ import { ContactCreationManagerModule } from 'src/modules/contact-creation-manag
 import { MatchParticipantModule } from 'src/modules/match-participant/match-participant.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessageParticipantMatchParticipantJob } from 'src/modules/messaging/message-participant-manager/jobs/message-participant-match-participant.job';
-import { MessagingCreateCompanyAndContactAfterSyncJob } from 'src/modules/messaging/message-participant-manager/jobs/messaging-create-company-and-contact-after-sync.job';
 import { MessageParticipantPersonListener } from 'src/modules/messaging/message-participant-manager/listeners/message-participant-person.listener';
 import { MessageParticipantWorkspaceMemberListener } from 'src/modules/messaging/message-participant-manager/listeners/message-participant-workspace-member.listener';
 import { MessageParticipantListener } from 'src/modules/messaging/message-participant-manager/listeners/message-participant.listener';
@@ -45,7 +44,6 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
   providers: [
     MessagingMessageParticipantService,
     MessageParticipantMatchParticipantJob,
-    MessagingCreateCompanyAndContactAfterSyncJob,
     MessageParticipantListener,
     MessageParticipantPersonListener,
     MessageParticipantWorkspaceMemberListener,

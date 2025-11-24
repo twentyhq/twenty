@@ -1,0 +1,77 @@
+---
+title: Informacje zwrotne
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+Wskazuje postęp lub odliczanie i przesuwa się z prawej do lewej.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { ProgressBar } from "twenty-ui/feedback";
+
+export const MyComponent = () => {
+  return (
+    <ProgressBar
+      duration={6000}
+      delay={0}
+      easing="easeInOut"
+      barHeight={10}
+      barColor="#4bb543"
+      autoStart={true}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Właściwości (Props) | Typ         | Opis                                                                                       | Domyślny  |
+| -------------------------------------- | ----------- | ------------------------------------------------------------------------------------------ | --------- |
+| czas trwania                           | numer       | Całkowity czas trwania animacji paska postępu w milisekundach                              | 3         |
+| delay                                  | numer       | Opóźnienie w rozpoczęciu animacji paska postępu w milisekundach                            | 0         |
+| easing                                 | ciąg znaków | Funkcja łagodzenia dla animacji paska postępu                                              | easeInOut |
+| wysokość paska                         | numer       | Wysokość paska w pikselach                                                                 | 24        |
+| kolor paska                            | ciąg znaków | Kolor paska                                                                                | gray80    |
+| autoStart                              | boolean     | Jeśli `true`, animacja paska postępu uruchamia się automatycznie po załadowaniu komponentu | `prawda`  |
+
+</Tab>
+</Tabs>
+
+## Okrągły pasek postępu
+
+Wskazuje postęp zadania, często używany na ekranach ładowania lub w obszarach, gdzie chcesz komunikować trwające procesy użytkownikowi.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
+
+export const MyComponent = () => {
+  return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Właściwości (Props) | Typ         | Opis                            | Domyślny     |
+| -------------------------------------- | ----------- | ------------------------------- | ------------ |
+| rozmiar                                | numer       | Rozmiar okrągłego paska postępu | 50           |
+| szerokość paska                        | numer       | Szerokość linii paska postępu   | 5            |
+| kolor paska                            | ciąg znaków | Kolor paska postępu             | currentColor |
+
+</Tab>
+
+</Tabs>

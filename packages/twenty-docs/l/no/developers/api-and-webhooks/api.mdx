@@ -1,0 +1,56 @@
+---
+title: API
+image: /images/docs/getting-started/api.png
+info: Oppdag hvordan du bruker våre API-er.
+---
+
+<Frame>
+  <img src="/images/docs/getting-started/api.png" alt="Header" />
+</Frame>
+
+## Oversikt
+
+Twenty API lar utviklere samhandle programmessig med Twenty CRM-plattformen. Ved hjelp av API-et kan du integrere Twenty med andre systemer, automatisere datasynkronisering og bygge tilpassede løsninger rundt kundeinformasjonen din. API-et tilbyr endepunkter for å **opprette, lese, oppdatere og slette** kjerne-CRM-objekter (slik som personer og selskaper) samt tilgang til metadata-konfigurasjon.
+
+**API-lekeplass:** Du kan nå få tilgang til API-lekeplassen i appens innstillinger. For å prøve API-kall i sanntid, logg inn på Twenty-arbeidsområdet ditt og naviger til **Innstillinger → APIer & Webhooks**. Dette åpner den innebygde API-lekeplassen og innstillingene for API-nøkler.
+**[Gå til API-innstillinger](https://app.twenty.com/settings)**
+
+## Autentisering
+
+Twenty sitt API bruker API-nøkler for autentisering. Hver forespørsel til beskyttede endepunkter må inkludere en API-nøkkel i overskriften.
+
+- **API-nøkler:** Du kan opprette en ny API-nøkkel fra Twenty-appens **API-innstillinger**-side. Hver API-nøkkel er et hemmelig token som gir tilgang til CRM-dataene dine, så hold det sikkert. Hvis en nøkkel er kompromittert, opphev den fra innstillingene og opprett en ny.
+- **Auth Header:** Når du har en API-nøkkel, inkluder den i `Authorization`-overskriften i dine HTTP-forespørsler. Bruk Bearer-token-ordningen. For eksempel:
+
+  ```
+  Authorization: Bearer YOUR_API_KEY
+  ```
+
+  Erstatt `YOUR_API_KEY` med nøkkelen du har mottatt. Denne overskriften må være til stede på **alle API-forespørsler**. Hvis tokenet mangler eller er ugyldig, vil API-et svare med en autentiseringsfeil (HTTP 401 Uautorisert).
+
+## API-endepunkter
+
+Alle ressurser kan nås og via REST eller GraphQL.
+
+- **Sky:** `https://api.twenty.com/` eller ditt eget domene / subdomene
+- **Self-Hosted Instances:** If you are running Twenty on your own server, use your own domain in place of `api.twenty.com` (for example, `https://{your-domain}/rest/`).
+
+Endepunkter er gruppert i to kategorier: **Kjerne-API** og **Metadata-API**. **Kjerne-API** håndterer primær CRM-data (for eksempel personer, selskaper, notater, oppgaver), mens **Metadata-API** dekker konfigurasjonsdata (som tilpassede felt eller objektdefinisjoner). De fleste integrasjoner vil hovedsakelig bruke Kjerne-API.
+
+### Kjerne-API
+
+Tilgang via `/rest/` eller `/graphql/`.
+**Kjerne-API** fungerer som et enhetlig grensesnitt for å administrere kjerne-CRM-enheter (personer, selskaper, notater, oppgaver) og deres relasjoner, som tilbyr **både REST og GraphQL**-interaksjonsmodeller.
+
+### Metadata-API
+
+Tilgang via `/rest/metadata/` eller `/metadata/`.
+Metadata-API-endepunktene lar deg hente informasjon om skjemaet og innstillingene dine. For eksempel kan du hente definisjoner av tilpassede felt, objektskjemaer, etc.
+
+- **Eksempel på endepunkter:**
+
+  - `GET /rest/metadata/objects` – List opp alle objekttyper og deres metadata (felt, relasjoner).
+  - `GET /rest/metadata/objects/{objectName}` – Hent metadata for et spesifikt objekt (f.eks., `personer`, `selskaper`).
+  - `GET /rest/metadata/picklists` – Hent picklist (nedtrekksmeny) feltalternativer definert i CRM.
+
+Vanligvis brukes metadata-endepunktene for å forstå strukturen til data (for dynamiske integrasjoner eller skjemaoppbygging) heller enn å administrere faktiske poster. De er skrivebeskyttet i de fleste tilfeller. Autentisering er også nødvendig for disse (bruk API-nøkkelen din).

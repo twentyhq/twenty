@@ -44,7 +44,7 @@ export const AggregateDropdownContent = () => {
       return (
         <RecordBoardColumnHeaderAggregateDropdownOptionsContent
           availableAggregations={availableAggregations}
-          title="Count"
+          title={t`Count`}
         />
       );
     }
@@ -57,7 +57,7 @@ export const AggregateDropdownContent = () => {
       return (
         <RecordBoardColumnHeaderAggregateDropdownOptionsContent
           availableAggregations={availableAggregations}
-          title="Percent"
+          title={t`Percent`}
         />
       );
     }
@@ -86,7 +86,7 @@ export const AggregateDropdownContent = () => {
       return (
         <RecordBoardColumnHeaderAggregateDropdownOptionsContent
           availableAggregations={availableAggregationsWithoutDates}
-          title="More options"
+          title={t`More options`}
         />
       );
     }

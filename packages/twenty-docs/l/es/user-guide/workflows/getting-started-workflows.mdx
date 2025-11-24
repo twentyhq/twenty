@@ -1,0 +1,77 @@
+---
+title: Inicio con Workflows
+info: "Aprende a agregar automatizaciones e ideas para comenzar."
+image: /images/user-guide/workflows/workflow.png
+sectionInfo: Automatiza procesos e integra con herramientas externas
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow.png" alt="Header" />
+</Frame>
+
+## Why Workflows Matter
+
+Twenty was built to bring maximum flexibility to its users. En lugar de obligarte a adaptar tus procesos empresariales a características rígidas y preconstruidas, los workflows te permiten crear automatizaciones que configuran el CRM que mejor respalda los casos de uso únicos de tu negocio.
+
+Workflows es la función integrada de Twenty para desarrollar estas automatizaciones. Te ofrecen los bloques para crear exactamente lo que tu negocio necesita, cuando lo necesita.
+
+## ¿Qué puedo hacer con los workflows?
+
+Recomendamos construir automatizaciones con dos propósitos principales:
+
+1. **Automatizaciones internas para facilitar el día a día de tu equipo**: Reduce la cantidad de entradas manuales y tareas repetitivas que ralentizan a tu equipo.
+2. **Incorporar datos dentro y fuera de Twenty**: Conecta Twenty mediante llamadas API y webhooks a tu base de datos y otras herramientas.
+
+Exploremos ejemplos de lo que es posible antes de profundizar en el cómo.
+
+## 1. Automatizaciones internas
+
+Tu CRM solo es útil si los datos están actualizados, pero a nadie le gusta actualizarlo. Usa workflows para automatizar tareas repetitivas de poco valor y mantener a tu equipo enfocado en lo importante.
+
+Ejemplos de lo que puedes automatizar internamente:
+
+- **Gestión de datos**: Marcado automático de correos electrónicos personales, asignación de leads, validación de datos
+- **Procesos de ventas**: Actualizaciones basadas en etapas, gestión de cancelaciones, alertas de oportunidades sin movimiento
+- **Productividad**: Recordatorios semanales de tareas, seguimientos de reuniones, sincronización de campos entre objetos
+
+Para ejemplos detallados y orientación paso a paso, consulta nuestra guía de [Automatizaciones Internas](/l/es/user-guide/workflows/internal-automations).
+
+## 2. Integraciones externas
+
+Conecta Twenty con tus otras herramientas y fuentes de datos para crear un sistema empresarial unificado. Puedes introducir datos en Twenty desde formularios web, bases de datos de productos, grabadores de llamadas y servicios de enriquecimiento. También puedes enviar datos a herramientas de marketing por correo electrónico, sistemas de facturación y otras aplicaciones empresariales.
+
+Ejemplos de lo que puedes integrar:
+
+- **Ingesta de datos**: Envíos de formularios web, sincronización de datos de productos, notas de reuniones, enriquecimiento de datos
+- **Distribución de datos**: Gestión de boletines, secuencias de correo electrónico, puntuación de clientes potenciales, generación de facturas
+
+Para patrones de integración detallados y orientación de implementación, consulte nuestra guía de [Integración de Herramientas Externas](/l/es/user-guide/workflows/external-tool-integration).
+
+### ¿Qué pasa si no quiero construir esas conexiones?
+
+Ofrecemos [Servicios Profesionales](/l/es/user-guide/workflows/professional-services) para ayudarle a crear las automatizaciones que necesite.  
+Dependiendo del alcance de su proyecto, le sugeriremos un [paquete de Incorporación](https://twenty.com/onboarding-packages) o le pondremos en contacto con nuestros socios de implementación certificados. Ellos pueden crear su modelo de datos, migrar su información y construir sus flujos de trabajo.
+
+### No estoy seguro de que la conexión que necesito sea factible
+
+Envíenos un mensaje y le ayudaremos a evaluar la viabilidad.
+
+## Mejores prácticas de flujo de trabajo
+
+Al comenzar a construir flujos de trabajo, tenga en cuenta estos consejos:
+
+- **Editar nombres de pasos**: Renombre los pasos de su flujo de trabajo para describir claramente lo que hace cada uno. Esto ayuda con el mantenimiento y facilita la transferencia a compañeros de trabajo
+- **Aprovechar los datos de pasos anteriores**: Puede usar campos de registros devueltos por cualquier paso anterior en su flujo de trabajo
+- **Comenzar simple**: Inicie con flujos de trabajo básicos y agregue complejidad con el tiempo a medida que se sienta más cómodo con el sistema
+- **Planificar antes de construir**: Trace la lógica de su flujo de trabajo antes de comenzar a construir para evitar quedarse atascado a mitad de camino
+- **Utilice ramas sabiamente**: Después de un paso de `Buscar Registros`, cree ramas para manejar tanto los escenarios de "actualizar registro existente" como de "crear un nuevo registro", luego vuelva a unir los caminos
+
+## En lo que estamos trabajando
+
+Aquí están los principales elementos en los que estamos trabajando para mejorar los flujos de trabajo:
+
+- Bucles (el Iterador está actualmente en beta, actívelo en Configuración → Lanzamientos → Laboratorio)
+- Paso Si / Else
+- Agente de IA para construir flujos de trabajo en su nombre
+
+

@@ -2,6 +2,7 @@ import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -16,7 +17,6 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MESSAGE_CHANNEL_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
@@ -98,6 +98,7 @@ registerEnumType(MessageChannelPendingGroupEmailsAction, {
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageChannel,
+
   namePlural: 'messageChannels',
   labelSingular: msg`Message Channel`,
   labelPlural: msg`Message Channels`,
@@ -232,7 +233,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'blue',
       },
     ],
-    defaultValue: `'${MessageFolderImportPolicy.SELECTED_FOLDERS}'`,
+    defaultValue: `'${MessageFolderImportPolicy.ALL_FOLDERS}'`,
   })
   messageFolderImportPolicy: MessageFolderImportPolicy;
 
@@ -255,16 +256,6 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     defaultValue: true,
   })
   excludeGroupEmails: boolean;
-
-  @WorkspaceField({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncAllFolders,
-    type: FieldMetadataType.BOOLEAN,
-    label: msg`Sync all folders`,
-    description: msg`Sync all folders including new ones`,
-    icon: 'IconFolders',
-    defaultValue: true,
-  })
-  syncAllFolders: boolean;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.pendingGroupEmailsAction,

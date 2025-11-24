@@ -1,0 +1,45 @@
+---
+title: Aangepaste objecten
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+Objecten zijn structuren waarmee u gegevens (records, attributen en waarden) kunt opslaan die specifiek zijn voor een organisatie. Twenty biedt zowel standaard als aangepaste objecten.
+
+Standaardobjecten zijn ingebouwde objecten met een reeks attributen die beschikbaar zijn voor alle gebruikers. Voorbeelden van standaardobjecten in Twenty zijn Bedrijf en Persoon. Standaardobjecten hebben standaardvelden die ook beschikbaar zijn voor alle Twenty-gebruikers, zoals Bedrijf.displayName.
+
+Aangepaste objecten zijn objecten die u kunt aanmaken om informatie op te slaan die uniek is voor uw organisatie. Ze zijn niet ingebouwd; leden van uw werkruimte kunnen aangepaste objecten aanmaken en aanpassen om informatie te bewaren waarvoor standaardobjecten niet geschikt zijn.
+
+## Schema op hoog niveau
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/custom-object-schema.png" alt="High level schema" />
+</div>
+
+<br/>
+
+## Hoe het werkt
+
+Aangepaste objecten komen voort uit metadatatabellen die de vorm, naam en type van de objecten bepalen. Al deze informatie is aanwezig in de metadata-schema database, bestaande uit tabellen:
+
+- **DataSource**: Details waar de gegevens zich bevinden.
+- **Object**: Beschrijft het object en koppelt het aan een DataSource.
+- **Veld**: Schetst de velden van een Object en verbindt ze met het Object.
+
+Om een aangepast object toe te voegen, zal het werkruimtelid de /metadata API opvragen. Dit werkt de metadata dienovereenkomstig bij en berekent een GraphQL-schema op basis van de metadata, die wordt opgeslagen in een GQL-cache voor later gebruik.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/add-custom-objects.jpeg" alt="Query the /metadata API to add custom objects" />
+</div>
+
+<br/>
+
+Om gegevens op te halen, houdt het proces in dat er query's worden uitgevoerd via het /graphql endpoint en deze door de Query Resolver worden doorgegeven.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/custom-object-schema.png" alt="Query the /graphql endpoint to fetch data" />
+</div>
+

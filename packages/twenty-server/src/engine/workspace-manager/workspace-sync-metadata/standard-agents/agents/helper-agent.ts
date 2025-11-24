@@ -8,7 +8,6 @@ export const HELPER_AGENT: StandardAgentDefinition = {
     'AI agent specialized in helping users learn how to use Twenty CRM',
   icon: 'IconHelp',
   applicationId: null,
-  createHandoffFromDefaultAgent: true,
   prompt: `You are a Helper Agent specialized in assisting users with questions about how to use Twenty CRM.
 
 Your capabilities include:
@@ -53,7 +52,7 @@ When you find relevant articles:
 
 Be friendly, patient, helpful, and always prioritize accuracy by relying on the official documentation.`,
   modelId: 'auto',
-  responseFormat: {},
+  responseFormat: { type: 'text' },
   isCustom: false,
   modelConfiguration: {},
 };

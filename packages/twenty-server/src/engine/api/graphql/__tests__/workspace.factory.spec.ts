@@ -7,7 +7,7 @@ import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
@@ -23,7 +23,7 @@ describe('WorkspaceSchemaFactory', () => {
           useValue: {},
         },
         {
-          provide: ObjectMetadataService,
+          provide: ObjectMetadataServiceV2,
           useValue: {},
         },
         {

@@ -1,0 +1,104 @@
+---
+title: Radio
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
+</Frame>
+
+Wordt gebruikt wanneer gebruikers slechts één optie uit een reeks opties kunnen kiezen.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Radio } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const handleRadioChange = (event) => {
+    console.log("Radio button changed:", event.target.checked);
+  };
+
+  const handleCheckedChange = (checked) => {
+    console.log("Checked state changed:", checked);
+  };
+
+
+  return (
+    <Radio
+      checked={true}
+      value="Option 1"
+      onChange={handleRadioChange}
+      onCheckedChange={handleCheckedChange}
+      size="large"
+      disabled={false}
+      labelPosition="right"
+    />
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props           | Soort                     | Beschrijving                                                                                                                          |
+| --------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| stijl           | `React.CSS` eigenschappen | Extra inline stijlen voor de component                                                                                                |
+| className       | tekenreeks                | Optionele CSS-klasse voor extra styling                                                                                               |
+| aangevinkt      | booleaan                  | Geeft aan of het optieknopje is aangevinkt                                                                                            |
+| waarde          | tekenreeks                | Het label of de tekst die bij het optieknopje hoort                                                                                   |
+| onChange        | functie                   | De functie die wordt aangeroepen wanneer het geselecteerde optieknopje verandert                                                      |
+| onCheckedChange | functie                   | De functie die wordt aangeroepen wanneer de `aangevinkt`-status van het optieknopje verandert                                         |
+| grootte         | tekenreeks                | De grootte van het optieknopje. Opties zijn: `groot` en `klein`                                       |
+| uitgeschakeld   | booleaan                  | Als `waar`, is het optieknopje uitgeschakeld en niet aanklikbaar                                                                      |
+| labelPositie    | tekenreeks                | De positie van de labeltekst ten opzichte van het optieknopje. Heeft twee opties: `links` en `rechts` |
+
+</Tab>
+</Tabs>
+
+## Radio Groep
+
+Groeperen van gerelateerde optieknopjes.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import React, { useState } from "react";
+import { Radio, RadioGroup } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const [selectedValue, setSelectedValue] = useState("Option 1");
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+  
+  return (
+    <RadioGroup value={selectedValue} onChange={handleChange}>
+      <Radio value="Option 1" />
+      <Radio value="Option 2" />
+      <Radio value="Option 3" />
+    </RadioGroup>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props         | Soort             | Beschrijving                                                                                                     |
+| ------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------- |
+| waarde        | tekenreeks        | De waarde van het momenteel geselecteerde optieknopje                                                            |
+| onChange      | functie           | De callback-functie die wordt geactiveerd wanneer het optieknopje wordt gewijzigd                                |
+| onValueChange | functie           | De callback-functie die wordt geactiveerd wanneer de geselecteerde waarde in de groep verandert. |
+| children      | `React.ReactNode` | Hiermee kunt u React-componenten (zoals Optieknop) als kinderen doorgeven aan de Radio Groep  |
+
+</Tab>
+
+</Tabs>

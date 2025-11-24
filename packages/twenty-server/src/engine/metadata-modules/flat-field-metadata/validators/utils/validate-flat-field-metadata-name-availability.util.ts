@@ -1,18 +1,15 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { getObjectFieldNamesAndJoinColumnNames } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-object-field-names-and-join-column-names.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 const getReservedCompositeFieldNames = (
@@ -39,15 +36,13 @@ const getReservedCompositeFieldNames = (
 };
 
 export const validateFlatFieldMetadataNameAvailability = ({
-  flatFieldMetadata,
+  name,
   flatFieldMetadataMaps,
-  remainingFlatEntityMapsToValidate,
   flatObjectMetadata,
 }: {
-  flatFieldMetadata: FlatFieldMetadata;
+  name: string;
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  remainingFlatEntityMapsToValidate?: FlatEntityMaps<FlatFieldMetadata>;
 }): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
   const objectFlatFieldMetadatas =
@@ -58,63 +53,37 @@ export const validateFlatFieldMetadataNameAvailability = ({
   const reservedCompositeFieldsNames = getReservedCompositeFieldNames(
     objectFlatFieldMetadatas,
   );
-  const flatFieldMetadataName = flatFieldMetadata.name;
 
-  if (
-    !isFlatFieldMetadataOfType(
-      // CHALLENGE Could remove the is morph relation assertion
-      flatFieldMetadata,
-      FieldMetadataType.MORPH_RELATION,
-    ) &&
-    objectFlatFieldMetadatas.some((existingFlatFieldMetadata) => {
-      const firstDegreeCollision =
-        existingFlatFieldMetadata.name === flatFieldMetadataName;
-
-      if (firstDegreeCollision) {
-        return true;
-      }
-
-      if (!isMorphOrRelationFlatFieldMetadata(existingFlatFieldMetadata)) {
-        return false;
-      }
-
-      const targetFlatFieldMetadata =
-        flatFieldMetadata.id ===
-        existingFlatFieldMetadata.relationTargetFieldMetadataId
-          ? flatFieldMetadata
-          : (remainingFlatEntityMapsToValidate?.byId[
-              existingFlatFieldMetadata.relationTargetFieldMetadataId
-            ] ??
-            findFlatEntityByIdInFlatEntityMapsOrThrow({
-              flatEntityId:
-                existingFlatFieldMetadata.relationTargetFieldMetadataId,
-              flatEntityMaps: flatFieldMetadataMaps,
-            }));
-
-      if (!isMorphOrRelationFlatFieldMetadata(targetFlatFieldMetadata)) {
-        return false;
-      }
-
-      return (
-        targetFlatFieldMetadata.settings.joinColumnName ===
-        flatFieldMetadataName
-      );
-    })
-  ) {
+  if (reservedCompositeFieldsNames.includes(name)) {
     errors.push({
-      code: FieldMetadataExceptionCode.NOT_AVAILABLE,
-      value: flatFieldMetadataName,
-      message: `Name "${flatFieldMetadataName}" is not available as it is already used by another field`,
-      userFriendlyMessage: msg`Name "${flatFieldMetadataName}" is not available as it is already used by another field`,
+      code: FieldMetadataExceptionCode.RESERVED_KEYWORD,
+      message: `Name "${name}" is reserved composite field name`,
+      value: name,
+      userFriendlyMessage: msg`Name "${name}" is not available`,
     });
   }
 
-  if (reservedCompositeFieldsNames.includes(flatFieldMetadataName)) {
+  const { objectFieldNamesAndJoinColumnNames } =
+    getObjectFieldNamesAndJoinColumnNames({
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    });
+
+  if (objectFieldNamesAndJoinColumnNames.fieldNames.includes(name)) {
     errors.push({
-      code: FieldMetadataExceptionCode.RESERVED_KEYWORD,
-      message: `Name "${flatFieldMetadataName}" is reserved composite field name`,
-      value: flatFieldMetadataName,
-      userFriendlyMessage: msg`Name "${flatFieldMetadataName}" is not available`,
+      code: FieldMetadataExceptionCode.NOT_AVAILABLE,
+      value: name,
+      message: `Name "${name}" is not available as it is already used by another field`,
+      userFriendlyMessage: msg`Name "${name}" is not available as it is already used by another field`,
+    });
+  }
+
+  if (objectFieldNamesAndJoinColumnNames.joinColumnNames.includes(name)) {
+    errors.push({
+      code: FieldMetadataExceptionCode.NOT_AVAILABLE,
+      value: name,
+      message: `Name "${name}" is not available as it is already used by another join column name`,
+      userFriendlyMessage: msg`Name "${name}" is not available as it is already used by join column name`,
     });
   }
 

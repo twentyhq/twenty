@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -22,15 +23,25 @@ export class ViewV2Service {
   constructor(
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async createOne({
     createViewInput,
     workspaceId,
+    createdByUserWorkspaceId,
   }: {
     createViewInput: CreateViewInput;
     workspaceId: string;
+    createdByUserWorkspaceId?: string;
   }): Promise<ViewDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const {
       flatObjectMetadataMaps,
       flatViewMaps: existingFlatViewMaps,
@@ -49,6 +60,8 @@ export class ViewV2Service {
     const flatViewFromCreateInput = fromCreateViewInputToFlatViewToCreate({
       createViewInput,
       workspaceId,
+      createdByUserWorkspaceId,
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
 
     const validateAndBuildResult =
@@ -97,9 +110,11 @@ export class ViewV2Service {
   async updateOne({
     updateViewInput,
     workspaceId,
+    userWorkspaceId,
   }: {
     updateViewInput: UpdateViewInput;
     workspaceId: string;
+    userWorkspaceId?: string;
   }): Promise<ViewDTO> {
     const {
       flatViewMaps: existingFlatViewMaps,
@@ -117,6 +132,21 @@ export class ViewV2Service {
         updateViewInput,
         flatViewMaps: existingFlatViewMaps,
       });
+
+    const existingFlatView = existingFlatViewMaps.byId[updateViewInput.id];
+
+    // If changing visibility from WORKSPACE to UNLISTED, ensure createdByUserWorkspaceId is set
+    // This prevents the view from disappearing for the user making the change
+    if (
+      isDefined(existingFlatView) &&
+      isDefined(updateViewInput.visibility) &&
+      updateViewInput.visibility === 'UNLISTED' &&
+      existingFlatView.visibility === 'WORKSPACE' &&
+      isDefined(userWorkspaceId)
+    ) {
+      // Re-allocate the view to the current user
+      flatViewFromUpdateInput.createdByUserWorkspaceId = userWorkspaceId;
+    }
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(

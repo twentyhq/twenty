@@ -6,13 +6,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { OnDbEventDTO } from 'src/engine/subscriptions/dtos/on-db-event.dto';
 import { OnDbEventInput } from 'src/engine/subscriptions/dtos/on-db-event.input';
 
 @Resolver()
-@UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+@UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class SubscriptionsResolver {

@@ -1,0 +1,104 @@
+---
+title: Import/Export Date
+info: "Învățați cum să importați și să exportați date."
+image: /images/user-guide/import-export-data/cloud.png
+sectionInfo: Descoperă Twenty, un CRM open-source.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="Header" />
+</Frame>
+
+## Importați Date
+
+- Puteți importa date pentru orice obiect folosind un fișier .csv, .xlsx sau .xls.
+- Fiecare dintre fișierele pe care le încărcați trebuie să conțină **doar un tip de obiect** (de exemplu, doar înregistrări ale Persoanelor).
+- Puteți folosi Importul pentru a **crea sau actualiza înregistrări**.
+
+### Download a sample file to match the expected formatting
+
+1. Accesați o vizualizare cu obiectul pe care urmează să-l importați.
+2. Faceți clic pe icon-ul `⋮` din colțul de sus dreapta și apoi selectați `Import records`.
+3. Click on `Download sample file`.
+
+### Pregătiți csv-ul dvs.
+
+Mai jos sunt câteva lucruri de verificat înainte de a încărca fișierul dvs.
+
+- Limitați numărul de înregistrări la **10.000 per fișier**.
+- **Eliminați duplicatele** din fișierul dvs.
+  - Unicitatea pentru `People` este setată implicit de `id` și `email`. Aveți, de asemenea, capacitatea de a defini câmpuri personalizate din `People` ca unice atunci când configurați modelul dvs. de date.
+  - Unicitatea pentru `Companies` este setată implicit de `id` și `domain`. Aveți, de asemenea, capacitatea de a defini câmpuri personalizate din `Companies` ca unice atunci când configurați modelul dvs. de date.
+  - Pentru orice alt obiect, inclusiv obiecte personalizate, aveți capacitatea de a defini câmp(uri) ca unice. Asigurați-vă că nu includeți duplicate atunci când vă pregătiți fișierele.
+- Recomandăm utilizarea sintaxei `https://domain.com` atunci când încărcați domeniile, deoarece aceasta este cea utilizată de conectorul nostru cu căsuța poștală și calendarul.
+- Puteți **importa relațiile între obiecte** oferind unul dintre câmpurile unice ale înregistrării asociate.
+  - Exemplu: Doriți să atașați o persoană la o companie. Adăugați o coloană în fișierul care conține toate înregistrările `People` care să conțină `id`-ul companiei -- sau domeniul său. Veți putea să mapați acest câmp în timpul încărcării.
+    <Warning>
+
+**Notă importantă:**
+
+- Relațiile între obiecte în Twenty sunt "Unu la Mulți". Aceasta înseamnă că fiecare înregistrare a obiectului A poate fi atașată la mai multe înregistrări ale obiectului B. Dar fiecare înregistrare a obiectului B poate aparține doar unei înregistrări ale obiectului A.
+  _De exemplu, o companie poate fi atașată la mai multe persoane. Și o persoană poate aparține doar unei singure companii._
+
+- Pentru a încărca relații prin funcția de import, trebuie să furnizați `id`-ul (sau orice alt câmp unic) al obiectului atașat în fișierul care conține înregistrările de pe partea de "Mulți" a relației.  
+  _De exemplu, furnizați `id`-ul sau `domeniul` companiei atunci când încărcați înregistrări ale persoanelor. Nu furnizați `id`-ul (sau `email`) persoanelor atunci când încărcați fișierul cu companii._
+  </Warning>
+
+### Încărcați fișierul dvs.
+
+1. Accesați o vizualizare cu obiectul pe care urmează să-l importați.
+2. Faceți clic pe icon-ul `⋮` din colțul de sus dreapta și apoi selectați `Import records`.
+3. Faceți clic pe `Select file`.
+4. Validați maparea câmpurilor.
+
+- Nu trebuie să importați toate, puteți alege opțiunea "Do not map".
+- Pentru relații, este recomandat să mapați doar unul dintre câmpurile unice.
+- Este posibil să fie necesar să mapați și valorile câmpurilor de tip select și multi-select.
+
+5. Faceți clic pe `Next Steps` și `Review the rows with errors`. Celulele cu probleme sunt evidențiate. **Puteți elimina rândul sau actualiza celula direct de acolo**.
+6. După ce ați terminat, faceți clic pe `Confirm`
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}}/>
+
+### FAQ despre Import
+
+<details><summary>Văd probleme cu duplicatele când încarc fișierul meu, ce ar trebui să fac?</summary>
+
+Vă rugăm să consultați secțiunea **Pregătiți csv-ul dvs.** de mai sus în acest articol, aceasta conține linii directoare despre ce va fi considerat un duplicat.
+
+</details>
+
+<details><summary>Pot importa relații între obiecte?</summary>
+
+Da, vă rugăm să consultați secțiunea **Pregătiți csv-ul dvs.** de mai sus în acest articol, aceasta conține o secțiune despre importul relațiilor.
+
+</details>
+
+<details><summary>Pot actualiza înregistrări existente folosind funcția de import?</summary>
+
+Da, puteți actualiza înregistrări existente folosind funcția de import. Asigurați-vă că furnizați id-ul (sau orice alt câmp unic) atunci când reîncărcați înregistrările dvs.
+
+</details>
+
+<details><summary>Pot migra `id`-ul din alte instrumente?</summary>
+
+Da. Trebuie să creați un câmp pe care îl definiți ca unic în modelul dvs. de date care va conține `id`-ul din alte instrumente ale dvs. Rețineți că numele `id` este protejat deoarece este utilizat pentru id-ul Twenty.  
+Dacă doriți să creați relații între obiecte folosind acest câmp, consultați secțiunea **Pregătiți csv-ul dvs.** de mai sus în acest articol. Conține o secțiune despre importul relațiilor.
+
+</details>
+
+## Exportați Date
+
+Puteți descărca date din majoritatea obiectelor și până la 20.000 de înregistrări pe export.
+Pentru a exporta date dintr-un obiect:
+
+1. Vizitați indexul obiectului.
+2. Alegeți vizualizarea pentru exportul de date. Configurați coloanele pe care doriți să le descărcați ascunzând sau adăugând coloane și găsiți înregistrările de care aveți nevoie filtrând vizualizarea.
+3. Accesați panoul lateral folosind icon-ul `⋮` din colțul de sus dreapta.
+4. Faceți clic pe `Export view`.
+5. Selectați locația de salvare pentru datele CSV. Rețineți că exportul poate dura timp cu un număr mare de înregistrări.
+
+<VimeoEmbed videoId="926226303" title="Video demonstration" />
+

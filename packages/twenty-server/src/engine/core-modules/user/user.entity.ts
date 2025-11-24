@@ -1,7 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -95,8 +95,8 @@ export class UserEntity {
   deletedAt: Date;
 
   @Field(() => String, { nullable: false })
-  @Column({ nullable: false, default: SOURCE_LOCALE })
-  locale: string;
+  @Column({ nullable: false, default: SOURCE_LOCALE, type: 'varchar' })
+  locale: keyof typeof APP_LOCALES;
 
   @OneToMany(() => AppTokenEntity, (appToken) => appToken.user, {
     cascade: true,

@@ -1,0 +1,91 @@
+{
+  "tabs": {
+    "userGuide": {
+      "label": "User Guide",
+      "groups": {
+        "gettingStarted": {
+          "label": "Getting Started"
+        },
+        "dataModel": {
+          "label": "Модел података"
+        },
+        "crmEssentials": {
+          "label": "Основе CRM-a"
+        },
+        "views": {
+          "label": "Прикази"
+        },
+        "workflows": {
+          "label": "Токови Рада"
+        },
+        "collaboration": {
+          "label": "Сарадња"
+        },
+        "integrationsApi": {
+          "label": "Integrations & API"
+        },
+        "reporting": {
+          "label": "Извештавање"
+        },
+        "settings": {
+          "label": "Подешавања"
+        },
+        "pricing": {
+          "label": "Цене"
+        },
+        "resources": {
+          "label": "Ресурси"
+        }
+      }
+    },
+    "developers": {
+      "label": "Програмери",
+      "groups": {
+        "developersGroup": {
+          "label": "Програмери"
+        },
+        "devGettingStarted": {
+          "label": "Getting Started",
+          "groups": {
+            "selfHosting": {
+              "label": "Самохостинг"
+            },
+            "apiAndWebhooks": {
+              "label": "API и Webhooks"
+            }
+          }
+        },
+        "contributing": {
+          "label": "Сарадња",
+          "groups": {
+            "frontendDevelopment": {
+              "label": "Фронтенд развој",
+              "groups": {
+                "twentyUi": {
+                  "label": "Twenty UI",
+                  "groups": {
+                    "display": {
+                      "label": "Приказ"
+                    },
+                    "feedback": {
+                      "label": "Повратна информација"
+                    },
+                    "input": {
+                      "label": "Унос"
+                    },
+                    "navigation": {
+                      "label": "Навигација"
+                    }
+                  }
+                }
+              }
+            },
+            "backendDevelopment": {
+              "label": "Бекенд развој"
+            }
+          }
+        }
+      }
+    }
+  }
+}

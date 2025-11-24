@@ -13,10 +13,9 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
 import { UpdateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/update-view-field.input';
@@ -31,36 +30,36 @@ import {
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { ViewFieldRestApiExceptionFilter } from 'src/engine/metadata-modules/view-field/filters/view-field-rest-api-exception.filter';
 import { ViewFieldV2Service } from 'src/engine/metadata-modules/view-field/services/view-field-v2.service';
-import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
+import { CreateViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-field-permission.guard';
+import { DeleteViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-field-permission.guard';
+import { UpdateViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-field-permission.guard';
 
 @Controller('rest/metadata/viewFields')
 @UseGuards(WorkspaceAuthGuard)
 @UseFilters(ViewFieldRestApiExceptionFilter)
 export class ViewFieldController {
-  constructor(
-    private readonly viewFieldService: ViewFieldService,
-    private readonly viewFieldV2Service: ViewFieldV2Service,
-    private readonly featureFlagService: FeatureFlagService,
-  ) {}
+  constructor(private readonly viewFieldV2Service: ViewFieldV2Service) {}
 
   @Get()
+  @UseGuards(NoPermissionGuard)
   async findMany(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('viewId') viewId?: string,
   ): Promise<ViewFieldEntity[]> {
     if (viewId) {
-      return this.viewFieldService.findByViewId(workspace.id, viewId);
+      return this.viewFieldV2Service.findByViewId(workspace.id, viewId);
     }
 
-    return this.viewFieldService.findByWorkspaceId(workspace.id);
+    return this.viewFieldV2Service.findByWorkspaceId(workspace.id);
   }
 
   @Get(':id')
+  @UseGuards(NoPermissionGuard)
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFieldEntity> {
-    const viewField = await this.viewFieldService.findById(id, workspace.id);
+    const viewField = await this.viewFieldV2Service.findById(id, workspace.id);
 
     if (!isDefined(viewField)) {
       throw new ViewFieldException(
@@ -81,109 +80,40 @@ export class ViewFieldController {
   }
 
   @Patch(':id')
+  @UseGuards(UpdateViewFieldPermissionGuard)
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewFieldInput['update'],
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFieldDTO> {
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspace.id,
-      );
-
-    if (isWorkspaceMigrationV2Enabled) {
-      return await this.viewFieldV2Service.updateOne({
-        updateViewFieldInput: { id, update: input },
-        workspaceId: workspace.id,
-      });
-    }
-
-    const updatedViewField = await this.viewFieldService.update(
-      id,
-      workspace.id,
-      input,
-    );
-
-    // Convert ViewFieldEntity to ViewFieldDTO for consistency
-    return {
-      id: updatedViewField.id,
-      fieldMetadataId: updatedViewField.fieldMetadataId,
-      isVisible: updatedViewField.isVisible,
-      size: updatedViewField.size,
-      position: updatedViewField.position,
-      aggregateOperation: updatedViewField.aggregateOperation,
-      viewId: updatedViewField.viewId,
-      workspaceId: updatedViewField.workspaceId,
-      createdAt: updatedViewField.createdAt,
-      updatedAt: updatedViewField.updatedAt,
-      deletedAt: updatedViewField.deletedAt,
-    };
+    return await this.viewFieldV2Service.updateOne({
+      updateViewFieldInput: { id, update: input },
+      workspaceId: workspace.id,
+    });
   }
 
   @Post()
+  @UseGuards(CreateViewFieldPermissionGuard)
   async create(
     @Body() input: CreateViewFieldInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFieldDTO> {
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspace.id,
-      );
-
-    if (isWorkspaceMigrationV2Enabled) {
-      return await this.viewFieldV2Service.createOne({
-        createViewFieldInput: input,
-        workspaceId: workspace.id,
-      });
-    }
-
-    const createdViewField = await this.viewFieldService.create({
-      ...input,
+    return await this.viewFieldV2Service.createOne({
+      createViewFieldInput: input,
       workspaceId: workspace.id,
     });
-
-    // Convert ViewFieldEntity to ViewFieldDTO for consistency
-    return {
-      id: createdViewField.id,
-      fieldMetadataId: createdViewField.fieldMetadataId,
-      isVisible: createdViewField.isVisible,
-      size: createdViewField.size,
-      position: createdViewField.position,
-      aggregateOperation: createdViewField.aggregateOperation,
-      viewId: createdViewField.viewId,
-      workspaceId: createdViewField.workspaceId,
-      createdAt: createdViewField.createdAt,
-      updatedAt: createdViewField.updatedAt,
-      deletedAt: createdViewField.deletedAt,
-    };
   }
 
   @Delete(':id')
+  @UseGuards(DeleteViewFieldPermissionGuard)
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<{ success: boolean }> {
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspace.id,
-      );
-
-    if (isWorkspaceMigrationV2Enabled) {
-      const deletedViewField = await this.viewFieldV2Service.deleteOne({
-        deleteViewFieldInput: { id },
-        workspaceId: workspace.id,
-      });
-
-      return { success: isDefined(deletedViewField) };
-    }
-
-    const deletedViewField = await this.viewFieldService.delete(
-      id,
-      workspace.id,
-    );
+    const deletedViewField = await this.viewFieldV2Service.deleteOne({
+      deleteViewFieldInput: { id },
+      workspaceId: workspace.id,
+    });
 
     return { success: isDefined(deletedViewField) };
   }

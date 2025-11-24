@@ -1,0 +1,91 @@
+---
+title: Siirtyminen muista CRM-järjestelmistä
+info: Vaiheittainen opas tietojen ja prosessien siirtämiseen muista CRM-järjestelmistä Twentyyn.
+image: /images/user-guide/what-is-twenty/migrating_crm.png
+sectionInfo: Lyhyt opas Twenty perusteiden ymmärtämiseen
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/migrating_crm.png" alt="Header" />
+</Frame>
+
+## Ennen kuin aloitat
+
+### 1. Arvioi nykyiset tietosi
+
+- **Valitse muutama siirrettävä objekti ja kenttä**: tämä siirtymä tarjoaa mahdollisuuden uuteen alkuun.
+- **Vie tämä tieto** nykyisestä CRM:stäsi
+- **Poista kaksoiskappaleet** ja vanhentuneet tiedot
+- **Listaa aktiiviset työnkulut** ja automaatiot
+
+### 2. Luo uusi tietomalli
+
+Noudata [tietomallin opastamme](/l/fi/user-guide/data-model/customize-your-data-model):
+
+- **Suunnittele tarvitsemasi tietomalli**
+- **Map existing fields** to Twenty's standard objects / fields
+- **Tunnista ne erityiskohteet / kentät**, joita tarvitset
+- **Luo ne** Asetukset → Tietomalli -kohtaan
+
+## Siirtoprosessi
+
+### 1. Tuo tietosi
+
+**Suositeltu järjestys:**
+
+1. **Yritykset** ensin (perustietueina)
+2. **Henkilöt** toisena (linkitetty yrityksiin)
+3. **Mahdollisuudet** kolmantena (linkitetty henkilöihin/yrityksiin)
+
+Käytä CSV-tuojaa komentovalikon kautta `Cmd + K` (Mac) tai `Ctrl + K` (Windows). Katso [tietojen tuontioppaamme](/l/fi/user-guide/getting-started/import-export-data) saadaksesi yksityiskohtaiset ohjeet.
+
+### 2. Luo työnkulut uudelleen
+
+- **Aloita yksinkertaisesti** - luo tärkeimmät automaatiot ensin
+- **Use Twenty's workflow builder** to replace existing automations
+
+## Yleiset haasteet
+
+### Tietojen muotoiluongelmat
+
+- **Sähköpostiosoitteet** - poista kaksoiskappaleet (Henkilöt-objektin vaatimus)
+- **Verkkotunnus** - poista kaksoiskappaleet (Yritykset-objektin vaatimus)
+
+<Warning>
+Please note that domain URLs created by the synchronization with your mailbox and calendar have the following format ```https://domain.com```
+</Warning>
+
+- **Päivämäärien muodot** - varmista yhtenäinen muotoilu (VVVV-KK-PP) tai muokkaa tätä muotoa Asetukset → Kokemus-kohdassa
+- **Puhelinnumerot** - käytä kansainvälistä muotoa (+1234567890)
+
+### Suhteiden kartoitus
+
+Tuodaksesi suhteita tietueiden välillä CSV-tuoja -toiminnolla, voit käyttää seuraavia kenttiä
+
+- **Käytä Twentyn tunnisteita** monimutkaisiin suhteisiin
+- **Käytä sähköpostiosoitteita** yhdistääksesi Henkilö-tietueet
+- **Käytä verkkotunnusten nimiä** yhdistääksesi Yritys-tietueet
+- **Käytä jotain muuta kenttää, jonka asetat uniikiksi**, mikä voidaan tehdä Tietomalli-osiossa.
+  Lue [tietojen tuonti- ja vientioppaamme](/l/fi/user-guide/getting-started/import-export-data) saadaksesi yksityiskohtaiset ohjeet suhteiden luomisesta CSV-tuonnin aikana.
+
+## Ammattilaisten apu
+
+### Palvelumme
+
+- **4 tunnin perehdytyspaketit** ohjattuun siirtymään
+- **Toteutuskumppanit** edistyneempiin projekteihin
+
+Tutustu [toteutuspalveluihimme](/l/fi/user-guide/getting-started/implementation-services).
+
+## Siirtyminen itseisännöinnistä pilveen
+
+Jos siirryt Twentyn itseisännöidystä versiosta Twentyn pilvipalveluun:
+
+1. **Vie tietosi** itseisännöidystä instanssistasi
+2. **Seuraa yllä olevaa vakiomigraatioprosessia**
+3. **Voimme tarjota apua migraatioon**, ole yhteydessä tiimiimme
+
+## Jälkimigraation tarkistuslista
+
+<input type="checkbox" /> All data imported successfully <input type="checkbox" /> Custom fields working correctly <input type="checkbox" /> User permissions configured <input type="checkbox" /> Email/calendar sync connected <input type="checkbox" /> Critical workflows recreated and tested <input type="checkbox" /> Team trained on new system
+

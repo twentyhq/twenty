@@ -1,0 +1,38 @@
+---
+title: Stapbalk
+image: /images/user-guide/api/api.png
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+Toont de voortgang door een reeks genummerde stappen door de actieve stap te markeren. Het maakt een container met stappen, elk weergegeven door de `Step`-component.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
+
+export const MyComponent = () => {
+  return (
+    <StepBar activeStep={2}>
+      <StepBar.Step>Step 1</StepBar.Step>
+      <StepBar.Step>Step 2</StepBar.Step>
+      <StepBar.Step>Step 3</StepBar.Step>
+    </StepBar>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Props      | Soort  | Beschrijving                                                                                                  |
+| ---------- | ------ | ------------------------------------------------------------------------------------------------------------- |
+| activeStep | nummer | De index van de momenteel actieve stap. Dit bepaalt welke stap visueel gemarkeerd moet worden |
+
+</Tab>
+</Tabs>

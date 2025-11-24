@@ -1,0 +1,108 @@
+---
+title: Câmpuri
+info: "Înțelegeți rolul câmpurilor și cum să le gestionați."
+image: /images/user-guide/fields/field.png
+sectionInfo: Model de date flexibil proiectat pentru a susține procesele unice ale afacerii tale
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## Despre câmpuri
+
+Câmpurile sunt ca coloanele unui tabel. Ele stochează diferite tipuri de date, cum ar fi text, numere sau date calendaristice. Fields can be standard (built-in) or custom (the ones you create).
+
+### Câmpuri standard
+
+Standard fields come built-in with Twenty to handle common business needs.
+
+De exemplu, `Prenume` și `Nume de familie` sunt câmpuri standard în obiectul `Persoane`. Ele stochează date text pentru numele individuale.
+
+Nu puteți șterge câmpurile standard, dar le puteți dezactiva dacă nu aveți nevoie de ele.
+
+De asemenea, puteți personaliza opțiunile câmpurilor standard de tip `SELECT`, de exemplu opțiunile pentru `Etapa` la Oportunități.
+
+<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}}/>
+
+### Câmpuri personalizate
+
+Câmpurile personalizate pot fi adăugate la orice obiect. Puteți stoca text, numere, date, selecții din liste derulante și altele. Folosind câmpuri personalizate puteți urmări informații specifice afacerii dumneavoastră.
+
+De exemplu, un câmp personalizat pentru SpaceX ar putea fi `Starea de funcționare a rachetei`, indicând dacă o rachetă este operațională.
+
+<img src="/images/user-guide/fields/custom-fields.png"style={{width:'100%'}}/>
+
+## Creați un câmp personalizat
+
+To add a custom field to any object, follow these steps:
+1.	Accesați `Setări` din bara laterală stângă.
+2.	Accesați `Model de date`, apoi selectați obiectul pe care doriți să îl personalizați.
+3.	Continuați prin a face clic pe `Adaugă câmp`.
+4.	Alegeți un nume și un tip de câmp care se potrivesc cerințelor dumneavoastră. Luați în considerare adăugarea unei descrieri a câmpului pentru o înțelegere mai bună.
+
+Noul câmp creat de dumneavoastră este acum disponibil în cadrul câmpurilor aplicației. Pentru a-l afișa într-o vizualizare specifică, faceți clic pe meniul de opțiuni, apoi selectați `Câmpuri`.
+
+<VimeoEmbed videoId="927628219" title="Video demonstration" />
+
+**Cale rapidă:** Faceți clic pe butonul **+** în colțul dreapta sus al oricărui tabel de obiecte, apoi selectați `Personalizați câmpurile`. Aceasta vă duce direct la setările Modelului de Date.
+
+<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}}/>
+
+## Dezactivați un câmp
+
+Puteți dezactiva un câmp pentru a-l ascunde din aplicație fără a pierde datele. Think of it as hiding the field rather than deleting it.
+
+Iată cum puteți face acest lucru:
+
+1. Găsiți câmpul pe care doriți să-l dezactivați în setările obiectului dumneavoastră.
+
+2. Faceți clic pe cele trei puncte `⋮` de lângă câmp pentru a deschide meniul.
+
+3. Selectați `Dezactivează` din lista derulantă.
+
+<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}}/>
+
+Ce se întâmplă când dezactivați un câmp?
+
+1. **În aplicație:** Câmpul dispare și nu se pot adăuga valori noi la acesta.
+
+2. **Relații existente:** Dacă este un câmp de relație, conexiunile existente rămân, dar nu se pot crea noi.
+
+3. **Acces API:** Încă puteți accesa câmpul și datele sale prin API.
+
+Puteți reactiva câmpuri standard și personalizate sau aveți opțiunea de a le șterge permanent.
+
+## Faceți câmpurile unice
+
+Faceți un câmp unic pentru a vă asigura că înregistrele distincte nu pot avea aceeași valoare. De exemplu, adresele de e-mail sunt unice pentru fiecare persoană.
+
+Dacă primiți o eroare când setați unicitatea, verificați prezența valorilor duplicate în datele dumneavoastră (inclusiv în cele șterse).
+
+## Cele mai bune practici pentru configurarea câmpului
+
+### Cele mai bune practici pentru configurarea câmpului
+
+- **Numele câmpurilor de relație nu pot fi actualizate** după crearea lor (impactează structura API)
+- **Numele la singular și plural trebuie să fie distincte**: API-ul nostru GraphQL necesită nume distincte pentru mutații
+- **Nume de câmpuri protejate**: unele nume sunt rezervate pentru uzul sistemului (de ex., `Tip`)
+
+### Câmpuri valută și telefon
+
+- **Valută implicită**: poate fi configurată prin modelul de date
+- **Coduri de țară implicite**: pot fi configurate pentru câmpurile de telefon prin modelul de date
+
+### Câmpuri de selectare
+
+- **Se poate selecta o opțiune implicită** pentru fiecare câmp de tip Select
+
+### Câmpuri de text pentru înregistrări
+
+- **Fiecare obiect are un câmp principal de afișare**: Acest câmp apare în coloana din stânga și reprezintă înregistrarea atunci când este legată de alte obiecte. Trebuie să fie un câmp text. De exemplu, Persoane utilizează `Nume` ca principal câmp, astfel încât atunci când legați o persoană de o companie, va apărea numele său în vizualizarea companiei.
+
+### Câmpuri de relație
+
+- **Conectați obiecte între ele**: Câmpurile de relație leagă înregistrări din diferite obiecte. Pentru informații detaliate despre crearea și gestionarea relațiilor, consultați articolul nostru [Câmpuri de relații](/l/ro/user-guide/data-model/relation-fields).
+

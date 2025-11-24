@@ -1,0 +1,87 @@
+---
+title: Webhooks
+image: /images/docs/getting-started/webhooks.png
+info: Descoperiți cum să utilizați Webhook-urile noastre.
+---
+
+<Frame>
+  <img src="/images/docs/getting-started/webhooks.png" alt="Header" />
+</Frame>
+
+## Prezentare generală
+
+Webhook-urile din Twenty completează API-ul prin activarea **notificărilor în timp real** către aplicațiile dumneavoastră atunci când anumite evenimente se întâmplă în CRM-ul dumneavoastră. În loc să interogați API-ul continuu pentru modificări, puteți configura webhook-uri pentru ca Twenty să **transmită** date către sistemul dumneavoastră ori de câte ori apar evenimente specifice (de exemplu, când un nou registru este creat sau un registru existent este actualizat). Acest lucru ajută la menținerea sistemelor externe sincronizate cu Twenty instantaneu și eficient.
+
+Cu webhook-uri, Twenty va trimite o cerere HTTP POST către un URL specificat de dumneavoastră, conținând detalii despre eveniment. Apoi puteți gestiona acele date în aplicația dumneavoastră (de exemplu, pentru a actualiza baza de date externă, a declanșa fluxuri de lucru sau a trimite alerte).
+
+## Configurarea unui Webhook
+
+Pentru a crea un webhook în Twenty, folosiți setările **API-uri & Webhook-uri** din aplicația dumneavoastră Twenty:
+
+1. **Navigați la Setări:** În aplicația dumneavoastră Twenty, mergeți la **Setări → API-uri & Webhook-uri**.
+2. **Creați un Webhook:** Sub **Webhook-uri** faceți clic pe **+ Creați webhook**.
+3. **Introduceți URL:** Furnizați URL-ul punctului final pe serverul dumneavoastră unde doriți ca Twenty să trimită cereri de webhook. Acesta ar trebui să fie un URL accesibil public care poate gestiona cererile POST.
+4. **Salvați:** Faceți clic pe **Salvați** pentru a crea webhook-ul. Webhook-ul nou va fi activ imediat.
+
+Puteți crea mai multe webhook-uri dacă aveți nevoie să trimiteți diferite evenimente către diferite puncte finale. Fiecare webhook este, în esență, o abonare pentru toate evenimentele relevante (în acest moment, Twenty trimite toate tipurile de evenimente către URL-ul dat; filtrarea unor tipuri de evenimente specifice poate fi configurată în interfața utilizatorului). Dacă vreodată trebuie să eliminați un webhook, îl puteți șterge din aceeași pagină de setări (selectați webhook-ul și alegeți ștergere).
+
+## Evenimente și Încărcături
+
+Odată ce un webhook este configurat, Twenty va trimite o cerere HTTP POST către URL-ul specificat ori de câte ori un eveniment declanșator are loc în datele dumneavoastră CRM. Evenimente comune care declanșează webhook-uri includ:
+
+- **Record Created:** e.g. a new person is added (`person.created`), a new company is created (`company.created`), a note is created (`note.created`), etc.
+- **Actualizare Înr.:** de exemplu, informațiile unei persoane existente sunt actualizate (`person.updated`), un registru al companiei este modificat (`company.updated`), etc.
+- **Record Deleted:** e.g. a person or company is deleted (`person.deleted`, `company.deleted`).
+- **Alte Evenimente:** Dacă este cazul, alte evenimente de obiect sau declanșatoare personalizate (de exemplu, dacă sarcini sau alte obiecte sunt actualizate, vor fi folosite tipuri similare de evenimente precum `task.created`, `note.updated`, etc.).
+
+Cererea POST webhook conține o încărcătură JSON în corpul său. Încărcătura va include în general cel puțin două lucruri: tipul evenimentului și datele legate de acel eveniment (adesea registrul care a fost creat/actualizat). For example, a webhook for a newly created person might send a payload like:
+
+```
+{
+  "event": "person.created",
+  "data": {
+    "id": "abc12345",
+    "firstName": "Alice",
+    "lastName": "Doe",
+    "email": "alice@example.com",
+    "createdAt": "2025-02-10T15:30:45Z",
+    "createdBy": "user_123"
+  },
+  "timestamp": "2025-02-10T15:30:50Z"
+}
+```
+
+În acest exemplu:
+
+- `"eveniment"` specifică ce s-a întâmplat (`person.created`).
+- `"date"` conține detaliile noului registru (aceleași informații pe care le-ați obține dacă ați cerut acea persoană prin API).
+- `"timp"` este când a avut loc evenimentul (în UTC).
+
+Punctul dumneavoastră final ar trebui să fie pregătit să primească astfel de date JSON via POST. De obicei, veți analiza JSON-ul, veți verifica tipul de `"eveniment"` pentru a înțelege ce s-a întâmplat și apoi veți folosi `"datele"` corespunzător (de exemplu, creați un nou contact în sistemul dumneavoastră sau actualizați unul existent).
+
+**Notă:** Este important să răspundeți cu un **cod de status HTTP 2xx** de la punctul dumneavoastră final de webhook pentru a confirma primirea cu succes. Dacă expeditorul webhook Twenty nu primește un răspuns 2xx, ar putea considera că livrarea a eșuat. (În viitor, logica de reîncercare ar putea încerca să retrimită webhook-uri nereușite, așa că întotdeauna străduiți-vă să returnați un 200 OK cât mai repede posibil după procesarea datelor.)
+
+## Validarea Webhook-ului
+
+Pentru a asigura securitatea punctelor finale ale webhook-ului, Twenty include o semnătură în antetul `X-Twenty-Webhook-Signature`.
+
+Această semnătură este un hash HMAC SHA256 al încărcăturii cererii, calculată folosind secretul webhook-ului dumneavoastră.
+
+Pentru a valida semnătura, va trebui să:
+
+1. Concatenați marca temporală (din antetul `X-Twenty-Webhook-Timestamp`), un colon și șirul JSON al încărcăturii
+2. Calculați hash-ul HMAC SHA256 folosind secretul webhook-ului dumneavoastră ca și cheie ()
+3. Comparați digestul hexagonal rezultat cu semnătura din antet
+
+Iată un exemplu în Node.js:
+
+```javascript
+const crypto = require("crypto");
+const timestamp = "1735066639761";
+const payload = JSON.stringify({...});
+const secret = "your-secret";
+const stringToSign = `${timestamp}:${JSON.stringify(payload)}`;
+const signature = crypto.createHmac("sha256", secret)
+  .update(stringToSign)
+  .digest("hex");
+```

@@ -159,8 +159,12 @@ export const useChartSettingsValues = ({
       case CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS:
         return configuration.displayDataLabel ?? undefined;
       case CHART_CONFIGURATION_SETTING_IDS.STACKED_BARS:
-        return 'groupMode' in configuration
+        return configuration.__typename === 'BarChartConfiguration'
           ? configuration.groupMode !== 'GROUPED'
+          : true;
+      case CHART_CONFIGURATION_SETTING_IDS.STACKED_LINES:
+        return configuration.__typename === 'LineChartConfiguration'
+          ? configuration.isStacked !== false
           : true;
       case CHART_CONFIGURATION_SETTING_IDS.OMIT_NULL_VALUES:
         return 'omitNullValues' in configuration

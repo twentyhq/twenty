@@ -109,6 +109,11 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   const { input, output, type, errorText } = toolPart;
   const toolName = type.split('-')[1];
 
+  const toolInput =
+    isDefined(input) && typeof input === 'object' && 'input' in input
+      ? input.input
+      : input;
+
   const hasError = isDefined(errorText);
   const isExpandable = isDefined(output) || hasError;
 
@@ -185,7 +190,7 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
                 <StyledJsonTreeContainer>
                   <JsonTree
                     value={
-                      (activeTab === 'output' ? result : input) as JsonValue
+                      (activeTab === 'output' ? result : toolInput) as JsonValue
                     }
                     shouldExpandNodeInitially={() => false}
                     emptyArrayLabel={t`Empty Array`}

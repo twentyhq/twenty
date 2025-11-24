@@ -158,33 +158,6 @@ export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
   connectionParameters: '20202020-a1b2-46be-814f-6228af16c481',
 } as const;
 
-export const EVENT_STANDARD_FIELD_IDS = {
-  properties: '20202020-f142-4b04-b91b-6a2b4af3bf10',
-  workspaceMember: '20202020-af23-4479-9a30-868edc474b35',
-  person: '20202020-c414-45b9-a60a-ac27aa96229e',
-  company: '20202020-04ad-4221-a744-7a8278a5ce20',
-  opportunity: '20202020-7664-4a35-a3df-580d389fd5f0',
-  custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
-} as const;
-
-export const AUDIT_LOGS_STANDARD_FIELD_IDS = {
-  name: '20202020-2462-4b9d-b5d9-745febb3b095',
-  properties: '20202020-5d36-470e-8fad-d56ea3ab2fd0',
-  context: '20202020-b9d1-4058-9a75-7469cab5ca8c',
-  objectName: '20202020-76ba-4c47-b7e5-96034005d00a',
-  objectMetadataId: '20202020-127b-409d-9864-0ec44aa9ed98',
-  recordId: '20202020-c578-4acf-bf94-eb53b035cea2',
-  workspaceMember: '20202020-6e96-4300-b3f5-67a707147385',
-} as const;
-
-export const BEHAVIORAL_EVENT_STANDARD_FIELD_IDS = {
-  name: '20202020-2462-4b9d-b5d9-745febb3b095',
-  properties: '20202020-5d36-470e-8fad-d56ea3ab2fd0',
-  context: '20202020-bd62-4b5b-8385-6caeed8f8078',
-  objectName: '20202020-a744-406c-a2e1-9d83d74f4341',
-  recordId: '20202020-6d8b-4ca5-9869-f882cb335673',
-} as const;
-
 export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   happensAt: '20202020-9526-4993-b339-c4318c4d39f0',
   type: '20202020-5e7b-4ccd-8b8a-86b94b474134',
@@ -259,7 +232,6 @@ export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   messageChannelMessageAssociations: '20202020-49b8-4766-88fd-75f1e21b3d5f',
   messageFolders: '20202020-cc39-4432-9fe8-ec8ab8bbed94',
   messageFolderImportPolicy: '20202020-cc39-4432-9fe8-ec8ab8bbed95',
-  syncAllFolders: '20202020-e36b-409c-a9bd-79071596cdc0',
   pendingGroupEmailsAction: '20202020-17c5-4e9f-bc50-af46a89fdd42',
   isSyncEnabled: '20202020-d9a6-48e9-990b-b97fdf22e8dd',
   syncCursor: '20202020-79d1-41cf-b738-bcf5ed61e256',
@@ -556,7 +528,6 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   calendarStartDay: '20202020-92d0-1d7f-a126-25ededa6b142',
   numberFormat: '20202020-7f40-4e7f-b126-11c0eda6b141',
 } as const;
-
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
   name: '20202020-ba07-4ffd-ba63-009491f5749c',
   position: '20202020-c2bd-4e16-bb9a-c8b0411bf49d',
@@ -589,7 +560,6 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   activity: ACTIVITY_STANDARD_FIELD_IDS,
   attachment: ATTACHMENT_STANDARD_FIELD_IDS,
   blocklist: BLOCKLIST_STANDARD_FIELD_IDS,
-  behavioralEvent: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS,
   calendarChannelEventAssociation:
     CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS,
   calendarChannel: CALENDAR_CHANNEL_STANDARD_FIELD_IDS,
@@ -600,7 +570,6 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   connectedAccount: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS,
   dashboard: DASHBOARD_STANDARD_FIELD_IDS,
   favorite: FAVORITE_STANDARD_FIELD_IDS,
-  auditLog: AUDIT_LOGS_STANDARD_FIELD_IDS,
   messageChannelMessageAssociation:
     MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS,
   messageChannel: MESSAGE_CHANNEL_STANDARD_FIELD_IDS,

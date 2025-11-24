@@ -98,14 +98,23 @@ export class PermissionsService {
         [PermissionFlagType.WORKSPACE_MEMBERS]: false,
         [PermissionFlagType.ROLES]: false,
         [PermissionFlagType.DATA_MODEL]: false,
-        [PermissionFlagType.ADMIN_PANEL]: false,
         [PermissionFlagType.SECURITY]: false,
         [PermissionFlagType.WORKFLOWS]: false,
+        [PermissionFlagType.APPLICATIONS]: false,
+        [PermissionFlagType.LAYOUTS]: false,
+        [PermissionFlagType.VIEWS]: false,
+        [PermissionFlagType.BILLING]: false,
+        [PermissionFlagType.AI_SETTINGS]: false,
+        [PermissionFlagType.AI]: false,
+        [PermissionFlagType.UPLOAD_FILE]: false,
+        [PermissionFlagType.DOWNLOAD_FILE]: false,
         [PermissionFlagType.SEND_EMAIL_TOOL]: false,
         [PermissionFlagType.IMPORT_CSV]: false,
         [PermissionFlagType.EXPORT_CSV]: false,
+        [PermissionFlagType.CONNECTED_ACCOUNTS]: false,
         [PermissionFlagType.IMPERSONATE]: false,
         [PermissionFlagType.SSO_BYPASS]: false,
+        [PermissionFlagType.PROFILE_INFORMATION]: false,
       },
       objectsPermissions: {},
     }) as const satisfies UserWorkspacePermissions;
@@ -179,7 +188,11 @@ export class PermissionsService {
     role: RoleEntity,
     setting: PermissionFlagType,
   ): boolean {
-    if (role.canUpdateAllSettings === true) {
+    const hasBasePermission = this.isToolPermission(setting)
+      ? role.canAccessAllTools
+      : role.canUpdateAllSettings;
+
+    if (hasBasePermission === true) {
       return true;
     }
 

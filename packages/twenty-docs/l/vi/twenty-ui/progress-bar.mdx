@@ -1,0 +1,77 @@
+---
+title: Phản hồi
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+Chỉ ra tiến độ hoặc đếm ngược và di chuyển từ phải sang trái.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { ProgressBar } from "twenty-ui/feedback";
+
+export const MyComponent = () => {
+  return (
+    <ProgressBar
+      duration={6000}
+      delay={0}
+      easing="easeInOut"
+      barHeight={10}
+      barColor="#4bb543"
+      autoStart={true}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Thuộc Tính      | Loại    | Mô tả                                                                            | Mặc định  |
+| --------------- | ------- | -------------------------------------------------------------------------------- | --------- |
+| thời lượng      | số      | Tổng thời lượng của hoạt ảnh thanh tiến trình tính bằng milliseconds             | 3         |
+| delay           | số      | Độ trễ khi bắt đầu hoạt ảnh thanh tiến trình tính bằng milliseconds              | 0         |
+| easing          | string  | Hàm làm dịu cho hoạt ảnh thanh tiến trình                                        | easeInOut |
+| chiều cao thanh | số      | Chiều cao của thanh tính bằng pixel                                              | 24        |
+| màu thanh       | string  | Màu của thanh                                                                    | gray80    |
+| bắt đầu tự động | boolean | Nếu `true`, hoạt ảnh thanh tiến trình sẽ bắt đầu tự động khi thành phần được gắn | `đúng`    |
+
+</Tab>
+</Tabs>
+
+## Thanh tiến trình hình tròn
+
+Chỉ ra tiến độ của một tác vụ, thường được sử dụng trong màn hình tải hoặc các khu vực nơi bạn muốn truyền đạt quá trình đang diễn ra cho người dùng.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
+
+export const MyComponent = () => {
+  return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Thuộc Tính       | Loại   | Mô tả                                     | Mặc định     |
+| ---------------- | ------ | ----------------------------------------- | ------------ |
+| kích cỡ          | số     | Kích thước của thanh tiến trình hình tròn | 50           |
+| chiều rộng thanh | số     | Chiều rộng của đường thanh tiến trình     | 5            |
+| màu thanh        | string | Màu của thanh tiến trình                  | currentColor |
+
+</Tab>
+
+</Tabs>

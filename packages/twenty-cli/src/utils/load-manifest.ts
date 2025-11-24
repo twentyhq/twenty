@@ -1,52 +1,51 @@
 import * as fs from 'fs-extra';
+import { posix, relative, sep } from 'path';
 import {
-  sys,
-  getDecorators,
-  readConfigFile,
-  parseJsonConfigFileContent,
-  formatDiagnosticsWithColorAndContext,
-  createProgram,
   Decorator,
-  isPropertyAccessExpression,
-  isNumericLiteral,
-  SyntaxKind,
-  isArrayLiteralExpression,
   Expression,
-  isPropertyAssignment,
-  isComputedPropertyName,
-  isStringLiteralLike,
-  isShorthandPropertyAssignment,
-  isIdentifier,
   FunctionDeclaration,
-  VariableDeclaration,
-  Program,
-  Node,
-  isClassDeclaration,
-  isCallExpression,
-  isObjectLiteralExpression,
-  forEachChild,
-  SourceFile,
-  isVariableStatement,
-  isArrowFunction,
-  isFunctionExpression,
-  isExportAssignment,
   Modifier,
-  isPropertyDeclaration,
+  Node,
+  Program,
+  SourceFile,
+  SyntaxKind,
+  VariableDeclaration,
+  forEachChild,
+  getDecorators,
+  isArrayLiteralExpression,
+  isArrowFunction,
+  isCallExpression,
+  isClassDeclaration,
+  isComputedPropertyName,
+  isExportAssignment,
+  isFunctionExpression,
+  isIdentifier,
+  isImportDeclaration,
   isNoSubstitutionTemplateLiteral,
+  isNumericLiteral,
+  isObjectLiteralExpression,
+  isPropertyAccessExpression,
+  isPropertyAssignment,
+  isPropertyDeclaration,
+  isShorthandPropertyAssignment,
+  isStringLiteralLike,
   isTemplateExpression,
+  isVariableStatement,
 } from 'typescript';
+import { GENERATED_FOLDER_NAME } from '../services/generate.service';
 import {
   AppManifest,
   Application,
+  FieldMetadata,
   ObjectManifest,
   PackageJson,
   ServerlessFunctionManifest,
   Sources,
-  FieldMetadata,
 } from '../types/config.types';
-import { posix, relative, sep, resolve, join } from 'path';
-import { parseJsoncFile, parseTextFile } from '../utils/jsonc-parser';
 import { findPathFile } from '../utils/find-path-file';
+import { getTsProgramAndDiagnostics } from '../utils/get-ts-program-and-diagnostics';
+import { parseJsoncFile, parseTextFile } from '../utils/jsonc-parser';
+import { formatAndWarnTsDiagnostics } from './format-and-warn-ts-diagnostics';
 
 type JSONValue =
   | string
@@ -55,32 +54,6 @@ type JSONValue =
   | null
   | JSONValue[]
   | { [k: string]: JSONValue };
-
-const getProgramFromTsconfig = (
-  appPath: string,
-  tsconfigPath = 'tsconfig.json',
-) => {
-  const configFile = readConfigFile(join(appPath, tsconfigPath), sys.readFile);
-  if (configFile.error)
-    throw new Error(
-      formatDiagnosticsWithColorAndContext([configFile.error], {
-        getCanonicalFileName: (f) => f,
-        getCurrentDirectory: sys.getCurrentDirectory,
-        getNewLine: () => sys.newLine,
-      }),
-    );
-  const parsed = parseJsonConfigFileContent(configFile.config, sys, appPath);
-  if (parsed.errors.length) {
-    throw new Error(
-      formatDiagnosticsWithColorAndContext(parsed.errors, {
-        getCanonicalFileName: (f) => f,
-        getCurrentDirectory: sys.getCurrentDirectory,
-        getNewLine: () => sys.newLine,
-      }),
-    );
-  }
-  return createProgram(parsed.fileNames, parsed.options);
-};
 
 const isDecoratorNamed = (node: Decorator, name: string): node is Decorator => {
   const expr = node.expression;
@@ -171,8 +144,10 @@ const collectObjects = (program: Program) => {
     const visit = (node: Node) => {
       if (isClassDeclaration(node) && getDecorators(node)?.length) {
         const decorators = getDecorators(node);
-        const objectDec = decorators?.find((d) =>
-          isDecoratorNamed(d, 'ObjectMetadata'),
+        const objectDec = decorators?.find(
+          (d) =>
+            isDecoratorNamed(d, 'ObjectMetadata') ||
+            isDecoratorNamed(d, 'Object'),
         );
         if (objectDec) {
           const cfg = getFirstArgObject(objectDec);
@@ -184,8 +159,10 @@ const collectObjects = (program: Program) => {
                 continue;
               }
 
-              const fieldDec = getDecorators(member)?.find((d) =>
-                isDecoratorNamed(d, 'FieldMetadata'),
+              const fieldDec = getDecorators(member)?.find(
+                (d) =>
+                  isDecoratorNamed(d, 'FieldMetadata') ||
+                  isDecoratorNamed(d, 'Field'),
               );
 
               if (!fieldDec) {
@@ -388,23 +365,6 @@ const collectServerlessFunctions = (program: Program, appPath: string) => {
   return serverlessFunctions;
 };
 
-const validateProgram = (program: Program) => {
-  const diagnostics = [
-    ...program.getSyntacticDiagnostics(),
-    ...program.getSemanticDiagnostics(),
-    ...program.getGlobalDiagnostics(),
-  ];
-
-  if (diagnostics.length > 0) {
-    const formatted = formatDiagnosticsWithColorAndContext(diagnostics, {
-      getCanonicalFileName: (f) => f,
-      getCurrentDirectory: sys.getCurrentDirectory,
-      getNewLine: () => sys.newLine,
-    });
-    throw new Error(`TypeScript validation failed:\n${formatted}`);
-  }
-};
-
 const setNested = (root: Sources, parts: string[], value: string) => {
   let cur: Sources = root;
   for (let i = 0; i < parts.length; i++) {
@@ -419,14 +379,10 @@ const setNested = (root: Sources, parts: string[], value: string) => {
 };
 
 const loadFolderContentIntoJson = async (
-  sourcePath = '.',
-  tsconfigPath = 'tsconfig.json',
+  program: Program,
+  appPath: string,
 ): Promise<Sources> => {
   const sources: Sources = {};
-  const baseAbs = resolve(sourcePath);
-
-  // Build the program from tsconfig (uses your getProgramFromTsconfig)
-  const program: Program = getProgramFromTsconfig(baseAbs, tsconfigPath);
 
   // Iterate only files the TS program knows about.
   for (const sf of program.getSourceFiles()) {
@@ -434,7 +390,7 @@ const loadFolderContentIntoJson = async (
 
     // Skip .d.ts and anything outside sourcePath
     if (sf.isDeclarationFile) continue;
-    if (!abs.startsWith(baseAbs + sep) && abs !== baseAbs) continue;
+    if (!abs.startsWith(appPath + sep) && abs !== appPath) continue;
 
     // Keep only TS/TSX files
     if (!(abs.endsWith('.ts') || abs.endsWith('.tsx'))) continue;
@@ -442,7 +398,7 @@ const loadFolderContentIntoJson = async (
     // Optional extra guard (usually unnecessary if tsconfig excludes node_modules)
     if (abs.includes(`${sep}node_modules${sep}`)) continue;
 
-    const relFromRoot = relative(baseAbs, abs);
+    const relFromRoot = relative(appPath, abs);
     const parts = relFromRoot.split(sep);
 
     const content = await fs.readFile(abs, 'utf8');
@@ -491,15 +447,52 @@ export const extractTwentyAppConfig = (program: Program): Application => {
   throw new Error('Could not find default exported ApplicationConfig');
 };
 
+const isGeneratedModuleUsedInProgram = (program: Program): boolean => {
+  for (const sf of program.getSourceFiles()) {
+    if (sf.isDeclarationFile) continue;
+
+    let found = false;
+
+    const visit = (node: Node): void => {
+      if (found) return;
+
+      if (isImportDeclaration(node)) {
+        const moduleSpecifier = node.moduleSpecifier;
+
+        if (isStringLiteralLike(moduleSpecifier)) {
+          const moduleText = moduleSpecifier.text;
+
+          // Match ../../generated, ../generated, ./foo/generated, etc.
+          const isGeneratedModule =
+            moduleText === GENERATED_FOLDER_NAME ||
+            moduleText.endsWith(`/${GENERATED_FOLDER_NAME}`);
+
+          if (isGeneratedModule && node.importClause) {
+            found = true;
+            return;
+          }
+        }
+      }
+
+      forEachChild(node, visit);
+    };
+
+    visit(sf);
+
+    if (found) return true;
+  }
+
+  return false;
+};
+
 export const loadManifest = async (
-  path?: string,
+  appPath: string,
 ): Promise<{
   packageJson: PackageJson;
   yarnLock: string;
   manifest: AppManifest;
+  shouldGenerate: boolean;
 }> => {
-  const appPath = path ?? process.cwd();
-
   const packageJson = await parseJsoncFile(
     await findPathFile(appPath, 'package.json'),
   );
@@ -508,17 +501,22 @@ export const loadManifest = async (
     await findPathFile(appPath, 'yarn.lock'),
   );
 
-  const program = getProgramFromTsconfig(appPath, 'tsconfig.json');
+  const { diagnostics, program } = await getTsProgramAndDiagnostics({
+    appPath,
+  });
 
-  validateProgram(program);
+  formatAndWarnTsDiagnostics({
+    diagnostics,
+  });
 
-  const [objects, serverlessFunctions, application, sources] =
-    await Promise.all([
-      Promise.resolve(collectObjects(program)),
-      Promise.resolve(collectServerlessFunctions(program, appPath)),
-      Promise.resolve(extractTwentyAppConfig(program)),
-      loadFolderContentIntoJson(appPath),
-    ]);
+  const [objects, serverlessFunctions, application, sources] = [
+    collectObjects(program),
+    collectServerlessFunctions(program, appPath),
+    extractTwentyAppConfig(program),
+    await loadFolderContentIntoJson(program, appPath),
+  ];
+
+  const shouldGenerate = isGeneratedModuleUsedInProgram(program);
 
   return {
     packageJson,
@@ -529,5 +527,6 @@ export const loadManifest = async (
       serverlessFunctions,
       sources,
     },
+    shouldGenerate,
   };
 };

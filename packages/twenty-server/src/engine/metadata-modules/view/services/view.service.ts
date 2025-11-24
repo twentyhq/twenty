@@ -9,6 +9,7 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-core-views-graphql-operation.constant';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import {
   ViewException,
   ViewExceptionCode,
@@ -27,8 +28,11 @@ export class ViewService {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
-  async findByWorkspaceId(workspaceId: string): Promise<ViewEntity[]> {
-    return this.viewRepository.find({
+  async findByWorkspaceId(
+    workspaceId: string,
+    userWorkspaceId?: string,
+  ): Promise<ViewEntity[]> {
+    const views = await this.viewRepository.find({
       where: {
         workspaceId,
         deletedAt: IsNull(),
@@ -43,13 +47,30 @@ export class ViewService {
         'viewFilterGroups',
       ],
     });
+
+    return views.filter((view) => {
+      if (view.visibility === ViewVisibility.WORKSPACE) {
+        return true;
+      }
+
+      if (
+        view.visibility === ViewVisibility.UNLISTED &&
+        isDefined(userWorkspaceId) &&
+        view.createdByUserWorkspaceId === userWorkspaceId
+      ) {
+        return true;
+      }
+
+      return false;
+    });
   }
 
   async findByObjectMetadataId(
     workspaceId: string,
     objectMetadataId: string,
+    userWorkspaceId?: string,
   ): Promise<ViewEntity[]> {
-    return this.viewRepository.find({
+    const views = await this.viewRepository.find({
       where: {
         workspaceId,
         objectMetadataId,
@@ -64,6 +85,23 @@ export class ViewService {
         'viewGroups',
         'viewFilterGroups',
       ],
+    });
+
+    // Apply visibility filtering
+    return views.filter((view) => {
+      if (view.visibility === ViewVisibility.WORKSPACE) {
+        return true;
+      }
+
+      if (
+        view.visibility === ViewVisibility.UNLISTED &&
+        isDefined(userWorkspaceId) &&
+        view.createdByUserWorkspaceId === userWorkspaceId
+      ) {
+        return true;
+      }
+
+      return false;
     });
   }
 
@@ -82,6 +120,29 @@ export class ViewService {
         'viewGroups',
         'viewFilterGroups',
       ],
+    });
+
+    return view || null;
+  }
+
+  async findByIdIncludingDeleted(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewEntity | null> {
+    const view = await this.viewRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+      },
+      relations: [
+        'workspace',
+        'viewFields',
+        'viewFilters',
+        'viewSorts',
+        'viewGroups',
+        'viewFilterGroups',
+      ],
+      withDeleted: true,
     });
 
     return view || null;
@@ -132,6 +193,7 @@ export class ViewService {
     id: string,
     workspaceId: string,
     updateData: Partial<ViewEntity>,
+    userWorkspaceId?: string,
   ): Promise<ViewEntity> {
     const existingView = await this.findById(id, workspaceId);
 
@@ -145,9 +207,23 @@ export class ViewService {
       );
     }
 
+    // If changing visibility from WORKSPACE to UNLISTED, ensure createdByUserWorkspaceId is set
+    // This prevents the view from disappearing for the user making the change
+    const dataToUpdate = { ...updateData };
+
+    if (
+      isDefined(updateData.visibility) &&
+      updateData.visibility === ViewVisibility.UNLISTED &&
+      existingView.visibility === ViewVisibility.WORKSPACE &&
+      isDefined(userWorkspaceId)
+    ) {
+      // Re-allocate the view to the current user if it has no owner or a different owner
+      dataToUpdate.createdByUserWorkspaceId = userWorkspaceId;
+    }
+
     const updatedView = await this.viewRepository.save({
       id,
-      ...updateData,
+      ...dataToUpdate,
     });
 
     await this.flushGraphQLCache(workspaceId);
@@ -176,7 +252,7 @@ export class ViewService {
   }
 
   async destroy(id: string, workspaceId: string): Promise<boolean> {
-    const view = await this.findById(id, workspaceId);
+    const view = await this.findByIdIncludingDeleted(id, workspaceId);
 
     if (!isDefined(view)) {
       throw new ViewException(
@@ -230,6 +306,21 @@ export class ViewService {
     }
 
     return viewName;
+  }
+
+  canUserUpdateView(
+    view: ViewEntity,
+    userWorkspaceId: string | undefined,
+    userHasViewsPermission: boolean,
+  ): boolean {
+    if (userHasViewsPermission) {
+      return true;
+    }
+
+    return (
+      view.visibility === ViewVisibility.UNLISTED &&
+      view.createdByUserWorkspaceId === userWorkspaceId
+    );
   }
 
   async flushGraphQLCache(workspaceId: string): Promise<void> {

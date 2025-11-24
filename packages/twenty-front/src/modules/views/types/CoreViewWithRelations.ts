@@ -9,6 +9,7 @@ import {
   type ViewKey,
   type ViewOpenRecordIn,
   type ViewType,
+  type ViewVisibility,
 } from '~/generated-metadata/graphql';
 
 export type CoreViewWithRelations = {
@@ -37,5 +38,7 @@ export type CoreViewWithRelations = {
   icon: string;
   openRecordIn: ViewOpenRecordIn;
   anyFieldFilterValue?: string | null;
+  visibility: ViewVisibility;
+  createdByUserWorkspaceId?: string | null;
   __typename?: 'CoreView';
 };

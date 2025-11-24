@@ -487,7 +487,7 @@ describe('failing createOne FieldMetadataService morph relation fields v2', () =
         input: {
           label: 'colliding field label',
           name: `fieldNamePersonForMorphRelationSecondId`,
-          objectMetadataId: createdObjectMetadataPersonId,
+          objectMetadataId: createdObjectMetadataCompanyId,
           type: FieldMetadataType.TEXT,
         },
         expectToFail: true,

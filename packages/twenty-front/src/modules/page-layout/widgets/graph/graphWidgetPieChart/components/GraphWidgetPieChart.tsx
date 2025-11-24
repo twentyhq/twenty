@@ -69,7 +69,6 @@ export const GraphWidgetPieChart = ({
 
   const { createTooltipData } = usePieChartTooltip({
     enrichedData,
-    data,
     formatOptions,
     displayType,
   });
@@ -91,12 +90,7 @@ export const GraphWidgetPieChart = ({
     const tooltipData = createTooltipData(datum);
     if (!isDefined(tooltipData)) return null;
 
-    return (
-      <GraphWidgetTooltip
-        items={[tooltipData.tooltipItem]}
-        showClickHint={tooltipData.showClickHint}
-      />
-    );
+    return <GraphWidgetTooltip items={[tooltipData.tooltipItem]} />;
   };
 
   return (

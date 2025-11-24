@@ -1,0 +1,88 @@
+---
+title: App-værktøjstip
+image: /images/user-guide/tips/light-bulb.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
+</Frame>
+
+En kort besked, der viser yderligere information, når en bruger interagerer med et element.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
+
+export const MyComponent = () => {
+  return (
+    <>
+      <p id="hoverText" style={{ display: "inline-block" }}>
+        Customer Insights
+      </p>
+      <AppTooltip
+        className
+        anchorSelect="#hoverText"
+        content="Explore customer behavior and preferences"
+        delayHide={0}
+        offset={6}
+        noArrow={false}
+        isOpen={true}
+        place="bottom"
+        positionStrategy="absolute"
+      />
+    </>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Egenskaber       | Type                                          | Beskrivelse                                                                                                                                                                                                                 |
+| ---------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className        | streng                                        | Valgfri CSS-klasse for yderligere styling                                                                                                                                                                                   |
+| anchorSelect     | CSS-vælger                                    | Vælger for værktøjstip anker (elementet, der udløser værktøjstip)                                                                                                                                        |
+| indhold          | streng                                        | Indholdet, du vil vise inden for værktøjstip                                                                                                                                                                                |
+| delayHide        | tal                                           | Forsinkelsen i sekunder før værktøjstip skjules, efter markøren forlader ankeret                                                                                                                                            |
+| offset           | tal                                           | Forskydningen i pixels til positionering af værktøjstip                                                                                                                                                                     |
+| ingenPil         | boolean                                       | Hvis `true`, skjules pilen på værktøjstippet                                                                                                                                                                                |
+| isOpen           | boolean                                       | Hvis `true`, er værktøjstippet åbent som standard                                                                                                                                                                           |
+| placering        | `placesType` streng fra `react-tooltip`       | Angiver placeringen af værktøjstippet. Værdier inkluderer `bund`, `venstre`, `højre`, `top`, `top-start`, `top-end`, `højre-start`, `højre-end`, `bund-start`, `bund-end`, `venstre-start` og `venstre-end` |
+| positionStrategi | `positionStrategy` streng fra `react-tooltip` | Positionsstrategi for værktøjstip. Har to værdier: `absolut` og `fast`                                                                                                                      |
+
+</Tab>
+
+</Tabs>
+
+## Overflowing Text with Tooltip
+
+Handles overflowing text and displays a tooltip when the text overflows.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  const crmTaskDescription =
+    'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
+
+  return <OverflowingTextWithTooltip text={crmTaskDescription} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Egenskaber | Type   | Beskrivelse                                                  |
+| ---------- | ------ | ------------------------------------------------------------ |
+| tekst      | streng | The content you want to display in the overflowing text area |
+
+</Tab>
+
+</Tabs>

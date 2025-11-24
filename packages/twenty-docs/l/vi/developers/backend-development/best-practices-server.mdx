@@ -1,0 +1,27 @@
+---
+title: Các thực tiễn tốt nhất
+image: '"/images/user-guide/tips/light-bulb.png"'
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
+</Frame>
+
+This document outlines the best practices you should follow when working on the backend.
+
+## Tuân theo phương pháp tiếp cận modular
+
+Backend tuân theo phương pháp tiếp cận modular, đây là nguyên tắc cơ bản khi làm việc với NestJS. Hãy chắc chắn rằng bạn chia nhỏ mã của mình thành các mô-đun có thể tái sử dụng để duy trì một cơ sở mã sạch sẽ và có tổ chức.
+Mỗi mô-đun nên bao hàm một chức năng hoặc tính năng cụ thể và có một phạm vi được xác định rõ ràng. Phương pháp tiếp cận modular này cho phép tách biệt rõ ràng các mối quan tâm và loại bỏ sự phức tạp không cần thiết.
+
+## Expose services to use in modules
+
+Luôn tạo các dịch vụ có trách nhiệm rõ ràng và đơn lẻ, điều này tăng cường khả năng đọc và bảo trì mã. Đặt tên dịch vụ một cách mô tả và nhất quán.
+
+Bạn cũng nên làm lộ các dịch vụ mà bạn muốn sử dụng trong các mô-đun khác. Exposing services to other modules is possible through NestJS's powerful dependency injection system, and promotes loose coupling between components.
+
+## Tránh sử dụng kiểu `any`
+
+Khi bạn khai báo một biến dưới dạng `any`, trình kiểm tra kiểu của TypeScript không thực hiện kiểm tra loại nào, điều này làm cho việc gán bất kỳ loại giá trị nào cho biến là có thể. TypeScript sử dụng suy luận kiểu để xác định loại biến dựa trên giá trị. Bằng cách khai báo dưới dạng `any`, TypeScript không còn có thể suy luận kiểu được nữa. Điều này làm cho việc bắt lỗi liên quan đến kiểu trong quá trình phát triển trở nên khó khăn, dẫn đến lỗi runtime và làm cho mã ít bảo trì hơn, ít đáng tin cậy hơn và khó hiểu hơn đối với người khác.
+
+Đây là lý do tại sao mọi thứ đều nên có một kiểu. Vì vậy, nếu bạn tạo một đối tượng mới với tên và họ, bạn nên tạo một giao diện hoặc kiểu chứa tên và họ để xác định hình dạng của đối tượng bạn đang thao tác.

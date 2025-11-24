@@ -1,0 +1,383 @@
+---
+title: 업그레이드 가이드
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+## 일반 가이드라인
+
+**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
+
+To restore backup, run `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
+
+Docker Compose를 사용한 경우, 다음 단계를 따르십시오:
+
+1. Twenty가 실행되고 있는 호스트의 터미널에서 Twenty를 종료하십시오: `docker compose down`
+
+2. `TAG` 값을 docker-compose와 가까운 .env 파일에 변경하여 버전을 업그레이드하십시오. ( We recommend consuming `major.minor` version such as `v0.53` )
+
+3. `docker compose up -d`로 Twenty를 다시 온라인 상태로 전환하십시오.
+
+여러 버전으로 인스턴스를 업그레이드하려는 경우, 예를 들어 v0.33.0에서 v0.35.0으로 업그레이드하려면 v0.33.0에서 v0.34.0으로, 그런 다음 v0.34.0에서 v0.35.0으로 업그레이드하십시오.
+
+**Make sure that after each upgraded version you have non-corrupted backup.**
+
+## 버전별 업그레이드 단계
+
+## v1.0
+
+안녕하세요 Twenty v1.0! 🎉
+
+## v0.60
+
+### 성능 개선
+
+메타데이터 API와의 모든 상호작용이 최적화되어, 특히 객체 메타데이터 조작 및 워크스페이스 생성 작업에서 성능이 향상되었습니다.
+
+데이터베이스 쿼리보다는 캐시 히트를 우선시하도록 캐싱 전략을 재구성하여 메타데이터 API 작업의 성능을 대폭 향상시켰습니다.
+
+업그레이드 후 실행 중 문제가 발생하면 캐시를 플러시하여 최신 변경 사항과 동기화해야 할 수도 있습니다. twenty-server 컨테이너에서 이 명령을 실행하십시오:
+
+```bash
+yarn command:prod cache:flush
+```
+
+### v0.55
+
+Twenty 인스턴스를 v0.55 이미지로 업그레이드하십시오.
+
+이제 명령어를 실행할 필요가 없으며, 새로운 이미지는 모든 필요한 마이그레이션을 자동으로 처리할 것입니다.
+
+### `사용자에게 권한이 없습니다` 오류
+
+업그레이드 후 대부분의 요청에서 권한 오류가 발생하면 캐시를 플러시하여 최신 권한을 다시 계산해야 할 수도 있습니다.
+
+`twenty-server` 컨테이너에서 실행하십시오:
+
+```bash
+yarn command:prod cache:flush
+```
+
+이 문제는 이 Twenty 버전에만 해당하며, 향후 업그레이드에서는 필요하지 않을 것입니다.
+
+### v0.54
+
+버전 `0.53` 이후로 수동 작업이 필요하지 않습니다.
+
+#### 메타데이터 스키마 사용 중단
+
+`metadata` 스키마를 `core` 스키마로 병합하여 `TypeORM`에서 데이터 검색을 간소화했습니다.
+`migrate` 명령 단계를 `upgrade` 명령과 통합했습니다. 서버/작업자 컨테이너 내에서 `migrate`를 수동으로 실행하지 않는 것을 권장합니다.
+
+### Since v0.53
+
+`0.53`부터 업그레이드는 `DockerFile` 내에서 프로그래밍 방식으로 수행되므로 앞으로는 수동으로 명령을 실행할 필요가 없습니다.
+
+인스턴스를 순차적으로 업그레이드하고 주요 버전을 건너뛰지 마십시오(e.g. `0.43.3`에서 `0.44.0`으로의 업그레이드는 가능하지만 `0.43.1`에서 `0.45.0`으로의 업그레이드는 불가능), 그렇지 않으면 워크스페이스 버전 비동기화가 발생하여 런타임 오류 및 기능 누락이 발생할 수 있습니다.
+
+워크스페이스가 올바르게 마이그레이션되었는지 확인하려면 `core.workspace` 테이블에서 데이터베이스의 버전을 검토할 수 있습니다.
+
+항상 현재 Twenty 인스턴스의 `주.소` 버전 범위 내에 있어야 하며, 인스턴스 버전은 admin 패널에서 볼 수 있습니다(`/설정/admin-panel`, 사용자가 데이터베이스에서 `canAccessFullAdminPanel` 속성이 true로 설정된 경우 접근 가능) 또는 `twenty-server` 컨테이너에서 `echo $APP_VERSION`을 실행하여 확인할 수 있습니다.
+
+비동기화된 워크스페이스 버전을 수정하려면 해당 Twenty 버전의 관련 업그레이드 가이드를 따르고 원하는 버전에 도달할 때까지 순차적으로 업그레이드해야 합니다.
+
+#### `auditLog` 제거
+
+auditLog 표준 객체를 제거했으며, 이로 인해 이 마이그레이션 이후 백업 크기가 상당히 줄어들 수 있습니다.
+
+### v0.51 to v0.52
+
+Twenty 인스턴스를 v0.52 이미지로 업그레이드하십시오.
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+#### 버전이 `0.52.0`과 `0.52.6` 사이에 차단된 워크스페이스가 있습니다.
+
+불행히도 `0.52.0` 및 `0.52.6`은 dockerHub에서 완전히 삭제되었습니다.
+데이터베이스의 워크스페이스 버전을 `0.51.0`으로 수동 업데이트하고 바로 위 업그레이드 가이드를 따라 Twenty 버전 `0.52.11`로 업그레이드해야 합니다.
+
+### v0.50 to v0.51
+
+Twenty 인스턴스를 v0.51 이미지로 업그레이드하십시오.
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### v0.44.0 to v0.50.0
+
+Twenty 인스턴스를 v0.50.0 이미지로 업그레이드하십시오.
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+#### Docker-compose.yml 변경
+
+이 버전은 `worker` 서비스가 `server-local-data` 볼륨에 접근할 수 있도록 `docker-compose.yml` 변경을 포함합니다.
+로컬 `docker-compose.yml`을 [v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml)로 업데이트하십시오.
+
+### v0.43.0 to v0.44.0
+
+Twenty 인스턴스를 v0.44.0 이미지로 업그레이드하십시오.
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### v0.42.0 to v0.43.0
+
+Twenty 인스턴스를 v0.43.0 이미지로 업그레이드하십시오.
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+이 버전에서는 docker-compose.yml 이미지가 postgres:16으로 전환되었습니다.
+
+#### (옵션 1) 데이터베이스 마이그레이션
+
+기존 postgres-spilo 이미지를 유지해도 되지만, docker-compose.yml에서 버전을 0.43.0으로 고정해야 합니다.
+
+#### (옵션 2) 데이터베이스 마이그레이션
+
+데이터베이스를 새로운 postgres:16 이미지로 마이그레이션하려면, 다음 단계를 따르십시오:
+
+1. 이전 postgres-spilo 컨테이너에서 데이터베이스를 덤프하십시오.
+
+```
+docker exec -it twenty-db-1 sh
+pg_dump -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} > databases_backup.sql
+exit
+docker cp twenty-db-1:/home/postgres/databases_backup.sql .
+```
+
+덤프 파일이 비어 있지 않은지 확인하십시오.
+
+2. docker-compose.yml을 postgres:16 이미지를 사용하도록 [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) 파일에 따라 업그레이드하십시오.
+
+3. 새로운 postgres:16 컨테이너에 데이터베이스를 복원하십시오.
+
+```
+docker cp databases_backup.sql twenty-db-1:/databases_backup.sql
+docker exec -it twenty-db-1 sh
+psql -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} -f databases_backup.sql
+exit
+```
+
+### v0.41.0 to v0.42.0
+
+Twenty 인스턴스를 v0.42.0 이미지로 업그레이드하십시오.
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.42
+```
+
+**환경 변수**
+
+- 삭제됨: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
+- 추가됨: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
+
+### v0.40.0 to v0.41.0
+
+Twenty 인스턴스를 v0.41.0 이미지로 업그레이드하십시오.
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.41
+```
+
+**환경 변수**
+
+- 삭제됨: `AUTH_MICROSOFT_TENANT_ID`
+
+### v0.35.0 to v0.40.0
+
+Twenty 인스턴스를 v0.40.0 이미지로 업그레이드하십시오.
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.40
+```
+
+**환경 변수**
+
+- 추가됨: `IS_EMAIL_VERIFICATION_REQUIRED`, `EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`, `WORKFLOW_EXEC_THROTTLE_LIMIT`, `WORKFLOW_EXEC_THROTTLE_TTL`
+
+### v0.34.0 to v0.35.0
+
+Twenty 인스턴스를 v0.35.0 이미지로 업그레이드하십시오.
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.35
+```
+
+`yarn database:migrate:prod` 명령은 데이터베이스 구조(핵심 및 메타데이터 스키마)에 마이그레이션을 적용합니다. `yarn command:prod upgrade-0.35`는 모든 워크스페이스의 데이터 마이그레이션을 처리합니다.
+
+**환경 변수**
+
+- `ENABLE_DB_MIGRATIONS`를 `DISABLE_DB_MIGRATIONS`로 교체했습니다(기본값은 이제 `false`이며, 별도의 설정이 필요하지 않을 것입니다.)
+
+### v0.33.0 to v0.34.0
+
+Twenty 인스턴스를 v0.34.0 이미지로 업그레이드하십시오.
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.34
+```
+
+`yarn database:migrate:prod` 명령은 데이터베이스 구조(핵심 및 메타데이터 스키마)에 마이그레이션을 적용합니다. `yarn command:prod upgrade-0.34`는 모든 워크스페이스의 데이터 마이그레이션을 처리합니다.
+
+**환경 변수**
+
+- 삭제됨: `FRONT_BASE_URL`
+- 추가됨: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
+
+프런트엔드 URL을 처리하는 방식을 업데이트했습니다.
+이제 `FRONT_DOMAIN`, `FRONT_PROTOCOL` 및 `FRONT_PORT` 변수를 사용하여 프런트엔드 URL을 설정할 수 있습니다.
+`FRONT_DOMAIN`이 설정되지 않은 경우 프런트엔드 URL은 `SERVER_URL`로 대체됩니다.
+
+### v0.32.0 to v0.33.0
+
+Twenty 인스턴스를 v0.33.0 이미지로 업그레이드하십시오.
+
+```
+yarn command:prod cache:flush
+yarn database:migrate:prod
+yarn command:prod upgrade-0.33
+```
+
+`yarn command:prod cache:flush` 명령은 Redis 캐시를 플러시합니다.
+`yarn database:migrate:prod` 명령은 데이터베이스 구조(핵심 및 메타데이터 스키마)에 마이그레이션을 적용합니다. `yarn command:prod upgrade-0.33`는 모든 워크스페이스의 데이터 마이그레이션을 처리합니다.
+
+이 버전부터 DB용으로 twenty-postgres 이미지가 폐기되어 twenty-postgres-spilo가 대신 사용되었습니다.
+twenty-postgres 이미지를 계속 사용하려면, docker-compose.yml에서 `twentycrm/twenty-postgres:${TAG}`를 `twentycrm/twenty-postgres`로 교체하십시오.
+
+### v0.31.0 to v0.32.0
+
+Twenty 인스턴스를 v0.32.0 이미지로 업그레이드하십시오.
+
+**스키마 및 데이터 마이그레이션**
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.32
+```
+
+`yarn database:migrate:prod` 명령은 데이터베이스 구조(핵심 및 메타데이터 스키마)에 마이그레이션을 적용합니다. `yarn command:prod upgrade-0.32`는 모든 워크스페이스의 데이터 마이그레이션을 처리합니다.
+
+**환경 변수**
+
+Redis 연결을 처리하는 방식을 업데이트했습니다.
+
+- 삭제됨: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
+- 추가됨: `REDIS_URL`
+
+`.env` 파일을 업데이트하여 개별 Redis 연결 매개변수 대신 새 `REDIS_URL` 변수를 사용하십시오.
+
+JWT 토큰을 처리하는 방식도 간소화했습니다.
+
+- 삭제됨: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
+- 추가됨: `APP_SECRET`
+
+.env 파일을 업데이트하여 개별 토큰 비밀 대신 새로운 `APP_SECRET` 변수를 사용하십시오 (이전 비밀을 그대로 사용하거나 새 임의 문자열을 생성할 수 있습니다.)
+
+**연결된 계정**
+
+Google 이메일 및 캘린더 동기화를 위해 연결된 계정을 사용하는 경우, Google 관리 콘솔에서 [People API](https://developers.google.com/people)를 활성화해야 합니다.
+
+### v0.30.0 to v0.31.0
+
+Twenty 인스턴스를 v0.31.0 이미지로 업그레이드하십시오.
+
+**스키마 및 데이터 마이그레이션**:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.31
+```
+
+`yarn database:migrate:prod` 명령은 데이터베이스 구조(핵심 및 메타데이터 스키마)에 마이그레이션을 적용합니다. `yarn command:prod upgrade-0.31`는 모든 워크스페이스의 데이터 마이그레이션을 처리합니다.
+
+### v0.24.0 to v0.30.0
+
+Twenty 인스턴스를 v0.30.0 이미지로 업그레이드하십시오.
+
+**Breaking change**:
+To enhance performances, Twenty now requires redis cache to be configured. [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml)을 업데이트하여 이를 반영했습니다.
+구성을 업데이트하고 환경 변수를 적절히 업데이트하십시오:
+
+```
+REDIS_HOST={your-redis-host}
+REDIS_PORT={your-redis-port}
+CACHE_STORAGE_TYPE=redis
+```
+
+**스키마 및 데이터 마이그레이션**:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.30
+```
+
+`yarn database:migrate:prod` 명령은 데이터베이스 구조(핵심 및 메타데이터 스키마)에 마이그레이션을 적용합니다. `yarn command:prod upgrade-0.30`는 모든 워크스페이스의 데이터 마이그레이션을 처리합니다.
+
+### v0.23.0 to v0.24.0
+
+Twenty 인스턴스를 v0.24.0 이미지로 업그레이드하십시오.
+
+다음 명령어를 실행하십시오:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.24
+```
+
+`yarn database:migrate:prod` 명령은 데이터베이스 구조(핵심 및 메타데이터 스키마)에 마이그레이션을 적용합니다. `yarn command:prod upgrade-0.24`는 모든 워크스페이스의 데이터 마이그레이션을 처리합니다.
+
+### v0.22.0 to v0.23.0
+
+Twenty 인스턴스를 v0.23.0 이미지로 업그레이드하십시오.
+
+다음 명령어를 실행하십시오:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.23
+```
+
+`yarn database:migrate:prod` 명령은 데이터베이스에 마이그레이션을 적용합니다.
+`yarn command:prod upgrade-0.23`는 데이터 마이그레이션을 처리하며, 활동을 작업/노트로 전송하는 것도 포함합니다.
+
+### v0.21.0 to v0.22.0
+
+Twenty 인스턴스를 v0.22.0 이미지로 업그레이드하십시오.
+
+다음 명령어를 실행하십시오:
+
+```
+yarn database:migrate:prod
+yarn command:prod workspace:sync-metadata -f
+yarn command:prod upgrade-0.22
+```
+
+`yarn database:migrate:prod` 명령은 데이터베이스에 마이그레이션을 적용합니다.
+`yarn command:prod workspace:sync-metadata -f` 명령은 표준 객체의 정의를 메타데이터 테이블에 동기화하고 기존 워크스페이스에 필요한 마이그레이션을 적용합니다.
+`yarn command:prod upgrade-0.22` 명령은 새 객체 defaultRequestInstrumentationOptions에 적응하기 위한 특정 데이터 변환을 적용합니다.
+
+
+
+

@@ -1,0 +1,109 @@
+---
+title: Команди бекенда
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+## Корисні команди
+
+Ці команди слід виконувати з папки packages/twenty-server.
+From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+
+### Первинне налаштування
+
+```
+npx nx database:reset twenty-server # setup the database with dev seeds
+```
+
+### Запуск сервера
+
+```
+npx nx run twenty-server:start
+```
+
+### Лінт
+
+```
+npx nx run twenty-server:lint # pass --fix to fix lint errors
+```
+
+### Тест
+
+```
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
+```
+
+Примітка: ви можете виконати `npx nx run twenty-server:test:integration:with-db-reset`, якщо потрібно скинути базу даних перед запуском інтеграційних тестів.
+
+### Скидання бази даних
+
+Якщо ви хочете скинути та наповнити базу даних, ви можете виконати наступну команду:
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### Міграції
+
+#### Для об'єктів у схемах Core/Metadata (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### Для об'єктів робочого простору
+
+Немає файлів міграцій, міграції генеруються автоматично для кожного робочого простору,
+зберігаються в базі даних і застосовуються за допомогою цієї команди
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+
+Це скине базу даних і повторно запустить міграції та наповнення.
+
+Переконайтеся, що ви зробили резервну копію будь-яких даних, які хочете зберегти перед виконанням цієї команди.
+
+</Warning>
+
+## Технічний стек
+
+Для бекенду Twenty в основному використовує NestJS.
+
+Prisma була першою ORM, яку ми використовували. Але для того, щоб дозволити користувачам створювати користувацькі поля та об'єкти, нижчий рівень має більше сенсу, оскільки нам потрібно мати тонке управління. Проект зараз використовує TypeORM.
+
+Ось як тепер виглядає технічний стек.
+
+**Core**
+
+- [NestJS](https://nestjs.com/)
+- [TypeORM](https://typeorm.io/)
+- [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**База даних**
+
+- [Postgres](https://www.postgresql.org/)
+
+**Інтеграції з третьою стороною**
+
+- [Sentry](https://sentry.io/welcome/) для відстеження помилок
+
+**Тестування**
+
+- [Jest](https://jestjs.io/)
+
+**Інструменти**
+
+- [Yarn](https://yarnpkg.com/)
+- [ESLint](https://eslint.org/)
+
+**Розробка**
+
+- [AWS EKS](https://aws.amazon.com/eks/)
+

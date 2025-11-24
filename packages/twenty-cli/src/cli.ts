@@ -1,12 +1,11 @@
 #!/usr/bin/env node
-
 import chalk from 'chalk';
 import { Command, CommanderError } from 'commander';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { AppCommand } from './commands/app.command';
 import { AuthCommand } from './commands/auth.command';
-import { ConfigCommand } from './commands/config.command';
+import { ConfigService } from './services/config.service';
 
 const packageJson = JSON.parse(
   readFileSync(join(__dirname, '../package.json'), 'utf-8'),
@@ -20,14 +19,24 @@ program
   .version(packageJson.version);
 
 program.option(
-  '--api-url <url>',
-  'Twenty API URL',
-  process.env.TWENTY_API_URL || 'http://localhost:3000',
+  '--workspace <name>',
+  'Use a specific workspace configuration',
+  'default',
 );
+
+program.hook('preAction', (thisCommand) => {
+  const opts = (thisCommand as any).optsWithGlobals
+    ? (thisCommand as any).optsWithGlobals()
+    : thisCommand.opts();
+  const workspace = opts.workspace;
+  ConfigService.setActiveWorkspace(workspace);
+  console.log(
+    chalk.gray(`👩‍💻 Workspace - ${ConfigService.getActiveWorkspace()}`),
+  );
+});
 
 program.addCommand(new AuthCommand().getCommand());
 program.addCommand(new AppCommand().getCommand());
-program.addCommand(new ConfigCommand().getCommand());
 
 program.exitOverride();
 

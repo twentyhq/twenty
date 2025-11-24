@@ -1,0 +1,458 @@
+---
+title: Menupunkt
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+Et alsidigt menupunkt designet til at blive brugt i en menu eller navigationsliste.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItem } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
+
+  const handleButtonClick = (event) => {
+    console.log("Icon button clicked!", event);
+  };
+
+  return (
+    <MenuItem
+      LeftIcon={IconBell}
+      accent="default"
+      text="Menu item text"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={true}
+      testId="menu-item-1"
+      onClick={handleMenuItemClick}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaber    | Type          | Beskrivelse                                                                                                                        |
+| ------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| VenstreIkon   | IkonKomponent | Et valgfrit venstre ikon der vises før teksten i menupunktet                                                                       |
+| accent        | streng        | Angiver accentfarven for menupunktet. Muligheder inkluderer: `default`, `danger`, og `placeholder` |
+| tekst         | streng        | Tekstindholdet for menupunktet                                                                                                     |
+| iconButtons   | array         | An array of objects representing additional icon buttons associated with the menu item                                             |
+| isTooltipOpen | boolean       | Controls the visibility of the tooltip associated with the menu item                                                               |
+| testId        | string        | Data-testid-attribut for testformål                                                                                                |
+| onClick       | funktion      | Callback function triggered when the menu item is clicked                                                                          |
+| className     | streng        | Valgfrit navn til yderligere styling                                                                                               |
+
+</Tab>
+</Tabs>
+
+## Varianter
+
+The different variants of the menu item component include the following:
+
+### Kommando
+
+A command-style menu item within a menu to indicate keyboard shortcuts.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemCommand } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleCommandClick = () => {
+    console.log("Command clicked!");
+  };
+
+  return (
+    <MenuItemCommand
+      LeftIcon={IconBell}
+      text="First Option"
+      firstHotKey="⌘"
+      secondHotKey="1"
+      isSelected={true}
+      onClick={handleCommandClick}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaber   | Type          | Beskrivelse                                                  |
+| ------------ | ------------- | ------------------------------------------------------------ |
+| VenstreIkon  | IkonKomponent | Et valgfrit venstre ikon der vises før teksten i menupunktet |
+| tekst        | streng        | Tekstindholdet for menupunktet                               |
+| firstHotKey  | string        | The first keyboard shortcut associated with the command      |
+| secondHotKey | streng        | The second keyboard shortcut associated with the command     |
+| erValgt      | boolean       | Indicates whether the menu item is selected or highlighted   |
+| onClick      | funktion      | Callback function triggered when the menu item is clicked    |
+| className    | string        | Valgfrit navn til yderligere styling                         |
+
+</Tab>
+</Tabs>
+
+### Trækbar
+
+A draggable menu item component designed to be used in a menu or list where items can be dragged, and additional actions can be performed through icon buttons.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItemDraggable } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
+
+  return (
+    <MenuItemDraggable
+      LeftIcon={IconBell}
+      accent="default"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={false}
+      onClick={handleMenuItemClick}
+      text="Menu item draggable"
+      isDragDisabled={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaber     | Type          | Beskrivelse                                                                                                 |
+| -------------- | ------------- | ----------------------------------------------------------------------------------------------------------- |
+| VenstreIkon    | IkonKomponent | Et valgfrit venstre ikon der vises før teksten i menupunktet                                                |
+| accent         | streng        | Accentfarven på menu elementet. Det kan enten være `default`, `placeholder`, eller `danger` |
+| iconButtons    | array         | An array of objects representing additional icon buttons associated with the menu item                      |
+| isTooltipOpen  | boolean       | Controls the visibility of the tooltip associated with the menu item                                        |
+| onClick        | funktion      | Callback function to be triggered when the link is clicked                                                  |
+| tekst          | streng        | Tekstindholdet for menupunktet                                                                              |
+| isDragDisabled | boolean       | Angiver om træk er deaktiveret                                                                              |
+| className      | streng        | Valgfrit navn til yderligere styling                                                                        |
+
+</Tab>
+</Tabs>
+
+### Multi Vælg
+
+Giver en måde at implementere multi-valg funktionalitet med et tilknyttet afkrydsningsfelt.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemMultiSelect } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  return (
+    <MenuItemMultiSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaber     | Type          | Beskrivelse                                                           |
+| -------------- | ------------- | --------------------------------------------------------------------- |
+| VenstreIkon    | IkonKomponent | Et valgfrit venstre ikon der vises før teksten i menupunktet          |
+| tekst          | streng        | Tekstindholdet for menupunktet                                        |
+| valgt          | boolean       | Angiver, om menupunktet er valgt (markeret)        |
+| onSelectChange | funktion      | Tilbagekaldsfunktion udløses, når afkrydsningsfeltets tilstand ændres |
+| className      | streng        | Valgfrit navn til yderligere styling                                  |
+
+</Tab>
+</Tabs>
+
+### Multi Vælg Avatar
+
+En multi-valg menu element med en avatar, et afkrydsningsfelt til valg og tekstindhold.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+  return (
+    <MenuItemMultiSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaber     | Type        | Beskrivelse                                                           |
+| -------------- | ----------- | --------------------------------------------------------------------- |
+| avatar         | `ReactNode` | Avataren eller ikonet, der vises på venstre side af menupunktet       |
+| tekst          | string      | Tekstindholdet for menupunktet                                        |
+| valgt          | boolean     | Angiver, om menupunktet er valgt (markeret)        |
+| onSelectChange | funktion    | Tilbagekaldsfunktion udløses, når afkrydsningsfeltets tilstand ændres |
+| className      | streng      | Valgfrit navn til yderligere styling                                  |
+
+</Tab>
+</Tabs>
+
+### Naviger
+
+A menu item featuring an optional left icon, textual content, and a right-chevron icon.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemNavigate } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleNavigation = () => {
+    console.log("Navigate to another page");
+  };
+
+  return (
+    <MenuItemNavigate
+      LeftIcon={IconBell}
+      text="First Option"
+      onClick={handleNavigation}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaber  | Type          | Beskrivelse                                                  |
+| ----------- | ------------- | ------------------------------------------------------------ |
+| VenstreIkon | IkonKomponent | Et valgfrit venstre ikon der vises før teksten i menupunktet |
+| tekst       | streng        | Tekstindholdet for menupunktet                               |
+| onClick     | funktion      | Tilbagekaldsfunktion udløses, når menu elementet klikkes     |
+| className   | streng        | Valgfrit navn til yderligere styling                         |
+
+</Tab>
+</Tabs>
+
+### Vælg
+
+Et valgbar menu element, med valgfri venstre indhold (ikon og tekst) og en indikator (afkrydsningsikon) for den valgte tilstand.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemSelect } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaber  | Type          | Beskrivelse                                                    |
+| ----------- | ------------- | -------------------------------------------------------------- |
+| VenstreIkon | IkonKomponent | Et valgfrit venstre ikon der vises før teksten i menupunktet   |
+| tekst       | streng        | Tekstindholdet for menupunktet                                 |
+| valgt       | boolean       | Angiver, om menupunktet er valgt (markeret) |
+| deaktiveret | boolean       | Angiver, om menupunktet er deaktiveret                         |
+| svævende    | boolean       | Angiver, om musen befinder sig over menupunktet lige nu        |
+| onClick     | funktion      | Tilbagekaldsfunktion udløses, når menu elementet klikkes       |
+| className   | string        | Valgfrit navn til yderligere styling                           |
+
+</Tab>
+</Tabs>
+
+### Vælg Avatar
+
+A selectable menu item with an avatar, featuring optional left content (avatar and text) and an indicator (check icon) for the selected state.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemSelectAvatar } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      testId="menu-item-test"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaber  | Type        | Beskrivelse                                                     |
+| ----------- | ----------- | --------------------------------------------------------------- |
+| avatar      | `ReactNode` | Avataren eller ikonet, der vises på venstre side af menupunktet |
+| tekst       | streng      | Tekstindholdet for menupunktet                                  |
+| valgt       | boolean     | Angiver, om menupunktet er valgt (markeret)  |
+| deaktiveret | boolean     | Angiver, om menupunktet er deaktiveret                          |
+| svævende    | boolean     | Angiver, om musen befinder sig over menupunktet lige nu         |
+| testId      | streng      | Data-testid-attribut for testformål                             |
+| onClick     | funktion    | Tilbagekaldsfunktion udløses, når menu elementet klikkes        |
+| className   | streng      | Valgfrit navn til yderligere styling                            |
+
+</Tab>
+</Tabs>
+
+### Vælg Farve
+
+A selectable menu item with a color sample for scenarios where you want users to choose a color from a menu.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemSelectColor } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelectColor
+      color="green"
+      selected={true}
+      disabled={false}
+      hovered={true}
+      variant="default"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaber  | Type     | Beskrivelse                                                                                                                                                                                      |
+| ----------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| farve       | streng   | Tema farven, der vises som en prøve i menupunktet. Mulighederne inkluderer: `grøn`, `turkis`, `himmel`, `blå`, `lilla`, `pink`, `rød`, `orange`, `gul`, og `grå` |
+| valgt       | boolean  | Angiver, om menupunktet er valgt (markeret)                                                                                                                                   |
+| deaktiveret | boolean  | Angiver, om menupunktet er deaktiveret                                                                                                                                                           |
+| svævende    | boolean  | Angiver, om musen befinder sig over menupunktet lige nu                                                                                                                                          |
+| variant     | streng   | Varianten af farveprøven. Den kan enten være `standard` eller `pipeline`                                                                                                         |
+| onClick     | funktion | Tilbagekaldsfunktion udløses, når menu elementet klikkes                                                                                                                                         |
+| className   | string   | Valgfrit navn til yderligere styling                                                                                                                                                             |
+
+</Tab>
+</Tabs>
+
+### Skift
+
+Et menupunkt med en tilhørende tænd/sluk kontakt for at give brugerne mulighed for at aktivere eller deaktivere en bestemt funktion
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from '@tabler/icons-react';
+
+import { MenuItemToggle } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+
+  return (
+    <MenuItemToggle
+      LeftIcon={IconBell}
+      text="First Option"
+      toggled={true}
+      toggleSize="small"
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaber     | Type          | Beskrivelse                                                            |
+| -------------- | ------------- | ---------------------------------------------------------------------- |
+| VenstreIkon    | IconComponent | Et valgfrit venstre ikon der vises før teksten i menupunktet           |
+| tekst          | streng        | Tekstindholdet for menupunktet                                         |
+| vekslet        | boolean       | Angiver, om tænd/sluk-kontakten er i "tændt" eller "slukket" status    |
+| onToggleChange | funktion      | Tilbagekaldsfunktion udløses, når tænd/sluk-kontaktens tilstand ændres |
+| skiftStørrelse | streng        | Størrelsen på skifteknappen. Du kan enten \\         |
+| className      | streng        | Valgfrit navn til yderligere styling                                   |
+
+</Tab>
+</Tabs>

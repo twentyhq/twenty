@@ -11,7 +11,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-options.interface';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -29,7 +29,7 @@ export class WorkspaceHealthService {
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly dataSourceService: DataSourceService,
-    private readonly objectMetadataService: ObjectMetadataService,
+    private readonly objectMetadataService: ObjectMetadataServiceV2,
     private readonly databaseStructureService: DatabaseStructureService,
     private readonly objectMetadataHealthService: ObjectMetadataHealthService,
     private readonly fieldMetadataHealthService: FieldMetadataHealthService,

@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  compositeTypeDefinitions,
+} from 'twenty-shared/types';
 import { DataSource, type ColumnType } from 'typeorm';
 import { type ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 
@@ -14,7 +17,6 @@ import {
   type WorkspaceTableStructureResult,
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-table-definition.interface';
 
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { type FieldMetadataDefaultValueFunctionNames } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';

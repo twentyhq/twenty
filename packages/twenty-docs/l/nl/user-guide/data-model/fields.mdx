@@ -1,0 +1,107 @@
+---
+title: Velden
+info: "Begrijp de rol van velden en hoe u ermee omgaat."
+image: /images/user-guide/fields/field.png
+sectionInfo: Flexibel datamodel ontworpen om uw unieke bedrijfsprocessen te ondersteunen
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## Over Velden
+
+Velden zijn zoals kolommen in een spreadsheet. Ze slaan verschillende soorten gegevens op, zoals tekst, nummers of datums. Fields can be standard (built-in) or custom (the ones you create).
+
+### Standaardvelden
+
+Standard fields come built-in with Twenty to handle common business needs.
+
+Bijvoorbeeld, `Voornaam` en `Achternaam` zijn standaardvelden in het `Mensen` object. Ze slaan tekstgegevens op voor individuele namen.
+
+Je kunt standaardvelden niet verwijderen, maar je kunt ze deactiveren als je ze niet nodig hebt.
+
+You can also customize the options of the standard `SELECT` type fields, for example the options for the `Stage` on Opportunities.
+
+<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}}/>
+
+### Aangepaste Velden
+
+Aangepaste velden kunnen aan elk object worden toegevoegd. Je kunt tekst, nummers, datums, keuzelijsten en meer opslaan. Gebruik aangepaste velden om informatie bij te houden die specifiek is voor jouw bedrijf.
+
+For instance, a custom field for SpaceX could be `Rocket Active Status`, indicating if a rocket is operational.
+
+<img src="/images/user-guide/fields/custom-fields.png"style={{width:'100%'}}/>
+
+## Creëer een Aangepast Veld
+
+To add a custom field to any object, follow these steps:	Ga naar `Instellingen` in de linker zijbalk.
+2.	Ga naar `Gegevensmodel`, selecteer daarna het object dat je wilt aanpassen.
+3.	Ga door door te klikken op `Veld toevoegen`.
+4.	Kies een veldnaam en type die aan je eisen voldoen. Overweeg om een veldbeschrijving toe te voegen voor een beter begrip.
+
+Je nieuw gemaakte veld is nu beschikbaar binnen de velden van de applicatie. Om het in een specifieke weergave te laten zien, klik op het optiemenu en selecteer daarna `Velden`.
+
+<VimeoEmbed videoId="927628219" title="Video demonstration" />
+
+**Snelle manier:** Klik op de **+** knop rechtsboven in een objecttabel, selecteer daarna `Velden aanpassen`. Dit brengt je direct naar de Gegevensmodel instellingen.
+
+<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}}/>
+
+## Deactivate a field
+
+Je kunt een veld deactiveren om het te verbergen in de app zonder je gegevens te verliezen. Zie het als het verbergen van het veld in plaats van het verwijderen.
+
+Here's how you can do it:
+
+1. Vind het veld dat je wilt deactiveren in je objectinstellingen.
+
+2. Klik op de drie puntjes `⋮` naast het veld om het menu te openen.
+
+3. Selecteer `Deactiveren` uit het dropdownmenu.
+
+<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}}/>
+
+Wat gebeurt er als je een veld deactiveert?
+
+1. **In de app:** Het veld verdwijnt en je kunt geen nieuwe waarden eraan toevoegen.
+
+2. **Bestaande relaties:** Als het een relatieveld is, blijven bestaande verbindingen bestaan, maar je kunt geen nieuwe maken.
+
+3. **API toegang:** Je kunt nog steeds toegang krijgen tot het veld en zijn gegevens via de API.
+
+You can reactivate Standard and Custom Fields or have the option to permanently delete them.
+
+## Maak Velden Uniek
+
+Maak een veld uniek om ervoor te zorgen dat onderscheiden records geen dezelfde waarde kunnen hebben. E-mailadressen zijn bijvoorbeeld uniek voor elke persoon.
+
+Als je een fout krijgt bij het instellen van uniciteit, controleer op dubbele waarden in je gegevens (inclusief verwijderde records).
+
+## Veldconfiguratie Best Practices
+
+### Naamgevingsconventies en Beperkingen
+
+- **Namen van relatievelden kunnen niet worden bijgewerkt** na het maken ervan (beïnvloedt API-structuur)
+- **Enkelvoudige en meervoudige namen moeten onderscheidend zijn**: Onze GraphQL API heeft onderscheidende namen nodig voor mutaties
+- **Beschermde veldnamen**: sommige namen zijn gereserveerd voor systeemgebruik (bijv. `Type`)
+
+### Valuta en Telefoonvelden
+
+- **Standaardvaluta**: kan worden geconfigureerd via het gegevensmodel
+- **Standaard landcodes**: kunnen voor telefoonvelden worden geconfigureerd via het gegevensmodel
+
+### Selecteer Velden
+
+- **Een standaardoptie kan worden geselecteerd** voor elk Select veld
+
+### Recordtekst Velden
+
+- **Elk object heeft één hoofddisplayveld**: Dit veld verschijnt in de meest linkse kolom en vertegenwoordigt het record wanneer het is gelinkt aan andere objecten. Het moet een tekstveld zijn. Mensen gebruikt bijvoorbeeld `Naam` als het hoofdveld, dus wanneer je een persoon aan een bedrijf koppelt, zie je hun naam in de weergave van het bedrijf.
+
+### Relatievelden
+
+- **Verbind objecten met elkaar**: Relatievelden verbinden records van verschillende objecten. Voor gedetailleerde informatie over het maken en beheren van relaties, zie ons [Relatievelden](/l/nl/user-guide/data-model/relation-fields) artikel.
+

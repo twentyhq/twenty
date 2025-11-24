@@ -186,6 +186,10 @@ export const getResolverArgs = (
           type: UUIDScalarType,
           isNullable: true,
         },
+        limit: {
+          type: GraphQLInt,
+          isNullable: true,
+        },
       };
     default:
       throw new Error(`Unknown resolver type: ${type}`);

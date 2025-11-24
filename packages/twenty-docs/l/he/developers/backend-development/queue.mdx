@@ -1,0 +1,47 @@
+---
+title: תור הודעות
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+תורים מאפשרים הפעלת פעולות אסינכרוניות. They can be used for performing background tasks such as sending a welcome email on register.
+לכל מקרה שימוש תהיה מחלקת תור משל עצמה שתורחב מ-`MessageQueueServiceBase`.
+
+כרגע אנו תומכים רק ב-`bull-mq`[bull-mq](https://bullmq.io/) כמתאם התור.
+
+## שלבים ליצירת ושימוש בתור חדש
+
+1. הוסף שם תור לתור החדש שלך תחת enum `MESSAGE_QUEUES`.
+2. ספק את יישום המפעל של התור עם שם התור כטוקן תלות.
+3. הזרק את התור שיצרת במודול/שירות הנדרש עם שם התור כטוקן תלות.
+4. Add worker class with token based injection just like producer.
+
+### שימוש לדוגמא
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```
+

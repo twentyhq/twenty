@@ -20,6 +20,7 @@ export const seedPageLayoutWidgets = async ({
   const pageLayoutWidgets = getPageLayoutWidgetDataSeeds(
     workspaceId,
     objectMetadataItems,
+    isDashboardV2Enabled,
   ).map((widget) => {
     const validatedConfiguration = widget.configuration
       ? validateAndTransformWidgetConfiguration({

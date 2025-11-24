@@ -1,0 +1,47 @@
+---
+title: Черга повідомлень
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+Черги забезпечують виконання асинхронних операцій. They can be used for performing background tasks such as sending a welcome email on register.
+Кожен випадок використання буде мати свій клас черги, розширений від `MessageQueueServiceBase`.
+
+Наразі ми підтримуємо тільки `bull-mq`[bull-mq](https://bullmq.io/) як драйвер черги.
+
+## Кроки для створення та використання нової черги
+
+1. Додайте ім'я для вашої нової черги у enum `MESSAGE_QUEUES`.
+2. Надайте імплементацію фабрики черги з ім'ям черги як токеном залежності.
+3. Впровадьте чергу, яку ви створили, у необхідний модуль/сервіс з ім'ям черги як токеном залежності.
+4. Add worker class with token based injection just like producer.
+
+### Приклад використання
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```
+

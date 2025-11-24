@@ -1,0 +1,220 @@
+---
+title: Intégration d'un Outil Externe
+info: Ces flux de travail se concentrent sur l'intégration et l'extraction de données de Twenty via des appels API et des webhooks.
+image: /images/user-guide/integrations/plug.png
+sectionInfo: Automatisez les processus et intégrez avec des outils externes
+---
+
+<Frame>
+  <img src="/images/user-guide/integrations/plug.png" alt="Header" />
+</Frame>
+
+Ci-dessous sont des exemples de workflows que vous pourriez déployer pour connecter Twenty avec le reste de votre ensemble d'outils.
+
+## Cas d'Utilisation d'Ingestion de Données
+
+### Soumissions de Formulaire Web
+
+**Problème** : Vous devez capturer des prospects depuis des formulaires de site web, des pages de destination ou des formulaires de contact directement dans Twenty.
+
+**Solution** : Utilisez des déclencheurs de webhook pour créer automatiquement des enregistrements à partir des soumissions de formulaire.
+
+**Installation**:
+
+- Créez un workflow avec un déclencheur de webhook
+- Configurez le webhook pour attendre les données de formulaire (nom, email, entreprise, etc.)
+- Définir la méthode webhook sur POST
+- Définir la structure attendue du corps dans le déclencheur
+
+**Déclencheur** : Webhook (requête POST depuis votre formulaire)
+
+**Actions** :
+
+- Recherchez des enregistrements pour vérifier si la personne/entreprise existe déjà
+- Bifurcation : Si elle existe → Mettre à jour l'enregistrement, Sinon → Créer l'enregistrement
+- Créez un enregistrement pour une tâche de suivi attribuée au représentant commercial
+- Envoyez une notification par email à l'équipe commerciale
+
+### Synchronisation des Données Produit
+
+**Problème** : Votre équipe commerciale a besoin de visibilité sur l'utilisation du produit, la facturation ou les données d'adoption de fonctionnalités stockées dans votre entrepôt de données.
+
+**Solution** : Synchronisez régulièrement les données produit dans Twenty pour donner aux vendeurs un contexte sur leurs comptes.
+
+**Déclencheur** : Selon un calendrier (quotidien ou hebdomadaire)
+
+**Actions** :
+
+- Requête HTTP à votre API d'entrepôt de données
+- Action de codage pour traiter et formater les données
+- Utilisez la fonction Itérateur pour les étapes suivantes
+- Recherchez des enregistrements pour trouver les enregistrements d'entreprise correspondants
+- Mettez à jour l'enregistrement pour ajouter des mesures d'utilisation du produit
+- Créez un enregistrement pour les tâches lorsque l'utilisation tombe en dessous du seuil
+
+### Notes de Réunion à partir des Enregistreurs d'Appels
+
+**Problème** : Des informations importantes tirées des appels de vente se perdent ou ne sont pas correctement documentées dans le CRM.
+
+**Solution** : Créez automatiquement des notes et des actions à partir des systèmes d'enregistrement des appels.
+
+**Déclencheur** : Webhook (à partir de la plateforme d'enregistrement des appels)
+
+**Actions** :
+
+- Action de codage pour extraire le résumé de la réunion et les actions à entreprendre
+- Recherchez des enregistrements pour trouver l'opportunité ou le contact lié
+- Créez un enregistrement pour une note avec le résumé de la réunion
+- Créez un enregistrement pour les tâches de suivi basées sur les actions à entreprendre
+- Envoyez un email aux participants avec le résumé et les prochaines étapes à suivre
+
+### Enrichissement de Données
+
+**Problème** : Vos enregistrements de contact et d'entreprise manquent d'informations démographiques et firmographiques importantes.
+
+**Solution** : Enrichissez automatiquement les enregistrements à l'aide de fournisseurs de données externes.
+
+**Déclencheur** : L'enregistrement est créé (objet Personnes ou Entreprises)
+
+**Actions** :
+
+- Requête HTTP à l'API d'enrichissement
+- Action de codage pour traiter la réponse d'enrichissement
+- Utilisez la fonction Itérateur pour les étapes suivantes
+- Mettez à jour l'enregistrement avec des informations supplémentaires sur l'entreprise/contact
+- Créez un enregistrement pour une tâche de vente si un prospect de grande valeur est identifié
+- Envoyez une alerte par email si l'enrichissement révèle des signaux d'achat clés
+
+## Cas d'Utilisation de Distribution de Données
+
+### Gestion des Abonnés à la Newsletter
+
+**Problème** : Vous souhaitez envoyer des emails marketing à des segments spécifiques de vos données CRM en utilisant des outils d'email spécialisés.
+
+**Solution** : Exportez des listes d'abonnés vers votre plateforme de marketing par email lorsque nécessaire.
+
+**Configuration** : Créez une vue dans Twenty avec tous les destinataires de la newsletter.
+
+**Déclencheur** : Lancement manuel (lorsqu'aucun enregistrement n'est sélectionné)
+
+**Actions** :
+
+- Recherchez des enregistrements en utilisant les critères de la vue newsletter.
+- Action de codage pour formater les adresses email pour votre plateforme email.
+- Requête HTTP pour ajouter des abonnés à votre outil de marketing par email.
+- Créez un enregistrement pour le suivi des campagnes.
+- Envoyez un email de confirmation à l'équipe marketing.
+
+### Déclencheurs de séquences d'emails.
+
+**Problème** : Vous souhaitez déclencher des séquences d'emails sophistiquées basées sur des événements CRM en utilisant des outils d'automatisation email dédiés.
+
+**Solution** : Envoyez de nouveaux prospects ou clients vers votre plateforme d'automatisation email lorsque des événements spécifiques se produisent.
+
+**Déclencheur** : L'enregistrement est créé (objet Personnes avec des critères spécifiques)
+
+**Actions** :
+
+- Action de codage pour déterminer la séquence d'email appropriée.
+- Requête HTTP pour ajouter le contact à la plateforme d'automatisation email.
+- Mettez à jour l'enregistrement pour suivre l'inscription à la séquence.
+- Créez un enregistrement pour une tâche de suivi afin de surveiller l'engagement.
+
+### Intégration du scoring de leads.
+
+**Problème** : Vous avez besoin d'un scoring de leads sophistiqué combinant des données CRM avec des signaux externes.
+
+**Solution** : Envoyez les données de leads à des outils d'évaluation externes ou implémentez une logique de scoring dans les workflows.
+
+**Option 1 - Outil externe** :
+
+**Déclencheur** : L'enregistrement est mis à jour (objet Personnes)
+
+**Actions** :
+
+- Requête HTTP pour envoyer les données des leads à la plateforme de scoring.
+- Action de codage pour traiter la réponse d'évaluation.
+- Mettez à jour l'enregistrement avec le score du lead.
+- Créez un enregistrement pour une tâche commerciale si le score dépasse le seuil.
+
+**Option 2 - Logique interne** :
+
+**Déclencheur** : L'enregistrement est mis à jour (objet Personnes)
+
+**Actions** :
+
+- Action de codage avec algorithme de scoring (taille de l'entreprise, industrie, comportement)
+- Mettez à jour l'enregistrement avec le score calculé.
+- Envoyez une alerte email au représentant des ventes pour les leads avec un score élevé.
+
+### Génération de factures.
+
+**Problème** : Lorsque les affaires se concluent, votre système de facturation doit être mis à jour avec les informations client et affaire.
+
+**Solution** : Envoyez automatiquement les données de l'affaire à votre système de facturation lorsque les opportunités sont gagnées.
+
+**Déclencheur** : L'enregistrement est mis à jour (objet Opportunités, Étape = "Fermé Gagné")
+
+**Actions** :
+
+- Recherchez des enregistrements pour obtenir des informations complètes sur le client.
+- Action de codage pour formater les données pour le système de facturation.
+- Requête HTTP pour créer un client dans la plateforme de facturation.
+- Requête HTTP pour générer une facture.
+- Mettez à jour l'enregistrement pour stocker la référence de la facture.
+- Envoyez un email à l'équipe financière avec les détails de la facture.
+
+## Modèles d'intégration avancée.
+
+### Synchronisation bidirectionnelle.
+
+**Problème** : Vous devez synchroniser les données entre Twenty et un autre système dans les deux sens.
+
+**Solution** : Combinez des workflows planifiés avec des déclencheurs webhook pour une synchronisation en temps réel.
+
+**De Twenty à Système Externe** :
+
+**Déclencheur** : L'enregistrement est mis à jour (tout objet pertinent)
+
+**Actions** :
+
+- Requête HTTP pour mettre à jour le système externe.
+- Mettez à jour l'enregistrement pour suivre l'état de la synchronisation et l'horodatage.
+
+**Du Système Externe à Twenty** :
+
+**Déclencheur** : Webhook (du système externe)
+
+**Actions** :
+
+- Recherchez des enregistrements pour trouver l'enregistrement correspondant.
+- Mettez à jour l'enregistrement avec les nouvelles données du système externe.
+- Créez un enregistrement pour une tâche de résolution de conflits si nécessaire.
+
+### Traitement de données en plusieurs étapes.
+
+**Problème** : Les données provenant de sources externes nécessitent un traitement complexe avant de pouvoir être utilisées dans Twenty.
+
+**Solution** : Utilisez des actions de codage pour la transformation et la validation des données.
+
+**Déclencheur** : Webhook ou Sur un planning
+
+**Actions** :
+
+- Action de codage pour valider le format des données entrantes.
+- Action de codage pour transformer la structure des données.
+- Action de codage pour appliquer des règles métier et des calculs.
+- Recherchez des enregistrements pour vérifier les doublons.
+- Créez ou mettez à jour l'enregistrement avec les données traitées.
+- Envoyez une alerte email si des problèmes de qualité des données sont détectés.
+
+## Conseils de mise en œuvre.
+
+- Stockez les clés API en toute sécurité dans Paramètres → API & Webhooks
+- Utilisez HTTPS pour tous les appels API externes.
+- Soyez attentif aux limites de débit d'API - utilisez des workflows planifiés lorsque possible.
+- Envisagez des mises à jour par lots "Sur un planning" lorsque le traitement en temps réel n'est pas requis.
+- Rappelez-vous de la limite de 100 flux de travail simultanés par espace de travail - utilisez la disponibilité "Bulk" pour les déclencheurs manuels lors du traitement de plusieurs enregistrements (voir [Fonctionnalités des Workflows](/l/fr/user-guide/workflows/workflow-features) pour les détails)
+- Testez avec des données d'échantillon avant d'activer les workflows.
+
+Pour résoudre les problèmes d'intégration, consultez notre guide [Résolution des problèmes de workflow](/l/fr/user-guide/workflows/workflow-troubleshooting). Pour obtenir de l'aide pour implémenter des intégrations complexes, pensez à nos [Services Professionnels](/l/fr/user-guide/workflows/professional-services).

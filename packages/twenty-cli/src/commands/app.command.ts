@@ -5,18 +5,20 @@ import {
   isSyncableEntity,
   SyncableEntity,
 } from './app-add.command';
-import { AppDeleteCommand } from './app-delete.command';
+import { AppUninstallCommand } from './app-uninstall.command';
 import { AppDevCommand } from './app-dev.command';
 import { AppInitCommand } from './app-init.command';
 import { AppSyncCommand } from './app-sync.command';
 import { formatPath } from '../utils/format-path';
+import { AppGenerateCommand } from './app-generate.command';
 
 export class AppCommand {
   private devCommand = new AppDevCommand();
   private syncCommand = new AppSyncCommand();
-  private deleteCommand = new AppDeleteCommand();
+  private uninstallCommand = new AppUninstallCommand();
   private initCommand = new AppInitCommand();
   private addCommand = new AppAddCommand();
+  private generateCommand = new AppGenerateCommand();
 
   getCommand(): Command {
     const appCommand = new Command('app');
@@ -48,11 +50,29 @@ export class AppCommand {
       });
 
     appCommand
-      .command('delete [appPath]')
+      .command('uninstall [appPath]')
+      .description('Uninstall application from Twenty')
+      .action(async (appPath?: string) => {
+        try {
+          const result = await this.uninstallCommand.execute({
+            appPath: formatPath(appPath),
+            askForConfirmation: true,
+          });
+          if (!result.success) {
+            process.exit(1);
+          }
+        } catch {
+          process.exit(1);
+        }
+      });
+
+    // Keeping to avoid breaking changes
+    appCommand
+      .command('delete [appPath]', { hidden: true })
       .description('Delete application from Twenty')
       .action(async (appPath?: string) => {
         try {
-          const result = await this.deleteCommand.execute({
+          const result = await this.uninstallCommand.execute({
             appPath: formatPath(appPath),
             askForConfirmation: true,
           });
@@ -81,10 +101,11 @@ export class AppCommand {
 
     appCommand
       .command('add [entityType]')
+      .option('--path <path>', 'Path in which the entity should be created.')
       .description(
         `Add a new entity to your application (${Object.values(SyncableEntity).join('|')})`,
       )
-      .action(async (entityType?: string) => {
+      .action(async (entityType?: string, options?: { path?: string }) => {
         if (entityType && !isSyncableEntity(entityType)) {
           console.error(
             chalk.red(
@@ -93,7 +114,17 @@ export class AppCommand {
           );
           process.exit(1);
         }
-        await this.addCommand.execute(entityType as SyncableEntity);
+        await this.addCommand.execute(
+          entityType as SyncableEntity,
+          options?.path,
+        );
+      });
+
+    appCommand
+      .command('generate [outputPath]')
+      .description('Generate Twenty client')
+      .action(async (appPath?: string) => {
+        await this.generateCommand.execute(formatPath(appPath));
       });
 
     return appCommand;

@@ -12,15 +12,15 @@ import {
   parseJson,
   removeUndefinedFields,
 } from 'twenty-shared/utils';
+import {
+  type AdditionalPhoneMetadata,
+  type PhonesMetadata,
+} from 'twenty-shared/types';
 
 import {
   RecordTransformerException,
   RecordTransformerExceptionCode,
 } from 'src/engine/core-modules/record-transformer/record-transformer.exception';
-import {
-  type AdditionalPhoneMetadata,
-  type PhonesMetadata,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 
 export type PhonesFieldGraphQLInput =
   | Partial<

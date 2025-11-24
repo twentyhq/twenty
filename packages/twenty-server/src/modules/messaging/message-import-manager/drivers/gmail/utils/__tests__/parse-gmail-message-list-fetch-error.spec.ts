@@ -84,12 +84,14 @@ describe('parseGmailMessageListFetchError', () => {
     );
   });
 
-  it('should handle 404 Not Found', () => {
+  it('should handle 404 as sync cursor error', () => {
     const error = gmailApiErrorMocks.getError(404);
     const exception = parseGmailMessageListFetchError(error.error);
 
     expect(exception).toBeInstanceOf(MessageImportDriverException);
-    expect(exception.code).toBe(MessageImportDriverExceptionCode.NOT_FOUND);
+    expect(exception.code).toBe(
+      MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+    );
   });
 
   it('should handle 410 Gone', () => {

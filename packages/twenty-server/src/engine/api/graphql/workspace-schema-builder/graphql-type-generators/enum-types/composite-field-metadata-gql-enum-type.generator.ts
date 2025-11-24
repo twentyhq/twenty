@@ -1,12 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { GraphQLEnumType } from 'graphql';
-import { type FieldMetadataType } from 'twenty-shared/types';
-
 import {
+  type FieldMetadataType,
   type CompositeProperty,
   type CompositeType,
-} from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+} from 'twenty-shared/types';
 
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { computeCompositeFieldEnumTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-enum-type-key.util';

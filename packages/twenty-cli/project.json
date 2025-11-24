@@ -10,7 +10,8 @@
       "options": {
         "cwd": "packages/twenty-cli",
         "commands": ["rimraf dist", "tsc --project tsconfig.lib.json"]
-      }
+      },
+      "dependsOn": ["^build", "typecheck"]
     },
     "build": {
       "executor": "nx:run-commands",
@@ -18,11 +19,10 @@
       "options": {
         "cwd": "packages/twenty-cli",
         "commands": [
-          "cp -R src/constants/base-application-project dist/constants",
-          "cp -R src/constants/schemas dist/constants"
+          "cp -R src/constants/base-application-project dist/constants"
         ]
       },
-      "dependsOn": ["^build", "before-build"]
+      "dependsOn": ["before-build"]
     },
     "dev": {
       "executor": "nx:run-commands",
@@ -40,13 +40,7 @@
         "command": "node dist/cli.js"
       }
     },
-    "typecheck": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "packages/twenty-cli",
-        "command": "tsc --noEmit --project tsconfig.lib.json"
-      }
-    },
+    "typecheck": {},
     "lint": {
       "options": {
         "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],

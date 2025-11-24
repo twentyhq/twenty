@@ -1,0 +1,91 @@
+---
+title: Zapier 應用程式
+image: /images/user-guide/integrations/plug.png
+---
+
+<Frame>
+  <img src="/images/user-guide/integrations/plug.png" alt="Header" />
+</Frame>
+
+輕鬆使用 [Zapier](https://zapier.com/) 與超過 3000 個應用程式同步 Twenty。 自動化任務、提升生產力，並強化您的客戶關係！ 自動化任務、提升生產力，並強化您的客戶關係！
+
+## 關於 Zapier
+
+Zapier 是一個讓您透過每天使用的應用程式自動化工作流程的工具。 Zapier 是一個讓您透過每天使用的應用程式自動化工作流程的工具。 Zapier 的基本概念是自動化工作流程，稱為 Zaps，包括觸發器和操作。
+
+You can learn more about how Zapier works [here](https://zapier.com/how-it-works).
+
+## 設定
+
+### 步驟 1：安裝 Zapier 套件
+
+```bash
+cd packages/twenty-zapier
+
+yarn
+```
+
+### 步驟 2：使用 CLI 登入
+
+使用您的 Zapier 憑證登入 CLI：
+
+```bash
+zapier login
+```
+
+### 步驟 3：設定環境變數
+
+從 `packages/twenty-zapier` 資料夾中執行：
+
+```bash
+cp .env.example .env
+```
+
+在本地運行應用程式，前往 [http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks)，生成 API 金鑰。
+
+在 `.env` 檔案中將 **YOUR_API_KEY** 值替換為您剛生成的 API 金鑰。
+
+## 開發
+
+<Warning>
+
+記得在執行任何 `zapier` 命令前運行 `yarn build`。
+
+</Warning>
+
+### 測試
+
+```bash
+yarn test
+```
+
+### Lint
+
+```bash
+yarn format
+```
+
+### 在編輯程式碼時觀看並編譯
+
+```bash
+yarn watch
+```
+
+### 驗證您的 Zapier 應用程式
+
+```bash
+yarn validate
+```
+
+### 部署您的 Zapier 應用程式
+
+```bash
+yarn deploy
+```
+
+### 列出所有 Zapier CLI 指令
+
+```bash
+zapier
+```
+

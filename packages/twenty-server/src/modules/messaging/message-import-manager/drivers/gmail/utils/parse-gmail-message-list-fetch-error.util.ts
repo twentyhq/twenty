@@ -52,7 +52,7 @@ export const parseGmailMessageListFetchError = (
     case 404:
       return new MessageImportDriverException(
         message,
-        MessageImportDriverExceptionCode.NOT_FOUND,
+        MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
         { cause: options?.cause },
       );
 

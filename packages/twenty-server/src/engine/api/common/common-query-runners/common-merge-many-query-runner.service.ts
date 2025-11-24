@@ -5,10 +5,10 @@ import {
   QUERY_MAX_RECORDS,
 } from 'twenty-shared/constants';
 import {
+  FieldMetadataRelationSettings,
   FieldMetadataType,
   ObjectRecord,
   RelationType,
-  FieldMetadataRelationSettings,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
@@ -29,10 +29,6 @@ import {
   CommonQueryNames,
   MergeManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
@@ -99,7 +95,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     });
 
     await queryBuilder
-      .softDelete()
+      .delete()
       .whereInIds(idsToDelete)
       .returning(columnsToReturn)
       .execute();
@@ -174,9 +170,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     );
 
     if (!priorityRecord) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         'Priority record not found',
-        GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND,
+        CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
       );
     }
 

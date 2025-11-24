@@ -1,0 +1,227 @@
+---
+title: Vianmääritys
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Vianmääritys
+
+If you encounter any problem while setting up environment for development, upgrading your instance or self-hosting,
+here are some solutions for common problems.
+
+### Oma isännöinti
+
+#### First install results in `password authentication failed for user "postgres"`
+
+🚨 **TÄRKEÄÄ: Tämä ratkaisu on VAIN uusille asennuksille** 🚨
+Jos sinulla on olemassa oleva Twenty-Instanssi tuotantodatalla, **ÄLÄ** seuraa näitä ohjeita, koska ne poistavat pysyvästi tietokantasi!
+
+Kun asennat Twentyä ensimmäistä kertaa, saatat haluta muuttaa oletustietokannan salasanaa.
+Ensimmäisen asennuksen aikana asettamasi salasana tallentuu pysyvästi tietokantalevyyn. Jos yrität myöhemmin muuttaa tätä salasanaa kokoonpanossasi ilman vanhan levyn poistamista, saat todennusvirheitä, koska tietokanta käyttää yhä alkuperäistä salasanaa.
+
+⚠️ VAROITUS: Seuraavat vaiheet POISTAVAT pysyvästi kaikki tietokantatiedot! ⚠️
+Jatka vain, jos tämä on uusi asennus ilman tärkeitä tietoja.
+
+Päivittääksesi `PG_DATABASE_PASSWORD` sinun on:
+
+```sh
+# Update the PG_DATABASE_PASSWORD in .env
+docker compose down --volumes
+docker compose up -d
+```
+
+#### CR rivinvaihto löytynyt [Windows]
+
+Tämä johtuu Windowsin rivinvaihtomerkkeistä ja git-asetuksista. Kokeile komennon suorittamista:
+
+```
+git config --global core.autocrlf false
+```
+
+Poista sitten arkisto ja kloonaa se uudelleen.
+
+#### Puuttuva metadata-schema
+
+Twenty-asennuksen aikana sinun on provisioitava postgres-tietokanta oikeilla schemoilla, laajennuksilla ja käyttäjillä.
+Jos onnistut tämän providisionnin suorittamisessa, tietokannassasi pitäisi olla `oletus` ja `metadata`-schemat.
+Jos ei, varmista, ettei koneellasi ole enemmän kuin yksi postgres-instaanssi käynnissä.
+
+#### Moduulia 'twenty-emails' tai sen vastaavia tyypin ilmoituksia ei löydy.
+
+Sinun on rakennettava paketti `twenty-emails` ennen tietokannan alustamisen suorittamista komennolla `npx nx run twenty-emails:build`
+
+#### Puuttuva twenty-x-paketti
+
+Varmista, että suoritat yarn juurihakemistossa ja sitten käynnistät `npx nx server:dev twenty-server`. Jos tämä ei edelleenkään toimi, yritä rakentaa puuttuva paketti manuaalisesti.
+
+#### Lint tallentamisessa ei toimi
+
+Tämän pitäisi toimia heti suorilta käsin, jos eslint-laajennus on asennettu. Jos tämä ei toimi, yritä lisätä seuraavaa vscode-asetuksiin (dev-konttinäkymässä):
+
+```
+"editor.codeActionsOnSave": {
+
+  "source.fixAll.eslint": "explicit"
+
+}
+```
+
+#### Kun `npx nx start` tai `npx nx start twenty-front` suoritetaan, muistivirhe ilmoitetaan
+
+In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` and `VITE_DISABLE_ESLINT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
+
+**Jos tämä ei toimi:**  
+Suorita vain tarvitsemasi palvelut sen sijaan, että käyttäisit `npx nx start`. Esimerkiksi, jos työskentelet palvelimen kanssa, suorita vain `npx nx worker twenty-server`
+
+**Jos tämä ei toimi:**  
+Jos yritit ajaa vain `npx nx run twenty-server:start` WSL:ssä ja se epäonnistuu seuraavalla muistivirheellä:
+
+`FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
+
+Kierrä ongelma suorittamalla alla oleva komento terminaalissa tai lisäämällä se .bashrc-profiiliin saadaksesi asennuksen automaattisesti:
+
+`export NODE_OPTIONS="--max-old-space-size=8192"`
+
+\--max-old-space-size=8192 asettaa 8GB:n ylärajan Node.js-heapille; käyttö kasvaa sovelluksen tarpeiden mukaan.
+Viite: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
+
+**Jos tämä ei toimi:**  
+Tutki, mitkä prosessit kuluttavat eniten koneesi RAM-muistia. Huomasimme Twentyssä, että jotkut VScode-laajennukset kuluttivat paljon RAM-muistia, joten poistamme ne tilapäisesti käytöstä.
+
+**Jos tämä ei toimi:**  
+Koneesi käynnistäminen uudelleen auttaa puhdistamaan haamuprosesseja.
+
+#### Kun `npx nx start` suoritetaan, lokeissa näkyy outoja [0] ja [1]
+
+Se on odotettavissa, sillä komento `npx nx start` suorittaa enemmän komentoja taustalla.
+
+#### Ei sähköposteja lähetetä
+
+Useimmiten kyse on siitä, että `worker` ei ole käynnissä taustalla. Yritä suorittaa
+
+```
+npx nx worker twenty-server
+```
+
+#### En voi yhdistää Microsoft 365-tiliini
+
+Useimmiten kyse on siitä, että ylläpitäjä ei ole mahdollistanut Microsoft 365 Lisenssiä tilillesi. Tarkista [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).
+
+Jos saat virhekoodin `AADSTS50020`, se todennäköisesti tarkoittaa, että käytät henkilökohtaista Microsoft-tiliä. Tätä ei ole vielä tuettu. Lisätietoa [täältä](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
+
+#### Kun suoritat `yarn`, konsolissa ilmestyy varoituksia
+
+Varoitukset ilmoittavat lisäriippuvuuksien vetämisestä, joita ei ole erikseen määritetty `package.json`-tiedostossa, joten niin kauan kuin kriittisiä virheitä ei ilmene, kaiken pitäisi toimia odotetusti.
+
+#### Kun käyttäjä avaa kirjautumissivun, lokit näyttävät virheen, joka koskee valtuuttamattoman käyttäjän yrittämistä päästä työtilaan
+
+Se on odotettavissa, sillä käyttäjä ei ole valtuutettu kirjauduttuaan ulos, koska hänen henkilöllisyyttään ei ole vahvistettu.
+
+#### Miten tarkistaa, onko työntekijäsi käynnissä?
+
+- Siirry osoitteeseen [webhook-test.com](https://webhook-test.com/) ja kopioi **Sinun ainutlaatuinen Webhook-URL**.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Webhook test" />
+</div>
+- Avaa Twenty-sovellus, siirry kohtaan `/settings`, ja ota **Edistynyt** kytkin käyttöön näytön vasemmasta alakulmasta.
+- Luo uusi webhook.
+- Liitä **Sinun ainutlaatuinen Webhook-URL** **Endpoint Url** -kenttään Twentyssä. Aseta **Suodattimet** arvoiksi `Yritykset` ja `Luotu`.
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Webhook settings" />
+</div>
+- Siirry kohtaan `/objects/companies` ja luo uusi yritysrekisteri.
+- Palaa [webhook-test.com](https://webhook-test.com/) ja tarkista, onko uusi **POST-pyyntö** vastaanotettu.
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Webhook test result" />
+</div>
+- Jos **POST-pyyntö** vastaanotetaan, työntekijäsi toimii oikein. Muuten, sinun on selvitettävä työntekijäsi ongelmat.
+
+#### Etusivu epäonnistuu käynnistyksessä ja palauttaa virheen TS5042: Option 'project' ei voi yhdistää lähdetiedostoihin komentorivillä
+
+Kommentoi checker-liitin tiedostossa `packages/twenty-ui/vite-config.ts` kuten alla olevassa esimerkissä
+
+```
+plugins: [
+      react({ jsxImportSource: '@emotion/react' }),
+      tsconfigPaths(),
+      svgr(),
+      dts(dtsConfig),
+      // checker(checkersConfig),
+      wyw({
+        include: [
+          '**/OverflowingTextWithTooltip.tsx',
+          '**/Chip.tsx',
+          '**/Tag.tsx',
+          '**/Avatar.tsx',
+          '**/AvatarChip.tsx',
+        ],
+        babelOptions: {
+          presets: ['@babel/preset-typescript', '@babel/preset-react'],
+        },
+      }),
+    ],
+```
+
+#### Ylläpitopaneeli ei ole saatavilla
+
+Suorita `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'etunimesi@sivicfler.com';` tietokantakontissa saadaksesi pääsyn ylläpitopaneeliin.
+
+### 1-click Docker compose
+
+#### Kirjautuminen ei onnistu
+
+Jos et voi kirjautua sisään asennuksen jälkeen:
+
+1. Suorita seuraavat komennot:
+   ```bash
+   docker exec -it twenty-server-1 yarn
+   docker exec -it twenty-server-1 npx nx database:reset  --configuration=no-seed
+   ```
+2. Käynnistä Docker-kontit uudelleen:
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+Huomioi, että database:reset-komento poistaa tietokannan kokonaan ja luo sen uudelleen alusta alkaen.
+
+#### Yhteysongelmat käänteisen proxyn takana
+
+Jos käytät Twentya käänteisen proxyn takana ja kohtaat yhteysongelmia:
+
+1. **Tarkista SERVER_URL:**
+
+   Varmista, että `.env`-tiedostossasi oleva `SERVER_URL` vastaa ulkoista pääsy URL-osoitettasi, mukaan lukien `https` mikäli SSL on käytössä.
+
+2. **Tarkista käänteisen proxyn asetukset:**
+
+   - Varmista, että käänteinen proxy välittää pyynnöt oikein Twenty-palvelimelle.
+   - Varmista, että otsikot, kuten `X-Forwarded-For` ja `X-Forwarded-Proto`, ovat asetettu oikein.
+
+3. **Käynnistä palvelut uudelleen:**
+
+   Muokkausten jälkeen käynnistä sekä käänteinen proxy että Twenty-kontit uudelleen.
+
+#### Error when uploading an image - permission denied
+
+Ratkaise tämä ongelma vaihtamalla isäntäkoneen tiedostokansion omistajuus rootista toiseen käyttäjään ja ryhmään.
+
+## Avun saaminen
+
+If you encounter issues not covered in this guide:
+
+- Tarkista lokit:
+
+  View container logs for error messages:
+
+  ```bash
+  docker compose logs
+  ```
+
+- Yhteisön tuki:
+
+  Ota yhteyttä [Twenty-yhteisöön](https://github.com/twentyhq/twenty/issues) tai [tukikanaviin](https://discord.gg/cx5n4Jzs57) saadaksesi apua.

@@ -1,0 +1,295 @@
+---
+title: Stílus útmutató
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+Ez a dokumentum tartalmazza azokat a szabályokat, amelyeket a kódírásnál követni kell.
+
+A cél itt egy konzisztens kódbázis létrehozása, amely könnyen olvasható és karbantartható.
+
+Ehhez jobb, ha egy kicsit bővebben, mint túl tömören fogalmazunk.
+
+Mindig tartsuk szem előtt, hogy az emberek gyakrabban olvassák a kódot, mint írják, különösen egy nyílt forráskódú projekt esetén, ahol bárki hozzájárulhat.
+
+Számos olyan szabály van, amely itt nincs meghatározva, de amelyeket automatikusan ellenőriznek az elemzők.
+
+## React
+
+### Használj funkcionális komponenseket
+
+Mindig használj TSX funkcionális komponenseket.
+
+Ne használj alapértelmezett `import`-ot `const`-tal, mert nehezebb olvasni és kód kiegészítéssel importálni.
+
+```tsx
+// ❌ Bad, harder to read, harder to import with code completion
+const MyComponent = () => {
+  return <div>Hello World</div>;
+};
+
+export default MyComponent;
+
+// ✅ Good, easy to read, easy to import with code completion
+export function MyComponent() {
+  return <div>Hello World</div>;
+};
+```
+
+### Tulajdonságok
+
+Hozd létre a propok típusát és nevezd el `(ComponentName)Props`-nak, ha nincs szükség exportálásra.
+
+Használd a prop szétbontását.
+
+```tsx
+// ❌ Bad, no type
+export const MyComponent = (props) => <div>Hello {props.name}</div>;
+
+// ✅ Good, type
+type MyComponentProps = {
+  name: string;
+};
+
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+```
+
+#### Kerüld a `React.FC` vagy `React.FunctionComponent` használatát a prop típusok meghatározásához
+
+```tsx
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
+ */
+const EmailField: React.FC<{
+  value: string;
+}> = ({ value }) => <TextInput value={value} disabled fullWidth />;
+```
+
+```tsx
+/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the 
+ *      component's props
+ *    - This method doesn't automatically include the children prop. If
+ *      you want to include it, you have to specify it in OwnProps.
+ */ 
+type EmailFieldProps = {
+  value: string;
+};
+
+const EmailField = ({ value }: EmailFieldProps) => (
+  <TextInput value={value} disabled fullWidth />
+);
+```
+
+#### Ne használj egysoros változó prop szórást JSX elemekben
+
+Kerüld az egysoros változó prop szórását JSX elemekben, például `{...props}`. Ez a gyakorlat gyakran eredményez olvashatatlanabb és nehezebben karbantartható kódot, mert nem világos, hogy mely propok érkeznek a komponenshez.
+
+```tsx
+/* ❌ - Bad, spreads a single variable prop into the underlying component
+ */
+const MyComponent = (props: OwnProps) => {
+  return <OtherComponent {...props} />;
+}
+```
+
+```tsx
+/* ✅ - Good, Explicitly lists all props
+ *    - Enhances readability and maintainability
+ */ 
+const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
+  return <OtherComponent {...{ prop1, prop2, prop3 }} />;
+};
+```
+
+Indoklás:
+
+- Első pillantásra világosabb, hogy a kód milyen propokat ad át, így könnyebb megérteni és karbantartani.
+- Segít megelőzni a komponensek közötti szoros kapcsolódást a propjaik révén.
+- Az ellenőrző eszközök megkönnyítik a helytelenül írt vagy használaton kívüli propok azonosítását, amikor kifejezetten felsorolod a propokat.
+
+## JavaScript
+
+### Használj nullish coalescing operátort `??`
+
+```tsx
+// ❌ Bad, can return 'default' even if value is 0 or ''
+const value = process.env.MY_VALUE || 'default';
+
+// ✅ Good, will return 'default' only if value is null or undefined
+const value = process.env.MY_VALUE ?? 'default';
+```
+
+### Használj opcionális láncolást `?.`
+
+```tsx
+// ❌ Bad 
+onClick && onClick();
+
+// ✅ Good
+onClick?.();
+```
+
+## TypeScript
+
+### Használj `type`-ot az `interface` helyett
+
+Mindig használj `type`-ot az `interface` helyett, mert majdnem ugyanazokat a funkciókat látják el, de a `type` rugalmasabb.
+
+```tsx
+// ❌ Bad
+interface MyInterface {
+  name: string;
+}
+
+// ✅ Good
+type MyType = {
+  name: string;
+};
+```
+
+### Használj sztring literálokat az enumerációk helyett
+
+[Sztring literálok](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) az előnyben részesítendő módja az enumeráció jellegű értékek kezelésének a TypeScript-ben. Könnyebben kiterjeszthetők a `Pick` és `Omit` használatával, valamint jobb fejlesztői élményt nyújtanak, különösen a kódkiegészítéssel.
+
+Láthatod, miért javasolja a TypeScript az enumerációk elkerülését [itt](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
+
+```tsx
+// ❌ Bad, utilizes an enum
+enum Color {
+  Red = "red",
+  Green = "green",
+  Blue = "blue",
+}
+
+let color = Color.Red;
+```
+
+```tsx
+// ✅ Good, utilizes a string literal
+
+let color: "red" | "green" | "blue" = "red";
+```
+
+#### GraphQL és belső könyvtárak
+
+Használj enumerációkat, amelyeket a GraphQL codegen generál.
+
+Belső könyvtár használata esetén is jobb az enumeráció használata, így a belső könyvtárnak nem kell egy string literál típust kitenni, amely nem kapcsolódik a belső API-hoz.
+
+Példa:
+
+```TSX
+const {
+  setHotkeyScopeAndMemorizePreviousScope,
+  goBackToPreviousHotkeyScope,
+} = usePreviousHotkeyScope();
+
+setHotkeyScopeAndMemorizePreviousScope(
+  RelationPickerHotkeyScope.RelationPicker,
+);
+```
+
+## Stílus
+
+### Használj StyledComponents-t
+
+Stílusozd a komponenseket [styled-components](https://emotion.sh/docs/styled) használatával.
+
+```tsx
+// ❌ Bad
+<div className="my-class">Hello World</div>
+```
+
+```tsx
+// ✅ Good
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+Előjegyezd meg a stílusozott komponenseket "Styled"-el, hogy megkülönböztesd őket a "valódi" komponensektől.
+
+```tsx
+// ❌ Bad
+const Title = styled.div`
+  color: red;
+`;
+```
+
+```tsx
+// ✅ Good
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+### Téma
+
+A téma használata a legtöbb komponens stílusához az előnyben részesítendő megközelítés.
+
+#### Mértékegységek
+
+Kerüld a `px` vagy `rem` értékek közvetlen használatát a stílus komponensekben. A szükséges értékek általában már meg vannak határozva a témában, ezért ajánlott a téma használata ezekre a célokra.
+
+#### Színek
+
+Kerüld az új színek bevezetését; helyette használd a meglévő palettát a témából. Ha olyan helyzet adódik, amikor a paletta nem felel meg, kérjük, hagyj megjegyzést, hogy a csapat ki tudja javítani.
+
+```tsx
+// ❌ Bad, directly specifies style values without utilizing the theme
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: 4px;
+  border-radius: 50px;
+`;
+```
+
+```tsx
+// ✅ Good, utilizes the theme
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  border-radius:  ${({ theme }) => theme.border.rounded};
+`;
+```
+
+## Típusimportok kényszerítése
+
+Kerüld a típusimportokat. Ennek a szabványnak az érvényesítése érdekében egy ESLint szabály ellenőrzi és jelenti az összes típusimportot. Ez segít fenntartani a konzisztenciát és az olvashatóságot a TypeScript kódban.
+
+```tsx
+// ❌ Bad
+import { type Meta, type StoryObj } from '@storybook/react';
+
+// ❌ Bad
+import type { Meta, StoryObj } from '@storybook/react';
+
+// ✅ Good
+import { Meta, StoryObj } from '@storybook/react';
+```
+
+### Miért kerüljük a típusimportokat
+
+- **Konzisztencia**: A típusimportok elkerülésével és ugyanazon megközelítés használatával mind a típus, mind az érték importok esetén a kódbázis konzisztensen marad a modul importálási stílusában.
+
+- **Olvashatóság**: A típusimportok elkerülése javítja a kód olvashatóságát azáltal, hogy világossá teszi, amikor értéket vagy típust importálunk. Ez csökkenti a kétértelműséget, és megkönnyíti az importált szimbólumok céljának megértését.
+
+- **Maintainability**: It enhances codebase maintainability because developers can identify and locate type-only imports when reviewing or modifying code.
+
+### ESLint szabály
+
+An ESLint rule, `@typescript-eslint/consistent-type-imports`, enforces the no-type import standard. Ez a szabály hibákat vagy figyelmeztetéseket generál bármely típusimport szabálysértés esetén.
+
+Kérjük, vegyék figyelembe, hogy ez a szabály kifejezetten azokra a ritka szélső esetekre vonatkozik, ahol véletlenszerű típusimportok történnek. Maga a TypeScript is elriasztja ezt a gyakorlatot, ahogy a [TypeScript 3.8 kiadási jegyzetek](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html) említik. In most situations, you should not need to use type-only imports.
+
+To ensure your code complies with this rule, make sure to run ESLint as part of your development workflow.

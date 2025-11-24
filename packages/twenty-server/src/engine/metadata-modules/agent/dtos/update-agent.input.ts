@@ -22,12 +22,12 @@ export class UpdateAgentInput {
 
   @IsString()
   @IsOptional()
-  @Field()
+  @Field({ nullable: true })
   name?: string;
 
   @IsString()
   @IsOptional()
-  @Field()
+  @Field({ nullable: true })
   label?: string;
 
   @IsString()
@@ -42,12 +42,12 @@ export class UpdateAgentInput {
 
   @IsString()
   @IsOptional()
-  @Field()
+  @Field({ nullable: true })
   prompt?: string;
 
   @IsString()
   @IsOptional()
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   modelId?: ModelId;
 
   @IsUUID()

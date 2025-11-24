@@ -1,0 +1,77 @@
+---
+title: Erste Schritte mit Workflows
+info: "Erfahren Sie, wie Sie Automatisierungen und Ideen hinzufügen, um loszulegen."
+image: /images/user-guide/workflows/workflow.png
+sectionInfo: Automatisieren Sie Prozesse und integrieren Sie externe Werkzeuge
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow.png" alt="Header" />
+</Frame>
+
+## Warum Workflows wichtig sind
+
+Twenty wurde entwickelt, um den Nutzern maximale Flexibilität zu bieten. Rather than forcing you to adapt your business processes to rigid, pre-built features, workflows enable you to build automations that create the CRM that best supports your unique business use cases.
+
+Workflows are Twenty's in-app feature for building these automations. Sie bieten Ihnen die Bausteine, um genau das zu schaffen, was Ihr Unternehmen braucht, wann es das braucht.
+
+## Was kann ich mit Workflows machen?
+
+Wir empfehlen, Automatisierungen für zwei Hauptzwecke zu entwickeln:
+
+1. **Interne Automatisierungen, um den Alltag Ihres Teams zu erleichtern**: Reduzieren Sie die Menge manueller Eingaben und sich wiederholender Aufgaben, die Ihr Team verlangsamen.
+2. **Daten in und aus Twenty bringen**: Verbinden Sie Twenty über API-Aufrufe und Webhooks mit Ihrer Datenbank und anderen Werkzeugen.
+
+Lassen Sie uns Beispiele erkunden, was möglich ist, bevor wir uns in das 'Wie' vertiefen.
+
+## 1. Interne Automatisierungen
+
+Ihr CRM ist nur hilfreich, wenn die Daten aktuell sind, aber niemand aktualisiert sie gerne. Use workflows to automate low-value, repeatable tasks and keep your team focused on what matters.
+
+Beispiele dafür, was Sie intern automatisieren können:
+
+- **Datenmanagement**: Automatisches Markieren von persönlichen E-Mails, Lead-Zuweisung, Datenvalidierung
+- **Verkaufsprozesse**: Stufenbasierte Aktualisierungen, Churn-Management, Benachrichtigungen über veraltete Gelegenheiten
+- **Produktivität**: Wöchentliche Aufgaben-Erinnerungen, Nachverfolgung von Meetings, Synchronisierung von Feldern über Objekte hinweg
+
+Für detaillierte Beispiele und Schritt-für-Schritt-Anleitungen siehe unseren [Internen Automatisierungen](/l/de/user-guide/workflows/internal-automations) Leitfaden.
+
+## 2. Externe Integrationen
+
+Verbinden Sie Twenty mit Ihren anderen Werkzeugen und Datenquellen, um ein einheitliches Geschäftssystem zu erstellen. Sie können Daten aus Webformularen, Produktdatenbanken, Anrufrekordern und Anreicherungsdiensten in Twenty importieren. Sie können auch Daten an E-Mail-Marketing-Tools, Abrechnungssysteme und andere Geschäftsapplikationen senden.
+
+Beispiele dafür, was Sie integrieren können:
+
+- **Datenerfassung**: Webformularübermittlungen, Produktsynchronisation, Besprechungsnotizen, Datenanreicherung
+- **Datenverteilung**: Newsletter-Verwaltung, E-Mail-Sequenzen, Lead-Scoring, Rechnungsstellung
+
+Für detaillierte Integrationsmuster und Implementierungsrichtlinien lesen Sie unseren [Leitfaden zur Integration externer Tools](/l/de/user-guide/workflows/external-tool-integration).
+
+### Was ist, wenn ich diese Verbindungen nicht herstellen möchte?
+
+Wir bieten [Professional Services](/l/de/user-guide/workflows/professional-services) an, um Ihnen bei der Erstellung der benötigten Automatisierungen zu helfen.  
+Je nach Umfang Ihres Projekts empfehlen wir ein [Onboarding-Paket](https://twenty.com/onboarding-packages) oder setzen wir Sie mit unseren zertifizierten Implementierungspartnern in Verbindung. Sie können Ihr Datenmodell erstellen, Ihre Daten migrieren und Ihre Workflows aufbauen.
+
+### Ich bin nicht sicher, ob die benötigte Verbindung möglich ist
+
+Senden Sie uns eine Nachricht, und wir helfen Ihnen, die Machbarkeit zu beurteilen.
+
+## Workflow Best Practices
+
+Beachten Sie beim Erstellen von Workflows diese Tipps:
+
+- **Schrittbezeichnungen bearbeiten**: Benennen Sie Ihre Workflow-Schritte um, um klar zu beschreiben, was jeder Schritt tut. Dies erleichtert die Wartung und die Übergabe an Kollegen
+- **Vorherige Schritt-Daten nutzen**: Sie können Felder aus Datensätzen verwenden, die von einem vorherigen Schritt in Ihrem Workflow zurückgegeben wurden.
+- **Einfach anfangen**: Beginnen Sie mit einfachen Workflows und erhöhen Sie die Komplexität im Laufe der Zeit, wenn Sie mit dem System vertrauter werden.
+- **Planen, bevor Sie loslegen**: Skizzieren Sie die Logik Ihres Workflows, bevor Sie beginnen, um zu vermeiden, dass Sie auf halbem Weg stecken bleiben.
+- **Use branches wisely**: After a `Search Records` step, create branches to handle both "update existing record" and "create new record" scenarios, then merge the paths back together
+
+## Woran wir arbeiten
+
+Hier sind die Hauptpunkte, an denen wir zur Verbesserung der Workflows arbeiten:
+
+- Schleifen (Iterator ist derzeit in der Beta-Phase, aktivieren Sie ihn unter Einstellungen → Releases → Lab)
+- If / Else Schritt
+- KI-Agent, um Workflows in Ihrem Namen zu erstellen
+
+

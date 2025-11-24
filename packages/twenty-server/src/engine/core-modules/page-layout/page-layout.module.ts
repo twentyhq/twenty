@@ -15,6 +15,7 @@ import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/servic
 import { PageLayoutUpdateService } from 'src/engine/core-modules/page-layout/services/page-layout-update.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 
 @Module({
@@ -25,6 +26,7 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
       PageLayoutWidgetEntity,
     ]),
     TwentyORMModule,
+    PermissionsModule,
     FeatureFlagModule,
   ],
   controllers: [

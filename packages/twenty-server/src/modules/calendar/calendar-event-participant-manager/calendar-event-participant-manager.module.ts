@@ -13,7 +13,6 @@ import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-module
 import { GetDataFromCacheWithRecomputeService } from 'src/engine/workspace-cache-storage/services/get-data-from-cache-with-recompute.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { CalendarCreateCompanyAndPersonAfterSyncJob } from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-create-company-and-contact-after-sync.job';
 import { CalendarEventParticipantMatchParticipantJob } from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-event-participant-match-participant.job';
 import { CalendarEventParticipantPersonListener } from 'src/modules/calendar/calendar-event-participant-manager/listeners/calendar-event-participant-person.listener';
 import { CalendarEventParticipantWorkspaceMemberListener } from 'src/modules/calendar/calendar-event-participant-manager/listeners/calendar-event-participant-workspace-member.listener';
@@ -37,7 +36,6 @@ import { MatchParticipantModule } from 'src/modules/match-participant/match-part
   ],
   providers: [
     CalendarEventParticipantService,
-    CalendarCreateCompanyAndPersonAfterSyncJob,
     CalendarEventParticipantMatchParticipantJob,
     CalendarEventParticipantListener,
     CalendarEventParticipantPersonListener,

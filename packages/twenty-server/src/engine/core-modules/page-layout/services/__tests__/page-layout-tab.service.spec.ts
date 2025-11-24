@@ -111,10 +111,10 @@ describe('PageLayoutTabService', () => {
         where: {
           pageLayoutId,
           pageLayout: { workspaceId },
-          deletedAt: expect.anything(),
         },
         order: { position: 'ASC' },
         relations: ['widgets'],
+        withDeleted: false,
       });
       expect(result).toEqual(expectedTabs);
     });
@@ -154,10 +154,10 @@ describe('PageLayoutTabService', () => {
         where: {
           pageLayoutId,
           pageLayout: { workspaceId },
-          deletedAt: expect.anything(),
         },
         order: { position: 'ASC' },
         relations: ['widgets'],
+        withDeleted: false,
       });
       expect(result).toEqual(expectedTabs);
     });

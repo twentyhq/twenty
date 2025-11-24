@@ -20,8 +20,8 @@ import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-han
 import { AgentToolGeneratorService } from 'src/engine/metadata-modules/agent/agent-tool-generator.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
@@ -36,7 +36,7 @@ export interface AgentToolTestContext {
   module: TestingModule;
   agentToolService: AgentToolGeneratorService;
   agentService: AgentService;
-  objectMetadataService: ObjectMetadataService;
+  objectMetadataService: ObjectMetadataServiceV2;
   roleRepository: Repository<RoleEntity>;
   workspacePermissionsCacheService: WorkspacePermissionsCacheService;
   twentyORMGlobalManager: TwentyORMGlobalManager;
@@ -78,7 +78,7 @@ export const createAgentToolTestModule =
           },
         },
         {
-          provide: ObjectMetadataService,
+          provide: ObjectMetadataServiceV2,
           useValue: {
             findManyWithinWorkspace: jest.fn(),
             findOneWithinWorkspace: jest.fn(),
@@ -215,8 +215,8 @@ export const createAgentToolTestModule =
       AgentToolGeneratorService,
     );
     const agentService = module.get<AgentService>(AgentService);
-    const objectMetadataService = module.get<ObjectMetadataService>(
-      ObjectMetadataService,
+    const objectMetadataService = module.get<ObjectMetadataServiceV2>(
+      ObjectMetadataServiceV2,
     );
     const roleRepository = module.get<Repository<RoleEntity>>(
       getRepositoryToken(RoleEntity),
@@ -243,7 +243,7 @@ export const createAgentToolTestModule =
       description: 'Test agent for integration tests',
       prompt: 'You are a test agent',
       modelId: 'gpt-4o',
-      responseFormat: {},
+      responseFormat: { type: 'text' },
       workspaceId: testWorkspaceId,
       workspace: {} as any,
       roleId: testRoleId,
@@ -338,94 +338,3 @@ export const createAgentToolTestModule =
       testRoleId,
     };
   };
-
-export const createMockRepository = () => ({
-  find: jest.fn(),
-  findOne: jest.fn(),
-  save: jest.fn(),
-  update: jest.fn(),
-  softDelete: jest.fn(),
-  remove: jest.fn(),
-  delete: jest.fn(),
-});
-
-export const setupBasicPermissions = (context: AgentToolTestContext) => {
-  jest
-    .spyOn(context.agentService, 'findOneAgent')
-    .mockResolvedValue(context.testAgent);
-  jest
-    .spyOn(context.roleRepository, 'findOne')
-    .mockResolvedValue(context.testRole);
-  jest
-    .spyOn(
-      context.workspacePermissionsCacheService,
-      'getRolesPermissionsFromCache',
-    )
-    .mockResolvedValue({
-      data: {
-        [context.testRoleId]: {
-          [context.testObjectMetadata.id]: {
-            canReadObjectRecords: true,
-            canUpdateObjectRecords: true,
-            canSoftDeleteObjectRecords: true,
-            canDestroyObjectRecords: false,
-            restrictedFields: {},
-          },
-        },
-      },
-      version: '1.0',
-    });
-  jest
-    .spyOn(context.objectMetadataService, 'findManyWithinWorkspace')
-    .mockResolvedValue([context.testObjectMetadata]);
-};
-
-export const setupRepositoryMock = (
-  context: AgentToolTestContext,
-  mockRepository: any,
-) => {
-  jest
-    .spyOn(context.twentyORMGlobalManager, 'getRepositoryForWorkspace')
-    .mockResolvedValue(mockRepository);
-};
-
-export const createTestRecord = (
-  id: string,
-  data: Record<string, any> = {},
-) => ({
-  id,
-  name: `Test Record ${id}`,
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  ...data,
-});
-
-export const createTestRecords = (
-  count: number,
-  baseData: Record<string, any> = {},
-) => {
-  return Array.from({ length: count }, (_, i) =>
-    createTestRecord(`record-${i + 1}`, baseData),
-  );
-};
-
-export const expectSuccessResult = (result: any, expectedMessage?: string) => {
-  expect(result.success).toBe(true);
-  if (expectedMessage) {
-    expect(result.message).toContain(expectedMessage);
-  }
-};
-
-export const expectErrorResult = (
-  result: any,
-  expectedError?: string,
-  expectedMessage?: string,
-) => {
-  expect(result.success).toBe(false);
-  if (expectedError) {
-    expect(result.error).toBe(expectedError);
-  }
-  if (expectedMessage) {
-    expect(result.message).toContain(expectedMessage);
-  }
-};

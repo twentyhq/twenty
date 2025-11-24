@@ -1,0 +1,124 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMaximumNumberOfDataPoints.constant';
+import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
+import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
+import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
+import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
+import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
+import { sortLineChartSeries } from '@/page-layout/widgets/graph/utils/sortLineChartSeries';
+import { isDefined } from 'twenty-shared/utils';
+import { type LineChartConfiguration } from '~/generated/graphql';
+
+type TransformTwoDimensionalGroupByToLineChartDataParams = {
+  rawResults: GroupByRawResult[];
+  groupByFieldX: FieldMetadataItem;
+  groupByFieldY: FieldMetadataItem;
+  aggregateField: FieldMetadataItem;
+  configuration: LineChartConfiguration;
+  aggregateOperation: string;
+  objectMetadataItem: ObjectMetadataItem;
+  primaryAxisSubFieldName?: string | null;
+};
+
+type TransformTwoDimensionalGroupByToLineChartDataResult = {
+  series: LineChartSeries[];
+  hasTooManyGroups: boolean;
+};
+
+export const transformTwoDimensionalGroupByToLineChartData = ({
+  rawResults,
+  groupByFieldX,
+  groupByFieldY,
+  aggregateField,
+  configuration,
+  aggregateOperation,
+  objectMetadataItem,
+  primaryAxisSubFieldName,
+}: TransformTwoDimensionalGroupByToLineChartDataParams): TransformTwoDimensionalGroupByToLineChartDataResult => {
+  const seriesMap = new Map<string, Map<string, number>>();
+  const allXValues: string[] = [];
+  const xValueSet = new Set<string>();
+  let hasTooManyGroups = false;
+
+  rawResults.forEach((result) => {
+    const dimensionValues = result.groupByDimensionValues;
+    if (!isDefined(dimensionValues) || dimensionValues.length < 2) return;
+
+    const rawAggregateValue = result[aggregateOperation];
+    if (!isDefined(rawAggregateValue)) return;
+
+    const xValue = formatDimensionValue({
+      value: dimensionValues[0],
+      fieldMetadata: groupByFieldX,
+      dateGranularity: configuration.primaryAxisDateGranularity ?? undefined,
+      subFieldName: primaryAxisSubFieldName ?? undefined,
+    });
+
+    // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)
+    const isNewX = !xValueSet.has(xValue);
+
+    if (isNewX && xValueSet.size >= LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS) {
+      hasTooManyGroups = true;
+      return;
+    }
+
+    if (isNewX) {
+      xValueSet.add(xValue);
+      allXValues.push(xValue);
+    }
+
+    const seriesKey = formatDimensionValue({
+      value: dimensionValues[1],
+      fieldMetadata: groupByFieldY,
+      dateGranularity:
+        configuration.secondaryAxisGroupByDateGranularity ?? undefined,
+      subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
+    });
+
+    const aggregateValue = computeAggregateValueFromGroupByResult({
+      rawResult: result,
+      aggregateField,
+      aggregateOperation:
+        configuration.aggregateOperation as unknown as ExtendedAggregateOperations,
+      aggregateOperationFromRawResult: aggregateOperation,
+      objectMetadataItem,
+    });
+
+    if (!isDefined(aggregateValue)) return;
+
+    if (!seriesMap.has(seriesKey)) {
+      seriesMap.set(seriesKey, new Map());
+    }
+
+    seriesMap.get(seriesKey)!.set(xValue, aggregateValue);
+  });
+
+  const unsortedSeries: LineChartSeries[] = Array.from(seriesMap.entries()).map(
+    ([seriesKey, xToYMap]) => {
+      const data: LineChartDataPoint[] = allXValues.map((xValue) => ({
+        x: xValue,
+        y: xToYMap.get(xValue) ?? 0,
+      }));
+
+      return {
+        id: seriesKey,
+        label: seriesKey,
+        color: configuration.color as GraphColor,
+        data,
+      };
+    },
+  );
+
+  const series = sortLineChartSeries({
+    series: unsortedSeries,
+    orderByY: configuration.secondaryAxisOrderBy,
+  });
+
+  return {
+    series,
+    hasTooManyGroups,
+  };
+};

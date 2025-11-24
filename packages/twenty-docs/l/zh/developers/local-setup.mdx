@@ -1,0 +1,348 @@
+---
+title: 本地設定
+description: "供貢獻者（或好奇的開發者）在本地運行 Twenty 的指南。"
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## 先決條件
+
+<Tabs>
+<Tab title="Linux and MacOS">
+
+在您可以安裝和使用 Twenty 之前，請確保您的電腦上安裝了以下內容：
+
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Node v24.5.0](https://nodejs.org/en/download)
+- [yarn v4](https://yarnpkg.com/getting-started/install)
+- [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+<Warning>
+`npm` won't work, you should use `yarn` instead. Yarn 現已隨 Node.js 發佈，因此您不需要單獨安裝它。
+如果尚未啟用 Yarn，請運行 `corepack enable` 。
+如果尚未啟用 Yarn，請運行 `corepack enable` 。
+</Warning>
+
+</Tab>
+
+<Tab title="Windows (WSL)">
+
+1. 安裝 WSL
+   以管理員身份打開 PowerShell 並運行：
+
+```powershell
+wsl --install
+```
+
+您現在應該會看到要求重新啟動計算機的提示。 如果沒有，請手動重啟。
+
+重新啟動後，將打開一個 powerShell 窗口並安裝 Ubuntu。 這可能會花一些時間。
+重新啟動後，將打開一個 powerShell 窗口並安裝 Ubuntu。 這可能會花一些時間。
+您將看到提示為您的 Ubuntu 安裝創建用戶名和密碼。
+
+2. 安裝並配置 git
+
+```bash
+sudo apt-get install git
+
+git config --global user.name "Your Name"
+
+git config --global user.email "youremail@domain.com"
+```
+
+3. 安裝 nvm、node.js 和 yarn
+
+<Warning>
+
+使用 `nvm` 安裝正確的 `node` 版本。 `.nvmrc` 確保所有貢獻者使用相同的版本。
+ `.nvmrc` 確保所有貢獻者使用相同的版本。
+</Warning>
+
+```bash
+sudo apt-get install curl
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+```
+
+關閉並重新打開終端以使用 nvm。 然後運行以下命令。 然後運行以下命令。
+
+```bash
+
+nvm install # installs recommended node version
+
+nvm use # use recommended node version
+
+corepack enable
+```
+
+</Tab>
+</Tabs>
+
+---
+
+## 步驟 1：Git 克隆
+
+在您的終端中運行以下命令。
+
+<Tabs>
+<Tab title="SSH (Recommended)">
+
+如果尚未設置 SSH 密鑰，您可以在[此處](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh)了解如何設置。
+```bash
+git clone git@github.com:twentyhq/twenty.git
+```
+
+```bash
+git clone git@github.com:twentyhq/twenty.git
+```
+</Tab>
+<Tab title="HTTPS">
+
+```bash
+git clone https://github.com/twentyhq/twenty.git
+```
+
+</Tab>
+</Tabs>
+
+## 步驟 2：定位到根目錄
+
+```bash
+cd twenty
+```
+
+應在接下來的步驟中，從項目根目錄運行所有命令。
+
+## 步驟 3：設置 PostgreSQL 數據庫
+
+<Tabs>
+  <Tab title="Linux">
+    **Option 1 (preferred):** To provision your database locally:
+    Use the following link to install Postgresql on your Linux machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+    Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make postgres-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Mac OS">
+    **Option 1 (preferred):** To provision your database locally with `brew`:
+
+````
+```bash
+  brew install postgresql@16
+  export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+  brew services start postgresql@16
+  psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+```
+
+You can verify if the PostgreSQL server is running by executing:
+```bash
+  brew services list
+```
+
+The installer might not create the `postgres` user by default when installing
+via Homebrew on MacOS. Instead, it creates a PostgreSQL role that matches your macOS
+username (e.g., "john").
+To check and create the `postgres` user if necessary, follow these steps:
+```bash
+  # Connect to PostgreSQL
+  psql postgres
+  or
+  psql -U $(whoami) -d postgres
+```
+
+Once at the psql prompt (postgres=#), run:
+ ```bash
+  # List existing PostgreSQL roles
+  \du
+```
+You'll see output similar to:
+ ```bash
+  Role name | Attributes  | Member of
+  -----------+-------------+-----------
+  john      | Superuser   | {}
+```
+
+If you do not see a `postgres` role listed, proceed to the next step.
+Create the `postgres` role manually:
+ ```bash
+  CREATE ROLE postgres WITH SUPERUSER LOGIN;
+```
+This creates a superuser role named `postgres` with login access.
+
+**Option 2:** If you have docker installed:
+```bash
+  make postgres-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Windows (WSL)">
+    All the following steps are to be run in the WSL terminal (within your virtual machine)
+
+````
+**Option 1:** To provision your Postgresql locally:
+Use the following link to install Postgresql on your Linux virtual machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
+```bash
+  psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+```
+Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
+
+**Option 2:** If you have docker installed:
+Running Docker on WSL adds an extra layer of complexity.
+Only use this option if you are comfortable with the extra steps involved, including turning on [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
+```bash
+  make postgres-on-docker
+```
+````
+
+  </Tab>
+</Tabs>
+
+您現在可以以用戶 `postgres` 和密碼 `postgres` 訪問 [localhost:5432](localhost:5432) 上的數據庫。
+
+## 步驟 4：設置 Redis 數據庫（緩存）
+
+Twenty 需要一個 redis 緩存來提供最佳性能
+
+<Tabs>
+  <Tab title="Linux">
+    **Option 1:** To provision your Redis locally:
+    Use the following link to install Redis on your Linux machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make redis-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Mac OS">
+    **Option 1 (preferred):** To provision your Redis locally with `brew`:
+    ```bash
+    brew install redis
+    ```
+    Start your redis server:
+    ```brew services start redis```
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make redis-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Windows (WSL)">
+    **Option 1:** To provision your Redis locally:
+    Use the following link to install Redis on your Linux virtual machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make redis-on-docker
+```
+````
+
+  </Tab>
+</Tabs>
+
+如果您需要客戶端 GUI，我們推薦 [redis insight](https://redis.io/insight/)（提供免費版本）
+
+## 步驟 5：設定環境變數
+
+使用環境變數或 `.env` 文件配置您的項目。 使用環境變數或 `.env` 文件配置您的項目。 查看更多信息 [這裡](https://docs.twenty.com/l/zh/developers/self-hosting/setup)
+
+複製 `/front` 和 `/server` 中的 `.env.example` 文件：
+
+```bash
+cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
+cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
+```
+
+## 步驟 6：安裝依賴項
+
+要構建 Twenty 服務器並向您的數據庫種植一些數據，請運行以下命令：
+
+```bash
+yarn
+```
+
+Note that `npm` or `pnpm` won't work
+
+## 步驟 7：運行項目
+
+<Tabs>
+  <Tab title="Linux">
+    根據您的 Linux 發行版，Redis 服務器可能會自動啟動。
+    
+    根據您的 Linux 發行版，Redis 服務器可能會自動啟動。
+    如果沒有，請檢查您的發行版的 [Redis 安裝指南](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)。
+  
+  </Tab>
+  <Tab title="Mac OS">
+  Redis 應已在運行。 
+  Redis 應已在運行。 If not, run:
+    ```bash
+    brew services start redis
+    ```  
+  
+</Tab>
+  <Tab title="Windows (WSL)">
+    根據您的 Linux 發行版，Redis 服務器可能會自動啟動。
+    
+    根據您的 Linux 發行版，Redis 服務器可能會自動啟動。
+    如果沒有，請檢查您的發行版的 [Redis 安裝指南](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)。
+  
+  </Tab>
+</Tabs>
+
+用以下命令設置您的資料庫：
+
+```bash
+npx nx database:reset twenty-server
+```
+
+啟動服務器、工作程序和前端服務：
+
+```bash
+npx nx start twenty-server
+npx nx worker twenty-server
+npx nx start twenty-front
+```
+
+或者，您可以一次啟動所有服務：
+
+```bash
+npx nx start
+```
+
+## 步驟 8：使用 Twenty
+
+**前端**
+
+Twenty 的前端將在 [http://localhost:3001](http://localhost:3001) 運行。
+您可以使用默認的演示帳戶登錄：`tim@apple.dev`（密碼：`tim@apple.dev`）
+您可以使用默認的演示帳戶登錄：`tim@apple.dev`（密碼：`tim@apple.dev`）
+
+**後端**
+
+- Twenty 的服務器將在 [http://localhost:3000](http://localhost:3000) 啟動並運行
+- 可以在 [http://localhost:3000/graphql](http://localhost:3000/graphql) 訪問 GraphQL API
+- 可以在 [http://localhost:3000/rest](http://localhost:3000/rest) 訪問 REST API
+
+## 疑難排解
+
+如果您遇到任何問題，請查看[疑難排解](https://docs.twenty.com/l/zh/developers/self-hosting/troubleshooting)找出解決方案。

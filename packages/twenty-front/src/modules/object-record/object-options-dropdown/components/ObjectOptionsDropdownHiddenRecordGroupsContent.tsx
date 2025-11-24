@@ -25,7 +25,6 @@ import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
 export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   const { t } = useLingui();
   const {
-    viewType,
     currentContentId,
     objectMetadataItem,
     onContentChange,
@@ -45,9 +44,7 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   });
 
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
-    useRecordGroupVisibility({
-      viewType,
-    });
+    useRecordGroupVisibility();
 
   const viewGroupSettingsUrl = getSettingsPath(SettingsPath.ObjectFieldEdit, {
     objectNamePlural,

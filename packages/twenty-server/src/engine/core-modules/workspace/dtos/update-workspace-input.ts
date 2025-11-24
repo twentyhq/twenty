@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
+  IsArray,
   IsBoolean,
   IsInt,
   IsOptional,
@@ -102,4 +103,10 @@ export class UpdateWorkspaceInput {
   @IsString()
   @IsOptional()
   routerModel?: string;
+
+  @Field(() => [String], { nullable: true })
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  editableProfileFields?: string[];
 }

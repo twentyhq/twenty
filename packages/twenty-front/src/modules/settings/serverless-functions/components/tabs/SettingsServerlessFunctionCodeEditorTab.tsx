@@ -7,6 +7,7 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
 import { Button, CoreEditorHeader } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -32,7 +33,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   );
   const TestButton = (
     <Button
-      title="Test"
+      title={t`Test`}
       variant="primary"
       accent="blue"
       size="small"
@@ -54,8 +55,8 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   return (
     <Section>
       <H2Title
-        title="Code your function"
-        description="Write your function (in typescript) below"
+        title={t`Code your function`}
+        description={t`Write your function (in typescript) below`}
       />
       <CoreEditorHeader leftNodes={[HeaderTabList]} rightNodes={[TestButton]} />
       {activeTabId && (

@@ -1,0 +1,69 @@
+---
+title: Onay işareti
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Başarılı veya tamamlanmış bir işlemi temsil eder.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Checkmark } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <Checkmark />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+`React.ComponentPropsWithoutRef<'div'>` öğesini genişletir ve normal bir `div` elemanının tüm özelliklerini kabul eder.
+
+</Tab>
+
+</Tabs>
+
+## Animasyonlu Onay İşareti
+
+Animasyon özelliği eklenmiş bir onay işareti simgesini temsil eder.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { AnimatedCheckmark } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return (
+    <AnimatedCheckmark
+      isAnimating={true}
+      color="green"
+      duration={0.5}
+      size={30}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Özellikler  | Tür     | Açıklama                                                 | Varsayılan                 |
+| ----------- | ------- | -------------------------------------------------------- | -------------------------- |
+| isAnimating | boolean | Onay işaretinin animasyonlu olup olmadığını kontrol eder | yanlış                     |
+| renk        | metin   | Onay işaretinin rengi                                    |                            |
+| süre        | sayı    | Animasyonun süresi, saniye cinsinden                     | 0.5 saniye |
+| boyut       | sayı    | Onay işaretinin boyutu                                   | 28 piksel                  |
+
+</Tab>
+
+</Tabs>

@@ -1,0 +1,114 @@
+---
+title: フォルダアーキテクチャ
+info: A detailed look into our folder architecture
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+このガイドでは、プロジェクトディレクトリ構造の詳細と、Twentyの組織化および保守性への貢献について探ります。
+
+このフォルダアーキテクチャの規約に従うことで、特定の機能に関連するファイルを見つけやすくし、アプリケーションがスケーラブルでメンテナブルであることを保証します。
+
+```
+front
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
+│   └───ui
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
+└───pages
+└───...
+```
+
+## ページ
+
+アプリケーションルートによって定義されたトップレベルのコンポーネントを含みます。 それらは、モジュールフォルダからより低レベルのコンポーネントをインポートします（詳細は下記を参照）。 それらは、モジュールフォルダからより低レベルのコンポーネントをインポートします（詳細は下記を参照）。
+
+## モジュール
+
+Each module represents a feature or a group of feature, comprising its specific components, states, and operational logic.
+以下の構造に従う必要があります。 以下の構造に従う必要があります。 モジュール内にモジュール（サブモジュールとして参照）をネストし、同じルールが適用されます。
+
+```
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
+```
+
+### コンテキスト
+
+コンテキストは、各レベルでプロップスを手動で渡すことなく、コンポーネントツリーを通じてデータを渡す方法です。
+
+詳細は[Reactコンテキスト](https://react.dev/reference/react#context-hooks)を参照してください。
+
+### GraphQL
+
+フラグメント、クエリ、およびミューテーションを含む。
+
+詳細は[GraphQL](https://graphql.org/learn/)を参照してください。
+
+- フラグメント
+
+フラグメントはクエリの再利用可能な部分で、異なる場所で使用できます。 フラグメントを使用することで、コードを重複させることを避けやすくなります。 フラグメントを使用することで、コードを重複させることを避けやすくなります。
+
+詳細は[GraphQL フラグメント](https://graphql.org/learn/queries/#fragments)を参照してください。
+
+- クエリ
+
+詳細は[GraphQLクエリ](https://graphql.org/learn/queries/)を参照してください。
+
+- ミューテーション
+
+詳細は[GraphQLミューテーション](https://graphql.org/learn/queries/#mutations)を参照してください。
+
+### フック
+
+詳細は[フック](https://react.dev/learn/reusing-logic-with-custom-hooks)を参照してください。
+
+### ステート
+
+ステート管理ロジックを含みます。 これを管理するのは[RecoilJS](https://recoiljs.org)です。 これを管理するのは[RecoilJS](https://recoiljs.org)です。
+
+- セレクター: 詳細は[RecoilJSセレクター](https://recoiljs.org/docs/basic-tutorial/selectors)を参照してください。
+
+Reactの組み込みステート管理は依然としてコンポーネント内のステートを処理します。
+
+### ユーティル
+
+再利用可能な純粋関数のみを含むべきです。 それ以外の場合は、`hooks`フォルダにカスタムフックを作成します。
+
+## UI
+
+アプリケーションで使用される再利用可能なUIコンポーネントをすべて含みます。
+
+このフォルダには、特定のタイプのコンポーネント用に`data`、`display`、`feedback`、および`input`のようなサブフォルダが含まれることがあります。 各コンポーネントは自己完結型で再利用可能でなければならず、アプリケーションのさまざまな部分で使用できます。 各コンポーネントは自己完結型で再利用可能でなければならず、アプリケーションのさまざまな部分で使用できます。
+
+UIコンポーネントを`modules`フォルダ内の他のコンポーネントから分離することで、一貫したデザインを維持し、UIの変更がコードベースの他の部分（ビジネスロジック）に影響を与えないようにするのが容易になります。
+
+## インターフェースと依存関係
+
+`ui`フォルダを除く任意のモジュールから他のモジュールコードをインポートできます。 これにより、そのコードは簡単にテストできます。 これにより、そのコードは簡単にテストできます。
+
+### 内部
+
+各部分（フック、ステート、...） モジュールの一部は`internal`フォルダを持ち、モジュール内でのみ使用される部分を含みます。

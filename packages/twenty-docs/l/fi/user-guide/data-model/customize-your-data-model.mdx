@@ -1,0 +1,69 @@
+---
+title: Mukauta tietomalliasi
+info: "Opi suunnittelemaan ja luomaan tietomalli, joka heijastaa toimintaasi."
+image: /images/user-guide/fields/custom_data_model.png
+sectionInfo: Joustava tietomalli, joka on suunniteltu tukemaan ainutlaatuisia liiketoimintaprosessejasi
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/custom_data_model.png" alt="Header" />
+</Frame>
+
+## Mikä on tietomalli?
+
+Tietomalli on rakenne, joka määrittelee, kuinka tieto on järjestetty CRM:ssäsi. Se määrittää, mitkä objektit ovat olemassa (kuten yritykset, henkilöt tai mahdollisuudet), mitkä ominaisuudet niillä on (nämä ovat kenttiä) ja kuinka ne liittyvät toisiinsa. Voit ajatella sitä asiakastietojesi karttana.
+
+## Miksi sinun pitäisi mukauttaa tietomalliasi?
+
+Jokainen yritys toimii eri tavoin. Mahdollisuus mukauttaa tietomalliasi tarkoittaa, että voit muovata Twenty-ohjelman prosessiesi ympärille, sen sijaan että pakottaisit ne jäykkään järjestelmään.  
+Twenty tarjoaa joustavuutta, jota tarvitset luodaksesi tietomallin, joka parhaiten tukee päivittäistä toimintaasi. Voit luoda niin monta mukautettua objektia ja kenttää kuin tarvitset, hinta ei muutu.
+
+## Vinkkejä tietomallisi suunnitteluun
+
+Harvoin on vain yksi tapa rakentaa tietomalli. Alla on muutamia vinkkejä, jotka auttavat sinua rakentamaan omasi.
+
+**1. Start with your core objects.**  
+Identify the main concepts you work with (e.g. Companies, People, Opportunities). Nämä kolme objektia ovat jo käytettävissä, sillä niitä käytetään hyvin usein. Mutta mieti muita, joita saatat tarvita.  
+Esimerkki: Stripe tarvitsee objektin `Tilaukset`, Airbnb objektin `Matkat`, start-up-kiihdyttämö objektin `Erät`.
+
+**2. Käytä kenttiä muutoksiin, ei uusiin objekteihin.**  
+Jos jokin on vain olemassa olevan objektin ominaisuus (esim. `Toimiala` yritykselle tai `Tila` mahdollisuudelle), tee siitä kenttä. Kentät sopivat parhaiten luokille, nimikkeille ja ominaisuuksille.
+
+**3. Luo uusi objekti, kun se on itsenäinen.**  
+Jos käsitteellä on oma elinkaari, ominaisuudet tai suhteet, se ansaitsee yleensä oman objektin. Esimerkki:
+
+- **Projektit** joilla on omat määräajat, omistajat ja tehtävät
+- **Tilaukset** jotka yhdistävät yritykset, tuotteet ja laskut
+- **Tapahtumat** joihin liittyy monia osallistujia ja jälkitoimenpiteitä
+
+Nämä ylittävät yhden kentän, koska niillä on oma data ja suhteet.
+
+**4. Luo objekti, kun liittyvien tietueiden lukumäärä on avoin.**  
+Jos jokin voidaan yhdistää useita kertoja ja et tiedä kuinka monta, on parempi luoda siitä oma objekti. Esimerkiksi, sen sijaan että loisit kenttiä kuten `Tuote 1`, `Tuote 2` jne., määritä `Tuote`-objekti ja yhdistä se alkuperäiseen tietueeseen. Tällä tavalla voit tukea yhtä, kahta tai sataa tuotetta muuttamatta malliasi.
+
+**5. Pidä se yksinkertaisena aluksi.**  
+Aloita kentistä. Siirry uusiin objekteihin vasta sitten, kun huomaat rajoitukset: liian monta kenttää, toistuvat tietueet tai suhteet, jotka eivät sovi hyvin.
+
+### Erityisohje ihmisille, yrityksille ja mahdollisuuksille
+
+- **`Henkilöt`, `Yritykset` ja `Mahdollisuudet` ovat ainoat objektit, joista pääset käsiksi postilaatikossasi tai kalenterissasi synkronoituihin sähköposteihin ja tapaamisiin.** Suosittelemme käyttämään näitä mahdollisimman paljon. Jos sinun on luotava `Henkilöiden` tai `Yritysten` luokkia, käytä kenttiä uusien objektien sijaan.
+
+  Esimerkki: on parasta käyttää `Henkilö`-objekti sekä prospekteille että kumppaneille, lisäämällä kenttä nimeltä `Henkilö Tyyppi`. Vältä `Kumppani`-objektin luomista, koska et voi käyttää sähköpostikeskusteluja siitä. Luo sen sijaan näkymiä `Henkilö`-objektin alle: yksi näyttää kumppanit, toinen näyttää prospektit.
+- Edellisen kohdan mukaisesti on ok, että kaikille tietueille ei ole vastinetta tietyille kentille. Esimerkiksi `Henkilö`-objektin alla voit lisätä `Viitelinkki`-kentän, joka on tärkeä vain, kun `Henkilö Tyyppi = Kumppani`. Se on ok: voit piilottaa tämän kentän näkymistä, joissa sitä ei tarvita.
+
+### Kysymyksiä valintojesi ohjaamiseen
+
+Kysy itseltäsi:
+
+- Onko tämä vain olemassa olevan asian ominaisuus vai tarvitseeko se omat ominaisuudet?
+- Tarvitseeko minun seurata useita tällaisia tietueita tietämättä kuinka monta etukäteen?
+- Liittyykö tämä käsite useampiin kuin yhteen objektiin?
+- Onko sillä oma elinkaari (esim. vaiheet, alku-/lopetuspäivät)?
+
+Jos vastaat 'kyllä' yhteen tai useampaan näistä, on todennäköisesti aika luoda uusi objekti.
+
+## Halutaanko apua?
+
+Tiimimme voi auttaa sinua suunnittelemaan ja luomaan tarvitsemasi tietomallin. Tutustu Onboarding-pakettiimme [tästä](https://twenty.com/onboarding-packages).
+
+

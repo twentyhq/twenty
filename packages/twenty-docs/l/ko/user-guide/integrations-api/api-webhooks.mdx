@@ -1,0 +1,83 @@
+---
+title: API 키 및 웹훅
+info: "인증을 위한 API 키를 생성 및 관리하고 실시간 알림을 위한 웹훅을 설정하세요."
+image: /images/user-guide/api/api.png
+sectionInfo: Twenty를 다른 도구와 연결하는 방법을 알아보세요.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+## API 키
+
+API 키는 귀하의 CRM 데이터에 자동으로 접근하고 다른 시스템과 데이터를 동기화하며 맞춤형 통합 또는 솔루션을 생성할 수 있습니다.
+
+### API 키 생성
+
+1. Go to **Settings → APIs & Webhooks**
+2. Click **+ Create key** at the top right
+3. API 키 구성:
+   - **이름**: API 키에 설명이 포함된 이름 지정
+   - **만료 날짜**: 키의 만기 날짜 설정
+4. **저장**을 클릭하여 API 키를 생성
+5. **중요**: 즉시 API 키를 복사하여 저장하세요. 이 키는 한 번만 표시됩니다.
+
+생성 후, API 키는 맞춤형 API 설명서와 플레이그라운드에 접근을 제공하며, 실제 데이터 모델로 엔드포인트를 테스트할 수 있습니다.
+
+<Warning>
+API 키는 민감한 정보에 접근할 수 있으므로 완전히 신뢰하지 않는 서비스에 공유하지 마세요. 누출되면 악의적으로 사용될 수 있습니다. API 키의 보안이 위험해진 경우 즉시 비활성화하고 새로 생성하세요.
+</Warning>
+<VimeoEmbed videoId="928786722" title="Creating API key" />
+
+### API 키 관리
+
+**Regenerate an API Key:**
+
+1. Go to **Settings → APIs & Webhooks**
+2. 다시 생성할 API 키를 클릭
+3. **다시 생성** 버튼 클릭
+4. 새 API 키를 즉시 복사하여 저장하세요.
+
+**API 키 삭제:**
+
+1. API 키를 목록에서 찾으세요.
+2. 키를 클릭하여 세부정보를 확인하세요.
+3. **삭제**를 클릭하여 영구적으로 제거하세요.
+
+## Webhooks
+
+Webhooks allow for immediate updates to your specified URL about changes or events related to your customer data.
+
+예를 들어, 기회가 "계약 성사"로 이동하면 웹훅이 자동으로 회계 시스템에서 송장 생성을 트리거할 수 있습니다. 이러한 자동화는 내부 필드 업데이트를 기반으로 트리거를 제공하는 Twenty의 인앱 [워크플로우 기능](/l/ko/user-guide/workflows/getting-started-workflows)을 사용하여서도 달성할 수 있습니다.
+
+웹훅은 외부 시스템과의 통합에 이상적이며, 워크플로우는 내부 자동화와 웹훅 트리거, 코드 노드, HTTP 노드를 통해 외부 도구 연결을 지원합니다.
+
+### Webhook 생성
+
+1. **설정 → API 및 웹훅 → 웹훅**으로 이동
+2. **+ Webhook 생성** 클릭
+3. 웹훅 URL(알림을 받을 위치)을 입력하세요.
+4. **저장** 클릭
+
+웹훅은 즉시 CRM 데이터 변경에 대한 실시간 알림을 받기 시작합니다.
+
+<VimeoEmbed videoId="928786708" title="Video demonstration" />
+
+### 웹훅 관리
+
+**Webhook 삭제:**
+
+1. **설정 → API 및 웹훅 → 웹훅**으로 이동
+2. 제거할 웹훅을 찾으세요.
+3. 웹훅을 클릭하세요.
+4. **삭제**를 클릭하고 팝업에서 확인하세요.
+
+**Webhook 수정:**
+
+1. 수정할 웹훅을 클릭하세요.
+2. URL 또는 기타 설정을 업데이트하세요.
+3. 변경 사항을 적용하려면 **저장**을 클릭하세요.
+

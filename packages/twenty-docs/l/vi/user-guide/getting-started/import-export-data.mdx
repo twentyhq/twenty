@@ -1,0 +1,104 @@
+---
+title: Nhập/Xuất Dữ Liệu
+info: "Tìm hiểu cách nhập và xuất dữ liệu."
+image: /images/user-guide/import-export-data/cloud.png
+sectionInfo: Khám phá Twenty, một CRM mã nguồn mở.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="Header" />
+</Frame>
+
+## Nhập Dữ Liệu
+
+- Bạn có thể nhập dữ liệu cho bất kỳ đối tượng nào bằng tệp .csv, .xlsx hoặc .xls.
+- Mỗi tệp bạn tải lên cần chứa **chỉ một loại đối tượng** (ví dụ: chỉ những bản ghi Người).
+- Bạn có thể sử dụng Nhập để **tạo hoặc cập nhật bản ghi**.
+
+### Tải xuống một tệp mẫu để phù hợp với định dạng mong đợi.
+
+1. Đi đến một chế độ xem với đối tượng bạn sắp nhập.
+2. Nhấp vào biểu tượng `⋮` ở góc trên cùng bên phải, sau đó chọn `Nhập bản ghi`.
+3. Nhấp vào `Tải xuống tệp mẫu`.
+
+### Chuẩn bị tệp csv của bạn
+
+Dưới đây là một vài mục cần kiểm tra trước khi tải lên tệp của bạn.
+
+- Giới hạn số lượng bản ghi là **10.000 bản ghi mỗi tệp**.
+- **Loại bỏ các bản ghi trùng lặp** khỏi tệp của bạn.
+  - Tính duy nhất trên `Người` được đặt mặc định bởi `id` và `email`. Bạn cũng có khả năng xác định các trường tùy chỉnh từ `Người` là duy nhất khi cấu hình mô hình dữ liệu của bạn.
+  - Tính duy nhất trên `Công ty` được đặt mặc định bởi `id` và `domain`. Bạn cũng có khả năng xác định các trường tùy chỉnh từ `Công ty` là duy nhất khi cấu hình mô hình dữ liệu của bạn.
+  - Đối với bất kỳ đối tượng nào khác, bao gồm đối tượng tùy chỉnh, bạn có khả năng xác định một số trường là duy nhất. Hãy chắc chắn không bao gồm các bản ghi trùng lặp khi chuẩn bị tệp của bạn.
+- Chúng tôi khuyến nghị sử dụng cú pháp `https://domain.com` khi tải lên các domain của bạn, vì đây là cú pháp được sử dụng bởi kết nối với hộp thư và lịch của bạn.
+- Bạn có thể **nhập các mối quan hệ giữa các đối tượng** bằng cách cung cấp một trong những trường duy nhất của bản ghi liên kết.
+  - Ví dụ: Bạn muốn kết nối một người với một công ty. Thêm một cột trong tệp có chứa tất cả các bản ghi `Người` bao gồm `id` của công ty -- hoặc `domain` của công ty. Bạn sẽ có thể ánh xạ trường này trong quá trình tải lên.
+    <Warning>
+
+**Lưu ý quan trọng:**
+
+- Các mối quan hệ giữa các đối tượng trong Twenty là "Một với Nhiều". Điều này có nghĩa là mỗi bản ghi của đối tượng A có thể được đính kèm với nhiều bản ghi của đối tượng B. Nhưng mỗi bản ghi của đối tượng B có thể chỉ thuộc một bản ghi của đối tượng A.
+  _Ví dụ, một công ty có thể được đính kèm với nhiều người. Và một người chỉ có thể thuộc về một công ty._
+
+- Để tải lên các mối quan hệ thông qua chức năng Nhập, bạn cần cung cấp `id` (hoặc bất kỳ trường duy nhất nào khác) của đối tượng đính kèm trong tệp chứa các bản ghi ở phía "Nhiều giao dịch" của mối quan hệ.  
+  _Ví dụ, bạn cung cấp `id` hoặc `domain` của công ty khi tải lên các bản ghi người. Bạn không cung cấp `id` (hoặc `email`) của người khi tải lên tệp với các công ty._
+  </Warning>
+
+### Tải lên tệp của bạn
+
+1. Đi đến một chế độ xem với đối tượng bạn sắp nhập.
+2. Nhấp vào biểu tượng `⋮` ở góc trên cùng bên phải, sau đó chọn `Nhập bản ghi`.
+3. Nhấp vào `Chọn tệp`.
+4. Xác nhận ánh xạ các trường.
+
+- Bạn không phải nhập tất cả, bạn có thể chọn tùy chọn "Không ánh xạ".
+- Đối với các mối quan hệ, nên chỉ ánh xạ một trong các trường duy nhất.
+- Bạn có thể cần ánh xạ giá trị của các trường loại chọn và loại chọn nhiều.
+
+5. Nhấp vào `Bước Tiếp Theo` và `Xem lại các dòng có lỗi`. Các ô gặp vấn đề được đánh dấu nổi bật. **Bạn có thể xóa dòng hoặc cập nhật ô trực tiếp từ đó**.
+6. Khi bạn đã hoàn thành, nhấp vào `Xác nhận`.
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}}/>
+
+### FAQ Nhập Dữ liệu
+
+<details><summary>Tôi thấy vấn đề trùng lặp khi tải tệp của tôi, tôi nên làm gì?</summary>
+
+Xin vui lòng tham khảo phần **Chuẩn bị tệp csv của bạn** ở trên trong bài viết này, phần này chứa hướng dẫn về những gì sẽ được coi là bản sao.
+
+</details>
+
+<details><summary>Tôi có thể nhập các mối quan hệ giữa các đối tượng không?</summary>
+
+Vâng, vui lòng tham khảo phần **Chuẩn bị tệp csv của bạn** ở trên trong bài viết này, phần này chứa mục về việc nhập các mối quan hệ.
+
+</details>
+
+<details><summary>Tôi có thể cập nhật các bản ghi hiện có bằng chức năng Nhập không?</summary>
+
+Vâng, bạn có thể cập nhật các bản ghi hiện có bằng chức năng Nhập. Hãy chắc chắn cung cấp id (hoặc bất kỳ trường duy nhất nào khác) khi tải lại các bản ghi của bạn.
+
+</details>
+
+<details><summary>Tôi có thể di chuyển `id` từ công cụ khác của tôi không?</summary>
+
+Có. Bạn cần tạo một trường mà bạn xác định là duy nhất trong mô hình dữ liệu của bạn và sẽ chứa `id` từ công cụ khác của bạn. Xin lưu ý rằng tên `id` được bảo vệ vì nó được sử dụng cho id của Twenty.  
+Nếu bạn muốn tạo mối quan hệ giữa các đối tượng sử dụng trường này, hãy tham khảo phần **Chuẩn bị tệp csv của bạn** ở trên trong bài viết này. Nó có chứa phần về việc nhập các mối quan hệ.
+
+</details>
+
+## Xuất Dữ Liệu
+
+Bạn có thể tải xuống dữ liệu từ hầu hết các đối tượng của bạn với tối đa 20.000 bản ghi cho mỗi lần xuất.
+Để xuất dữ liệu từ một đối tượng:
+
+1. Truy cập chỉ mục đối tượng.
+2. Chọn chế độ xem để xuất dữ liệu. Cấu hình các cột bạn muốn tải xuống bằng cách ẩn hoặc thêm cột và tìm các bản ghi bạn cần bằng cách lọc chế độ xem của bạn.
+3. Truy cập bảng điều khiển bên thông qua biểu tượng `⋮` trên cùng bên phải.
+4. Nhấp vào `Xuất chế độ xem`.
+5. Chọn vị trí lưu cho dữ liệu CSV. Lưu ý rằng việc xuất có thể mất thời gian với số lượng bản ghi lớn.
+
+<VimeoEmbed videoId="926226303" title="Video demonstration" />
+

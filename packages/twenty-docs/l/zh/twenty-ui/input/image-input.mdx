@@ -1,0 +1,42 @@
+---
+title: 圖片輸入
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import imageInputCode from '!!raw-loader!@site/src/ui/input/components/imageInputCode.js'
+
+允許用戶上傳和移除圖片。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ImageInput } from "@/ui/input/components/ImageInput";
+
+export const MyComponent = () => {
+  return <ImageInput/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性           | 類型       | 描述                               |
+| ------------ | -------- | -------------------------------- |
+| 圖片           | 字串       | 圖片來源網址                           |
+| onUpload     | function | 用戶上傳新圖片時調用的函數。 它接收 `File` 對象作為參數 |
+| onRemove     | function | 用戶點擊移除按鈕時調用的函數                   |
+| onAbort      | function | 用戶在圖像上傳期間點擊中止按鈕時調用的函數            |
+| isUploading  | 布爾值      | 指示是否當前正在上傳圖片                     |
+| errorMessage | 字串       | 可選的錯誤信息顯示於圖片輸入下方                 |
+| 禁用           | 布爾值      | 如果為 `true`，則整個輸入被禁用，按鈕不可點擊       |
+
+</Tab>
+</Tabs>

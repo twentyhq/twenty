@@ -1,0 +1,104 @@
+---
+title: Ràdio
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
+</Frame>
+
+S'utilitza quan els usuaris només poden triar una opció d'una sèrie d'opcions.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Radio } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const handleRadioChange = (event) => {
+    console.log("Radio button changed:", event.target.checked);
+  };
+
+  const handleCheckedChange = (checked) => {
+    console.log("Checked state changed:", checked);
+  };
+
+
+  return (
+    <Radio
+      checked={true}
+      value="Option 1"
+      onChange={handleRadioChange}
+      onCheckedChange={handleCheckedChange}
+      size="large"
+      disabled={false}
+      labelPosition="right"
+    />
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Propietats         | Tipus                  | Descripció                                                                                                                               |
+| ------------------ | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| estil              | propietats `React.CSS` | Estils en línia addicionals per al component                                                                                             |
+| nomDeClasse        | cadena                 | Classe CSS opcional per a un estil addicional                                                                                            |
+| seleccionat        | boolean                | Indica si el botó de ràdio està marcat                                                                                                   |
+| valor              | cadena                 | L'etiqueta o text associat amb el botó de ràdio                                                                                          |
+| onChange           | funció                 | La funció cridada quan es canvia el botó de ràdio seleccionat                                                                            |
+| canviDeSeleccionat | funció                 | La funció cridada quan canvia l'estat `checked` del botó de ràdio                                                                        |
+| tamany             | cadena                 | La mida del botó de ràdio. Les opcions inclouen: `gran` i `petit`                                        |
+| desactivat         | boolean                | Si és `true`, el botó de ràdio està desactivat i no es pot clicar                                                                        |
+| posicióEtiqueta    | cadena                 | La posició del text de l'etiqueta en relació amb el botó de ràdio. Té dues opcions: `esquerra` i `dreta` |
+
+</Tab>
+</Tabs>
+
+## Grup de Ràdio
+
+Agrupa botons de ràdio relacionats.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import React, { useState } from "react";
+import { Radio, RadioGroup } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const [selectedValue, setSelectedValue] = useState("Option 1");
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+  
+  return (
+    <RadioGroup value={selectedValue} onChange={handleChange}>
+      <Radio value="Option 1" />
+      <Radio value="Option 2" />
+      <Radio value="Option 3" />
+    </RadioGroup>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Propietats    | Tipus             | Descripció                                                                                           |
+| ------------- | ----------------- | ---------------------------------------------------------------------------------------------------- |
+| valor         | cadena            | El valor del botó de ràdio seleccionat actualment.                                   |
+| onChange      | funció            | La funció de retorn cridada quan el botó de ràdio es canvia                                          |
+| onValueChange | funció            | La funció de retorn cridada quan el valor seleccionat dins del grup canvia.          |
+| children      | `React.ReactNode` | Et permet passar components de React (com ara Radio) com a fills al Grup de Ràdio |
+
+</Tab>
+
+</Tabs>

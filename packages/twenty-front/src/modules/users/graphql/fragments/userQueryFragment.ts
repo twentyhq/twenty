@@ -33,6 +33,7 @@ export const USER_QUERY_FRAGMENT = gql`
       ...DeletedWorkspaceMemberQueryFragment
     }
     currentUserWorkspace {
+      id
       permissionFlags
       objectsPermissions {
         ...ObjectPermissionFragment
@@ -59,7 +60,9 @@ export const USER_QUERY_FRAGMENT = gql`
       isPasswordAuthBypassEnabled
       subdomain
       hasValidEnterpriseKey
-      customDomain
+      workspaceCustomApplication {
+        id
+      }
       isCustomDomainEnabled
       workspaceUrls {
         ...WorkspaceUrlsFragment
@@ -82,6 +85,7 @@ export const USER_QUERY_FRAGMENT = gql`
       routerModel
       isTwoFactorAuthenticationEnforced
       trashRetentionDays
+      editableProfileFields
     }
     availableWorkspaces {
       ...AvailableWorkspacesFragment

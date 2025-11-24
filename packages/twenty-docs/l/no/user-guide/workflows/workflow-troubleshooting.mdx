@@ -1,0 +1,131 @@
+---
+title: Feilsøking av arbeidsflyt
+info: Feilsøk og optimaliser arbeidsflytene dine med feilsøkingsteknikker og ytelsesoptimaliseringstips.
+image: /images/user-guide/what-is-twenty/20.png
+sectionInfo: Automatiser prosesser og integrer med eksterne verktøy
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Debugging with Workflow Runs
+
+Bruk **Workflow Runs**-grensesnittet til å feilsøke problemer:
+
+- Tilgang via **Runs**-panelet i arbeidsflytredigeringen
+- Click on individual runs to see input/output data for each step
+- Sjekk utførelsesstatus, feilmeldinger og dataflyt mellom trinn
+
+## Vanlige problemer og løsninger
+
+### Arbeidsflyt ikke utløst
+
+**Problem**: Arbeidsflyten utføres ikke som forventet.
+
+**Løsninger**:
+
+- Kontroller at arbeidsflyten er **aktiv** (ikke i kladdmodus)
+- Sjekk at utløserkonfigurasjonen samsvarer med datastrukturen din
+- For Record triggers, ensure the correct object and fields are selected
+- For webhook-utløsere, verifiser URL-en og forventet dataformat
+- Sjekk tidsinnstillingene for planlagte utløsere
+
+### Skjemaer ikke tilgjengelig
+
+**Problem**: Skjemahandlinger er vanskelig å finne eller få tilgang til i automatiserte arbeidsflyter.
+
+<Warning>
+Skjemaer er for øyeblikket kun utformet for manuelle utløsere. For arbeidsflyter med andre utløsere (post opprettet, oppdatert osv.), er skjemaer kun tilgjengelige via arbeidsflytkjøringsgrensesnittet, noe som ikke er den forventede brukeropplevelsen. Et varslingssenter blir lansert i 2026 for å støtte skjemaer i automatiserte arbeidsflyter.
+</Warning>
+
+**Midlertidig løsning**: Bruk manuelle utløsere når skjemaer er nødvendige, eller omstrukturere arbeidsflyter for å unngå skjemaer i automatiserte flyter.
+
+### Høy kredittforbruk
+
+**Problem**: Arbeidsflyter bruker mer kreditter enn forventet.
+
+**Vanlige årsaker og løsninger**:
+
+- **Ineffektive API-anrop**: Grupper API-anrop når det er mulig i stedet for individuelle forespørsler
+- **Feil konfigurasjon av manuell utløser**: Bruk `Bulk`-tilgjengelighet i stedet for `Single` for å behandle flere poster i én arbeidsflytkjøring
+- **Manglende filter**: Legg til betinget logikk for å stoppe arbeidsflyter når kriteriene ikke er oppfylt
+- **Unødvendige trinn**: Fjern overflødige handlinger og optimaliser arbeidsflytlogikken
+- **Sanntid vs. planlagte**: Bruk planlagte arbeidsflyter for ikke-urgente prosesser
+
+### Concurrent Workflow Limits
+
+**Problem**: Hitting the 100 concurrent workflow limit per workspace.
+
+<Warning>
+You cannot run more than 100 workflows in parallel at any given time per workspace.
+</Warning>
+
+**Løsninger**:
+
+- Bruk `Bulk` tilgjengelighet for manuelle utløsere for å behandle flere poster i én kjøring
+- Implementere forsinkelser mellom arbeidsflytutførelser ved bruk av planlagte utløsere
+- Optimaliser arbeidsflyter for å kjøre raskere og redusere samtidig utførelsestid
+- Vurder batchbehandling i perioder med lite belastning
+
+### API-begrensning av forespørsler
+
+**Problem**: Eksterne API-anrop mislykkes på grunn av begrensninger i antallet forespørsler.
+
+**Løsninger**:
+
+- Bruk planlagte arbeidsflyter i stedet for sanntidsutløsere når mulig
+- Implementere forsinkelser mellom API-anrop i kodehandlinger
+- Gruppere API-forespørsler når den eksterne tjenesten støtter det
+- Overvåk arbeidsflytkjøringer for begrensningsfeil og juster tidsplanen
+
+### Iterator-problemer
+
+**Problem**: Iterator-handlinger fungerer ikke som forventet.
+
+**Løsninger**:
+
+- **Merk**: Iterator er for tiden i beta. Aktiver den under Innstillinger → Lanseringer → Lab
+- Kontroller at innputtet er en matrise av poster fra et tidligere trinn
+- Sjekk at handlingene i Iterator er riktig konfigurert
+- Bruk Iterator med `Bulk` manuelle utløsere for optimal ytelse
+
+### Manglende tillatelser
+
+**Problem**: Kan ikke få tilgang til arbeidsflytseksjonen.
+
+<Warning>
+Hvis du ikke ser Arbeidsflyt-seksjonen, skyldes dette et tillatelsesproblem. Kontakt arbeidsområdets administrator for å gi deg tilgang til arbeidsflyter.
+</Warning>
+
+## Optimaliseringstips
+
+### Performance Best Practices
+
+- **Start enkelt** og legg til kompleksitet gradvis
+- **Bruk `Bulk` tilgjengelighet** for manuelle utløsere for å behandle flere poster effektivt
+- **Legg til filtre tidlig** for å stoppe arbeidsflyter når kriteriene ikke er oppfylt
+- **Gruppe API-anrop** og bruk planlagte arbeidsflyter for ikke-urgente prosesser
+- **Skjul arbeidsflytkjøringer** fra sider som viser alle arbeidsflyter for å forbedre lasteytelsen
+- **Overvåk kredittbruk** regelmessig i Innstillinger → Fakturering
+
+### Feilforebygging
+
+- **Test i kladdmodus** før du aktiverer arbeidsflyter
+- **Valider API-responsene** og implementer reservehandlinger
+- **Bruk beskrivende trinnnavn** for enklere vedlikehold
+- **Dokumenter kompleks logikk** for teammedlemmer
+
+## Få hjelp
+
+### Selvhjelpsressurser
+
+- Se gjennom [Arbeidsflytfunksjoner](/l/no/user-guide/workflows/workflow-features) for tekniske detaljer
+- Sjekk [Arbeidsflytkreditter](/l/no/user-guide/workflows/workflow-credits) for optimaliseringstips
+- Utforsk [Interne automatiseringer](/l/no/user-guide/workflows/internal-automations) og [Ekstern verktøyintegrasjon](/l/no/user-guide/workflows/external-tool-integration) for eksempler
+
+### Profesjonell støtte
+
+- Kontakt vår [Profesjonelle tjenester](/l/no/user-guide/workflows/professional-services) for komplisert feilsøking
+- Ta kontakt med support via contact@twenty.com for teknisk assistanse
+

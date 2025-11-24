@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { google } from 'googleapis';
+
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
@@ -17,11 +19,12 @@ export class GoogleEmailAliasManagerService {
         connectedAccount,
       );
 
-    const people = oAuth2Client.people({
+    const peopleClient = google.people({
       version: 'v1',
+      auth: oAuth2Client,
     });
 
-    const emailsResponse = await people.people.get({
+    const emailsResponse = await peopleClient.people.get({
       resourceName: 'people/me',
       personFields: 'emailAddresses',
     });

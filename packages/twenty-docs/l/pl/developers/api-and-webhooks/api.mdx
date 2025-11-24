@@ -1,0 +1,56 @@
+---
+title: API
+image: /images/docs/getting-started/api.png
+info: Odkryj, jak korzystać z naszych API.
+---
+
+<Frame>
+  <img src="/images/docs/getting-started/api.png" alt="Header" />
+</Frame>
+
+## Przegląd
+
+Twenty API pozwala programistom na interakcję z platformą CRM Twenty przy pomocy kodu. Korzystając z API, można zintegrować Twenty z innymi systemami, automatyzować synchronizację danych i tworzyć niestandardowe rozwiązania wokół danych klienta. API udostępnia punkty końcowe do **tworzenia, odczytywania, aktualizowania i usuwania** głównych obiektów CRM (takich jak osoby i firmy) oraz uzyskiwania dostępu do konfiguracji metadanych.
+
+**API Playground:** Teraz można uzyskać dostęp do API Playground w ustawieniach aplikacji. Aby przetestować wywołania API w czasie rzeczywistym, zaloguj się do swojego obszaru roboczego Twenty i przejdź do **Ustawienia → API i Webhooks**. To otwiera wbudowany API Playground i ustawienia kluczy API.
+**[Przejdź do ustawień API](https://app.twenty.com/settings)**
+
+## Uwierzytelnianie
+
+API Twenty używa kluczy API do uwierzytelniania. Każde żądanie do chronionych punktów końcowych musi zawierać klucz API w nagłówku.
+
+- **Klucze API:** Możesz wygenerować nowy klucz API na stronie **ustawień API** swojej aplikacji Twenty. Każdy klucz API to tajny token, który przyznaje dostęp do danych CRM, więc trzymaj go w bezpiecznym miejscu. Jeśli klucz zostanie skompromitowany, wycofaj go z ustawień i wygeneruj nowy.
+- **Nagłówek uwierzytelniający:** Po uzyskaniu klucza API, uwzględnij go w nagłówku `Authorization` swoich żądań HTTP. Użyj schematu tokenu Bearer. Na przykład:
+
+  ```
+  Authorization: Bearer YOUR_API_KEY
+  ```
+
+  Zastąp `YOUR_API_KEY` kluczem, który uzyskałeś. Ten nagłówek musi być obecny we **wszystkich żądaniach API**. Jeśli token jest brakujący lub nieważny, API odpowie błędem uwierzytelnienia (HTTP 401 Unauthorized).
+
+## Punkty końcowe API
+
+Wszystkie zasoby są dostępne za pośrednictwem REST lub GraphQL.
+
+- **Chmura:** `https://api.twenty.com/` lub Twoja niestandardowa domena / subdomena
+- **Self-Hosted Instances:** If you are running Twenty on your own server, use your own domain in place of `api.twenty.com` (for example, `https://{your-domain}/rest/`).
+
+Punkty końcowe są podzielone na dwie kategorie: **Główne API** i **API Metadanych**. **Główne API** zajmuje się podstawowymi danymi CRM (np. osoby, firmy, notatki, zadania), podczas gdy **API Metadanych** obejmuje dane konfiguracyjne (np. niestandardowe pola lub definicje obiektów). Większość integracji będzie korzystać głównie z Głównego API.
+
+### Główne API
+
+Dostęp za pośrednictwem `/rest/` lub `/graphql/`.
+**Główne API** służy jako zintegrowany interfejs do zarządzania podstawowymi jednostkami CRM (osoby, firmy, notatki, zadania) i ich relacjami, oferując **modele interakcji REST oraz GraphQL**.
+
+### API Metadanych
+
+Dostęp za pośrednictwem `/rest/metadata/` lub `/metadata/`.
+Punkty końcowe API Metadanych pozwalają pozyskać informacje o schemacie i ustawieniach. Na przykład, możesz uzyskać definicje niestandardowych pól, schematów obiektów, itd.
+
+- **Przykładowe Punkty Końcowe:**
+
+  - `GET /rest/metadata/objects` – lista wszystkich typów obiektów i ich metadanych (pola, relacje).
+  - `GET /rest/metadata/objects/{objectName}` – pobierz metadata dla konkretnego obiektu (np. `osoby`, `firmy`).
+  - `GET /rest/metadata/picklists` – pobierz opcje pola wyboru (dropdown) zdefiniowane w CRM.
+
+Zazwyczaj punkty końcowe metadanych służą do zrozumienia struktury danych (dla dynamicznych integracji lub budowania formularzy) niż zarządzania rzeczywistymi rekordami. W większości przypadków są one tylko do odczytu. Do nich również wymagane jest uwierzytelnienie (użyj swojego klucza API).

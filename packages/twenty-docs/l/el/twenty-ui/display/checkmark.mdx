@@ -1,0 +1,69 @@
+---
+title: Επισημασία ελέγχου
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Αντιπροσωπεύει μια επιτυχημένη ή ολοκληρωμένη ενέργεια.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Checkmark } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <Checkmark />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+Επεκτείνει τις `React.ComponentPropsWithoutRef<'div'>` και αποδέχεται όλες τις ιδιότητες ενός κανονικού στοιχείου `div`.
+
+</Tab>
+
+</Tabs>
+
+## Κινούμενη επισημασία ελέγχου
+
+Αντιπροσωπεύει ένα εικονίδιο επισημασίας ελέγχου με το πρόσθετο χαρακτηριστικό της κίνησης.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { AnimatedCheckmark } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return (
+    <AnimatedCheckmark
+      isAnimating={true}
+      color="green"
+      duration={0.5}
+      size={30}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Ιδιότητες     | Τύπος         | Περιγραφή                                       | Προεπιλογή                       |
+| ------------- | ------------- | ----------------------------------------------- | -------------------------------- |
+| είναιΣεΚίνηση | boolean       | Ελέγχει αν η επισημασία ελέγχου είναι σε κίνηση | ψευδής                           |
+| χρώμα         | αλφαριθμητικό | Χρώμα της επισημασίας ελέγχου                   |                                  |
+| διάρκεια      | αριθμός       | Η διάρκεια της κίνησης σε δευτερόλεπτα          | 0.5 δευτερόλεπτα |
+| μέγεθος       | αριθμός       | Το μέγεθος της επισημασίας ελέγχου              | 28 εικονοκύτταρα                 |
+
+</Tab>
+
+</Tabs>

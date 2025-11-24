@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/core-modules/application/constants/twenty-standard-applications';
+import { WorkspaceFlatApplicationMapCacheService } from 'src/engine/core-modules/application/services/workspace-flat-application-map-cache.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -11,6 +15,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { SeededWorkspacesIds } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
 import { seedCoreSchema } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-core-schema.util';
 import { seedPageLayoutTabs } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layout-tabs.util';
@@ -33,17 +38,20 @@ export class DevSeederService {
     private readonly devSeederPermissionsService: DevSeederPermissionsService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly devSeederDataService: DevSeederDataService,
+    private readonly applicationService: ApplicationService,
+    private readonly workspaceFlatApplicationMapCacheService: WorkspaceFlatApplicationMapCacheService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {}
 
-  public async seedDev(workspaceId: string): Promise<void> {
+  public async seedDev(workspaceId: SeededWorkspacesIds): Promise<void> {
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
     await seedCoreSchema({
       dataSource: this.coreDataSource,
       workspaceId,
+      applicationService: this.applicationService,
       seedBilling: isBillingEnabled,
       appVersion,
     });
@@ -53,6 +61,10 @@ export class DevSeederService {
         workspaceId,
       );
 
+    await this.workspaceFlatApplicationMapCacheService.invalidateCache({
+      workspaceId,
+    });
+
     const dataSourceMetadata =
       await this.dataSourceService.createDataSourceMetadata(
         workspaceId,
@@ -61,6 +73,25 @@ export class DevSeederService {
 
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+
+    const twentyStandardApplication =
+      await this.applicationService.findByUniversalIdentifier({
+        workspaceId,
+        universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+      });
+
+    if (!isDefined(twentyStandardApplication)) {
+      throw new Error(
+        'Seeder failed to find twenty standard application, should never occur',
+      );
+    }
+
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
 
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId: workspaceId,
@@ -72,13 +103,17 @@ export class DevSeederService {
       dataSourceMetadata,
       workspaceId,
       featureFlags,
+      twentyStandardFlatApplication,
     });
 
     await this.devSeederMetadataService.seedRelations({
       workspaceId,
     });
 
-    await this.devSeederPermissionsService.initPermissions(workspaceId);
+    await this.devSeederPermissionsService.initPermissions({
+      workspaceId,
+      twentyStandardApplication,
+    });
 
     await seedPageLayouts(this.coreDataSource, 'core', workspaceId);
     await seedPageLayoutTabs(this.coreDataSource, 'core', workspaceId);

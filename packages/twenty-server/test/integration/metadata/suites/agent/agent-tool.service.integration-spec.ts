@@ -103,6 +103,7 @@ describe('AgentToolGeneratorService Integration', () => {
       expect(Object.keys(tools)).toHaveLength(3);
       expect(Object.keys(tools)).toContain('find_testObject');
       expect(Object.keys(tools)).toContain('find_one_testObject');
+      expect(Object.keys(tools)).toContain('http_request');
       expect(Object.keys(tools)).not.toContain('create_testObject');
       expect(Object.keys(tools)).not.toContain('update_testObject');
     });

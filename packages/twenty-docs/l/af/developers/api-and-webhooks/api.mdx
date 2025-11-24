@@ -1,0 +1,56 @@
+---
+title: API
+image: /images/docs/getting-started/api.png
+info: Ontdek hoe om ons API's te gebruik.
+---
+
+<Frame>
+  <img src="/images/docs/getting-started/api.png" alt="Header" />
+</Frame>
+
+## Oorsig
+
+Die Twenty API stel ontwikkelaars in staat om programmaties met die Twenty CRM-platform te kommunikeer. Met behulp van die API kan jy Twenty integreer met ander stelsels, data-sinchronisasie outomatiseer en pasgemaakte oplossings om jou kliëntedata bou. Die API voorsien eindpunte om **te skep, lees, opdateer, en uitvee** kern CRM voorwerpe (soos mense en maatskappye) asook toegang tot metadata-konfigurasie.
+
+**API Speelgrond:** Jy kan nou toegang tot die API Speelgrond binne die toep-instellings verkry. Om API-oproepe in reële tyd te toets, teken in by jou Twenty-werksruimte en navigeer na **Instellings → API's & Webhooks**. Dit open die in-app API Speelgrond en die instellings vir API-sleutels.
+**[Gaan na API Instellings](https://app.twenty.com/settings)**
+
+## Magtiging
+
+Twenty se API gebruik API-sleutels vir verifikasie. Elke versoek aan beskermde eindpunte moet 'n API-sleutel in die kopstuk insluit.
+
+- **API-sleutels:** Jy kan 'n nuwe API-sleutel genereer vanaf jou Twenty-toep se **API-instellings** bladsy. Elke API-sleutel is 'n geheime teken wat toegang tot jou CRM-data verleen, dus hou dit veilig. As 'n sleutel gekompromitteer is, herroep dit vanaf die instellings en genereer 'n nuwe een.
+- **Verifikasie-opskrif:** Sodra jy 'n API-sleutel het, sluit dit in die `Verifikasie` opskrif van jou HTTP-versoeke in. Gebruik die Bearer token-skema. Byvoorbeeld:
+
+  ```
+  Authorization: Bearer YOUR_API_KEY
+  ```
+
+  Vervang `JOU_API_SLEUTEL` met die sleutel wat jy verkry het. Hierdie opskrif moet op **alle API-versoeke** teenwoordig wees. As die teken ontbreek of ongeldig is, sal die API met 'n verifikasiefout (HTTP 401 Ongemagtig) antwoord.
+
+## API Eindpunte
+
+Alle hulpbronne kan verkry word en via REST of GraphQL.
+
+- **Wolk:** `https://api.twenty.com/` of jou pasgemaakte domein/sub-domein
+- **Self-Hosted Instances:** If you are running Twenty on your own server, use your own domain in place of `api.twenty.com` (for example, `https://{your-domain}/rest/`).
+
+Eindpunte is in twee kategorieë gegroepeer: **Kern API** en **Metadata API**. Die **Kern API** hanteer primêre CRM-data (bv. mense, maatskappye, notas, take), terwyl die **Metadata API** konfigurasiedata dek (soos pasgemaakte velde of voorwerpedefinisies). Die meeste integrasies sal hoofsaaklik die Kern API gebruik.
+
+### Kern API
+
+Toeganklik op `/rest/` of `/graphql/`.
+Die **Kern API** dien as 'n verenigde koppelvlak vir die bestuur van kern CRM-entiteite (mense, maatskappye, notas, take) en hul verhoudings, en bied **sowel REST as GraphQL** interaksie modelle aan.
+
+### Metadata API
+
+Toeganklik op `/rest/metadata/` of `/metadata/`.
+Die Metadata API-eindpunte laat jou toe om inligting oor jou skema en instellings te kry. Byvoorbeeld, jy kan definisies van pasgemaakte velde, voorwerpeskemas, ensovoorts opsoek.
+
+- **Voorbeeld Eindpunte:**
+
+  - `GET /rest/metadata/objects` – Lys al die voorwerptipes en hul metadata (velde, verhoudings).
+  - `GET /rest/metadata/objects/{objectNaam}` – Verkry metadata vir 'n spesifieke voorwerp (bv. `mense`, `maatskappye`).
+  - `GET /rest/metadata/picklists` – Verkry keuselys (afrol) velde-opsies wat in die CRM gedefinieer is.
+
+Tipies word die metadata-eindpunte gebruik om die struktuur van data (vir dinamiese integrasies of vormbou) te verstaan eerder as om werklike rekords te bestuur. Hulle is in die meeste gevalle lees-alleen. Verifikasie is ook vir hierdie vereis (gebruik jou API-sleutel).

@@ -1,0 +1,91 @@
+{
+  "tabs": {
+    "userGuide": {
+      "label": "ユーザーガイド",
+      "groups": {
+        "gettingStarted": {
+          "label": "始めに"
+        },
+        "dataModel": {
+          "label": "データモデル"
+        },
+        "crmEssentials": {
+          "label": "CRM の基本"
+        },
+        "views": {
+          "label": "ビュー"
+        },
+        "workflows": {
+          "label": "ワークフロー"
+        },
+        "collaboration": {
+          "label": "コラボレーション"
+        },
+        "integrationsApi": {
+          "label": "連携とAPI"
+        },
+        "reporting": {
+          "label": "レポーティング"
+        },
+        "settings": {
+          "label": "設定"
+        },
+        "pricing": {
+          "label": "料金"
+        },
+        "resources": {
+          "label": "リソース"
+        }
+      }
+    },
+    "developers": {
+      "label": "開発者",
+      "groups": {
+        "developersGroup": {
+          "label": "開発者"
+        },
+        "devGettingStarted": {
+          "label": "始めに",
+          "groups": {
+            "selfHosting": {
+              "label": "セルフホスティング"
+            },
+            "apiAndWebhooks": {
+              "label": "APIとWebhooks"
+            }
+          }
+        },
+        "contributing": {
+          "label": "貢献",
+          "groups": {
+            "frontendDevelopment": {
+              "label": "フロントエンド開発",
+              "groups": {
+                "twentyUi": {
+                  "label": "Twenty UI",
+                  "groups": {
+                    "display": {
+                      "label": "表示"
+                    },
+                    "feedback": {
+                      "label": "フィードバック"
+                    },
+                    "input": {
+                      "label": "Input"
+                    },
+                    "navigation": {
+                      "label": "Navigation"
+                    }
+                  }
+                }
+              }
+            },
+            "backendDevelopment": {
+              "label": "バックエンド開発"
+            }
+          }
+        }
+      }
+    }
+  }
+}

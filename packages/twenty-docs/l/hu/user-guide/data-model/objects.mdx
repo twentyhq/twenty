@@ -1,0 +1,60 @@
+---
+title: Objektumok
+info: "Tudjon meg többet a standard objektumokról, és hogyan hozhat létre egyedi objektumokat üzleti igényei számára."
+image: /images/user-guide/objects/objects_orange.png
+sectionInfo: Rugalmas adatmodell, amely az Ön egyedi üzleti folyamatait támogatja
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/objects/objects_orange.png" alt="Header" />
+</Frame>
+
+## Standard objektumok
+
+Standard objects are predefined entities in your workspace to help you get started. They're part of a shared data model accessible to all users of Twenty. Használhatja őket úgy, ahogy vannak, testre szabhatja vagy kikapcsolhatja őket.
+
+<img src="/images/user-guide/objects/standard-objects.png"style={{width:'100%'}}/>
+
+### Emberek
+
+A `People` objektum tárolja a kapcsolatait. Tartalmazza a kapcsolati adatokat és az interakciók történetét, így minden ügyfélinterakciót egy helyen láthat.
+
+### Cég
+
+A `Companies` objektum tárolja az üzleti fiókokat. Tartalmaz olyan részleteket, mint az iparág, méret és helyszín. A cégek kapcsolatban állnak mind a `People`, mind az `Opportunities` objektumokkal.
+
+### Lehetőségek
+
+Az `Opportunities` objektum tárolja az üzlethez kapcsolódó adatokat. Követi a potenciális értékesítések előrehaladását, a felkutatástól az üzletkötésig, rögzíti a szakaszokat, az üzletméreteket, a kapcsolódó fiókot és a várható lezárási dátumot. Megtekintheti értékesítési csatornáját kanban elrendezésben.
+
+## Egyéni objektumok
+
+Az egyedi objektumok lehetővé teszik, hogy tárolja azokat az információkat, amelyek egyediek az Ön szervezete számára, és amelyeket a standard objektumok nem tudnak kezelni. Például, ha a SpaceX-nek dolgozik, lehet, hogy egyedi objektumot szeretne létrehozni rakétákhoz és indításokhoz.
+
+<img src="/images/user-guide/objects/custom-objects.png"style={{width:'100%'}}/>
+
+### Új egyedi objektum létrehozása
+
+Új egyedi objektum létrehozásához:
+
+1. Menjen a Beállításokhoz a bal oldali oldalsávban.
+2. A Munkaterület alatt menjen az Adatmodellhez. Itt áttekintést kaphat az összes meglévő Standard és Egyedi objektumról (mind aktív, mind letiltott).
+
+<VimeoEmbed videoId="926288174" title="Video demonstration" />
+
+3. Click on `+ New object` at the top. Adja meg a nevet (mind az egyes, mind a többes számot), válasszon egy ikont, és adjon meg egy leírást az egyedi objektumához, majd nyomja meg a Mentés gombot (jobb felső sarokban). A Listing egyedi objektum példaként használva, az egyes szám "listing", a többes szám "listings", és egy olyan leírás, mint "A listingek, amelyeket a házigazdák a tulajdonuk bemutatásához hoztak létre."
+
+<Warning>
+Az egyes és a többes számú neveknek eltérőeknek kell lenniük. Ez szükséges ahhoz, hogy a GraphQL API megfelelően működjön.
+</Warning>
+
+<VimeoEmbed videoId="926293493" title="Video demonstration" />
+
+4. Miután létrehozta egyedi objektumát, képes lesz kezelni azt. Szerkesztheti a nevet, ikont és leírást, megtekintheti a különböző mezőket, és további mezőket adhat hozzá.
+
+<img src="/images/user-guide/objects/customize-fields.png"style={{width:'100%'}}/>
+
+**Megjegyzés:** Ha nem biztos benne, hogy szükséges-e új objektum vagy mező, nézze meg [ezt a cikket](/l/hu/user-guide/data-model/customize-your-data-model) útmutatóul az adatmodell megtervezéséhez.
+

@@ -1,8 +1,8 @@
 import deepEqual from 'deep-equal';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 const isWorkflowVersionStepsOrTrigger = (
   objectMetadataItem: ObjectMetadataItemWithFieldMaps,
@@ -14,18 +14,8 @@ const isWorkflowVersionStepsOrTrigger = (
   );
 };
 
-const isWorkflowRunState = (
-  objectMetadataItem: ObjectMetadataItemWithFieldMaps,
-  key: string,
-) => {
-  return (
-    objectMetadataItem.standardId === STANDARD_OBJECT_IDS.workflowRun &&
-    key === 'state'
-  );
-};
-
 const isWorkflowAutomatedTriggerSettings = (
-  objectMetadataItem: ObjectMetadataItemWithFieldMaps,
+  objectMetadataItem: Pick<ObjectMetadataItemWithFieldMaps, 'standardId'>,
   key: string,
 ) => {
   return (
@@ -50,8 +40,7 @@ export const objectRecordChangedValues = (
       // Temporary ignore workflow json fields changes
       if (
         isWorkflowAutomatedTriggerSettings(objectMetadataItem, key) ||
-        isWorkflowVersionStepsOrTrigger(objectMetadataItem, key) ||
-        isWorkflowRunState(objectMetadataItem, key)
+        isWorkflowVersionStepsOrTrigger(objectMetadataItem, key)
       ) {
         return acc;
       }

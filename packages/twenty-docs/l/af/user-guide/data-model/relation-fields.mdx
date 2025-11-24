@@ -1,0 +1,62 @@
+---
+title: Verbandvelde
+info: Learn how to create relationships between objects using relation fields and configure 1-to-many relationships.
+image: /images/user-guide/fields/relations_field.png
+sectionInfo: Buigsame datamodel ontwerp om jou unieke sakeprosesse te ondersteun
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/relations_field.png" alt="Header" />
+</Frame>
+
+## Wat is Verbandvelde?
+
+Verbandvelde koppel rekords van een voorwerp aan rekords in 'n ander voorwerp. Byvoorbeeld:
+
+- **Mense** → **Maatskappye** (elke persoon werk vir 'n maatskappy)
+- **Geleenthede** → **Mense** (elke transaksie het 'n kontakpersoon)
+- **Take** → **Geleenthede** (elke taak hou verband met 'n spesifieke transaksie)
+
+## Verbandvelde Skep
+
+### 1. Add the Field
+
+Gaan na **Instellings → Datamodel → [Jou Voorwerp]** en klik **Voeg Veld by**.
+
+### 2. Choose Relation Type
+
+- **Veldtipo**: Kies "Verband"
+- **Teikenvoorwerp**: Kies watter voorwerp om aan te koppel
+- **Verhouding**: Ondersteun tans **1-tot-vele** verhoudings slegs. Maak seker om die verhouding in die regte rigting te skep.
+
+### 3. Konfigureer Veldname
+
+Jy sal name moet stel vir albei kante van die verhouding:
+
+- **Bronveld naam**: Hoe die veld op jou huidige voorwerp verskyn
+- **Target field name**: How the reverse field appears on the target object
+
+<Warning>
+Veldname kan nie gewysig word sodra die verband gestoor is nie, want dit beïnvloed die API-struktuur. Kies versigtig.
+</Warning>
+
+## Relating to Team Members
+
+You can create relations to any object, including **Workspace Members** (your Twenty team users). Dit is nuttig vir die skep van eienaarskapsvelde:
+
+- **Rekeninghouer**: Koppel 'n Maatskappy aan 'n spanlid wat dit bestuur
+- **Transaksiehouer**: Ken 'n Geleentheid aan 'n spesifieke verkoopsman toe
+
+Wanneer jy 'n verband skep met `Werksruimte Lede`, sal jy jou spanlede se name in keuselysensies sien, wat dit maklik maak om eienaarskap en verantwoordelikhede toe te ken.
+
+## Beste Praktyke
+
+- **Beplan jou verhoudings** voordat jy dit skep
+- **Gebruik duidelike, beskrywende name** vir beide veldname
+- **Test relationships** with sample data before full implementation
+
+## Toekomstige Kenmerke
+
+- **Morph Many relationships** (Coming Q4 2025)
+- **Baie-tot-baie verhoudings** (Kom Q1 2026)
+

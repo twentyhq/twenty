@@ -3,7 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CleanOrphanedRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-role-targets.command';
 import { CleanOrphanedUserWorkspacesCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-user-workspaces.command';
+import { CreateTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-create-twenty-standard-application.command';
 import { MigrateTimelineActivityToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-migrate-timeline-activity-to-morph-relations.command';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -28,21 +31,25 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
       UserWorkspaceEntity,
       RoleTargetsEntity,
       DataSourceEntity,
+      ApplicationEntity,
     ]),
     WorkspaceSchemaManagerModule,
     FeatureFlagModule,
     WorkspaceCacheStorageModule,
     ObjectMetadataModule,
+    ApplicationModule,
   ],
   providers: [
     CleanOrphanedUserWorkspacesCommand,
     CleanOrphanedRoleTargetsCommand,
     MigrateTimelineActivityToMorphRelationsCommand,
+    CreateTwentyStandardApplicationCommand,
   ],
   exports: [
     CleanOrphanedUserWorkspacesCommand,
     CleanOrphanedRoleTargetsCommand,
     MigrateTimelineActivityToMorphRelationsCommand,
+    CreateTwentyStandardApplicationCommand,
   ],
 })
 export class V1_11_UpgradeVersionCommandModule {}

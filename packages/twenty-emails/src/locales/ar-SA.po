@@ -90,13 +90,18 @@ msgstr "قبول الدعوة"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
 msgstr "تأكد من عنوان بريدك الإلكتروني"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr "شكراً لتسجيلك لحساب على Twenty! قبل أن نبدأ، نحتاج فقط إلى التأكد من أن هذا أنت. انقر أسفل للتحقق من عنوان بريدك الإلكتروني."
+msgid "Confirm new email"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -131,7 +136,7 @@ msgstr "إعادة تعيين كلمة مرورك 🗝"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
-msgstr ""
+msgstr "قم بتعيين كلمة مرورك 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -141,7 +146,7 @@ msgstr "إعادة تعيين"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set"
-msgstr ""
+msgstr "تعيين"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

@@ -1,7 +1,7 @@
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent } from '@storybook/test';
+import { expect, fn, userEvent, waitFor } from '@storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -19,6 +19,7 @@ const EditorWrapper = ({
   onUpdate = fn(),
   minHeight = 200,
   maxWidth = 800,
+  enableSlashCommand = true,
 }: {
   readonly?: boolean;
   placeholder?: string;
@@ -26,6 +27,7 @@ const EditorWrapper = ({
   onUpdate?: (content: string) => void;
   minHeight?: number;
   maxWidth?: number;
+  enableSlashCommand?: boolean;
 }) => {
   const editor = useAdvancedTextEditor({
     placeholder,
@@ -42,6 +44,7 @@ const EditorWrapper = ({
     onImageUploadError: (_error: Error, _file: File) => {
       // Handle image upload error
     },
+    enableSlashCommand,
   });
 
   if (!editor) {
@@ -392,8 +395,13 @@ export const WithLists: Story = {
   },
   play: async ({ canvasElement, step }) => {
     await step('Verify bullet list is rendered', async () => {
+      await waitFor(() =>
+        expect(canvasElement.querySelectorAll('ul li').length).toBeGreaterThan(
+          0,
+        ),
+      );
+
       const listItems = canvasElement.querySelectorAll('ul li');
-      expect(listItems.length).toBeGreaterThan(0);
 
       const firstItem = listItems[0];
       expect(firstItem).toBeInTheDocument();
@@ -401,8 +409,13 @@ export const WithLists: Story = {
     });
 
     await step('Verify ordered list is rendered', async () => {
+      await waitFor(() =>
+        expect(canvasElement.querySelectorAll('ol li').length).toBeGreaterThan(
+          0,
+        ),
+      );
+
       const orderedListItems = canvasElement.querySelectorAll('ol li');
-      expect(orderedListItems.length).toBeGreaterThan(0);
 
       const firstOrderedItem = orderedListItems[0];
       expect(firstOrderedItem).toBeInTheDocument();
@@ -430,11 +443,13 @@ export const WithLists: Story = {
       const orderedList = canvasElement.querySelector('ol');
       expect(orderedList).toBeInTheDocument();
 
-      const bulletListItems = canvasElement.querySelectorAll('ul li');
-      expect(bulletListItems.length).toBe(3);
+      await waitFor(() =>
+        expect(canvasElement.querySelectorAll('ul li').length).toBe(3),
+      );
 
-      const orderedListItems = canvasElement.querySelectorAll('ol li');
-      expect(orderedListItems.length).toBe(4);
+      await waitFor(() =>
+        expect(canvasElement.querySelectorAll('ol li').length).toBe(4),
+      );
     });
   },
 };

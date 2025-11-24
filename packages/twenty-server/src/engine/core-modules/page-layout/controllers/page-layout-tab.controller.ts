@@ -26,7 +26,10 @@ import { PageLayoutTabRestApiExceptionFilter } from 'src/engine/core-modules/pag
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 @Controller('rest/metadata/pageLayoutTabs')
 @UseGuards(WorkspaceAuthGuard)
@@ -35,6 +38,7 @@ export class PageLayoutTabController {
   constructor(private readonly pageLayoutTabService: PageLayoutTabService) {}
 
   @Get()
+  @UseGuards(NoPermissionGuard)
   async findMany(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('pageLayoutId') pageLayoutId: string,
@@ -55,6 +59,7 @@ export class PageLayoutTabController {
   }
 
   @Get(':id')
+  @UseGuards(NoPermissionGuard)
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -63,6 +68,7 @@ export class PageLayoutTabController {
   }
 
   @Post()
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async create(
     @Body() input: CreatePageLayoutTabInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -71,6 +77,7 @@ export class PageLayoutTabController {
   }
 
   @Patch(':id')
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async update(
     @Param('id') id: string,
     @Body() input: UpdatePageLayoutTabInput,
@@ -80,6 +87,7 @@ export class PageLayoutTabController {
   }
 
   @Delete(':id')
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

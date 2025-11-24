@@ -217,7 +217,7 @@ export const MultiItemFieldInput = <T,>({
 
   return (
     <DropdownContent ref={containerRef}>
-      {!!items.length && !shouldAutoEditSingleItem && (
+      {!!items.length && (!shouldAutoEditSingleItem || !isInputDisplayed) && (
         <>
           <DropdownMenuItemsContainer hasMaxHeight>
             {items.map((item, index) =>

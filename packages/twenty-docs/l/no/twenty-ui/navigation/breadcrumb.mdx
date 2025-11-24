@@ -1,0 +1,44 @@
+---
+title: Brødsmule
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+Tegner en navigasjonslinje med brødsmuler.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter } from "react-router-dom";
+import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+
+export const MyComponent = () => {
+  const breadcrumbLinks = [
+    { children: "Home", href: "/" },
+    { children: "Category", href: "/category" },
+    { children: "Subcategory", href: "/category/subcategory" },
+    { children: "Current Page" },
+  ];
+
+  return (
+    <BrowserRouter>
+      <Breadcrumb className links={breadcrumbLinks} />
+    </BrowserRouter>
+    )
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                | Beskrivelse                                                                                                                                                                                                                                               |
+| ----------------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "klasseNavn"            | <span>streng</span> | Optional class name for additional styling                                                                                                                                                                                                                |
+| lenker                  | array               | An array of objects, each representing a breadcrumb link. Hvert objekt har en `children`-egenskap (tekstinnholdet til lenken) og en valgfri `href`-egenskap (URL for navigering når lenken klikkes) |
+
+</Tab>
+</Tabs>

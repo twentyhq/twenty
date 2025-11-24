@@ -12,7 +12,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestController {
           @Get()
-          @UseGuards(UserAuthGuard)
+          @UseGuards(UserAuthGuard, NoPermissionGuard)
           testMethod() {}
         }
       `,
@@ -21,7 +21,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestController {
           @Get()
-          @UseGuards(WorkspaceAuthGuard)
+          @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
           testMethod() {}
         }
       `,
@@ -30,7 +30,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestController {
           @Get()
-          @UseGuards(PublicEndpoint)
+          @UseGuards(PublicEndpoint, NoPermissionGuard)
           testMethod() {}
         }
       `,
@@ -39,14 +39,14 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestController {
           @Get()
-          @UseGuards(CaptchaGuard, PublicEndpoint)
+          @UseGuards(CaptchaGuard, PublicEndpoint, NoPermissionGuard)
           testMethod() {}
         }
       `,
     },
     {
       code: `
-        @UseGuards(UserAuthGuard)
+        @UseGuards(UserAuthGuard, NoPermissionGuard)
         class TestController {
           @Get()
           testMethod() {}
@@ -55,7 +55,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        @UseGuards(WorkspaceAuthGuard)
+        @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
         class TestController {
           @Get()
           testMethod() {}
@@ -64,10 +64,64 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        @UseGuards(PublicEndpoint)
+        @UseGuards(PublicEndpoint, NoPermissionGuard)
         class TestController {
           @Get()
           testMethod() {}
+        }
+      `,
+    },
+    {
+      code: `
+        class TestController {
+          @Post()
+          @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
+          createMethod() {}
+        }
+      `,
+    },
+    {
+      code: `
+        class TestController {
+          @Put()
+          @UseGuards(WorkspaceAuthGuard, UpdatePermissionGuard)
+          updateMethod() {}
+        }
+      `,
+    },
+    {
+      code: `
+        class TestController {
+          @Patch()
+          @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
+          patchMethod() {}
+        }
+      `,
+    },
+    {
+      code: `
+        class TestController {
+          @Delete()
+          @UseGuards(WorkspaceAuthGuard, DeletePermissionGuard)
+          deleteMethod() {}
+        }
+      `,
+    },
+    {
+      code: `
+        @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
+        class TestController {
+          @Post()
+          createMethod() {}
+        }
+      `,
+    },
+    {
+      code: `
+        @UseGuards(WorkspaceAuthGuard, SettingsPermissionsGuard(PermissionFlagType.WORKSPACE))
+        class TestController {
+          @Delete()
+          deleteMethod() {}
         }
       `,
     },
@@ -110,6 +164,20 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestController {
           @Get()
+          @UseGuards(WorkspaceAuthGuard)
+          testMethod() {}
+        }
+      `,
+      errors: [
+        {
+          messageId: 'restApiMethodsShouldBeGuarded',
+        },
+      ],
+    },
+    {
+      code: `
+        class TestController {
+          @Get()
           @UseGuards(CaptchaGuard)
           testMethod() {}
         }
@@ -134,5 +202,103 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
+    {
+      code: `
+        @UseGuards(WorkspaceAuthGuard)
+        class TestController {
+          @Get()
+          testMethod() {}
+        }
+      `,
+      errors: [
+        {
+          messageId: 'restApiMethodsShouldBeGuarded',
+        },
+      ],
+    },
+    {
+      code: `
+        class TestController {
+          @Post()
+          @UseGuards(WorkspaceAuthGuard)
+          createMethod() {}
+        }
+      `,
+      errors: [
+        {
+          messageId: 'restApiMethodsShouldBeGuarded',
+        },
+      ],
+    },
+    {
+      code: `
+        class TestController {
+          @Put()
+          @UseGuards(WorkspaceAuthGuard)
+          updateMethod() {}
+        }
+      `,
+      errors: [
+        {
+          messageId: 'restApiMethodsShouldBeGuarded',
+        },
+      ],
+    },
+    {
+      code: `
+        class TestController {
+          @Patch()
+          @UseGuards(WorkspaceAuthGuard)
+          patchMethod() {}
+        }
+      `,
+      errors: [
+        {
+          messageId: 'restApiMethodsShouldBeGuarded',
+        },
+      ],
+    },
+    {
+      code: `
+        class TestController {
+          @Delete()
+          @UseGuards(WorkspaceAuthGuard)
+          deleteMethod() {}
+        }
+      `,
+      errors: [
+        {
+          messageId: 'restApiMethodsShouldBeGuarded',
+        },
+      ],
+    },
+    {
+      code: `
+        @UseGuards(WorkspaceAuthGuard)
+        class TestController {
+          @Post()
+          createMethod() {}
+        }
+      `,
+      errors: [
+        {
+          messageId: 'restApiMethodsShouldBeGuarded',
+        },
+      ],
+    },
+    {
+      code: `
+        @UseGuards(WorkspaceAuthGuard)
+        class TestController {
+          @Delete()
+          deleteMethod() {}
+        }
+      `,
+      errors: [
+        {
+          messageId: 'restApiMethodsShouldBeGuarded',
+        },
+      ],
+    },
   ],
-}); 
+});

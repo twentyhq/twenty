@@ -1,10 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { GraphQLObjectType, isInputObjectType } from 'graphql';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, type CompositeType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/object-type-definition-kind.enum';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';

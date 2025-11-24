@@ -1,0 +1,47 @@
+---
+title: Checkbox
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Використовується, коли користувач має вибрати декілька значень з кількох варіантів.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Checkbox } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+    <Checkbox
+      checked={true}
+      indeterminate={false}
+      onChange={() => console.log("onChange function fired")}
+      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      variant="primary"
+      size="small"
+      shape="squared"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Властивості     | Тип         | Опис                                                                                                                     |
+| --------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------ |
+| позначено       | булевий тип | Вказує, чи прапорець позначений                                                                                          |
+| indeterminate   | булевий тип | Вказує, чи прапорець у невизначеному стані (ні позначений, ні непозначений)                           |
+| onChange        | функція     | Функція зворотного виклику, яку ви хочете викликати, коли змінюється стан позначки                                       |
+| onCheckedChange | функція     | Функція зворотного виклику, яку ви хочете викликати, коли змінюється стан `позначено`                                    |
+| variant         | рядок       | Візуальний стиль варіанта блоку. Варіанти включають: `primary`, `secondary` і `tertiary` |
+| розмір          | рядок       | Розмір прапорця. Має дві опції: `малий` і `великий`                                      |
+| форма           | рядок       | Форма прапорця. Has two options: `squared` and `rounded`                                 |
+
+</Tab>
+</Tabs>

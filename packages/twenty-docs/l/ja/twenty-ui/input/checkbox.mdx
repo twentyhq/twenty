@@ -1,0 +1,47 @@
+---
+title: チェックボックス
+image: '""'
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+ユーザーが、複数のオプションから複数の値を選択する必要がある場合に使用されます。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Checkbox } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+    <Checkbox
+      checked={true}
+      indeterminate={false}
+      onChange={() => console.log("onChange function fired")}
+      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      variant="primary"
+      size="small"
+      shape="squared"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| プロパティ           | タイプ    | 説明                                                                         |
+| --------------- | ------ | -------------------------------------------------------------------------- |
+| checked         | ブール型   | チェックボックスがチェックされているかどうかを示します                                                |
+| 不確定             | ブール型   | チェックボックスが不確定な状態（チェック済みでも未チェックでもない）かどうかを示します                                |
+| onChange        | 機能     | The callback function you want to trigger when the checkbox state changes  |
+| onCheckedChange | 機能     | The callback function you want to trigger when the `checked` state changes |
+| バリアント           | string | ボックスのビジュアルスタイルのバリエーション。 オプションには `primary`、 `secondary`、 `tertiary` が含まれます  |
+| サイズ             | string | チェックボックスのサイズ。 チェックボックスのサイズ。 オプションは2つ：`small` と `large`                     |
+| 形状              | string | チェックボックスの形状。 チェックボックスの形状。 オプションは2つ：`squared` と `rounded`                   |
+
+</Tab>
+</Tabs>

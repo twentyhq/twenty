@@ -1,0 +1,69 @@
+---
+title: Personalize seu modelo de dados
+info: "Saiba como projetar e criar um modelo de dados que reflita como você opera."
+image: /images/user-guide/fields/custom_data_model.png
+sectionInfo: Modelo de dados flexível projetado para suportar seus processos de negócios únicos
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/custom_data_model.png" alt="Header" />
+</Frame>
+
+## O que é um modelo de dados?
+
+Um modelo de dados é a estrutura que define como as informações são organizadas em seu CRM. Ele determina quais objetos existem (como empresas, pessoas ou oportunidades), quais propriedades eles possuem (estes são os campos) e como eles se relacionam. Você pode pensar nele como o mapa dos seus dados de clientes.
+
+## Por que personalizar seu modelo de dados?
+
+Cada empresa trabalha de maneira diferente. Ser capaz de personalizar totalmente seu modelo de dados significa que você pode moldar o Twenty em torno dos seus processos em vez de forçar os seus em um sistema rígido.  
+O Twenty oferece a flexibilidade que você precisa para moldar o modelo de dados que melhor suportará seu dia a dia. Você pode criar quantos objetos e campos personalizados precisar, o preço não mudará.
+
+## Dicas para projetar seu modelo de dados
+
+Raramente há apenas uma maneira de construir um modelo de dados. Abaixo estão algumas dicas para ajudá-lo a construir o seu.
+
+**1. Comece com seus objetos principais.**
+Identifique os principais conceitos com os quais você trabalha (por exemplo, Empresas, Pessoas, Oportunidades). Esses três objetos já estão disponíveis, pois são usados com muita frequência. Mas pense em quaisquer outros de que você possa precisar.  
+Exemplo: a Stripe precisaria de um objeto `Assinaturas`, a Airbnb precisaria de um objeto `Viagens`, uma aceleradora de startups um objeto `Lotes`.
+
+**2. Use fields for variations, not new objects.**  
+If something is just a characteristic of an existing object (e.g. `Industry` for a Company, or `Status` for an Opportunity), make it a field. Campos são melhores para categorias, etiquetas e atributos.
+
+**3. Crie um novo objeto quando ele se sustentar sozinho.**
+Se o conceito tem seu próprio ciclo de vida, propriedades ou relacionamentos, geralmente merece um objeto. Por exemplo:
+
+- **Projetos** que têm seus próprios prazos, proprietários e tarefas
+- **Assinaturas** que conectam empresas, produtos e faturas
+- **Eventos** que envolvem muitos participantes e ações de acompanhamento
+
+Esses vão além de um único campo porque carregam seus próprios dados e relacionamentos.
+
+**4. Crie um objeto quando o número de registros relacionados for ilimitado.**
+Se algo pode ser vinculado várias vezes e você não sabe quantas, é melhor que seja seu próprio objeto. Por exemplo, em vez de criar campos como `Produto 1`, `Produto 2`, etc., defina um objeto `Produto` e relacione-o ao registro original. Desta forma, você pode suportar um, dois ou cem produtos sem alterar seu modelo.
+
+**5. Keep it simple first.**  
+Start with fields. Passe para novos objetos somente quando sentir os limites: muitos campos, registros repetidos ou relacionamentos que não se encaixam perfeitamente.
+
+### Nota especial sobre Pessoas, Empresas e Oportunidades
+
+- **`People`, `Companies` and `Opportunities` are the only objects from where you can access the emails and meetings synchronized from your mailbox / calendar.** We recommend using those as much as possible. Se precisar criar categorias de `Pessoas` ou `Empresas`, use campos em vez de novos objetos.
+
+  Example: it is best to use the `People` object for both prospects and partners, adding a field called `Person Type`. Evite criar um objeto `Parceiro`, pois você não conseguiria acessar os e-mails dele. Em vez disso, crie diferentes visualizações em `Pessoas`: uma mostrando parceiros, outra mostrando possíveis clientes.
+- Dado o ponto acima, é aceitável ter campos que não se aplicam a todos os registros. Por exemplo, em `Pessoas`, você pode adicionar um campo `Link de Referência` que só é relevante quando `Tipo de Pessoa = Parceiro`. Isso é aceitável: você pode esconder este campo das visualizações onde não é necessário.
+
+### Perguntas para orientar sua escolha
+
+Pergunte a si mesmo:
+
+- Isso é apenas uma propriedade de algo que já tenho ou precisa de suas próprias propriedades?
+- Eu precisarei controlar múltiplos disso por registro, sem saber quantos de antemão?
+- Este conceito se conecta a vários objetos diferentes, não apenas a um?
+- Terá seu próprio ciclo de vida (por exemplo, estágios, datas de início/fim)?
+
+Se a resposta for “sim” para uma ou mais dessas, provavelmente é hora de um novo objeto.
+
+## Quer ajuda?
+
+Nossa equipe pode ajudá-lo a projetar e criar o modelo de dados que você precisa. Descubra nosso Pacote de Integração [aqui](https://twenty.com/onboarding-packages).
+
+

@@ -9,6 +9,7 @@ import { type ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entit
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 
 export const findViewByIdWithRestApi = async (
   viewId: string,
@@ -57,6 +58,7 @@ export const createTestViewWithRestApi = async (
     position: 0,
     isCompact: false,
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
+    visibility: ViewVisibility.WORKSPACE,
     ...restParams,
   };
 

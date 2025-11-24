@@ -1,6 +1,6 @@
 import { capitalize } from 'twenty-shared/utils';
+import { compositeTypeDefinitions } from 'twenty-shared/types';
 
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export const getConflictingFields = (

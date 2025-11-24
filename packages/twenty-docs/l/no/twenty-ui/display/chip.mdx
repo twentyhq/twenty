@@ -1,0 +1,148 @@
+---
+title: Brikke
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+Et visuelt element du kan bruke som en klikkbar eller ikke-klikkbar beholder med en etikett, valgfrie venstre og høyre komponenter, og ulike stilalternativer for å vise etiketter og merkelapper.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+    <Chip
+      size="large"
+      label="Clickable Chip"
+      clickable={true}
+      variant="highlighted"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+    />
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                     | Beskrivelse                                                                                                                 |
+| ----------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| linkToEntity            | <span>streng</span>      | Lenken til enheten                                                                                                          |
+| entityId                | <span>streng</span>      | Den unike identifikatoren for enheten                                                                                       |
+| navn                    | <span>streng</span>      | Navnet på enheten                                                                                                           |
+| pictureUrl              | <span>streng</span>      | s bilde","pluralForm":null},{                                                                               |
+| avatarType              | Avatar type              | Typen avatar du ønsker å vise. Har to alternativer: `avrundet` og `firkantet`               |
+| "variant"               | `EntityChipVariant` enum | Variant av enhetsbrikken du ønsker å vise. Har to alternativer: `vanlig` og `gjennomsiktig` |
+| "VenstreIkon"           | "IkonKomponent"          | En React-komponent som representerer et ikon. Vises på venstre side av brikken                              |
+
+</Tab>
+</Tabs>
+
+## Eksempler
+
+### Gjennomsiktig Deaktivert Brikke
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Transparent Disabled Chip"
+      clickable={false}
+      variant="rounded"
+      accent="text-secondary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+
+```
+
+<br/>
+
+### Deaktivert Brikke med Verktøytips
+
+```jsx
+import { Chip } from "twenty-ui/components";
+  
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Disabled chip that triggers a tooltip when overflowing."
+      clickable={false}
+      variant="regular"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+```
+
+## Enhetsbrikke
+
+Et brikke-lignende element for å vise informasjon om en enhet.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+import { IconTwentyStar } from 'twenty-ui/display';
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <Chip
+        linkToEntity="/entity-link"
+        entityId="entityTest"
+        name="Entity name"
+        pictureUrl=""
+        avatarType="rounded"
+        variant="regular"
+        LeftIcon={IconTwentyStar}
+      />
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                     | Beskrivelse                                                                                                                 |
+| ----------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| linkToEntity            | <span>streng</span>      | Lenken til enheten                                                                                                          |
+| entityId                | <span>streng</span>      | Den unike identifikatoren for enheten                                                                                       |
+| navn                    | <span>streng</span>      | Navnet på enheten                                                                                                           |
+| pictureUrl              | <span>streng</span>      | s bilde","pluralForm":null},{                                                                               |
+| avatarType              | Avatar type              | Typen avatar du ønsker å vise. Har to alternativer: `avrundet` og `firkantet`               |
+| "variant"               | `EntityChipVariant` enum | Variant av enhetsbrikken du ønsker å vise. Har to alternativer: `vanlig` og `gjennomsiktig` |
+| "VenstreIkon"           | "IkonKomponent"          | En React-komponent som representerer et ikon. Vises på venstre side av brikken                              |
+
+</Tab>
+</Tabs>

@@ -9,6 +9,10 @@ import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/work
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
+import { WorkflowVersionStepHelpersWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-helpers.workspace-service';
+import { WorkflowVersionStepCreationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-creation.workspace-service';
+import { WorkflowVersionStepUpdateWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-update.workspace-service';
+import { WorkflowVersionStepDeletionWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-deletion.workspace-service';
 import {
   type WorkflowAction,
   WorkflowActionType,
@@ -113,6 +117,10 @@ describe('WorkflowVersionStepWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkflowVersionStepWorkspaceService,
+        WorkflowVersionStepHelpersWorkspaceService,
+        WorkflowVersionStepCreationWorkspaceService,
+        WorkflowVersionStepUpdateWorkspaceService,
+        WorkflowVersionStepDeletionWorkspaceService,
         {
           provide: TwentyORMGlobalManager,
           useValue: twentyORMGlobalManager,
@@ -140,6 +148,14 @@ describe('WorkflowVersionStepWorkspaceService', () => {
                 additionalCreatedSteps: [],
               })),
             runWorkflowVersionStepDeletionSideEffects: jest.fn(),
+            cloneStep: jest.fn().mockImplementation(({ step }) => ({
+              ...step,
+              id: 'cloned-step-id',
+            })),
+            markStepAsDuplicate: jest
+              .fn()
+              .mockImplementation(({ step }) => step),
+            createDraftStep: jest.fn().mockImplementation(({ step }) => step),
           },
         },
         {

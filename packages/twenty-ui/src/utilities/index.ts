@@ -15,6 +15,7 @@ export { AnimatedFadeOut } from './animation/components/AnimatedFadeOut';
 export { AnimatedRotate } from './animation/components/AnimatedRotate';
 export { AnimatedTextWord } from './animation/components/AnimatedTextWord';
 export { AnimatedTranslation } from './animation/components/AnimatedTranslation';
+export { getMainColorNameFromPaletteColorName } from './color/utils/getMainColorNameFromPaletteColorName';
 export {
   stringToThemeColor,
   stringToThemeColorP3String,

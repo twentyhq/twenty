@@ -73,21 +73,26 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
       | MetadataToFlatEntityMapsKey<TMetadataName>
     >
   > {
-    await Promise.all([
-      this.asyncMethodPerformanceMetricWrapper({
-        label: 'executeForMetadata',
-        method: async () => this.executeForMetadata(context),
-      }),
-      this.asyncMethodPerformanceMetricWrapper({
-        label: 'executeForWorkspaceSchema',
-        method: async () => this.executeForWorkspaceSchema(context),
-      }),
-    ]);
+    try {
+      await Promise.all([
+        this.asyncMethodPerformanceMetricWrapper({
+          label: 'executeForMetadata',
+          method: async () => this.executeForMetadata(context),
+        }),
+        this.asyncMethodPerformanceMetricWrapper({
+          label: 'executeForWorkspaceSchema',
+          method: async () => this.executeForWorkspaceSchema(context),
+        }),
+      ]);
 
-    return this.optimisticallyApplyActionOnAllFlatEntityMaps({
-      action: context.action,
-      allFlatEntityMaps: context.allFlatEntityMaps,
-    });
+      return this.optimisticallyApplyActionOnAllFlatEntityMaps({
+        action: context.action,
+        allFlatEntityMaps: context.allFlatEntityMaps,
+      });
+    } catch (error) {
+      this.logger.error(`${this.actionType} execution failed`, error);
+      throw error;
+    }
   }
 
   async rollback(

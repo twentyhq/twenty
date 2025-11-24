@@ -1,0 +1,73 @@
+---
+title: 銷售管道
+info: "通過自定義的管道階段跟踪和管理您的銷售機會。"
+image: /images/user-guide/kanban-views/kanban.png
+sectionInfo: "管理潛在客戶、銷售和客戶的重要 CRM 功能"
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+## 瞭解管道
+
+銷售管道跟踪從初次接觸到交易完成的機會。 每個階段代表銷售流程中的一個步驟，機會隨著接近成交而在這些階段中前進。
+
+Twenty 包含標準銷售階段，例如潛在客戶開發、資格認證、方案、談判、完成。 您可以自定義這些階段以匹配您的特定銷售流程。
+
+## 使用看板視圖
+
+看板視圖在視覺上映射出您的管道，其中每個列代表一個階段，每個卡片代表一個機會。 每張卡片顯示關鍵資訊如交易金額、完成日期和分配的負責人。 查看完整細節：包括備註、任務、會議和電子郵件歷史記錄，點擊任何卡片以打開完整機會記錄。
+
+### 通過您的管道推進機會
+
+可以通過拖放的方式將每個機會在階段之間移動，隨著銷售流程的推進。 按住某個卡片並將其移動到下一個階段。
+
+<VimeoEmbed videoId="927888627" title="Video demonstration" />
+
+### 自定義您的管道階段
+
+可以根據您的特定銷售流程定制您的管道。 階段在選擇字段中代表值，因此可以根據需要新增、刪除或重命名它們。
+
+#### 添加階段
+
+要添加階段，請通過導航至設置→資料模型，選擇您的對象，然後選擇您的看板視圖所依賴的字段，來訪問選擇字段設置。
+
+<VimeoEmbed videoId="927890428" title="Video demonstration" />
+
+#### 刪除階段
+
+要刪除階段，將鼠標懸停在階段名稱或 `⋮` 圖標上，然後在選擇字段設置中點擊 `從設置中編輯`，然後點擊相關階段旁邊的`刪除`。
+
+<img src="/images/user-guide/kanban-views/edit-stage.png" style={{width:'100%'}}/>
+
+### 自定義卡片
+
+您可以配置您的看板板以顯示某些欄位，同時隱藏其他欄位。 您可以配置您的看板板以顯示某些欄位，同時隱藏其他欄位。 To hide a field, click on `Options` on the top right, then on `Fields` to bring up the list of options. 將鼠標懸停在您想要隱藏的欄位上以顯示 `-` 按鈕。 點擊以隱藏欄位。
+
+您還可以通過按住欄位名稱並將其拖動到想要的位置來重新排列欄位的順序。
+
+<img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}}/>
+
+### 緊湊視圖
+
+您還可以隱藏所有字段，並一目了然查看所有機會的概覽。 要這樣做，請點擊右上角的`選項`，然後在看板視圖中選擇佈局後打開`緊湊視圖`的切換。
+
+<img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}}/>
+
+## 高級管道管理
+
+### 使用自動化工作流程
+
+使用 [工作流程](/l/zh/user-guide/workflows/getting-started-workflows) 自動化您的管道：
+
+- **自動階段推進**：根據活動移動交易
+- **通知**：通知團隊成員階段更改
+- **任務創建**：為每個階段生成後續任務
+
+### 多個管道
+
+You can create different pipelines for various business lines, market segments, or specialized sales teams by creating new views. Each view can show different opportunities with specific filters and stages tailored to your needs. Learn how to create those views in our [View Management](/l/zh/user-guide/crm-essentials/view-management) guide.
+

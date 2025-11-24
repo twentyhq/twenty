@@ -1,0 +1,118 @@
+---
+title: E-post & Kalenderinstallation
+info: "Anslut dina e-post- och kalenderkonton."
+image: /images/user-guide/emails/emails_header.png
+sectionInfo: Konfigurera inställningar och preferenser för ditt Twenty-arbetsområde
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+## Anslutningsalternativ
+
+### Google Account (Gmail & Google Calendar)
+
+1. Gå till **Inställningar → Konton**
+2. Klicka på **Lägg till konto**
+3. Välj **Fortsätt med Google**
+4. Auktorisera Twenty att få åtkomst till din Gmail och Google-kalender
+5. Dina e-postmeddelanden och kalenderevenemang börjar synkroniseras automatiskt
+
+### Microsoft Account (Outlook & Microsoft Calendar)
+
+1. Gå till **Inställningar → Konton**
+2. Klicka på **Lägg till konto**
+3. Välj **Fortsätt med Microsoft**
+4. Auktorisera Twenty att få åtkomst till din Outlook och Microsoft-kalender
+5. Dina e-postmeddelanden och kalenderevenemang börjar synkroniseras automatiskt
+
+### SMTP/CalDAV Setup (Other Providers)
+
+För andra e-post- och kalenderleverantörer:
+
+1. Go to **Settings → Releases → Lab** to enable the feature
+2. Återgå till **Inställningar → Konton**
+3. Konfigurera SMTP-inställningar för e-post
+4. Konfigurera CalDAV-inställningar för kalender
+5. Testa anslutningen
+
+### Flera brevlådor
+
+- **Obegränsat antal konton**: Anslut flera e-postkonton per användare
+- **Kontohantering**: Växla mellan olika brevlådor
+- **Synkroniseringsinställningar**: Konfigurera olika inställningar per brevlåda
+
+<Warning>
+Only true mailboxes can be connected (e.g., support@domain.com with its own inbox). E-postalias som vidarebefordras till en annan brevlåda kan inte anslutas till Twenty.
+</Warning>
+
+## E-postkonfiguration
+
+### Message Visibility
+
+Välj olika nivåer av synlighet för dina e-postmeddelanden:
+
+- **Endast metadata**: Dela endast grundläggande information (avsändare, mottagare, datum, tid)
+- **Ämne och metadata**: Dela ämnesrad tillsammans med metadata
+- **All e-postinnehåll**: Dela hela e-postinnehållet inklusive bilagor
+
+### Contact Auto-Creation
+
+- **Deaktiverad**: Ingen automatisk kontaktgenerering
+- **För meddelanden skickade & mottagna**: Skapa kontakter för alla externa e-postinteraktioner
+- **Endast för meddelanden skickade**: Skapa kontakter endast för e-post du skickar
+- **Obs**: Interna e-postmeddelanden (samma domän) synkas aldrig för att upprätthålla sekretess
+
+### Kontrollera vilka e-postmeddelanden som synkas med Meddelandemappval (Lab-funktion)
+
+Kontrollera vilka e-postmappar som synkas med Twenty:
+
+1. Gå till **Inställningar → Utsläpp → Lab** och aktivera **Meddelandemapp**
+2. Återgå till **Inställningar → Konton** och välj ditt anslutna e-postkonto
+3. Choose which folders to sync:
+   - **Inkorg**: Primära inkommande e-postmeddelanden
+   - **Skickat**: Utgående e-postmeddelanden du har skickat
+   - **Anpassade mappar**: Alla specifika mappar du vill inkludera
+   - **Exkludera mappar**: Hoppa över mappar som Spam, Skräp eller personliga mappar
+
+Detta ger dig exakt kontroll över vilka e-postmeddelanden som visas i ditt CRM utan att synkronisera allt.
+
+**Vad som synkas:**
+
+- **Externa e-postmeddelanden**: Alla e-postmeddelanden med externa kontakter från valda mappar
+- **Interna e-postmeddelanden**: Synkas inte (e-postmeddelanden från samma domän förblir privata)
+- **Bilagor**: Kommer i H1 2026
+
+**Obs**: Vi tillhandahåller inte en CC-e-postadress för selektiv synkronisering. Använd istället Meddelandemappfunktionen ovan för att uppnå samma nivå av kontroll över vilka e-postmeddelanden som synkas med Twenty.
+
+## Kalenderkonfiguration
+
+### Händelsers synlighet
+
+Choose what will be visible to other users in your workspace:
+
+- **Allt**: Hela händelsedetaljerna kommer att delas med ditt team
+- **Metadata**: Endast datum & deltagare kommer att delas med ditt team
+
+### Automatisk kontaktgenerering för möten
+
+- **Ja**: Skapa automatiskt kontakter för mötesdeltagare som inte finns i ditt CRM
+- **Nej**: Länka endast möten till befintliga kontakter
+
+### Kontrollera vilka händelser som synkas
+
+- **Mötesimport**: Importera automatiskt kalenderevenemang
+- **Kontaktlänkning**: Länka möten till Person- och Företagsuppgifter
+
+**Vad som synkas:**
+
+- **Möten**: Kalenderevenemang med externa deltagare
+- **Kontaktlänkning**: Händelser länkas automatiskt till CRM-poster
+- **Teamhändelser**: Delad kalendersynlighet
+
+## Synkningsfrekvens
+
+**Uppdateras var 5:e minut**: Både e-post- och kalenderdata synkas automatiskt var 5:e minut efter den första importen.
+
+

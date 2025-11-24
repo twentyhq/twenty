@@ -54,9 +54,7 @@ export const useRecordGroupActions = ({
   );
 
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
-    useRecordGroupVisibility({
-      viewType,
-    });
+    useRecordGroupVisibility();
 
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,

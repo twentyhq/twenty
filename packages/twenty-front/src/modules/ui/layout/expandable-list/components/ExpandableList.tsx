@@ -45,6 +45,8 @@ const StyledChildContainer = styled.div`
 const StyledUnShrinkableContainer = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   flex-shrink: 0;
+
+  width: 24px;
 `;
 
 export type ExpandableListProps = {

@@ -90,13 +90,18 @@ msgstr "Přijměte pozvánku"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
 msgstr "Potvrďte svou e-mailovou adresu"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr "Děkujeme za registraci účtu na Twenty! Než začneme, musíme potvrdit, že jste to vy. Klikněte níže k ověření vaší e-mailové adresy."
+msgid "Confirm new email"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -131,7 +136,7 @@ msgstr "Obnovte své heslo 🗝"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
-msgstr ""
+msgstr "Nastavte své heslo 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -141,7 +146,7 @@ msgstr "Obnovit"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set"
-msgstr ""
+msgstr "Nastavit"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

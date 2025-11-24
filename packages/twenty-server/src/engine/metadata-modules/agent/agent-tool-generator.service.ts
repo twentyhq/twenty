@@ -4,24 +4,23 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type ToolSet } from 'ai';
 import { Repository } from 'typeorm';
 
+import type { ActorMetadata } from 'twenty-shared/types';
+
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { SearchArticlesTool } from 'src/engine/core-modules/tool/tools/search-articles-tool/search-articles-tool';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
-import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { HELPER_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/helper-agent';
 import { WorkflowToolWorkspaceService as WorkflowToolService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
+import type { ToolHints } from 'src/engine/metadata-modules/ai-router/types/tool-hints.interface';
 
 @Injectable()
 export class AgentToolGeneratorService {
   private readonly logger = new Logger(AgentToolGeneratorService.name);
 
   constructor(
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
     private readonly toolAdapterService: ToolAdapterService,
@@ -36,6 +35,7 @@ export class AgentToolGeneratorService {
     workspaceId: string,
     actorContext?: ActorMetadata,
     roleIds?: string[],
+    toolHints?: ToolHints,
   ): Promise<ToolSet> {
     let tools: ToolSet = {};
 
@@ -76,6 +76,7 @@ export class AgentToolGeneratorService {
         { intersectionOf: roleIds },
         workspaceId,
         actorContext,
+        toolHints,
       );
 
       tools = { ...tools, ...databaseTools };

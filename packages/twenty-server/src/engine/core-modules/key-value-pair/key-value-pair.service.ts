@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Repository } from 'typeorm';
+import { type QueryRunner, IsNull, Repository } from 'typeorm';
 
 import {
   KeyValuePairEntity,
@@ -50,19 +50,22 @@ export class KeyValuePairService<
     }));
   }
 
-  async set<K extends keyof KeyValueTypesMap>({
-    userId,
-    workspaceId,
-    key,
-    value,
-    type,
-  }: {
-    userId?: string | null;
-    workspaceId?: string | null;
-    key: Extract<K, string>;
-    value: KeyValueTypesMap[K];
-    type: KeyValuePairType;
-  }) {
+  async set<K extends keyof KeyValueTypesMap>(
+    {
+      userId,
+      workspaceId,
+      key,
+      value,
+      type,
+    }: {
+      userId?: string | null;
+      workspaceId?: string | null;
+      key: Extract<K, string>;
+      value: KeyValueTypesMap[K];
+      type: KeyValuePairType;
+    },
+    queryRunner?: QueryRunner,
+  ) {
     const upsertData = {
       userId,
       workspaceId,
@@ -84,24 +87,36 @@ export class KeyValuePairService<
         ? '"workspaceId" is NULL'
         : undefined;
 
-    await this.keyValuePairRepository.upsert(upsertData, {
-      conflictPaths,
-      indexPredicate,
-    });
+    if (queryRunner) {
+      await queryRunner.manager
+        .getRepository(KeyValuePairEntity)
+        .upsert(upsertData, {
+          conflictPaths,
+          indexPredicate,
+        });
+    } else {
+      await this.keyValuePairRepository.upsert(upsertData, {
+        conflictPaths,
+        indexPredicate,
+      });
+    }
   }
 
-  async delete({
-    userId,
-    workspaceId,
-    type,
-    key,
-  }: {
-    userId?: string | null;
-    workspaceId?: string | null;
-    type: KeyValuePairType;
-    key: Extract<keyof KeyValueTypesMap, string>;
-  }) {
-    await this.keyValuePairRepository.delete({
+  async delete(
+    {
+      userId,
+      workspaceId,
+      type,
+      key,
+    }: {
+      userId?: string | null;
+      workspaceId?: string | null;
+      type: KeyValuePairType;
+      key: Extract<keyof KeyValueTypesMap, string>;
+    },
+    queryRunner?: QueryRunner,
+  ) {
+    const deleteConditions = {
       ...(userId === undefined
         ? {}
         : userId === null
@@ -114,6 +129,14 @@ export class KeyValuePairService<
           : { workspaceId }),
       type,
       key,
-    });
+    };
+
+    if (queryRunner) {
+      await queryRunner.manager
+        .getRepository(KeyValuePairEntity)
+        .delete(deleteConditions);
+    } else {
+      await this.keyValuePairRepository.delete(deleteConditions);
+    }
   }
 }

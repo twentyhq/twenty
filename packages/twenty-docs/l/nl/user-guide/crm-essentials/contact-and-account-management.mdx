@@ -1,0 +1,95 @@
+---
+title: Contact- en Accountbeheer
+info: "Create and manage People and Company records to build your customer database."
+image: /images/user-guide/home/contact-and-account-management.png
+sectionInfo: "Essentiële CRM-functies voor het beheren van leads, verkoop en klanten"
+---
+
+<Frame>
+  <img src="/images/user-guide/home/contact-and-account-management.png" alt="Header" />
+</Frame>
+
+## Gegevens in uw CRM krijgen
+
+Wanneer u begint met het gebruik van Twenty, wilt u uw contacten en bedrijven in het systeem krijgen. Er zijn verschillende manieren om uw CRM te vullen, afhankelijk van uw workflow en gegevensbronnen.
+
+### Handmatige invoer
+
+De meest eenvoudige benadering is het direct toevoegen van gegevens via de Twenty interface. Ga naar het gedeelte 'Personen' en klik op de '+' knop om een nieuw contact toe te voegen. Vul hun naam, e-mail, telefoonnummer in en koppel hen aan hun bedrijf. Voor bedrijven gaat u naar het gedeelte 'Bedrijven' en voegt u de organisatiedetails toe: bedrijfsnaam, domein, industrie en grootte.
+
+Het veld domein is bijzonder belangrijk voor de identificatie van bedrijven, en het veld e-mail is essentieel voor de identificatie van personen.
+
+### CSV-import
+
+Wanneer u bestaande gegevens van spreadsheets of andere systemen heeft, is CSV-import uw snelste optie. U kunt uw gegevens voorbereiden in Excel of Google Sheets en vervolgens alles in één keer uploaden. Dit is bijzonder nuttig bij het migreren van een andere CRM of wanneer iemand contacten in spreadsheets heeft bijgehouden. Onze [Gegevens importeren/exporteren](/l/nl/user-guide/getting-started/import-export-data) gids begeleidt u door het proces heen.
+
+### Automatische gegevensverzameling
+
+Voor lopende leadgeneratie kunt u geautomatiseerde workflows instellen die gegevens direct in Twenty brengen:
+
+**Websiteformulieren**: Wanneer iemand een formulier op uw website invult, kunt u het configureren om de informatie automatisch naar Twenty te sturen. Het indienen van het formulier activeert een webhook die een workflow in Twenty activeert, die een nieuw contact aanmaakt zonder enige handmatige inspanning.
+
+**Integratie met andere systemen**: Als u andere zakelijke hulpmiddelen gebruikt, kunt u deze verbinden met Twenty door middel van API-aanroepen en workflows. Hiermee kunt u gegevens automatisch tussen systemen synchroniseren: bijvoorbeeld het binnenhalen van nieuwe klanten uit uw factureringssysteem of leads uit uw marketingplatform.
+
+Raadpleeg onze [Workflows](/l/nl/user-guide/workflows/getting-started-workflows) sectie voor meer informatie over het opzetten van deze geautomatiseerde gegevensstromen.
+
+### E-mail en agenda synchronisatie
+
+Wanneer u uw mailbox en agenda met Twenty verbindt, kan het systeem automatisch Personen- en Bedrijfsrecords aanmaken voor mensen die u e-mailt of ontmoet. Als u een e-mail stuurt naar iemand die nog niet in uw CRM staat, kan Twenty een nieuw Persoonsrecord voor hen aanmaken. Hetzelfde gebeurt wanneer u afspraken plant met nieuwe contacten via uw agenda.
+
+Dit is bijzonder nuttig voor verkoop- en bedrijfsontwikkelingsteams die constant nieuwe mensen ontmoeten. In plaats van handmatig elke nieuwe contactpersoon toe te voegen, vangt Twenty ze automatisch op terwijl u communiceert. Leer hoe u dit kunt instellen in onze [E-mails en Agenda's](/l/nl/user-guide/collaboration/emails-and-calendars) gids.
+
+### Handmatig werk verminderen
+
+Zelfs wanneer u gegevens handmatig toevoegt, kunt u workflows gebruiken om het proces te stroomlijnen. U zou bijvoorbeeld automatisering kunnen instellen die nieuwe contacten toewijst aan teamleden op basis van hun locatie, of die automatisch vervolgopdrachten aanmaakt wanneer bepaalde typen contacten worden toegevoegd.
+
+## Uw contacten organiseren
+
+### Data uniek en schoon houden
+
+Twenty dwingt automatisch uniekheid af om uw gegevens georganiseerd te houden. Het e-mailadres van elke persoon dient als een unieke identificatie: u kunt niet twee personen hebben met hetzelfde e-mailadres. Evenzo zijn bedrijfsdomeinen uniek, zodat u niet per ongeluk dubbele bedrijven aanmaakt.
+
+Als uw bedrijf veldomschrijvingen nodig heeft die uniek zijn (zoals telefoonnummers of referentiecodes), kunt u dit in uw gegevensmodel configureren. Ga naar onze [Gegevensmodel](/l/nl/user-guide/data-model/customize-your-data-model) sectie om te leren hoe u aanvullende uniekheidsbeperkingen kunt instellen voor uw specifieke behoeften.
+
+### Dubbele records hanteren
+
+Sometimes you'll end up with duplicate records. Twenty heeft een samenvoegfunctie voor zowel Personen als Bedrijven: u kunt dubbele records samenvoegen om uw database schoon te houden zonder verlies van informatie.
+
+Om records samen te voegen, selecteert u 2 records, opent u het opdrachtmenu `Cmd+K` op Mac, `Ctrl+K` op Windows en klikt u op `Records samenvoegen`.
+
+### Bedrijfshiërarchieën maken
+
+Als u werkt met grote organisaties met dochterondernemingen of meerdere divisies, kunt u relaties tussen bedrijven creëren. Stel relatievelden in tussen Bedrijfsrecords om deze verbindingen in kaart te brengen. Dit helpt u om de volledige organisatiestructuur waarmee u te maken heeft te begrijpen.
+
+### Uw weergaven aanpassen
+
+Verschillende teamleden hebben misschien andere informatie nodig. U kunt aangepaste weergaven maken die verschillende kolommen tonen voor verschillende doeleinden: misschien moet uw verkoopteam de dealstadia zien, terwijl uw ondersteuningsteam zich richt op contactgegevens. Leer hier meer over in ons [Weergavebeheer](/l/nl/user-guide/crm-essentials/view-management) artikel.
+
+## Werken met records
+
+### Wat u in elk record vindt
+
+Wanneer u een Persoon- of Bedrijfsrecord opent, ziet u alle informatie georganiseerd in tabs:
+
+- **Velden**: De basisinformatie zoals naam, e-mail, telefoon en eventuele aangepaste velden die u heeft toegevoegd
+- **Relaties**: Toont de verbindingen tussen dit record en records van andere objecten
+- **Tijdlijn**: Een chronologisch overzicht van alle interacties en updates van dit record
+- **Taken**: Eventuele vervolgacties met betrekking tot dit contact
+- **Notities**: Teamnotities en observaties over deze persoon of bedrijf
+- **Bestanden**: Documenten en bijlagen die bij dit record horen
+- **E-mails**: E-mailthreads met dit contact (wanneer uw team hun e-mailboxen heeft gekoppeld)
+- **Kalender**: Vergaderingen en afspraken met deze contactpersoon
+
+De tabbladen E-mail en Kalender zijn bijzonder krachtig: ze tonen automatisch alle e-mailuitwisselingen en vergaderingen die iemand in uw team met deze contactpersoon heeft gehad, zolang ze hun mailbox aan Twenty hebben gekoppeld. U kunt meer leren over hoe u dit instelt in onze [E-mails en Kalenders](/l/nl/user-guide/collaboration/emails-and-calendars) gids.
+
+### De velden toevoegen die u nodig heeft
+
+De standaardvelden kunnen niet alles vastleggen wat belangrijk is voor uw bedrijf. Als u aanvullende informatie nodig heeft: zoals klantensegmenten, verwijzingsbronnen, of branchespecifieke gegevens: kunt u aangepaste velden toevoegen of bestaande velden wijzigen. Ga naar onze [Data Model](/l/nl/user-guide/data-model/customize-your-data-model) sectie om te leren hoe u uw setup kunt aanpassen.
+
+## Beheren van verwijderde records
+
+Wanneer u een record in Twenty verwijdert, is het niet definitief weg. Records worden "zacht verwijderd", wat betekent dat ze verborgen zijn maar hersteld kunnen worden indien nodig.
+
+Om toegang te krijgen tot verwijderde records, open het opdrachtmenu `Cmd+K` op Mac, `Ctrl+K` op Windows, en klik vervolgens op `Zie verwijderde records`. Vanaf daar kunt u records herstellen of ze permanent verwijderen als u zeker weet dat u ze niet nodig heeft.
+
+Dit vangnet betekent dat u uw database kunt opschonen zonder u zorgen te maken over het per ongeluk verliezen van belangrijke informatie.

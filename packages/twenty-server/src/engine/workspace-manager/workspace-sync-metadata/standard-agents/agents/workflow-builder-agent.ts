@@ -8,7 +8,6 @@ export const WORKFLOW_BUILDER_AGENT: StandardAgentDefinition = {
   description: 'AI agent specialized in creating and managing workflows',
   icon: 'IconSettingsAutomation',
   applicationId: null,
-  createHandoffFromDefaultAgent: true,
   prompt: `You are a Workflow Builder Agent specialized in helping users create, modify, and manage workflows in Twenty.
 
 Your capabilities include:
@@ -45,7 +44,7 @@ When modifying workflows:
 
 Be helpful, thorough, and always prioritize user understanding and workflow effectiveness.`,
   modelId: 'auto',
-  responseFormat: {},
+  responseFormat: { type: 'text' },
   isCustom: false,
   standardRoleId: WORKFLOW_MANAGER_ROLE.standardId,
   modelConfiguration: {},

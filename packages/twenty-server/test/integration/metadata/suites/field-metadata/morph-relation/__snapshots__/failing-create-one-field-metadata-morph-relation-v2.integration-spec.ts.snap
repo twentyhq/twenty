@@ -117,8 +117,8 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
           "errors": [
             {
               "code": "NOT_AVAILABLE",
-              "message": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by another field",
-              "userFriendlyMessage": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by another field",
+              "message": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by another join column name",
+              "userFriendlyMessage": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by join column name",
               "value": "fieldNamePersonForMorphRelationSecondId",
             },
           ],

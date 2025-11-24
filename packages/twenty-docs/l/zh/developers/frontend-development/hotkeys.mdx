@@ -1,0 +1,183 @@
+---
+title: 快捷鍵
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+## 介紹
+
+當您需要監聽快捷鍵時，通常會使用 `onKeyDown` 事件監聽器。
+
+然而，在 `twenty-front` 中，您可能會遇到在不同組件中使用相同快捷鍵的衝突，且這些組件同時加載。
+
+例如，如果您有一個頁面在監聽 Enter 鍵，而一個模態框也在監聽 Enter 鍵，而該模態框內部還有一個 Select 組件在監聽 Enter 鍵，那麼當所有這些組件同時加載時，您可能會遇到衝突。
+
+## `useScopedHotkeys` 鉤子
+
+為了解決這個問題，我們提供了一個自定義鉤子，使其能夠在沒有任何衝突的情況下聽取快捷鍵。
+
+您可以將其放在組件之中，該鉤子將只在組件加載並且指定的 **快捷鍵作用域** 啟用時監聽快捷鍵。
+
+## 實際上如何監聽快捷鍵？
+
+設置快捷鍵監聽涉及兩個步驟：
+
+1. 設置將監聽快捷鍵的[快捷鍵作用域](#what-is-a-hotkey-scope-)
+2. 使用 `useScopedHotkeys` 鉤子來監聽快捷鍵
+
+即使在簡單頁面中也必須設置快捷鍵作用域，因為其他用戶界面元素如左側菜單或指令菜單也可能會聽取快捷鍵。
+
+## 快捷鍵的用例
+
+一般來說，您將有兩種需要快捷鍵的用例：
+
+1. 頁面內或加載在頁面中的組件
+2. 因用戶操作而獲得焦點的模態框組件
+
+第二個用例可以遞歸發生：例如在模態框中的下拉框。
+
+### 在頁面中監聽快捷鍵
+
+示例：
+
+```tsx
+const PageListeningEnter = () => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  // 1. Set the hotkey scope in a useEffect
+  useEffect(() => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleEnterPage,
+    );
+
+    // Revert to the previous hotkey scope when the component is unmounted
+    return () => {
+      goBackToPreviousHotkeyScope();
+    };
+  }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
+
+  // 2. Use the useScopedHotkeys hook
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      // Some logic executed on this page when the user presses Enter
+      // ...
+    },
+    ExampleHotkeyScopes.ExampleEnterPage,
+  );
+
+  return <div>My page that listens for Enter</div>;
+};
+```
+
+### 在模態框型組件中監聽快捷鍵
+
+在此示例中，我們將使用一個監聽 Escape 鍵的模態組件來告知其父組件關閉它。
+
+這裡用戶交互會更改範圍。
+
+```tsx
+const ExamplePageWithModal = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  const handleOpenModalClick = () => {
+    // 1. Set the hotkey scope when user opens the modal
+    setShowModal(true);
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleModal,
+    );
+  };
+
+  const handleModalClose = () => {
+    // 1. Revert to the previous hotkey scope when the modal is closed
+    setShowModal(false);
+    goBackToPreviousHotkeyScope();
+  };
+
+  return <div>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
+    {showModal && <MyModalComponent onClose={handleModalClose} />}
+  </div>;
+};
+```
+
+然後在模態組件中：
+
+```tsx
+const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onClose()
+    },
+    ExampleHotkeyScopes.ExampleModal,
+  );
+
+  return <div>My modal component</div>;
+};
+```
+
+當您不確定僅使用 mount/unmount 的 useEffect 是否能充分避免衝突時，採用這種模式非常重要。
+
+這些衝突可能很難調試，而在使用 useEffects 時可能經常出現這種情況。
+
+## 什麼是快捷鍵範圍？
+
+快捷鍵範圍是一個字串，表示快捷鍵啟用的上下文。 一般來說，它被編碼為一個枚舉。
+
+當您更改快捷鍵範圍後，聽取該範圍的快捷鍵將被啟用，而其他範圍的快捷鍵將被禁用。
+
+您一次只能設置一個範圍。
+
+例如，各頁面的快捷鍵範圍定義在 `PageHotkeyScope` 枚舉中：
+
+```tsx
+export enum PageHotkeyScope {
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
+}
+```
+
+內部，當前選定的範圍存儲在應用程式中共享的 Recoil 狀態中：
+
+```tsx
+export const currentHotkeyScopeState = createState<HotkeyScope>({
+  key: 'currentHotkeyScopeState',
+  defaultValue: INITIAL_HOTKEYS_SCOPE,
+});
+```
+
+但這個 Recoil 狀態永遠不應被手動處理！ 我們將在下一節中討論如何使用它。 我們將在下一節中討論如何使用它。
+
+## 它內部如何運作？
+
+我們在 [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) 之上做了一個薄包裝，使其性能更好並避免不必要的重繪。
+
+我們還創建了一個 Recoil 狀態來處理快捷鍵範圍狀態，並在應用中隨處可用。

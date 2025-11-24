@@ -108,9 +108,6 @@ export class ClientConfigService {
       ),
       defaultSubdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
       frontDomain: this.domainServerConfigService.getFrontUrl().hostname,
-      debugMode:
-        this.twentyConfigService.get('NODE_ENV') ===
-        NodeEnvironment.DEVELOPMENT,
       support: {
         supportDriver: supportDriver ? supportDriver : SupportDriver.NONE,
         supportFrontChatId: this.twentyConfigService.get(

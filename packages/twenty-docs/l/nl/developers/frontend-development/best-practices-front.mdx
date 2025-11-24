@@ -1,0 +1,333 @@
+---
+title: Beste praktijken
+image: /images/user-guide/tips/light-bulb.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
+</Frame>
+
+Dit document schetst de beste praktijken die je moet volgen bij het werken aan de frontend.
+
+## Staatbeheer
+
+React en Recoil regelen het staatbeheer in de codebase.
+
+### Gebruik `useRecoilState` om staat op te slaan
+
+Het is een goede gewoonte om net zoveel atomen te maken als je nodig hebt om je staat op te slaan.
+
+<Warning>
+
+Het is beter om extra atomen te gebruiken dan proberen te beknopt te zijn met props drilling.
+
+</Warning>
+
+```tsx
+export const myAtomState = atom({
+  key: 'myAtomState',
+  default: 'default value',
+});
+
+export const MyComponent = () => {
+  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+
+  return (
+    <div>
+      <input
+        value={myAtom}
+        onChange={(e) => setMyAtom(e.target.value)}
+      />
+    </div>
+  );
+}
+```
+
+### Gebruik `useRef` niet om staat op te slaan
+
+Vermijd het gebruik van `useRef` om staat op te slaan.
+
+Als je staat wilt opslaan, moet je `useState` of `useRecoilState` gebruiken.
+
+Bekijk [hoe je her-renderingen beheert](#managing-re-renders) als je het gevoel hebt dat je `useRef` nodig hebt om te voorkomen dat er her-renderingen plaatsvinden.
+
+## Her-renderingen beheren
+
+Her-renderingen kunnen moeilijk te beheren zijn in React.
+
+Hier zijn enkele regels die je kunt volgen om onnodige her-renderingen te vermijden.
+
+Houd er rekening mee dat je **altijd** her-renderingen kunt vermijden door hun oorzaak te begrijpen.
+
+### Work at the root level
+
+Avoiding re-renders in new features is now made easy by eliminating them at the root level.
+
+Het `PageChangeEffect` sidecar component bevat slechts één `useEffect` die alle logica bevat om uit te voeren bij een paginawijziging.
+
+That way you know that there's just one place that can trigger a re-render.
+
+### Denk altijd twee keer na voordat je `useEffect` in je codebase toevoegt
+
+Her-renderingen worden vaak veroorzaakt door onnodige `useEffect`.
+
+Je moet nadenken of je `useEffect` nodig hebt, of dat je de logica kunt verplaatsen naar een event handler functie.
+
+Je zult het over het algemeen gemakkelijk vinden om de logica te verplaatsen naar een `handleClick` of `handleChange` functie.
+
+Je vindt ze ook in bibliotheken zoals Apollo: `onCompleted`, `onError`, enz.
+
+### Gebruik een nevencomponent om `useEffect` of data-ophaallogica uit te trekken
+
+Als je het gevoel hebt dat je een `useEffect` aan je root-component moet toevoegen, moet je overwegen deze in een sidecar component te extraheren.
+
+Je kunt hetzelfde toepassen voor data-ophaallogica, met Apollo hooks.
+
+```tsx
+// ❌ Bad, will cause re-renders even if data is not changing, 
+//    because useEffect needs to be re-evaluated
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <div>{data}</div>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+```tsx
+// ✅ Good, will not cause re-renders if data is not changing, 
+//   because useEffect is re-evaluated in another sibling component
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+
+  return <div>{data}</div>;
+};
+
+export const PageData = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <></>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageData />
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+### Gebruik recoil familie status en recoil familie selectors
+
+Recoil familie statussen en selectors zijn een geweldige manier om her-renderingen te vermijden.
+
+Ze zijn handig wanneer je een lijst van items moet opslaan.
+
+### Je moet `React.memo(MyComponent)` niet gebruiken
+
+Vermijd het gebruik van `React.memo()` omdat het niet de oorzaak van de her-rendering oplost, maar in plaats daarvan de her-render keten breekt, wat kan leiden tot onverwacht gedrag en de code zeer moeilijk te refactoren maakt.
+
+### Beperk het gebruik van `useCallback` of `useMemo`
+
+Ze zijn vaak niet nodig en zullen de code moeilijker leesbaar en onderhoudbaar maken voor een prestatieverbetering die niet merkbaar is.
+
+## Console.log's
+
+`console.log`-verklaringen zijn waardevol tijdens ontwikkeling, omdat ze realtime-inzichten bieden in variabele waarden en codeverloop. Maar, ze in productiecode achterlaten kan tot verschillende problemen leiden:
+
+1. **Prestaties**: Overmatige logging kan de runtime prestaties beïnvloeden, vooral bij client-side applicaties.
+
+2. **Beveiliging**: Loggen van gevoelige gegevens kan kritiek informatie blootstellen aan iedereen die de console van de browser inspecteert.
+
+3. **Netheid**: De console vullen met logs kan belangrijke waarschuwingen of fouten verhullen die ontwikkelaars of hulpmiddelen nodig hebben om te zien.
+
+4. **Professionaliteit**: Eindgebruikers of klanten die de console controleren en een overvloed aan logberichten zien, kunnen de kwaliteit en afwerking van de code in twijfel trekken.
+
+Zorg ervoor dat je alle `console.log's` verwijdert voordat je de code in productie brengt.
+
+## Naamgeving
+
+### Variabele naamgeving
+
+Variabelenamen moeten precies het doel of de functie van de variabele beschrijven.
+
+#### Het probleem met generieke namen
+
+Generieke namen in programmeren zijn niet ideaal omdat ze gebrek aan specificiteit hebben, wat leidt tot ambiguïteit en verminderde leesbaarheid van de code. Dergelijke namen slagen er niet in om het doel van de variabele of functie over te brengen, waardoor het moeilijk is voor ontwikkelaars om de intentie van de code te begrijpen zonder verder onderzoek. Dit kan resulteren in verhoogde debugging tijd, grotere gevoeligheid voor fouten en moeilijkheden in onderhoud en samenwerking. Ondertussen maakt beschrijvende naamgeving de code zelfverklarend en gemakkelijker te navigeren, wat de codekwaliteit en de productiviteit van de ontwikkelaar verbetert.
+
+```tsx
+// ❌ Bad, uses a generic name that doesn't communicate its
+//    purpose or content clearly
+const [value, setValue] = useState('');
+```
+
+```tsx
+// ✅ Good, uses a descriptive name
+const [email, setEmail] = useState('');
+```
+
+#### Woorden om te vermijden in variabelenamen
+
+- dummy
+
+### Event handlers
+
+Event handler names should start with `handle`, while `on` is a prefix used to name events in components props.
+
+```tsx
+// ❌ Bad
+const onEmailChange = (val: string) => {
+  // ...
+};
+```
+
+```tsx
+// ✅ Good
+const handleEmailChange = (val: string) => {
+  // ...
+};
+```
+
+## Optionele eigenschappen
+
+Vermijd het doorgeven van de standaardwaarde voor een optionele eigenschap.
+
+**VOORBEELD**
+
+Neem de `EmailField`-component zoals hieronder gedefinieerd:
+
+```tsx
+type EmailFieldProps = {
+  value: string;
+  disabled?: boolean;
+};
+
+const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
+  <TextInput value={value} disabled={disabled} fullWidth />
+);
+```
+
+**Gebruik**
+
+```tsx
+// ❌ Bad, passing in the same value as the default value adds no value
+const Form = () => <EmailField value="username@email.com" disabled={false} />;
+```
+
+```tsx
+// ✅ Good, assumes the default value
+const Form = () => <EmailField value="username@email.com" />;
+```
+
+## Component als eigenschappen
+
+Probeer zoveel mogelijk om niet-geïnstantieerde componenten als props door te geven, zodat de kinderen zelf kunnen beslissen welke props ze moeten doorgeven.
+
+Het meest voorkomende voorbeeld hiervan is icooncomponenten:
+
+```tsx
+const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
+
+// In MyComponent
+const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
+  const theme = useTheme();
+
+  return (
+    <div>
+      <MyIcon size={theme.icon.size.md}>
+    </div>
+  )
+};
+```
+
+Voor React om te begrijpen dat de component een component is, moet je PascalCase gebruiken, om het later te instantiëren met `<MyIcon>`.
+
+## Prop Doorboren: Houd het minimaal
+
+Prop doorboren, in de React-context, verwijst naar de praktijk van het doorgeven van statusvariabelen en hun setters door veel componentlagen, zelfs als intermediaire componenten ze niet gebruiken. Hoewel soms noodzakelijk, kan overmatig prop doorboren leiden tot:
+
+1. **Verminderde Leesbaarheid**: Het traceren waar een prop vandaan komt of waar het wordt gebruikt kan ingewikkeld worden in een diep geneste componentstructuur.
+
+2. **Onderhoudsuitdagingen**: Wijzigingen in de prop-structuur van één component kunnen aanpassingen vereisen in verschillende componenten, zelfs als ze de prop niet direct gebruiken.
+
+3. **Verminderde Component Herbruikbaarheid**: Een component dat veel props ontvangt alleen om ze door te geven, wordt minder algemeen bruikbaar en moeilijker te hergebruiken in verschillende contexten.
+
+Als je het gevoel hebt dat je overmatig gebruik maakt van prop doorboren, zie [toestandbeheer beste praktijken](#state-management).
+
+## Importeren
+
+Kies bij het importeren voor de aangewezen aliassen in plaats van volledige of relatieve paden op te geven.
+
+**De Aliassen**
+
+```js
+{
+  alias: {
+    "~": path.resolve(__dirname, "src"),
+    "@": path.resolve(__dirname, "src/modules"),
+    "@testing": path.resolve(__dirname, "src/testing"),
+  },
+}
+```
+
+**Gebruik**
+
+```tsx
+// ❌ Bad, specifies the entire relative path
+import {
+  CatalogDecorator
+} from '../../../../../testing/decorators/CatalogDecorator';
+import {
+  ComponentDecorator
+} from '../../../../../testing/decorators/ComponentDecorator';
+```
+
+```tsx
+// ✅ Good, utilises the designated aliases
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'twenty-ui/testing';
+```
+
+## Schema Validatie
+
+[Zod](https://github.com/colinhacks/zod) is de schema-validator voor niet-getypte objecten:
+
+```js
+const validationSchema = z
+  .object({
+    exist: z.boolean(),
+    email: z
+      .string()
+      .email('Email must be a valid email'),
+    password: z
+      .string()
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+  })
+  .required();
+
+type Form = z.infer<typeof validationSchema>;
+```
+
+## Breekende Wijzigingen
+
+Voer altijd grondige handmatige tests uit voordat u verder gaat om te garanderen dat wijzigingen elders geen verstoringen hebben veroorzaakt, aangezien tests nog niet uitgebreid zijn geïntegreerd.
+

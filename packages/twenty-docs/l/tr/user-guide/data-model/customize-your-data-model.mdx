@@ -1,0 +1,69 @@
+---
+title: Veri modelinizi özelleştirin
+info: "Çalışma şeklinizi yansıtan bir veri modelini nasıl tasarlayıp oluşturacağınızı öğrenin."
+image: /images/user-guide/fields/custom_data_model.png
+sectionInfo: Eşsiz iş süreçlerinizi desteklemek için tasarlanan esnek veri modeli
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/custom_data_model.png" alt="Header" />
+</Frame>
+
+## Veri modeli nedir?
+
+Veri modeli, CRM'nizde bilgilerin nasıl organize edildiğini tanımlayan yapıdır. Şirketler, insanlar veya fırsatlar gibi hangi nesnelerin var olduğunu, onların hangi özelliklere sahip olduğunu (bunlar alanlardır) ve birbirleriyle nasıl ilişkili olduklarını belirler. Onu müşteri verilerinizin haritası olarak düşünebilirsiniz.
+
+## Veri modelinizi neden özelleştirmelisiniz?
+
+Her iş farklı çalışır. Being able to fully customize your data model means you can shape Twenty around your processes instead of forcing yours into a rigid system.  
+Twenty, günlük ihtiyaçlarınızı en iyi şekilde destekleyecek veri modelini şekillendirmeniz için ihtiyaç duyduğunuz esnekliği sunar. İhtiyacınız kadar özel nesne ve alan oluşturabilirsiniz, fiyat değişmeyecektir.
+
+## Veri modelinizi tasarlamak için ipuçları
+
+There is rarely only one way to build a data model. Kendi modelinizi oluşturmanıza yardımcı olacak birkaç ipucu aşağıda verilmiştir.
+
+**1. Ana nesnelerinizle başlayın.**  
+Çalıştığınız ana kavramları belirleyin (örneğin; Şirketler, İnsanlar, Fırsatlar). Bu üç nesne zaten mevcuttur çünkü sıklıkla kullanılırlar. Ama ihtiyacınız olabilecek diğerlerini düşünün.  
+Örnek: Stripe bir `Abonelikler` nesnesine ihtiyaç duyarken, Airbnb bir `Geziler` nesnesine, bir start-up hızlandırıcı ise `Seriler` nesnesine ihtiyaç duyacaktır.
+
+**2. Varyasyonlar için alanları kullanın, yeni nesneler değil.**  
+Bir şey zaten var olan bir nesnenin sadece bir özelliği ise (örneğin; bir Şirket için `Sektör` veya bir Fırsat için `Durum` gibi), onu bir alan yapın. Alanlar, kategoriler, etiketler ve nitelikler için en iyisidir.
+
+**3. Kendi başına duran yeni bir nesne oluşturun.**  
+Kavramın kendi yaşam döngüsü, özellikleri veya ilişkileri varsa, genellikle bir nesneyi hak eder. Örneğin:
+
+- **Projeler** kendi son tarihleri, sahipleri ve görevleri olan
+- **Abonelikler** şirketler, ürünler ve faturalarla bağlantı kuran
+- **Etkinlikler** birçok katılımcıyı ve takip eylemlerini içeren
+
+Bunlar, kendi verilerini ve ilişkilerini taşıdığından dolayı tek bir alandan daha fazlasıdır.
+
+**4. İlişkili kayıt sayısı sınırsız olduğunda bir nesne oluşturun.**  
+Bir şey birden çok kez bağlanabiliyorsa ve sayısını bilmiyorsanız, kendi nesnesi olarak daha iyidir. Örneğin, `Ürün 1`, `Ürün 2` gibi alanlar oluşturmak yerine, bir `Ürün` nesnesi tanımlayın ve onu orijinal kayıtla ilişkilendirin. Bu şekilde, modelinizi değiştirmeden bir, iki veya yüz ürünü destekleyebilirsiniz.
+
+**5. Önce basit tutun.**  
+Alanlarla başlayın. Yalnızca sınırları hissettiğinizde yeni nesnelere geçin: çok fazla alan, tekrar eden kayıtlar veya düzgün bir şekilde uymayan ilişkiler.
+
+### İnsanlar, Şirketler ve Fırsatlar hakkında özel not
+
+- **`İnsanlar`, `Şirketler` ve `Fırsatlar` nesnelerini, posta kutunuzdan / takviminizden eşlenen e-postalara ve toplantılara erişebileceğiniz tek nesnelerdir.** Mümkün olduğunca bunları kullanmanızı öneririz. Kategoriler oluşturmanız gerekiyorsa `İnsanlar` veya `Şirketler` için alanlar kullanın, yeni nesneler değil.
+
+  Örnek: `İnsanlar` nesnesini hem potansiyel müşteriler hem de iş ortakları için kullanmak en iyisidir, `Kişi Türü` adında bir alan ekleyerek. Bir `İş Ortağı` nesnesi oluşturmaktan kaçının, çünkü e-posta zincirlerine buradan erişemezsiniz. Bunun yerine, `İnsanlar` altında farklı görünümler oluşturun: biri iş ortaklarını, diğeri potansiyel müşterileri gösterir.
+- Yukarıda belirtilen noktaya göre, her kayda uygulanmayan alanlar olması sorun değildir. Örneğin, `İnsanlar` altında, yalnızca `Kişi Türü = İş Ortağı` olduğunda ilgili olan bir `Yönlendirme Bağlantısı` alanı ekleyebilirsiniz. Bu alanı ihtiyaç duyulmadığı görünümlerden gizleyebilirsiniz, bu sorun değil.
+
+### Tercihinizi yönlendirecek sorular
+
+Kendinize şunu sorun:
+
+- Bu, zaten sahip olduğum bir şeyin sadece bir özelliği mi yoksa kendi özelliklerine mi ihtiyaç duyuyor?
+- Will I ever need to track multiple of these per record, without knowing how many in advance?
+- Bu kavram birkaç farklı nesneyle mi bağlantılı, sadece bir nesneyle mi değil?
+- Kendi yaşam döngüsüne mi sahip olacak (ör. aşamalar, başlangıç/bitiş tarihleri)?
+
+Bu sorulardan birine veya daha fazlasına “evet” yanıtı veriyorsanız, muhtemelen yeni bir nesne zamanı gelmiştir.
+
+## Yardım ister misiniz?
+
+Ekibimiz, ihtiyacınız olan veri modelini tasarlayıp oluşturmanıza yardımcı olabilir. Karşılama Paketi'mizi [buradan](https://twenty.com/onboarding-packages) keşfedin.
+
+

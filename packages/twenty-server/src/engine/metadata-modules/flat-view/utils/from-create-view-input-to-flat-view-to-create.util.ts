@@ -5,13 +5,18 @@ import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-
 import { type CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 
 export const fromCreateViewInputToFlatViewToCreate = ({
   createViewInput: rawCreateViewInput,
   workspaceId,
+  createdByUserWorkspaceId,
+  workspaceCustomApplicationId,
 }: {
   createViewInput: CreateViewInput;
   workspaceId: string;
+  createdByUserWorkspaceId?: string;
+  workspaceCustomApplicationId: string;
 }): FlatView => {
   const { objectMetadataId, ...createViewInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -44,9 +49,11 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     position: createViewInput.position ?? 0,
     type: createViewInput.type ?? ViewType.TABLE,
     universalIdentifier: createViewInput.universalIdentifier ?? viewId,
+    visibility: createViewInput.visibility ?? ViewVisibility.WORKSPACE,
+    createdByUserWorkspaceId: createdByUserWorkspaceId ?? null,
     viewFieldIds: [],
     viewFilterIds: [],
     viewGroupIds: [],
-    applicationId: createViewInput.applicationId ?? null,
+    applicationId: workspaceCustomApplicationId,
   };
 };

@@ -22,7 +22,6 @@ import { twentyORMGraphqlApiExceptionHandler } from 'src/engine/twenty-orm/utils
 interface QueryFailedErrorWithCode extends QueryFailedError {
   code: string;
 }
-//TODO : Refacto-common - Should be handle first in common api layer
 
 export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
   error: QueryFailedErrorWithCode,

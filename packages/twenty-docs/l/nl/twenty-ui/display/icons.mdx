@@ -1,0 +1,83 @@
+---
+title: Pictogrammen
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+Een lijst van pictogrammen die door onze app worden gebruikt.
+
+## Tabler Pictogrammen
+
+We gebruiken Tabler-pictogrammen voor React door de hele app heen.
+
+<Tabs>
+
+<Tab title="Installation"><br/>
+
+```
+yarn add @tabler/icons-react
+```
+
+</Tab>
+
+<Tab title="Props">
+
+Je kunt elk pictogram als een component importeren. Here's an example: <br />
+
+```jsx
+import { IconArrowLeft } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return <IconArrowLeft color="red" size={48} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Props   | Soort      | Beschrijving                                     | Standaard    |
+| ------- | ---------- | ------------------------------------------------ | ------------ |
+| grootte | nummer     | De hoogte en breedte van het pictogram in pixels | 24           |
+| kleur   | tekenreeks | De kleur van de pictogrammen                     | huidigeKleur |
+| omtrek  | nummer     | De omtrekdikte van het pictogram in pixels       | 2            |
+
+</Tab>
+
+</Tabs>
+
+## Aangepaste Pictogrammen
+
+Naast Tabler-pictogrammen gebruikt de app ook enkele aangepaste pictogrammen.
+
+### Pictogram Adresboek
+
+Toont een adresboekpictogram.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { IconAddressBook } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <IconAddressBook size={24} stroke={2} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Props   | Soort  | Beschrijving                                     | Standaard |
+| ------- | ------ | ------------------------------------------------ | --------- |
+| grootte | nummer | De hoogte en breedte van het pictogram in pixels | 24        |
+| omtrek  | nummer | De omtrekdikte van het pictogram in pixels       | 2         |
+
+</Tab>
+
+</Tabs>

@@ -1,38 +1,39 @@
-import { type DraftPageLayout } from '@/page-layout/types/draft-page-layout';
-import { type PageLayout } from '@/page-layout/types/PageLayout';
+import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { PageLayoutType } from '~/generated/graphql';
 
 type GetTabsByDisplayModeParams = {
-  pageLayout: PageLayout | DraftPageLayout;
+  tabs: PageLayoutTab[];
+  pageLayoutType: PageLayoutType;
   isMobile: boolean;
   isInRightDrawer: boolean;
 };
 
 export const getTabsByDisplayMode = ({
-  pageLayout,
+  tabs,
+  pageLayoutType,
   isMobile,
   isInRightDrawer,
 }: GetTabsByDisplayModeParams) => {
   if (
     isMobile ||
     isInRightDrawer ||
-    pageLayout.type !== PageLayoutType.RECORD_PAGE
+    pageLayoutType !== PageLayoutType.RECORD_PAGE
   ) {
     return {
-      tabsToRenderInTabList: pageLayout.tabs,
+      tabsToRenderInTabList: tabs,
       pinnedLeftTab: undefined,
     };
   }
 
-  if (pageLayout.tabs.length === 1) {
+  if (tabs.length === 1) {
     return {
-      tabsToRenderInTabList: pageLayout.tabs,
+      tabsToRenderInTabList: tabs,
       pinnedLeftTab: undefined,
     };
   }
 
-  const tabsToRenderInTabList = pageLayout.tabs.slice(1);
-  const pinnedLeftTab = pageLayout.tabs[0];
+  const tabsToRenderInTabList = tabs.slice(1);
+  const pinnedLeftTab = tabs[0];
 
   return {
     tabsToRenderInTabList,

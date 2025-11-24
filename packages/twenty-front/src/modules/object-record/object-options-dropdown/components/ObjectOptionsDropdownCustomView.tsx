@@ -4,10 +4,10 @@ import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdow
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { recordIndexCalendarLayoutState } from '@/object-record/record-index/states/recordIndexCalendarLayoutState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -18,7 +18,6 @@ import { ViewKey } from '@/views/types/ViewKey';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
-import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -26,9 +25,9 @@ import {
   AppTooltip,
   IconCalendar,
   IconCalendarWeek,
-  IconCopy,
   IconLayoutList,
   IconListDetails,
+  IconShare,
   IconTrash,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -92,17 +91,14 @@ export const ObjectOptionsDropdownCustomView = ({
     onBackToDefault?.();
   };
 
-  const theme = useTheme();
-  const { enqueueSuccessSnackBar } = useSnackBar();
-
   const selectableItemIdArray = [
     'Layout',
+    'Visibility',
     'Fields',
     ...(customViewData?.type === ViewType.Calendar
       ? ['CalendarDateField', 'CalendarView']
       : []),
     ...(customViewData?.type !== ViewType.Calendar ? ['Group'] : []),
-    'Copy link to view',
     'Delete view',
   ];
 
@@ -116,7 +112,7 @@ export const ObjectOptionsDropdownCustomView = ({
   }
 
   return (
-    <DropdownContent>
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
       <ObjectOptionsDropdownMenuViewName currentView={customViewData} />
       <DropdownMenuSeparator />
       <SelectableList
@@ -137,6 +133,24 @@ export const ObjectOptionsDropdownCustomView = ({
               )}
               text={t`Layout`}
               contextualText={`${capitalize(customViewData?.type ?? '')}`}
+              contextualTextPosition="right"
+              hasSubMenu
+            />
+          </SelectableListItem>
+          <SelectableListItem
+            itemId="Visibility"
+            onEnter={() => onContentChange('visibility')}
+          >
+            <MenuItem
+              focused={selectedItemId === 'Visibility'}
+              onClick={() => onContentChange('visibility')}
+              LeftIcon={IconShare}
+              text={t`Visibility`}
+              contextualText={
+                customViewData?.visibility === 'UNLISTED'
+                  ? t`Unlisted`
+                  : t`Workspace`
+              }
               contextualTextPosition="right"
               hasSubMenu
             />
@@ -245,37 +259,6 @@ export const ObjectOptionsDropdownCustomView = ({
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer scrollable={false}>
-          <SelectableListItem
-            itemId="Copy link to view"
-            onEnter={() => {
-              const currentUrl = window.location.href;
-              navigator.clipboard.writeText(currentUrl);
-              enqueueSuccessSnackBar({
-                message: t`Link copied to clipboard`,
-                options: {
-                  icon: <IconCopy size={theme.icon.size.md} />,
-                  duration: 2000,
-                },
-              });
-            }}
-          >
-            <MenuItem
-              focused={selectedItemId === 'Copy link to view'}
-              onClick={() => {
-                const currentUrl = window.location.href;
-                navigator.clipboard.writeText(currentUrl);
-                enqueueSuccessSnackBar({
-                  message: t`Link copied to clipboard`,
-                  options: {
-                    icon: <IconCopy size={theme.icon.size.md} />,
-                    duration: 2000,
-                  },
-                });
-              }}
-              LeftIcon={IconCopy}
-              text={t`Copy link to view`}
-            />
-          </SelectableListItem>
           <div id="delete-view-menu-item">
             <SelectableListItem
               itemId="Delete view"

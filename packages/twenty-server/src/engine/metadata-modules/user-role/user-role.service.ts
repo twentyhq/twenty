@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Not, Repository } from 'typeorm';
+import { type QueryRunner, In, Not, Repository } from 'typeorm';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import {
@@ -29,15 +29,18 @@ export class UserRoleService {
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
-  public async assignRoleToUserWorkspace({
-    workspaceId,
-    userWorkspaceId,
-    roleId,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string;
-    roleId: string;
-  }): Promise<void> {
+  public async assignRoleToUserWorkspace(
+    {
+      workspaceId,
+      userWorkspaceId,
+      roleId,
+    }: {
+      workspaceId: string;
+      userWorkspaceId: string;
+      roleId: string;
+    },
+    queryRunner?: QueryRunner,
+  ): Promise<void> {
     const validationResult = await this.validateAssignRoleInput({
       userWorkspaceId,
       workspaceId,
@@ -48,13 +51,17 @@ export class UserRoleService {
       return;
     }
 
-    const newRoleTarget = await this.roleTargetsRepository.save({
+    const roleTargetsRepo = queryRunner
+      ? queryRunner.manager.getRepository(RoleTargetsEntity)
+      : this.roleTargetsRepository;
+
+    const newRoleTarget = await roleTargetsRepo.save({
       roleId,
       userWorkspaceId,
       workspaceId,
     });
 
-    await this.roleTargetsRepository.delete({
+    await roleTargetsRepo.delete({
       userWorkspaceId,
       workspaceId,
       id: Not(newRoleTarget.id),

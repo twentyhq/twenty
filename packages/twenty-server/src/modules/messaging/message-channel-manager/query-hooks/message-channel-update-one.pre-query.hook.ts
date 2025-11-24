@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { msg } from '@lingui/core/macro';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { Not } from 'typeorm';
@@ -22,6 +24,7 @@ import {
   MessageFolderPendingSyncAction,
   type MessageFolderWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 
 const ONGOING_SYNC_STAGES = [
   MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
@@ -32,8 +35,13 @@ const ONGOING_SYNC_STAGES = [
 export class MessageChannelUpdateOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
+  private readonly logger = new Logger(
+    MessageChannelUpdateOnePreQueryHook.name,
+  );
+
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
   ) {}
 
   async execute(
@@ -98,6 +106,31 @@ export class MessageChannelUpdateOnePreQueryHook
         {
           userFriendlyMessage: msg`Cannot update message channel while sync is ongoing. Please wait for the sync to complete.`,
         },
+      );
+    }
+
+    const hasCompletedConfiguration =
+      messageChannel.syncStage !==
+      MessageChannelSyncStage.PENDING_CONFIGURATION;
+
+    if (!hasCompletedConfiguration) {
+      this.logger.log(
+        `MessageChannelId: ${messageChannel.id} - Skipping pending action for message channel in PENDING_CONFIGURATION state`,
+      );
+
+      return payload;
+    }
+
+    const excludeGroupEmailsChanged =
+      payload.data.excludeGroupEmails !== messageChannel.excludeGroupEmails;
+
+    if (excludeGroupEmailsChanged) {
+      await this.messagingProcessGroupEmailActionsService.markMessageChannelAsPendingGroupEmailsAction(
+        messageChannel,
+        workspace.id,
+        payload.data.excludeGroupEmails
+          ? MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_DELETION
+          : MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_IMPORT,
       );
     }
 

@@ -1,0 +1,95 @@
+---
+title: Kontakt- und Kontoverwaltung
+info: "Erstellen und Verwalten von Personen- und Unternehmensdatensätzen zum Aufbau Ihrer Kundendatenbank."
+image: /images/user-guide/home/contact-and-account-management.png
+sectionInfo: "Wesentliche CRM-Funktionen zur Verwaltung von Leads, Verkäufen und Kunden"
+---
+
+<Frame>
+  <img src="/images/user-guide/home/contact-and-account-management.png" alt="Header" />
+</Frame>
+
+## Daten in Ihr CRM einfügen
+
+Wenn Sie anfangen, Twenty zu verwenden, möchten Sie Ihre Kontakte und Unternehmen in das System aufnehmen. Es gibt mehrere Möglichkeiten, Ihr CRM zu befüllen, abhängig von Ihrem Arbeitsablauf und Ihren Datenquellen.
+
+### Manuelle Eingabe
+
+Der einfachste Ansatz ist das direkte Hinzufügen von Datensätzen über die Twenty-Oberfläche. Gehen Sie zum Abschnitt `Personen` und klicken Sie auf die Schaltfläche `+`, um einen neuen Kontakt hinzuzufügen. Füllen Sie ihren Namen, E-Mail, Telefon aus und verknüpfen Sie sie mit ihrem Unternehmen. Für Unternehmen gehen Sie zum Abschnitt `Unternehmen` und fügen Sie die Organisationsdetails hinzu: Firmenname, Domain, Branche und Größe.
+
+Das Domain-Feld ist besonders wichtig für die Unternehmensidentifikation und das E-Mail-Feld essenziell für die Personenidentifikation.
+
+### CSV-Importe
+
+Wenn Sie bereits bestehende Daten aus Tabellenkalkulationen oder anderen Systemen haben, ist der CSV-Import Ihre schnellste Option. Sie können Ihre Daten in Excel oder Google Sheets vorbereiten und dann alles auf einmal hochladen. Dies ist besonders nützlich beim Umstieg von einem anderen CRM oder wenn jemand Kontakte in Tabellenkalkulationen erfasst hat. Unser [Import/Export-Daten](/l/de/user-guide/getting-started/import-export-data) Leitfaden führt Sie durch den Prozess.
+
+### Automatisierte Datenerfassung
+
+Für eine kontinuierliche Lead-Generierung können Sie automatisierte Arbeitsabläufe einrichten, die Daten direkt in Twenty bringen:
+
+**Website forms**: When someone fills out a form on your website, you can configure it to send the information to Twenty automatically. Die Formularübermittlung löst einen Webhook aus, der einen Arbeitsablauf in Twenty aktiviert und den neuen Kontaktdatensatz ohne manuelle Arbeit erstellt.
+
+**Integration mit anderen Systemen**: Wenn Sie andere Geschäftstools verwenden, können Sie diese über API-Aufrufe und Arbeitsabläufe mit Twenty verbinden. Dies ermöglicht Ihnen die automatische Synchronisierung von Daten zwischen Systemen: Zum Beispiel die Einbringung neuer Kunden aus Ihrem Abrechnungssystem oder Leads aus Ihrer Marketing-Plattform.
+
+Um mehr über die Einrichtung dieser automatisierten Datenflüsse zu erfahren, besuchen Sie unseren [Workflows](/l/de/user-guide/workflows/getting-started-workflows) Abschnitt.
+
+### E-Mail- und Kalendersynchronisierung
+
+Wenn Sie Ihr Postfach und Ihren Kalender mit Twenty verbinden, kann das System automatisch Personen- und Unternehmensdatensätze für Personen erstellen, mit denen Sie E-Mails austauschen oder sich treffen. Wenn Sie jemandem eine E-Mail senden, der noch nicht in Ihrem CRM ist, kann Twenty einen neuen Personendatensatz für diese Person erstellen. Das Gleiche passiert, wenn Sie über Ihren Kalender Meetings mit neuen Kontakten vereinbaren.
+
+Dies ist besonders nützlich für Verkaufs- und Geschäftsentwicklungsteams, die ständig neue Menschen treffen. Anstatt jeden neuen Kontakt manuell hinzuzufügen, erfasst Twenty sie automatisch, während Sie kommunizieren. Erfahren Sie, wie Sie das in unserem [E-Mails und Kalender](/l/de/user-guide/collaboration/emails-and-calendars) Leitfaden einrichten können.
+
+### Manuelle Arbeit reduzieren
+
+Selbst wenn Sie Daten manuell hinzufügen, können Sie Arbeitsabläufe verwenden, um den Prozess zu optimieren. Sie könnten beispielsweise eine Automatisierung einrichten, die neuen Kontakten basierend auf ihrem Standort Teammitglieder zuweist oder automatisch Folgeaktivitäten erstellt, wenn bestimmte Kontaktarten hinzugefügt werden.
+
+## Ihre Kontakte organisieren
+
+### Daten einzigartig und sauber halten
+
+Twenty erzwingt automatisch die Einzigartigkeit, um Ihre Daten organisiert zu halten. Die E-Mail-Adresse jeder Person dient als eindeutiger Identifikator: Sie können nicht zwei Personen mit derselben E-Mail-Adresse haben. Ähnlich sind Unternehmensdomains einzigartig, sodass Sie nicht versehentlich doppelte Unternehmen erstellen.
+
+Wenn Ihr Unternehmen andere Felder eindeutig machen muss (wie Telefonnummern oder Referenzcodes), können Sie dies in Ihrem Datenmodell konfigurieren. Besuchen Sie unseren [Datenmodell](/l/de/user-guide/data-model/customize-your-data-model) Abschnitt, um zu erfahren, wie Sie zusätzliche Einzigartigkeitseinschränkungen für Ihre spezifischen Bedürfnisse einstellen können.
+
+### Umgang mit Duplikaten
+
+Manchmal haben Sie doppelte Datensätze. Twenty verfügt über eine Zusammenführungsfunktion für Personen und Unternehmen: Sie können doppelte Datensätze kombinieren, um Ihre Datenbank sauber zu halten, ohne Informationen zu verlieren.
+
+Um Datensätze zusammenzuführen, wählen Sie 2 Datensätze aus, öffnen Sie das Befehlsmenü `Cmd+K` auf dem Mac, `Ctrl+K` unter Windows und klicken Sie auf `Datensätze zusammenführen`.
+
+### Unternehmenshierarchien erstellen
+
+Wenn Sie mit großen Organisationen arbeiten, die Tochtergesellschaften oder mehrere Abteilungen haben, können Sie Beziehungen zwischen Unternehmen erstellen. Richten Sie Beziehungsfelder zwischen Unternehmensdatensätzen ein, um diese Verbindungen abzubilden. Dies hilft Ihnen, die gesamte Organisationsstruktur zu verstehen, mit der Sie es zu tun haben.
+
+### Ihre Ansichten anpassen
+
+Unterschiedliche Teammitglieder benötigen möglicherweise unterschiedliche Informationen. Sie können benutzerdefinierte Ansichten erstellen, die verschiedene Spalten für unterschiedliche Zwecke anzeigen: Vielleicht muss Ihr Vertriebsteam die Phasen der Deals sehen, während Ihr Supportteam sich auf die Kontaktdetails konzentriert. Erfahren Sie mehr darüber in unserem [Ansichtsmanagement](/l/de/user-guide/crm-essentials/view-management) Artikel.
+
+## Mit Datensätzen arbeiten
+
+### Was Sie in jedem Datensatz finden werden
+
+Wenn Sie einen Personen- oder Unternehmensdatensatz öffnen, sehen Sie alle Informationen in Registerkarten organisiert:
+
+- **Felder**: Die Basisinformationen wie Name, E-Mail, Telefon und alle von Ihnen hinzugefügten benutzerdefinierten Felder
+- **Beziehungen**: Zeigt die Verbindungen zwischen diesem Datensatz und Datensätzen anderer Objekte
+- **Chronologie**: Eine chronologische Ansicht aller Interaktionen und Aktualisierungen zu diesem Datensatz
+- **Aufgaben**: Alle Folgeaktivitäten in Bezug auf diesen Kontakt
+- **Notes**: Team notes and observations about this person or company
+- **Dateien**: Dokumente und Anhänge, die mit diesem Datensatz in Verbindung stehen
+- **E-Mails**: E-Mail-Threads mit diesem Kontakt (wenn Ihr Team ihre Postfächer verbunden hat)
+- **Kalender**: Besprechungen und Termine mit diesem Kontakt
+
+Die E-Mail- und Kalenderregisterkarten sind besonders leistungsstark: Sie zeigen automatisch alle E-Mail-Austausche und Meetings an, die jemand in Ihrem Team mit diesem Kontakt gehabt hat, sofern sie ihr Postfach mit Twenty verbunden haben. Erfahren Sie mehr über die Einrichtung in unserem [E-Mails und Kalender](/l/de/user-guide/collaboration/emails-and-calendars) Leitfaden.
+
+### Hinzufügen der benötigten Felder
+
+Die Standardfelder erfassen möglicherweise nicht alles Wichtige für Ihr Unternehmen. Wenn Sie zusätzliche Informationen benötigen: wie Kundensegmente, Empfehlungsquellen oder branchenspezifische Daten: können Sie benutzerdefinierte Felder hinzufügen oder vorhandene ändern. Besuchen Sie unseren [Datenmodell](/l/de/user-guide/data-model/customize-your-data-model) Abschnitt, um zu erfahren, wie Sie Ihr Setup anpassen können.
+
+## Verwaltung gelöschter Datensätze
+
+Wenn Sie einen Datensatz in Twenty löschen, ist er nicht für immer verschwunden. Datensätze werden "soft gelöscht", was bedeutet, dass sie ausgeblendet, aber bei Bedarf wiederhergestellt werden können.
+
+Um auf gelöschte Datensätze zuzugreifen, öffnen Sie das Befehlsmenü `Cmd+K` auf dem Mac, `Ctrl+K` unter Windows und klicken Sie dann auf `Gelöschte Datensätze anzeigen`. Von dort aus können Sie entweder Datensätze wiederherstellen oder endgültig löschen, wenn Sie sicher sind, dass Sie sie nicht benötigen.
+
+Dieses Sicherheitsnetz bedeutet, dass Sie Ihre Datenbank bereinigen können, ohne befürchten zu müssen, versehentlich wichtige Informationen zu verlieren.

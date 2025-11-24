@@ -69,7 +69,6 @@ describe('ClientConfigController', () => {
         isEmailVerificationRequired: false,
         defaultSubdomain: 'app',
         frontDomain: 'localhost',
-        debugMode: true,
         support: {
           supportDriver: SupportDriver.NONE,
           supportFrontChatId: undefined,

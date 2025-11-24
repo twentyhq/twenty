@@ -60,6 +60,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         color
         description
         filter
+        isStacked
         timezone
         firstDayOfTheWeek
       }

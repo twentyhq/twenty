@@ -1,0 +1,42 @@
+---
+title: Resim Girişi
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import imageInputCode from '!!raw-loader!@site/src/ui/input/components/imageInputCode.js'
+
+Kullanıcıların bir resim yüklemesine ve kaldırmasına olanak tanır.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ImageInput } from "@/ui/input/components/ImageInput";
+
+export const MyComponent = () => {
+  return <ImageInput/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Özellikler  | Tür       | Açıklama                                                                                            |
+| ----------- | --------- | --------------------------------------------------------------------------------------------------- |
+| resim       | metin     | Resim kaynağı URL’si                                                                                |
+| onUpload    | fonksiyon | Yeni bir resim yüklendiğinde çağrılan işlev. `File` nesnesini parametre olarak alır |
+| onRemove    | fonksiyon | Kullanıcı, kaldırma düğmesine tıkladığında çağrılan fonksiyon                                       |
+| onAbort     | fonksiyon | Kullanıcı, yükleme sırasında iptale tıkladığında çağrılan fonksiyon                                 |
+| yükleniyor  | boolean   | Bir resmin şu anda yüklenip yüklenmediğini gösterir                                                 |
+| hata mesajı | metin     | Resim girişi altında görüntülenmesi gereken isteğe bağlı hata mesajı                                |
+| devre dışı  | boolean   | `true` ise, tüm giriş devre dışıdır ve butonlara tıklanamaz                                         |
+
+</Tab>
+</Tabs>

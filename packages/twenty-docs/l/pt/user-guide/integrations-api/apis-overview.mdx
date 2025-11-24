@@ -1,0 +1,130 @@
+---
+title: Visão Geral das APIs
+info: Entenda as quatro diferentes APIs e quando usar cada uma.
+image: /images/user-guide/api/api-overview.png
+sectionInfo: Aprenda como conectar o Twenty às suas outras ferramentas.
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api-overview.png" alt="Header" />
+</Frame>
+
+A Twenty foi construída para ser amigável aos desenvolvedores, oferecendo APIs poderosas que se adaptam ao seu modelo de dados personalizado. Oferecemos quatro tipos distintos de API para atender a diferentes necessidades de integração.
+
+## Abordagem Focada no Desenvolvedor
+
+A Twenty gera APIs especificamente para o seu modelo de dados, ou seja:
+
+- **Sem necessidade de IDs longos**: Use diretamente os nomes dos seus objetos e campos nos endpoints
+- **Objetos padrão e personalizados tratados igualmente**: Seus objetos personalizados recebem o mesmo tratamento de API que os internos
+- **Endpoints dedicados**: Cada objeto e campo recebe seu próprio endpoint de API
+- **Documentação personalizada**: Gerada especificamente para o modelo de dados do seu workspace
+
+<Warning>
+Sua API personalizada gera documentação personalizada acessível em Configurações → API & Webhooks após criar uma chave de API. Esta documentação reflete seu modelo de dados exato e as configurações de campo.
+</Warning>
+
+## Os Quatro Tipos de API
+
+A Twenty oferece APIs nos formatos **REST** e **GraphQL**:
+
+### APIs REST
+
+#### 1. API de Metadados REST
+
+- **Propósito**: Gerencie a estrutura do seu workspace e modelo de dados
+- **Casos de uso**:
+  - Criar, modificar ou deletar objetos e campos
+  - Configurar as configurações do workspace
+  - Gerenciar relacionamentos do modelo de dados
+- **Acesso**: Disponível através de endpoints REST
+
+#### 2. API Core REST
+
+- **Propósito**: Gerenciar seus registros de dados reais
+- **Casos de uso**:
+  - Criar, ler, atualizar, deletar registros
+  - Consultar dados específicos
+  - Gerenciar relacionamentos de registros
+- **Acesso**: Disponível através de endpoints REST
+
+### APIs GraphQL
+
+#### 3. API de Metadados GraphQL
+
+- **Propósito**: Igual ao API de Metadados REST, mas com os benefícios do GraphQL
+- **Casos de uso**: Mesma gestão do workspace e modelo de dados
+- **Benefícios adicionais**:
+  - Consultar múltiplos tipos de metadados em uma única solicitação
+  - Seleção precisa de campos
+  - Melhor desempenho para consultas complexas
+
+#### 4. API Core GraphQL
+
+- **Propósito**: Igual ao API Core REST, mas com as vantagens do GraphQL
+- **Casos de uso**: Mesma gestão de registros de dados
+- **Benefícios adicionais**:
+  - **Operações em lote**: Disponível para todas as operações
+  - **Operações Upsert**: Crie ou atualize registros em uma chamada
+  - Consultar relacionamentos em solicitações únicas
+  - Busca precisa de dados
+
+## Operações em Lote
+
+### Suporte a Lotes em REST e GraphQL
+
+Ambas as APIs REST e GraphQL suportam operações em lote para a maioria das ações:
+
+- **Tamanho do lote**: Até 60 registros por solicitação
+- **Operações disponíveis**: Criar, atualizar, deletar múltiplos registros
+- **Desempenho**: Significativamente mais rápido do que chamadas de API individuais
+
+### Recursos Exclusivos do GraphQL
+
+- **Upsert em Lote**: Disponível apenas em APIs GraphQL
+- **Uso**: Use nomes de objetos no plural (e.g., `CreateCompanies` ao invés de `CreateCompany`)
+- **Requisito**: É por isso que nomes de objetos singulares e plurais devem ser distintos
+
+## Acesso à Documentação da API
+
+1. Vá para **Configurações → API & Webhooks**
+2. Crie uma chave de API (necessário para acesso à documentação)
+3. Acesse sua documentação personalizada e playground
+4. Teste APIs com seu modelo de dados real
+
+Sua documentação é única para seu workspace porque reflete seus objetos, campos e relacionamentos personalizados.
+
+## Quando Usar Cada API
+
+### Use APIs de Metadados quando:
+
+- Configurando seu modelo de dados
+- Criando objetos ou campos personalizados
+- Configurando as configurações do workspace
+
+### Use APIs Core quando:
+
+- Gerenciando dados do dia a dia (Pessoas, Empresas, Oportunidades)
+- Integrando com sistemas externos
+- Construindo aplicativos personalizados
+- Automatizando fluxos de dados
+
+### Escolha GraphQL quando:
+
+- Você precisa de operações em lote
+- Você quer minimizar chamadas de API
+- Você precisa de funcionalidade upsert
+- Você está construindo integrações complexas
+
+### Escolha REST quando:
+
+- Você prefere uma estrutura de API mais simples
+- Você está construindo integrações básicas
+- Sua equipe está mais familiarizada com REST
+- Você precisa de operações CRUD diretas
+
+## Próximos Passos
+
+- **[Configuração de API & Webhooks](/l/pt/user-guide/integrations-api/api-webhooks)**: Saiba como criar chaves de API e webhooks
+- **Documentação Personalizada**: Acesse seus documentos de API personalizados via Configurações → API & Webhooks
+

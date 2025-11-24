@@ -9,6 +9,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { WorkspaceHealthModule } from 'src/engine/workspace-manager/workspace-health/workspace-health.module';
 import { SyncWorkspaceLoggerModule } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/services/sync-workspace-logger.module';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 
 import { SyncWorkspaceMetadataCommand } from './sync-workspace-metadata.command';
 
@@ -22,6 +23,7 @@ import { SyncWorkspaceMetadataCommand } from './sync-workspace-metadata.command'
     FeatureFlagModule,
     TypeOrmModule.forFeature([WorkspaceEntity]),
     SyncWorkspaceLoggerModule,
+    ApplicationModule,
   ],
   providers: [SyncWorkspaceMetadataCommand],
   exports: [SyncWorkspaceMetadataCommand],

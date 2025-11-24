@@ -1,0 +1,60 @@
+---
+title: Objekter
+info: "Learn about standard objects and how to create custom ones for your business needs."
+image: /images/user-guide/objects/objects_orange.png
+sectionInfo: Fleksibel datamodel designet til at understøtte dine unikke forretningsprocesser
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/objects/objects_orange.png" alt="Header" />
+</Frame>
+
+## Standardobjekter
+
+Standardobjekter er foruddefinerede enheder i din arbejdsplads for at hjælpe dig i gang. De er en del af en delt datamodel, der er tilgængelig for alle brugere af Twenty. Du kan bruge dem som de er, tilpasse dem eller deaktivere dem.
+
+<img src="/images/user-guide/objects/standard-objects.png"style={{width:'100%'}}/>
+
+### Personer
+
+Objektet `People` gemmer dine kontakter. Det inkluderer kontaktoplysninger og interaktionshistorik, så du kan se alle dine kundeinteraktioner ét sted.
+
+### Virksomhed
+
+The `Companies` object stores your business accounts. Det inkluderer detaljer som industri, størrelse og placering. Virksomheder forbinder til både `People` og `Opportunities` objekter.
+
+### Muligheder
+
+Objektet `Opportunities` lagrer data relateret til aftaler. It tracks the progression of potential sales, from prospecting to closure, recording stages, deal sizes, associated account, and expected close date. Du kan se din salgs pipeline i en kanban opsætning.
+
+## Tilpassede objekter
+
+Custom objects let you store information that's unique to your organization and that standard objects can't handle. For eksempel, hvis du er SpaceX, vil du muligvis oprette et brugerdefineret objekt for Raketter og Opsendelser.
+
+<img src="/images/user-guide/objects/custom-objects.png"style={{width:'100%'}}/>
+
+### Oprettelse af et nyt brugerdefineret objekt
+
+For at oprette et nyt brugerdefineret objekt:
+
+1. Gå til Indstillinger i sidebjælken til venstre.
+2. Under Arbejdsplads, gå til Datamodel. Her vil du kunne se en oversigt over alle dine eksisterende Standard- og Brugerdefinerede objekter (både aktive og deaktiverede).
+
+<VimeoEmbed videoId="926288174" title="Video demonstration" />
+
+3. Klik på `+ Nyt objekt` øverst. Indtast navnet (både ental og flertal), vælg et ikon, og tilføj en beskrivelse til dit brugerdefinerede objekt og tryk på Gem (øverst til højre). Ved brug af Listing som eksempel på et brugerdefineret objekt, ville ental være "listing" og flertal ville være "listings" sammen med en beskrivelse som "Listings der værter skabte for at fremvise deres ejendom."
+
+<Warning>
+Entals- og flertalsnavne skal være forskellige. Dette er påkrævet for at vores GraphQL API fungerer korrekt.
+</Warning>
+
+<VimeoEmbed videoId="926293493" title="Video demonstration" />
+
+4. Når du opretter dit brugerdefinerede objekt, vil du kunne administrere det. Du kan redigere navnet, ikonet og beskrivelsen, se de forskellige felter og tilføje flere felter.
+
+<img src="/images/user-guide/objects/customize-fields.png"style={{width:'100%'}}/>
+
+**Bemærk:** Hvis du ikke er sikker på, om et nyt objekt eller felt er nødvendigt, tjek [denne artikel](/l/da/user-guide/data-model/customize-your-data-model) for vejledning i at designe din datamodel.
+

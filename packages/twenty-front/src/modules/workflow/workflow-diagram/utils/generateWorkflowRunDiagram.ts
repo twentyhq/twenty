@@ -14,6 +14,23 @@ import { isStepNode } from '@/workflow/workflow-diagram/utils/isStepNode';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
+const shouldOpenStep = ({
+  nodeId,
+  steps,
+  stepInfos,
+}: {
+  nodeId: string;
+  steps: Array<WorkflowStep>;
+  stepInfos: WorkflowRunStepInfos | undefined;
+}) => {
+  const step = steps.find((step) => step.id === nodeId);
+  const stepInfo = stepInfos?.[nodeId];
+  const isStepPending = isDefined(stepInfo) && stepInfo.status === 'PENDING';
+  const isStepOpenable = isDefined(step) && ['FORM'].includes(step.type);
+
+  return isStepPending && isStepOpenable;
+};
+
 export const generateWorkflowRunDiagram = ({
   trigger,
   steps,
@@ -65,7 +82,10 @@ export const generateWorkflowRunDiagram = ({
         runStatus: stepInfo.status,
       };
 
-      if (!isDefined(stepToOpenByDefault) && stepInfo.status === 'PENDING') {
+      if (
+        !isDefined(stepToOpenByDefault) &&
+        shouldOpenStep({ nodeId, stepInfos, steps })
+      ) {
         stepToOpenByDefault = { id: nodeId, data: nodeData };
       }
 

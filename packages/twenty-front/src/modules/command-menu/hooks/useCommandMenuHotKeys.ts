@@ -69,7 +69,7 @@ export const useCommandMenuHotKeys = () => {
     keys: ['@'],
     callback: () => {
       if (isAiEnabled) {
-        openAskAIPage();
+        openAskAIPage({ resetNavigationStack: true });
       }
     },
     containsModifier: false,

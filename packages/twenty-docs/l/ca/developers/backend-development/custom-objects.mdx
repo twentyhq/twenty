@@ -1,0 +1,45 @@
+---
+title: Objectes personalitzats
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+Els objectes són estructures que et permeten emmagatzemar dades (registres, atributs i valors) específiques d'una organització. Twenty proporciona tant objectes estàndards com personalitzats.
+
+Els objectes estàndards són objectes integrats amb un conjunt d'atributs disponibles per a tots els usuaris. Exemples d'objectes estàndards a Twenty inclouen Company i Person. Els objectes estàndards tenen camps estàndards que també estan disponibles per a tots els usuaris de Twenty, com Company.displayName.
+
+Els objectes personalitzats són objectes que pots crear per emmagatzemar informació que és única per a la teva organització. No són integrats; els membres del teu espai de treball poden crear i personalitzar objectes personalitzats per emmagatzemar informació per a la qual els objectes estàndards no són adequats.
+
+## Esquema a alt nivell
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/custom-object-schema.png" alt="High level schema" />
+</div>
+
+<br/>
+
+## Com funciona
+
+Els objectes personalitzats provenen de taules de metadades que determinen la forma, el nom i el tipus dels objectes. Tota aquesta informació està present a la base de dades de l'esquema de metadades, consistent en taules:
+
+- **Font de dades**: Detalls sobre on es troba la informació.
+- **Objecte**: Descriu l'objecte i enllaça a un DadesFont.
+- **Camp**: Esbossa els camps d'un objecte i connecta a l'objecte.
+
+Per afegir un objecte personalitzat, el workspaceMember farà una consulta a l'API de /metadata. Això actualitza les metadades de manera adequada i calcula un esquema GraphQL basat en les metadades, emmagatzemant-lo a una memòria cau GQL per a un ús posterior.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/add-custom-objects.jpeg" alt="Query the /metadata API to add custom objects" />
+</div>
+
+<br/>
+
+Per obtenir dades, el procés implica fer consultes a través del punt final de /graphql i passar-les pel Query Resolver.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/custom-object-schema.png" alt="Query the /graphql endpoint to fetch data" />
+</div>
+

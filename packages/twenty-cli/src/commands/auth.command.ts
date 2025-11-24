@@ -92,7 +92,12 @@ export class AuthCommand {
       const isValid = await this.apiService.validateAuth();
 
       if (isValid) {
-        console.log(chalk.green('✓ Successfully authenticated with Twenty'));
+        const activeWorkspace = ConfigService.getActiveWorkspace();
+        console.log(
+          chalk.green(
+            `✓ Successfully authenticated with Twenty (workspace: ${activeWorkspace})`,
+          ),
+        );
       } else {
         console.log(
           chalk.red('✗ Authentication failed. Please check your credentials.'),
@@ -111,7 +116,12 @@ export class AuthCommand {
   private async logout(): Promise<void> {
     try {
       await this.configService.clearConfig();
-      console.log(chalk.green('✓ Successfully logged out'));
+      const activeWorkspace = ConfigService.getActiveWorkspace();
+      console.log(
+        chalk.green(
+          `✓ Successfully logged out (workspace: ${activeWorkspace})`,
+        ),
+      );
     } catch (error) {
       console.error(
         chalk.red('Logout failed:'),
@@ -123,9 +133,11 @@ export class AuthCommand {
 
   private async status(): Promise<void> {
     try {
+      const activeWorkspace = ConfigService.getActiveWorkspace();
       const config = await this.configService.getConfig();
 
       console.log(chalk.blue('Authentication Status:'));
+      console.log(`Workspace: ${activeWorkspace}`);
       console.log(`API URL: ${config.apiUrl}`);
       console.log(
         `API Key: ${config.apiKey ? '***' + config.apiKey.slice(-4) : 'Not set'}`,

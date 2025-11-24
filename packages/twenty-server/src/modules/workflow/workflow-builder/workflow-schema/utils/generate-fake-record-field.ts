@@ -1,6 +1,8 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
+import {
+  type FieldMetadataType,
+  compositeTypeDefinitions,
+} from 'twenty-shared/types';
 
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import {
   type Leaf,

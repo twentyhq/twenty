@@ -1,0 +1,44 @@
+---
+title: タグ
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+コンテンツを視覚的に分類またはラベル付けするためのコンポーネント。
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { Tag } from "@/ui/display/tag/components/Tag";
+
+export const MyComponent = () => {
+  return (
+    <Tag
+      className
+      color="red"
+      text="Urgent"
+      onClick={() => console.log("click")}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| プロパティ     | タイプ    | 説明                                                                                                               |
+| --------- | ------ | ---------------------------------------------------------------------------------------------------------------- |
+| className | string | 追加のスタイリングのためのオプション名                                                                                              |
+| カラー       | string | タグの色。 タグの色。 タグの色。 タグの色。 オプションは次のとおりです: `緑`, `トルコ石`, `空`, `青`, `紫`, `ピンク`, `赤`, `オレンジ`, `黄`, `灰色` |
+| テキスト      | string | タグの内容                                                                                                            |
+| onClick   | 機能     | ユーザーがタグをクリックすると呼び出される任意の関数                                                                                       |
+
+</Tab>
+
+</Tabs>

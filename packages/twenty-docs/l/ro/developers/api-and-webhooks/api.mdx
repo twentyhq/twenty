@@ -1,0 +1,56 @@
+---
+title: API
+image: /images/docs/getting-started/api.png
+info: Descoperă cum să utilizezi API-urile noastre.
+---
+
+<Frame>
+  <img src="/images/docs/getting-started/api.png" alt="Header" />
+</Frame>
+
+## Prezentare generală
+
+API-ul Twenty permite dezvoltatorilor să interacționeze programatic cu platforma CRM Twenty. Folosind API-ul, poți integra Twenty cu alte sisteme, automatiza sincronizarea datelor și construi soluții personalizate în jurul datelor tale despre clienți. API-ul oferă puncte finale pentru **crearea, citirea, actualizarea și ștergerea** obiectelor centrale CRM (cum ar fi persoane și companii), precum și accesul la configurarea metadatelor.
+
+**API Playground:**  Acum poți accesa Playground-ul API în cadrul setărilor aplicației. Pentru a încerca apeluri API în timp real, conectează-te la spațiul tău Twenty și navighează la **Setări → API-uri & Webhooks**. Aceasta deschide Playground-ul API din aplicație și setările pentru cheile API.
+**[Accesează Setările API](https://app.twenty.com/settings)**
+
+## Autentificare
+
+API-ul Twenty folosește cheile API pentru autentificare. Fiecare solicitare către punctele finale protejate trebuie să includă o cheie API în antet.
+
+- **Chei API:** Poți genera o nouă cheie API din pagina **setărilor API** a aplicației tale Twenty. Fiecare cheie API este un token secret care oferă acces la datele tale CRM, așa că păstreaz-o în siguranță. Dacă o cheie este compromisă, revoc-o din setări și generează una nouă.
+- **Antet de Autentificare:** Odată ce ai o cheie API, include-o în antetul `Authorization` al solicitărilor tale HTTP. Folosește schema de token Bearer. De exemplu:
+
+  ```
+  Authorization: Bearer YOUR_API_KEY
+  ```
+
+  Înlocuiește `YOUR_API_KEY` cu cheia pe care ai obținut-o. Acest antet trebuie să fie prezent la **toate solicitările API**. Dacă token-ul lipsește sau este invalid, API-ul va răspunde cu o eroare de autentificare (HTTP 401 Unauthorized).
+
+## Puncte Finale API
+
+Toate resursele pot fi accesate și prin REST sau GraphQL.
+
+- **Cloud:** `https://api.twenty.com/` sau domeniul / sub-domeniul tău personalizat
+- **Self-Hosted Instances:** If you are running Twenty on your own server, use your own domain in place of `api.twenty.com` (for example, `https://{your-domain}/rest/`).
+
+Punctele finale sunt grupate în două categorii: **API Core** și **API Metadata**. **API Core** se ocupă cu datele CRM primare (de exemplu, persoane, companii, note, sarcini), în timp ce **API Metadata** acoperă datele de configurare (cum ar fi câmpuri personalizate sau definiții de obiecte). Majoritatea integrărilor vor folosi în principal API-ul Core.
+
+### API Core
+
+Accesibil prin `/rest/` sau `/graphql/`.
+**API Core** servește ca o interfață unificată pentru gestionarea entităților CRM centrale (persoane, companii, note, sarcini) și relațiile acestora, oferind **atât modele de interacțiune REST cât și GraphQL**.
+
+### API Metadata
+
+Accesibil prin `/rest/metadata/` sau `/metadata/`.
+Endpoint-urile API Metadata îți permit să obții informații despre schema și setările tale. De exemplu, poți obține definițiile câmpurilor personalizate, schemele de obiecte, etc.
+
+- **Example de Puncte Finale:**
+
+  - `GET /rest/metadata/objects` – Lista tuturor tipurilor de obiecte și a metadatelor acestora (câmpuri, relații).
+  - `GET /rest/metadata/objects/{objectName}` – Obține metadatele pentru un obiect specific (de exemplu, `persoane`, `companii`).
+  - `GET /rest/metadata/picklists` – Preia opțiunile câmpurilor de tip listă derulantă definite în CRM.
+
+De obicei, endpoint-urile de metadate sunt folosite pentru a înțelege structura datelor (pentru integrații dinamice sau crearea de formulare) mai degrabă decât pentru a gestiona înregistrările propriu-zise. În cele mai multe cazuri, acestea sunt doar pentru citire. Este necesară autentificarea și pentru acestea (folosește-ți cheia API).

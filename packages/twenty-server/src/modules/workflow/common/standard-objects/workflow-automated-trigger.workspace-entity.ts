@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { Relation } from 'typeorm';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -12,7 +13,6 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { AutomatedTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 
 import { WorkflowWorkspaceEntity } from './workflow.workspace-entity';
@@ -24,6 +24,7 @@ export enum AutomatedTriggerType {
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowAutomatedTrigger,
+
   namePlural: 'workflowAutomatedTriggers',
   labelSingular: msg`WorkflowAutomatedTrigger`,
   labelPlural: msg`WorkflowAutomatedTriggers`,

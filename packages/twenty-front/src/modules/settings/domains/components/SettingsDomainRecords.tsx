@@ -1,5 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
+import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
@@ -57,8 +58,8 @@ export const SettingsDomainRecords = ({
   return (
     <Section>
       <H2Title
-        title="Domain Setup"
-        description="Configure these DNS records with your domain provider"
+        title={t`Domain Setup`}
+        description={t`Configure these DNS records with your domain provider`}
       />
       <SettingsDnsRecordsTable records={transformedRecords} />
     </Section>

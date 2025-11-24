@@ -1,0 +1,330 @@
+---
+title: 로컬 설정
+description: "콘트리뷰터(기여자)나 호기심 많은 개발자를 위한 가이드로서, Twenty를 로컬에서 실행하고자 하는 분들에게 드리는 안내입니다."
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## 사전 준비
+
+<Tabs>
+<Tab title="Linux and MacOS">
+
+Twenty를 설치하고 사용하기 전에, 먼저 컴퓨터에 다음을 설치하세요:
+
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Node v24.5.0](https://nodejs.org/en/download)
+- [yarn v4](https://yarnpkg.com/getting-started/install)
+- [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+<Warning>
+`npm`은 사용할 수 없으며, 대신 `yarn`을 사용해야 합니다. Yarn은 이제 Node.js와 함께 제공되기 때문에 별도로 설치할 필요가 없습니다.
+아직 하지 않았다면 `corepack enable`을 실행하여 Yarn을 사용할 수 있도록 설정하세요.
+</Warning>
+
+</Tab>
+
+<Tab title="Windows (WSL)">
+
+1. WSL 설치
+   PowerShell을 관리자 권한으로 열고 다음을 실행하세요:
+
+```powershell
+wsl --install
+```
+
+이제 컴퓨터를 재시작하라는 프롬프트가 나타날 것입니다. 그렇지 않으면 수동으로 재시작하세요.
+
+재시작 후, powershell 창이 열리고 Ubuntu가 설치됩니다. 이 작업은 다소 시간이 걸릴 수 있습니다.
+Ubuntu 설치 시 사용자 이름과 암호를 만드는 프롬프트가 나타납니다.
+
+2. Git 설치 및 구성
+
+```bash
+sudo apt-get install git
+
+git config --global user.name "Your Name"
+
+git config --global user.email "youremail@domain.com"
+```
+
+3. nvm, node.js 및 yarn 설치
+
+<Warning>
+적절한 `node` 버전을 설치하기 위해 `nvm`을 사용하세요. `.nvmrc`는 모든 기여자가 동일한 버전을 사용하도록 보장합니다.
+</Warning>
+
+```bash
+sudo apt-get install curl
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+```
+
+nvm을 사용하려면 터미널을 닫았다가 다시 여세요. 그런 다음 다음 명령어를 실행하세요.
+
+```bash
+
+nvm install # installs recommended node version
+
+nvm use # use recommended node version
+
+corepack enable
+```
+
+</Tab>
+</Tabs>
+
+---
+
+## 1단계: Git 복제
+
+터미널에서 다음 명령어를 실행하세요.
+
+<Tabs>
+<Tab title="SSH (Recommended)">
+아직 SSH 키를 설정하지 않은 경우, [여기](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh)를 참조하여 설정하는 방법을 배우세요.
+```bash
+git clone git@github.com:twentyhq/twenty.git
+```
+</Tab>
+<Tab title="HTTPS">
+
+```bash
+git clone https://github.com/twentyhq/twenty.git
+```
+
+</Tab>
+</Tabs>
+
+## 2단계: 루트 위치 설정
+
+```bash
+cd twenty
+```
+
+다음 단계의 모든 명령어는 프로젝트 루트에서 실행하세요.
+
+## 3단계: PostgreSQL 데이터베이스 설정
+
+<Tabs>
+  <Tab title="Linux">
+    **Option 1 (preferred):** To provision your database locally:
+    Use the following link to install Postgresql on your Linux machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+    Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make postgres-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Mac OS">
+    **Option 1 (preferred):** To provision your database locally with `brew`:
+
+````
+```bash
+  brew install postgresql@16
+  export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+  brew services start postgresql@16
+  psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+```
+
+You can verify if the PostgreSQL server is running by executing:
+```bash
+  brew services list
+```
+
+The installer might not create the `postgres` user by default when installing
+via Homebrew on MacOS. Instead, it creates a PostgreSQL role that matches your macOS
+username (e.g., "john").
+To check and create the `postgres` user if necessary, follow these steps:
+```bash
+  # Connect to PostgreSQL
+  psql postgres
+  or
+  psql -U $(whoami) -d postgres
+```
+
+Once at the psql prompt (postgres=#), run:
+ ```bash
+  # List existing PostgreSQL roles
+  \du
+```
+You'll see output similar to:
+ ```bash
+  Role name | Attributes  | Member of
+  -----------+-------------+-----------
+  john      | Superuser   | {}
+```
+
+If you do not see a `postgres` role listed, proceed to the next step.
+Create the `postgres` role manually:
+ ```bash
+  CREATE ROLE postgres WITH SUPERUSER LOGIN;
+```
+This creates a superuser role named `postgres` with login access.
+
+**Option 2:** If you have docker installed:
+```bash
+  make postgres-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Windows (WSL)">
+    All the following steps are to be run in the WSL terminal (within your virtual machine)
+
+````
+**Option 1:** To provision your Postgresql locally:
+Use the following link to install Postgresql on your Linux virtual machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
+```bash
+  psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+```
+Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
+
+**Option 2:** If you have docker installed:
+Running Docker on WSL adds an extra layer of complexity.
+Only use this option if you are comfortable with the extra steps involved, including turning on [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
+```bash
+  make postgres-on-docker
+```
+````
+
+  </Tab>
+</Tabs>
+
+이제 [localhost:5432](localhost:5432)에서 데이터베이스에 액세스할 수 있으며, 사용자 `postgres`와 비밀번호 `postgres` 를 사용합니다.
+
+## 4단계: Redis 데이터베이스 (캐시) 설정
+
+Twenty는 최상의 성능을 제공하기 위해 redis 캐시가 필요합니다.
+
+<Tabs>
+  <Tab title="Linux">
+    **Option 1:** To provision your Redis locally:
+    Use the following link to install Redis on your Linux machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make redis-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Mac OS">
+    **Option 1 (preferred):** To provision your Redis locally with `brew`:
+    ```bash
+    brew install redis
+    ```
+    Start your redis server:
+    ```brew services start redis```
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make redis-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Windows (WSL)">
+    **Option 1:** To provision your Redis locally:
+    Use the following link to install Redis on your Linux virtual machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make redis-on-docker
+```
+````
+
+  </Tab>
+</Tabs>
+
+클라이언트 GUI가 필요한 경우에는 [redis insight](https://redis.io/insight/) (무료 버전 제공)을 권장합니다.
+
+## 5단계: 환경 변수 설정
+
+프로젝트를 구성하기 위해 환경 변수나 `.env` 파일을 사용하세요. 추가 정보는 [여기](https://docs.twenty.com/l/ko/developers/self-hosting/setup)에서 확인하십시오
+
+`/front`와 `/server`의 `.env.example` 파일을 복사하세요:
+
+```bash
+cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
+cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
+```
+
+## 6단계: 의존성 설치
+
+Twenty 서버를 빌드하고 데이터베이스에 몇 가지 데이터를 시드하기 위해, 다음 명령어를 실행하세요:
+
+```bash
+yarn
+```
+
+`npm`이나 `pnpm`은 작동하지 않음을 주의하세요.
+
+## 7단계: 프로젝트 실행
+
+<Tabs>
+  <Tab title="Linux">
+    리눅스 배포판에 따라 Redis 서버가 자동으로 시작될 수 있습니다.
+    시작되지 않는다면, 각 배포판에 맞는 [Redis 설치 가이드](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)를 확인하세요.
+  </Tab>
+  <Tab title="Mac OS">
+  Redis가 이미 실행 중이어야 합니다. If not, run:
+    ```bash
+    brew services start redis
+    ```  
+</Tab>
+  <Tab title="Windows (WSL)">
+    리눅스 배포판에 따라 Redis 서버가 자동으로 시작될 수 있습니다.
+    시작되지 않는다면, 각 배포판에 맞는 [Redis 설치 가이드](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)를 확인하세요.
+  </Tab>
+</Tabs>
+
+다음 명령어로 데이터베이스를 설정하세요:
+
+```bash
+npx nx database:reset twenty-server
+```
+
+서버, 워커 및 프론트엔드 서비스를 시작하세요:
+
+```bash
+npx nx start twenty-server
+npx nx worker twenty-server
+npx nx start twenty-front
+```
+
+또한, 모든 서비스를 한 번에 시작할 수도 있습니다:
+
+```bash
+npx nx start
+```
+
+## 8단계: Twenty 사용하기
+
+**프론트엔드**
+
+Twenty의 프론트엔드는 [http://localhost:3001](http://localhost:3001)에서 실행됩니다.
+기본 데모 계정을 사용하여 로그인할 수 있습니다: `tim@apple.dev` (비밀번호: `tim@apple.dev`)
+
+**백엔드**
+
+- Twenty의 서버는 [http://localhost:3000](http://localhost:3000)에서 실행됩니다.
+- The GraphQL API can be accessed at [http://localhost:3000/graphql](http://localhost:3000/graphql)
+- The REST API can be reached at [http://localhost:3000/rest](http://localhost:3000/rest)
+
+## 문제 해결
+
+문제가 발생하면 [문제 해결](https://docs.twenty.com/l/ko/developers/self-hosting/troubleshooting)에서 해결책을 확인하십시오.

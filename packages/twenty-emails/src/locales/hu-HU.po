@@ -90,13 +90,18 @@ msgstr "Meghívó elfogadása"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
 msgstr "Erősítse meg email címét"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr "Köszönjük, hogy regisztrált a Twenty szolgáltatására! Mielőtt elkezdenénk, csak meg kell erősítenünk, hogy ez Ön. Kattintson az alábbi hivatkozásra email címének megerősítéséhez."
+msgid "Confirm new email"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -131,7 +136,7 @@ msgstr "Jelszó visszaállítása 🗝"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
-msgstr ""
+msgstr "Adja meg a jelszavát 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -141,7 +146,7 @@ msgstr "Visszaállítás"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set"
-msgstr ""
+msgstr "Beállítás"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

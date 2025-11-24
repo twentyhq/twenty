@@ -1,0 +1,118 @@
+---
+title: הגדרת דואר אלקטרוני ולוח שנה
+info: "חבר את חשבונות הדואר האלקטרוני והלוח שנה שלך."
+image: /images/user-guide/emails/emails_header.png
+sectionInfo: הגדר את העדפות וההגדרות של מרחב העבודה של Twenty שלך
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+## אפשרויות חיבור
+
+### Google Account (Gmail & Google Calendar)
+
+1. Go to **Settings → Accounts**
+2. לחץ על **הוסף חשבון**
+3. בחר **המשך עם Google**
+4. Authorize Twenty to access your Gmail and Google Calendar
+5. Your emails and calendar events will start syncing automatically
+
+### חשבון Microsoft (Outlook ולוח שנה של Microsoft)
+
+1. Go to **Settings → Accounts**
+2. לחץ על **הוסף חשבון**
+3. בחר **המשך עם Microsoft**
+4. Authorize Twenty to access your Outlook and Microsoft Calendar
+5. Your emails and calendar events will start syncing automatically
+
+### הגדרת SMTP/CalDAV (ספקים אחרים)
+
+לספקי דואר אלקטרוני ולוח שנה אחרים:
+
+1. Go to **Settings → Releases → Lab** to enable the feature
+2. Return to **Settings → Accounts**
+3. Configure SMTP settings for email
+4. Configure CalDAV settings for calendar
+5. Test the connection
+
+### תיבות דואר מרובות
+
+- **חשבונות בלתי מוגבלים**: חבר מספר חשבונות דואר אלקטרוני לכל משתמש
+- **ניהול חשבונות**: החלף בין תיבות דואר שונות
+- **הגדרות סנכרון**: קבע הגדרות שונות לכל תיבת דואר
+
+<Warning>
+רק תיבות דואר אמיתיות יכולות להיות מחוברות (למשל, support@domain.com עם תיבת דואר נפרדת משלו). Email aliases that forward to another mailbox cannot be connected to Twenty.
+</Warning>
+
+## הגדרות דואר אלקטרוני
+
+### נראות הודעה
+
+Choose different levels of visibility for your emails:
+
+- **מידע מטא בלבד**: שיתוף מידע בסיסי (שולח, נמען, תאריך, שעה)
+- **שורת נושא ומידע מטא**: שתף שורת נושא יחד עם המידע מטא
+- **כל תוכן הדואר האלקטרוני**: שתף את כל תוכן המייל כולל קבצים מצורפים
+
+### יצירת איש קשר אוטומטית
+
+- **לא פעיל**: אין יצירת איש קשר אוטומטית
+- **למסרים שנשלחו וקיבלו**: צור אנשי קשר לכל התקשרות דואר אלקטרוני חיצונית
+- **למסרים שנשלחו בלבד**: צור אנשי קשר רק לאימיילים שאתה שולח
+- **הערה**: אימיילים פנימיים (אותו דומיין) אינם מסונכרנים כדי לשמור על פרטיות.
+
+### שלוט אילו אימיילים מסתנכרנים עם בחירת תיקיית הודעות (פיצ׳ר מעבדה)
+
+שלוט באילו תיקיות אימייל מסתנכרנות עם Twenty:
+
+1. Go to **Settings → Releases → Lab** and enable **Message Folder**
+2. Return to **Settings → Accounts** and select your connected email account
+3. Choose which folders to sync:
+   - **תיבת דואר נכנס**: אימיילים נכנסים ראשיים
+   - **נשלח**: אימיילים שנשלחו ממך
+   - **תיקיות מותאמות אישית**: כל תיקיות ספציפיות שברצונך לכלול
+   - **יוצא מהכלל תיקיות**: דלג על תיקיות כמו דואר זבל, זבל, או תיקיות אישיות
+
+This gives you precise control over which emails appear in your CRM without syncing everything.
+
+**מה מסתנכרן:**
+
+- **אימיילים חיצוניים**: כל אימיילים עם אנשי קשר חיצוניים מתיקיות נבחרות
+- **אימיילים פנימיים**: לא מסונכרנים (אותו דומיין אימיילים נשאר פרטיים)
+- **קבצים מצורפים**: נכנס בשנת 2026
+
+**הערה**: אנחנו לא מספקים כתובת אימייל CC לפעולת סינכרון סלקטיבית. Instead, use the Message Folder feature above to achieve the same level of control over which emails sync with Twenty.
+
+## הגדרות לוח שנה
+
+### נראות אירוע
+
+Choose what will be visible to other users in your workspace:
+
+- **הכל**: כל פרטי האירוע ישותפו עם הצוות שלך
+- **מטא-דאטה**: רק התאריך והמשתתפים ישותפו עם הצוות שלך
+
+### Contact Auto-Creation for Meetings
+
+- **כן**: צור אוטומטית אנשי קשר עבור משתתפי פגישה שלא נמצאים ב-CRM שלך
+- **לא**: קישור פגישות רק עם אנשי קשר קיימים
+
+### שלוט באילו אירועים מסתנכרנים
+
+- **ייבוא פגישות**: ייבוא אוטומטי של אירועים בלוח השנה
+- **קישור אנשי קשר**: קישור פגישות לרשומות של אנשים וחברות
+
+**מה מסתנכרן:**
+
+- **פגישות**: אירועי לוח שנה עם משתתפים חיצוניים
+- **קישור אנשי קשר**: אירועים מקושרים אוטומטית לרשומות CRM
+- **אירועים בצוות**: נראות לוח שנה משותפת
+
+## תדירות סינכרון
+
+**עדכונים כל 5 דקות**: גם אימייל וגם נתוני לוח שנה מסתנכרנים אוטומטית כל 5 דקות אחרי הייבוא הראשוני.
+
+

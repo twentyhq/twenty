@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
 import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
+import { FieldActorSource } from 'twenty-shared/types';
 
 import {
   RecordCrudException,
@@ -12,7 +13,6 @@ import { getSelectedColumnsFromRestrictedFields } from 'src/engine/core-modules/
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 

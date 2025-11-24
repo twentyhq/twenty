@@ -1,0 +1,39 @@
+---
+title: Basculer
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Toggle } from "twenty-ui/input";
+
+export const MyComponent = () => {
+  return (
+    <Toggle
+    value = {true}
+    onChange = {()=>console.log('On Change event')}
+    color="green"
+    toggleSize = "medium"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Propriétés     | Type     | Description                                                                                                                | Par défaut           |
+| -------------- | -------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| valeur         | booléen  | The current state of the toggle                                                                                            | `faux`               |
+| onChange       | fonction | Callback function triggered when the toggle state changes                                                                  |                      |
+| couleur        | chaîne   | Color of the toggle when it\                                                                                              | est de couleur bleue |
+| tailleBasculer | chaîne   | Size of the toggle, affecting both height and weight. A deux options : `small` et `medium` | moyen                |
+
+</Tab>
+</Tabs>

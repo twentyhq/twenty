@@ -1,0 +1,130 @@
+---
+title: API-Übersicht
+info: Verstehen Sie die vier verschiedenen APIs und wann jede verwendet wird.
+image: /images/user-guide/api/api-overview.png
+sectionInfo: Erfahren Sie, wie Sie Twenty mit Ihren anderen Tools verbinden.
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api-overview.png" alt="Header" />
+</Frame>
+
+Twenty wurde so entwickelt, dass es entwicklerfreundlich ist und leistungsstarke APIs bietet, die sich an Ihr individuelles Datenmodell anpassen. Wir bieten vier verschiedene API-Typen, um unterschiedlichen Integrationsanforderungen gerecht zu werden.
+
+## Entwickler-Erst-Ansatz
+
+Twenty generiert speziell für Ihr Datenmodell APIs, das bedeutet:
+
+- **Keine langen IDs erforderlich**: Verwenden Sie Ihre Objekt- und Feldnamen direkt in Endpunkten
+- **Standard- und benutzerdefinierte Objekte werden gleich behandelt**: Ihre benutzerdefinierten Objekte erhalten dieselbe API-Behandlung wie integrierte
+- **Dedizierte Endpunkte**: Jedes Objekt und Feld erhält seinen eigenen API-Endpunkt
+- **Benutzerdefinierte Dokumentation**: Speziell für das Datenmodell Ihres Arbeitsplatzes generiert
+
+<Warning>
+Ihre benutzerdefinierte API generiert personalisierte Dokumentationen, die über Einstellungen → API & Webhooks zugänglich sind, nachdem ein API-Schlüssel erstellt wurde. Diese Dokumentation spiegelt Ihr genaues Datenmodell und Feldkonfigurationen wider.
+</Warning>
+
+## Die vier API-Typen
+
+Twenty bietet APIs in den Formaten **REST** und **GraphQL** an:
+
+### REST-APIs
+
+#### 1. REST-Metadaten-API
+
+- **Zweck**: Verwalten Sie Ihre Arbeitsbereich- und Datenmodellstruktur
+- **Anwendungsfälle**:
+  - Create, modify, or delete objects and fields
+  - Konfigurieren der Arbeitsbereichseinstellungen
+  - Verwalten von Datenmodellbeziehungen
+- **Zugriff**: Verfügbar über REST-Endpunkte
+
+#### 2. REST-Kern-API
+
+- **Zweck**: Verwalten Sie Ihre tatsächlichen Datensätze
+- **Anwendungsfälle**:
+  - Create, read, update, delete records
+  - Abfragen spezifischer Daten
+  - Verwalten von Datensatzbeziehungen
+- **Zugriff**: Verfügbar über REST-Endpunkte
+
+### GraphQL-APIs
+
+#### 3. GraphQL-Metadaten-API
+
+- **Zweck**: Gleich wie REST-Metadaten-API, aber mit GraphQL-Vorteilen
+- **Anwendungsfälle**: Gleiches Arbeitsbereichs- und Datenmodellmanagement
+- **Zusätzliche Vorteile**:
+  - Abfrage mehrerer Metadatentypen in einer Anfrage
+  - Präzise Feldauswahl
+  - Bessere Leistung bei komplexen Abfragen
+
+#### 4. GraphQL-Kern-API
+
+- **Zweck**: Gleich wie REST-Kern-API, aber mit GraphQL-Vorteilen
+- **Anwendungsfälle**: Gleiches Datenbestandsmanagement
+- **Zusätzliche Vorteile**:
+  - **Batch-Vorgänge**: Für alle Operationen verfügbar
+  - **Upsert operations**: Create or update records in one call
+  - Abfragen von Beziehungen in Einzelanfragen
+  - Präzises Abrufen von Daten
+
+## Batch-Vorgänge
+
+### REST- und GraphQL-Batch-Unterstützung
+
+Sowohl REST- als auch GraphQL-APIs unterstützen Batch-Vorgänge für die meisten Aktionen:
+
+- **Batch-Größe**: Bis zu 60 Datensätze pro Anfrage
+- **Verfügbare Vorgänge**: Erstellen, aktualisieren, löschen mehrerer Datensätze
+- **Leistung**: Deutlich schneller als individuelle API-Aufrufe
+
+### GraphQL-Exklusivfunktionen
+
+- **Batch-Upsert**: Nur in GraphQL-APIs verfügbar
+- **Verwendung**: Verwenden Sie Pluralobjektnamen (z.B. `CreateCompanies` statt `CreateCompany`)
+- **Anforderung**: Deshalb müssen Singular- und Pluralobjektnamen unterscheidbar sein
+
+## API-Dokumentationszugang
+
+1. Gehen Sie zu **Einstellungen → API & Webhooks**
+2. Erstellen Sie einen API-Schlüssel (erforderlich für Dokumentationszugang)
+3. Access your custom documentation and playground
+4. Testen Sie APIs mit Ihrem tatsächlichen Datenmodell
+
+Ihre Dokumentation ist einzigartig für Ihren Arbeitsbereich, da sie Ihre benutzerdefinierten Objekte, Felder und Beziehungen widerspiegelt.
+
+## When to Use Each API
+
+### Verwenden Sie Metadaten-APIs wenn:
+
+- Ihr Datenmodell einrichten
+- Erstellen benutzerdefinierter Objekte oder Felder
+- Konfiguration von Arbeitsbereichseinstellungen
+
+### Use Core APIs when:
+
+- Verwaltung täglicher Daten (Personen, Unternehmen, Chancen)
+- Integration mit externen Systemen
+- Erstellen benutzerdefinierter Anwendungen
+- Automatisierung von Daten-Workflows
+
+### Wählen Sie GraphQL wenn:
+
+- Sie Batch-Vorgänge benötigen
+- Sie möchten API-Aufrufe minimieren
+- Sie benötigen Upsert-Funktionalität
+- Sie komplexe Integrationen erstellen
+
+### Wählen Sie REST wenn:
+
+- Sie eine einfachere API-Struktur bevorzugen
+- Sie grundlegende Integrationen erstellen
+- Ihr Team mit REST vertrauter ist
+- Sie unkomplizierte CRUD-Operationen benötigen
+
+## Nächste Schritte
+
+- **[API & Webhooks Einrichtung](/l/de/user-guide/integrations-api/api-webhooks)**: Lernen Sie API-Schlüssel und Webhooks zu erstellen
+- **Benutzerdefinierte Dokumentation**: Greifen Sie auf Ihre persönlichen API-Dokumentationen über Einstellungen → API & Webhooks zu
+

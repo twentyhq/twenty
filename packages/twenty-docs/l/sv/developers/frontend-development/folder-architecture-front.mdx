@@ -1,0 +1,114 @@
+---
+title: Folder Architecture
+info: A detailed look into our folder architecture
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+I denna guide kommer du utforska projektkatalogens struktur och hur den bidrar till organisationen och underhållbarheten av Twenty.
+
+Genom att följa denna mappstrukturkonvention är det enklare att hitta filerna relaterade till specifika funktioner och säkerställa att applikationen är skalbar och lätt att underhålla.
+
+```
+front
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
+│   └───ui
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
+└───pages
+└───...
+```
+
+## Pages
+
+Includes the top-level components defined by the application routes. They import more low-level components from the modules folder (more details below).
+
+## Moduler
+
+Each module represents a feature or a group of feature, comprising its specific components, states, and operational logic.
+De bör alla följa strukturen nedan. Du kan nästa moduler inom moduler (kallas undermoduler) och samma regler gäller.
+
+```
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
+```
+
+### Sammanhang
+
+A context is a way to pass data through the component tree without having to pass props down manually at every level.
+
+Se [React Context](https://react.dev/reference/react#context-hooks) för mer detaljer.
+
+### GraphQL
+
+Inkluderar fragment, frågor och mutationer.
+
+Se [GraphQL](https://graphql.org/learn/) för mer detaljer.
+
+- Fragment
+
+Ett fragment är en återanvändbar del av en fråga, som du kan använda på olika ställen. Genom att använda fragment är det enklare att undvika att duplicera kod.
+
+Se [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) för mer detaljer.
+
+- Frågor
+
+Se [GraphQL Queries](https://graphql.org/learn/queries/) för mer detaljer.
+
+- Mutationer
+
+Se [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) för mer detaljer.
+
+### Hooks
+
+Se [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) för mer detaljer.
+
+### States
+
+Innehåller tillståndshanteringslogik. [RecoilJS](https://recoiljs.org) hanterar detta.
+
+- Selektorer: Se [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) för mer detaljer.
+
+Reacts inbyggda tillståndshantering hanterar fortfarande tillstånd inom en komponent.
+
+### Verktyg
+
+Bör bara innehålla återanvändbara rena funktioner. Otherwise, create custom hooks in the `hooks` folder.
+
+## UI
+
+Innehåller alla återanvändbara UI-komponenter som används i applikationen.
+
+Denna mapp kan innehålla undermappar, som `data`, `display`, `feedback`, och `input` för specifika typer av komponenter. Varje komponent bör vara självständig och återanvändbar, så att du kan använda den i olika delar av applikationen.
+
+Genom att separera UI-komponenterna från de andra komponenterna i mappen `modules`, är det lättare att bibehålla en konsekvent design och att göra ändringar i UI utan att påverka andra delar (affärslogik) i kodbasen.
+
+## Gränssnitt och beroenden
+
+Du kan importera annan modul kod från vilken modul som helst utom för mappen `ui`. Detta kommer att hålla dess kod lätt att testa.
+
+### Intern
+
+Each part (hooks, states, ...) av en modul kan ha en `intern` mapp, som innehåller delar som bara används inom modulen.

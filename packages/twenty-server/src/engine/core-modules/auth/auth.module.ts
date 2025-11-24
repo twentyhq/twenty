@@ -8,6 +8,7 @@ import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { GoogleAPIsAuthController } from 'src/engine/core-modules/auth/controllers/google-apis-auth.controller';
 import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/google-auth.controller';
@@ -91,8 +92,8 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
       KeyValuePairEntity,
       UserWorkspaceEntity,
       TwoFactorAuthenticationMethodEntity,
+      ObjectMetadataEntity,
     ]),
-    TypeOrmModule.forFeature([ObjectMetadataEntity]),
     HttpModule,
     UserWorkspaceModule,
     WorkspaceModule,
@@ -113,6 +114,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     AuditModule,
     SubdomainManagerModule,
     DomainServerConfigModule,
+    ApplicationModule,
   ],
   controllers: [
     GoogleAuthController,

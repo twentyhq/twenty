@@ -90,13 +90,18 @@ msgstr "Прихвати позив"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
 msgstr "Потврдите вашу е-адресу"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr "Хвала што сте се регистровали за налог на Twenty! Пре него што започнемо, потребно је да потврдимо да сте то ви. Кликните испод да верификујете своју имејл адресу."
+msgid "Confirm new email"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -131,7 +136,7 @@ msgstr "Ресетујте вашу шифру 🗝"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
-msgstr ""
+msgstr "Подесите своју лозинку 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -141,7 +146,7 @@ msgstr "Ресетуј"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set"
-msgstr ""
+msgstr "Подесити"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

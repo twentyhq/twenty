@@ -2,6 +2,7 @@ import { type I18n } from '@lingui/core';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
+  ForbiddenError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -45,6 +46,14 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
         throw new UserInputError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
+      case ViewExceptionCode.VIEW_CREATE_PERMISSION_DENIED:
+        throw new ForbiddenError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
+      case ViewExceptionCode.VIEW_MODIFY_PERMISSION_DENIED:
+        throw new ForbiddenError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
       default: {
         return assertUnreachable(error.code);
       }
@@ -54,6 +63,8 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
   if (error instanceof ViewFieldException) {
     switch (error.code) {
       case ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND:
+        throw new NotFoundError(error.message);
+      case ViewFieldExceptionCode.VIEW_NOT_FOUND:
         throw new NotFoundError(error.message);
       case ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA:
         throw new UserInputError(error.message, {
@@ -69,6 +80,8 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
     switch (error.code) {
       case ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND:
         throw new NotFoundError(error.message);
+      case ViewFilterExceptionCode.VIEW_NOT_FOUND:
+        throw new NotFoundError(error.message);
       case ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA:
         throw new UserInputError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
@@ -82,6 +95,8 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
   if (error instanceof ViewFilterGroupException) {
     switch (error.code) {
       case ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND:
+        throw new NotFoundError(error.message);
+      case ViewFilterGroupExceptionCode.VIEW_NOT_FOUND:
         throw new NotFoundError(error.message);
       case ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA:
         throw new UserInputError(error.message, {
@@ -97,6 +112,8 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
     switch (error.code) {
       case ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND:
         throw new NotFoundError(error.message);
+      case ViewGroupExceptionCode.VIEW_NOT_FOUND:
+        throw new NotFoundError(error.message);
       case ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA:
         throw new UserInputError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
@@ -110,6 +127,8 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
   if (error instanceof ViewSortException) {
     switch (error.code) {
       case ViewSortExceptionCode.VIEW_SORT_NOT_FOUND:
+        throw new NotFoundError(error.message);
+      case ViewSortExceptionCode.VIEW_NOT_FOUND:
         throw new NotFoundError(error.message);
       case ViewSortExceptionCode.INVALID_VIEW_SORT_DATA:
         throw new UserInputError(error.message, {

@@ -5,8 +5,7 @@ import {
   GraphQLInputFieldConfigMap,
   GraphQLInputObjectType,
 } from 'graphql';
-
-import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+import { CompositeType } from 'twenty-shared/types';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';

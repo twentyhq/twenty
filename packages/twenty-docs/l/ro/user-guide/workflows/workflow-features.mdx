@@ -1,0 +1,320 @@
+---
+title: Funcționalități Flux de Lucru
+info: Referință completă pentru toate declanșatoarele disponibile, acțiunile și funcționalitățile de management ale fluxului de lucru.
+image: /images/user-guide/workflows/robot.png
+sectionInfo: Automatizați procesele și integrați cu instrumente externe
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/robot.png" alt="Header" />
+</Frame>
+
+## Declanșatoare Flux de Lucru
+
+Fluxurile de lucru întotdeauna încep cu un declanșator unic care definește când ar trebui să ruleze automatizarea.
+
+### Înregistrare este Creată
+
+Pornește fluxul de lucru când o nouă înregistrare este creată în un obiect selectat (Persoane, Companii, Oportunități sau orice obiect personalizat).
+
+**Configurare**: Selectați tipul de obiect pentru a monitoriza noile înregistrări.
+
+### Înregistrare este Actualizată
+
+Pornește fluxul de lucru când se fac modificări într-o înregistrare existentă.
+
+**Configurare**:
+
+- Selectați tipul de obiect
+- Specificați opțional care câmpuri să fie monitorizate pentru modificări
+
+### Înregistrare este Actualizată sau Creată
+
+Pornește fluxul de lucru când o înregistrare este fie creată, fie actualizată într-un obiect selectat.
+
+**De ce contează acest lucru**: Acest declanșator este deosebit de util deoarece înregistrările create prin metode diferite se comportă diferit:
+
+- **Importuri API/CSV**: Înregistrările sunt create cu toate câmpurile completate imediat
+- **Creare manuală**: Înregistrările sunt create mai întâi, apoi câmpurile sunt adăugate în actualizări ulterioare
+
+**Configurare**:
+
+- Selectați tipul de obiect pentru a monitoriza
+- Specificați opțional care câmpuri să fie monitorizate pentru modificări
+- Fluxul de lucru va fi declanșat atât la crearea inițială, cât și la orice actualizări ulterioare
+
+### Înregistrare este Ștearsă
+
+Pornește fluxul de lucru când o înregistrare este eliminată dintr-un obiect.
+
+**Configurare**: Selectați tipul de obiect pentru a monitoriza ștergerile.
+
+### Lansați Manual
+
+Pornește fluxul de lucru când este declanșat de o acțiune a utilizatorului. Acest declanșator poate fi accesat prin meniul Cmd+K sau printr-un buton personalizat în bara de navigare de sus.
+
+**Configurare Disponibilitate**:
+Alegeți cum ar trebui să gestioneze fluxul de lucru selecția înregistrărilor:
+
+- **Global**: Nu se necesită nicio înregistrare pentru a declanșa acest flux de lucru. Fluxul de lucru este declanșat de oriunde (din orice obiect) și nu folosește înregistrare(i) ca intrare.
+
+- **Singular**: Înregistrarea(e) selectată va fi transmisă fluxului de lucru. Acesta este configurat pentru un obiect dat. Mai multe înregistrări pot fi selectate înainte de declanșarea fluxului de lucru. Fluxul de lucru va rula de câte ori sunt selectate înregistrări.
+
+  <Warning>
+  You cannot run more than 100 workflows in parallel at any given time.
+  </Warning>
+
+- **Bulk**: Înregistrarea(ele) selectate vor fi transmise în fluxul dumneavoastră de lucru. Aceasta este configurat pentru un obiect dat. Mai multe înregistrări pot fi selectate înainte de a declanșa fluxul de lucru. Fluxul de lucru va rula o singură dată, oferind întreaga listă de înregistrări ca intrare. Aceasta înseamnă că fluxul de lucru trebuie să conțină o acțiune de Iterator. Acesta este cel mai bun pentru persoanele care doresc să optimizeze/restricționeze numărul de rulări ale fluxului de lucru.
+
+**Configurare suplimentară**:
+
+- Selectați obiectul țintă (pentru disponibilitate unică și bulk)
+- Alegeți o pictogramă de comandă pentru declanșarea fluxului de lucru
+- Configurați plasarea în navbar (fixat sau nefixat)
+
+**Metode de Acces**:
+
+- Meniul Cmd+K pentru a găsi și lansa fluxuri de lucru manual
+- Buton personalizat în navbarul superior (dacă este configurat)
+
+### La Program
+
+Pornirea fluxului de lucru pe o bază recurentă pe care o definiți.
+
+**Configurare**:
+
+- Selectați unitatea de timp (minute, ore, zile)
+- Introduceți o valoare sau folosiți expresii cron personalizate pentru programare avansată
+
+### Webhook
+
+Începe fluxul de lucru când este primită o cerere GET sau POST de la un serviciu extern.
+
+**Configurare**:
+
+- Primiți o adresă unică de webhook URL
+- Pentru cererile POST, definiți structura așteptată a corpului
+- Configurați autentificarea dacă este necesar
+
+## Acțiuni Workflow
+
+Acțiunile definesc ce se întâmplă după declanșarea unui trigger. Puteți conecta mai multe acțiuni împreună.
+
+### Creați o Înregistrare
+
+Adaugă o nouă înregistrare la un obiect selectat.
+
+**Configurare**:
+
+- Selectați obiectul țintă
+- Completați câmpurile obligatorii și opționale
+- Folosiți datele din pașii anteriori pentru a completa câmpurile
+
+**Output**: Datele noii înregistrări create sunt disponibile pentru utilizare în pașii următori.
+
+### Actualizați Înregistrarea
+
+Modifică o înregistrare existentă într-un obiect selectat.
+
+**Configurare**:
+
+- Selectați obiectul țintă
+- Alegeți înregistrarea specifică de actualizat
+- Selectați câmpurile de modificat și introduceți valori noi
+
+**Output**: Datele înregistrării actualizate sunt disponibile pentru utilizare în pașii următori.
+
+### Ștergeți Înregistrarea
+
+Îndepărtează o înregistrare dintr-un obiect selectat.
+
+**Configurare**:
+
+- Selectați obiectul țintă
+- Alegeți înregistrarea specifică de șters
+
+**Output**: Datele înregistrării șterse rămân disponibile pentru utilizare în pașii următori.
+
+### Căutați Înregistrări
+
+Găsește înregistrări într-un obiect selectat folosind condițiile de filtrare.
+
+**Configurare**:
+
+- Selectați obiectul de căutat
+- Setați criterii de filtrare pentru a restrânge rezultatele
+- Configurați ordonarea și limitele
+
+**Output**: Returnează înregistrările care se potrivesc care pot fi utilizate în pașii următori.
+
+**Cea mai bună practică**: Utilizați ramuri după căutarea înregistrărilor pentru a gestiona scenarii de "găsit" vs "ne-găsit".
+
+### Iterator
+
+Trece printr-un array de înregistrări returnate dintr-un pas anterior, permițându-vă să efectuați acțiuni pe fiecare înregistrare individual.
+
+**Configurare**:
+
+- Selectați array-ul de înregistrări dintr-un pas anterior (de exemplu, rezultatele de la Căutare Înregistrări)
+- Define the actions to perform on each record in the loop
+- Configurați numele variabilei pentru a face referire la fiecare înregistrare în iterație
+
+**Exemplu**: Căutarea înregistrărilor returnează 5 persoane, utilizați apoi Iteratorul pentru a trimite un email fiecărei persoane sau pentru a actualiza fiecare înregistrare individual.
+
+**Notă**: Iteratorul este în prezent în beta. Activați-l sub Setări → Lansări → Lab.
+
+### Filter
+
+Filtrează un array de înregistrări pe baza condițiilor specificate, permițând trecerea doar a înregistrărilor care îndeplinesc criteriile.
+
+**Configurare**:
+
+- Selectați array-ul de înregistrări de filtrat
+- Definiți condițiile și criteriile de filtrare
+- Configurați care înregistrări ar trebui să treacă la pașii următori
+
+**Output**: Returnează doar înregistrările care se potrivesc cu condițiile de filtrare specificate.
+
+### Send Email
+
+Trimite un email din fluxul dumneavoastră de lucru.
+
+**Prerequisites**: Add an email account in Settings > Accounts
+
+**Configurare**:
+
+- Introduceți adresa de email a destinatarului
+- Setați linia de subiect
+- Compuneți corpul mesajului
+- Faceți referire la variabilele din pașii anteriori pentru personalizare
+
+**Notă**: Atașamentele de email vor fi disponibile în Q1 2026.
+
+### Cod
+
+Rulați JavaScript personalizat în cadrul fluxului dumneavoastră de lucru.
+
+**Configurare**:
+
+- Scrieți cod JavaScript în editor
+- Accesați variabilele din pașii anteriori
+- Returnați variabilele pentru utilizare în pașii următori
+- Testați codul direct în pas
+
+**Acces**: Gestionați cheile API în Setări → API & Webhooks
+
+### Formular
+
+Solicită un formular în timpul execuției fluxului de lucru pentru a colecta intrarea utilizatorului.
+
+**Configurare**:
+
+- Define input fields with types, labels, and placeholders
+- Configurați regulile de validare
+- Setați titlul și descrierea formularului
+
+**Output**: Răspunsurile formularului sunt disponibile pentru utilizare în pașii următori.
+
+<Warning>
+Formularele sunt concepute în prezent doar pentru declanșatoare manuale. Pentru fluxurile de lucru cu alte declanșatoare (Înregistrare creată, actualizată, etc.), formularele sunt accesibile doar prin interfața de execuție a fluxului de lucru, ceea ce nu este experiența de utilizator așteptată. Un centru de notificări va fi lansat în 2026 pentru a sprijini corespunzător formularele în fluxurile de lucru automatizate.
+</Warning>
+
+### Solicitare HTTP
+
+Trimite o cerere la un API extern ca parte a fluxului dumneavoastră de lucru.
+
+**Configurare**:
+
+- Introduceți URL-ul punctului final API
+- Selectați metoda HTTP (GET, POST, PUT, PATCH, DELETE)
+- Adăugați anteturile și valorile necesare
+- Includeți corpul cererii pentru cereri POST/PUT/PATCH
+- Oferiți un exemplu de răspuns pentru previzualizarea structurii
+
+## Managementul fluxurilor de lucru
+
+### Crearea fluxurilor de lucru
+
+1. Dați clic pe "+ Adaugă un flux de lucru" pentru a începe
+2. Click "Untitled" to name your workflow
+3. Choose and configure your workflow trigger
+4. Add actions to your workflow
+5. Testați și iterați
+6. Activați fluxul de lucru (în prezent în modul schiță) odată ce ați terminat de editat
+
+**Note**: If you don't see the Workflows section, this is due to a permissions issue. Contactați administratorul spațiului de lucru pentru a vă acorda acces la fluxuri de lucru.
+
+### Stările fluxului de lucru
+
+- **Draft**: Being edited, not yet published
+- **Activ**: Versiunea live care răspunde la declanșatori
+- **Deactivated**: Previously active but manually stopped
+- **Archived**: Past versions kept for history
+
+### Activarea fluxurilor de lucru
+
+Dați clic pe **Activează** pentru a publica schița dvs. ca o nouă versiune. Acest lucru face ca fluxul de lucru să fie eligibil pentru a rula când este declanșat, dar nu îl execută imediat.
+
+### Testarea fluxurilor de lucru
+
+Testați fluxurile de lucru înainte de activare utilizând:
+
+- Declanșatoare manuale (când nu este selectată nicio înregistrare)
+- Individual action testing (especially Code actions)
+- Testarea modului schiță care nu activează fluxul de lucru
+
+### Rulările fluxului de lucru
+
+A **Run** is a record of workflow execution containing:
+
+- Statut (succes, eșuat, în derulare)
+- Datele de ieșire din fiecare pas
+- Autor și timestampuri
+- Mesaje de eroare dacă este aplicabil
+
+**Vizualizarea Rulărilor**:
+
+- Verificați panoul **Rulări** în editorul de fluxuri de lucru
+- Open **Workflow Runs** view for monitoring across all workflows
+
+**Sfat de performanță**: Ascundeți rulările fluxului de lucru de pe pagina "Toate fluxurile de lucru" și de pe alte pagini de flux pentru a îmbunătăți performanța încărcării, deoarece un număr mare de rulări poate încetini încărcarea paginii.
+
+### Istoria versiunilor
+
+- Vizualizați toate versiunile sub câmpul **Versiuni**
+- Dați clic pe o versiune pentru a vizualiza detalii
+- Utilizați **Utilizați ca schiță** pentru a restaura versiunile anterioare
+- Gestionați conflictele de schiță cu opțiuni de înlocuire sau returnare
+
+## Cele mai bune practici
+
+### Organizarea fluxurilor de lucru
+
+- **Nume descriptive**: Folosiți nume de fluxuri de lucru clare și specifice
+- **Nume de pasi**: Redenumiți pașii pentru a descrie funcția lor
+- **Documentație**: Adăugați comentarii în acțiuni de cod
+- **Categorisire**: Grupați fluxurile de lucru relaționate logic
+- **Câmpuri Personalizate**: Adăugați câmpuri obiectului Workflow în modelul dvs. de date (similar cu alte obiecte) pentru a organiza și categorisi fluxurile de lucru cu proprietăți personalizate
+
+### Performance Optimization
+
+- **Minimizați apelurile API**: Gruparea operațiilor când este posibil
+- **Căutări eficiente**: Folosiți criterii de filtrare specifice
+- **Gestionarea erorilor**: Planificați scenarii de eșec
+- **Limitarea ratei**: Respectați limitele API externe
+
+### Managementul fluxului de date
+
+- **Logică de ramificare**: Utilizați ramuri după căutările înregistrărilor
+- **Utilizarea Variabilelor**: Folosiți datele din pașii anteriori
+- **Validarea datelor**: Validați intrările în acțiunile de cod
+- **Maparea câmpurilor**: Planificați transformările de date cu atenție
+
+### Monitorizare și Mentenanță
+
+- **Monitorizare regulată**: Verificați rulările fluxului de lucru pentru erori
+- **Revizuirea performanței**: Analizați timpii de execuție și rata de succes
+- **Managementul actualizării**: Testați modificările în schiță înainte de activare
+- **Coordonarea echipei**: Documentați fluxurile de lucru pentru membrii echipei
+
+Pentru exemple practice ale acestor funcții în acțiune, vedeți ghidurile noastre [Automatizări interne](/ghid-utilizator/fluxuri-de-lucru/automatizări-interne) și [Integrarea instrumentelor externe](/ghid-utilizator/fluxuri-de-lucru/integrari-instrumente-externe).

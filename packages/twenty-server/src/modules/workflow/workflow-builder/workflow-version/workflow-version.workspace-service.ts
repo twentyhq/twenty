@@ -14,17 +14,26 @@ import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import {
+  WorkflowStatus,
+  WorkflowWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { assertWorkflowVersionHasSteps } from 'src/modules/workflow/common/utils/assert-workflow-version-has-steps';
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
+import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  WorkflowActionType,
+  type WorkflowAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 @Injectable()
 export class WorkflowVersionWorkspaceService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
+    private readonly workflowVersionStepOperationsWorkspaceService: WorkflowVersionStepOperationsWorkspaceService,
     private readonly recordPositionService: RecordPositionService,
   ) {}
 
@@ -119,6 +128,169 @@ export class WorkflowVersionWorkspaceService {
       ...draftWorkflowVersion,
       steps: newWorkflowVersionSteps,
       trigger: newWorkflowVersionTrigger,
+    };
+  }
+
+  async duplicateWorkflow({
+    workspaceId,
+    workflowIdToDuplicate,
+    workflowVersionIdToCopy,
+  }: {
+    workspaceId: string;
+    workflowIdToDuplicate: string;
+    workflowVersionIdToCopy: string;
+  }) {
+    const workflowRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        'workflow',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const workflowVersionRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
+        'workflowVersion',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const sourceWorkflow = await workflowRepository.findOne({
+      where: {
+        id: workflowIdToDuplicate,
+      },
+    });
+
+    if (!isDefined(sourceWorkflow)) {
+      throw new WorkflowVersionStepException(
+        'Source workflow not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    const sourceVersion = await workflowVersionRepository.findOne({
+      where: {
+        id: workflowVersionIdToCopy,
+        workflowId: workflowIdToDuplicate,
+      },
+    });
+
+    if (!isDefined(sourceVersion)) {
+      throw new WorkflowVersionStepException(
+        'WorkflowVersion to copy not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    assertWorkflowVersionTriggerIsDefined(sourceVersion);
+    assertWorkflowVersionHasSteps(sourceVersion);
+
+    const workflowPosition =
+      await this.recordPositionService.buildRecordPosition({
+        value: 'first',
+        objectMetadata: {
+          isCustom: false,
+          nameSingular: 'workflow',
+        },
+        workspaceId,
+      });
+
+    const insertWorkflowResult = await workflowRepository.insert({
+      name: `${sourceWorkflow.name} (Duplicate)`,
+      statuses: [WorkflowStatus.DRAFT],
+      position: workflowPosition,
+    });
+
+    const newWorkflowId = (
+      insertWorkflowResult.generatedMaps[0] as WorkflowWorkspaceEntity
+    ).id;
+
+    const versionPosition =
+      await this.recordPositionService.buildRecordPosition({
+        value: 'first',
+        objectMetadata: {
+          isCustom: false,
+          nameSingular: 'workflowVersion',
+        },
+        workspaceId,
+      });
+
+    const insertVersionResult = await workflowVersionRepository.insert({
+      workflowId: newWorkflowId,
+      name: 'v1',
+      status: WorkflowVersionStatus.DRAFT,
+      position: versionPosition,
+    });
+
+    const newDraftVersion = insertVersionResult
+      .generatedMaps[0] as WorkflowVersionWorkspaceEntity;
+
+    const newTrigger = sourceVersion.trigger;
+    const sourceToClonedPairs: Array<{
+      source: WorkflowAction;
+      duplicated: WorkflowAction;
+    }> = [];
+    const oldToNewIdMap = new Map<string, string>();
+
+    for (const step of sourceVersion.steps ?? []) {
+      const clonedStep =
+        await this.workflowVersionStepOperationsWorkspaceService.cloneStep({
+          step,
+          workspaceId,
+        });
+
+      sourceToClonedPairs.push({
+        source: step,
+        duplicated: clonedStep,
+      });
+      oldToNewIdMap.set(step.id, clonedStep.id);
+    }
+
+    const remappedTrigger = isDefined(newTrigger)
+      ? {
+          ...newTrigger,
+          nextStepIds: (newTrigger.nextStepIds ?? []).map(
+            (oldId) => oldToNewIdMap.get(oldId) ?? oldId,
+          ),
+        }
+      : undefined;
+
+    const remappedSteps: WorkflowAction[] = sourceToClonedPairs.map(
+      ({ source, duplicated }) => {
+        const remappedStep = {
+          ...duplicated,
+          nextStepIds: (source.nextStepIds ?? []).map(
+            (oldId) => oldToNewIdMap.get(oldId) ?? oldId,
+          ),
+        };
+
+        if (
+          source.type === WorkflowActionType.ITERATOR &&
+          isDefined(source.settings?.input?.initialLoopStepIds)
+        ) {
+          remappedStep.settings = {
+            ...remappedStep.settings,
+            input: {
+              ...remappedStep.settings.input,
+              initialLoopStepIds: source.settings.input.initialLoopStepIds.map(
+                (oldId) => oldToNewIdMap.get(oldId) ?? oldId,
+              ),
+            },
+          };
+        }
+
+        return remappedStep;
+      },
+    );
+
+    await workflowVersionRepository.update(newDraftVersion.id, {
+      steps: remappedSteps,
+      trigger: remappedTrigger,
+    });
+
+    return {
+      ...newDraftVersion,
+      steps: remappedSteps,
+      trigger: remappedTrigger ?? null,
     };
   }
 

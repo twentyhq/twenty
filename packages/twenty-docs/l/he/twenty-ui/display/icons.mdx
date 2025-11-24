@@ -1,0 +1,83 @@
+---
+title: סמלים
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+רשימה של סמלים שבהם נעשה שימוש בכל האפליקציה.
+
+## סמלי Tabler
+
+אנו משתמשים בסמלי Tabler עבור React בכל האפליקציה.
+
+<Tabs>
+
+<Tab title="Installation"><br/>
+
+```
+yarn add @tabler/icons-react
+```
+
+</Tab>
+
+<Tab title="Props">
+
+ניתן לייבא כל סמל כמרכיב. Here's an example: <br />
+
+```jsx
+import { IconArrowLeft } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return <IconArrowLeft color="red" size={48} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| תכונות | סוג    | תיאור                                  | ברירת מחדל   |
+| ------ | ------ | -------------------------------------- | ------------ |
+| גודל   | מספר   | הגובה והרוחב של הסמל בפיקסלים          | 24           |
+| צבע    | מחרוזת | The color of the icons                 | currentColor |
+| stroke | מספר   | The stroke width of the icon in pixels | 2            |
+
+</Tab>
+
+</Tabs>
+
+## סמלים מותאמים
+
+בנוסף לסמלי Tabler, האפליקציה משתמשת גם בכמה סמלים מותאמים אישית.
+
+### ספר כתובות סמלים
+
+מציג סמל של ספר כתובות.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { IconAddressBook } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <IconAddressBook size={24} stroke={2} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| תכונות | סוג  | תיאור                                  | ברירת מחדל |
+| ------ | ---- | -------------------------------------- | ---------- |
+| גודל   | מספר | הגובה והרוחב של הסמל בפיקסלים          | 24         |
+| stroke | מספר | The stroke width of the icon in pixels | 2          |
+
+</Tab>
+
+</Tabs>

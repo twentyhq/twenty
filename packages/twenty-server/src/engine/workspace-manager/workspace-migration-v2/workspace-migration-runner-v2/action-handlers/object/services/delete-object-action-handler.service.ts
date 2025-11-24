@@ -89,6 +89,7 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       queryRunner,
       schemaName,
       tableName,
+      cascade: true,
     });
     const objectFlatFieldMetadatas =
       findManyFlatEntityByIdInFlatEntityMapsOrThrow({

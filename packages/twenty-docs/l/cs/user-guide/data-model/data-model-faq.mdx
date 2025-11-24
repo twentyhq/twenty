@@ -1,0 +1,90 @@
+---
+title: Data Model FAQ
+info: "Často kladené otázky týkající se konfigurace modelu dat, omezení a nových funkcí."
+image: /images/user-guide/what-is-twenty/faq.png
+sectionInfo: Flexibilní datový model navržený tak, aby podporoval vaše jedinečné obchodní procesy
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/faq.png" alt="Header" />
+</Frame>
+
+## Správa objektů
+
+<AccordionGroup>
+<Accordion title="Can I reorder objects in the left navigation bar?">
+Ještě ne. Pořadí objektů v navigaci je aktuálně pevně nastavené, ale tato funkce je plánována pro budoucí vydání.
+</Accordion>
+
+<Accordion title="Can I hide objects from the left navigation bar?">
+Všechny aktivní objekty se zobrazují v navigaci. You can deactivate objects you don't need under **Settings → Data Model**.
+</Accordion>
+
+<Accordion title="Can I delete standard objects (People, Companies, etc.)?">
+You can deactivate any standard objects but you cannot hard delete them.
+</Accordion>
+</AccordionGroup>
+
+## Možnosti polí
+
+<AccordionGroup>
+<Accordion title="Can I create formula fields?">
+Formula fields are coming in **Q1 2026**. Mezitím můžete použít pracovní postupy pro automatické výpočty a aktualizace hodnot polí.
+</Accordion>
+
+<Accordion title="Can I have nested fields in my objects?">
+Vnořená pole přijdou v **Q1 2026**. Aktuálně můžete použít pracovní postupy k přenesení hodnot polí z příbuzných objektů. Například k zobrazení odvětví společnosti na záznamu Osoby vytvořte vlastní pole pro Lidi a použijte pracovní postup k synchronizaci hodnoty.
+</Accordion>
+
+<Accordion title="Why can't I update relation field names?">
+Názvy vztahových polí mají vliv na strukturu API a nelze je měnit po vytvoření. Pokud potřebujete přejmenovat pole vztahů, budete muset vytvořit nové a smazat staré.
+</Accordion>
+
+<Accordion title="Why do I need different singular and plural names?">
+Our GraphQL API uses both forms for different operations:
+- `createPerson` (singular) for single record actions
+- `createPeople` (plural) for bulk operations
+
+To vytváří omezení, když jsou jednotné a množné formy stejné, ale zlepšuje to zkušenost vývojářů. </Accordion>
+
+<Accordion title="Why are some field names protected?">
+Některé názvy polí, jako `Typ` nebo `Aplikace`, jsou vyhrazeny pro systémové použití. Zvolte alternativní názvy jako `Kategorie` nebo `Klasifikace`.
+</Accordion>
+</AccordionGroup>
+
+## Pokročilé funkce
+
+<AccordionGroup>
+<Accordion title="Can I create many-to-many relationships?">
+Vztahy mnoho-mnoho přijdou v **Q1 2026**. Aktuálně vytvořte intermediární objekt se dvěma vztahy jedno-mnoho jako řešení.
+</Accordion>
+
+<Accordion title="What are Morph Many relationships?">
+Morf-více vztahy umožňují jednomu objektu vztahovat se k více typům objektů. Například Příležitost se může vztahovat buď k Osobě nebo ke Společnosti. Tato funkce je nyní k dispozici.
+</Accordion>
+
+<Accordion title="Can I reorder fields in objects?">
+Přerovnávání polí bude dostupné s vlastními rozloženími ve **Q4 2025**. Aktuálně se pole zobrazují v abecedním pořadí.
+</Accordion>
+</AccordionGroup>
+
+## Přístup a oprávnění
+
+<AccordionGroup>
+<Accordion title="Where can I see and edit my data model?">
+You can access your Data Model under **Settings → Data Model**.
+</Accordion>
+
+<Accordion title="Why can't I see the Data Model under Settings?">
+Reach out to your workspace administrator. Přístup k modelu dat je obvykle omezen pouze na správce.
+</Accordion>
+
+<Accordion title="How many custom objects or fields can I create?">
+You can create as many custom objects and fields as you need - the price won't change.
+</Accordion>
+</AccordionGroup>
+
+## Potřebujete další pomoc?
+
+Podívejte se na naše [implementační služby](/l/cs/user-guide/getting-started/implementation-services), abyste získali pomoc s návrhem komplexního modelu dat.
+

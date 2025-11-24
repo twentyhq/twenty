@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Create input validation - CURRENCY Gql create input - failure CURRENCY - should fail with : {"currencyField":"not-a-currency"} 1`] = `"Expected type "CurrencyCreateInput" to be an object."`;
+
+exports[`Create input validation - CURRENCY Rest create input - failure CURRENCY - should fail with : {"currencyField":"not-a-currency"} 1`] = `"["Invalid object value 'not-a-currency' for field \\"currencyField\\""]"`;

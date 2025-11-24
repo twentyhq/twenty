@@ -17,8 +17,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/const/previewable-extensions.const';
 import { FileIcon } from '@/file/components/FileIcon';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { isNavigationModifierPressed } from 'twenty-ui/utilities';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
@@ -80,6 +82,10 @@ export const AttachmentRow = ({
 }: AttachmentRowProps) => {
   const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
+
+  const hasDownloadPermission = useHasPermissionFlag(
+    PermissionFlagType.DOWNLOAD_FILE,
+  );
 
   const { name: originalFileName, extension: attachmentFileExtension } =
     getFileNameAndExtension(attachment.name);
@@ -203,6 +209,7 @@ export const AttachmentRow = ({
             onDelete={handleDelete}
             onDownload={handleDownload}
             onRename={handleRename}
+            hasDownloadPermission={hasDownloadPermission}
           />
         </StyledRightContent>
       </ActivityRow>

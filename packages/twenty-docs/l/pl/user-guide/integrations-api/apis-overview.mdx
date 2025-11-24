@@ -1,0 +1,130 @@
+---
+title: APIs Overview
+info: Poznaj cztery różne API i dowiedz się, kiedy używać każdego z nich.
+image: /images/user-guide/api/api-overview.png
+sectionInfo: Dowiedz się, jak połączyć Twenty z innymi narzędziami.
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api-overview.png" alt="Header" />
+</Frame>
+
+Twenty zostało stworzone jako przyjazne dla deweloperów, oferując potężne API, które dostosowują się do Twojego niestandardowego modelu danych. Oferujemy cztery różne typy API, aby sprostać różnorodnym potrzebom integracyjnym.
+
+## Podejście zorientowane na dewelopera
+
+Twenty generuje API specjalnie dla Twojego modelu danych, co oznacza:
+
+- **Nie są wymagane długie identyfikatory**: Używaj swoich nazw obiektów i pól bezpośrednio w końcówkach
+- **Równorzędne traktowanie standardowych i niestandardowych obiektów**: Twoje niestandardowe obiekty mają takie samo traktowanie API jak wbudowane
+- **Dedykowane końcówki**: Każdy obiekt i pole mają własną końcówkę API
+- **Niestandardowa dokumentacja**: Generowana specjalnie dla modelu danych Twojego środowiska pracy
+
+<Warning>
+Twoje niestandardowe API generuje spersonalizowaną dokumentację dostępną przez Ustawienia → API i Webhooki po utworzeniu klucza API. Ta dokumentacja odzwierciedla Twój dokładny model danych i konfiguracje pól.
+</Warning>
+
+## Cztery typy API
+
+Twenty oferuje API w formatach **REST** i **GraphQL**:
+
+### REST API
+
+#### 1. REST Metadata API
+
+- **Cel**: Zarządzanie środowiskiem pracy i strukturą modelu danych
+- **Przypadki użycia**:
+  - Tworzenie, modyfikacja lub usuwanie obiektów i pól
+  - Konfiguracja ustawień środowiska pracy
+  - Zarządzanie relacjami modelu danych
+- **Dostęp**: Dostępne poprzez końcówki REST
+
+#### 2. REST Core API
+
+- **Cel**: Zarządzanie faktycznymi rekordami danych
+- **Przypadki użycia**:
+  - Tworzenie, odczyt, aktualizacja, usuwanie rekordów
+  - Zapytanie o określone dane
+  - Zarządzanie relacjami rekordu
+- **Dostęp**: Dostępne poprzez końcówki REST
+
+### GraphQL API
+
+#### 3. GraphQL Metadata API
+
+- **Cel**: Taki sam jak REST Metadata API, ale z korzyściami GraphQL
+- **Przypadki użycia**: Zarządzanie tym samym środowiskiem pracy i modelem danych
+- **Dodatkowe korzyści**:
+  - Query multiple metadata types in one request
+  - Precise field selection
+  - Lepsza wydajność dla skomplikowanych zapytań
+
+#### 4. GraphQL Core API
+
+- **Cel**: Taki sam jak REST Core API, ale z zaletami GraphQL
+- **Przypadki użycia**: Zarządzanie tymi samymi rekordami danych
+- **Dodatkowe korzyści**:
+  - **Operacje zbiorcze**: Dostępne dla wszystkich operacji
+  - **Operacje upsert**: Tworzenie lub aktualizowanie rekordów w jednym wywołaniu
+  - Zapytania o relacje w pojedynczych żądaniach
+  - Precyzyjne pobieranie danych
+
+## Operacje zbiorcze
+
+### Wsparcie zbiorcze REST i GraphQL
+
+Zarówno REST, jak i GraphQL wspierają operacje zbiorcze dla większości czynności:
+
+- **Rozmiar paczki**: Do 60 rekordów na żądanie
+- **Dostępne operacje**: Tworzenie, aktualizacja, usuwanie wielu rekordów
+- **Wydajność**: Zdecydowanie szybsze niż indywidualne wywołania API
+
+### Funkcje dostępne tylko w GraphQL
+
+- **Operacja zbiorcza upsert**: Dostępna tylko w GraphQL
+- **Użycie**: Używaj nazw obiektów w liczbie mnogiej (np. `CreateCompanies` zamiast `CreateCompany`)
+- **Wymaganie**: Dlatego nazwy obiektów w liczbie pojedynczej i mnogiej muszą się różnić
+
+## Dostęp do dokumentacji API
+
+1. Przejdź do **Ustawienia → API i Webhooki**
+2. Utwórz klucz API (wymagany do dostępu do dokumentacji)
+3. Uzyskaj dostęp do swojej niestandardowej dokumentacji i miejsca do zabaw
+4. Testuj API przy użyciu faktycznego modelu danych
+
+Twoja dokumentacja jest unikalna dla Twojego środowiska pracy, ponieważ odzwierciedla Twoje niestandardowe obiekty, pola i relacje.
+
+## Kiedy używać każdego z API
+
+### Używaj API metadanych, gdy:
+
+- Konfigurujesz swój model danych
+- Tworzysz niestandardowe obiekty lub pola
+- Konfigurujesz ustawienia środowiska pracy
+
+### Używaj API Core, gdy:
+
+- Zarządzasz codziennymi danymi (Osoby, Firmy, Możliwości)
+- Integrujesz się z zewnętrznymi systemami
+- Budujesz niestandardowe aplikacje
+- Automatyzujesz przepływy pracy danych
+
+### Wybierz GraphQL, gdy:
+
+- Potrzebujesz operacji zbiorczych
+- Chcesz zminimalizować wywołania API
+- Potrzebujesz funkcjonalności upsert
+- Budujesz złożone integracje
+
+### Wybierz REST, gdy:
+
+- Preferujesz prostszą strukturę API
+- Budujesz podstawowe integracje
+- Twój zespół jest bardziej zaznajomiony z REST
+- Potrzebujesz bezpośrednich operacji CRUD
+
+## Przejdź do następnych kroków
+
+- **[Ustawienia API i Webhooki](/l/pl/user-guide/integrations-api/api-webhooks)**: Dowiedz się, jak tworzyć klucze API i webhooki
+- **Niestandardowa dokumentacja**: Uzyskaj dostęp do swoich spersonalizowanych dokumentacji API przez Ustawienia → API i Webhooki
+

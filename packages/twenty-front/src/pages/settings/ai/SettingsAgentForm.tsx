@@ -4,6 +4,10 @@ import { useParams } from 'react-router-dom';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
+import { useSaveDraftRoleToDB } from '@/settings/roles/role/hooks/useSaveDraftRoleToDB';
+import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -12,7 +16,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { t } from '@lingui/core/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title, IconLock, IconSettings } from 'twenty-ui/display';
+import { IconLock, IconSettings } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import {
   type CreateAgentInput,
@@ -24,6 +28,8 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 import { useState } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { SettingsAgentDetailSkeletonLoader } from './components/SettingsAgentDetailSkeletonLoader';
 import { SettingsAgentRoleTab } from './components/SettingsAgentRoleTab';
 import { SettingsAgentSettingsTab } from './components/SettingsAgentSettingsTab';
@@ -86,6 +92,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           prompt: agent.prompt,
           isCustom: agent.isCustom,
           modelConfiguration: agent.modelConfiguration || {},
+          responseFormat: agent.responseFormat || { type: 'text', schema: {} },
         });
       } else {
         enqueueErrorSnackBar({
@@ -106,6 +113,22 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const [updateAgent] = useUpdateOneAgentMutation();
 
   const agent = data?.findOneAgent;
+
+  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
+    settingsDraftRoleFamilyState(formValues.role || ''),
+  );
+  const settingsPersistedRole = useRecoilValue(
+    settingsPersistedRoleFamilyState(formValues.role || ''),
+  );
+
+  const { saveDraftRoleToDB } = useSaveDraftRoleToDB({
+    roleId: formValues.role || '',
+    isCreateMode: false,
+  });
+
+  const isRoleDirty =
+    isDefined(formValues.role) &&
+    !isDeeplyEqual(settingsDraftRole, settingsPersistedRole);
 
   if (!isCreateMode && !loading && !agent) {
     return null;
@@ -138,6 +161,26 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     setIsSubmitting(true);
 
     try {
+      if (isRoleDirty && isDefined(formValues.role)) {
+        try {
+          await saveDraftRoleToDB();
+        } catch (error) {
+          if (error instanceof ApolloError) {
+            enqueueErrorSnackBar({
+              apolloError: error,
+            });
+          } else {
+            const errorMessage =
+              error instanceof Error ? error.message : String(error);
+            enqueueErrorSnackBar({
+              message: t`Failed to save role permissions: ${errorMessage}`,
+            });
+          }
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
       if (isCreateMode) {
         const input: CreateAgentInput = {
           name: formValues.name,
@@ -148,6 +191,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           roleId: formValues.role,
           prompt: formValues.prompt,
           modelConfiguration: formValues.modelConfiguration,
+          responseFormat: formValues.responseFormat,
         };
 
         await createAgent({
@@ -173,6 +217,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
             roleId: formValues.role,
             prompt: formValues.prompt,
             modelConfiguration: formValues.modelConfiguration,
+            responseFormat: formValues.responseFormat,
           },
         },
       });
@@ -187,15 +232,21 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     }
   };
 
+  const handleCancel = () => {
+    resetForm();
+
+    if (isRoleDirty && isDefined(settingsPersistedRole)) {
+      setSettingsDraftRole(settingsPersistedRole);
+    }
+
+    navigate(SettingsPath.AI);
+  };
+
   const title = !isCreateMode
     ? loading
       ? t`Agent`
       : agent?.label
     : t`New Agent`;
-  const pageTitle = !isCreateMode ? t`Edit Agent` : t`New Agent`;
-  const pageDescription = !isCreateMode
-    ? t`Update agent information`
-    : t`Create a new AI agent`;
   const breadcrumbText = !isCreateMode
     ? loading
       ? t`Agent`
@@ -210,6 +261,8 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
             formValues={formValues}
             onFieldChange={handleFieldChange}
             disabled={isReadonlyMode || (isEditMode ? !agent?.isCustom : false)}
+            agentId={agentId}
+            agentLabel={formValues.label}
           />
         );
 
@@ -229,13 +282,14 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
   return (
     <>
+      <SettingsRolesQueryEffect />
       <SubMenuTopBarContainer
         title={title}
         actionButton={
           isCreateMode || (isEditMode && agent?.isCustom) ? (
             <SaveAndCancelButtons
               onSave={handleSave}
-              onCancel={() => navigate(SettingsPath.AI)}
+              onCancel={handleCancel}
               isSaveDisabled={!canSave}
               isLoading={isSubmitting}
               isCancelDisabled={isSubmitting}
@@ -253,7 +307,6 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       >
         <SettingsPageContainer>
           <Section>
-            <H2Title title={pageTitle} description={pageDescription} />
             {isEditMode && loading ? (
               <SettingsAgentDetailSkeletonLoader />
             ) : (

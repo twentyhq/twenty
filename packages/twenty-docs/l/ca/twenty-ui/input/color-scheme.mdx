@@ -1,0 +1,73 @@
+---
+title: Esquema de colors
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## Tarjeta d'Esquema de Colors
+
+Representa diferents esquemes de colors i està especialment dissenyat per a temes clars i foscos.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ColorSchemeCard } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+      <ColorSchemeCard
+      variant="Dark"
+      selected={true}
+      />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Propietats             | Tipus                                   | Descripció                                                                                         | Per defecte |
+| ---------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------- | ----------- |
+| variant                | cadena                                  | La variant de l'esquema de colors. Les opcions inclouen `Fosc`, `Clar` i `Sistema` | clar        |
+| seleccionat            | boolean                                 | Si està en `true`, mostra una marca de verificació per indicar l'esquema de colors seleccionat     |             |
+| propietats addicionals | `React.ComponentPropsWithoutRef<'div'>` | Propietats estàndard de l'element HTML `div`                                                       |             |
+
+</Tab>
+
+</Tabs>
+
+## Selector d'Esquema de Colors
+
+Permet als usuaris triar entre diversos esquemes de colors.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ColorSchemePicker } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return <ColorSchemePicker
+  value="Dark"
+  onChange
+  />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Props    | Tipus               | Descripció                                                                                     |
+| -------- | ------------------- | ---------------------------------------------------------------------------------------------- |
+| valor    | `Esquema de colors` | L'esquema de colors actualment seleccionat                                                     |
+| onChange | funció              | La funció de retorn de trucada que vols activar quan un usuari selecciona un esquema de colors |
+
+</Tab>
+
+</Tabs>

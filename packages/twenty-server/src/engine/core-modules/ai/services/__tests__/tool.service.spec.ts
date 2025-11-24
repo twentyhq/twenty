@@ -6,7 +6,7 @@ import { DeleteRecordService } from 'src/engine/core-modules/record-crud/service
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
@@ -57,7 +57,7 @@ describe('ToolService', () => {
           },
         },
         {
-          provide: ObjectMetadataService,
+          provide: ObjectMetadataServiceV2,
           useValue: {
             findManyWithinWorkspace: jest.fn().mockResolvedValue([testObject]),
           },
@@ -138,7 +138,6 @@ describe('ToolService', () => {
       expect(tools['create_testObject']).toBeDefined();
       expect(tools['update_testObject']).toBeDefined();
       expect(tools['find_testObject']).toBeDefined();
-      expect(tools['find_one_testObject']).toBeDefined();
       expect(tools['soft_delete_testObject']).toBeDefined();
       expect(tools['soft_delete_many_testObject']).toBeDefined();
 

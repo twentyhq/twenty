@@ -1,0 +1,153 @@
+---
+title: Szöveg
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+## Szövegbevitel
+
+Lehetővé teszi a felhasználóknak a szöveg beírását és szerkesztését.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import { TextInput } from "@/ui/input/components/TextInput";
+
+export const MyComponent = () => {
+  const handleChange = (text) => {
+    console.log("Input changed:", text);
+  };
+
+  const handleKeyDown = (event) => {
+    console.log("Key pressed:", event.key);
+  };
+
+  return (
+    <RecoilRoot>
+      <TextInput
+        className
+        label="Username"
+        onChange={handleChange}
+        fullWidth={false}
+        disableHotkeys={false}
+        error="Invalid username"
+        onKeyDown={handleKeyDown}
+        RightIcon={null}
+      />
+    </RecoilRoot>
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Tulajdonságok   | Típus         | Leírás                                                                                                                                 |
+| --------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| className       | string        | Opcionális név a további stílushoz                                                                                                     |
+| címke           | string        | Represents the label for the input                                                                                                     |
+| onChange        | függvény      | The function called when the input value changes                                                                                       |
+| teljesSzélesség | boolean       | Jelzi, hogy a bemenet kitöltse-e a szélesség 100%-át                                                                                   |
+| disableHotkeys  | boolean       | Jelzi, hogy a gyorsbillentyűk engedélyezve vannak-e a bevitelhez                                                                       |
+| hiba            | string        | Represents the error message to be displayed. When provided, it also adds an icon error on the right side of the input |
+| onKeyDown       | függvény      | Called when a key is pressed down while the input field is focused. Receives a `React.KeyboardEvent` as an argument    |
+| JobbIkon        | IkonKomponens | Egy opcionális ikonelem, amely a bemenet jobb oldalán jelenik meg                                                                      |
+
+A komponens más HTML bemenet elem tulajdonságokat is elfogad.
+
+</Tab>
+
+</Tabs>
+
+## Autosize Text Input
+
+Text input component that automatically adjusts its height based on the content.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
+
+export const MyComponent = () => {
+  return (
+    <RecoilRoot>
+      <AutosizeTextInput
+        onValidate={() => console.log("onValidate function fired")}
+        minRows={1}
+        placeholder="Write a comment"
+        onFocus={() => console.log("onFocus function fired")}
+        variant="icon"
+        buttonTitle
+        value="Task: "
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Tulajdonságok | Típus   | Leírás                                                                                                               |
+| ------------- | ------- | -------------------------------------------------------------------------------------------------------------------- |
+| onValidate    | funkció | The callback function you want to trigger when the user validates the input                                          |
+| minSorok      | szám    | The minimum number of rows for the text area                                                                         |
+| helyőrző      | string  | The placeholder text you want to display when the text area is empty                                                 |
+| onFocus       | funkció | The callback function you want to trigger when the text area gains focus                                             |
+| változat      | string  | A bemenet változata. Lehetőségek közé tartozik: `alapértelmezett`, `ikon`, és `gomb` |
+| buttonTitle   | string  | A gomb címe (csak a gomb változatra vonatkozik)                                                   |
+| érték         | string  | A szövegterület kezdeti értéke                                                                                       |
+
+</Tab>
+
+</Tabs>
+
+## Text Area
+
+Allows you to create multi-line text inputs.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { TextArea } from "@/ui/input/components/TextArea";
+
+export const MyComponent = () => {
+  return (
+    <TextArea
+    disabled={false}
+    minRows={4}
+    onChange={()=>console.log('On change function fired')}
+    placeholder="Enter text here"
+    value=""
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Tulajdonságok | Típus    | Leírás                                                                  |
+| ------------- | -------- | ----------------------------------------------------------------------- |
+| letiltva      | boolean  | Jelzi, hogy a szövegterület le van-e tiltva                             |
+| minSorok      | szám     | Minimum number of visible rows for the text area.       |
+| onChange      | függvény | Callback függvény aktiválódik, amikor a szövegmező tartalma megváltozik |
+| helyőrző      | string   | Helyőrző szöveg jelenik meg, amikor a szövegmező üres                   |
+| érték         | string   | A szövegmező jelenlegi értéke                                           |
+
+</Tab>
+</Tabs>

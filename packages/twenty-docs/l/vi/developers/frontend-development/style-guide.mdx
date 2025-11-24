@@ -1,0 +1,295 @@
+---
+title: Hướng dẫn phong cách
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+Tài liệu này bao gồm các quy tắc cần tuân theo khi viết mã.
+
+Mục tiêu tại đây là có một cơ sở mã nhất quán, dễ đọc và dễ bảo trì.
+
+Vì điều này, tốt hơn là nên dài dòng hơn một chút thay vì quá súc tích.
+
+Luôn ghi nhớ rằng mọi người đọc mã nhiều hơn là viết nó, đặc biệt là trong một dự án mã nguồn mở, nơi bất kỳ ai cũng có thể đóng góp.
+
+Có rất nhiều quy tắc không được xác định ở đây, nhưng được các công cụ kiểm tra lỗi tự động kiểm tra.
+
+## React
+
+### Sử dụng các thành phần chức năng
+
+Luôn sử dụng các thành phần chức năng TSX.
+
+Không sử dụng `import` mặc định với `const`, vì nó khó đọc và khó nhập với hỗ trợ hoàn thành mã.
+
+```tsx
+// ❌ Bad, harder to read, harder to import with code completion
+const MyComponent = () => {
+  return <div>Hello World</div>;
+};
+
+export default MyComponent;
+
+// ✅ Good, easy to read, easy to import with code completion
+export function MyComponent() {
+  return <div>Hello World</div>;
+};
+```
+
+### Thuộc tính
+
+Tạo kiểu của thuộc tính và gọi nó là `(TênThànhPhần)Props` nếu không cần xuất nó.
+
+Sử dụng cấu trúc phân rã thuộc tính.
+
+```tsx
+// ❌ Bad, no type
+export const MyComponent = (props) => <div>Hello {props.name}</div>;
+
+// ✅ Good, type
+type MyComponentProps = {
+  name: string;
+};
+
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+```
+
+#### Hạn chế sử dụng `React.FC` hoặc `React.FunctionComponent` để xác định kiểu thuộc tính
+
+```tsx
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
+ */
+const EmailField: React.FC<{
+  value: string;
+}> = ({ value }) => <TextInput value={value} disabled fullWidth />;
+```
+
+```tsx
+/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the 
+ *      component's props
+ *    - This method doesn't automatically include the children prop. If
+ *      you want to include it, you have to specify it in OwnProps.
+ */ 
+type EmailFieldProps = {
+  value: string;
+};
+
+const EmailField = ({ value }: EmailFieldProps) => (
+  <TextInput value={value} disabled fullWidth />
+);
+```
+
+#### Không được phép sử dụng lan truyền thuộc tính biến đơn trong các phần tử JSX
+
+Tránh sử dụng lan truyền thuộc tính biến đơn trong các phần tử JSX, như `{...props}`. Thực hành này thường dẫn đến mã khó đọc hơn và khó bảo trì hơn vì không rõ thành phần đang nhận những thuộc tính nào.
+
+```tsx
+/* ❌ - Bad, spreads a single variable prop into the underlying component
+ */
+const MyComponent = (props: OwnProps) => {
+  return <OtherComponent {...props} />;
+}
+```
+
+```tsx
+/* ✅ - Good, Explicitly lists all props
+ *    - Enhances readability and maintainability
+ */ 
+const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
+  return <OtherComponent {...{ prop1, prop2, prop3 }} />;
+};
+```
+
+Lý do:
+
+- Nhìn thoáng qua, dễ thấy rõ thuộc tính nào mã truyền xuống, giúp dễ hiểu và bảo trì hơn.
+- Nó giúp ngăn chặn sự gắn kết chặt chẽ giữa các thành phần thông qua thuộc tính của chúng.
+- Các công cụ kiểm tra lỗi giúp dễ dàng nhận dạng thuộc tính bị viết sai chính tả hoặc không sử dụng khi bạn liệt kê các thuộc tính rõ ràng.
+
+## JavaScript
+
+### Sử dụng toán tử kết hợp rỗng `??`
+
+```tsx
+// ❌ Bad, can return 'default' even if value is 0 or ''
+const value = process.env.MY_VALUE || 'default';
+
+// ✅ Good, will return 'default' only if value is null or undefined
+const value = process.env.MY_VALUE ?? 'default';
+```
+
+### Sử dụng chuỗi tùy chọn `?.`
+
+```tsx
+// ❌ Bad 
+onClick && onClick();
+
+// ✅ Good
+onClick?.();
+```
+
+## TypeScript
+
+### Sử dụng `type` thay vì `interface`
+
+Luôn sử dụng `type` thay vì `interface`, vì chúng hầu như bị chồng lấn, và `type` linh hoạt hơn.
+
+```tsx
+// ❌ Bad
+interface MyInterface {
+  name: string;
+}
+
+// ✅ Good
+type MyType = {
+  name: string;
+};
+```
+
+### Sử dụng chữ khai báo chuỗi thay vì enums
+
+[Chữ khai báo chuỗi](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) là cách đi-to để xử lý các giá trị giống kiểu enum trong TypeScript. Chúng dễ mở rộng hơn với Pick và Omit, và mang lại trải nghiệm nhà phát triển tốt hơn, đặc biệt với tính năng hoàn thành mã.
+
+Bạn có thể thấy lý do tại sao TypeScript khuyến cáo tránh sử dụng enums [tại đây](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
+
+```tsx
+// ❌ Bad, utilizes an enum
+enum Color {
+  Red = "red",
+  Green = "green",
+  Blue = "blue",
+}
+
+let color = Color.Red;
+```
+
+```tsx
+// ✅ Good, utilizes a string literal
+
+let color: "red" | "green" | "blue" = "red";
+```
+
+#### GraphQL và thư viện nội bộ
+
+Bạn nên sử dụng các enum mà GraphQL codegen tạo ra.
+
+Ngoài ra, tốt hơn là sử dụng một enum khi sử dụng một thư viện nội bộ, để thư viện nội bộ không cần phải hiển thị một kiểu chữ khai báo chuỗi không liên quan đến API nội bộ.
+
+Ví dụ:
+
+```TSX
+const {
+  setHotkeyScopeAndMemorizePreviousScope,
+  goBackToPreviousHotkeyScope,
+} = usePreviousHotkeyScope();
+
+setHotkeyScopeAndMemorizePreviousScope(
+  RelationPickerHotkeyScope.RelationPicker,
+);
+```
+
+## Phong cách
+
+### Sử dụng StyledComponents
+
+Tạo kiểu cho các thành phần bằng [styled-components](https://emotion.sh/docs/styled).
+
+```tsx
+// ❌ Bad
+<div className="my-class">Hello World</div>
+```
+
+```tsx
+// ✅ Good
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+Đặt tên kiểu các thành phần với "Styled" để phân biệt chúng với các thành phần "thực".
+
+```tsx
+// ❌ Bad
+const Title = styled.div`
+  color: red;
+`;
+```
+
+```tsx
+// ✅ Good
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+### Chủ đề
+
+Sử dụng chủ đề cho phần lớn việc tạo kiểu thành phần là phương pháp được ưu tiên.
+
+#### Đơn vị đo lường
+
+Tránh sử dụng trực tiếp các giá trị `px` hoặc `rem` trong các thành phần đã được tạo kiểu. Các giá trị cần thiết thường đã được định nghĩa trong chủ đề, vì vậy khuyến khích tận dụng chủ đề cho các mục đích này.
+
+#### Các màu sắc
+
+Hạn chế giới thiệu màu mới; thay vào đó, hãy sử dụng bảng màu hiện có từ chủ đề. Trong trường hợp bảng màu không phù hợp, xin vui lòng để lại bình luận để nhóm có thể sửa chữa nó.
+
+```tsx
+// ❌ Bad, directly specifies style values without utilizing the theme
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: 4px;
+  border-radius: 50px;
+`;
+```
+
+```tsx
+// ✅ Good, utilizes the theme
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  border-radius:  ${({ theme }) => theme.border.rounded};
+`;
+```
+
+## Cưỡng chế Không nhập kiểu
+
+Tránh nhập các loại kiểu. Để thực thi tiêu chuẩn này, quy tắc ESLint kiểm tra và báo cáo bất kỳ nhập kiểu nào. Điều này giúp duy trì tính nhất quán và khả năng đọc trong mã TypeScript.
+
+```tsx
+// ❌ Bad
+import { type Meta, type StoryObj } from '@storybook/react';
+
+// ❌ Bad
+import type { Meta, StoryObj } from '@storybook/react';
+
+// ✅ Good
+import { Meta, StoryObj } from '@storybook/react';
+```
+
+### Tại sao không nhập kiểu
+
+- **Tính nhất quán**: Bằng cách tránh nhập kiểu và sử dụng một cách tiếp cận duy nhất cho cả nhập kiểu và giá trị, mã nguồn vẫn duy trì tính nhất quán trong kiểu nhập mô đun của mình.
+
+- **Khả năng đọc**: Không nhập kiểu cải thiện khả năng đọc mã bằng cách làm rõ khi bạn đang nhập các giá trị hoặc kiểu. Điều này giảm bớt sự mơ hồ và làm cho việc hiểu mục đích của các ký hiệu nhập dễ dàng hơn.
+
+- **Khả năng bảo trì**: Nó nâng cao khả năng bảo trì mã nguồn vì các nhà phát triển có thể xác định và định vị các nhập chỉ cho kiểu khi đánh giá hoặc điều chỉnh mã.
+
+### Quy tắc ESLint
+
+Một quy tắc ESLint, `@typescript-eslint/consistent-type-imports`, thi hành tiêu chuẩn không nhập kiểu. Quy tắc này sẽ tạo ra lỗi hoặc cảnh báo cho bất kỳ vi phạm nhập kiểu nào.
+
+Xin lưu ý rằng quy tắc này cụ thể giải quyết các trường hợp hiếm gặp mà vô tình nhập kiểu xảy ra. TypeScript itself discourages this practice, as mentioned in the [TypeScript 3.8 release notes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). Trong hầu hết các tình huống, bạn không nên cần sử dụng các nhập chỉ cho kiểu.
+
+Để đảm bảo mã của bạn tuân thủ quy tắc này, hãy chắc chắn chạy ESLint như một phần của quy trình phát triển của bạn.

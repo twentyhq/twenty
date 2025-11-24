@@ -1,0 +1,44 @@
+---
+title: Etikett
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+Komponent for å visuelt kategorisere eller merke innhold.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { Tag } from "@/ui/display/tag/components/Tag";
+
+export const MyComponent = () => {
+  return (
+    <Tag
+      className
+      color="red"
+      text="Urgent"
+      onClick={() => console.log("click")}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                  | Beskrivelse                                                                                                                                                      |
+| ----------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "klasseNavn"            | <span>streng</span>   | "Valgfritt navn for ekstra styling"                                                                                                                              |
+| farge                   | <span>streng</span>   | Farge på etiketten. Alternativer inkluderer: `grønn`, `turkis`, `himmel`, `blå`, `lilla`, `rosa`, `rød`, `oransje`, `gul`, `grå` |
+| tekst                   | <span>streng</span>   | The content of the tag                                                                                                                                           |
+| "onClick"               | <span>funksjon</span> | Valgfri funksjon som kalles når en bruker klikker på etiketten                                                                                                   |
+
+</Tab>
+
+</Tabs>

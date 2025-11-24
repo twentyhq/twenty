@@ -1,0 +1,45 @@
+---
+title: Pasgemaakte voorwerpe
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+Objekte is strukture wat jou toelaat om data (rekords, eienskappe en waardes) wat spesifiek aan 'n organisasie is, op te slaan. Twenty provides both standard and custom objects.
+
+Standaard voorwerpe is ingeboude voorwerpe met 'n stel eienskappe beskikbaar vir alle gebruikers. Voorbeelde van standaard voorwerpe in Twenty sluit in Maatskappy en Persoon. Standard objects have standard fields that are also available for all Twenty users, like Company.displayName.
+
+Aangepaste voorwerpe is voorwerpe wat jy kan skep om inligting wat uniek is aan jou organisasie te stoor. Hulle is nie ingebou nie; lede van jou werkruimte kan aangepaste voorwerpe skep en aanpas om inligting te hou waarvoor standaard voorwerpe nie geskik is nie.
+
+## Hoë-vlak skema
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/custom-object-schema.png" alt="High level schema" />
+</div>
+
+<br/>
+
+## Hoe dit werk
+
+Aangepaste voorwerpe kom van metadata tabelle wat die vorm, naam en tipe van die voorwerpe bepaal. Al hierdie inligting is teenwoordig in die metadata skema databasis wat bestaan uit tabelle:
+
+- **DataBron**: Beskryf waar die data teenwoordig is.
+- **Voorwerp**: Beskryf die voorwerp en koppel aan 'n DataBron.
+- **Veld**: Lys 'n voorwerp se velde en koppel aan die voorwerp.
+
+Om 'n aangepaste voorwerp by te voeg, sal die werkspasielid die /metadata API navraag doen. Dit werk die metadata dienooreenkomstig op en bereken 'n GraphQL skema gebaseer op die metadata en berg dit in 'n GQL kas vir later gebruik.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/add-custom-objects.jpeg" alt="Query the /metadata API to add custom objects" />
+</div>
+
+<br/>
+
+Om data te haal, behels die proses die maak van navrae deur die /graphql eindpunt en dit deur die Navraag Oplosser.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/custom-object-schema.png" alt="Query the /graphql endpoint to fetch data" />
+</div>
+

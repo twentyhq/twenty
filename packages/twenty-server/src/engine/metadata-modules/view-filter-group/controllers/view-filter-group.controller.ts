@@ -15,6 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
 import { UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/update-view-filter-group.input';
@@ -28,6 +29,9 @@ import {
 } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import { ViewFilterGroupRestApiExceptionFilter } from 'src/engine/metadata-modules/view-filter-group/filters/view-filter-group-rest-api-exception.filter';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
+import { CreateViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-filter-group-permission.guard';
+import { DeleteViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-filter-group-permission.guard';
+import { UpdateViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-filter-group-permission.guard';
 
 @Controller('rest/metadata/viewFilterGroups')
 @UseGuards(WorkspaceAuthGuard)
@@ -38,6 +42,7 @@ export class ViewFilterGroupController {
   ) {}
 
   @Get()
+  @UseGuards(NoPermissionGuard)
   async findMany(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('viewId') viewId?: string,
@@ -50,6 +55,7 @@ export class ViewFilterGroupController {
   }
 
   @Get(':id')
+  @UseGuards(NoPermissionGuard)
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -79,6 +85,7 @@ export class ViewFilterGroupController {
   }
 
   @Post()
+  @UseGuards(CreateViewFilterGroupPermissionGuard)
   async create(
     @Body() input: CreateViewFilterGroupInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -90,6 +97,7 @@ export class ViewFilterGroupController {
   }
 
   @Patch(':id')
+  @UseGuards(UpdateViewFilterGroupPermissionGuard)
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewFilterGroupInput,
@@ -105,6 +113,7 @@ export class ViewFilterGroupController {
   }
 
   @Delete(':id')
+  @UseGuards(DeleteViewFilterGroupPermissionGuard)
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

@@ -1,0 +1,251 @@
+---
+title: הגדרה
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+import OptionTable from '@site/src/theme/OptionTable'
+
+# ניהול תצורה
+
+<Warning>
+**First time installing?** Follow the [Docker Compose installation guide](https://docs.twenty.com/l/he/developers/self-hosting/docker-compose) to get Twenty running, then return here for configuration.
+</Warning>
+
+Twenty מציעה **שני מצבי תצורה** כדי להתאים לצרכים שונים של פריסה:
+
+**Admin panel access:** Only users with admin privileges (`canAccessFullAdminPanel: true`) can access the configuration interface.
+
+## 1. תצורת פאנל ניהול (ברירת מחדל)
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
+```
+
+**רוב ההגדרות מתבצעות דרך הממשק** לאחר התקנה:
+
+1. גש למופע Twenty שלך (בדרך כלל `http://localhost:3000`)
+2. לך אל **הגדרות / פאנל ניהול / משתנים של תצורה**
+3. הגדר אינטגרציות, מייל, אחסון ועוד
+4. שינויים נכנסים לתוקף מידית (בתוך 15 שניות עבור פריסות מרובות מכולות)
+
+<Warning>
+**Multi-Container Deployments:** When using database configuration (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), both server and worker containers read from the same database. Admin panel changes affect both automatically, eliminating the need to duplicate environment variables between containers (except for infrastructure variables).
+</Warning>
+
+**מה ניתן להגדיר דרך פאנל הניהול:**
+
+- **אימות** - OAuth של Google/Microsoft, הגדרות סיסמאות
+- **דוא"ל** - הגדרות SMTP, תבניות, אימות
+- **אחסון** - תצורת S3, מסלולי אחסון מקומי
+- **אינטגרציות** - Gmail, גוגל קלנדר, שירותי Microsoft
+- **Workflow & Rate Limiting** - Execution limits, API throttling
+- **ועוד הרבה...**
+
+![משתנים של תצורת פאנל הניהול](/images/user-guide/setup/admin-panel-config-variables.png)
+
+<Warning>
+כל משתנה מתועד עם תיאורים בפאנל הניהול שלך ב **הגדרות → פאנל ניהול → משתני קונפיגורציה**.
+כמה הגדרות תשתית כמו חיבורי מסד נתונים (`PG_DATABASE_URL`), URL של השרת (`SERVER_URL`) וסודות האפליקציה (`APP_SECRET`) ניתן להגדיר רק דרך קובץ `.env`.
+
+[Complete technical reference →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) </Warning>
+
+## 2. תצורת סביבה בלבד
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
+```
+
+**כל התצורה מנוהלת באמצעות קבצי `.env`:**
+
+1. שנה `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` בקובץ `.env` שלך
+2. הוסף את כל משתני התצורה לקובץ `.env` שלך
+3. הפעל מחדש מכולות כדי ששינויים ייכנסו לתוקף
+4. פאנל הניהול יציג את הערכים הנוכחיים אך לא יוכל לשנותם
+
+## אינטגרציה של Gmail & Google Calendar
+
+### צור פרויקט ב-Google Cloud
+
+1. לך אל [Google Cloud Console](https://console.cloud.google.com/)
+2. צור פרויקט חדש או בחר אחד קיים
+3. הפעל את ה-APIs הבאים:
+
+- [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+- [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+- [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+
+### הגדר OAuth
+
+1. לך אל [Credentials](https://console.cloud.google.com/apis/credentials)
+2. צור OAuth 2.0 Client ID
+3. הוסף את ה-URIs של הפניה הבאים:
+   - `https://{your-domain}/auth/google/redirect` (for SSO)
+   - `https://{your-domain}/auth/google-apis/get-access-token` (for integrations)
+
+### הגדר את Twenty
+
+1. לך אל **הגדרות → פאנל ניהול → משתנים של תצורה**
+2. מצא את החלק של **Google Auth**
+3. הגדר את המשתנים הללו:
+   - `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   - `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   - `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   - `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   - `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   - `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>
+
+**תחומים נדרשים** (מוגדרים באופן אוטומטי):
+[ראה מקור קוד רלוונטי](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
+
+- `https://www.googleapis.com/auth/calendar.events`
+- `https://www.googleapis.com/auth/gmail.readonly`
+- `https://www.googleapis.com/auth/profile.emails.read`
+
+### אם האפליקציה שלך במצב בדיקה
+
+אם האפליקציה שלך במצב בדיקה, תצטרך להוסיף משתמשי בדיקה לפרויקט שלך.
+
+תחת [מסך הסכמה של OAuth](https://console.cloud.google.com/apis/credentials/consent), הוסף את משתמשי הבדיקה שלך לקטע "משתמשים לבדיקה".
+
+## אינטגרציית Microsoft 365
+
+<Warning>
+על המשתמשים להחזיק ב-[רישיון של Microsoft 365](https://admin.microsoft.com/Adminportal/Home) כדי להשתמש ב-API של לוח שנה והודעות. ללא אחד כזה, הם לא יוכלו לסנכרן את החשבון שלהם על גבי Twenty.
+</Warning>
+
+### צור פרויקט ב-Microsoft Azure
+
+יהיה עליך ליצור פרויקט ב-[Microsoft Azure](https://portal.azure.com/#view/Microsoft_AAD_IAM/AppGalleryBladeV2) ולקבל את האישורים.
+
+### הפעל APIs
+
+ב-Microsoft Azure Console הפעל את ה-APIs הבאים ב"הרשאות":
+
+- Microsoft Graph: Mail.ReadWrite
+- Microsoft Graph: Mail.Send
+- Microsoft Graph: Calendars.Read
+- Microsoft Graph: User.Read
+- Microsoft Graph: openid
+- Microsoft Graph: email
+- Microsoft Graph: profile
+- Microsoft Graph: offline_access
+
+הערה: "Mail.ReadWrite" ו-"Mail.Send" הם חובה רק אם תרצה לשלוח דוא"ל באמצעות פעולות זרימת העבודה שלנו. אתה יכול להשתמש ב-"Mail.Read" במקום אם ברצונך רק לקבל דוא"ל.
+
+### URIs להפניה מורשית
+
+עליך להוסיף את URIs ההפניה הבאים לפרויקט שלך:
+
+- `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
+- `https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+### הגדר את Twenty
+
+1. לך אל **הגדרות → פאנל ניהול → משתנים של תצורה**
+2. מצא את החלק של **Microsoft Auth**
+3. הגדר את המשתנים הללו:
+   - `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   - `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   - `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   - `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>
+
+### הגדרת תחומים
+
+[ראה מקור קוד רלוונטי](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+
+- 'openid'
+- 'דואר אלקטרוני'
+- 'profile'
+- 'offline_access'
+- 'Mail.ReadWrite'
+- 'Mail.Send'
+- 'Calendars.Read'
+
+### אם האפליקציה שלך במצב בדיקה
+
+אם האפליקציה שלך במצב בדיקה, תצטרך להוסיף משתמשי בדיקה לפרויקט שלך.
+
+הוסף את משתמשי הבדיקה שלך לקטע "משתמשים וקבוצות".
+
+## עבודות רקע ללוח שנה והודעות
+
+לאחר הגדרת אינטגרציות של Gmail, Google Calendar או Microsoft 365, עליך להפעיל את עבודות הרקע שמסנכרנות נתונים.
+
+רשום את עבודות התזמון החוזרות הבאות במכולה שלך לעובד:
+
+```bash
+# from your worker container
+yarn command:prod cron:messaging:messages-import
+yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:calendar:calendar-events-import
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
+yarn command:prod cron:workflow:automated-cron-trigger
+```
+
+## הגדרות דואר אלקטרוני
+
+1. לך אל **הגדרות → פאנל ניהול → משתנים של תצורה**
+2. מצא את החלק של **Email**
+3. הגדר את ההגדרות שלך ל-SMTP:
+
+<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+
+  <ArticleTab>
+
+עליך להקצות [סיסמת יישום](https://support.google.com/accounts/answer/185833).
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.gmail.com
+- EMAIL_SMTP_PORT=465
+- EMAIL_SMTP_USER=gmail_email_address
+- EMAIL_SMTP_PASSWORD='gmail_app_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+**smtp4dev** הוא שרת דואר אלקטרוני מזויף לפיתוח ובדיקות.
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.office365.com
+- EMAIL_SMTP_PORT=587
+- EMAIL_SMTP_USER=office365_email_address
+- EMAIL_SMTP_PASSWORD='office365_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+**smtp4dev** הוא שרת דואר אלקטרוני מזויף לפיתוח ובדיקות.
+
+- הפעל את תמונת smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+- גש לממשק smtp4dev כאן: [http://localhost:8090](http://localhost:8090)
+- הגדר את המשתנים הבאים:
+  - EMAIL_DRIVER=smtp
+  - EMAIL_SMTP_HOST=localhost
+  - EMAIL_SMTP_PORT=2525
+
+  </ArticleTab>
+
+</ArticleTabs>
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>

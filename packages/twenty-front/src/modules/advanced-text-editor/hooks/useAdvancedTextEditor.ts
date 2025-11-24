@@ -1,7 +1,9 @@
 import { ResizableImage } from '@/advanced-text-editor/extensions/resizable-image/ResizableImage';
 import { UploadImageExtension } from '@/advanced-text-editor/extensions/resizable-image/UploadImageExtension';
+import { SlashCommand } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
 import { getInitialAdvancedTextEditorContent } from '@/workflow/workflow-variables/utils/getInitialAdvancedTextEditorContent';
 import { VariableTag } from '@/workflow/workflow-variables/utils/variableTag';
+import { t } from '@lingui/core/macro';
 import { Bold } from '@tiptap/extension-bold';
 import { Document } from '@tiptap/extension-document';
 import { HardBreak } from '@tiptap/extension-hard-break';
@@ -27,6 +29,7 @@ type UseAdvancedTextEditorProps = {
   onBlur?: (editor: Editor) => void;
   onImageUpload?: (file: File) => Promise<string>;
   onImageUploadError?: (error: Error, file: File) => void;
+  enableSlashCommand?: boolean;
 };
 
 export const useAdvancedTextEditor = (
@@ -39,6 +42,7 @@ export const useAdvancedTextEditor = (
     onBlur,
     onImageUpload,
     onImageUploadError,
+    enableSlashCommand,
   }: UseAdvancedTextEditorProps,
   dependencies?: DependencyList,
 ) => {
@@ -48,7 +52,7 @@ export const useAdvancedTextEditor = (
       Paragraph,
       Text,
       Placeholder.configure({
-        placeholder,
+        placeholder: placeholder ?? t`Enter text or Type '/' for commands`,
       }),
       VariableTag,
       HardBreak.configure({
@@ -72,8 +76,15 @@ export const useAdvancedTextEditor = (
         onImageUpload,
         onImageUploadError,
       }),
+      ...(!readonly && enableSlashCommand !== false ? [SlashCommand] : []),
     ],
-    [placeholder, onImageUpload, onImageUploadError],
+    [
+      placeholder,
+      onImageUpload,
+      onImageUploadError,
+      readonly,
+      enableSlashCommand,
+    ],
   );
 
   const editor = useEditor(

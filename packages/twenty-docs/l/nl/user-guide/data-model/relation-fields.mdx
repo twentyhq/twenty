@@ -1,0 +1,62 @@
+---
+title: Relatievelden
+info: Leer hoe u relaties tussen objecten kunt creëren met behulp van relatievelden en configureer 1-op-veel relaties.
+image: /images/user-guide/fields/relations_field.png
+sectionInfo: Flexibel datamodel ontworpen om uw unieke bedrijfsprocessen te ondersteunen
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/relations_field.png" alt="Header" />
+</Frame>
+
+## Wat zijn relatievelden?
+
+Relatievelden koppelen records van het ene object aan records van een ander object. Bijvoorbeeld:
+
+- **Personen** → **Bedrijven** (elke persoon werkt voor een bedrijf)
+- **Kansen** → **Personen** (elke deal heeft een contactpersoon)
+- **Taken** → **Kansen** (elke taak heeft betrekking op een specifieke deal)
+
+## Relatievelden creëren
+
+### 1. Het veld toevoegen
+
+Ga naar **Instellingen → Datamodel → [Uw Object]** en klik op **Veld toevoegen**.
+
+### 2. Kies relatietype
+
+- **Veldtype**: Selecteer "Relatie"
+- **Doelobject**: Kies welk object moet worden gekoppeld
+- **Relatie**: Ondersteunt momenteel alleen **1-op-veel** relaties. Zorg ervoor dat u de relatie in de juiste richting creëert.
+
+### 3. Veldnamen configureren
+
+U moet namen instellen voor beide kanten van de relatie:
+
+- **Bronvelnaam**: Hoe het veld in uw huidige object verschijnt
+- **Doelvelnaam**: Hoe het omgekeerde veld op het doelobject verschijnt
+
+<Warning>
+Veldnamen kunnen niet worden bewerkt zodra de relatie is opgeslagen, omdat dit invloed heeft op de API-structuur. Kies zorgvuldig.
+</Warning>
+
+## Relaties met teamleden
+
+You can create relations to any object, including **Workspace Members** (your Twenty team users). Dit is handig voor het creëren van eigenaarschapsvelden:
+
+- **Accountbeheerder**: Koppel een bedrijf aan een teamlid dat het beheert
+- **Dealbeheerder**: Wijs een kans toe aan een specifieke verkoper
+
+Wanneer u een relatie creëert met `Werkruimtemedewerkers`, ziet u de namen van uw teamleden in drop-down selecties, waardoor het gemakkelijk is om eigendom en verantwoordelijkheden toe te wijzen.
+
+## Best practices
+
+- **Plan uw relaties** voordat u ze creëert
+- **Gebruik duidelijke, beschrijvende namen** voor beide veldnamen
+- **Test relaties** met voorbeeldgegevens voordat u volledig implementeert
+
+## Toekomstige functies
+
+- **Morph Many relationships** (Coming Q4 2025)
+- **Veel-op-veel relaties** (Komt in Q1 2026)
+

@@ -1,0 +1,51 @@
+---
+title: crwdns60350:0crwdne60350:0
+image: crwdns60352:0crwdne60352:0
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+crwdns60354:0crwdne60354:0 crwdns60356:0crwdne60356:0
+
+## crwdns60358:0crwdne60358:0
+
+crwdns60360:0crwdne60360:0
+
+```ts
+type FeatureFlagKey =
+  | 'IS_FEATURENAME_ENABLED'
+  | ...;
+```
+
+crwdns60362:0crwdne60362:0
+
+```ts
+enum FeatureFlagKeys {
+    IsFeatureNameEnabled = 'IS_FEATURENAME_ENABLED',
+    ...
+}
+```
+
+crwdns60364:0crwdne60364:0
+
+```ts
+@Gate({
+  featureFlag: 'IS_FEATURENAME_ENABLED',
+})
+```
+
+crwdns60366:0crwdne60366:0
+
+```ts
+const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
+```
+
+## crwdns60368:0crwdne60368:0
+
+crwdns60370:0crwdne60370:0
+
+| crwdns60372:0crwdne60372:0 | crwdns60374:0crwdne60374:0 | crwdns60376:0crwdne60376:0 | crwdns60378:0crwdne60378:0 |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
+| crwdns60380:0crwdne60380:0 | crwdns60382:0crwdne60382:0 | crwdns60384:0crwdne60384:0 | crwdns60386:0crwdne60386:0 |

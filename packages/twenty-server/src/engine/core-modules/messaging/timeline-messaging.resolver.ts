@@ -1,10 +1,19 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, ArgsType, Field, Int, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  ArgsType,
+  Field,
+  Int,
+  Mutation,
+  Query,
+  Resolver,
+} from '@nestjs/graphql';
 
 import { Max } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TIMELINE_THREADS_MAX_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
+import { DismissReconnectAccountBannerInput } from 'src/engine/core-modules/messaging/dtos/dismiss-reconnect-account-banner.input';
 import { TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { GetMessagesService } from 'src/engine/core-modules/messaging/services/get-messages.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -12,8 +21,10 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 
 @ArgsType()
 class GetTimelineThreadsFromPersonIdArgs {
@@ -54,12 +65,13 @@ class GetTimelineThreadsFromOpportunityIdArgs {
   pageSize: number;
 }
 
-@UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+@UseGuards(WorkspaceAuthGuard, UserAuthGuard, CustomPermissionGuard)
 @Resolver(() => TimelineThreadsWithTotalDTO)
 export class TimelineMessagingResolver {
   constructor(
     private readonly getMessagesFromPersonIdsService: GetMessagesService,
     private readonly userService: UserService,
+    private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {}
 
   @Query(() => TimelineThreadsWithTotalDTO)
@@ -139,5 +151,20 @@ export class TimelineMessagingResolver {
       );
 
     return timelineThreads;
+  }
+
+  @Mutation(() => Boolean)
+  async dismissReconnectAccountBanner(
+    @AuthUser() user: UserEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args() { connectedAccountId }: DismissReconnectAccountBannerInput,
+  ): Promise<boolean> {
+    await this.accountsToReconnectService.removeAccountToReconnect(
+      user.id,
+      workspace.id,
+      connectedAccountId,
+    );
+
+    return true;
   }
 }

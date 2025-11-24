@@ -20,7 +20,7 @@ export const parseImapError = (
   if (error.message.includes('Connection not available')) {
     return new MessageImportDriverException(
       `IMAP client not available: ${error.message}`,
-      MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
       { cause: options?.cause || error },
     );
   }

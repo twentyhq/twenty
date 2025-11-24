@@ -1,0 +1,90 @@
+---
+title: Tietomallin FAQ
+info: "Usein kysytyt kysymykset tietomallin konfiguraatiosta, rajoituksista ja tulevista ominaisuuksista."
+image: /images/user-guide/what-is-twenty/faq.png
+sectionInfo: Joustava tietomalli, joka on suunniteltu tukemaan ainutlaatuisia liiketoimintaprosessejasi
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/faq.png" alt="Header" />
+</Frame>
+
+## Objektien hallinta
+
+<AccordionGroup>
+<Accordion title="Can I reorder objects in the left navigation bar?">
+Ei vielä. Objektien järjestys navigaatiossa on tällä hetkellä kiinteä, mutta tämä ominaisuus on tulossa tulevassa julkaisussa.
+</Accordion>
+
+<Accordion title="Can I hide objects from the left navigation bar?">
+Kaikki aktiiviset objektit näkyvät navigaatiossa. You can deactivate objects you don't need under **Settings → Data Model**.
+</Accordion>
+
+<Accordion title="Can I delete standard objects (People, Companies, etc.)?">
+You can deactivate any standard objects but you cannot hard delete them.
+</Accordion>
+</AccordionGroup>
+
+## Kenttien ominaisuudet
+
+<AccordionGroup>
+<Accordion title="Can I create formula fields?">
+Kaavakentät ovat tulossa **Q1 2026**. Sillä välin voit käyttää työnkulkuja laskemaan ja päivittämään kenttäarvoja automaattisesti.
+</Accordion>
+
+<Accordion title="Can I have nested fields in my objects?">
+Sisäkkäiset kentät ovat tulossa **Q1 2026**. Tällä hetkellä voit käyttää työnkulkuja hakeaksesi kenttäarvoja liittyvistä objekteista. Esimerkkinä, yrityksen toimialan näyttämiseksi henkilörekisterissä, luo mukautettu kenttä Henkilöt ja käytä työnkulkua synkronoidaksesi arvon.
+</Accordion>
+
+<Accordion title="Why can't I update relation field names?">
+Suhdekenttien nimet vaikuttavat API-rakenteeseen eikä niitä voi muuttaa luomisen jälkeen. Jos sinun täytyy nimetä suhdekenttä uudelleen, sinun täytyy luoda uusi ja poistaa vanha.
+</Accordion>
+
+<Accordion title="Why do I need different singular and plural names?">
+Our GraphQL API uses both forms for different operations:
+- `createPerson` (singular) for single record actions
+- `createPeople` (plural) for bulk operations
+
+Tämä luo rajoituksia silloin, kun yksikkö- ja monikkomuodot ovat samat, mutta parantaa kehittäjäkokemusta. </Accordion>
+
+<Accordion title="Why are some field names protected?">
+Tietyt kenttänimet kuten `Tyyppi` tai `Sovellus` on varattu järjestelmäkäyttöön. Valitse vaihtoehtoisia nimiä kuten `Kategoria` tai `Luokitus`.
+</Accordion>
+</AccordionGroup>
+
+## Kehittyneet ominaisuudet
+
+<AccordionGroup>
+<Accordion title="Can I create many-to-many relationships?">
+Monesta-moneen-suhteet ovat tulossa **Q1 2026**. Tällä hetkellä luo väliaikainen objekti, jonka avulla toteutat kaksi monesta yhteen -suhdetta.
+</Accordion>
+
+<Accordion title="What are Morph Many relationships?">
+Morph-monisuhteet mahdollistavat yhden objektin liittyvän useisiin eri objektityyppeihin. Esimerkiksi Mahdollisuus voi liittyä joko Henkilöön tai Yritykseen. Tämä ominaisuus on nyt saatavilla.
+</Accordion>
+
+<Accordion title="Can I reorder fields in objects?">
+Kenttien järjestäminen uudelleen on mahdollista mukautettujen asettelujen avulla **Q4 2025**. Tällä hetkellä kentät näkyvät aakkosjärjestyksessä.
+</Accordion>
+</AccordionGroup>
+
+## Pääsy ja oikeudet
+
+<AccordionGroup>
+<Accordion title="Where can I see and edit my data model?">
+You can access your Data Model under **Settings → Data Model**.
+</Accordion>
+
+<Accordion title="Why can't I see the Data Model under Settings?">
+Ota yhteyttä työtilasi ylläpitäjään. Tietomallin käyttöoikeus on yleensä rajattu vain ylläpitäjille.
+</Accordion>
+
+<Accordion title="How many custom objects or fields can I create?">
+You can create as many custom objects and fields as you need - the price won't change.
+</Accordion>
+</AccordionGroup>
+
+## Tarvitsetko lisäapua?
+
+Tarkista [toteutuspalvelumme](/l/fi/user-guide/getting-started/implementation-services) saadaksesi apua monimutkaisen tietomallin suunnittelussa.
+

@@ -15,7 +15,6 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MicrosoftMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-message-list-fetch-error-handler.service';
-import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
   type GetMessageListsResponse,
@@ -93,12 +92,6 @@ export class MicrosoftGetMessageListService {
         this.logger.error(
           `Connected account ${connectedAccount.id}: Error fetching message list: ${JSON.stringify(error)}`,
         );
-        if (isAccessTokenRefreshingError(error?.body)) {
-          throw new MessageImportDriverException(
-            error.message,
-            MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
-          );
-        }
         this.microsoftMessageListFetchErrorHandler.handleError(error);
       });
 
@@ -119,12 +112,6 @@ export class MicrosoftGetMessageListService {
     });
 
     await pageIterator.iterate().catch((error) => {
-      if (isAccessTokenRefreshingError(error?.body)) {
-        throw new MessageImportDriverException(
-          error.message,
-          MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
-        );
-      }
       this.microsoftMessageListFetchErrorHandler.handleError(error);
     });
 

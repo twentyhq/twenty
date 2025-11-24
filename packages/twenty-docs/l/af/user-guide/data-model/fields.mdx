@@ -1,0 +1,108 @@
+---
+title: Velde
+info: "Verstaan die rol van velde en hoe om dit te hanteer."
+image: /images/user-guide/fields/field.png
+sectionInfo: Buigsame datamodel ontwerp om jou unieke sakeprosesse te ondersteun
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## Oor Velde
+
+Velde is soos kolomme in 'n sigblad. Hulle stoor verskillende soorte data soos teks, nommers of datums. Fields can be standard (built-in) or custom (the ones you create).
+
+### Standaard Velde
+
+Standaard velde is ingebou met Twenty om algemene saketoepassings te hanteer.
+
+Byvoorbeeld, `Eerste Naam` en `Van` is standaard velde in die `Mense` voorwerp. Hulle stoor teksdata vir individuele name.
+
+Jy kan nie standaard velde uitvee nie, maar jy kan hulle deaktiveer as jy dit nie nodig het nie.
+
+Jy kan ook die opsies van die standaard `SELECT` tipe velde aanpas, byvoorbeeld die opsies vir die `Stage` op Geleenthede.
+
+<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}}/>
+
+### Persoonlike Velde
+
+Persoonlike velde kan by enige voorwerp gevoeg word. Jy kan teks, nommers, datums, aftreklyskeuses en meer stoor. Gebruik persoonlike velde om inligting op te spoor wat spesifiek is aan jou besigheid.
+
+Byvoorbeeld, 'n persoonlike veld vir SpaceX kan `Vuurpyl Aktiewe Status` wees, wat aandui of 'n vuurpyl operasioneel is.
+
+<img src="/images/user-guide/fields/custom-fields.png"style={{width:'100%'}}/>
+
+## Skep 'n Persoonlike Veld
+
+To add a custom field to any object, follow these steps:
+1.	Gaan na `Instellings` in die linker sybalk.
+2.	Gaan na `Datamodel`, en kies dan die voorwerp wat jy wil aanpas.
+3.	Gaan voort deur op `Voeg Veld By` te klik.
+4.	Kies 'n veldnaam en tipe wat by jou behoeftes pas. Oorweeg dit om 'n veldbeskrywing by te voeg vir beter begrip.
+
+Jou nuutgeskepte veld is nou beskikbaar binne die toepassing se velde. Om dit op 'n spesifieke aansig te vertoon, klik op die opsiemenu en kies dan `Velde`.
+
+<VimeoEmbed videoId="927628219" title="Video demonstration" />
+
+**Vinnige manier:** Klik die **+** knoppie bo regs van enige voorwerp tafel, dan kies `Pas velde aan`. Dit neem jou direk na die Datamodel instellings.
+
+<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}}/>
+
+## Deaktiveer 'n veld
+
+Jy kan 'n veld deaktiveer om dit weg te steek van die app sonder om jou data te verloor. Dink daaraan as om die veld weg te steek eerder as om dit uit te vee.
+
+Hier's hoe jy dit kan doen:
+
+1. Vind die veld wat jy wil deaktiveer in jou voorwerp instellings.
+
+2. Klik op die drie kolletjies `⋮` langs die veld om die menu oop te maak.
+
+3. Kies `Deaktiveer` uit die aftreklys.
+
+<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}}/>
+
+Wat gebeur wanneer jy 'n veld deaktiveer?
+
+1. **In die app:** Die veld verdwyn en jy kan nie nuwe waardes byvoeg nie.
+
+2. **Bestaande verhoudings:** As dit 'n verwantskapsveld is, hou bestaande verbindings aan maar jy kan nie nuwe een skep nie.
+
+3. **API toegang:** Jy kan steeds die veld en sy data deur die API verkry.
+
+Jy kan Standaard en Persoonlike Velde weer aktiveer of die opsie hê om hulle permanent uit te vee.
+
+## Maak Velde Uniek
+
+Maak 'n veld uniek om seker te maak verskillende rekords kan nie dieselfde waarde hê nie. Byvoorbeeld, e-posadresse is uniek vir elke persoon.
+
+As jy 'n fout kry wanneer jy uniekheid instel, kyk na duplikaat waardes in jou data (insluitend uitgevee rekords).
+
+## Veldkonfigurasie Beste Praktyke
+
+### Veldkonfigurasie Beste Praktyke
+
+- **Verhouding veldname kan nie opdateer word nie** na skep (beïnvloed API struktuur)
+- **Enkelvoudige en meervoudige name moet verskil**: Ons GraphQL API benodig verskillende name vir mutasies
+- **Beskermde veldname**: sommige name is voorbehou vir stelseldiens (bv. `Tipe`)
+
+### Geldeenheids- en Foonvelde
+
+- **Standaard geldeenheid**: kan via die datamodel geconfigureer word
+- **Standaard landkodes**: kan vir foonvelde via die datamodel geconfigureer word
+
+### Kies Velde
+
+- **'n Standaard opsie kan gekies word** vir elke Kiesveld
+
+### Rekord Teks Velde
+
+- **Elke voorwerp het een hoof vertoon veld**: Hierdie veld verskyn in die linkerste kolom en verteenwoordig die rekord wanneer dit aan ander voorwerpe gekoppel is. Dit moet 'n teksveld wees. Byvoorbeeld, Mense gebruik `Naam` as die hoof veld, so wanneer jy 'n persoon aan 'n maatskappy koppel, sal jy hul naam in die maatskappy se aansig sien.
+
+### Verhouding Velde
+
+- **Koppel voorwerpe aanmekaar**: Verhouding velde koppel rekords van verskillende voorwerpe. Vir gedetailleerde inligting oor die skepping en bestuur van verhoudings, sien ons [Verhouding Velde](/l/af/user-guide/data-model/relation-fields) artikel.
+

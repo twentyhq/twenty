@@ -1,0 +1,458 @@
+---
+title: Menyobjekt
+image: "\x102Fbilder\x112Fanv\x101ndarhandbok\x10Fkanban-vyer\x10Fkanban.png"
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+Ett mångsidigt menyobjekt designat att användas i en meny eller navigeringslista.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItem } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
+
+  const handleButtonClick = (event) => {
+    console.log("Icon button clicked!", event);
+  };
+
+  return (
+    <MenuItem
+      LeftIcon={IconBell}
+      accent="default"
+      text="Menu item text"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={true}
+      testId="menu-item-1"
+      onClick={handleMenuItemClick}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaper    | Typ           | Beskrivning                                                                                                                 |
+| ------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| LeftIcon      | IconComponent | En valfri vänsterikon som visas före texten i menyobjektet.                                                 |
+| accent        | string        | Anger accentfärgen på menyobjektet. Options include: `default`, `danger`, and `placeholder` |
+| text          | string        | Textinnehållet i menyobjektet.                                                                              |
+| ikonerKnappar | array         | En array med objekt som representerar ytterligare ikonknappar associerade med menyobjektet.                 |
+| isTooltipOpen | boolean       | Styr synligheten för verktygstipset associerat med menyobjektet.                                            |
+| testId        | string        | Det data-testid-attributet för teständamål.                                                                 |
+| onClick       | funktion      | Återkopplingsfunktion som utlöses när menyobjektet klickas.                                                 |
+| className     | string        | Valfritt namn för ytterligare styling                                                                                       |
+
+</Tab>
+</Tabs>
+
+## Varianter
+
+De olika varianterna av menyobjektkomponenten inkluderar följande:
+
+### Kommando
+
+Ett kommando-stil menyobjekt i en meny för att indikera tangentbordsgenvägar.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemCommand } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleCommandClick = () => {
+    console.log("Command clicked!");
+  };
+
+  return (
+    <MenuItemCommand
+      LeftIcon={IconBell}
+      text="First Option"
+      firstHotKey="⌘"
+      secondHotKey="1"
+      isSelected={true}
+      onClick={handleCommandClick}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaper   | Typ           | Beskrivning                                                                 |
+| ------------ | ------------- | --------------------------------------------------------------------------- |
+| LeftIcon     | IconComponent | En valfri vänsterikon som visas före texten i menyobjektet. |
+| text         | string        | Textinnehållet i menyobjektet.                              |
+| firstHotKey  | string        | Den första kortkommandot associerat med kommandot                           |
+| secondHotKey | string        | Det andra kortkommandot associerat med kommandot                            |
+| isSelected   | boolean       | Indikerar om menyobjektet är markerat eller framhävt                        |
+| onClick      | funktion      | Återkopplingsfunktion som utlöses när menyobjektet klickas. |
+| klassNamn    | string        | Valfritt namn för ytterligare styling                                       |
+
+</Tab>
+</Tabs>
+
+### Draggable
+
+Ett dragbart menyobjekt designat för att användas i en meny eller lista där objekt kan dras, och ytterligare åtgärder kan utföras via ikonknappar.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItemDraggable } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
+
+  return (
+    <MenuItemDraggable
+      LeftIcon={IconBell}
+      accent="default"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={false}
+      onClick={handleMenuItemClick}
+      text="Menu item draggable"
+      isDragDisabled={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaper     | Typ           | Beskrivning                                                                                                                      |
+| -------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| LeftIcon       | IconComponent | En valfri vänsterikon som visas före texten i menyobjektet.                                                      |
+| accent         | string        | Anger accentfärgen på menyobjektet. Det kan antingen vara `default`, `placeholder` och `danger`. |
+| ikonerKnappar  | array         | En array med objekt som representerar ytterligare ikonknappar associerade med menyobjektet.                      |
+| isTooltipOpen  | boolean       | Styr synligheten för verktygstipset associerat med menyobjektet.                                                 |
+| onClick        | funktion      | Callback-funktion som ska användas när länken klickas                                                                            |
+| text           | string        | Textinnehållet i menyobjektet.                                                                                   |
+| isDragDisabled | boolean       | Indikerar om dragning är inaktiverad                                                                                             |
+| klassNamn      | string        | Valfritt namn för ytterligare styling                                                                                            |
+
+</Tab>
+</Tabs>
+
+### Multi Select
+
+Tillhandahåller ett sätt att implementera flerval funktionalitet med en associerad kryssruta.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemMultiSelect } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  return (
+    <MenuItemMultiSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaper     | Typ           | Beskrivning                                                                        |
+| -------------- | ------------- | ---------------------------------------------------------------------------------- |
+| LeftIcon       | IconComponent | En valfri vänsterikon som visas före texten i menyobjektet.        |
+| text           | string        | Textinnehållet i menyobjektet.                                     |
+| vald           | boolean       | Anger om menyobjektet är valt (markerat)                        |
+| onSelectChange | funktion      | Återkopplingsfunktion som utlöses när kryssrutan tillstånd ändras. |
+| className      | string        | Valfritt namn för ytterligare styling                                              |
+
+</Tab>
+</Tabs>
+
+### Multi Select Avatar
+
+Ett flerval menyobjekt med en avatar, en kryssruta för urval och textinnehåll.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+  return (
+    <MenuItemMultiSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaper     | Typ         | Beskrivning                                                                          |
+| -------------- | ----------- | ------------------------------------------------------------------------------------ |
+| avatar         | `ReactNode` | Avataren eller ikonen som ska visas på vänster sida av menyobjektet. |
+| text           | string      | Textinnehållet i menyobjektet.                                       |
+| vald           | boolean     | Anger om menyobjektet är valt (markerat)                          |
+| onSelectChange | funktion    | Återkopplingsfunktion som utlöses när kryssrutan tillstånd ändras.   |
+| className      | string      | Valfritt namn för ytterligare styling                                                |
+
+</Tab>
+</Tabs>
+
+### Navigera
+
+Ett menyobjekt med en valfri vänsterikon, textinnehåll och en höger-pil-ikon.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemNavigate } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleNavigation = () => {
+    console.log("Navigate to another page");
+  };
+
+  return (
+    <MenuItemNavigate
+      LeftIcon={IconBell}
+      text="First Option"
+      onClick={handleNavigation}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaper | Typ           | Beskrivning                                                                 |
+| ---------- | ------------- | --------------------------------------------------------------------------- |
+| LeftIcon   | IconComponent | En valfri vänsterikon som visas före texten i menyobjektet. |
+| text       | string        | Textinnehållet i menyobjektet.                              |
+| onClick    | funktion      | Återkopplingsfunktion som utlöses när menyobjektet klickas                  |
+| className  | string        | Valfritt namn för ytterligare styling                                       |
+
+</Tab>
+</Tabs>
+
+### Välj
+
+Ett valbart menyobjekt, med valfri vänster innehåll (ikon och text) och en indikator (check-ikon) för det valda tillståndet.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemSelect } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaper  | Typ           | Beskrivning                                                                 |
+| ----------- | ------------- | --------------------------------------------------------------------------- |
+| LeftIcon    | IconComponent | En valfri vänsterikon som visas före texten i menyobjektet. |
+| text        | string        | Textinnehållet i menyobjektet.                              |
+| vald        | boolean       | Anger om menyobjektet är valt (markerat)                 |
+| inaktiverad | boolean       | Anger om menyobjektet är inaktiverat                                        |
+| svävad      | boolean       | Anger om menyobjektet för närvarande svävas över                            |
+| onClick     | funktion      | Återkopplingsfunktion som utlöses när menyobjektet klickas                  |
+| klassNamn   | string        | Valfritt namn för ytterligare styling                                       |
+
+</Tab>
+</Tabs>
+
+### Select Avatar
+
+Ett valbart menyobjekt med en avatar, med valfritt vänster innehåll (avatar och text) och en indikator (check-ikon) för det valda tillståndet.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemSelectAvatar } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      testId="menu-item-test"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaper  | Typ         | Beskrivning                                                                          |
+| ----------- | ----------- | ------------------------------------------------------------------------------------ |
+| avatar      | `ReactNode` | Avataren eller ikonen som ska visas på vänster sida av menyobjektet. |
+| text        | string      | Textinnehållet i menyobjektet.                                       |
+| vald        | boolean     | Anger om menyobjektet är valt (markerat)                          |
+| inaktiverad | boolean     | Anger om menyobjektet är inaktiverat                                                 |
+| svävad      | boolean     | Anger om menyobjektet för närvarande svävas över                                     |
+| testId      | string      | Det data-testid-attributet för teständamål.                          |
+| onClick     | funktion    | Återkopplingsfunktion som utlöses när menyobjektet klickas                           |
+| className   | string      | Valfritt namn för ytterligare styling                                                |
+
+</Tab>
+</Tabs>
+
+### Select Color
+
+Ett markerbart menyobjekt med ett färgprov för scenarier där du vill att användare ska välja en färg från en meny.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemSelectColor } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelectColor
+      color="green"
+      selected={true}
+      disabled={false}
+      hovered={true}
+      variant="default"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaper  | Typ      | Beskrivning                                                                                                                                                                                        |
+| ----------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| färg        | string   | Temafärgen som ska visas som ett prov i menyobjektet. Alternativen inkluderar: `grön`, `turkos`, `himmel`, `blå`, `lila`, `rosa`, `röd`, `orange`, `gul` och `grå` |
+| vald        | boolean  | Anger om menyobjektet är valt (markerat)                                                                                                                                        |
+| inaktiverad | boolean  | Anger om menyobjektet är inaktiverat                                                                                                                                                               |
+| svävad      | boolean  | Anger om menyobjektet för närvarande svävas över                                                                                                                                                   |
+| variant     | string   | Varianten av färgprovet. Det kan antingen vara `standard` eller `pipeline`                                                                                                         |
+| onClick     | funktion | Återkopplingsfunktion som utlöses när menyobjektet klickas                                                                                                                                         |
+| klassNamn   | string   | Valfritt namn för ytterligare styling                                                                                                                                                              |
+
+</Tab>
+</Tabs>
+
+### Växla
+
+Ett menyobjekt med en tillhörande strömbrytare för att tillåta användare att aktivera eller inaktivera en specifik funktion
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from '@tabler/icons-react';
+
+import { MenuItemToggle } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+
+  return (
+    <MenuItemToggle
+      LeftIcon={IconBell}
+      text="First Option"
+      toggled={true}
+      toggleSize="small"
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Egenskaper     | Typ           | Beskrivning                                                                 |
+| -------------- | ------------- | --------------------------------------------------------------------------- |
+| LeftIcon       | IconComponent | En valfri vänsterikon som visas före texten i menyobjektet. |
+| text           | string        | Textinnehållet i menyobjektet.                              |
+| toggled        | boolean       | Indicates whether the toggle switch is in the "on" or "off" state           |
+| onToggleChange | funktion      | Callback function triggered when the toggle switch state changes            |
+| växelstorlek   | string        | Storleken på vippströmbrytaren. Det kan vara antingen \\  |
+| className      | string        | Valfritt namn för ytterligare styling                                       |
+
+</Tab>
+</Tabs>

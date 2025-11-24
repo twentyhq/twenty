@@ -1,0 +1,44 @@
+---
+title: Etiqueta
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+Componente para categorizar ou rotular visualmente o conteúdo.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { Tag } from "@/ui/display/tag/components/Tag";
+
+export const MyComponent = () => {
+  return (
+    <Tag
+      className
+      color="red"
+      text="Urgent"
+      onClick={() => console.log("click")}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Props     | Tipo                                     | Descrição                                                                                                                                                      |
+| --------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className | Nome opcional para estilização adicional | Nome opcional para estilização adicional                                                                                                                       |
+| cor       | Nome opcional para estilização adicional | Cor da etiqueta. Opções incluem: `verde`, `turquesa`, `sky`, `azul`, `roxo`, `rosa`, `vermelho`, `laranja`, `amarelo`, `cinza` |
+| texto     | Nome opcional para estilização adicional | O conteúdo da etiqueta                                                                                                                                         |
+| onClick   | função                                   | Função opcional chamada quando um usuário clica na etiqueta                                                                                                    |
+
+</Tab>
+
+</Tabs>

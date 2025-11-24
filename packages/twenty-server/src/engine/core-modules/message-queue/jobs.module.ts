@@ -12,6 +12,7 @@ import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.modu
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
+import { UpdateWorkspaceMemberEmailJob } from 'src/engine/core-modules/user/jobs/update-workspace-member-email.job';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WebhookJobModule } from 'src/engine/core-modules/webhook/jobs/webhook-job.module';
@@ -74,6 +75,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     UpdateSubscriptionQuantityJob,
     HandleWorkspaceMemberDeletedJob,
     CleanWorkspaceDeletionWarningUserVarsJob,
+    UpdateWorkspaceMemberEmailJob,
   ],
 })
 export class JobsModule {

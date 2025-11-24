@@ -1,3 +1,5 @@
+import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
@@ -21,6 +23,8 @@ export type ViewEntityRelationProperties =
     | ViewFilterGroupEntity
     | WorkspaceEntity
     | FieldMetadataEntity
+    | UserWorkspaceEntity
+    | ApplicationEntity
   >;
 
 export type FlatView = FlatEntityFrom<

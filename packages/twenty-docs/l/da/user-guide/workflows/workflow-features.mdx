@@ -1,0 +1,320 @@
+---
+title: Workflow Features
+info: Fuld reference til alle tilgængelige arbejdsgangs udløsere, handlinger og administrationsfunktioner.
+image: /images/user-guide/workflows/robot.png
+sectionInfo: Automatiser processer og integrer med eksterne værktøjer
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/robot.png" alt="Header" />
+</Frame>
+
+## Workflow Triggers
+
+Arbejdsgange starter altid med en enkelt udløser, der definerer, hvornår automatiseringen skal køre.
+
+### Post er oprettet
+
+Starter arbejdsgangen, når en ny post oprettes i et valgt objekt (Personer, Virksomheder, Muligheder eller ethvert brugerdefineret objekt).
+
+**Konfiguration**: Vælg objekttypen til at overvåge for nye poster.
+
+### Post er opdateret
+
+Starter arbejdsgangen, når der foretages ændringer i en eksisterende post.
+
+**Konfiguration**:
+
+- Vælg objekttypen
+- Optionally specify which fields to monitor for changes
+
+### Post er opdateret eller oprettet
+
+Starter arbejdsgangen, når en post enten er oprettet eller opdateret i et valgt objekt.
+
+**Hvorfor dette er vigtigt**: Denne udløser er særlig nyttig, fordi poster oprettet via forskellige metoder opfører sig forskelligt:
+
+- **API/CSV import**: Poster oprettes med alle felter udfyldt med det samme
+- **Manuel oprettelse**: Poster oprettes først, derefter tilføjes felter i efterfølgende opdateringer
+
+**Konfiguration**:
+
+- Vælg objekttypen til at overvåge
+- Optionally specify which fields to monitor for changes
+- Arbejdsgangen vil både udløse ved første oprettelse og ved efterfølgende opdateringer
+
+### Post er slettet
+
+Starter arbejdsgangen, når en post fjernes fra et objekt.
+
+**Konfiguration**: Vælg objekttypen til at overvåge for sletninger.
+
+### Start manuelt
+
+Starter arbejdsgangen, når den udløses af en brugerhandling. Denne udløser kan tilgås via Cmd+K-menuen eller via en brugerdefineret knap i topnavigationslinjen.
+
+**Tilgængelighedskonfiguration**:
+Vælg, hvordan arbejdsgangen skal håndtere postvalg:
+
+- **Global**: Ingen post er nødvendig for at udløse denne arbejdsgang. Arbejdsgangen udløses fra hvor som helst (fra hvilket som helst objekt) og bruger ikke post(er) som input.
+
+- **Enkel**: Den valgte post(er) vil blive sendt til din arbejdsgang. Dette er konfigureret for et givent objekt. Flere poster kan vælges, før arbejdsgangen udløses. Arbejdsgangen vil køre så mange gange, som der er poster valgt.
+
+  <Warning>
+  You cannot run more than 100 workflows in parallel at any given time.
+  </Warning>
+
+- **Bulk**: The selected record(s) will be passed to your workflow. Dette er konfigureret for et givet objekt. Flere poster kan vælges, før arbejdsgangen udløses. Arbejdsforløbet vil køre én gang og give hele listen over poster som input. Dette betyder, at arbejdsforløbet skal indeholde en Iterator-handling. Dette er bedst for dem, der ønsker at optimere/begrænse antallet af arbejdsforløbskørsler.
+
+**Yderligere konfiguration**:
+
+- Select the target object (for Single and Bulk availability)
+- Choose a command icon for the workflow trigger
+- Configure navbar placement (Pinned or Not Pinned)
+
+**Adgangsmetoder**:
+
+- Cmd+K menu til at finde og starte manuelle arbejdsforløb
+- Custom button in the top navbar (if configured)
+
+### On a Schedule
+
+Starts the workflow on a recurring basis you define.
+
+**Konfiguration**:
+
+- Vælg tidsenhed (minutter, timer, dage)
+- Indtast en værdi eller brug tilpassede cron-udtryk for avanceret planlægning
+
+### Webhook
+
+Starter arbejdsforløbet, når en GET- eller POST-anmodning modtages fra en ekstern tjeneste.
+
+**Konfiguration**:
+
+- Receive a unique webhook URL
+- For POST requests, define the expected body structure
+- Konfigurer godkendelse hvis nødvendigt
+
+## Arbejdsforløbshandlinger
+
+Handlinger definerer, hvad der sker, når en udløser aktiveres. Du kan kæde flere handlinger sammen.
+
+### Create a Record
+
+Tilføjer en ny post til et valgt objekt.
+
+**Konfiguration**:
+
+- Vælg målobjektet
+- Udfyld de krævede og valgfrie felter
+- Brug data fra tidligere trin til at udfylde felter
+
+**Output**: De nyoprettede postdata er tilgængelige til brug i efterfølgende trin.
+
+### Opdater post
+
+Ændrer en eksisterende post i et valgt objekt.
+
+**Konfiguration**:
+
+- Vælg målobjektet
+- Vælg den specifikke post, der skal opdateres
+- Vælg felter, der skal ændres og indtast nye værdier
+
+**Output**: De opdaterede postdata er tilgængelige til brug i efterfølgende trin.
+
+### Slet post
+
+Fjerner en post fra et valgt objekt.
+
+**Konfiguration**:
+
+- Vælg målobjektet
+- Vælg den specifikke post, der skal slettes
+
+**Output**: De slettede postdata forbliver tilgængelige til brug i efterfølgende trin.
+
+### Søg poster
+
+Finder poster inden for et valgt objekt ved hjælp af filterbetingelser.
+
+**Konfiguration**:
+
+- Vælg objektet, der skal søges
+- Indstil filterkriterier for at indsnævre resultaterne
+- Konfigurer sortering og grænser
+
+**Output**: Returnerer matchende poster, der kan bruges i efterfølgende trin.
+
+**Bedste praksis**: Brug grene efter søge poster til at håndtere "fundet" vs "ikke fundet" scenarier.
+
+### Iterator
+
+Looper gennem en række poster returneret fra et tidligere trin, så du kan udføre handlinger på hver post individuelt.
+
+**Konfiguration**:
+
+- Vælg rækken af poster fra et tidligere trin (f.eks. resultater fra Søge Post)
+- Definer handlingerne, der skal udføres på hver post i loopen
+- Konfigurer variabelnavnet for at referere til hver post i iterationen
+
+**Eksempel**: Søge poster returnerer 5 personer, brug derefter Iterator til at sende en email til hver person eller opdatere hver post individuelt.
+
+**Bemærk**: Iterator er i øjeblikket i beta. Activate it under Settings > Releases > Lab.
+
+### Filtrér
+
+Filtrerer en række poster baseret på angivne betingelser og tillader kun poster, der opfylder kriterierne, at passere igennem.
+
+**Konfiguration**:
+
+- Vælg rækken af poster til at filtrere
+- Definer filterbetingelser og kriterier
+- Konfigurer, hvilke poster der skal passere igennem til efterfølgende trin
+
+**Output**: Returnerer kun de poster, der opfylder de angivne filterbetingelser.
+
+### Send e-mail
+
+Sends an email from your workflow.
+
+**Forudsætninger**: Tilføj en email-konto i Indstillinger > Konti
+
+**Konfiguration**:
+
+- Indtast modtagerens email-adresse
+- Indstil emnelinje
+- Komponer beskedindhold
+- Referér variable fra tidligere trin til personalisering
+
+**Bemærk**: Email-vedhæftninger vil være tilgængelige i Q1 2026.
+
+### Kode
+
+Runs custom JavaScript within your workflow.
+
+**Konfiguration**:
+
+- Skriv JavaScript-kode i editoren
+- Tilgå variable fra tidligere trin
+- Returner variable til brug i efterfølgende trin
+- Test kode direkte i trin
+
+**Adgang**: Administrer API-nøgler i Indstillinger → API & Webhooks
+
+### Form
+
+Fremkalder en formular under arbejdsforløbets kørsel for at indsamle brugerinput.
+
+**Konfiguration**:
+
+- Definer inputfelter med typer, etiketter og pladsholdere
+- Konfigurer valideringsregler
+- Indstil formens titel og beskrivelse
+
+**Output**: Formulardata er tilgængelige til brug i efterfølgende trin.
+
+<Warning>
+Formularer er i øjeblikket designet til manuelle triggere kun. For arbejdsprocesser med andre triggere (Record Created, Updated osv.), er formularer kun tilgængelige via arbejdsproceskørselsgrænsefladen, hvilket ikke er den forventede brugeroplevelse. Et notifikationscenter vil blive udgivet i 2026 for at støtte formularer korrekt i automatiserede arbejdsforløb.
+</Warning>
+
+### HTTP Anmodning
+
+Sender en anmodning til en ekstern API som en del af din arbejdsforløb.
+
+**Konfiguration**:
+
+- Indtast API-endpoint-URL
+- Vælg HTTP-metode (GET, POST, PUT, PATCH, DELETE)
+- Tilføj påkrævede headers og værdier
+- Inkluder anmodningskrop for POST/PUT/PATCH-anmodninger
+- Giv et eksempel på svar for strukturforhåndsvisning
+
+## Workflow Management
+
+### Creating Workflows
+
+1. Click "+ Add a Workflow" to begin
+2. Click "Untitled" to name your workflow
+3. Choose and configure your workflow trigger
+4. Add actions to your workflow
+5. Test og iterér
+6. Activate your workflow (currently in draft mode) once you're done editing it
+
+**Note**: If you don't see the Workflows section, this is due to a permissions issue. Kontakt din arbejdsområdeadministrator for at få adgang til arbejdsprocesser.
+
+### Workflow Statuses
+
+- **Kladde**: Bliver redigeret, endnu ikke offentliggjort
+- **Aktiv**: Live-version reagerer på triggere
+- **Deaktiveret**: Tidligere aktiv men manuelt stoppet
+- **Arkiveret**: Tidligere versioner holdt for historik
+
+### Activating Workflows
+
+Klik på **Aktiver** for at offentliggøre din kladde som en ny version. This makes the workflow eligible to run when triggered but doesn't immediately execute it.
+
+### Testing Workflows
+
+Test workflows before activation using:
+
+- Manual triggers (when no record selected)
+- Individual action testing (especially Code actions)
+- Draft mode testing that doesn't activate the workflow
+
+### Arbejdsgangskørsler
+
+A **Run** is a record of workflow execution containing:
+
+- Status (success, failed, running)
+- Output data from each step
+- Forfatter og tidsstempler
+- Error messages if applicable
+
+**Viewing Runs**:
+
+- Check the **Runs** panel in the workflow editor
+- Open **Workflow Runs** view for monitoring across all workflows
+
+**Performance Tip**: Hide workflow runs from the "All workflows" page and other workflow pages to improve loading performance, as large numbers of runs can slow down page loading.
+
+### Versionshistorik
+
+- Se alle versioner under **Versioner** feltet
+- Klik på en hvilken som helst version for at se detaljer
+- Brug **Brug som kladde** for at gendanne tidligere versioner
+- Handle draft conflicts with override or return options
+
+## Bedste praksis
+
+### Workflow Organization
+
+- **Descriptive Names**: Use clear, specific workflow names
+- **Step Naming**: Rename steps to describe their function
+- **Documentation**: Add comments in Code actions
+- **Categorization**: Group related workflows logically
+- **Custom Fields**: Add fields to the Workflow object in your data model (similar to other objects) to organize and categorize workflows with custom properties
+
+### Performanceoptimering
+
+- **Minimize API Calls**: Batch operations when possible
+- **Effektive søgninger**: Brug specifikke filterkriterier
+- **Error Handling**: Plan for failure scenarios
+- **Rate Limiting**: Respect external API limits
+
+### Dataflowstyring
+
+- **Branch Logic**: Use branches after Search Records
+- **Variable Usage**: Leverage data from previous steps
+- **Data Validation**: Validate inputs in Code actions
+- **Field Mapping**: Plan data transformations carefully
+
+### Overvågning og Vedligeholdelse
+
+- **Regular Monitoring**: Check workflow runs for errors
+- **Performance Review**: Analyze execution times and success rates
+- **Update Management**: Test changes in draft before activation
+- **Team Coordination**: Document workflows for team members
+
+For practical examples of these features in action, see our [Internal Automations](/l/da/user-guide/workflows/internal-automations) and [External Tool Integration](/l/da/user-guide/workflows/external-tool-integration) guides.

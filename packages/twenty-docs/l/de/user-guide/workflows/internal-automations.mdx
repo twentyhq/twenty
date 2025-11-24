@@ -1,0 +1,170 @@
+---
+title: Interne Automatisierungen
+info: "Automatisieren Sie wiederholte Aufgaben, um manuelle Arbeit zu reduzieren und Ihre Daten genau zu halten."
+image: /images/user-guide/workflows/internal-automations.png
+sectionInfo: Automatisieren Sie Prozesse und integrieren Sie externe Werkzeuge
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/internal-automations.png" alt="Header" />
+</Frame>
+
+Im Folgenden finden Sie Workflow-Beispiele, die Sie einsetzen könnten, um wiederkehrende Aufgaben zu automatisieren und so manuelle Arbeit zu verringern und Ihre Daten aktuell zu halten.
+
+## Datenmanagement-Automatisierungen
+
+### Automatisches Markieren von persönlichen E-Mails
+
+**Problem**: Ihr Team muss persönliche von geschäftlichen E-Mail-Adressen unterscheiden, um eine bessere Zielausrichtung und Compliance zu gewährleisten.
+
+**Lösung**: Erstellen Sie einen Workflow, der automatisch ein "ist persönliche E-Mail"-Feld aktualisiert, wenn eine E-Mail-Adresse hinzugefügt oder aktualisiert wird.
+
+**Auslöser**: Datensatz wird aktualisiert (Personenobjekt, E-Mail-Feld)
+
+**Aktionen**:
+
+- Code-Aktion, um zu überprüfen, ob die E-Mail-Domain mit allgemeinen persönlichen Anbietern übereinstimmt (gmail.com, yahoo.com, etc.)
+- Datensatz aktualisieren, um das "ist persönliche E-Mail"-Flag zu setzen
+
+### Lead-Zuweisung - Rundlauf
+
+**Problem**: Neue Leads müssen fair auf Ihr Vertriebsteam verteilt werden, um eine ausgewogene Arbeitsbelastung sicherzustellen.
+
+**Lösung**: Weisen Sie automatisch neue Leads mithilfe eines Rundlauf-Systems den Vertriebsmitarbeitern zu.
+
+**Auslöser**: Datensatz wird erstellt (Personenobjekt)
+
+**Aktionen**:
+
+- Datensätze durchsuchen, um den zuletzt zugewiesenen Vertreter zu finden
+- Code-Aktion, um den nächsten Vertreter in der Rotation zu bestimmen
+- Datensatz aktualisieren, um den Lead dem ausgewählten Vertreter zuzuweisen
+- E-Mail senden, um den zugewiesenen Vertreter zu benachrichtigen
+
+### Lead-Zuweisung - Gebietsbezogen
+
+**Problem**: Leads sollten basierend auf geografischen Gebieten oder Unternehmensmerkmalen zugewiesen werden.
+
+**Lösung**: Leiten Sie Leads, basierend auf Standort, Unternehmensgröße oder Branche, an den entsprechenden Vertriebsmitarbeiter weiter.
+
+**Auslöser**: Datensatz wird erstellt (Personen- oder Unternehmensobjekt)
+
+**Aktionen**:
+
+- Code-Aktion, um Gebiet basierend auf Standort/Branchenregeln zu bestimmen
+- Datensätze durchsuchen, um den Gebietsinhaber zu finden
+- Datensatz aktualisieren, um den Lead zuzuweisen
+- Datensatz für eine Nachverfolgungsaufgabe erstellen
+
+## Vertriebsprozess-Automatisierungen
+
+### Verwaltung der Vertriebsphasen - Geschlossen Gewonnen
+
+**Problem**: Wenn Geschäfte abgeschlossen werden, sind zahlreiche manuelle Aktualisierungen in verschiedenen Datensätzen und bei Teammitgliedern erforderlich.
+
+**Lösung**: Alle Aktivitäten nach dem Gewinn automatisch verwalten, wenn eine Gelegenheit in "Geschlossen Gewonnen" übergeht.
+
+**Trigger**: Record is Updated (Opportunities object, Stage field = "Closed Won")
+
+**Aktionen**:
+
+- Datensatz aktualisieren, um den Unternehmenstyp von "Prospekt" auf "Kunde" zu ändern
+- Datensatz für Onboarding-Aufgaben erstellen, die dem Account-Manager zugewiesen sind
+- E-Mail-Benachrichtigung an das Customer-Success-Team senden
+- HTTP-Anfrage, um externes Abrechnungssystem zu aktualisieren
+
+### Verwaltung der Vertriebsphasen - Geschlossen Verloren Erneuerung
+
+**Problem**: Wenn Erneuerungsgelegenheiten verloren gehen, muss der Kundenstatus für eine ordnungsgemäße Kontoverwaltung aktualisiert werden.
+
+**Lösung**: Kundenstatus automatisch aktualisieren, wenn Erneuerungsverträge verloren gehen.
+
+**Auslöser**: Datensatz wird aktualisiert (Chancenobjekt, Stadium = "Geschlossen Verloren" UND Typ = "Erneuerung")
+
+**Aktionen**:
+
+- Datensatz aktualisieren, um den Unternehmenstyp von "Kunde" auf "Churn-Kunde" zu ändern
+- Datensatz für Churn-Analyse-Aufgabe erstellen
+- E-Mail-Warnung an Kundenbetreuer senden
+- Datensatz aktualisieren, um Austrittsdatum und Grund hinzuzufügen
+
+### Benachrichtigungen für ruhende Gelegenheiten
+
+**Problem**: Gelegenheiten werden länger nicht aktualisiert, was dazu führt, dass Deals kalt werden und Prognosen unzuverlässig werden.
+
+**Lösung**: Automatische Warnungen senden, wenn Gelegenheiten in letzter Zeit nicht aktualisiert wurden.
+
+**Auslöser**: Nach Plan (täglich)
+
+**Aktionen**:
+
+- Datensätze durchsuchen für Gelegenheiten, die in X Tagen nicht aktualisiert wurden
+- Code-Aktion, um Warnmeldung mit Gelegenheit-Details zu formatieren
+- E-Mail an Gelegenheitseigentümer und Manager senden
+- Datensatz für Nachverfolgungsaufgabe erstellen, falls keine Antwort erfolgt
+
+## Produktivitätsautomatisierungen
+
+### Wöchentliche Aufgabenübersicht
+
+**Problem**: Teammitglieder verlieren den Überblick über ihre bevorstehenden Aufgaben und Fristen.
+
+**Lösung**: Automatisierte wöchentliche E-Mail-Erinnerungen mit Aufgabenübersichten senden.
+
+**Auslöser**: Nach Plan (jeden Montag um 8 Uhr)
+
+**Aktionen**:
+
+- Datensätze durchsuchen für Aufgaben, die in dieser Woche fällig sind, nach Verantwortlichem
+- Code-Aktion, um Aufgabenliste nach Person zu formatieren
+- E-Mail an jedes Teammitglied mit ihrer Aufgabenübersicht senden
+- E-Mail mit Teamübersicht an Manager senden
+
+### Automatisierte Nachverfolgung von Besprechungen
+
+**Problem**: Wichtige Maßnahmen aus Besprechungen werden vergessen oder verzögert.
+
+**Lösung**: Automatisch Nachverfolgungsaufgaben erstellen, wenn Besprechungen geplant oder abgeschlossen sind.
+
+**Auslöser**: Datensatz wird erstellt (Aktivitätsobjekt, Typ = "Besprechung")
+
+**Aktionen**:
+
+- Datensatz für vorbereitende Besprechungsaufgabe erstellen
+- Datensatz für Nachverfolgungsaufgabe nach der Besprechung erstellen
+- E-Mail-Erinnerung an Teilnehmer senden
+- Datensatz aktualisieren, um Aufgaben mit der Besprechung zu verknüpfen
+
+### Synchronisierung von Feldern über Objekte
+
+**Problem**: Informationen von verbundenen Datensätzen sollten leicht zugänglich sein (z.B. E-Mail des Hauptkontakts im Chancenobjekt).
+
+**Lösung**: Felder zwischen verbundenen Objekten automatisch synchronisieren, bis verschachtelte Felder verfügbar sind.
+
+**Auslöser**: Datensatz wird aktualisiert (Chancenobjekt, Ansprechpartner-Feld)
+
+**Aktionen**:
+
+- Datensätze durchsuchen, um die Details der verbundenen Person zu finden
+- Datensatz aktualisieren, um E-Mail-Adresse zu Gelegenheit zu kopieren
+- Datensatz aktualisieren, um Telefonnummer zu Gelegenheit zu kopieren
+- Datensatz aktualisieren, um Unternehmensinformationen zu kopieren
+
+## Datenvalidierung und Bereinigung
+
+### Standardisierung von Telefonnummern
+
+**Problem**: Telefonnummern werden in verschiedenen Formaten eingegeben, was sie schwer nutzbar für Anrufe oder Nachrichten macht.
+
+**Lösung**: Telefonnummern automatisch in ein Standardformat bringen, wenn sie eingegeben werden.
+
+**Auslöser**: Datensatz wird aktualisiert (Personenobjekt, Telefonnummer-Feld)
+
+**Aktionen**:
+
+- Code-Aktion, um Telefonnummer zu analysieren und zu formatieren
+- Datensatz mit standardisiertem Telefonformat aktualisieren
+- Update Record to add country code if missing
+
+For more complex automation needs, consider our [Professional Services](/l/de/user-guide/workflows/professional-services) or explore [External Tool Integration](/l/de/user-guide/workflows/external-tool-integration).
+

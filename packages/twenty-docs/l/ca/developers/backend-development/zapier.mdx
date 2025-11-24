@@ -1,0 +1,91 @@
+---
+title: Aplicació Zapier
+image: /images/user-guide/integrations/plug.png
+---
+
+<Frame>
+  <img src="/images/user-guide/integrations/plug.png" alt="Header" />
+</Frame>
+
+Effortlessly sync Twenty with 3000+ apps using [Zapier](https://zapier.com/). Automatitza les tasques, augmenta la productivitat i millora les relacions amb els clients!
+
+## Sobre Zapier
+
+Zapier és una eina que et permet automatitzar els fluxos de treball connectant les aplicacions que el teu equip utilitza cada dia. El concepte fonamental de Zapier és l'automatització de fluxos de treball, anomenats Zaps, que inclouen desencadenants i accions.
+
+Pots aprendre més sobre com funciona Zapier [aquí](https://zapier.com/how-it-works).
+
+## Configuració
+
+### Pas 1: Instal·la els paquets de Zapier
+
+```bash
+cd packages/twenty-zapier
+
+yarn
+```
+
+### Pas 2: Inicia sessió amb la CLI
+
+Utilitza els teus credencials de Zapier per iniciar sessió utilitzant la CLI:
+
+```bash
+zapier login
+```
+
+### Pas 3: Defineix les variables d'entorn
+
+Des de la carpeta `packages/twenty-zapier`, executa:
+
+```bash
+cp .env.example .env
+```
+
+Executa l'aplicació localment, ves a [http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks) i genera una clau API.
+
+Reemplaça el valor **YOUR_API_KEY** en el fitxer `.env` amb la clau API que acabes de generar.
+
+## Desenvolupament
+
+<Warning>
+
+Assegura't d'executar `yarn build` abans de qualsevol comanda `zapier`.
+
+</Warning>
+
+### Provar
+
+```bash
+yarn test
+```
+
+### Lint
+
+```bash
+yarn format
+```
+
+### Observa i compila mentre edites el codi
+
+```bash
+yarn watch
+```
+
+### Valida la teva aplicació de Zapier
+
+```bash
+yarn validate
+```
+
+### Desplega la teva aplicació de Zapier
+
+```bash
+yarn deploy
+```
+
+### Llista totes les comandes de CLI de Zapier
+
+```bash
+zapier
+```
+

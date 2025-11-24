@@ -1,0 +1,319 @@
+---
+title: Funcions de flux de treball
+info: Referència completa per a tots els desencadenants, accions i funcions de gestió de flux de treball disponibles.
+image: /images/user-guide/workflows/robot.png
+sectionInfo: Automatitza processos i integra amb eines externes
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/robot.png" alt="Header" />
+</Frame>
+
+## Desencadenants del flux de treball
+
+Els fluxos de treball sempre comencen amb un únic desencadenant que defineix quan s'ha de llançar l'automatització.
+
+### Es crea un registre
+
+Inicia el flux de treball quan es crea un registre nou en un objecte seleccionat (Persones, Empreses, Oportunitats o qualsevol objecte personalitzat).
+
+**Configuració**: Selecciona el tipus d'objecte a monitorar per a nous registres.
+
+### S'actualitza un registre
+
+Inicia el flux de treball quan es fan canvis en un registre existent.
+
+**Configuració**:
+
+- Selecciona el tipus d'objecte
+- Opcionalment especifica quins camps cal monitorar per a canvis
+
+### Es crea o s'actualitza un registre
+
+Inicia el flux de treball quan un registre es crea o s'actualitza en un objecte seleccionat.
+
+**Per què és important**: Aquest desencadenant és especialment útil perquè els registres creats per diferents mètodes es comporten de manera diferent:
+
+- **API/importacions CSV**: Els registres es creen amb tots els camps omplerts immediatament
+- **Creació manual**: Els registres es creen primer i després s'afegeixen els camps en les actualitzacions posteriors
+
+**Configuració**:
+
+- Selecciona el tipus d'objecte a monitorar
+- Opcionalment especifica quins camps cal monitorar per a canvis
+- El flux de treball es desencadenarà tant a la creació inicial com en qualsevol actualització posterior
+
+### Record is Deleted
+
+Inicia el flux de treball quan s'elimina un registre d'un objecte.
+
+**Configuració**: Selecciona el tipus d'objecte a monitorar per a eliminacions.
+
+### Llança manualment
+
+Inicia el flux de treball quan un usuari acciona un desencadenant. Aquest desencadenant es pot accedir a través del menú Cmd+K o mitjançant un botó personalitzat a la barra de navegació superior.
+
+**Configuració de disponibilitat**: Tria com el flux de treball ha de gestionar la selecció de registres:
+
+- **Global**: No es requereix cap registre per desencadenar aquest flux de treball. El flux de treball es activa des de qualsevol lloc (de qualsevol objecte) i no utilitza registre(s) com a entrada.
+
+- **Individual**: El(s) registre(s) seleccionat(s) es passarà(n) al teu flux de treball. Això està configurat per a un objecte donat. Es poden seleccionar diversos registres abans de desencadenar el flux de treball. El flux de treball s'executarà tantes vegades com registres es seleccionin.
+
+  <Warning>
+  You cannot run more than 100 workflows in parallel at any given time.
+  </Warning>
+
+- **Massiu**: El(s) registre(s) seleccionat(s) es passarà(n) al teu flux de treball. Això està configurat per a un objecte determinat. Es poden seleccionar diversos registres abans d'executar el flux de treball. El flux de treball s'executarà una vegada, proporcionant la llista completa de registres com a entrada. Això significa que el flux de treball ha de contenir una acció d'Iterador. Això és millor per a persones que volen optimitzar/limitar la quantitat d'execucions de flux de treball.
+
+**Configuració addicional**:
+
+- Selecciona l'objecte destí (per a disponibilitat individual i massiva)
+- Tria una icona de comanda per al disparador del flux de treball
+- Configura la col·locació a la barra de navegació (fixada o no fixada)
+
+**Mètodes d'accés**:
+
+- Menú Cmd+K per trobar i llançar fluxos de treball manuals
+- Botó personalitzat a la barra de navegació superior (si configurat)
+
+### Programat
+
+Inicia el flux de treball de manera recurrent segons defines.
+
+**Configuració**:
+
+- Selecciona la unitat de temps (minuts, hores, dies)
+- Entra un valor o utilitza expressions cron personalitzades per a una programació avançada
+
+### Webhook
+
+Inicia el flux de treball quan es rep una sol·licitud GET o POST d'un servei extern.
+
+**Configuració**:
+
+- Rep una URL de webhook única
+- Per a peticions POST, defineix l'estructura esperada del cos
+- Configura l'autenticació si necessari
+
+## Accions del Flux de Treball
+
+Les accions defineixen què passa després que un disparador es dispara. Pots encadenar múltiples accions juntes.
+
+### Crear un Registre
+
+Afegeix un nou registre a un objecte seleccionat.
+
+**Configuració**:
+
+- Selecciona l'objecte destí
+- Emplena els camps necessaris i opcionals
+- Utilitza les dades dels passos anteriors per omplir els camps
+
+**Resultat**: Les dades del nou registre creat estan disponibles per a usar en els passos següents.
+
+### Actualitzar el Registre
+
+Modifica un registre existent en un objecte seleccionat.
+
+**Configuració**:
+
+- Selecciona l'objecte destí
+- Tria el registre específic per actualitzar
+- Selecciona els camps a modificar i entra els nous valors
+
+**Resultat**: Les dades del registre actualitzat estan disponibles per a usar en els passos següents.
+
+### Eliminar el Registre
+
+Elimina un registre d'un objecte seleccionat.
+
+**Configuració**:
+
+- Selecciona l'objecte destí
+- Tria el registre específic per eliminar
+
+**Resultat**: Les dades del registre eliminat es mantenen disponibles per a usar en els passos següents.
+
+### Cerca Registres
+
+Troba registres dins d'un objecte seleccionat utilitzant condicions de filtre.
+
+**Configuració**:
+
+- Selecciona l'objecte per cercar
+- Estableix els criteris de filtre per restringir els resultats
+- Configura l'ordenació i els límits
+
+**Resultat**: Retorna els registres coincidents que poden ser utilitzats en els passos següents.
+
+**Millor Pràctica**: Utilitza branques després de buscar Registres per gestionar els escenaris de "trobat" vs "no trobat".
+
+### Iterador
+
+Passa per una sèrie de registres retornats d'un pas anterior, permetent fer accions sobre cada registre individualment.
+
+**Configuració**:
+
+- Selecciona la sèrie de registres d'un pas anterior (per exemple, resultats de Buscar Registres)
+- Defineix les accions a realitzar en cada registre en el bucle
+- Configura el nom de la variable per referenciar cada registre en la iteració
+
+**Example**: Search Records returns 5 people, then use Iterator to send an email to each person or update each record individually.
+
+**Nota**: L'Iterador està actualment en beta. Activa'l a Configuració → Llançaments → Laboratori.
+
+### Filtrar
+
+Filters an array of records based on specified conditions, allowing only records that meet the criteria to pass through.
+
+**Configuració**:
+
+- Selecciona la sèrie de registres a filtrar
+- Defineix condicions de filtratge i criteris
+- Configura quins registres han de passar als passos següents
+
+**Resultat**: Retorna només els registres que compleixen les condicions de filtre especificades.
+
+### Enviar correu electrònic
+
+Envia un correu electrònic des del teu flux de treball.
+
+**Requisits previs**: Afegeix un compte de correu electrònic a Configuració > Comptes
+
+**Configuració**:
+
+- Entra l'adreça de correu electrònic del destinatari
+- Estableix la línia de l'assumpte
+- Redacta el cos del missatge
+- Referència les variables dels passos anteriors per a la personalització
+
+**Nota**: Els arxius adjunts de correu electrònic estaran disponibles el primer trimestre de 2026.
+
+### Codi
+
+Executa JavaScript personalitzat dins del teu flux de treball.
+
+**Configuració**:
+
+- Escriu el codi JavaScript a l'editor
+- Accedeix a les variables dels passos anteriors
+- Retorna les variables per a utilitzar-les en els passos següents
+- Prova el codi directament en el pas
+
+**Accés**: Gestiona les claus API a Configuració → API i Webhooks
+
+### Formulari
+
+Desplega un formulari durant l'execució del flux de treball per recollir dades de l'usuari.
+
+**Configuració**:
+
+- Defineix camps d'entrada amb tipus, etiquetes i camps de simulació
+- Configura les regles de validació
+- Estableix el títol i la descripció del formulari
+
+**Resultat**: Les respostes al formulari estan disponibles per a ser utilitzades en els passos següents.
+
+<Warning>
+Els formularis estan actualment dissenyats només per a desencadenadors manuals. Per a fluxos de treball amb altres desencadenadors (Registre Creat, Actualitzat, etc.), els formularis només són accessibles mitjançant la interfície d'execució de fluxos de treball, cosa que no és l'experiència d'usuari esperada. Un centre de notificacions es llançarà al 2026 per suportar adequadament els formularis en fluxos de treball automatitzats.
+</Warning>
+
+### Sol·licitud HTTP
+
+Envia una sol·licitud a una API externa com a part del teu flux de treball.
+
+**Configuració**:
+
+- Entra la URL del punt final de l'API
+- Selecciona el mètode HTTP (GET, POST, PUT, PATCH, DELETE)
+- Afegeix les capçaleres i valors necessaris
+- Inclou el cos de la sol·licitud per a peticions POST/PUT/PATCH
+- Proporciona una mostra de resposta per a la vista prèvia d'estructura
+
+## Gestió de Fluxos de Treball
+
+### Creació de Fluxos de Treball
+
+1. Fes clic a "+ Afegir un Flux de Treball" per començar
+2. Fes clic a "Sense títol" per donar nom al teu flux de treball
+3. Escull i configura el teu disparador de flux de treball
+4. Afegeix accions al teu flux de treball
+5. Prova i repeteix
+6. Activa el teu flux de treball (actualment en mode esborrany) un cop hagis acabat d'editar-lo
+
+**Nota**: Si no veus la secció de fluxos de treball, això es deu a un problema de permisos. Contacta amb l'administrador del teu espai de treball per concedir-te accés als fluxos de treball.
+
+### Estats del Flux de Treball
+
+- **Esborrany**: Sent editat, encara no publicat
+- **Actiu**: Versió en viu que respon als disparadors
+- **Desactivat**: Prèviament actiu però aturat manualment
+- **Arxivat**: Versions passades guardades per al historial
+
+### Activació de Fluxos de Treball
+
+Fes clic a **Activa** per publicar el teu esborrany com a nova versió. Això fa que el flux de treball sigui apte per a executar-se quan es dispari, però no l'executa immediatament.
+
+### Prova de Fluxos de Treball
+
+Prova fluxos de treball abans de l'activació utilitzant:
+
+- Disparadors manuals (quan no es selecciona cap registre)
+- Prova d'accions individuals (especialment accions de codi)
+- Prova en mode esborrany que no activa el flux de treball
+
+### Execucions de Flux de Treball
+
+Una **Execució** és un registre de l'execució del flux de treball que conté:
+
+- Estat (èxit, fallat, en execució)
+- Dades de sortida de cada pas
+- Autor i marques de temps
+- Missatges d'error si s'escau
+
+**Veure Execucions**:
+
+- Comprova el panell **Execucions** a l'editor de fluxos de treball
+- Obre la vista **Execucions de Fluxos de Treball** per a monitorització a través de tots els fluxos de treball
+
+**Consell de rendiment**: Amaga les execucions de fluxos de treball des de la pàgina "Tots els fluxos de treball" i altres pàgines de fluxos de treball per millorar el rendiment del càrrega, ja que un gran nombre d'execucions poden alentir la càrrega de la pàgina.
+
+### Historial de Versions
+
+- Veure totes les versions sota el camp **Versions**
+- Fes clic a qualsevol versió per veure els detalls
+- Utilitza **Utilitzar com a esborrany** per restaurar versions anteriors
+- Gestiona conflictes d'esborrany amb opcions de sobreescriure o tornar
+
+## Millors pràctiques
+
+### Organització dels Fluxos de Treball
+
+- **Noms Descriptius**: Utilitza noms clars i específics per als fluxos de treball
+- **Nomenament dels Passos**: Reanomena els passos per descriure la seva funció
+- **Documentació**: Afegeix comentaris a les accions de codi
+- **Categorització**: Agrupa fluxos de treball relacionats de manera lògica
+- **Camps Personalitzats**: Afegeix camps a l'objecte Flux de Treball en el teu model de dades (semblant a altres objectes) per organitzar i categoritzar fluxos de treball amb propietats personalitzades
+
+### Optimizació del Rendiment
+
+- **Minimitza les Trucades d'API**: Agrupa operacions quan sigui possible
+- **Cerques Eficients**: Utilitza criteris de filtre específics
+- **Gestió d'Errors**: Planifica per a escenaris de fallada
+- **Limitació de Velocitat**: Respecta els límits de l'API externa
+
+### Gestió del Flux de Dades
+
+- **Lògica de Branques**: Utilitza branques després de Cercar Registres
+- **Ús de Variables**: Aprofita les dades dels passos anteriors
+- **Validació de Dades**: Valida les entrades en accions de codi
+- **Mapatge de Camps**: Planifica les transformacions de dades acuradament
+
+### Monitoratge i Manteniment
+
+- **Monitoratge Regular**: Comprova les execucions de flux de treball per errors
+- **Revisió de Rendiment**: Analitza els temps d'execució i les taxes d'èxit
+- **Gestió d'Actualitzacions**: Prova els canvis en esborrany abans de l'activació
+- **Coordinació de l'Equip**: Documenta fluxos de treball per a membres de l'equip
+
+Per obtenir exemples pràctics d'aquestes funcions en acció, vegeu les nostres guies d'[Automatitzacions Internes](/l/ca/user-guide/workflows/internal-automations) i [Integració d'Eines Externes](/l/ca/user-guide/workflows/external-tool-integration).

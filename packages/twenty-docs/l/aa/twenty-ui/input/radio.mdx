@@ -1,0 +1,104 @@
+---
+title: crwdns62132:0crwdne62132:0
+image: crwdns62134:0crwdne62134:0
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
+</Frame>
+
+crwdns62136:0crwdne62136:0
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Radio } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const handleRadioChange = (event) => {
+    console.log("Radio button changed:", event.target.checked);
+  };
+
+  const handleCheckedChange = (checked) => {
+    console.log("Checked state changed:", checked);
+  };
+
+
+  return (
+    <Radio
+      checked={true}
+      value="Option 1"
+      onChange={handleRadioChange}
+      onCheckedChange={handleCheckedChange}
+      size="large"
+      disabled={false}
+      labelPosition="right"
+    />
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| crwdns62138:0crwdne62138:0 | crwdns62140:0crwdne62140:0 | crwdns62142:0crwdne62142:0                                                            |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| crwdns62144:0crwdne62144:0 | crwdns62146:0crwdne62146:0 | crwdns62148:0crwdne62148:0                                                            |
+| crwdns62152:0crwdne62152:0 | crwdns62154:0crwdne62154:0 | crwdns62156:0crwdne62156:0                                                            |
+| crwdns62158:0crwdne62158:0 | crwdns62160:0crwdne62160:0 | crwdns62164:0crwdne62164:0                                                            |
+| crwdns62168:0crwdne62168:0 | crwdns62172:0crwdne62172:0 | crwdns62176:0crwdne62176:0                                                            |
+| crwdns62178:0crwdne62178:0 | crwdns62182:0crwdne62182:0 | crwdns62186:0crwdne62186:0                                                            |
+| crwdns62190:0crwdne62190:0 | crwdns62194:0crwdne62194:0 | crwdns62198:0crwdne62198:0                                                            |
+| crwdns62202:0crwdne62202:0 | crwdns62206:0crwdne62206:0 | crwdns62210:0crwdne62210:0 crwdns62214:0crwdne62214:0 |
+| crwdns62218:0crwdne62218:0 | crwdns62222:0crwdne62222:0 | crwdns62226:0crwdne62226:0                                                            |
+| crwdns62230:0crwdne62230:0 | crwdns62234:0crwdne62234:0 | crwdns62236:0crwdne62236:0 crwdns62240:0crwdne62240:0 |
+
+</Tab>
+</Tabs>
+
+## crwdns62244:0crwdne62244:0
+
+crwdns62248:0crwdne62248:0
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import React, { useState } from "react";
+import { Radio, RadioGroup } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const [selectedValue, setSelectedValue] = useState("Option 1");
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+  
+  return (
+    <RadioGroup value={selectedValue} onChange={handleChange}>
+      <Radio value="Option 1" />
+      <Radio value="Option 2" />
+      <Radio value="Option 3" />
+    </RadioGroup>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| crwdns62252:0crwdne62252:0 | crwdns62256:0crwdne62256:0 | crwdns62260:0crwdne62260:0 |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
+| crwdns62264:0crwdne62264:0 | crwdns62268:0crwdne62268:0 | crwdns62272:0crwdne62272:0 |
+| crwdns62276:0crwdne62276:0 | crwdns62278:0crwdne62278:0 | crwdns62280:0crwdne62280:0 |
+| crwdns62282:0crwdne62282:0 | crwdns62284:0crwdne62284:0 | crwdns62286:0crwdne62286:0 |
+| crwdns62288:0crwdne62288:0 | crwdns62290:0crwdne62290:0 | crwdns62292:0crwdne62292:0 |
+
+</Tab>
+
+</Tabs>

@@ -1,0 +1,54 @@
+---
+title: Kiválasztás
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+Lehetővé teszi a felhasználók számára, hogy egy előre meghatározott lehetőségek listájából válasszanak.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from 'recoil';
+import { IconTwentyStar } from 'twenty-ui/display';
+
+import { Select } from '@/ui/input/components/Select';
+
+export const MyComponent = () => {
+
+  return (
+    <RecoilRoot>
+      <Select
+        className
+        disabled={false}
+        label="Select an option"
+        options={[
+          { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
+          { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
+        ]}
+        value="option1"
+      />
+    </RecoilRoot>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Tulajdonságok | Típus    | Leírás                                                                                                                                                                                                                                                                          |
+| ------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className     | string   | Opcionális CSS osztály további stílushoz                                                                                                                                                                                                                                        |
+| letiltott     | boolean  | Ha `true`-ra van állítva, a felhasználói interakció nem lehetséges az összetevővel.                                                                                                                                                                             |
+| címke         | string   | A címke leírja a `Kiválasztás` összetevő célját.                                                                                                                                                                                                                |
+| onChange      | függvény | The function called when the selected values change                                                                                                                                                                                                                             |
+| opciók        | tömb     | Represents the options available for the `Selected` component. Ez egy objektumok tömbje, ahol minden objektumnak van egy `érték` (egyedi azonosító), `címke` (egyedi azonosító) és egy opcionális `Ikon`. |
+| érték         | string   | A jelenleg kiválasztott értéket jelöli. Meg kell egyeznie az `érték` mezővel az `opciók` tömbjében.                                                                                                                                             |
+
+</Tab>
+</Tabs>

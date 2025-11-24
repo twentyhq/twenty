@@ -4,6 +4,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { DataSource, Repository } from 'typeorm';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
@@ -13,13 +14,13 @@ import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import {
+  SEED_APPLE_WORKSPACE_ID,
+  SEED_YCOMBINATOR_WORKSPACE_ID,
+} from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import {
   RANDOM_USER_WORKSPACE_IDS,
   USER_WORKSPACE_DATA_SEED_IDS,
 } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
-import {
-  SEED_APPLE_WORKSPACE_ID,
-  SEED_YCOMBINATOR_WORKSPACE_ID,
-} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 
@@ -41,7 +42,13 @@ export class DevSeederPermissionsService {
     private readonly coreDataSource: DataSource,
   ) {}
 
-  public async initPermissions(workspaceId: string) {
+  public async initPermissions({
+    twentyStandardApplication,
+    workspaceId,
+  }: {
+    workspaceId: string;
+    twentyStandardApplication: ApplicationEntity;
+  }) {
     const adminRole = await this.roleRepository.findOne({
       where: {
         standardId: ADMIN_ROLE.standardId,
@@ -100,6 +107,7 @@ export class DevSeederPermissionsService {
 
       const guestRole = await this.roleService.createGuestRole({
         workspaceId,
+        applicationId: twentyStandardApplication.id,
       });
 
       await this.userRoleService.assignRoleToUserWorkspace({
@@ -135,6 +143,7 @@ export class DevSeederPermissionsService {
 
     const memberRole = await this.roleService.createMemberRole({
       workspaceId,
+      applicationId: twentyStandardApplication.id,
     });
 
     await this.coreDataSource

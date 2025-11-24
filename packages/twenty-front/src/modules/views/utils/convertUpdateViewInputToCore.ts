@@ -45,5 +45,6 @@ export const convertUpdateViewInputToCore = (
     ...(isDefined(view.calendarFieldMetadataId) && {
       calendarFieldMetadataId: view.calendarFieldMetadataId,
     }),
+    ...(isDefined(view.visibility) && { visibility: view.visibility }),
   };
 };

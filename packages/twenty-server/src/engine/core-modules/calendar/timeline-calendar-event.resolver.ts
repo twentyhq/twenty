@@ -8,6 +8,7 @@ import { TIMELINE_CALENDAR_EVENTS_MAX_PAGE_SIZE } from 'src/engine/core-modules/
 import { TimelineCalendarEventsWithTotalDTO } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-events-with-total.dto';
 import { TimelineCalendarEventService } from 'src/engine/core-modules/calendar/timeline-calendar-event.service';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
+import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @ArgsType()
@@ -49,7 +50,7 @@ class GetTimelineCalendarEventsFromOpportunityIdArgs {
   pageSize: number;
 }
 
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
 @Resolver(() => TimelineCalendarEventsWithTotalDTO)
 export class TimelineCalendarEventResolver {
   constructor(

@@ -1,0 +1,130 @@
+---
+title: API-overzicht
+info: Begrijp de vier verschillende API's en wanneer je elke kunt gebruiken.
+image: /images/user-guide/api/api-overview.png
+sectionInfo: Leer hoe je Twenty met je andere tools verbindt.
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api-overview.png" alt="Header" />
+</Frame>
+
+Twenty is ontwikkeld met ontwikkelaars in gedachten, en biedt krachtige API's die zich aanpassen aan je aangepaste datamodel. We bieden vier verschillende API-typen om aan uiteenlopende integratiebehoeften te voldoen.
+
+## Developer-First Approach
+
+Twenty genereert API's specifiek voor je datamodel, dat betekent:
+
+- **Geen lange ID's vereist**: Gebruik direct je object- en veldnamen in de eindpunten
+- **Standaard en aangepaste objecten gelijk behandeld**: Je aangepaste objecten krijgen dezelfde API-behandeling als ingebouwde
+- **Toegewijde eindpunten**: Elk object en veld krijgt zijn eigen API-eindpunt
+- **Custom documentation**: Generated specifically for your workspace's data model
+
+<Warning>
+Je aangepaste API genereert gepersonaliseerde documentatie toegankelijk via Instellingen → API & Webhooks na het aanmaken van een API-sleutel. Deze documentatie weerspiegelt je exacte datamodel en veldconfiguraties.
+</Warning>
+
+## De Vier API-Typen
+
+Twenty biedt API's in zowel **REST** als **GraphQL** formaten:
+
+### REST API's
+
+#### 1. REST Metadata API
+
+- **Doelstelling**: Beheer je werkruimte en de structuur van je datamodel
+- **Gebruikscases**:
+  - Maak, wijzig of verwijder objecten en velden
+  - Configureer werkruimte-instellingen
+  - Beheer relaties in het datamodel
+- **Toegang**: Beschikbaar via REST-eindpunten
+
+#### 2. REST Core API
+
+- **Doelstelling**: Beheer van je daadwerkelijke datarecords
+- **Gebruikscases**:
+  - Maak, lees, update, verwijder records
+  - Specifieke data opvragen
+  - Beheer recordrelaties
+- **Toegang**: Beschikbaar via REST-eindpunten
+
+### GraphQL API's
+
+#### 3. GraphQL Metadata API
+
+- **Doelstelling**: Hetzelfde als REST Metadata API maar met GraphQL voordelen
+- **Gebruikscases**: Zelfde werkruimte en datamodelbeheer
+- **Extra voordelen**:
+  - Meerdere metadata types in één verzoek opvragen
+  - Precieze veldselectie
+  - Betere prestaties voor complexe queries
+
+#### 4. GraphQL Core API
+
+- **Doelstelling**: Hetzelfde als REST Core API maar met GraphQL voordelen
+- **Gebruikscases**: Zelfde datarecordbeheer
+- **Extra voordelen**:
+  - **Batch-operaties**: Beschikbaar voor alle operaties
+  - **Upsert-operaties**: Maak of update records in één verzoek
+  - Relaties opvragen in enkele verzoeken
+  - Precieze data ophalen
+
+## Batch Operaties
+
+### REST en GraphQL Batch Ondersteuning
+
+Zowel REST als GraphQL API's ondersteunen batch-operaties voor de meeste acties:
+
+- **Batchgrootte**: Tot 60 records per verzoek
+- **Beschikbare operaties**: Maak, update, verwijder meerdere records
+- **Prestaties**: Significant sneller dan individuele API-aanroepen
+
+### GraphQL-Enige Kenmerken
+
+- **Batch-upsert**: Alleen beschikbaar in GraphQL API's
+- **Gebruik**: Gebruik meervoudige objectnamen (bv. `CreateCompanies` in plaats van `CreateCompany`)
+- **Vereiste**: Daarom moeten enkelvoudige en meervoudige objectnamen onderscheiden worden
+
+## API Documentatie Toegang
+
+1. Ga naar **Instellingen → API & Webhooks**
+2. Maak een API-sleutel aan (vereist voor documentatietoegang)
+3. Toegang tot je aangepaste documentatie en speelveld
+4. Test API's met je actuele datamodel
+
+Je documentatie is uniek voor je werkruimte omdat het je aangepaste objecten, velden en relaties weerspiegelt.
+
+## Wanneer gebruik je welke API
+
+### Gebruik Metadata API's wanneer:
+
+- Bij het opzetten van je datamodel
+- Aangepaste objecten of velden aanmaken
+- Werkruimte-instellingen configureren
+
+### Gebruik Core API's wanneer:
+
+- Bij het dagelijks beheren van data (Mensen, Bedrijven, Kansen)
+- Integreren met externe systemen
+- Bouw zelfgemaakte applicaties
+- Automatiseer datawerkstromen
+
+### Kies GraphQL wanneer:
+
+- Je batch-operaties nodig hebt
+- Je API-aanroepen wilt minimaliseren
+- Je upsert-functionaliteit nodig hebt
+- Je complexe integraties bouwt
+
+### Kies REST wanneer:
+
+- Je de voorkeur geeft aan een eenvoudiger API-structuur
+- Je eenvoudige integraties bouwt
+- Je team meer vertrouwd is met REST
+- Je behoefte hebt aan eenvoudige CRUD-operaties
+
+## Volgende Stappen
+
+- **[API & Webhooks Setup](/l/nl/user-guide/integrations-api/api-webhooks)**: Leer hoe je API-sleutels en webhooks kunt aanmaken
+- **Aangepaste Documentatie**: Toegang tot je gepersonaliseerde API-documenten via Instellingen → API & Webhooks
+

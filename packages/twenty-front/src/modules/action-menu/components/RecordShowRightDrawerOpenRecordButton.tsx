@@ -17,6 +17,7 @@ import { useComponentInstanceStateContext } from '@/ui/utilities/state/component
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { t } from '@lingui/core/macro';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -131,10 +132,10 @@ export const RecordShowRightDrawerOpenRecordButton = ({
 
   return (
     <Button
-      title="Open"
+      title={t`Open`}
       variant="primary"
       accent="blue"
-      size="medium"
+      size="small"
       Icon={IconBrowserMaximize}
       hotkeys={[getOsControlSymbol(), '⏎']}
       onClick={handleOpenRecord}

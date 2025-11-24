@@ -1,0 +1,34 @@
+---
+title: Блок уређивач
+image: /images/user-guide/api/api.png
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+Користи уређивач текста заснован на блоковима из [BlockNote](https://www.blocknotejs.org/) који омогућава корисницима да уређују и прегледају блокове садржаја.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { useBlockNote } from "@blocknote/react";
+import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+
+export const MyComponent = () => {
+  const BlockNoteEditor = useBlockNote();
+
+  return <BlockEditor editor={BlockNoteEditor} />;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Својства | Тип               | Опис                                      |
+| -------- | ----------------- | ----------------------------------------- |
+| editor   | `BlockNoteEditor` | Инстанца или конфигурација блок уређивача |
+
+</Tab>
+</Tabs>

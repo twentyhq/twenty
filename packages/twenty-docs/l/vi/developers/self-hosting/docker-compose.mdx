@@ -1,0 +1,214 @@
+---
+title: 1-Click w/ Docker Compose
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+<Warning>
+Docker containers are for production hosting or self-hosting, for the contribution please check the [Local Setup](https://docs.twenty.com/l/vi/developers/local-setup).
+</Warning>
+
+## Tổng quan
+
+Hướng dẫn này cung cấp các bước cài đặt và cấu hình ứng dụng Twenty sử dụng Docker Compose. Mục tiêu là làm cho quá trình này đơn giản và tránh những sự cố phổ biến có thể phá vỡ thiết lập của bạn.
+
+**Quan trọng:** Chỉ sửa đổi các cài đặt được nêu cụ thể trong hướng dẫn này. Thay đổi các cấu hình khác có thể dẫn đến sự cố.
+
+Xem tài liệu [Thiết lập Biến môi trường](https://docs.twenty.com/l/vi/developers/self-hosting/setup) để cấu hình nâng cao. Tất cả các biến môi trường phải được khai báo trong file docker-compose.yml tại cấp độ máy chủ và / hoặc công nhân tùy thuộc vào biến.
+
+## System Requirements
+
+- RAM: Đảm bảo môi trường của bạn có ít nhất 2GB RAM. Insufficient memory can cause processes to crash.
+- Docker & Docker Compose: Đảm bảo cả hai đã được cài đặt và cập nhật.
+
+## Tùy chọn 1: Tập lệnh một dòng
+
+Cài đặt phiên bản ổn định mới nhất của Twenty với một lệnh duy nhất:
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+To install a specific version or branch:
+
+```bash
+VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+- Thay x.y.z bằng số phiên bản mong muốn.
+- Thay branch-name bằng tên nhánh bạn muốn cài đặt.
+
+## Tùy chọn 2: Các bước thủ công
+
+Thực hiện các bước này để thiết lập thủ công.
+
+### Bước 1: Thiết Lập Tệp Môi Trường
+
+1. **Tạo tệp .env**
+
+   Sao chép tệp môi trường mẫu vào tệp .env mới trong thư mục làm việc của bạn:
+
+   ```bash
+   curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
+   ```
+
+2. **Tạo Mã Bảo Mật**
+
+   Chạy lệnh sau để tạo chuỗi ngẫu nhiên duy nhất:
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   **Quan trọng:** Giữ giá trị này bí mật / không chia sẻ nó.
+
+3. **Cập nhật `.env`**
+
+   Thay thế giá trị giữ chỗ trong tệp .env của bạn bằng mã bảo mật đã tạo:
+
+   ```ini
+   APP_SECRET=first_random_string
+   ```
+
+4. **Đặt Mật Khẩu Postgres**
+
+   Cập nhật giá trị `PG_DATABASE_PASSWORD` trong tệp .env với mật khẩu mạnh không có ký tự đặc biệt.
+
+   ```ini
+   PG_DATABASE_PASSWORD=my_strong_password
+   ```
+
+### Bước 2: Nhận Tệp Docker Compose
+
+Tải xuống tệp `docker-compose.yml` vào thư mục làm việc của bạn:
+
+```bash
+curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/docker-compose.yml
+```
+
+### Bước 3: Khởi Chạy Ứng Dụng
+
+Khởi động các container Docker:
+
+```bash
+docker compose up -d
+```
+
+### Bước 4: Truy Cập Ứng Dụng
+
+Nếu bạn lưu trữ twentyCRM trên máy tính của mình, mở trình duyệt và điều hướng đến [http://localhost:3000](http://localhost:3000).
+
+Nếu bạn lưu trữ trên máy chủ, hãy kiểm tra máy chủ đang chạy và mọi thứ đều ổn với
+
+```bash
+curl http://localhost:3000
+```
+
+## Cấu Hình
+
+### Mở rộng Twenty để truy cập bên ngoài
+
+Theo mặc định, Twenty chạy trên `localhost` tại cổng `3000`. Để truy cập qua tên miền hoặc địa chỉ IP bên ngoài, bạn cần cấu hình `SERVER_URL` trong tệp `.env` của bạn.
+
+#### Hiểu về `SERVER_URL`
+
+- **Giao thức:** Sử dụng `http` hoặc `https` tùy thuộc vào thiết lập của bạn.
+  - Sử dụng `http` nếu bạn chưa thiết lập SSL.
+  - Sử dụng `https` nếu bạn đã cấu hình SSL.
+- **Tên miền/IP:** Đây là tên miền hoặc địa chỉ IP nơi ứng dụng của bạn có thể truy cập.
+- **Cổng:** Bao gồm số cổng nếu bạn không sử dụng các cổng mặc định (`80` cho `http`, `443` cho `https`).
+
+### Yêu cầu SSL
+
+SSL (HTTPS) được yêu cầu cho một số tính năng trình duyệt hoạt động chính xác. Mặc dù các tính năng này có thể hoạt động trong quá trình phát triển cục bộ (vì trình duyệt xử lý localhost khác nhau), thiết lập SSL đầy đủ là cần thiết khi lưu trữ Twenty trên tên miền thông thường.
+
+Ví dụ, API clipboard có thể yêu cầu một môi trường bảo mật - một số tính năng như nút sao chép trong ứng dụng có thể không hoạt động khi không kích hoạt HTTPS.
+
+Chúng tôi khuyến nghị mạnh mẽ việc thiết lập Twenty sau proxy ngược với kết thúc SSL để bảo mật và chức năng tối ưu.
+
+#### Cấu hình `SERVER_URL`
+
+1. **Xác Định URL Truy Cập Của Bạn**
+   - **Không qua Proxy Ngược (Truy Cập Trực Tiếp):**
+
+     Nếu bạn đang truy cập ứng dụng trực tiếp mà không qua proxy ngược:
+
+     ```ini
+     SERVER_URL=http://your-domain-or-ip:3000
+     ```
+
+   - **Qua Proxy Ngược (Các Cổng Tiêu Chuẩn):**
+
+     Nếu bạn đang dùng proxy ngược như Nginx hoặc Traefik và đã cấu hình SSL:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip
+     ```
+
+   - **Qua Proxy Ngược (Các Cổng Tùy Chỉnh):**
+
+     Nếu bạn đang sử dụng các cổng không chuẩn:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip:custom-port
+     ```
+
+2. **Cập Nhật Tệp `.env`**
+
+   Mở tệp `.env` và cập nhật `SERVER_URL`:
+
+   ```ini
+   SERVER_URL=http(s)://your-domain-or-ip:your-port
+   ```
+
+   **Ví Dụ:**
+
+   - Truy cập trực tiếp không có SSL:
+     ```ini
+     SERVER_URL=http://123.45.67.89:3000
+     ```
+   - Truy cập qua tên miền với SSL:
+     ```ini
+     SERVER_URL=https://mytwentyapp.com
+     ```
+
+3. **Khởi Động Lại Ứng Dụng**
+
+   Để thay đổi có hiệu lực, khởi động lại các container Docker:
+
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+#### Cân nhắc
+
+- **Cấu hình Reverse Proxy:**
+
+  Đảm bảo proxy đảo ngược của bạn chuyển tiếp các yêu cầu đến đúng cổng nội bộ (mặc định là `3000`). Cấu hình kết thúc SSL và các tiêu đề cần thiết.
+
+- **Cài đặt Tường lửa:**
+
+  Mở các cổng cần thiết trong tường lửa của bạn để cho phép truy cập bên ngoài.
+
+- **Tính nhất quán:**
+
+  `SERVER_URL` phải khớp với cách người dùng truy cập ứng dụng của bạn qua trình duyệt.
+
+#### Persistence
+
+- **Data Volumes:**
+
+  The Docker Compose configuration uses volumes to persist data for the database and server storage.
+
+- **Môi trường không trạng thái:**
+
+  Nếu triển khai vào một môi trường không trạng thái (vd: một số dịch vụ đám mây), cấu hình lưu trữ bên ngoài để lưu trữ dữ liệu.
+
+## Xử lý sự cố
+
+Nếu gặp bất kỳ vấn đề nào, hãy kiểm tra [Xử lý sự cố](https://docs.twenty.com/l/vi/developers/self-hosting/troubleshooting) để tìm giải pháp.
+

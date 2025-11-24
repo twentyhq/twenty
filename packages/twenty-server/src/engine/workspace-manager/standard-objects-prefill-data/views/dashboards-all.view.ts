@@ -1,17 +1,26 @@
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { v4 } from 'uuid';
 
+import { STANDARD_OBJECTS } from 'src/engine/core-modules/application/constants/standard-object.constant';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewOpenRecordInType } from 'src/engine/metadata-modules/view/types/view-open-record-in-type.type';
+import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   DASHBOARD_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-export const dashboardsAllView = (
-  objectMetadataItems: ObjectMetadataEntity[],
+export const dashboardsAllView = ({
+  objectMetadataItems,
   useCoreNaming = false,
-) => {
+  twentyStandardFlatApplication,
+}: {
+  objectMetadataItems: ObjectMetadataEntity[];
+  useCoreNaming?: boolean;
+  twentyStandardFlatApplication: FlatApplication;
+}): ViewDefinition => {
   const dashboardObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.dashboard,
   );
@@ -20,7 +29,13 @@ export const dashboardsAllView = (
     throw new Error('Dashboard object metadata not found');
   }
 
+  const viewUniversalIdentifier =
+    STANDARD_OBJECTS.dashboard.views.allDashboards.universalIdentifier;
+
   return {
+    id: v4(),
+    universalIdentifier: viewUniversalIdentifier,
+    applicationId: twentyStandardFlatApplication.id,
     name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All Dashboards',
     objectMetadataId: dashboardObjectMetadata.id ?? '',
     type: 'table',
@@ -39,6 +54,9 @@ export const dashboardsAllView = (
         position: 0,
         isVisible: true,
         size: 200,
+        universalIdentifier:
+          STANDARD_OBJECTS.dashboard.views.allDashboards.viewFields.title
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -49,6 +67,9 @@ export const dashboardsAllView = (
         position: 1,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.dashboard.views.allDashboards.viewFields.createdBy
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -59,6 +80,9 @@ export const dashboardsAllView = (
         position: 2,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.dashboard.views.allDashboards.viewFields.createdAt
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -69,6 +93,9 @@ export const dashboardsAllView = (
         position: 3,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.dashboard.views.allDashboards.viewFields.updatedAt
+            .universalIdentifier,
       },
     ],
   };

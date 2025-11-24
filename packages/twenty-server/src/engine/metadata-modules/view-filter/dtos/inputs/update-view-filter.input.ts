@@ -1,5 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
+import { Type } from 'class-transformer';
 import {
   IsEnum,
   IsNotEmpty,
@@ -11,7 +12,6 @@ import {
 } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 import { ViewFilterOperand } from 'twenty-shared/types';
-import { Type } from 'class-transformer';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';

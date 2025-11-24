@@ -1,0 +1,91 @@
+---
+title: Zapier App
+image: /images/user-guide/integrations/plug.png
+---
+
+<Frame>
+  <img src="/images/user-guide/integrations/plug.png" alt="Header" />
+</Frame>
+
+Лако синхронизујте Twenty са више од 3000 апликација користећи [Запиер](https://zapier.com/). Аутоматизујте задатке, повећајте продуктивност и унапредите односе са клијентима!
+
+## О Запиеру
+
+Запиер је алатка која вам омогућава да аутоматизујете радне токове повезујући апликације које ваш тим користи свакодневно. Основни концепт Запиера је аутоматизација радних токова, који се зову Зепс, и укључују тригере и акције.
+
+Више о томе како Запиер ради можете сазнати [овде](https://zapier.com/how-it-works).
+
+## Подешавање
+
+### Корак 1: Инсталирајте Zapier пакете
+
+```bash
+cd packages/twenty-zapier
+
+yarn
+```
+
+### Корак 2: Пријавите се са CLI-ом
+
+Користите своје Запиер акредитиве за пријављивање користећи CLI:
+
+```bash
+zapier login
+```
+
+### Step 3: Set environment variables
+
+Из фолдера `packages/twenty-zapier`, покрените:
+
+```bash
+cp .env.example .env
+```
+
+Покрените апликацију локално, идите на [http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks), и генеришите API кључ.
+
+Замените вредност **YOUR_API_KEY** у `.env` фајлу са API кључем који сте управо генерисали.
+
+## Развој
+
+<Warning>
+
+Обавезно покрените `yarn build` пре било које `zapier` команде.
+
+</Warning>
+
+### Тест
+
+```bash
+yarn test
+```
+
+### Lint
+
+```bash
+yarn format
+```
+
+### Гледајте и компајлирајте док уређујете код
+
+```bash
+yarn watch
+```
+
+### Валидирајте вашу Запиер апликацију
+
+```bash
+yarn validate
+```
+
+### Деплојтујте вашу Запиер апликацију
+
+```bash
+yarn deploy
+```
+
+### Наведите све Запиер CLI команде
+
+```bash
+zapier
+```
+

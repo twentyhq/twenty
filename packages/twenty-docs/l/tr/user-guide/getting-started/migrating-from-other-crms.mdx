@@ -1,0 +1,91 @@
+---
+title: Diğer CRM'lerden Taşınma
+info: Diğer CRM sistemlerinden Twenty'ye veri ve süreçleri taşımak için adım adım kılavuz.
+image: /images/user-guide/what-is-twenty/migrating_crm.png
+sectionInfo: Twenty hakkında temel bilgileri anlamak için kısa bir kılavuz
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/migrating_crm.png" alt="Header" />
+</Frame>
+
+## Başlamadan Önce
+
+### 1. Import Your Data
+
+- **Taşınacak birkaç nesne ve alan seçin**: bu taşınma taze bir başlangıç için fırsattır
+- Mevcut CRM'nizden **bu veriyi dışa aktarın**
+- **Çift kayıtları** ve eski kayıtları kaldırın
+- **List active workflows** and automations
+
+### 2. Yeni Veri Modelinizi Oluşturun
+
+Şunları yapmak için [veri modeli rehberimizi](/l/tr/user-guide/data-model/customize-your-data-model) takip edin:
+
+- **İhtiyacınız olan veri modelini tasarlayın**
+- Mevcut alanları Twenty'nin standart nesne/alanlarıyla **eşleştirin**
+- İhtiyacınız olacak özel nesneleri/alanları **belirleyin**
+- Ayarlarda → Veri modeli altında **oluşturun**
+
+## Taşıma Süreci
+
+### 1. Mevcut Verilerinizi Denetleyin
+
+**Recommended order:**
+
+1. **Önce Şirketler** (temel kayıtlar olarak)
+2. **İkinci olarak Kişiler** (şirketlerle bağlantılı)
+3. **Opportunities** third (linked to people/companies)
+
+Command Menu `Cmd + K` (Mac) veya `Ctrl + K` (Windows) ile CSV'yi kullanarak içe aktarın. Ayrıntılı talimatlar için [veri içe aktarma rehberimize](/l/tr/user-guide/getting-started/import-export-data) bakın.
+
+### 2. Recreate Workflows
+
+- **Basit başlayın** - öncelikle en kritik otomasyonlarınızı yeniden oluşturun
+- **Use Twenty's workflow builder** to replace existing automations
+
+## Ortak Sorunlar
+
+### Veri Biçimlendirme Sorunları
+
+- **E-posta adresleri** - çift kayıtları kaldırın (Kişi nesnesi gerekliliği)
+- **Alan adı** - çift kayıtları kaldırın (Şirketler nesne gerekliliği)
+
+<Warning>
+Please note that domain URLs created by the synchronization with your mailbox and calendar have the following format ```https://domain.com```
+</Warning>
+
+- **Tarih formatları** - tutarlı şekilde formatlanmasını sağlayın (YYYY-AA-GG) veya bu formatı Ayarlar → Deneyim altında düzenleyin
+- **Telefon numaraları** - uluslararası format kullanın (+1234567890)
+
+### İlişki Haritalama
+
+CSV içe aktarma işlevini kullanarak kayıtlar arasındaki ilişkileri içe almak için aşağıdaki alanları kullanabilirsiniz
+
+- Karmaşık ilişkiler için **Twenty ID'lerini kullanın**
+- Kişi kayıtlarını bağlamak için **e-posta adreslerini kullanın**
+- Şirket kayıtlarını bağlamak için **alan adlarını kullanın**
+- **Benzersiz olarak ayarladığınız başka herhangi bir alanı** kullanın, bu, Veri Modeli bölümünde yapılabilir.
+  CSV içe aktarma sırasında ilişkiler oluşturma hakkında ayrıntılı talimatlar için [veri içe aktarma rehberimizi](/l/tr/user-guide/getting-started/import-export-data) okuyun.
+
+## Profesyonel Yardım
+
+### Hizmetlerimiz
+
+- Yönlendirilmiş taşınma için **4 saatlik başlangıç paketleri**
+- Daha ileri düzey projeler için **uygulama ortakları**
+
+[Uygulama hizmetlerimizi](/l/tr/user-guide/getting-started/implementation-services) keşfedin.
+
+## Kendi Barındırma'dan Bulut'a Geçiş
+
+Twenty kendi barındırmalı sisteminden Twenty Bulut'a taşınıyorsanız:
+
+1. Kendi barındırmalı sisteminizden **verilerinizi dışa aktarın**
+2. **Follow the standard migration process** above
+3. **Taşınma yardımı sağlayabiliriz**, ekibimizle iletişime geçin
+
+## Taşındıktan Sonra Kontrol Listesi
+
+<input type="checkbox" /> All data imported successfully <input type="checkbox" /> Custom fields working correctly <input type="checkbox" /> User permissions configured <input type="checkbox" /> Email/calendar sync connected <input type="checkbox" /> Critical workflows recreated and tested <input type="checkbox" /> Team trained on new system
+

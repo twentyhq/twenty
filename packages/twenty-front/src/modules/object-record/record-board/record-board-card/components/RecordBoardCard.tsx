@@ -5,7 +5,6 @@ import { RecordBoardCardContext } from '@/object-record/record-board/record-boar
 import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
-import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
@@ -13,14 +12,16 @@ import { RecordBoardCardCellEditModePortal } from '@/object-record/record-board/
 import { RecordBoardCardCellHoveredPortal } from '@/object-record/record-board/record-board-card/anchored-portal/components/RecordBoardCardCellHoveredPortal';
 import { RecordBoardCardBody } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBody';
 import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
+import { RecordBoardCardMultiDragStack } from '@/object-record/record-board/record-board-card/components/RecordBoardCardMultiDragStack';
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
 import { RecordBoardCardComponentInstanceContext } from '@/object-record/record-board/record-board-card/states/contexts/RecordBoardCardComponentInstanceContext';
 import { recordBoardCardIsExpandedComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardIsExpandedComponentState';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
+import { isRecordIdPrimaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdPrimaryDragMultipleComponentFamilyState';
+import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
@@ -29,7 +30,6 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { InView, useInView } from 'react-intersection-observer';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -41,18 +41,6 @@ const StyledCardContainer = styled.div<{ isPrimaryMultiDrag?: boolean }>`
     transform: scale(1.02);
     z-index: 10;
   `}
-`;
-
-const StyledRecordBoardCardStackCard = styled.div<{ offset: number }>`
-  position: absolute;
-  top: ${({ offset }) => (offset === 1 ? 2 : (offset - 1) * 4 + 2)}px;
-  left: 0;
-  right: 0;
-  height: 100%;
-  background-color: ${({ theme }) => theme.accent.tertiary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  z-index: ${({ offset }) => -offset};
 `;
 
 const StyledBoardCardWrapper = styled.div`
@@ -69,17 +57,15 @@ export const RecordBoardCard = () => {
     RecordBoardComponentInstanceContext,
   );
 
-  const multiDragState = useRecordDragState('board', recordBoardId);
+  const isRecordIdPrimaryDragMultiple = useRecoilComponentFamilyValue(
+    isRecordIdPrimaryDragMultipleComponentFamilyState,
+    { recordId },
+  );
 
-  const isPrimaryMultiDrag =
-    multiDragState?.isDragging &&
-    recordId === multiDragState.primaryDraggedRecordId &&
-    multiDragState.originalSelection.length > 1;
-
-  const isSecondaryDragged =
-    multiDragState?.isDragging &&
-    multiDragState.originalSelection.includes(recordId) &&
-    recordId !== multiDragState.primaryDraggedRecordId;
+  const isRecordIdSecondaryDragMultiple = useRecoilComponentFamilyValue(
+    isRecordIdSecondaryDragMultipleComponentFamilyState,
+    { recordId },
+  );
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -156,12 +142,8 @@ export const RecordBoardCard = () => {
     }
   }, 800);
 
-  const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
-
-  const { ref: cardRef } = useInView({
-    root: scrollWrapperHTMLElement,
-    rootMargin: '1000px',
-  });
+  const isDraggingThisCard =
+    isRecordIdPrimaryDragMultiple || isRecordIdSecondaryDragMultiple;
 
   return (
     <RecordBoardCardComponentInstanceContext.Provider
@@ -173,43 +155,29 @@ export const RecordBoardCard = () => {
         data-click-outside-id={RECORD_BOARD_CARD_CLICK_OUTSIDE_ID}
         onContextMenu={handleContextMenuOpen}
       >
-        <InView>
-          <StyledCardContainer isPrimaryMultiDrag={isPrimaryMultiDrag}>
-            {isPrimaryMultiDrag &&
-              Array.from({
-                length: Math.min(
-                  5,
-                  multiDragState.originalSelection.length - 1,
-                ),
-              }).map((_, index) => (
-                <StyledRecordBoardCardStackCard
-                  key={index}
-                  offset={index + 1}
-                />
-              ))}
-
-            <RecordCard
-              ref={cardRef}
-              data-selected={isCurrentCardSelected}
-              data-focused={isCurrentCardFocused}
-              data-active={isCurrentCardActive}
-              onMouseLeave={onMouseLeaveBoard}
-              onClick={handleCardClick}
-              isPrimaryMultiDrag={isPrimaryMultiDrag}
-              isSecondaryDragged={isSecondaryDragged}
+        <StyledCardContainer isPrimaryMultiDrag={isRecordIdPrimaryDragMultiple}>
+          {isRecordIdPrimaryDragMultiple && <RecordBoardCardMultiDragStack />}
+          <RecordCard
+            data-selected={isCurrentCardSelected}
+            data-focused={isCurrentCardFocused}
+            data-active={isCurrentCardActive}
+            onMouseLeave={onMouseLeaveBoard}
+            onClick={handleCardClick}
+            isPrimaryMultiDrag={isRecordIdPrimaryDragMultiple}
+            isSecondaryDragged={isRecordIdSecondaryDragMultiple}
+            isDragging={isDraggingThisCard}
+          >
+            <RecordBoardCardHeader />
+            <AnimatedEaseInOut
+              isOpen={isCardExpanded || !isCompactModeActive}
+              initial={false}
             >
-              <RecordBoardCardHeader />
-              <AnimatedEaseInOut
-                isOpen={isCardExpanded || !isCompactModeActive}
-                initial={false}
-              >
-                <RecordBoardCardBody />
-              </AnimatedEaseInOut>
-            </RecordCard>
-          </StyledCardContainer>
-          <RecordBoardCardCellHoveredPortal />
-          <RecordBoardCardCellEditModePortal />
-        </InView>
+              <RecordBoardCardBody />
+            </AnimatedEaseInOut>
+          </RecordCard>
+        </StyledCardContainer>
+        <RecordBoardCardCellHoveredPortal />
+        <RecordBoardCardCellEditModePortal />
       </StyledBoardCardWrapper>
     </RecordBoardCardComponentInstanceContext.Provider>
   );

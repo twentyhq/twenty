@@ -23,7 +23,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 type GenerateExportOptions = {
   columns: Pick<
     ColumnDefinition<FieldMetadata>,
-    'size' | 'label' | 'type' | 'metadata'
+    'label' | 'type' | 'metadata'
   >[];
   rows: Record<string, any>[];
 };
@@ -169,7 +169,13 @@ export const useRecordIndexExportRecords = ({
 
   const downloadCsv = useMemo(
     () =>
-      (records: ObjectRecord[], columns: ColumnDefinition<FieldMetadata>[]) => {
+      (
+        records: ObjectRecord[],
+        columns: Pick<
+          ColumnDefinition<FieldMetadata>,
+          'label' | 'type' | 'metadata'
+        >[],
+      ) => {
         const recordsProcessedForExport = processRecordsForCSVExport(records);
 
         csvDownloader(filename, { rows: recordsProcessedForExport, columns });

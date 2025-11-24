@@ -3,49 +3,102 @@ import * as os from 'os';
 import * as path from 'path';
 import { TwentyConfig } from '../types/config.types';
 
+type PersistedConfig = TwentyConfig & {
+  profiles?: Record<string, TwentyConfig>;
+};
+
+const DEFAULT_WORKSPACE_NAME = 'default';
+
 export class ConfigService {
   private readonly configPath: string;
+  private static activeWorkspace = DEFAULT_WORKSPACE_NAME;
 
   constructor() {
     this.configPath = path.join(os.homedir(), '.twenty', 'config.json');
   }
 
+  static setActiveWorkspace(name?: string) {
+    this.activeWorkspace = name ?? DEFAULT_WORKSPACE_NAME;
+  }
+
+  static getActiveWorkspace(): string {
+    return this.activeWorkspace;
+  }
+
+  private getActiveWorkspaceName(): string {
+    return ConfigService.getActiveWorkspace();
+  }
+
+  private async readRawConfig(): Promise<PersistedConfig> {
+    await fs.ensureFile(this.configPath);
+    const content = await fs.readFile(this.configPath, 'utf8');
+    return JSON.parse(content || '{}');
+  }
+
   async getConfig(): Promise<TwentyConfig> {
+    const defaultConfig = this.getDefaultConfig();
     try {
-      const defaultConfig = this.getDefaultConfig();
+      const raw = await this.readRawConfig();
+      const profile = this.getActiveWorkspaceName();
 
-      let fileConfig = {};
-      await fs.ensureFile(this.configPath);
-      const configExists = await fs.pathExists(this.configPath);
+      const profileConfig =
+        profile === DEFAULT_WORKSPACE_NAME &&
+        !raw.profiles?.[DEFAULT_WORKSPACE_NAME]
+          ? raw
+          : raw.profiles?.[profile];
 
-      if (configExists) {
-        const configContent = await fs.readFile(this.configPath, 'utf8');
-        // TODO parse using a zod schema
-        fileConfig = JSON.parse(configContent || '{}');
-      }
+      // Fallback to legacy top-level values if profile value is missing
+      const apiUrl = profileConfig?.apiUrl ?? defaultConfig.apiUrl;
+      const apiKey = profileConfig?.apiKey;
 
       return {
-        ...defaultConfig,
-        ...fileConfig,
+        apiUrl,
+        apiKey,
       };
     } catch {
-      return this.getDefaultConfig();
+      return defaultConfig;
     }
   }
 
   async setConfig(config: Partial<TwentyConfig>): Promise<void> {
-    const currentConfig = await this.getConfig();
-    const newConfig = { ...currentConfig, ...config };
+    const raw = await this.readRawConfig();
+    const profile = this.getActiveWorkspaceName();
+
+    // Ensure profiles map exists
+    if (!raw.profiles) {
+      raw.profiles = {};
+    }
+
+    const currentProfile = raw.profiles[profile] || {};
+
+    raw.profiles[profile] = { ...currentProfile, ...config };
 
     await fs.ensureDir(path.dirname(this.configPath));
-    await fs.writeFile(this.configPath, JSON.stringify(newConfig, null, 2));
+    await fs.writeFile(this.configPath, JSON.stringify(raw, null, 2));
   }
 
   async clearConfig(): Promise<void> {
-    const configExists = await fs.pathExists(this.configPath);
-    if (configExists) {
-      await fs.remove(this.configPath);
+    // Clear only the active profile credentials (non-breaking for other profiles)
+    const raw = await this.readRawConfig();
+    const profile = this.getActiveWorkspaceName();
+
+    if (!raw.profiles) {
+      raw.profiles = {};
     }
+
+    if (raw.profiles[profile]) {
+      delete raw.profiles[profile];
+    }
+
+    // Also clear legacy top-level apiKey for compatibility when active profile is default
+    if (profile === DEFAULT_WORKSPACE_NAME) {
+      const defaultConfig = this.getDefaultConfig();
+      delete raw.apiKey;
+      raw.apiUrl = defaultConfig.apiUrl;
+    }
+
+    await fs.ensureDir(path.dirname(this.configPath));
+    await fs.writeFile(this.configPath, JSON.stringify(raw, null, 2));
   }
 
   private getDefaultConfig(): TwentyConfig {

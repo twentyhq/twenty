@@ -1,0 +1,390 @@
+---
+title: מדריך שדרוג
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+## הנחיות כלליות
+
+**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
+
+To restore backup, run `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
+
+אם השתמשת ב-Docker Compose, עקוב אחרי השלבים הבאים:
+
+1. בטרמינל, על המחשב המארח בו Twenty פועלת, כבה את Twenty: `docker compose down`
+
+2. שדרוג את הגרסה על ידי שינוי ערך ה-`TAG` בקובץ `.env` ליד הקובץ docker-compose שלך. ( מומלץ לצרוך גרסת `major.minor` כמו `v0.53` )
+
+3. העלה את Twenty בחזרה עם `docker compose up -d`
+
+אם ברצונך לשדרג את המופע שלך בכמה גרסאות, למשל מ-v0.33.0 ל-v0.35.0, עליך לשדרג את המופע שלך באופן רצוף, בדוגמה זו מ-v0.33.0 ל-v0.34.0, ולאחר מכן מ-v0.34.0 ל-v0.35.0.
+
+**ודא שאחרי כל גרסה משודרגת יש לך גיבוי בלתי פגום.**
+
+## צעדי שדרוג ספציפיים לגרסה
+
+## v1.0
+
+שלום Twenty v1.0! 🎉
+
+## v0.60
+
+### שדרוגי ביצועים
+
+All interactions with the metadata API have been optimized for better performance, particularly for object metadata manipulation and workspace creation operations.
+
+We've refactored our caching strategy to prioritize cache hits over database queries when possible, significantly improving the performance of metadata API operations.
+
+אם אתה נתקל בבעיות בזמן ריצה לאחר השדרוג, ייתכן שתצטרך לנקות את המטמון שלך כדי לוודא שהוא מסונכרן עם השינויים האחרונים. הרץ את הפקודה במיכל השרת שלך ב-Twenty:
+
+```bash
+yarn command:prod cache:flush
+```
+
+### v0.55
+
+שדרג את מופע ה-Twenty שלך לשימוש בתמונת v0.55
+
+You don't need to run any command anymore, the new image will automatically care about running all required migrations.
+
+### שגיאה: `למשתמש אין הרשאה`
+
+אם אתה נתקל בבעיות הרשאה ברוב הבקשות אחרי השדרוג, ייתכן שיהיה צורך לנקות את המטמון כדי לחשב מחדש את ההרשאות האחרונות.
+
+במיכל השרת שלך ב-Twenty, הרץ:
+
+```bash
+yarn command:prod cache:flush
+```
+
+בעיה זו ספציפית לגרסה זו של Twenty ולא אמורה להידרש בשדרוגים עתידיים.
+
+### v0.54
+
+מאז גרסה `0.53`, אין צורך בפעולות ידניות.
+
+#### התיישנות סכמת מטא נתונים
+
+מיזגנו את סכמת ה`metadata` עם ה`core` כדי לפשט את שליפת הנתונים מ`TypeORM`.
+מיזגנו את הצעד של `migrate` בתוך הצו `upgrade`. We do not recommend running `migrate` manually within any of your server/worker containers.
+
+### מאז v0.53
+
+החל מגרסה `0.53`, השדרוג מבוצע תיכנותית בתוך ה`DockerFile`, כלומר מעתה והלאה, אין צורך יותר בהרצת פקודה ידנית.
+
+ודא שתשדרג את המופע שלך באופן רציף, מבלי לדלג על שום גרסת עיקרית (למשל מ`0.43.3` ל`0.44.0` מותר, אבל מ`0.43.1` ל`0.45.0` לא), אחרת זה עלול להוביל לתיאום גירסה שאינו נכון שיכול לגרום לשגיאת זמן ריצה ולחוסר פעולתיות.
+
+כדי לבדוק אם מרחב העבודה הועבר כראוי ניתן לבדוק את גרסתו בבסיס הנתונים בטבלה `core.workspace`.
+
+הוא תמיד צריך להיות בטווח של גרסת `major.minor` הנוכחית של מופע Twenty שלך, תוכל לבדוק את גרסת המופע שלך בפאנל הניהול (ב`/settings/admin-panel`, נגיש אם ההגדרה `canAccessFullAdminPanel` של המשתמש שלך מוגדרת כ-true בבסיס הנתונים) או על ידי הרצת `echo $APP_VERSION` במיכל השרת שלך.
+
+כדי לתקן גרסת מרחב עבודה אונכתפית, תצטרך לשדרג מהגרסה הרלוונטית של Twenty על פי מדריך השדרוג המתאים ברציפות וכך הלאה עד שתגיע לגרסה הרצויה.
+
+#### הסרת `auditLog`
+
+הסרנו את אובייקט ה-standard של auditLog, כלומר גודל הגיבוי שלך עשוי להיות מופחת אוטומטית לאחר ההגירה הזו.
+
+### v0.51 ל-v0.52
+
+שדרג את מופע ה-Twenty שלך לשימוש בתמונת v0.52
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+#### יש לי מרחב עבודה שנחסם בין גרסה `0.52.0` לבין `0.52.6`
+
+לצערנו גרסאות `0.52.0` ו-`0.52.6` הוסרו לחלוטין מ-dockerHub.
+יהיה עליך לעדכן ידנית את גרסת מרחב העבודה שלך ל-`0.51.0` בבסיס הנתונים ולשדרג בשימוש בגרסת twenty `0.52.11` לפי מדריך השדרוג שלה הנמצא מעל.
+
+### v0.50 ל-v0.51
+
+שדרג את מופע ה-Twenty שלך לשימוש בתמונת v0.51
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### v0.44.0 ל-v0.50.0
+
+שדרג את מופע ה-Twenty שלך לשימוש בתמונת v0.50.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+#### שינוי ב-docker-compose.yml
+
+גרסה זו כוללת שינוי ב`docker-compose.yml` כדי להעניק לשירות `worker` גישה לנפח `server-local-data`.
+אנא עדכן את ה`docker-compose.yml` המקומי שלך עם [v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml)
+
+### v0.43.0 ל-v0.44.0
+
+שדרג את מופע ה-Twenty שלך לשימוש בתמונת v0.44.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+### v0.42.0 ל-v0.43.0
+
+שדרג את מופע ה-Twenty שלך לשימוש בתמונת v0.43.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade
+```
+
+בגרסה זו, העברנו לשימוש בתמונה postgres:16 בתוך docker-compose.yml.
+
+#### (אפשרות 1) הגירת מסד נתונים
+
+השארת התמונה הקיימת postgres-spilo זה טוב, אך יהיה עליך להקפיא את הגרסה ב-docker-compose.yml שלך ל-0.43.0.
+
+#### (אפשרות 2) הגירת מסד נתונים
+
+אם אתה מעוניין להמיר את מסד הנתונים שלך לתמונה החדשה postgres:16, אנא פעל לפי השלבים הבאים:
+
+1. גבה את מסד הנתונים מהמיכל הישן postgres-spilo
+
+```
+docker exec -it twenty-db-1 sh
+pg_dump -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} > databases_backup.sql
+exit
+docker cp twenty-db-1:/home/postgres/databases_backup.sql .
+```
+
+ודא שקובץ הגיבוי שלך אינו ריק.
+
+2. שדרג את ה-docker-compose.yml שלך לשימוש בתמונת postgres:16 כפי שבקובץ [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml).
+
+3. שחזר את בסיס הנתונים למיכל החדש postgres:16
+
+```
+docker cp databases_backup.sql twenty-db-1:/databases_backup.sql
+docker exec -it twenty-db-1 sh
+psql -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} -f databases_backup.sql
+exit
+```
+
+### v0.41.0 ל-v0.42.0
+
+שדרג את מופע ה-Twenty שלך לשימוש בתמונת v0.42.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.42
+```
+
+**משתני סביבה**
+
+- הוסר: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
+- התווסף: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
+
+### v0.40.0 ל-v0.41.0
+
+שדרג את מופע ה-Twenty שלך לשימוש בתמונת v0.41.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.41
+```
+
+**משתני סביבה**
+
+- הוסר: `AUTH_MICROSOFT_TENANT_ID`
+
+### v0.35.0 ל-v0.40.0
+
+שדרג את מופע ה-Twenty שלך לשימוש בתמונת v0.40.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.40
+```
+
+**משתני סביבה**
+
+- התווסף: `IS_EMAIL_VERIFICATION_REQUIRED`, `EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`, `WORKFLOW_EXEC_THROTTLE_LIMIT`, `WORKFLOW_EXEC_THROTTLE_TTL`
+
+### v0.34.0 ל-v0.35.0
+
+שדרג את מופע ה-Twenty שלך לשימוש בתמונת v0.35.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.35
+```
+
+פקודת yarn database:migrate:prod תאיים את הגירות המבנה של בסיס הנתונים (סכמות ליבה ומטא נתונים)
+פקודת yarn command:prod upgrade-0.35 תדאג להעברת נתונים של כל מרחבי העבודה.
+
+**משתני סביבה**
+
+- החלפנו את `ENABLE_DB_MIGRATIONS` ב`DISABLE_DB_MIGRATIONS` (כעת הערך הוא `false` כברירת מחדל, כנראה שלא תצטרך להגדיר דבר)
+
+### v0.33.0 ל-v0.34.0
+
+שדרג את מופע ה-Twenty שלך לשימוש בתמונת v0.34.0
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.34
+```
+
+פקודת yarn database:migrate:prod תאיים את הגירות המבנה של בסיס הנתונים (סכמות ליבה ומטא נתונים)
+פקודת yarn command:prod upgrade-0.34 תדאג להעברת נתונים של כל מרחבי העבודה.
+
+**משתני סביבה**
+
+- הוסר: `FRONT_BASE_URL`
+- התווסף: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
+
+עדכנו את הדרך בה אנו מטפלים בכתובת ה-URL של הממשק הראשי.
+כעת ניתן להגדיר את כתובת ה-URL של הממשק הראשי על ידי שימוש במשתני `FRONT_DOMAIN`, `FRONT_PROTOCOL` ו-`FRONT_PORT`.
+אם ה-FRONT_DOMAIN לא נקבע, כתובת ה-URL של הממשק הראשי תחזור ל-SERVER_URL.
+
+### v0.32.0 ל-v0.33.0
+
+שדרג את מופע ה-Twenty שלך לשימוש בתמונת v0.33.0
+
+```
+yarn command:prod cache:flush
+yarn database:migrate:prod
+yarn command:prod upgrade-0.33
+```
+
+פקודת yarn command:prod cache:flush תנקה את מטמון ה-Redis.
+פקודת yarn database:migrate:prod תאיים את הגירות המבנה של בסיס הנתונים (סכמות ליבה ומטא נתונים)
+פקודת yarn command:prod upgrade-0.33 תדאג להעברת נתונים של כל מרחבי העבודה.
+
+החל מגרסה זו, התמונה twenty-postgres עבור בסיס הנתונים נעשתה מיושנת ויש להשתמש בתמונה twenty-postgres-spilo במקום.
+אם אתה מעוניין להמשיך להשתמש בתמונה twenty-postgres, פשוט החלף את `twentycrm/twenty-postgres:${TAG}` ב-twentycrm/twenty-postgres בתיקיית docker-compose.yml.
+
+### v0.31.0 ל-v0.32.0
+
+שדרג את מופע ה-Twenty שלך לשימוש בתמונת v0.32.0
+
+**הגירה סכמתית ונתונים**
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.32
+```
+
+פקודת yarn database:migrate:prod תאיים את הגירות המבנה של בסיס הנתונים (סכמות ליבה ומטא נתונים)
+פקודת yarn command:prod upgrade-0.32 תדאג להעברת נתונים של כל מרחבי העבודה.
+
+**משתני סביבה**
+
+עדכנו את הדרך בה אנו מטפלים בחיבור Redis.
+
+- הוסר: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
+- התווסף: `REDIS_URL`
+
+עדכן את קובץ ה`.env` שלך לשימוש במשתנה החדש `REDIS_URL` במקום בפרמטרי החיבור הבודדים של Redis.
+
+We have also simplified the way we handle the JWT tokens.
+
+- הוסר: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
+- התווסף: `APP_SECRET`
+
+עדכן את קובץ ה`.env` שלך לשימוש במשתנה ה`APP_SECRET` החדש במקום בסודות הטוקנים הבודדים (ניתן להשתמש באותו הסוד כמו קודם או ליצור מחרוזת אקראית חדשה).
+
+**חשבון מחובר**
+
+אם אתה משתמש בחשבון מחובר לסנכרון הודעות דוא"ל ולוחות שנה של גוגל, תצטרך להפעיל את [API אנשים](https://developers.google.com/people) בקונסולת המנהל של גוגל שלך.
+
+### v0.30.0 ל-v0.31.0
+
+שדרג את מופע ה-Twenty שלך לשימוש בתמונת v0.31.0
+
+**הגירה סכמתית ונתונים**:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.31
+```
+
+פקודת yarn database:migrate:prod תאיים את הגירות המבנה של בסיס הנתונים (סכמות ליבה ומטא נתונים)
+פקודת yarn command:prod upgrade-0.31 תדאג להעברת נתונים של כל מרחבי העבודה.
+
+### v0.24.0 ל-v0.30.0
+
+שדרג את מופע ה-Twenty שלך לשימוש בתמונת v0.30.0
+
+**Breaking change**:
+To enhance performances, Twenty now requires redis cache to be configured. עדכנו את [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) כדי לשקף זאת.
+ודא לעדכן את תצורתך ולעדכן את משתני הסביבה שלך בהתאם:
+
+```
+REDIS_HOST={your-redis-host}
+REDIS_PORT={your-redis-port}
+CACHE_STORAGE_TYPE=redis
+```
+
+**הגירה סכמתית ונתונים**:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.30
+```
+
+פקודת yarn database:migrate:prod תאיים את הגירות המבנה של בסיס הנתונים (סכמות ליבה ומטא נתונים)
+פקודת yarn command:prod upgrade-0.30 תדאג להעברת נתונים של כל מרחבי העבודה.
+
+### v0.23.0 ל-v0.24.0
+
+שדרג את מופע ה-Twenty שלך לשימוש בתמונת v0.24.0
+
+הרץ את הפקודות הבאות:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.24
+```
+
+פקודת yarn database:migrate:prod תאיים את הגירות המבנה של בסיס הנתונים (סכמות ליבה ומטא נתונים)
+פקודת yarn command:prod upgrade-0.24 תדאג להעברת נתונים של כל מרחבי העבודה.
+
+### v0.22.0 ל-v0.23.0
+
+שדרג את מופע ה-Twenty שלך לשימוש בתמונת v0.23.0
+
+הרץ את הפקודות הבאות:
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.23
+```
+
+פקודת yarn database:migrate:prod תאיים את הגירות המבנה של בסיס הנתונים.
+פקודת yarn command:prod upgrade-0.23 תדאג להעברת הנתונים, כולל העברת פעילויות למשימות/הערות.
+
+### v0.21.0 ל-v0.22.0
+
+שדרג את מופע ה-Twenty שלך לשימוש בתמונת v0.22.0
+
+הרץ את הפקודות הבאות:
+
+```
+yarn database:migrate:prod
+yarn command:prod workspace:sync-metadata -f
+yarn command:prod upgrade-0.22
+```
+
+פקודת yarn database:migrate:prod תאיים את הגירות המבנה של בסיס הנתונים.
+The `yarn command:prod workspace:sync-metadata -f` command will sync the definition of standard objects to the metadata tables and apply to required migrations to existing workspaces.
+The `yarn command:prod upgrade-0.22` command will apply specific data transformations to adapt to the new object defaultRequestInstrumentationOptions.
+
+
+
+

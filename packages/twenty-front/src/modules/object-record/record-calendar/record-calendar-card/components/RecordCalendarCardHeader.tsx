@@ -2,10 +2,11 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RecordCardHeaderContainer } from '@/object-record/record-card/components/RecordCardHeaderContainer';
-import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
+import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
@@ -36,8 +37,7 @@ type RecordCalendarCardHeaderProps = {
 export const RecordCalendarCardHeader = ({
   recordId,
 }: RecordCalendarCardHeaderProps) => {
-  const { objectMetadataItem, viewBarInstanceId } =
-    useRecordCalendarContextOrThrow();
+  const { objectMetadataItem } = useRecordCalendarContextOrThrow();
   const record = useRecoilValue(recordStoreFamilyState(recordId));
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
@@ -45,7 +45,9 @@ export const RecordCalendarCardHeader = ({
 
   const isCompactModeActive = currentView?.isCompact ?? false;
 
-  const dragState = useRecordDragState('calendar', viewBarInstanceId);
+  const isDraggingRecord = useRecoilComponentValue(
+    isDraggingRecordComponentState,
+  );
 
   const [isCurrentCardSelected, setIsCurrentCardSelected] =
     useRecoilComponentFamilyState(
@@ -54,7 +56,7 @@ export const RecordCalendarCardHeader = ({
     );
 
   const handleChipClick = () => {
-    if (dragState.isDragging) {
+    if (isDraggingRecord) {
       return;
     }
     openRecordFromIndexView({ recordId });

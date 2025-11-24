@@ -163,7 +163,14 @@ export class ViewSortService {
   }
 
   async destroy(id: string, workspaceId: string): Promise<boolean> {
-    const viewSort = await this.findById(id, workspaceId);
+    const viewSort = await this.viewSortRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+      },
+      relations: ['workspace', 'view'],
+      withDeleted: true,
+    });
 
     if (!isDefined(viewSort)) {
       throw new ViewSortException(

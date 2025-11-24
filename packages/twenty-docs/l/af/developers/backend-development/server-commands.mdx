@@ -1,0 +1,109 @@
+---
+title: Agterkant Opdragte
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+## Nuttige opdragte
+
+Hierdie opdragte moet vanaf pakkette/twenty-server gids uitgevoer word.
+From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+
+### Eerste keer opstel
+
+```
+npx nx database:reset twenty-server # setup the database with dev seeds
+```
+
+### Begin die bediener
+
+```
+npx nx run twenty-server:start
+```
+
+### Lint
+
+```
+npx nx run twenty-server:lint # pass --fix to fix lint errors
+```
+
+### Toets
+
+```
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
+```
+
+Let wel: jy kan `npx nx run twenty-server:test:integration:with-db-reset` gebruik as jy die databasis moet reset voordat jy integrasie-toetse uitvoer.
+
+### Resetting the database
+
+If you want to reset and seed the database, you can run the following command:
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### Migrasies
+
+#### For objects in Core/Metadata schemas (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### For Workspace objects
+
+There are no migrations files, migration are generated automatically for each workspace,
+stored in the database, and applied with this command
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+
+This will drop the database and re-run the migrations and seed.
+
+Maak seker om enige data wat jy wil behou, terug te rugsteun voordat jy hierdie opdrag uitvoer.
+
+</Warning>
+
+## Tegnologie Stapel
+
+Twenty primarily uses NestJS for the backend.
+
+Prisma was die eerste ORM wat ons gebruik het. But in order to allow users to create custom fields and custom objects, a lower-level made more sense as we need to have fine-grained control. Die projek gebruik nou TypeORM.
+
+Hier is hoe die tegnologie stapel nou lyk.
+
+**Kern**
+
+- [NestJS](https://nestjs.com/)
+- [TypeORM](https://typeorm.io/)
+- [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**Databasis**
+
+- [Postgres](https://www.postgresql.org/)
+
+**Derde-party integrasies**
+
+- [Sentry](https://sentry.io/welcome/) vir die dop van foute
+
+**Toetsing**
+
+- [Jest](https://jestjs.io/)
+
+**Gereedskap**
+
+- [Yarn](https://yarnpkg.com/)
+- [ESLint](https://eslint.org/)
+
+**Ontwikkeling**
+
+- [AWS EKS](https://aws.amazon.com/eks/)
+

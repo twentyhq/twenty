@@ -169,7 +169,14 @@ export class ViewGroupService {
   }
 
   async destroy(id: string, workspaceId: string): Promise<ViewGroupEntity> {
-    const viewGroup = await this.findById(id, workspaceId);
+    const viewGroup = await this.viewGroupRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+      },
+      relations: ['workspace', 'view'],
+      withDeleted: true,
+    });
 
     if (!isDefined(viewGroup)) {
       throw new ViewGroupException(

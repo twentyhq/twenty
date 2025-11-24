@@ -1,7 +1,7 @@
 import { isString } from '@sniptt/guards';
 import { type DataSource, type QueryRunner } from 'typeorm';
-import { v4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
@@ -10,13 +10,17 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import { ViewOpenRecordInType } from 'src/engine/metadata-modules/view/types/view-open-record-in-type.type';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
+import { calendarEventsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/calendar-events-all.view';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { dashboardsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view';
+import { messageThreadsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/message-threads-all.view';
+import { messagesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/messages-all.view';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
 import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
@@ -27,6 +31,7 @@ import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects
 import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
+import { workspaceMembersAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workspace-members-all.view';
 
 type PrefillCoreViewsArgs = {
   coreDataSource: DataSource;
@@ -34,6 +39,7 @@ type PrefillCoreViewsArgs = {
   objectMetadataItems: ObjectMetadataEntity[];
   featureFlags?: Record<string, boolean>;
   workspaceSchemaName: string;
+  twentyStandardFlatApplication: FlatApplication;
 };
 
 export const prefillCoreViews = async ({
@@ -41,21 +47,32 @@ export const prefillCoreViews = async ({
   workspaceId,
   objectMetadataItems,
   workspaceSchemaName,
+  twentyStandardFlatApplication,
 }: PrefillCoreViewsArgs): Promise<ViewEntity[]> => {
   const views = [
-    companiesAllView(objectMetadataItems, true),
-    peopleAllView(objectMetadataItems, true),
-    opportunitiesAllView(objectMetadataItems, true),
-    opportunitiesByStageView(objectMetadataItems, true),
-    notesAllView(objectMetadataItems, true),
-    tasksAllView(objectMetadataItems, true),
-    tasksAssignedToMeView(objectMetadataItems, true),
-    tasksByStatusView(objectMetadataItems, true),
-    workflowsAllView(objectMetadataItems, true),
-    workflowVersionsAllView(objectMetadataItems, true),
-    workflowRunsAllView(objectMetadataItems, true),
-    dashboardsAllView(objectMetadataItems, true),
-  ];
+    companiesAllView,
+    peopleAllView,
+    opportunitiesAllView,
+    opportunitiesByStageView,
+    notesAllView,
+    tasksAllView,
+    tasksAssignedToMeView,
+    tasksByStatusView,
+    workflowsAllView,
+    workflowVersionsAllView,
+    workflowRunsAllView,
+    dashboardsAllView,
+    workspaceMembersAllView,
+    messagesAllView,
+    messageThreadsAllView,
+    calendarEventsAllView,
+  ].map((seeder) =>
+    seeder({
+      objectMetadataItems,
+      useCoreNaming: true,
+      twentyStandardFlatApplication,
+    }),
+  );
 
   const queryRunner = coreDataSource.createQueryRunner();
 
@@ -64,7 +81,12 @@ export const prefillCoreViews = async ({
   try {
     await queryRunner.startTransaction();
 
-    const createdViews = await createCoreViews(queryRunner, workspaceId, views);
+    const createdViews = await createCoreViews(
+      queryRunner,
+      workspaceId,
+      views,
+      twentyStandardFlatApplication,
+    );
 
     await prefillWorkspaceFavorites(
       createdViews
@@ -103,13 +125,9 @@ export const createCoreViews = async (
   queryRunner: QueryRunner,
   workspaceId: string,
   viewDefinitions: ViewDefinition[],
+  twentyStandardFlatApplication: FlatApplication,
 ): Promise<ViewEntity[]> => {
-  const viewDefinitionsWithId = viewDefinitions.map((viewDefinition) => ({
-    ...viewDefinition,
-    id: v4(),
-  }));
-
-  const coreViews: Partial<ViewEntity>[] = viewDefinitionsWithId.map(
+  const coreViews: Partial<ViewEntity>[] = viewDefinitions.map(
     ({
       id,
       name,
@@ -122,6 +140,8 @@ export const createCoreViews = async (
       openRecordIn,
       kanbanAggregateOperation,
       kanbanAggregateOperationFieldMetadataId,
+      applicationId,
+      universalIdentifier,
     }) => ({
       id,
       name: isString(name) ? name : name.message || '',
@@ -140,13 +160,16 @@ export const createCoreViews = async (
       kanbanAggregateOperationFieldMetadataId,
       workspaceId,
       anyFieldFilterValue: null,
+      visibility: ViewVisibility.WORKSPACE,
+      applicationId,
+      universalIdentifier,
     }),
   );
 
   const viewRepository = queryRunner.manager.getRepository(ViewEntity);
   const createdViews = await viewRepository.save(coreViews);
 
-  for (const viewDefinition of viewDefinitionsWithId) {
+  for (const viewDefinition of viewDefinitions) {
     if (viewDefinition.fields && viewDefinition.fields.length > 0) {
       const coreViewFields: Partial<ViewFieldEntity>[] =
         viewDefinition.fields.map((field) => ({
@@ -156,6 +179,8 @@ export const createCoreViews = async (
           size: field.size,
           viewId: viewDefinition.id,
           workspaceId,
+          applicationId: twentyStandardFlatApplication.id,
+          universalIdentifier: field.universalIdentifier,
         }));
 
       const viewFieldRepository =
@@ -172,6 +197,8 @@ export const createCoreViews = async (
           operand: filter.operand,
           value: filter.value,
           workspaceId,
+          applicationId: twentyStandardFlatApplication.id,
+          universalIdentifier: filter.universalIdentifier,
         }));
 
       const viewFilterRepository =
@@ -193,6 +220,8 @@ export const createCoreViews = async (
           position: group.position,
           viewId: viewDefinition.id,
           workspaceId,
+          applicationId: twentyStandardFlatApplication.id,
+          universalIdentifier: group.universalIdentifier,
         }));
 
       const viewGroupRepository =

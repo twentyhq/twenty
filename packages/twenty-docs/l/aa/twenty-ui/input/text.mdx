@@ -1,0 +1,153 @@
+---
+title: crwdns61402:0crwdne61402:0
+image: crwdns61412:0crwdne61412:0
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+## crwdns61416:0crwdne61416:0
+
+crwdns61420:0crwdne61420:0
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import { TextInput } from "@/ui/input/components/TextInput";
+
+export const MyComponent = () => {
+  const handleChange = (text) => {
+    console.log("Input changed:", text);
+  };
+
+  const handleKeyDown = (event) => {
+    console.log("Key pressed:", event.key);
+  };
+
+  return (
+    <RecoilRoot>
+      <TextInput
+        className
+        label="Username"
+        onChange={handleChange}
+        fullWidth={false}
+        disableHotkeys={false}
+        error="Invalid username"
+        onKeyDown={handleKeyDown}
+        RightIcon={null}
+      />
+    </RecoilRoot>
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| crwdns61424:0crwdne61424:0 | crwdns61428:0crwdne61428:0 | crwdns61432:0crwdne61432:0                                                            |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| crwdns61434:0crwdne61434:0 | crwdns61438:0crwdne61438:0 | crwdns61442:0crwdne61442:0                                                            |
+| crwdns61446:0crwdne61446:0 | crwdns61450:0crwdne61450:0 | crwdns61454:0crwdne61454:0                                                            |
+| crwdns61458:0crwdne61458:0 | crwdns61460:0crwdne61460:0 | crwdns61464:0crwdne61464:0                                                            |
+| crwdns61468:0crwdne61468:0 | crwdns61472:0crwdne61472:0 | crwdns61476:0crwdne61476:0                                                            |
+| crwdns61480:0crwdne61480:0 | crwdns61484:0crwdne61484:0 | crwdns61486:0crwdne61486:0                                                            |
+| crwdns61490:0crwdne61490:0 | crwdns61494:0crwdne61494:0 | crwdns61498:0crwdne61498:0 crwdns61502:0crwdne61502:0 |
+| crwdns61506:0crwdne61506:0 | crwdns61508:0crwdne61508:0 | crwdns61512:0crwdne61512:0 crwdns61516:0crwdne61516:0 |
+| crwdns61520:0crwdne61520:0 | crwdns61524:0crwdne61524:0 | crwdns61528:0crwdne61528:0                                                            |
+
+crwdns61530:0crwdne61530:0
+
+</Tab>
+
+</Tabs>
+
+## crwdns61534:0crwdne61534:0
+
+crwdns61538:0crwdne61538:0
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
+
+export const MyComponent = () => {
+  return (
+    <RecoilRoot>
+      <AutosizeTextInput
+        onValidate={() => console.log("onValidate function fired")}
+        minRows={1}
+        placeholder="Write a comment"
+        onFocus={() => console.log("onFocus function fired")}
+        variant="icon"
+        buttonTitle
+        value="Task: "
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| crwdns61542:0crwdne61542:0 | crwdns61546:0crwdne61546:0 | crwdns61550:0crwdne61550:0                                                            |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| crwdns61554:0crwdne61554:0 | crwdns61558:0crwdne61558:0 | crwdns61560:0crwdne61560:0                                                            |
+| crwdns61564:0crwdne61564:0 | crwdns61568:0crwdne61568:0 | crwdns61572:0crwdne61572:0                                                            |
+| crwdns61576:0crwdne61576:0 | crwdns61578:0crwdne61578:0 | crwdns61582:0crwdne61582:0                                                            |
+| crwdns61586:0crwdne61586:0 | crwdns61590:0crwdne61590:0 | crwdns61592:0crwdne61592:0                                                            |
+| crwdns61596:0crwdne61596:0 | crwdns61600:0crwdne61600:0 | crwdns61604:0crwdne61604:0 crwdns61608:0crwdne61608:0 |
+| crwdns61612:0crwdne61612:0 | crwdns61616:0crwdne61616:0 | crwdns61618:0crwdne61618:0                                                            |
+| crwdns61622:0crwdne61622:0 | crwdns61626:0crwdne61626:0 | crwdns61630:0crwdne61630:0                                                            |
+
+</Tab>
+
+</Tabs>
+
+## crwdns61634:0crwdne61634:0
+
+crwdns61638:0crwdne61638:0
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { TextArea } from "@/ui/input/components/TextArea";
+
+export const MyComponent = () => {
+  return (
+    <TextArea
+    disabled={false}
+    minRows={4}
+    onChange={()=>console.log('On change function fired')}
+    placeholder="Enter text here"
+    value=""
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| crwdns61642:0crwdne61642:0 | crwdns61646:0crwdne61646:0 | crwdns61648:0crwdne61648:0 |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
+| crwdns61650:0crwdne61650:0 | crwdns61652:0crwdne61652:0 | crwdns61654:0crwdne61654:0 |
+| crwdns61656:0crwdne61656:0 | crwdns61658:0crwdne61658:0 | crwdns61660:0crwdne61660:0 |
+| crwdns61662:0crwdne61662:0 | crwdns61664:0crwdne61664:0 | crwdns61666:0crwdne61666:0 |
+| crwdns61668:0crwdne61668:0 | crwdns61670:0crwdne61670:0 | crwdns61672:0crwdne61672:0 |
+| crwdns61674:0crwdne61674:0 | crwdns61676:0crwdne61676:0 | crwdns61678:0crwdne61678:0 |
+
+</Tab>
+</Tabs>

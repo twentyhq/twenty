@@ -1,0 +1,168 @@
+---
+title: Enllaços
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Enllaç de contacte
+
+Un component d'enllaç estilitzat per mostrar informació de contacte.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+
+import { ContactLink } from 'twenty-ui/navigation';
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log('Contact link clicked!', event);
+  };
+
+  return (
+    <Router>
+      <ContactLink
+        className
+        href="mailto:example@example.com"
+        onClick={handleLinkClick}
+      >
+        example@example.com
+      </ContactLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Propietats  | Tipus             | Descripció                                                        |
+| ----------- | ----------------- | ----------------------------------------------------------------- |
+| nomDeClasse | cadena            | Nom opcional per a un estil addicional                            |
+| href        | cadena            | La URL o ruta objectiu per a l'enllaç                             |
+| onClick     | funció            | Funció de devolució de trucada per activar quan es clica l'enllaç |
+| children    | `React.ReactNode` | El contingut que es mostra dins de l'enllaç                       |
+
+</Tab>
+
+</Tabs>
+
+## Enllaç cru
+
+Un component d'enllaç estilitzat per mostrar enllaços.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RawLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RawLink className href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RawLink>
+    </Router>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Props     | Tipus             | Descripció                                                        |
+| --------- | ----------------- | ----------------------------------------------------------------- |
+| className | cadena            | Nom opcional per a un estil addicional                            |
+| href      | cadena            | La URL o ruta objectiu per a l'enllaç                             |
+| onClick   | funció            | Funció de devolució de trucada per activar quan es clica l'enllaç |
+| children  | `React.ReactNode` | El contingut que es mostra dins de l'enllaç                       |
+
+</Tab>
+</Tabs>
+
+## Enllaç arrodonit
+
+Un enllaç estilitzat arrodonit amb un component de xip per a enllaços.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RoundedLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RoundedLink href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RoundedLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Props    | Tipus             | Descripció                                                        |
+| -------- | ----------------- | ----------------------------------------------------------------- |
+| href     | cadena            | La URL o ruta objectiu per a l'enllaç                             |
+| children | `React.ReactNode` | El contingut que es mostra dins de l'enllaç                       |
+| onClick  | funció            | Funció de devolució de trucada per activar quan es clica l'enllaç |
+
+</Tab>
+</Tabs>
+
+## Enllaç social
+
+Enllaços socials estilitzats, amb suport per a diferents tipus d'enllaços socials, com ara URLs, LinkedIn i X (o Twitter).
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { SocialLink } from "twenty-ui/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <SocialLink
+        type="twitter"
+        href="https://twitter.com/twentycrm"
+      ></SocialLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Propietats | Tipus             | Descripció                                                                                                     |
+| ---------- | ----------------- | -------------------------------------------------------------------------------------------------------------- |
+| href       | cadena            | La URL o ruta objectiu per a l'enllaç                                                                          |
+| children   | `React.ReactNode` | El contingut que es mostra dins de l'enllaç                                                                    |
+| tipus      | cadena            | El tipus d'enllaç social. Les opcions inclouen: `url`, `LinkedIn`, i `Twitter` |
+| onClick    | funció            | Funció de devolució de trucada per activar quan es clica l'enllaç                                              |
+
+</Tab>
+</Tabs>

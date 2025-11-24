@@ -62,7 +62,7 @@ export class MakeSureDashboardNamingAvailableCommand extends ActiveOrSuspendedWo
       `Updating the dashboard object metadata for workspace ${workspaceId}...`,
     );
 
-    await this.objectMetadataServiceV2.updateOne({
+    await this.objectMetadataServiceV2.updateOneObject({
       workspaceId,
       updateObjectInput: {
         id: potentialCustomDashboardObjectMetadata.id,

@@ -16,7 +16,6 @@ export const mockedClientConfig: ClientConfig = {
   frontDomain: 'localhost',
   defaultSubdomain: 'app',
   chromeExtensionId: 'MOCKED_EXTENSION_ID',
-  debugMode: false,
   analyticsEnabled: true,
   support: {
     supportDriver: SupportDriver.FRONT,

@@ -175,7 +175,7 @@ export const CreateProfile = () => {
       </SubTitle>
       <StyledContentContainer>
         <StyledSectionContainer>
-          <H2Title title="Picture" />
+          <H2Title title={t`Picture`} />
           <ProfilePictureUploader />
         </StyledSectionContainer>
         <StyledSectionContainer>

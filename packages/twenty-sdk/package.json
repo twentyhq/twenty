@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "license": "AGPL-3.0",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
@@ -13,9 +13,11 @@
     "build": "vite build"
   },
   "devDependencies": {
+    "@types/node": "^24.0.0",
     "typescript": "5.9.2",
     "vite": "^7.0.0",
-    "vite-plugin-dts": "3.8.1"
+    "vite-plugin-dts": "3.8.1",
+    "vite-tsconfig-paths": "^4.2.1"
   },
   "exports": {
     ".": {

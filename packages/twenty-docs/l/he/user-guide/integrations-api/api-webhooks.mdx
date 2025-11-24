@@ -1,0 +1,83 @@
+---
+title: מפתחות API ו-Webhooks
+info: "Create and manage API keys for authentication and set up webhooks for real-time notifications."
+image: /images/user-guide/api/api.png
+sectionInfo: למדו כיצד לחבר את Twenty לכלים האחרים שלכם.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+## מפתחות API
+
+API keys allow automated access to your CRM data, synchronize data with other systems, and create custom integrations or solutions.
+
+### צור מפתח API
+
+1. עבור אל **הגדרות → APIs & Webhooks**
+2. Click **+ Create key** at the top right
+3. קבע את הגדרות מפתח ה-API שלך:
+   - **שם**: תן למפתח ה-API שלך שם תיאורתי
+   - **תאריך תפוגה**: קבע מתי המפתח אמור לפוג
+4. לחץ על **שמירה** כדי להפיק את מפתח ה-API שלך
+5. **חשוב**: העתק ואחסן את מפתח ה-API שלך מיד, הוא מוצג רק פעם אחת
+
+לאחר יצירתו, מפתח ה-API שלך מספק גישה לתיעוד API מותאם אישית ושטח עבודה לבדיקת נקודות קצה עם מודל הנתונים בפועל שלך.
+
+<Warning>
+כיוון שמפתח ה-API שלך נותן גישה למידע רגיש, אין לשתף אותו עם שירותים שאינך בוטח בהם באופן מלא. אם דלף, ייתכן שמישהו ישתמש בו בצורה מזיקה. אם ביטחון מפתח ה-API שלך נפגע, בטל אותו מיד וצור חדש.
+</Warning>
+<VimeoEmbed videoId="928786722" title="Creating API key" />
+
+### נהל מפתחות API
+
+**שחזר מפתח API:**
+
+1. עבור אל **הגדרות → APIs & Webhooks**
+2. לחץ על מפתח ה-API שברצונך לשחזר
+3. לחץ על כפתור **שחזור**
+4. העתק ואחסן את מפתח ה-API החדש באופן מיידי
+
+**מחק מפתח API:**
+
+1. מצא את מפתח ה-API ברשימה שלך
+2. לחץ על המפתח כדי לפתוח את פרטיו
+3. לחץ על **מחק** כדי להסירו לצמיתות
+
+## וובהוקים
+
+Webhooks מאפשרים עדכונים מיידיים ל-URL שצויין על שינויים או אירועים הקשורים לנתוני הלקוחות שלך.
+
+לדוגמא, כאשר הזדמנות עוברת ל"סגור זכה", ה-webhook יכול להפעיל באופן אוטומטי יצירת חשבונית במערכת הנהלת החשבונות שלך. שים לב כי סוג אוטומציה זה ניתן להשגה גם באמצעות תכונת [Workflows של Twenty](/l/he/user-guide/workflows/getting-started-workflows) באפליקציה, המציעה הדק מבוסס על עדכוני שדה לאוטומציה פנימית.
+
+Webhooks הם אידיאליים לאינטגרציה עם מערכות חיצוניות, בעוד Workflows תומכים באוטומציה פנימית וחיבור לכלים חיצוניים באמצעות הדקי webhook, צמתי קוד וצמתי HTTP.
+
+### צור Webhook
+
+1. עבור אל **הגדרות → APIs & Webhooks → Webhooks**
+2. Click **+ Create webhook**
+3. הזן את URL של ה-webhook שלך (היכן שברצונך לקבל הודעות)
+4. לחץ על **שמור**
+
+ה-webhook שלך יתחיל מיד לקבל הודעות בזמן אמת על שינויים בנתוני ה-CRM שלך.
+
+<VimeoEmbed videoId="928786708" title="Video demonstration" />
+
+### ניהול webhooks
+
+**Delete a Webhook:**
+
+1. עבור אל **הגדרות → APIs & Webhooks → Webhooks**
+2. מצא את ה-webhook שברצונך להסיר
+3. לחץ על ה-webhook
+4. לחץ על **מחק** ואשר בפופאפ
+
+**Edit a Webhook:**
+
+1. לחץ על ה-webhook שברצונך לשנות
+2. עדכן את ה-URL או הגדרות אחרות
+3. לחץ על **שמור** להחלת שינויים
+

@@ -1,0 +1,90 @@
+---
+title: Veri Modeli SSS
+info: "Veri modeli yapılandırması, sınırlamaları ve gelecekteki özellikleri hakkında sıkça sorulan sorular."
+image: /images/user-guide/what-is-twenty/faq.png
+sectionInfo: Eşsiz iş süreçlerinizi desteklemek için tasarlanan esnek veri modeli
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/faq.png" alt="Header" />
+</Frame>
+
+## Nesne Yönetimi
+
+<AccordionGroup>
+<Accordion title="Can I reorder objects in the left navigation bar?">
+Henüz değil. Navigasyon içindeki nesne sıralaması şu anda sabit, ancak bu özellik gelecekteki bir sürüm için planlanmıştır.
+</Accordion>
+
+<Accordion title="Can I hide objects from the left navigation bar?">
+Tüm aktif nesneler gezinme menüsünde görünür. **Ayarlar → Veri Modeli** altında ihtiyaç duymadığınız nesneleri devre dışı bırakabilirsiniz.
+</Accordion>
+
+<Accordion title="Can I delete standard objects (People, Companies, etc.)?">
+You can deactivate any standard objects but you cannot hard delete them.
+</Accordion>
+</AccordionGroup>
+
+## Alan Yetkinlikleri
+
+<AccordionGroup>
+<Accordion title="Can I create formula fields?">
+Formül alanları **2026'nın ilk çeyreğinde** gelmektedir. Bu arada, alan değerlerini otomatik olarak hesaplamak ve güncellemek için iş akışlarını kullanabilirsiniz.
+</Accordion>
+
+<Accordion title="Can I have nested fields in my objects?">
+İç içe alanlar **2026'nın ilk çeyreğinde** gelmektedir. Şu anda, ilişkili nesnelerden alan değerleri getirmek için iş akışlarını kullanabilirsiniz. Örneğin, bir Kişi kaydında bir şirketin sektörünü görüntülemek için, Kişiler üzerinde özel bir alan oluşturun ve değeri eşzamanlamak için bir iş akışı kullanın.
+</Accordion>
+
+<Accordion title="Why can't I update relation field names?">
+İlişki alanı adları API yapısını etkiler ve oluşturulduktan sonra değiştirilemez. Bir ilişki alanını yeniden adlandırmanız gerekiyorsa, yeni bir tane oluşturmalı ve eski olanı silmelisiniz.
+</Accordion>
+
+<Accordion title="Why do I need different singular and plural names?">
+Our GraphQL API uses both forms for different operations:
+- `createPerson` (singular) for single record actions
+- `createPeople` (plural) for bulk operations
+
+Bu, tekil ve çoğul biçimler aynı olduğunda sınırlamalar yaratır ancak geliştirici deneyimini iyileştirir. </Accordion>
+
+<Accordion title="Why are some field names protected?">
+`Tür` veya `Uygulama` gibi bazı alan adları sistem kullanımı için ayrılmıştır. Bunun yerine `Kategori` veya `Sınıflandırma` gibi alternatif adlar seçin.
+</Accordion>
+</AccordionGroup>
+
+## Gelişmiş Özellikler
+
+<AccordionGroup>
+<Accordion title="Can I create many-to-many relationships?">
+Çoktan-çoka ilişkiler **2026'nın ilk çeyreğinde** gelmektedir. Şu anda, iki 1'e-çok ilişkisi olan bir ara nesne oluşturun.
+</Accordion>
+
+<Accordion title="What are Morph Many relationships?">
+Morph Many ilişkileri bir nesnenin birden fazla farklı nesne türüyle ilişkilendirilmesine izin verir. Örneğin, bir Fırsat hem bir Kişiye hem de bir Şirkete bağlanabilir. Bu özellik artık kullanılabilir.
+</Accordion>
+
+<Accordion title="Can I reorder fields in objects?">
+Alan yeniden düzenlemesi, **2025'in dördüncü çeyreğinde** özel düzenlerle birlikte kullanılabilir olacaktır. Şu anda, alanlar alfabetik sırada görünür.
+</Accordion>
+</AccordionGroup>
+
+## Erişim ve İzinler
+
+<AccordionGroup>
+<Accordion title="Where can I see and edit my data model?">
+You can access your Data Model under **Settings → Data Model**.
+</Accordion>
+
+<Accordion title="Why can't I see the Data Model under Settings?">
+Çalışma alanı yöneticinize ulaşın. Veri modeli erişimi genellikle yalnızca yöneticiler tarafından sınırlıdır.
+</Accordion>
+
+<Accordion title="How many custom objects or fields can I create?">
+You can create as many custom objects and fields as you need - the price won't change.
+</Accordion>
+</AccordionGroup>
+
+## Daha Fazla Yardım mı İhtiyacınız Var?
+
+Karmaşık veri modeli tasarımıyla ilgili yardım almak için [uygulama hizmetlerimizi](/l/tr/user-guide/getting-started/implementation-services) kontrol edin.
+

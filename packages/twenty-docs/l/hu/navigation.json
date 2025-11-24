@@ -1,0 +1,91 @@
+{
+  "tabs": {
+    "userGuide": {
+      "label": "User Guide",
+      "groups": {
+        "gettingStarted": {
+          "label": "Első lépések"
+        },
+        "dataModel": {
+          "label": "Adatmodell"
+        },
+        "crmEssentials": {
+          "label": "CRM Essentials"
+        },
+        "views": {
+          "label": "Nézetek"
+        },
+        "workflows": {
+          "label": "Munkafolyamatok"
+        },
+        "collaboration": {
+          "label": "Együttműködés"
+        },
+        "integrationsApi": {
+          "label": "Integrations & API"
+        },
+        "reporting": {
+          "label": "Riporting"
+        },
+        "settings": {
+          "label": "Beállítások"
+        },
+        "pricing": {
+          "label": "Árazás"
+        },
+        "resources": {
+          "label": "Erőforrások"
+        }
+      }
+    },
+    "developers": {
+      "label": "Fejlesztők",
+      "groups": {
+        "developersGroup": {
+          "label": "Fejlesztők"
+        },
+        "devGettingStarted": {
+          "label": "Első lépések",
+          "groups": {
+            "selfHosting": {
+              "label": "Self-Hosting"
+            },
+            "apiAndWebhooks": {
+              "label": "API és Webhookok"
+            }
+          }
+        },
+        "contributing": {
+          "label": "Hozzájárulás",
+          "groups": {
+            "frontendDevelopment": {
+              "label": "Frontend Fejlesztés",
+              "groups": {
+                "twentyUi": {
+                  "label": "Twenty UI",
+                  "groups": {
+                    "display": {
+                      "label": "Megjelenítés"
+                    },
+                    "feedback": {
+                      "label": "Visszajelzés"
+                    },
+                    "input": {
+                      "label": "Bemenet"
+                    },
+                    "navigation": {
+                      "label": "Navigáció"
+                    }
+                  }
+                }
+              }
+            },
+            "backendDevelopment": {
+              "label": "Backend Fejlesztés"
+            }
+          }
+        }
+      }
+    }
+  }
+}

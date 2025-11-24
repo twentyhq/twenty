@@ -1,0 +1,214 @@
+---
+title: 1-Klick m/ Docker Compose
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+<Warning>
+Docker containers are for production hosting or self-hosting, for the contribution please check the [Local Setup](https://docs.twenty.com/l/sv/developers/local-setup).
+</Warning>
+
+## Översikt
+
+Denna guide ger steg-för-steg-anvisningar för att installera och konfigurera Twenty-applikationen med Docker Compose. Syftet är att göra processen enkel och undvika vanliga fallgropar som kan störa din installation.
+
+**Viktigt:** Ändra endast inställningar som uttryckligen nämns i denna guide. Att ändra andra konfigurationer kan orsaka problem.
+
+Se dokumentation [Konfigurera miljövariabler](https://docs.twenty.com/l/sv/developers/self-hosting/setup) för avancerad konfiguration. Alla miljövariabler måste deklareras i docker-compose.yml-filen på server- och/eller arbetsnivå beroende på variabeln.
+
+## Systemkrav
+
+- RAM: Se till att din miljö har minst 2GB RAM. Otillräckligt minne kan orsaka att processer kraschar.
+- Docker & Docker Compose: Se till att båda är installerade och uppdaterade.
+
+## Alternativ 1: En rad skript
+
+Installera den senaste stabila versionen av Twenty med ett enda kommando:
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+För att installera en specifik version eller gren:
+
+```bash
+VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+- Ersätt x.y.z med önskat versionsnummer.
+- Ersätt branch-name med namnet på den gren du vill installera.
+
+## Alternativ 2: Manuella steg
+
+Följ dessa steg för en manuell installation.
+
+### Steg 1: Ställ in miljöfilen
+
+1. **Skapa .env-filen**
+
+   Kopiera exempelfilen för miljö till en ny .env-fil i din arbetskatalog:
+
+   ```bash
+   curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
+   ```
+
+2. **Generera hemliga token**
+
+   Kör följande kommando för att generera en unik slumpmässig sträng:
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   **Viktigt:** Behåll detta värde hemligt / dela inte det.
+
+3. **Uppdatera `.env`**
+
+   Ersätt platshållarvärdet i din .env-fil med den genererade token:
+
+   ```ini
+   APP_SECRET=first_random_string
+   ```
+
+4. **Ange Postgres-lösenord**
+
+   Uppdatera värdet `PG_DATABASE_PASSWORD` i .env-filen med ett starkt lösenord utan specialtecken.
+
+   ```ini
+   PG_DATABASE_PASSWORD=my_strong_password
+   ```
+
+### Steg 2: Hämta Docker Compose-filen
+
+Ladda ner `docker-compose.yml`-filen till din arbetskatalog:
+
+```bash
+curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/docker-compose.yml
+```
+
+### Steg 3: Starta applikationen
+
+Starta Docker-containrarna:
+
+```bash
+docker compose up -d
+```
+
+### Steg 4: Åtkomst till applikationen
+
+Om du hostar twentyCRM på din egen dator, öppna din webbläsare och navigera till [http://localhost:3000](http://localhost:3000).
+
+Om du hostar den på en server, kontrollera att servern körs och att allt är okej med
+
+```bash
+curl http://localhost:3000
+```
+
+## Konfiguration
+
+### Exponera Twenty för extern åtkomst
+
+Som standard körs Twenty på `localhost` på port `3000`. För att nå det via en extern domän eller IP-adress, måste du konfigurera `SERVER_URL` i din `.env`-fil.
+
+#### Förstå `SERVER_URL`
+
+- **Protokoll:** Använd `http` eller `https` beroende på din setup.
+  - Använd `http` om du inte har satt upp SSL.
+  - Använd `https` om du har SSL konfigurerat.
+- **Domän/IP:** Detta är domännamn eller IP-adress där din applikation är tillgänglig.
+- **Port:** Ange portnumret om du inte använder standardportarna (`80` för `http`, `443` för `https`).
+
+### SSL-krav
+
+SSL (HTTPS) behövs för att vissa webbläsarfunktioner ska fungera korrekt. Även om dessa funktioner kan fungera under lokal utveckling (eftersom webbläsare behandlar localhost annorlunda), behövs en riktig SSL-installation när man hostar Twenty på en vanlig domän.
+
+Till exempel kan clipboards-API kräva en säker kontext - vissa funktioner som kopieringsknappar genom hela applikationen fungerar kanske inte utan HTTPS aktiverat.
+
+Vi rekommenderar starkt att sätta upp Twenty bakom en omvänd proxy med SSL-terminering för optimal säkerhet och funktionalitet.
+
+#### Konfigurera `SERVER_URL`
+
+1. **Bestäm din åtkomst-URL**
+   - **Utan omvänd proxy (direktåtkomst):**
+
+     Om du har direkt åtkomst till applikationen utan en omvänd proxy:
+
+     ```ini
+     SERVER_URL=http://your-domain-or-ip:3000
+     ```
+
+   - **Med omvänd proxy (standardportar):**
+
+     Om du använder en omvänd proxy som Nginx eller Traefik och har SSL konfigurerat:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip
+     ```
+
+   - **Med omvänd proxy (anpassade portar):**
+
+     Om du använder icke-standardportar:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip:custom-port
+     ```
+
+2. **Uppdatera `.env`-filen**
+
+   Öppna din `.env`-fil och uppdatera `SERVER_URL`:
+
+   ```ini
+   SERVER_URL=http(s)://your-domain-or-ip:your-port
+   ```
+
+   **Exempel:**
+
+   - Direkt tillgång utan SSL:
+     ```ini
+     SERVER_URL=http://123.45.67.89:3000
+     ```
+   - Åtkomst via domän med SSL:
+     ```ini
+     SERVER_URL=https://mytwentyapp.com
+     ```
+
+3. **Starta om applikationen**
+
+   För att ändringar ska träda i kraft, starta om Docker-containrarna:
+
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+#### Överväganden
+
+- **Omvänd proxy-konfiguration:**
+
+  Säkerställ att din omvända proxy vidarebefordrar förfrågningar till rätt internt port (`3000` som standard). Konfigurera SSL-terminering och alla nödvändiga headers.
+
+- **Brandväggsinställningar:**
+
+  Öppna nödvändiga portar i din brandvägg för att tillåta extern åtkomst.
+
+- **Konsistens:**
+
+  `SERVER_URL` måste matcha hur användare kommer åt din applikation i sina webbläsare.
+
+#### Persistens
+
+- **Datavolymer:**
+
+  Docker Compose-konfigurationen använder volymer för att bevara data för databasen och serverlagringen.
+
+- **Statuslösa miljöer:**
+
+  Om du distribuerar till en statuslös miljö (t.ex. vissa molntjänster), konfigurera extern lagring för att bevara data.
+
+## Felsökning
+
+Om du stöter på några problem, kolla [Felsökning](https://docs.twenty.com/l/sv/developers/self-hosting/troubleshooting) för lösningar.
+

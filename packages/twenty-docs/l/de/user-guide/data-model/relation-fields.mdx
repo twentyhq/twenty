@@ -1,0 +1,62 @@
+---
+title: Relationsfelder
+info: Erfahren Sie, wie Sie Relationen zwischen Objekten mithilfe von Beziehungsfeldern erstellen und 1-zu-viele-Beziehungen konfigurieren.
+image: /images/user-guide/fields/relations_field.png
+sectionInfo: Flexibles Datenmodell, das darauf ausgelegt ist, Ihre einzigartigen Geschäftsprozesse zu unterstützen.
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/relations_field.png" alt="Header" />
+</Frame>
+
+## What are Relation Fields?
+
+Relation fields link records from one object to records in another object. Zum Beispiel:
+
+- **Personen** → **Unternehmen** (jede Person arbeitet für ein Unternehmen)
+- **Opportunities** → **People** (each deal has a contact person)
+- **Tasks** → **Opportunities** (each task relates to a specific deal)
+
+## Creating Relation Fields
+
+### 1. Feld hinzufügen
+
+Gehen Sie zu **Einstellungen → Datenmodell → [Ihr Objekt]** und klicken Sie auf **Feld hinzufügen**.
+
+### 2. Beziehungstyp auswählen
+
+- **Feldtyp**: Wählen Sie "Relation"
+- **Zielobjekt**: Wählen Sie, welches Objekt verbunden werden soll
+- **Beziehung**: Unterstützt derzeit nur **1-zu-viele**-Beziehungen. Stellen Sie sicher, dass Sie die Beziehung in der richtigen Richtung erstellen.
+
+### 3. Feldnamen konfigurieren
+
+Sie müssen Namen für beide Seiten der Beziehung festlegen:
+
+- **Quellfeldname**: Wie das Feld auf Ihrem aktuellen Objekt angezeigt wird
+- **Zielfeldname**: Wie das rückseitige Feld auf dem Zielobjekt angezeigt wird
+
+<Warning>
+Feldnamen können nicht mehr bearbeitet werden, sobald die Beziehung gespeichert ist, da sie die API-Struktur beeinflussen. Wählen Sie sorgfältig.
+</Warning>
+
+## Beziehungen zu Teammitgliedern herstellen
+
+Sie können Relationen zu jedem Objekt erstellen, einschließlich **Workspace Members** (Ihre Twenty-Teamnutzer). Dies ist nützlich zum Erstellen von Eigentümerfeldern:
+
+- **Kontoinhaber**: Verknüpfen Sie ein Unternehmen mit einem Teammitglied, das es verwaltet
+- **Deal Owner**: Assign an Opportunity to a specific salesperson
+
+Wenn Sie eine Relation zu `Workspace Members` erstellen, sehen Sie die Namen Ihrer Teammitglieder in Dropdown-Auswahlen, was die Zuordnung von Eigentum und Verantwortlichkeiten erleichtert.
+
+## Beste Praktiken
+
+- **Planen Sie Ihre Beziehungen** bevor Sie diese erstellen.
+- **Verwenden Sie klare, beschreibende Namen** für beide Feldnamen.
+- **Testen Sie Beziehungen** mit Beispieldaten, bevor Sie sie vollständig implementieren.
+
+## Kommende Funktionen
+
+- **Morph-Many-Beziehungen** (Erscheint Q4 2025)
+- **Viele-zu-viele-Beziehungen** (Erscheint Q1 2026)
+

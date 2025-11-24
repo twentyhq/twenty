@@ -142,6 +142,7 @@ export const useSnackBar = () => {
         : apolloError
           ? getErrorMessageFromApolloError(apolloError)
           : t`An error occurred.`;
+
       setSnackBarQueue({
         id: uuidv4(),
         message: errorMessage,

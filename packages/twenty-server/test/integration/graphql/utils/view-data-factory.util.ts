@@ -11,6 +11,7 @@ import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/v
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 
 export const createViewData = (overrides: Partial<ViewEntity> = {}) => ({
   name: 'Test View',
@@ -20,6 +21,7 @@ export const createViewData = (overrides: Partial<ViewEntity> = {}) => ({
   position: 0,
   isCompact: false,
   openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
+  visibility: ViewVisibility.WORKSPACE,
   ...overrides,
 });
 

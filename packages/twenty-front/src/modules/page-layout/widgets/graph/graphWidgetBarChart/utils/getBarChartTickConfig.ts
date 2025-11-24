@@ -1,0 +1,80 @@
+import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
+import { calculateMaxTickLabelLength } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateMaxTickLabelLength';
+import { calculateWidthPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateWidthPerTick';
+import { computeBarChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartCategoryTickValues';
+import { computeBarChartValueTickCount } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartValueTickCount';
+import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
+
+const MAX_LEFT_AXIS_LABEL_LENGTH = 10;
+
+export type BarChartTickConfig = {
+  categoryTickValues: (string | number)[];
+  numberOfValueTicks: number;
+  maxBottomAxisTickLabelLength: number;
+  maxLeftAxisTickLabelLength: number;
+};
+
+export const getBarChartTickConfig = ({
+  width,
+  height,
+  data,
+  indexBy,
+  xAxisLabel,
+  yAxisLabel,
+  axisFontSize,
+  layout,
+}: {
+  width: number;
+  height: number;
+  data: BarChartDataItem[];
+  indexBy: string;
+  xAxisLabel?: string;
+  yAxisLabel?: string;
+  axisFontSize: number;
+  layout: BarChartLayout;
+}): BarChartTickConfig => {
+  const categoryTickValues = computeBarChartCategoryTickValues({
+    axisSize: layout === BarChartLayout.VERTICAL ? width : height,
+    axisFontSize,
+    data,
+    indexBy,
+    xAxisLabel,
+    yAxisLabel,
+    layout,
+  });
+
+  const margins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
+
+  const availableWidth = width - (margins.left + margins.right);
+  const availableHeight = height - (margins.top + margins.bottom);
+
+  const numberOfValueTicks = computeBarChartValueTickCount({
+    axisSize:
+      layout === BarChartLayout.VERTICAL ? availableHeight : availableWidth,
+    axisFontSize,
+    layout,
+  });
+
+  const widthPerTick = calculateWidthPerTick({
+    layout,
+    availableWidth,
+    categoryTickCount: categoryTickValues.length,
+    valueTickCount: numberOfValueTicks,
+  });
+
+  const maxBottomAxisTickLabelLength = calculateMaxTickLabelLength({
+    widthPerTick,
+    axisFontSize,
+  });
+
+  // TODO: Make this dynamic based on the data
+  const maxLeftAxisTickLabelLength = MAX_LEFT_AXIS_LABEL_LENGTH;
+
+  return {
+    categoryTickValues,
+    numberOfValueTicks,
+    maxBottomAxisTickLabelLength,
+    maxLeftAxisTickLabelLength,
+  };
+};

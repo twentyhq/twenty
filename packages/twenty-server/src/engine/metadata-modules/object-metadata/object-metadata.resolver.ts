@@ -8,8 +8,6 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -17,19 +15,16 @@ import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.typ
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
+import { CreateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
-import {
-  UpdateOneObjectInput,
-  type UpdateObjectPayload,
-} from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
-import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
+import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -44,9 +39,6 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 )
 export class ObjectMetadataResolver {
   constructor(
-    private readonly objectMetadataService: ObjectMetadataService,
-    private readonly beforeUpdateOneObject: BeforeUpdateOneObject<UpdateObjectPayload>,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
     private readonly i18nService: I18nService,
   ) {}
@@ -96,7 +88,7 @@ export class ObjectMetadataResolver {
     );
   }
 
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   @ResolveField(() => String, { nullable: true })
   async icon(
     @Parent() objectMetadata: ObjectMetadataDTO,
@@ -112,18 +104,21 @@ export class ObjectMetadataResolver {
     );
   }
 
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
-  async deleteOneObject(
-    @Args('input') input: DeleteOneObjectInput,
+  async createOneObject(
+    @Args('input') input: CreateOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Context() context: I18nContext,
   ) {
     try {
-      return await this.objectMetadataService.deleteOneObject(
-        input,
-        workspaceId,
-      );
+      const flatobjectMetadata =
+        await this.objectMetadataServiceV2.createOneObject({
+          createObjectInput: input.object,
+          workspaceId,
+        });
+
+      return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
     } catch (error) {
       objectMetadataGraphqlApiExceptionHandler(
         error,
@@ -132,46 +127,44 @@ export class ObjectMetadataResolver {
     }
   }
 
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
+  @Mutation(() => ObjectMetadataDTO)
+  async deleteOneObject(
+    @Args('input') deleteObjectInput: DeleteOneObjectInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Context() context: I18nContext,
+  ) {
+    try {
+      const flatobjectMetadata =
+        await this.objectMetadataServiceV2.deleteOneObject({
+          deleteObjectInput,
+          workspaceId,
+        });
+
+      return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
+    } catch (error) {
+      objectMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(context.req.locale),
+      );
+    }
+  }
+
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
   async updateOneObject(
     @Args('input') updateObjectInput: UpdateOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Context() context: I18nContext,
   ) {
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspaceId,
-      );
-
-    if (isWorkspaceMigrationV2Enabled) {
-      try {
-        return await this.objectMetadataServiceV2.updateOne({
+    try {
+      const flatobjectMetadata =
+        await this.objectMetadataServiceV2.updateOneObject({
           updateObjectInput,
           workspaceId,
         });
-      } catch (error) {
-        objectMetadataGraphqlApiExceptionHandler(
-          error,
-          this.i18nService.getI18nInstance(context.req.locale),
-        );
-      }
-    }
 
-    try {
-      const updatedInput = (await this.beforeUpdateOneObject.run(
-        updateObjectInput,
-        {
-          workspaceId,
-          locale: context.req.locale,
-        },
-      )) as UpdateOneObjectInput;
-
-      return await this.objectMetadataService.updateOneObject(
-        updatedInput,
-        workspaceId,
-      );
+      return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
     } catch (error) {
       objectMetadataGraphqlApiExceptionHandler(
         error,

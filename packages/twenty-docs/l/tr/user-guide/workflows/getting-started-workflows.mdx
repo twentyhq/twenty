@@ -1,0 +1,77 @@
+---
+title: İş Akışlarına Başlarken
+info: "Otomasyonlar eklemeyi ve nasıl başlanacağını öğrenin."
+image: /images/user-guide/workflows/workflow.png
+sectionInfo: Süreçleri otomatikleştirin ve harici araçlarla entegre edin
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow.png" alt="Header" />
+</Frame>
+
+## İş Akışları Neden Önemlidir?
+
+Twenty, kullanıcılarına maksimum esneklik sağlamak için tasarlandı. İş süreçlerinizi katı, önceden oluşturulmuş özelliklere uyarlamak yerine, iş akışları, benzersiz iş kullanım durumlarınızı en iyi destekleyen CRM'yi oluşturmanıza olanak tanır.
+
+İş akışları, bu otomasyonları oluşturmak için Twenty'nin uygulama içi özelliğidir. They give you the building blocks to create exactly what your business needs, when it needs it.
+
+## İş akışlarıyla ne yapabilirim?
+
+İki ana amaç için otomasyonlar oluşturmanızı öneririz:
+
+1. **Ekibinizin günlük işlerini kolaylaştırmak için iç otomasyonlar**: Ekibinizin yavaşlamasına neden olan manuel giriş ve tekrarlanan görevleri azaltın.
+2. **Verileri içeri ve dışarı getirin**: Twenty'yi API çağrıları ve webhooks aracılığıyla veritabanınıza ve diğer araçlara bağlayın.
+
+Nasıl yapılacağına dalmadan önce nelerin mümkün olduğuna dair örnekleri keşfedelim.
+
+## 1. İç Otomasyonlar
+
+CRM'niz, veriler güncel olduğu sürece faydalıdır, ancak kimse güncellemeyi sevmez. Use workflows to automate low-value, repeatable tasks and keep your team focused on what matters.
+
+İçeride otomatikleştirebileceğiniz şeylere örnekler:
+
+- **Data management**: Auto-flag personal emails, lead assignment, data validation
+- **Satış süreçleri**: Aşama bazlı güncellemeler, müşteri kaybı yönetimi, durgun fırsat uyarıları
+- **Verimlilik**: Haftalık görev hatırlatıcıları, toplantı takibi, nesneler arası alan senkronizasyonu
+
+Detaylı örnekler ve adım adım kılavuzlar için [İç Otomasyonlar](/l/tr/user-guide/workflows/internal-automations) kılavuzumuza bakın.
+
+## 2. Dış Entegrasyonlar
+
+Twenty'yi diğer araçlarınız ve veri kaynaklarınızla bağlantı kurarak entegre bir iş sistemi oluşturun. Web formları, ürün veritabanları, çağrı kaydedicileri ve zenginleştirme hizmetlerinden verileri Twenty'ye aktarabilirsiniz. Ayrıca verileri e-posta pazarlama araçlarına, faturalama sistemlerine ve diğer işletme uygulamalarına gönderebilirsiniz.
+
+Entegre edebileceğiniz şeylere örnekler:
+
+- **Veri alımı**: Web formu gönderimleri, ürün veri senkronizasyonu, toplantı notları, veri zenginleştirme
+- **Veri dağıtımı**: Bülten yönetimi, e-posta dizileri, lead skorlama, fatura oluşturma
+
+Detaylı entegrasyon kalıpları ve uygulama rehberliği için, [Dış Araç Entegrasyonu](/l/tr/user-guide/workflows/external-tool-integration) kılavuzumuza bakın.
+
+### Bu bağlantıları kurmak istemezsem ne olur?
+
+Gereksinimlerinize uygun otomasyonlar oluşturmak için [Profesyonel Hizmetler](/l/tr/user-guide/workflows/professional-services) sunuyoruz.  
+Projenizin kapsamına bağlı olarak, bir [Başlangıç Paketi](https://twenty.com/onboarding-packages) önerebiliriz veya sizi sertifikalı uygulama ortaklarımızla iletişime geçirebiliriz. Veri modelinizi oluşturabilir, verilerinizi taşıyabilir, iş akışlarınızı oluşturabilirler.
+
+### İhtiyacım olan bağlantının uygulanabilir olduğundan emin değilim
+
+Bize bir mesaj gönderin, uygulanabilirliği değerlendirme konusunda sizlere yardımcı olalım.
+
+## İş Akışı En İyi Uygulamaları
+
+İş akışları oluşturmaya başlarken, bu ipuçlarını aklınızda bulundurun:
+
+- **Adım isimlerini düzenleyin**: Her biri ne yaptığını açıkça tanımlamak için iş akışı adımlarınızı yeniden adlandırın. Bakım açısından yardımcı olur ve iş arkadaşlarına devretmeyi kolaylaştırır
+- **Önceki adım verilerinden yararlanın**: İş akışınızdaki herhangi bir önceki adım tarafından döndürülen kayıtlardan alanları kullanabilirsiniz
+- **Basit başlayın**: Temel iş akışlarıyla başlayın ve sistemle daha rahat hale geldikçe zamanla karmaşıklık ekleyin
+- **Plan before building**: Map out your workflow logic before you start building to avoid getting stuck halfway through
+- **Dallarınızı akıllıca kullanın**: Bir `Kayıt Ara` adımından sonra, hem "mevcut kaydı güncelle" hem de "yeni kayıt oluştur" senaryolarını yönetmek için dallar oluşturun, ardından yolları tekrar birleştirin
+
+## Üzerinde çalıştığımız konular
+
+İş akışlarını iyileştirmek için üzerinde çalıştığımız temel öğeler şunlardır:
+
+- Döngüler (Iterator şu anda beta aşamasında, Ayarlar → Sürüm → Laboratuvar altında etkinleştirin)
+- Eğer / Aksi adımı
+- Sizin yerinize iş akışları oluşturacak AI ajanı
+
+

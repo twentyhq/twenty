@@ -3,8 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { LanguageModelUsage } from 'ai';
 
 import { type ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
-import { DOLLAR_TO_CREDIT_MULTIPLIER } from 'src/engine/core-modules/ai/constants/dollar-to-credit-multiplier';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
+import { convertCentsToBillingCredits } from 'src/engine/core-modules/ai/utils/convert-cents-to-billing-credits.util';
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 import { type BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
@@ -49,9 +49,7 @@ export class AIBillingService {
     workspaceId: string,
   ): Promise<void> {
     const costInCents = await this.calculateCost(modelId, usage);
-
-    const costInDollars = costInCents / 100;
-    const creditsUsed = Math.round(costInDollars * DOLLAR_TO_CREDIT_MULTIPLIER);
+    const creditsUsed = Math.round(convertCentsToBillingCredits(costInCents));
 
     this.sendAiTokenUsageEvent(workspaceId, creditsUsed);
   }

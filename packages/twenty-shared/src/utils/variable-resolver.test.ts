@@ -10,10 +10,29 @@ describe('resolveInput', () => {
       theme: 'dark',
       notifications: true,
     },
+    specialValues: {
+      nullValue: null,
+      undefinedValue: undefined,
+      emptyString: '',
+      zero: 0,
+      booleanFalse: false,
+      booleanTrue: true,
+    },
   };
 
   it('should return null for null input', () => {
     expect(resolveInput(null, context)).toBeNull();
+  });
+
+  it('should support special values', () => {
+    expect(resolveInput('{{specialValues.nullValue}}', context)).toBeNull();
+    expect(
+      resolveInput('{{specialValues.undefinedValue}}', context),
+    ).toBeUndefined();
+    expect(resolveInput('{{specialValues.emptyString}}', context)).toBe('');
+    expect(resolveInput('{{specialValues.zero}}', context)).toBe(0);
+    expect(resolveInput('{{specialValues.booleanFalse}}', context)).toBe(false);
+    expect(resolveInput('{{specialValues.booleanTrue}}', context)).toBe(true);
   });
 
   it('should return undefined for undefined input', () => {

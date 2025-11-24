@@ -15,3 +15,4 @@ export type {
   MetadataValidationErrorResponse,
 } from './MetadataValidationError';
 export { WorkspaceMigrationV2ExceptionCode } from './MetadataValidationError';
+export { STANDARD_OBJECT_IDS } from './standard-object-ids';

@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
+import { type ActorMetadata } from 'twenty-shared/types';
 
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
@@ -9,12 +10,15 @@ import { UpdateRecordService } from 'src/engine/core-modules/record-crud/service
 import { generateCreateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-record-input-schema.util';
 import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-record-input-schema.util';
 import { BulkDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/bulk-delete-tool.zod-schema';
-import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
 import { SoftDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/soft-delete-tool.zod-schema';
-import { isWorkflowRunObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-run-object.util';
-import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
+import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-related-object.util';
+import {
+  type ToolHints,
+  type ToolOperation,
+} from 'src/engine/metadata-modules/ai-router/types/tool-hints.interface';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
@@ -22,9 +26,11 @@ import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compu
 
 @Injectable()
 export class ToolService {
+  private readonly logger = new Logger(ToolService.name);
+
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly objectMetadataService: ObjectMetadataService,
+    private readonly objectMetadataService: ObjectMetadataServiceV2,
     protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly createRecordService: CreateRecordService,
     private readonly updateRecordService: UpdateRecordService,
@@ -32,10 +38,14 @@ export class ToolService {
     private readonly findRecordsService: FindRecordsService,
   ) {}
 
+  // Generates AI tools for database operations based on workspace objects and permissions
+  // Supports filtering by object names and operation types via toolHints
+  // Returns a map of tool names to tool definitions
   async listTools(
     rolePermissionConfig: RolePermissionConfig,
     workspaceId: string,
     actorContext?: ActorMetadata,
+    toolHints?: ToolHints,
   ): Promise<ToolSet> {
     const tools: ToolSet = {};
 
@@ -77,9 +87,41 @@ export class ToolService {
         relations: ['fields'],
       });
 
-    const filteredObjectMetadata = allObjectMetadata.filter(
-      (objectMetadata) => !isWorkflowRunObject(objectMetadata),
+    let filteredObjectMetadata = allObjectMetadata.filter(
+      (objectMetadata) => !isWorkflowRelatedObject(objectMetadata),
     );
+
+    if (toolHints?.relevantObjects && toolHints.relevantObjects.length > 0) {
+      const relevantSet = new Set(toolHints.relevantObjects);
+      const originalCount = filteredObjectMetadata.length;
+
+      filteredObjectMetadata = filteredObjectMetadata.filter(
+        (obj) =>
+          relevantSet.has(obj.nameSingular) || relevantSet.has(obj.namePlural),
+      );
+
+      this.logger.log(
+        `Tool filtering: reduced from ${originalCount} to ${filteredObjectMetadata.length} objects based on hints: ${toolHints.relevantObjects.join(', ')}`,
+      );
+
+      if (filteredObjectMetadata.length === 0) {
+        this.logger.warn(
+          `Tool filtering resulted in 0 objects. Hints may be incorrect: ${toolHints.relevantObjects.join(', ')}`,
+        );
+      }
+    }
+
+    const operationsSet = toolHints?.operations
+      ? new Set(toolHints.operations)
+      : null;
+
+    const shouldIncludeOperation = (operation: ToolOperation) =>
+      !operationsSet || operationsSet.has(operation);
+
+    const shouldIncludeFind = shouldIncludeOperation('find');
+    const shouldIncludeCreate = shouldIncludeOperation('create');
+    const shouldIncludeUpdate = shouldIncludeOperation('update');
+    const shouldIncludeDelete = shouldIncludeOperation('delete');
 
     filteredObjectMetadata.forEach((objectMetadata) => {
       const objectPermission = objectPermissions[objectMetadata.id];
@@ -90,53 +132,9 @@ export class ToolService {
 
       const restrictedFields = objectPermission.restrictedFields;
 
-      if (objectPermission.canUpdateObjectRecords) {
-        tools[`create_${objectMetadata.nameSingular}`] = {
-          description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
-          inputSchema: generateCreateRecordInputSchema(
-            objectMetadata,
-            restrictedFields,
-          ),
-          execute: async (parameters) => {
-            return this.createRecordService.execute({
-              objectName: objectMetadata.nameSingular,
-              objectRecord: parameters.input,
-              workspaceId,
-              rolePermissionConfig,
-              createdBy: actorContext,
-            });
-          },
-        };
-
-        tools[`update_${objectMetadata.nameSingular}`] = {
-          description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
-          inputSchema: generateUpdateRecordInputSchema(
-            objectMetadata,
-            restrictedFields,
-          ),
-          execute: async (parameters) => {
-            const { id, ...allFields } = parameters.input;
-
-            const objectRecord = Object.fromEntries(
-              Object.entries(allFields).filter(
-                ([, value]) => value !== undefined,
-              ),
-            );
-
-            return this.updateRecordService.execute({
-              objectName: objectMetadata.nameSingular,
-              objectRecordId: id,
-              objectRecord,
-              workspaceId,
-              rolePermissionConfig,
-            });
-          },
-        };
-      }
-
-      if (objectPermission.canReadObjectRecords) {
+      if (shouldIncludeFind && objectPermission.canReadObjectRecords) {
         tools[`find_${objectMetadata.nameSingular}`] = {
-          description: `Search for ${objectMetadata.labelSingular} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Returns an array of matching records with their full data.`,
+          description: `Search for ${objectMetadata.labelSingular} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. To find by ID, use filter: { id: { eq: "record-id" } }. Returns an array of matching records with their full data.`,
           inputSchema: generateFindToolInputSchema(
             objectMetadata,
             restrictedFields,
@@ -171,7 +169,55 @@ export class ToolService {
         };
       }
 
-      if (objectPermission.canSoftDeleteObjectRecords) {
+      if (objectPermission.canUpdateObjectRecords) {
+        if (shouldIncludeCreate) {
+          tools[`create_${objectMetadata.nameSingular}`] = {
+            description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
+            inputSchema: generateCreateRecordInputSchema(
+              objectMetadata,
+              restrictedFields,
+            ),
+            execute: async (parameters) => {
+              return this.createRecordService.execute({
+                objectName: objectMetadata.nameSingular,
+                objectRecord: parameters.input,
+                workspaceId,
+                rolePermissionConfig,
+                createdBy: actorContext,
+              });
+            },
+          };
+        }
+
+        if (shouldIncludeUpdate) {
+          tools[`update_${objectMetadata.nameSingular}`] = {
+            description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
+            inputSchema: generateUpdateRecordInputSchema(
+              objectMetadata,
+              restrictedFields,
+            ),
+            execute: async (parameters) => {
+              const { id, ...allFields } = parameters.input;
+
+              const objectRecord = Object.fromEntries(
+                Object.entries(allFields).filter(
+                  ([, value]) => value !== undefined,
+                ),
+              );
+
+              return this.updateRecordService.execute({
+                objectName: objectMetadata.nameSingular,
+                objectRecordId: id,
+                objectRecord,
+                workspaceId,
+                rolePermissionConfig,
+              });
+            },
+          };
+        }
+      }
+
+      if (shouldIncludeDelete && objectPermission.canSoftDeleteObjectRecords) {
         tools[`soft_delete_${objectMetadata.nameSingular}`] = {
           description: `Soft delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record remains in the database but is hidden from normal queries. This is reversible and preserves all data. Use this for temporary removal.`,
           inputSchema: SoftDeleteToolInputSchema,
@@ -200,6 +246,12 @@ export class ToolService {
         };
       }
     });
+
+    if (operationsSet) {
+      this.logger.log(
+        `Tool filtering: included operations [${Array.from(operationsSet).join(', ')}]`,
+      );
+    }
 
     return tools;
   }

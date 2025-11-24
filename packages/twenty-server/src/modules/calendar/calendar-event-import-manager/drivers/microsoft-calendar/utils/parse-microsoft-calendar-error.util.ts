@@ -33,6 +33,12 @@ export const parseMicrosoftCalendarError = (
         CalendarEventImportDriverExceptionCode.NOT_FOUND,
       );
 
+    case 410:
+      return new CalendarEventImportDriverException(
+        message,
+        CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+      );
+
     case 429:
       return new CalendarEventImportDriverException(
         message,

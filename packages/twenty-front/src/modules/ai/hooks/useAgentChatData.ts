@@ -1,3 +1,4 @@
+import { useAgentChatScrollToBottom } from '@/ai/hooks/useAgentChatScrollToBottom';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { useRecoilState } from 'recoil';
@@ -12,6 +13,8 @@ export const useAgentChatData = () => {
     currentAIChatThreadState,
   );
 
+  const { scrollToBottom } = useAgentChatScrollToBottom();
+
   const { loading: threadsLoading } = useGetChatThreadsQuery({
     skip: isDefined(currentAIChatThread),
     onCompleted: (data) => {
@@ -24,6 +27,7 @@ export const useAgentChatData = () => {
   const { loading: messagesLoading, data } = useGetChatMessagesQuery({
     variables: { threadId: currentAIChatThread! },
     skip: !isDefined(currentAIChatThread),
+    onCompleted: scrollToBottom,
   });
 
   const uiMessages = mapDBMessagesToUIMessages(data?.chatMessages || []);

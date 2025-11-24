@@ -1,0 +1,69 @@
+---
+title: Галочка
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Представляет успешное или завершенное действие.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Checkmark } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <Checkmark />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+Расширяет `React.ComponentPropsWithoutRef<'div'>` и принимает все свойства обычного элемента `div`.
+
+</Tab>
+
+</Tabs>
+
+## Анимированная галочка
+
+Представляет иконку галочки с дополнительной функцией анимации.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { AnimatedCheckmark } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return (
+    <AnimatedCheckmark
+      isAnimating={true}
+      color="green"
+      duration={0.5}
+      size={30}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Свойства          | Тип     | Описание                         | По умолчанию                |
+| ----------------- | ------- | -------------------------------- | --------------------------- |
+| isAnimating       | boolean | Управляет анимацией галочки      | ложь                        |
+| цвет              | строка  | Цвет галочки                     |                             |
+| Продолжительность | число   | Длительность анимации в секундах | 0.5 секунды |
+| размер            | число   | Размер галочки                   | 28 пикселей                 |
+
+</Tab>
+
+</Tabs>

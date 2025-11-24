@@ -21,7 +21,10 @@ import { PageLayoutRestApiExceptionFilter } from 'src/engine/core-modules/page-l
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 @Controller('rest/metadata/pageLayouts')
 @UseGuards(WorkspaceAuthGuard)
@@ -30,6 +33,7 @@ export class PageLayoutController {
   constructor(private readonly pageLayoutService: PageLayoutService) {}
 
   @Get()
+  @UseGuards(NoPermissionGuard)
   async findMany(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('objectMetadataId') objectMetadataId?: string,
@@ -45,6 +49,7 @@ export class PageLayoutController {
   }
 
   @Get(':id')
+  @UseGuards(NoPermissionGuard)
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -53,6 +58,7 @@ export class PageLayoutController {
   }
 
   @Post()
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async create(
     @Body() input: CreatePageLayoutInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -61,6 +67,7 @@ export class PageLayoutController {
   }
 
   @Patch(':id')
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async update(
     @Param('id') id: string,
     @Body() input: UpdatePageLayoutInput,
@@ -76,6 +83,7 @@ export class PageLayoutController {
   }
 
   @Delete(':id')
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

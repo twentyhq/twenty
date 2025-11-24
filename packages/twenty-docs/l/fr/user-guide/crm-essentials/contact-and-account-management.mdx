@@ -1,0 +1,95 @@
+---
+title: Gestion des contacts et des comptes
+info: "Créez et gérez les dossiers de personnes et d'entreprises pour constituer votre base de données clients."
+image: /images/user-guide/home/contact-and-account-management.png
+sectionInfo: "Fonctionnalités essentielles du CRM pour gérer les prospects, les ventes et les clients"
+---
+
+<Frame>
+  <img src="/images/user-guide/home/contact-and-account-management.png" alt="Header" />
+</Frame>
+
+## Importer des données dans votre CRM
+
+Lorsque vous commencez à utiliser Twenty, vous devez intégrer vos contacts et entreprises dans le système. Il existe plusieurs manières de remplir votre CRM en fonction de votre flux de travail et de vos sources de données.
+
+### Saisie manuelle
+
+La méthode la plus simple consiste à ajouter des enregistrements directement via l'interface de Twenty. Allez dans la section `Personnes` et cliquez sur le bouton `+` pour ajouter un nouveau contact. Remplissez leur nom, email, téléphone, et liez-les à leur entreprise. Pour les entreprises, allez dans la section `Entreprises` et ajoutez les détails de l'organisation : nom de l'entreprise, domaine, secteur d'activité et taille.
+
+Le champ de domaine est particulièrement important pour l'identification de l'entreprise, et le champ de l'e-mail est essentiel pour l'identification des personnes.
+
+### Importations CSV
+
+Lorsque vous disposez de données existantes provenant de feuilles de calcul ou d'autres systèmes, l'importation CSV est votre option la plus rapide. Vous pouvez préparer vos données dans Excel ou Google Sheets, puis les télécharger en une seule fois. Cela est particulièrement utile lors de la migration depuis un autre CRM ou lorsque quelqu'un a suivi les contacts dans des feuilles de calcul. Notre guide [Importer/Exporter des données](/l/fr/user-guide/getting-started/import-export-data) vous accompagne dans le processus.
+
+### Capture de données automatisée
+
+Pour une génération continue de prospects, vous pouvez configurer des flux de travail automatisés qui intègrent directement les données dans Twenty :
+
+**Formulaires de site Web** : Lorsque quelqu'un remplit un formulaire sur votre site, vous pouvez le configurer pour envoyer automatiquement les informations à Twenty. La soumission du formulaire déclenche un webhook qui active un flux de travail dans Twenty, créant le nouvel enregistrement de contact sans aucune intervention manuelle.
+
+**Intégration avec d'autres systèmes** : Si vous utilisez d'autres outils professionnels, vous pouvez les connecter à Twenty via des appels API et des flux de travail. Cela vous permet de synchroniser automatiquement les données entre les systèmes : par exemple, faire entrer de nouveaux clients depuis votre système de facturation ou des prospects depuis votre plateforme marketing.
+
+Pour en savoir plus sur la configuration de ces flux de données automatisés, consultez notre section [Workflows](/l/fr/user-guide/workflows/getting-started-workflows).
+
+### Synchronisation des e-mails et du calendrier
+
+Lorsque vous connectez votre boîte aux lettres et votre calendrier à Twenty, le système peut automatiquement créer des enregistrements de personnes et d'entreprises pour les personnes que vous envoyez un e-mail ou rencontrez. Si vous envoyez un e-mail à une personne qui n'est pas déjà dans votre CRM, Twenty peut créer un nouvel enregistrement pour elle. Il en est de même lorsque vous planifiez des réunions avec de nouveaux contacts via votre calendrier.
+
+C'est particulièrement utile pour les équipes commerciales et de développement des affaires qui rencontrent constamment de nouvelles personnes. Au lieu d'ajouter manuellement chaque nouveau contact, Twenty les capture automatiquement au fur et à mesure que vous communiquez. Découvrez comment configurer cela dans notre guide [E-mails et Calendriers](/l/fr/user-guide/collaboration/emails-and-calendars).
+
+### Réduire le travail manuel
+
+Même lorsque vous ajoutez des données manuellement, vous pouvez utiliser des flux de travail pour simplifier le processus. Par exemple, vous pouvez configurer une automatisation qui assigne de nouveaux contacts aux membres de l'équipe en fonction de leur localisation, ou qui crée automatiquement des tâches de suivi lorsque certains types de contacts sont ajoutés.
+
+## Organiser vos contacts
+
+### Conserver les données uniques et propres
+
+Twenty applique automatiquement l'unicité pour organiser vos données. L'adresse e-mail de chaque personne sert d'identifiant unique : vous ne pouvez pas avoir deux personnes avec la même adresse e-mail. De même, les domaines des entreprises sont uniques, donc vous ne créerez pas accidentellement des entreprises en double.
+
+Si votre entreprise a besoin que d'autres champs soient uniques (comme les numéros de téléphone, ou les codes de référence), vous pouvez le configurer dans votre modèle de données. Consultez notre section [Modèle de données](/l/fr/user-guide/data-model/customize-your-data-model) pour apprendre comment configurer des contraintes d'unicité supplémentaires selon vos besoins spécifiques.
+
+### Gestion des doublons
+
+Parfois, vous vous retrouverez avec des enregistrements en double. Twenty dispose d'une fonction de fusion pour les personnes et les entreprises : vous pouvez combiner des enregistrements en double pour garder votre base de données propre sans perdre d'informations.
+
+Pour fusionner des enregistrements, sélectionnez 2 enregistrements, ouvrez le menu de commande `Cmd+K` sur Mac, `Ctrl+K` sur Windows et cliquez sur `Fusionner les enregistrements`.
+
+### Création de hiérarchies d'entreprises
+
+Si vous travaillez avec de grandes organisations qui ont des filiales ou plusieurs divisions, vous pouvez créer des relations entre les entreprises. Configurez des champs de relation entre les enregistrements d'entreprise pour cartographier ces connexions. Cela vous aide à comprendre la structure organisationnelle complète avec laquelle vous travaillez.
+
+### Personnaliser vos vues
+
+Différents membres de l'équipe peuvent avoir besoin de voir différentes informations. Vous pouvez créer des vues personnalisées qui montrent différentes colonnes pour différents objectifs : peut-être que votre équipe de vente doit voir les étapes des offres tandis que votre équipe de support se concentre sur les détails de contact. En savoir plus à ce sujet dans notre article [Gestion des vues](/l/fr/user-guide/crm-essentials/view-management).
+
+## Travailler avec des enregistrements
+
+### Ce que vous trouverez dans chaque enregistrement
+
+Lorsque vous ouvrez un enregistrement de personne ou d'entreprise, vous voyez toutes leurs informations organisées en onglets :
+
+- **Champs** : Les informations de base telles que le nom, l'email, le téléphone et tous les champs personnalisés que vous avez ajoutés
+- **Relations** : Montre les connexions entre cet enregistrement et des enregistrements d'autres objets
+- **Chronologie** : Une vue chronologique de toutes les interactions et mises à jour de cet enregistrement
+- **Tâches** : Toutes les tâches de suivi liées à ce contact
+- **Notes** : Notes d'équipe et observations sur cette personne ou entreprise
+- **Fichiers** : Documents et pièces jointes liés à cet enregistrement
+- **E-mails** : Fils de discussion par e-mail avec ce contact (lorsque votre équipe a connecté ses boîtes aux lettres)
+- **Calendrier** : Réunions et rendez-vous avec ce contact
+
+Les onglets Email et Calendrier sont particulièrement puissants : ils affichent automatiquement tous les échanges par email et les réunions que quiconque dans votre équipe a eus avec ce contact, tant qu'ils ont connecté leur boîte mail à Twenty. Vous pouvez en savoir plus sur la mise en place de ceci dans notre guide [Emails et Calendriers](/l/fr/user-guide/collaboration/emails-and-calendars).
+
+### Ajouter les champs dont vous avez besoin
+
+Les champs standards pourraient ne pas capturer tout ce qui est important pour votre entreprise. Si vous avez besoin d'informations supplémentaires, telles que des segments de clientèle, des sources de recommandations, ou des données spécifiques au secteur, vous pouvez ajouter des champs personnalisés ou modifier ceux existants. Rendez-vous dans notre section [Modèle de données](/l/fr/user-guide/data-model/customize-your-data-model) pour apprendre comment personnaliser votre configuration.
+
+## Gérer les enregistrements supprimés
+
+Lorsque vous supprimez un enregistrement dans Twenty, il n'est pas perdu pour toujours. Les enregistrements sont "soft deletions", ce qui signifie qu'ils sont cachés mais peuvent être restaurés si nécessaire.
+
+Pour accéder aux enregistrements supprimés, ouvrez le menu de commande `Cmd+K` sur Mac, `Ctrl+K` sur Windows, puis cliquez sur `Voir les enregistrements supprimés`. De là, vous pouvez soit restaurer les enregistrements, soit les supprimer définitivement si vous êtes sûr de ne pas en avoir besoin.
+
+Ce filet de sécurité signifie que vous pouvez nettoyer votre base de données sans vous soucier de perdre par accident des informations importantes.

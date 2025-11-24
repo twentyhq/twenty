@@ -155,7 +155,6 @@ export class WorkspaceDatasourceFactory {
                 .map((objectMetadata) =>
                   this.entitySchemaFactory.create(
                     workspaceId,
-                    dataSourceMetadataVersion,
                     objectMetadata,
                     cachedObjectMetadataMaps,
                   ),

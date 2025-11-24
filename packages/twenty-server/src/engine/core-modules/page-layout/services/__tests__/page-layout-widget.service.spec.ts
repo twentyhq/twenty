@@ -107,9 +107,9 @@ describe('PageLayoutWidgetService', () => {
         where: {
           pageLayoutTabId,
           workspaceId,
-          deletedAt: IsNull(),
         },
         order: { createdAt: 'ASC' },
+        withDeleted: false,
       });
       expect(result).toEqual(expectedWidgets);
     });

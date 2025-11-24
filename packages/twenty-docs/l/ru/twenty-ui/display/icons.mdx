@@ -1,0 +1,83 @@
+---
+title: Иконки
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+Список иконок, используемых в нашем приложении.
+
+## Иконки Tabler
+
+Мы используем иконки Tabler для React во всем приложении.
+
+<Tabs>
+
+<Tab title="Installation"><br/>
+
+```
+yarn add @tabler/icons-react
+```
+
+</Tab>
+
+<Tab title="Props">
+
+You can import each icon as a component. Here's an example: <br />
+
+```jsx
+import { IconArrowLeft } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return <IconArrowLeft color="red" size={48} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Свойства | Тип    | Описание                          | По умолчанию |
+| -------- | ------ | --------------------------------- | ------------ |
+| размер   | число  | Высота и ширина иконки в пикселях | 24           |
+| цвет     | строка | Цвет иконок                       | currentColor |
+| обводка  | число  | Ширина обводки иконки в пикселях  | 2            |
+
+</Tab>
+
+</Tabs>
+
+## Пользовательские иконки
+
+В дополнение к иконкам Tabler, приложение использует несколько пользовательских иконок.
+
+### Иконка адресной книги
+
+Displays an address book icon.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { IconAddressBook } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <IconAddressBook size={24} stroke={2} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Свойства | Тип   | Описание                          | По умолчанию |
+| -------- | ----- | --------------------------------- | ------------ |
+| размер   | число | Высота и ширина иконки в пикселях | 24           |
+| обводка  | число | Ширина обводки иконки в пикселях  | 2            |
+
+</Tab>
+
+</Tabs>

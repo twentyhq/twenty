@@ -1,0 +1,93 @@
+---
+title: Arbejdsgangkreditter
+info: Forstå forbrug af arbejdsgangscredits, overvågning og omkostningsstyring for dine automatiseringer.
+image: /images/user-guide/workflows/workflow-credits.png
+sectionInfo: Automatiser processer og integrer med eksterne værktøjer
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow-credits.png" alt="Header" />
+</Frame>
+
+Arbejdsgangscredits driver dine automatiseringer i Twenty. Forståelse af, hvordan de fungerer, hjælper dig med at optimere omkostninger og administrere dit automatiseringsbudget effektivt.
+
+## Creditfordeling pr. plan
+
+Arbejdsgangscredits fordeles pr. arbejdsområde baseret på dit abonnement:
+
+- **Prøveversion**: 5 millioner credits
+- **Pro Plan**: 10 millioner credits pr. måned
+- **Organisationsplan**: 20 millioner credits pr. måned
+
+## Hvordan kreditforbrug virker
+
+Credits bruges, når arbejdsgange udføres, ikke når du opretter dem. Hver workflow-handling forbruger kreditter baseret på dens kompleksitet:
+
+### Kreditforbrug efter handlingstype
+
+- **Grundlæggende interne operationer**: Meget lavt kreditforbrug
+  - Søg poster
+  - Opret post
+  - Opdater post
+  - Slet post
+  - Formularhandlinger
+
+- **Komplekse operationer**: Højere kreditforbrug
+  - Kodehandlinger (JavaScript-udførelse)
+  - HTTP Anmodninger til eksterne tjenester
+
+- **AI-funktioner**: Betydeligt kreditforbrug (kommer snart)
+  - AI prompts og behandling vil forbruge credits baseret på brugen
+
+### Realtidsfradrag
+
+Kreditter fratrækkes i realtid, når arbejdsprocesser udføres. Dette betyder:
+
+- Udkast til arbejdsgange forbruger ikke credits
+- Kun aktive, kørende arbejdsgange bruger din kreditfordeling
+- Fejlede arbejdsgange forbruger stadig credits for færdiggjorte trin
+
+## Credits administration
+
+### Tjek kreditforbrug
+
+1. Gå til **Indstillinger → Fakturering**
+2. Vis dit nuværende kreditforbrug og resterende balance
+3. Overvåg forbrugsmønstre for at optimere dine arbejdsgange
+
+### Køb af ekstra credits
+
+Hvis du har brug for flere kreditter ud over din planlagte allokering:
+
+1. Gå til **Indstillinger → Fakturering**
+2. Klik på muligheden for at købe yderligere credits. Pakker i forskellige størrelser er tilgængelige.
+3. Credits tilføjes til din nuværende balance
+
+## Bedste praksis
+
+### Effektivt Arbejdsgangsdesign
+
+- **Start Simpelt**: Begynd med grundlæggende handlinger og tilføj kompleksitet gradvist
+- **Test i Udkast**: Test arbejdsgange grundigt inden aktivering for at undgå at spilde credits på fejl
+- **Minimer HTTP Anmodninger**: Brug effektive søgekriterier og kombiner operationer hvor muligt
+- **Batchbehandling**: Brug bulkoperationer og iteratorhandlinger effektivt
+- **Fejlhåndtering**: Implementer korrekt fejlhåndtering for at forhindre unødvendige gentagelser
+- **Optimering af manuelt udløste handlinger**: For manuelle udløsere, vælg `Bulk`-tilgængelighed for at behandle flere poster i en enkelt arbejdsgangskørsel (se [Arbejdsgangsfunktioner](/l/da/user-guide/workflows/workflow-features) for detaljer)
+
+### Handlingsoptimering
+
+- Brug grundlæggende interne operationer, når det er muligt (lavere kreditforbrug)
+- Optimer kodehandlinger for effektivitet
+- Overvej manuelle udløsere for ikke-presserende processer
+- Batch-operationer for at reducere individuelle handlingskald
+
+### Kreditstyring
+
+- **Regelmæssig Overvågning**: Tjek dit kreditforbrug ugentligt i Indstillinger → Fakturering
+- **Forbrugssporing**: Hold styr på forbrugsmønstre for at undgå uventede overtræk
+- **Planlæg i overensstemmelse hermed**: Overvej at opgradere din plan, hvis du konsekvent har brug for flere credits
+- **Gennemgang af arbejdsgange**: Gennemgå regelmæssigt arbejdsgange med højt forbrug og deaktiver ubrugte
+- **Strategisk planlægning**: Planlæg udrulningen af arbejdsgange baseret på tilgængelige credits
+
+For detaljerede oplysninger om fakturering og kreditadministration, besøg **Indstillinger → Fakturering** i din Twenty-arbejdsplads.
+

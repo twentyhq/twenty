@@ -17,6 +17,7 @@ export const createTestViewWithGraphQL = async (
     position: viewData.position,
     isCompact: viewData.isCompact,
     openRecordIn: viewData.openRecordIn,
+    visibility: viewData.visibility,
   };
 
   const { data, errors } = await createOneCoreView({

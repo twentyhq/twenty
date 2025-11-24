@@ -1,0 +1,107 @@
+---
+title: Campi
+info: "Comprendere il ruolo dei campi e come gestirli."
+image: /images/user-guide/fields/field.png
+sectionInfo: Modello dati flessibile progettato per supportare i tuoi processi aziendali unici
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## Informazioni sui Campi
+
+I campi sono come colonne in un foglio di calcolo. Memorizzano diversi tipi di dati come testo, numeri o date. Fields can be standard (built-in) or custom (the ones you create).
+
+### Campi Standard
+
+Standard fields come built-in with Twenty to handle common business needs.
+
+Ad esempio, `Nome` e `Cognome` sono campi standard nell'oggetto `People`. Memorizzano dati di testo per nomi individuali.
+
+Non puoi eliminare i campi standard, ma puoi disattivarli se non ne hai bisogno.
+
+Puoi anche personalizzare le opzioni dei campi standard di tipo `SELECT`, ad esempio le opzioni per il `Fase` su Opportunità.
+
+<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}}/>
+
+### Campi Personalizzati
+
+I campi personalizzati possono essere aggiunti a qualsiasi oggetto. Puoi memorizzare testo, numeri, date, selezioni a discesa e altro. Usa campi personalizzati per tracciare informazioni specifiche per la tua attività.
+
+Ad esempio, un campo personalizzato per SpaceX potrebbe essere `Stato operativo razzo`, che indica se un razzo è operativo.
+
+<img src="/images/user-guide/fields/custom-fields.png"style={{width:'100%'}}/>
+
+## Create a Custom Field
+
+To add a custom field to any object, follow these steps:	Vai su `Impostazioni` nella barra laterale sinistra.
+2.	Vai su `Modello di dati`, quindi seleziona l'oggetto che desideri personalizzare.
+3.	Procedi cliccando su `Aggiungi Campo`.
+4.	Scegli un nome e un tipo di campo che si adattano alle tue esigenze. Considera l'aggiunta di una descrizione del campo per una migliore comprensione.
+
+Il tuo nuovo campo è ora disponibile nei campi dell'applicazione. Per visualizzarlo in una vista specifica, fai clic sul menu delle opzioni, quindi seleziona `Campi`.
+
+<VimeoEmbed videoId="927628219" title="Video demonstration" />
+
+**Modo rapido:** Fai clic sul pulsante **+** in alto a destra di ogni tabella oggetto, quindi seleziona `Personalizza campi`. Ciò ti porterà direttamente alle impostazioni del Modello di Dati.
+
+<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}}/>
+
+## Disattiva un campo
+
+Puoi disattivare un campo per nasconderlo dall'app senza perdere i tuoi dati. Pensalo come un nascondimento del campo invece di un'eliminazione.
+
+Ecco come puoi farlo:
+
+1. Trova il campo che desideri disattivare nelle impostazioni del tuo oggetto.
+
+2. Clicca sui tre punti `⋮` accanto al campo per aprire il menu.
+
+3. Seleziona `Disattiva` dall'elenco a discesa.
+
+<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}}/>
+
+Cosa succede quando disattivi un campo?
+
+1. **Nell'app:** Il campo scompare e non puoi aggiungervi nuovi valori.
+
+2. **Relazioni esistenti:** Se è un campo di relazione, le connessioni esistenti rimangono ma non puoi crearne di nuove.
+
+3. **Accesso API:** Puoi ancora accedere al campo e ai suoi dati tramite l'API.
+
+Puoi riattivare i campi Standard e Personalizzati o avere l'opzione di eliminarli permanentemente.
+
+## Rendi Unici i Campi
+
+Rendi un campo unico per garantire che i record distinti non possano avere lo stesso valore. Ad esempio, gli indirizzi email sono unici per ogni persona.
+
+Se ottieni un errore impostando l'unicità, controlla i valori duplicati nei tuoi dati (inclusi i record eliminati).
+
+## Procedure Migliori per la Configurazione dei Campi
+
+### Convenzioni e Limitazioni sui Nomi
+
+- **I nomi dei campi di relazione non possono essere aggiornati** dopo la creazione (influisce sulla struttura API)
+- **I nomi singolari e plurali devono essere distinti**: La nostra API GraphQL necessita di nomi distinti per le mutazioni
+- **Nomi di campi protetti**: alcuni nomi sono riservati per uso di sistema (e.g., `Tipo`)
+
+### Campi Valuta e Telefono
+
+- **Valuta predefinita**: può essere configurata tramite il modello di dati
+- **Codici paesi predefiniti**: possono essere configurati per i campi telefono tramite il modello di dati
+
+### Campi Selezione
+
+- **Può essere selezionata un'opzione predefinita** per ogni campo Selezione
+
+### Campi di Testo dei Record
+
+- **Ogni oggetto ha un campo di visualizzazione principale**: Questo campo appare nella colonna più a sinistra e rappresenta il record quando collegato a altri oggetti. Deve essere un campo di testo. Ad esempio, Persone usa `Nome` come campo principale, quindi quando colleghi una persona a un'azienda, vedrai il loro nome nella vista dell'azienda.
+
+### Campi di Relazione
+
+- **Collegare oggetti tra loro**: I campi di relazione collegano i record da diversi oggetti. Per informazioni dettagliate sulla creazione e la gestione delle relazioni, consulta il nostro articolo [Campi di Relazione](/l/it/user-guide/data-model/relation-fields).
+

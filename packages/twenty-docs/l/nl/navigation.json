@@ -1,0 +1,91 @@
+{
+  "tabs": {
+    "userGuide": {
+      "label": "Gebruikers gids",
+      "groups": {
+        "gettingStarted": {
+          "label": "Aan de slag"
+        },
+        "dataModel": {
+          "label": "Gegevensmodel"
+        },
+        "crmEssentials": {
+          "label": "CRM-essentials"
+        },
+        "views": {
+          "label": "Weergaven"
+        },
+        "workflows": {
+          "label": "Workstrooms"
+        },
+        "collaboration": {
+          "label": "Samenwerking"
+        },
+        "integrationsApi": {
+          "label": "Integraties & API"
+        },
+        "reporting": {
+          "label": "Rapportage"
+        },
+        "settings": {
+          "label": "Instellingen"
+        },
+        "pricing": {
+          "label": "Prijzen"
+        },
+        "resources": {
+          "label": "Bronnen"
+        }
+      }
+    },
+    "developers": {
+      "label": "Ontwikkelaars",
+      "groups": {
+        "developersGroup": {
+          "label": "Ontwikkelaars"
+        },
+        "devGettingStarted": {
+          "label": "Aan de slag",
+          "groups": {
+            "selfHosting": {
+              "label": "Zelfhosting"
+            },
+            "apiAndWebhooks": {
+              "label": "API en Webhooks"
+            }
+          }
+        },
+        "contributing": {
+          "label": "Bijdragen",
+          "groups": {
+            "frontendDevelopment": {
+              "label": "Frontend ontwikkeling",
+              "groups": {
+                "twentyUi": {
+                  "label": "Twenty UI",
+                  "groups": {
+                    "display": {
+                      "label": "Weergeven"
+                    },
+                    "feedback": {
+                      "label": "Terugkoppeling"
+                    },
+                    "input": {
+                      "label": "Input"
+                    },
+                    "navigation": {
+                      "label": "Navigation"
+                    }
+                  }
+                }
+              }
+            },
+            "backendDevelopment": {
+              "label": "Backend Ontwikkeling"
+            }
+          }
+        }
+      }
+    }
+  }
+}

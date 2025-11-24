@@ -1,0 +1,87 @@
+---
+title: Webhake
+image: /images/docs/getting-started/webhooks.png
+info: Ontdek hoe om ons Webhooks te gebruik.
+---
+
+<Frame>
+  <img src="/images/docs/getting-started/webhooks.png" alt="Header" />
+</Frame>
+
+## Oorsig
+
+Webhooks in Twenty vul die API aan deur **intydse kennisgewings** aan jou eie toepassings te aktiveer wanneer sekere gebeurtenisse in jou CRM plaasvind. In plaas daarvan om die API voortdurend vir veranderinge te pols, kan jy webhooks opstel om Twenty toe te laat om data **te stuur** na jou stelsel wanneer spesifieke gebeurtenisse voorkom (byvoorbeeld, wanneer 'n nuwe rekord geskep word of 'n bestaande rekord opgedateer word). Dit help om eksterne stelsels onmiddellik en doeltreffend met Twenty gesinkroniseer te hou.
+
+Met webhooks sal Twenty 'n HTTP POST-versoek stuur na 'n URL wat jy spesifiseer, wat besonderhede oor die gebeurtenis bevat. You can then handle that data in your application (e.g., to update your external database, trigger workflows, or send alerts).
+
+## Stel 'n Webhook Op
+
+Om 'n webhook in Twenty te skep, gebruik die **API's & Webhooks**-instellings in jou Twenty-app:
+
+1. **Gaan na Instellings:** Gaan in jou Twenty-toepassing na **Instellings → API's & Webhooks**.
+2. **Skep 'n Webhook:** Klik onder **Webhooks** op **+ Skep webhook**.
+3. **Voer URL in:** Verskaf die eindpunt-URL op jou bediener waar jy wil hê Twenty moet webhook-versoeke stuur. Dit moet 'n publiek toeganklike URL wees wat POST-versoeke kan hanteer.
+4. **Stoor:** Klik **Stoor** om die webhook te skep. Die nuwe webhook sal onmiddellik geaktiveer word.
+
+Jy kan verskeie webhooks skep as jy verskillende gebeurtenisse na verskillende eindpunte moet stuur. Elke webhook is in wese 'n inskrywing vir alle relevante gebeurtenisse (op hierdie stadium stuur Twenty alle gebeurtenissoorte na die gegewe URL; filter spesifieke gebeurtenissoorte mag in die UI konfigureerbaar wees). If you ever need to remove a webhook, you can delete it from the same settings page (select the webhook and choose delete).
+
+## Gebeurtenisse en Laaie
+
+Sodra 'n webhook ingestel is, sal Twenty 'n HTTP POST-versoek stuur na jou gespesifiseerde URL wanneer 'n sneller-gebeurtenis in jou CRM-data plaasvind. Algemene gebeurtenisse wat webhooks sneller insluit:
+
+- **Rekord Geskep:** bv. 'n nuwe persoon word bygevoeg (`person.created`), 'n nuwe maatskappy word geskep (`company.created`), 'n nota word geskep (`note.created`), ens.
+- **Rekord Opgedateer:** bv. 'n bestaande persoon se inligting word opgedateer (`person.updated`), 'n maatskappyrekord word gewysig (`company.updated`), ens.
+- **Record Deleted:** e.g. a person or company is deleted (`person.deleted`, `company.deleted`).
+- **Ander Gebeurtenisse:** Indien van toepassing, ander objekgebeurtenisse of pasgemaakte snelringe (byvoorbeeld, indien take of ander voorwerpe opgedateer word, sal soortgelyke gebeurtenistipes gebruik word soos `task.created`, `note.updated`, ens.).
+
+Die webhook POST-versoek bevat 'n JSON-laai in sy liggaam. Die laai sal gewoonlik ten minste twee dinge insluit: die tipe gebeurtenis, en die data wat met daardie gebeurtenis verband hou (dikwels die rekord wat geskep/opgedateer is). Byvoorbeeld, 'n webhook vir 'n nuutgeskepde persoon sal dalk 'n laai stuur soos:
+
+```
+{
+  "event": "person.created",
+  "data": {
+    "id": "abc12345",
+    "firstName": "Alice",
+    "lastName": "Doe",
+    "email": "alice@example.com",
+    "createdAt": "2025-02-10T15:30:45Z",
+    "createdBy": "user_123"
+  },
+  "timestamp": "2025-02-10T15:30:50Z"
+}
+```
+
+In hierdie voorbeeld:
+
+- `"event"` spesifiseer wat gebeur het (`person.created`).
+- `"data"` bevat die besonderhede van die nuwe rekord (dieselfde inligting wat jy sou kry as jy daardie persoon via die API versoek het).
+- `"timestamp"` is wanneer die gebeurtenis plaasgevind het (in UTC).
+
+Jou eindpunt moet voorbereid wees om sulke JSON-data via POST te ontvang. Gewoonlik sal jy die JSON ontleed, kyk na die `"event"`-tipe om te verstaan wat gebeur het, en dan die `"data"` toepaslik gebruik (bv. 'n nuwe kontak in jou stelsel skep, of 'n bestaande een opdateer).
+
+**Nota:** Dit is belangrik om te reageer met 'n **2xx HTTP-status** van jou webhook-eindpunt om suksesvolle ontvangs te erken. As die Twenty webhooksender nie 'n 2xx-antwoord kry nie, mag dit oorweeg dat die aflewering misluk het. (In die toekoms mag herpoging logika mislukte webhooks probeer herstuur, so streef altyd om so gou as moontlik 'n 200 OK terug te gee na verwerking van die data.)
+
+## Webhook Validasie
+
+Om die sekerheid van jou webhook-eindpunte te verseker, sluit Twenty 'n handtekening in die `X-Twenty-Webhook-Signature`-kop in.
+
+Hierdie handtekening is 'n HMAC SHA256 hash van die versoeklaai, bereken met behulp van jou webhook-geheim.
+
+Om die handtekening te valideer, moet jy:
+
+1. Koppel die timestamp (van `X-Twenty-Webhook-Timestamp`-kop), 'n dubbelpunt, en die JSON-string van die laai.
+2. Bereken die HMAC SHA256 hash met behulp van jou webhook-geheim as die sleutel.
+3. Vergelyk die resulterende heksadecimale verteer met die handtekening-kop.
+
+Hier is 'n voorbeeld in Node.js:
+
+```javascript
+const crypto = require("crypto");
+const timestamp = "1735066639761";
+const payload = JSON.stringify({...});
+const secret = "your-secret";
+const stringToSign = `${timestamp}:${JSON.stringify(payload)}`;
+const signature = crypto.createHmac("sha256", secret)
+  .update(stringToSign)
+  .digest("hex");
+```

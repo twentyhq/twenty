@@ -1,10 +1,10 @@
 import { TSESTree } from '@typescript-eslint/utils';
 
 export const typedTokenHelpers = {
-  nodeHasDecoratorsNamed(
+  nodeHasDecoratorsNamed: (
     node: TSESTree.MethodDefinition | TSESTree.ClassDeclaration,
-    decoratorNames: string[]
-  ): boolean {
+    decoratorNames: string[],
+  ): boolean => {
     if (!node.decorators) {
       return false;
     }
@@ -13,8 +13,10 @@ export const typedTokenHelpers = {
       if (decorator.expression.type === TSESTree.AST_NODE_TYPES.Identifier) {
         return decoratorNames.includes(decorator.expression.name);
       }
-      
-      if (decorator.expression.type === TSESTree.AST_NODE_TYPES.CallExpression) {
+
+      if (
+        decorator.expression.type === TSESTree.AST_NODE_TYPES.CallExpression
+      ) {
         const callee = decorator.expression.callee;
         if (callee.type === TSESTree.AST_NODE_TYPES.Identifier) {
           return decoratorNames.includes(callee.name);
@@ -25,9 +27,9 @@ export const typedTokenHelpers = {
     });
   },
 
-  nodeHasAuthGuards(
-    node: TSESTree.MethodDefinition | TSESTree.ClassDeclaration
-  ): boolean {
+  nodeHasAuthGuards: (
+    node: TSESTree.MethodDefinition | TSESTree.ClassDeclaration,
+  ): boolean => {
     if (!node.decorators) {
       return false;
     }
@@ -36,15 +38,19 @@ export const typedTokenHelpers = {
       // Check for @UseGuards() call expression
       if (
         decorator.expression.type === TSESTree.AST_NODE_TYPES.CallExpression &&
-        decorator.expression.callee.type === TSESTree.AST_NODE_TYPES.Identifier &&
+        decorator.expression.callee.type ===
+          TSESTree.AST_NODE_TYPES.Identifier &&
         decorator.expression.callee.name === 'UseGuards'
       ) {
-        // Check the arguments for UserAuthGuard, WorkspaceAuthGuard, or PublicEndpoint
+        // Check the arguments for UserAuthGuard, WorkspaceAuthGuard, PublicEndpoint, or FilePathGuard
         return decorator.expression.arguments.some((arg) => {
           if (arg.type === TSESTree.AST_NODE_TYPES.Identifier) {
-            return arg.name === 'UserAuthGuard' || 
-                   arg.name === 'WorkspaceAuthGuard' || 
-                   arg.name === 'PublicEndpointGuard';
+            return (
+              arg.name === 'UserAuthGuard' ||
+              arg.name === 'WorkspaceAuthGuard' ||
+              arg.name === 'PublicEndpointGuard' ||
+              arg.name === 'FilePathGuard'
+            );
           }
           return false;
         });
@@ -53,4 +59,38 @@ export const typedTokenHelpers = {
       return false;
     });
   },
-}; 
+
+  nodeHasPermissionsGuard: (
+    node: TSESTree.MethodDefinition | TSESTree.ClassDeclaration,
+  ): boolean => {
+    if (!node.decorators) {
+      return false;
+    }
+
+    return node.decorators.some((decorator) => {
+      if (
+        decorator.expression.type === TSESTree.AST_NODE_TYPES.CallExpression &&
+        decorator.expression.callee.type ===
+          TSESTree.AST_NODE_TYPES.Identifier &&
+        decorator.expression.callee.name === 'UseGuards'
+      ) {
+        // Check if any argument ends with PermissionGuard
+        return decorator.expression.arguments.some((arg) => {
+          // Factory-style guards: SettingsPermissionGuard(PermissionFlagType.XXX)
+          if (arg.type === TSESTree.AST_NODE_TYPES.CallExpression) {
+            const callee = arg.callee;
+            if (callee.type === TSESTree.AST_NODE_TYPES.Identifier) {
+              return callee.name.endsWith('PermissionGuard');
+            }
+          }
+          // Identifier guards: CustomPermissionGuard, NoPermissionGuard, etc.
+          if (arg.type === TSESTree.AST_NODE_TYPES.Identifier) {
+            return arg.name.endsWith('PermissionGuard');
+          }
+          return false;
+        });
+      }
+      return false;
+    });
+  },
+};

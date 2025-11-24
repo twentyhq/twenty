@@ -76,7 +76,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     try {
       this.logger.log('Running core datasource migrations...');
       const coreResult = await execPromise(
-        'npx -y typeorm migration:run -d dist/src/database/typeorm/core/core.datasource',
+        'npx -y typeorm migration:run -d dist/database/typeorm/core/core.datasource',
       );
 
       this.logger.log(coreResult.stdout);

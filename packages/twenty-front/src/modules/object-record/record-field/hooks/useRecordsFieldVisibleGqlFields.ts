@@ -1,12 +1,11 @@
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
+import { generateActivityTargetGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateActivityTargetGqlFields';
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
-import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -29,15 +28,6 @@ export const useRecordsFieldVisibleGqlFields = ({
     useRecordIndexContextOrThrow();
 
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { objectMetadataItem: noteTargetObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.NoteTarget,
-    });
-
-  const { objectMetadataItem: taskTargetObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.TaskTarget,
-    });
 
   const allDepthOneGqlFields = generateDepthRecordGqlFieldsFromFields({
     objectMetadataItems,
@@ -59,6 +49,10 @@ export const useRecordsFieldVisibleGqlFields = ({
     ? fieldMetadataItemByFieldMetadataItemId[additionalFieldMetadataId]
     : undefined;
 
+  const isObjectAnActivity =
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.Note ||
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.Task;
+
   return {
     id: true,
     ...(isDefined(additionalFieldMetadataItem)
@@ -75,15 +69,15 @@ export const useRecordsFieldVisibleGqlFields = ({
     createdAt: true,
     updatedAt: true,
     deletedAt: true,
-    noteTargets: generateDepthRecordGqlFieldsFromObject({
-      objectMetadataItem: noteTargetObjectMetadataItem,
+    noteTargets: generateActivityTargetGqlFields({
+      activityObjectNameSingular: CoreObjectNameSingular.Note,
       objectMetadataItems,
-      depth: 1,
+      loadRelations: isObjectAnActivity ? 'relations' : 'activity',
     }),
-    taskTargets: generateDepthRecordGqlFieldsFromObject({
+    taskTargets: generateActivityTargetGqlFields({
+      activityObjectNameSingular: CoreObjectNameSingular.Task,
       objectMetadataItems,
-      objectMetadataItem: taskTargetObjectMetadataItem,
-      depth: 1,
+      loadRelations: isObjectAnActivity ? 'relations' : 'activity',
     }),
   };
 };

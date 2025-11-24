@@ -1,0 +1,251 @@
+---
+title: Налаштування
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+import OptionTable from '@site/src/theme/OptionTable'
+
+# Керування конфігурацією
+
+<Warning>
+**First time installing?** Follow the [Docker Compose installation guide](https://docs.twenty.com/l/uk/developers/self-hosting/docker-compose) to get Twenty running, then return here for configuration.
+</Warning>
+
+Twenty пропонує **два режими конфігурації**, щоб задовольнити різні потреби розгортання:
+
+**Доступ до панелі адміністратора:** Тільки користувачі з правами адміністратора (`canAccessFullAdminPanel: true`) можуть отримати доступ до інтерфейсу конфігурації.
+
+## 1. Admin Panel Configuration (Default)
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
+```
+
+**Більшість налаштувань виконується через UI** після встановлення:
+
+1. Отримайте доступ до свого Twenty-екземпляру (зазвичай `http://localhost:3000`)
+2. Перейдіть до **Налаштування / Панель Адміністратора / Конфігураційні Змінні**
+3. Налаштування інтеграцій, електронної пошти, сховища та інших функцій
+4. Зміни вступають в силу негайно (протягом 15 секунд для багатоконтейнерних розгортань)
+
+<Warning>
+**Multi-Container Deployments:** When using database configuration (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), both server and worker containers read from the same database. Admin panel changes affect both automatically, eliminating the need to duplicate environment variables between containers (except for infrastructure variables).
+</Warning>
+
+**Що можна налаштувати через панель адміністратора:**
+
+- **Аутентифікація** - OAuth Google/Microsoft, налаштування паролів
+- **Електронна пошта** - SMTP налаштування, шаблони, перевірка
+- **Сховище** - конфігурація S3, шляхи локального сховища
+- **Інтеграції** - Gmail, Календар Google, сервіси Microsoft
+- **Workflow & Rate Limiting** - Execution limits, API throttling
+- **І ще багато іншого...**
+
+![Конфігураційні Змінні Панелі Адміністратора](/images/user-guide/setup/admin-panel-config-variables.png)
+
+<Warning>
+Кожна змінна задокументована з описами у вашій панелі адміністратора в **Налаштування → Панель Адміністратора → Конфігураційні Змінні**.
+Деякі налаштування інфраструктури як з'єднання з базою даних (`PG_DATABASE_URL`), URL-и сервера (`SERVER_URL`) та секрети додатка (`APP_SECRET`) можна налаштувати лише через `.env` файл.
+
+[Complete technical reference →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) </Warning>
+
+## 2. Конфігурація тільки середовища
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
+```
+
+**Вся конфігурація виконується через `.env` файли:**
+
+1. Встановіть `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` у вашому `.env` файлі
+2. Додайте всі конфігураційні змінні у ваш `.env` файл
+3. Перезавантажте контейнери, щоб зміни вступили в силу
+4. Панель адміністратора відобразить поточні значення, але не зможе змінити їх
+
+## Інтеграції Gmail і Google Calendar
+
+### Створіть проект в Google Cloud
+
+1. Перейдіть до [Google Cloud Console](https://console.cloud.google.com/)
+2. Створіть новий проект або виберіть існуючий
+3. Увімкніть ці API:
+
+- [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+- [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+- [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+
+### Налаштуйте OAuth
+
+1. Перейдіть до [Креденціали](https://console.cloud.google.com/apis/credentials)
+2. Створіть клієнтський ID OAuth 2.0
+3. Додайте ці переадресації URI:
+   - `https://{your-domain}/auth/google/redirect` (for SSO)
+   - `https://{your-domain}/auth/google-apis/get-access-token` (for integrations)
+
+### Налаштування в Twenty
+
+1. Перейдіть до **Налаштування → Панель Адміністратора → Конфігураційні Змінні**
+2. Знайдіть секцію **Google Auth**
+3. Встановіть ці змінні:
+   - `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   - `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   - `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   - `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   - `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   - `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>
+
+**Необхідні області** (автоматично налаштовуються):
+[Див. відповідний вихідний код](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
+
+- `https://www.googleapis.com/auth/calendar.events`
+- `https://www.googleapis.com/auth/gmail.readonly`
+- `https://www.googleapis.com/auth/profile.emails.read`
+
+### Якщо ваш додаток в тестовому режимі
+
+Якщо ваш додаток в тестовому режимі, вам потрібно додати тестових користувачів у ваш проект.
+
+У [екрані згоди OAuth](https://console.cloud.google.com/apis/credentials/consent), додайте свої тестові користувачі до розділу "Тестові користувачі".
+
+## Інтеграція Microsoft 365
+
+<Warning>
+Користувачі повинні мати [ліцензію Microsoft 365](https://admin.microsoft.com/Adminportal/Home), щоб мати змогу використовувати API Календаря та Повідомлень. Вони не зможуть синхронізувати свій обліковий запис у Twenty без неї.
+</Warning>
+
+### Створіть проект у Microsoft Azure
+
+Вам потрібно створити проект у [Microsoft Azure](https://portal.azure.com/#view/Microsoft_AAD_IAM/AppGalleryBladeV2) і отримати креденціали.
+
+### Увімкніть API
+
+У консолі Microsoft Azure увімкніть наступні API в "Дозволи":
+
+- Microsoft Graph: Mail.ReadWrite
+- Microsoft Graph: Mail.Send
+- Microsoft Graph: Calendars.Read
+- Microsoft Graph: User.Read
+- Microsoft Graph: openid
+- Microsoft Graph: email
+- Microsoft Graph: profile
+- Microsoft Graph: offline_access
+
+Примітка: "Mail.ReadWrite" і "Mail.Send" є обов'язковими, якщо ви хочете відправляти електронну пошту за допомогою наших дій у робочому процесі. Можна використовувати "Mail.Read" замість цього, якщо ви хочете отримувати лише електронні листи.
+
+### Авторизовані переадресації URI
+
+You need to add the following redirect URIs to your project:
+
+- `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
+- `https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+### Налаштування в Twenty
+
+1. Перейдіть до **Налаштування → Панель Адміністратора → Конфігураційні Змінні**
+2. Знайдіть секцію **Microsoft Auth**
+3. Встановіть ці змінні:
+   - `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   - `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   - `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   - `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>
+
+### Configure scopes
+
+[Див. відповідний вихідний код](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+
+- 'openid'
+- 'електронна пошта'
+- 'профіль'
+- 'offline_access'
+- 'Mail.ReadWrite'
+- 'Mail.Send'
+- 'Calendars.Read'
+
+### Якщо ваш додаток в тестовому режимі
+
+Якщо ваш додаток в тестовому режимі, вам потрібно додати тестових користувачів у ваш проект.
+
+Додайте ваших тестових користувачів до розділу "Користувачі та групи".
+
+## Фонові завдання для Календаря та Повідомлень
+
+Після налаштування інтеграцій Gmail, Google Calendar або Microsoft 365, вам потрібно запустити фонові завдання, які синхронізують дані.
+
+Зареєструйте наступні регулярні завдання в своєму робочому контейнері:
+
+```bash
+# from your worker container
+yarn command:prod cron:messaging:messages-import
+yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:calendar:calendar-events-import
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
+yarn command:prod cron:workflow:automated-cron-trigger
+```
+
+## Налаштування Електронної Пошти
+
+1. Перейдіть до **Налаштування → Панель Адміністратора → Конфігураційні Змінні**
+2. Знайдіть секцію **Email**
+3. Налаштуйте ваші налаштування SMTP:
+
+<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+
+  <ArticleTab>
+
+Вам потрібно забезпечити [пароль додатка](https://support.google.com/accounts/answer/185833).
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.gmail.com
+- EMAIL_SMTP_PORT=465
+- EMAIL_SMTP_USER=gmail_email_address
+- EMAIL_SMTP_PASSWORD='gmail_app_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+**smtp4dev** - це фейковий сервер SMTP для розробки та тестування.
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.office365.com
+- EMAIL_SMTP_PORT=587
+- EMAIL_SMTP_USER=office365_email_address
+- EMAIL_SMTP_PASSWORD='office365_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+**smtp4dev** - це фейковий сервер SMTP для розробки та тестування.
+
+- Запустіть образ smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+- Перейдіть до інтерфейсу smtp4dev тут: [http://localhost:8090](http://localhost:8090)
+- Встановіть наступні змінні:
+  - EMAIL_DRIVER=smtp
+  - EMAIL_SMTP_HOST=localhost
+  - EMAIL_SMTP_PORT=2525
+
+  </ArticleTab>
+
+</ArticleTabs>
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>

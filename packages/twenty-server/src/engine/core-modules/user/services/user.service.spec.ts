@@ -4,7 +4,11 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type Repository, type UpdateResult } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -43,11 +47,27 @@ describe('UserService', () => {
             findOne: jest.fn(),
             save: jest.fn(),
             softDelete: jest.fn(),
+            update: jest.fn(),
           },
         },
         {
           provide: WorkspaceService,
           useValue: { deleteWorkspace: jest.fn() },
+        },
+        {
+          provide: WorkspaceDomainsService,
+          useValue: {
+            getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain:
+              jest.fn(),
+          },
+        },
+        {
+          provide: EmailVerificationService,
+          useValue: { sendVerificationEmail: jest.fn() },
+        },
+        {
+          provide: `MESSAGE_QUEUE_${MessageQueue.workspaceQueue}`,
+          useValue: { add: jest.fn() },
         },
         {
           provide: TwentyORMGlobalManager,
@@ -66,6 +86,10 @@ describe('UserService', () => {
           useValue: {
             deleteUserWorkspace: jest.fn(),
           },
+        },
+        {
+          provide: ApplicationService,
+          useValue: {},
         },
       ],
     }).compile();

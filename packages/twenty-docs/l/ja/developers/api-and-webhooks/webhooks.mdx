@@ -1,0 +1,87 @@
+---
+title: Webhooks
+image: /images/docs/getting-started/webhooks.png
+info: Discover how to use our Webhooks.
+---
+
+<Frame>
+  <img src="/images/docs/getting-started/webhooks.png" alt="Header" />
+</Frame>
+
+## 概要
+
+Twentyのウェブフックは、あなたのCRMで特定のイベントが発生したときに自分のアプリケーションへ**リアルタイム通知**を行うことで、APIを補完します。 APIの変更を継続的にポーリングする代わりに、特定のイベントが発生したとき（例えば、新しいレコードが作成されたり、既存のレコードが更新されたりしたとき）に、Twentyがあなたのシステムにデータを**プッシュ**するようにウェブフックを設定できます。 これにより、外部システムをTwentyと瞬時かつ効率的に同期させることができます。 APIの変更を継続的にポーリングする代わりに、特定のイベントが発生したとき（例えば、新しいレコードが作成されたり、既存のレコードが更新されたりしたとき）に、Twentyがあなたのシステムにデータを**プッシュ**するようにウェブフックを設定できます。 これにより、外部システムをTwentyと瞬時かつ効率的に同期させることができます。
+
+With webhooks, Twenty will send an HTTP POST request to a URL you specify, containing details about the event. そのデータはあなたのアプリケーションで（例: 外部データベースを更新する、ワークフローをトリガーする、アラートを送信するなど）扱うことができます。
+
+## Setting Up a Webhook
+
+To create a webhook in Twenty, use the **APIs & Webhooks** settings in your Twenty app:
+
+1. **Navigate to Settings:** In your Twenty application, go to **Settings → APIs & Webhooks**.
+2. **Create a Webhook:** Under **Webhooks** click on **+ Create webhook**.
+3. **Enter URL:** Provide the endpoint URL on your server where you want Twenty to send webhook requests. これは、POSTリクエストを処理できる公開アクセス可能なURLである必要があります。
+4. **Save:** Click **Save** to create the webhook. The new webhook will be active immediately.
+
+You can create multiple webhooks if you need to send different events to different endpoints. Each webhook is essentially a subscription for all relevant events (at this time, Twenty sends all event types to the given URL; filtering specific event types may be configurable in the UI). If you ever need to remove a webhook, you can delete it from the same settings page (select the webhook and choose delete).
+
+## イベントとペイロード
+
+ウェブフックが設定されると、TwentyはあなたのCRMデータ内でトリガーイベントが発生するたびに指定URLにHTTP POSTリクエストを送信します。 ウェブフックをトリガーする一般的なイベントには次のものがあります: ウェブフックをトリガーする一般的なイベントには次のものがあります:
+
+- **レコード作成**: 例 ば, 新しい人が追加される（`person.created`）、新しい会社が作成される（`company.created`）、ノートが作成される（`note.created`）、など。
+- **レコード更新**: 例, 既存の人の情報が更新される（`person.updated`）、会社レコードが編集される（`company.updated`）など。
+- **レコード削除**: 例, 人または会社が削除される（`person.deleted`、`company.deleted`）。
+- **その他のイベント**: 該当する場合、他のオブジェクトイベントやカスタムトリガー（例えば、タスクや他のオブジェクトが更新された場合には、同様のイベントタイプが使用されます: `task.created`、`note.updated`など）。
+
+ウェブフックのPOSTリクエストは、そのボディにJSONペイロードを含んでいます。 このペイロードは通常、イベントのタイプとそのイベントに関連するデータ（しばしば作成/更新されたレコード）が含まれます。 例えば、新しく作成された人に対するウェブフックは、次のようなペイロードを送信するかもしれません: このペイロードは通常、イベントのタイプとそのイベントに関連するデータ（しばしば作成/更新されたレコード）が含まれます。 例えば、新しく作成された人に対するウェブフックは、次のようなペイロードを送信するかもしれません:
+
+```
+{
+  "event": "person.created",
+  "data": {
+    "id": "abc12345",
+    "firstName": "Alice",
+    "lastName": "Doe",
+    "email": "alice@example.com",
+    "createdAt": "2025-02-10T15:30:45Z",
+    "createdBy": "user_123"
+  },
+  "timestamp": "2025-02-10T15:30:50Z"
+}
+```
+
+この例では:
+
+- `"event"` は何が起こったかを指定します（`person.created`）。
+- `"data"` は新しいレコードの詳細を含みます（APIを介してその人をリクエストした場合に得られる同じ情報）。
+- `"timestamp"` はイベントが発生した時刻（UTC）です。
+
+あなたのエンドポイントは、このようなJSONデータをPOSTで受け取る準備が必要です。 あなたのエンドポイントは、このようなJSONデータをPOSTで受け取る準備が必要です。 一般的には、JSONを解析し、`"event"` タイプを見て何が起こったかを理解し、そして`"data"`を適切に使用します（例: あなたのシステムに新しいコンタクトを作成する、または既存のものを更新する）。
+
+**注意:** ウェブフックエンドポイントからの受信確認として**2xx HTTPステータス**を応答することが重要です。 Twentyのウェブフック送信者が2xx応答を受け取らない場合、配信が失敗したと考えるかもしれません。 （将来、失敗したウェブフックを再送するために再試行ロジックを使用するかもしれないので、データを処理した後できるだけ早く200 OKを返すようにしてください。） Twentyのウェブフック送信者が2xx応答を受け取らない場合、配信が失敗したと考えるかもしれません。 （将来、失敗したウェブフックを再送するために再試行ロジックを使用するかもしれないので、データを処理した後できるだけ早く200 OKを返すようにしてください。）
+
+## ウェブフックの検証
+
+ウェブフックのエンドポイントのセキュリティを確保するために、Twentyは`X-Twenty-Webhook-Signature`ヘッダーに署名を含めています。
+
+この署名は、あなたのウェブフックシークレットを使用して計算されたリクエストペイロードのHMAC SHA256ハッシュです。
+
+署名を検証するには次の手順が必要です:
+
+1. `X-Twenty-Webhook-Timestamp`ヘッダーからタイムスタンプ、コロン、ペイロードのJSON文字列を連結します。
+2. あなたのウェブフックシークレットをキーとして使用して、HMAC SHA256ハッシュを計算します。
+3. 結果の16進ダイジェストを署名ヘッダーと比較します。
+
+Node.jsでの例は次のとおりです:
+
+```javascript
+const crypto = require("crypto");
+const timestamp = "1735066639761";
+const payload = JSON.stringify({...});
+const secret = "your-secret";
+const stringToSign = `${timestamp}:${JSON.stringify(payload)}`;
+const signature = crypto.createHmac("sha256", secret)
+  .update(stringToSign)
+  .digest("hex");
+```

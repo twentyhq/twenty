@@ -1,0 +1,86 @@
+---
+title: Konfigurer dit arbejdsområde
+info: "Start med at konfigurere dit arbejdsområde med disse tre trin."
+image: /images/user-guide/what-is-twenty/getting_started.png
+sectionInfo: Opdag Twenty, en open-source CRM.
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/getting_started.png" alt="Header" />
+</Frame>
+
+Hver virksomhed fungerer forskelligt. Det er derfor Twenty lader dig forme CRM'en omkring dine behov, ikke tvinge dine processer ind i vores.
+**Begynd med disse tre trin for at sætte det op på din måde.**
+
+**Hurtig Sejr**: Begynd med at forbinde din postkasse og tilpasse din datamodel med et par nøglefelter. Dette giver dig øjeblikkelig værdi og hjælper dit team med at se Twenty i aktion med rigtige data. Du kan gøre det under Indstillinger → Konti.
+
+## 1. Tilpas din datamodel
+
+Twenty tilbyder den fleksibilitet, du har brug for, til at forme datamodellen, der bedst understøtter din daglige drift.
+Opret objekter og felter af enhver type, inklusive relationer mellem dine forskellige objekter. Du kan gøre det under Indstillinger → Datamodel.
+Her er et par tips:
+
+- **Du er ikke begrænset i antallet af brugerdefinerede felter eller brugerdefinerede objekter**. Tilføjelse af brugerdefinerede objekter og felter vil ikke føre til en opgradering af din plan.
+- **Personer, Virksomheder og Muligheder er de tre objekter, hvorfra du kan få adgang til e-mails og møder synkroniseret fra din postkasse/kalender**. Vi anbefaler at bruge dem så meget som muligt og tilføje felter for at kategorisere dine poster efter behov. Her er et eksempel:
+  - Det er bedst at bruge Personer-objektet til dine kunder og partnere, oprette et felt på Personer-objektet, der hedder `Persontype`, i stedet for at oprette et Partner-brugerdefineret objekt. Fordi du ikke ville kunne få adgang til de e-mails udvekslet med denne person fra Partner-poster.
+  - Opret forskellige visninger under Personer, én til at vise partnere og én til at vise kunder.
+- To personer kan ikke have samme e-mailadresse. To virksomheder kan ikke have samme domæne.
+- Du kan deaktivere standardfelter og objekter, du ikke ønsker at bruge.
+- Du kan skjule felter fra visninger: vær ikke bange for at oprette felter, du behøver ikke at vise dem alle.
+
+Læs [denne artikel](https://docs.twenty.com/l/da/user-guide/data-model/customize-your-data-model) for at lære, hvordan du designer din datamodel.
+
+## 2. Bring dine data ind
+
+At bringe dine eksisterende data ind i Twenty giver dit team kontekst fra starten.
+
+### Forbind din postkasse
+
+Hvis du ikke har gjort det, når du oprettede dit arbejdsområde, skal du forbinde din **Google eller Microsoft konto** under Indstillinger → Konti. Dette tillader Twenty at:
+
+- Importere dine beskeder og møder
+- Auto-oprette kontakter baseret på interaktioner (valgfrit)
+- Holde kommunikationshistorikken synlig for dit team
+
+**Bruger du en anden udbyder?**
+Du kan tilføje en anden postkasse via SMTP eller en anden kalender via CalDAV. Du skal aktivere funktionen under Indstillinger → Udgivelser → Lab og derefter gå tilbage til Indstillinger → Konti fanen.
+
+### Importer data via csv
+
+Brug kommandomenyen (`Cmd + K` eller `Ctrl + K`) for at importere Personer, Virksomheder, Muligheder eller enhver brugerdefineret objekt via CSV.
+
+**Vigtige retningslinjer**:
+
+- Download the sample file to understand the expected format
+- Begræns hver fil til 10k poster
+- Fjern duplikerede e-mails for personer eller duplikerede domæner for virksomheder
+- Gennemgå og ret fejl (fremhævet i gult) inden import
+
+Læs [denne artikel](/l/da/user-guide/getting-started/import-export-data) for at lære mere om dataimport.
+
+## 3. Opret din første visning
+
+At skabe forskellige visninger er nøglen til at gøre dataene brugbare for dit team.
+Her er hvordan man gør det:
+
+- **Tilføj eller skjul kolonner**
+  Administrer de felter, der er synlige i en given visning ved at klikke på Valgmuligheder → Felter (øverst til højre). Du kan vise/skjule felter derfra.
+
+- **Omrokér felter**
+  Omrokér felterne i en given visning ved at klikke på Valgmuligheder → Felter (øverst til højre). Træk og slip felterne for at omrokere dem.
+
+- **Filtrer din visning**
+  Begræns de viste poster ved hjælp af filtre øverst til højre.
+
+- **Sorter poster**
+  Sorter viste poster ved hjælp af sorteringsfunktionen fra øverst til højre eller ved at klikke direkte på kolonnenavnet.
+
+- **Vælg layoutet**
+  Du kan skifte til et **Kanban layout** eller en liste **Gruppe efter** layout, så længe objektet har et `Stage` eller lignende valgtype felt.
+
+- **Gem din visning som favorit**
+  Dette kan gøres ved hjælp af rullelisten, der viser de forskellige visninger.
+
+## Hvad nu?
+
+Begynd med at oprette automatiseringer ved hjælp af [arbejdsgange](https://docs.twenty.com/l/da/user-guide/workflows/getting-started-workflows).
