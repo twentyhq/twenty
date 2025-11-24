@@ -1,5 +1,5 @@
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
-import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowIdComponentState';
+import { useCommandMenuWorkflowIdOrThrow } from '@/command-menu/pages/workflow/hooks/useCommandMenuWorkflowIdOrThrow';
 import { commandMenuWorkflowStepIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowStepIdComponentState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
@@ -7,11 +7,12 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { getAgentIdFromStep } from '@/workflow/utils/getAgentIdFromStep';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
+import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { useUpdateAgentLabel } from '@/workflow/workflow-steps/hooks/useUpdateAgentLabel';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
@@ -37,10 +38,7 @@ export const CommandMenuWorkflowStepInfo = ({
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);
 
-  const workflowId = useRecoilComponentValue(
-    commandMenuWorkflowIdComponentState,
-    commandMenuPageInstanceId,
-  );
+  const workflowId = useCommandMenuWorkflowIdOrThrow();
 
   const workflowStepId = useRecoilComponentValue(
     commandMenuWorkflowStepIdComponentState,
@@ -54,9 +52,14 @@ export const CommandMenuWorkflowStepInfo = ({
     commandMenuPage === CommandMenuPages.WorkflowRunStepView;
 
   const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
+
+  const instanceId = getWorkflowVisualizerComponentInstanceId({
+    recordId: workflowId,
+  });
+  const { getUpdatableWorkflowVersion } =
+    useGetUpdatableWorkflowVersionOrThrow(instanceId);
+
   const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
-  const { createDraftFromWorkflowVersion } =
-    useCreateDraftFromWorkflowVersion();
   const { updateOneRecord: updateOneWorkflowVersion } =
     useUpdateOneRecord<WorkflowVersion>({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
@@ -66,12 +69,10 @@ export const CommandMenuWorkflowStepInfo = ({
     trigger,
     steps,
     id: workflowVersionId,
-    status: workflowVersionStatus,
   } = workflowWithCurrentVersion?.currentVersion ?? {
     trigger: null,
     steps: null,
     id: undefined,
-    status: undefined,
   };
 
   const isTriggerStep = workflowStepId === TRIGGER_STEP_ID;
@@ -148,20 +149,7 @@ export const CommandMenuWorkflowStepInfo = ({
       pageIcon: Icon,
     });
 
-    let targetWorkflowVersionId = workflowVersionId;
-
-    if (workflowVersionStatus === 'ACTIVE') {
-      const draftVersionId = await createDraftFromWorkflowVersion({
-        workflowId,
-        workflowVersionIdToCopy: workflowVersionId,
-      });
-
-      if (!isDefined(draftVersionId)) {
-        throw new Error('Failed to create draft version');
-      }
-
-      targetWorkflowVersionId = draftVersionId;
-    }
+    const targetWorkflowVersionId = await getUpdatableWorkflowVersion();
 
     if (isTrigger) {
       await updateOneWorkflowVersion({
