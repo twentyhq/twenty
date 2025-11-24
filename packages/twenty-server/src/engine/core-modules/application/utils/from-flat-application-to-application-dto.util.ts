@@ -1,5 +1,5 @@
-import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
-import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 
 export const fromFlatApplicationToApplicationDto = ({
   canBeUninstalled,
