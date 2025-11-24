@@ -5,6 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { type z } from 'zod';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
@@ -47,6 +48,7 @@ export const SettingsObjectFieldEdit = () => {
   const { t } = useLingui();
 
   const navigate = useNavigate();
+  const [currentWorkspace] = useRecoilState(currentWorkspaceState);
 
   const [navigationMemorizedUrl, setNavigationMemorizedUrl] = useRecoilState(
     navigationMemorizedUrlState,
@@ -64,7 +66,11 @@ export const SettingsObjectFieldEdit = () => {
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
-  const readonly = isObjectMetadataSettingsReadOnly({ objectMetadataItem });
+  const readonly = isObjectMetadataSettingsReadOnly({
+    objectMetadataItem,
+    workspaceCustomApplicationId:
+      currentWorkspace?.workspaceCustomApplication?.id,
+  });
 
   const { deactivateMetadataField, activateMetadataField } =
     useFieldMetadataItem();

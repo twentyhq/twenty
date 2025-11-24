@@ -1,16 +1,18 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
+import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useRecoilState } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { H2Title, IconArchive } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 
 type ObjectSettingsProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -28,7 +30,12 @@ const StyledFormSection = styled(Section)`
 
 export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
   const { t } = useLingui();
-  const readonly = isObjectMetadataSettingsReadOnly({ objectMetadataItem });
+  const [currentWorkspace] = useRecoilState(currentWorkspaceState);
+  const readonly = isObjectMetadataSettingsReadOnly({
+    objectMetadataItem,
+    workspaceCustomApplicationId:
+      currentWorkspace?.workspaceCustomApplication?.id,
+  });
   const navigate = useNavigateSettings();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
