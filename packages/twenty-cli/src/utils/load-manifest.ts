@@ -20,6 +20,7 @@ import {
   isExportAssignment,
   isFunctionExpression,
   isIdentifier,
+  isImportDeclaration,
   isNoSubstitutionTemplateLiteral,
   isNumericLiteral,
   isObjectLiteralExpression,
@@ -29,8 +30,9 @@ import {
   isShorthandPropertyAssignment,
   isStringLiteralLike,
   isTemplateExpression,
-  isVariableStatement
+  isVariableStatement,
 } from 'typescript';
+import { GENERATED_FOLDER_NAME } from '../services/generate.service';
 import {
   AppManifest,
   Application,
@@ -445,6 +447,44 @@ export const extractTwentyAppConfig = (program: Program): Application => {
   throw new Error('Could not find default exported ApplicationConfig');
 };
 
+const isGeneratedModuleUsedInProgram = (program: Program): boolean => {
+  for (const sf of program.getSourceFiles()) {
+    if (sf.isDeclarationFile) continue;
+
+    let found = false;
+
+    const visit = (node: Node): void => {
+      if (found) return;
+
+      if (isImportDeclaration(node)) {
+        const moduleSpecifier = node.moduleSpecifier;
+
+        if (isStringLiteralLike(moduleSpecifier)) {
+          const moduleText = moduleSpecifier.text;
+
+          // Match ../../generated, ../generated, ./foo/generated, etc.
+          const isGeneratedModule =
+            moduleText === GENERATED_FOLDER_NAME ||
+            moduleText.endsWith(`/${GENERATED_FOLDER_NAME}`);
+
+          if (isGeneratedModule && node.importClause) {
+            found = true;
+            return;
+          }
+        }
+      }
+
+      forEachChild(node, visit);
+    };
+
+    visit(sf);
+
+    if (found) return true;
+  }
+
+  return false;
+};
+
 export const loadManifest = async (
   appPath: string,
 ): Promise<{
@@ -476,7 +516,7 @@ export const loadManifest = async (
     await loadFolderContentIntoJson(program, appPath),
   ];
 
-  const shouldGenerate = true;
+  const shouldGenerate = isGeneratedModuleUsedInProgram(program);
 
   return {
     packageJson,
