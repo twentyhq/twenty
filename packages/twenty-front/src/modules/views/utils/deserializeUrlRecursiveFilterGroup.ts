@@ -1,6 +1,6 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { type UrlFilterDeserializationResult } from '@/views/types/UrlFilterDeserializationResult';
 import { type UrlRecursiveFilterGroup } from '@/views/types/UrlRecursiveFilterGroup';
 import { convertUrlSingleFilterToRecordFilter } from '@/views/utils/convertUrlSingleFilterToRecordFilter';
@@ -21,18 +21,7 @@ export const deserializeUrlRecursiveFilterGroup = ({
   const groupId = uuidv4();
   const recordFilters: RecordFilter[] = [];
   const recordFilterGroups: RecordFilterGroup[] = [];
-
-  const currentGroup: RecordFilterGroup = {
-    id: groupId,
-    logicalOperator: urlRecursiveFilterGroup.operator,
-    positionInRecordFilterGroup: positionInParent,
-  };
-
-  if (isDefined(parentGroupId)) {
-    currentGroup.parentRecordFilterGroupId = parentGroupId;
-  }
-
-  recordFilterGroups.push(currentGroup);
+  const groupFilters: RecordFilter[] = [];
 
   let positionCounter = 0;
 
@@ -46,11 +35,13 @@ export const deserializeUrlRecursiveFilterGroup = ({
       });
 
       if (isDefined(recordFilter)) {
+        groupFilters.push(recordFilter);
         recordFilters.push(recordFilter);
       }
     }
   }
 
+  const childGroupResults: RecordFilterGroup[] = [];
   if (isDefined(urlRecursiveFilterGroup.groups)) {
     for (const childUrlGroup of urlRecursiveFilterGroup.groups) {
       const childResult = deserializeUrlRecursiveFilterGroup({
@@ -60,9 +51,31 @@ export const deserializeUrlRecursiveFilterGroup = ({
         positionInParent: positionCounter++,
       });
 
-      recordFilters.push(...childResult.recordFilters);
-      recordFilterGroups.push(...childResult.recordFilterGroups);
+      if (
+        childResult.recordFilters.length > 0 ||
+        childResult.recordFilterGroups.length > 0
+      ) {
+        recordFilters.push(...childResult.recordFilters);
+        childGroupResults.push(...childResult.recordFilterGroups);
+        recordFilterGroups.push(...childResult.recordFilterGroups);
+      }
     }
+  }
+
+  const hasContent = groupFilters.length > 0 || childGroupResults.length > 0;
+
+  if (hasContent) {
+    const currentGroup: RecordFilterGroup = {
+      id: groupId,
+      logicalOperator: urlRecursiveFilterGroup.operator,
+      positionInRecordFilterGroup: positionInParent,
+    };
+
+    if (isDefined(parentGroupId)) {
+      currentGroup.parentRecordFilterGroupId = parentGroupId;
+    }
+
+    recordFilterGroups.push(currentGroup);
   }
 
   return {
