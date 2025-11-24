@@ -1,16 +1,16 @@
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import chalk from 'chalk';
 import {
+  buildClientSchema,
+  getIntrospectionQuery,
+  printSchema,
+} from 'graphql/index';
+import {
   type ApiResponse,
   type AppManifest,
   type PackageJson,
 } from '../types/config.types';
 import { ConfigService } from './config.service';
-import {
-  buildClientSchema,
-  getIntrospectionQuery,
-  printSchema,
-} from 'graphql/index';
 
 export class ApiService {
   private client: AxiosInstance;
@@ -125,8 +125,7 @@ export class ApiService {
       if (response.data.errors) {
         return {
           success: false,
-          error:
-            response.data.errors[0]?.message || 'Failed to sync application',
+          error: response.data.errors[0],
         };
       }
 
@@ -136,13 +135,10 @@ export class ApiService {
         message: `Successfully synced application: ${packageJson.name}`,
       };
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        return {
-          success: false,
-          error: error.response.data?.errors?.[0]?.message || error.message,
-        };
-      }
-      throw error;
+      return {
+        success: false,
+        error,
+      };
     }
   }
 
