@@ -85,7 +85,7 @@ export const UpdateViewButtonGroup = () => {
     await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
   };
 
-  const hasFiltersQueryParams = useHasFiltersInQueryParams();
+  const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
 
   const { viewFilterGroupsAreDifferentFromRecordFilterGroups } =
     useAreViewFilterGroupsDifferentFromRecordFilterGroups();
