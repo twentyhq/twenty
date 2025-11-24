@@ -144,7 +144,7 @@ describe('FieldPermissionService', () => {
       label: 'Test Field',
       objectMetadataId: testObjectMetadataId,
       workspaceId: testWorkspaceId,
-      id: '20202020-0000-0000-0000-000000000003',
+      id: testFieldMetadataId,
     });
 
     workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
@@ -154,7 +154,7 @@ describe('FieldPermissionService', () => {
             [testObjectMetadataId]: {
               ...objectMetadataItemMock,
               id: testObjectMetadataId,
-              fieldMetadataIds: [testFieldMetadata.id],
+              fieldMetadataIds: [testFieldMetadataId],
               indexMetadataIds: [],
               viewIds: [],
               universalIdentifier: testObjectMetadataId,
@@ -175,7 +175,7 @@ describe('FieldPermissionService', () => {
         },
         flatFieldMetadataMaps: {
           byId: {
-            [testFieldMetadata.id]: testFieldMetadata as any,
+            [testFieldMetadataId]: testFieldMetadata as any,
             [fieldRelationMock.id]: fieldRelationMock as any,
           },
           idByUniversalIdentifier: {},
