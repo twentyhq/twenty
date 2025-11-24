@@ -7,6 +7,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
+import { useResetWorkflowInsertStepIds } from '@/workflow/workflow-diagram/hooks/useResetWorkflowInsertStepIds';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
 import { workflowDiagramWaitingNodesDimensionsComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramWaitingNodesDimensionsComponentState';
@@ -24,7 +25,6 @@ import { WorkflowDiagramConnection } from '@/workflow/workflow-diagram/workflow-
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramCustomMarkers';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
-import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -170,12 +170,10 @@ export const WorkflowDiagramCanvasBase = ({
   const setWorkflowDiagram = useSetRecoilComponentState(
     workflowDiagramComponentState,
   );
-  const setWorkflowInsertStepIds = useSetRecoilComponentState(
-    workflowInsertStepIdsComponentState,
-  );
   const setWorkflowSelectedNode = useSetRecoilComponentState(
     workflowSelectedNodeComponentState,
   );
+  const { resetWorkflowInsertStepIds } = useResetWorkflowInsertStepIds();
   const workflowDiagramWaitingNodesDimensionsState =
     useRecoilComponentCallbackState(
       workflowDiagramWaitingNodesDimensionsComponentState,
@@ -217,11 +215,7 @@ export const WorkflowDiagramCanvasBase = ({
   };
 
   useListenToSidePanelClosing(() => {
-    setWorkflowInsertStepIds({
-      parentStepId: undefined,
-      nextStepId: undefined,
-      position: undefined,
-    });
+    resetWorkflowInsertStepIds();
     setWorkflowSelectedNode(undefined);
   });
 
