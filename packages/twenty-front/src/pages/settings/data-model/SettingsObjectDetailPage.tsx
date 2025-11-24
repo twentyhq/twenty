@@ -57,7 +57,6 @@ export const SettingsObjectDetailPage = () => {
   const navigateApp = useNavigateApp();
   const { t } = useLingui();
 
-  const [currentWorkspace] = useRecoilState(currentWorkspaceState);
   const { objectNamePlural = '' } = useParams();
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
@@ -69,7 +68,7 @@ export const SettingsObjectDetailPage = () => {
     findObjectMetadataItemByNamePlural(objectNamePlural) ??
     findObjectMetadataItemByNamePlural(updatedObjectNamePlural);
 
-  // Could factorize ?
+  const [currentWorkspace] = useRecoilState(currentWorkspaceState);
   const readonly = isObjectMetadataSettingsReadOnly({
     objectMetadataItem,
     workspaceCustomApplicationId:

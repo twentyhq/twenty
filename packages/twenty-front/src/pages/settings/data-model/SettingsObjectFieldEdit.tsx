@@ -13,6 +13,7 @@ import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdate
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
+import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
@@ -34,7 +35,6 @@ import { Section } from 'twenty-ui/layout';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 
 //TODO: fix this type
 export type SettingsDataModelFieldEditFormValues = z.infer<
@@ -48,7 +48,6 @@ export const SettingsObjectFieldEdit = () => {
   const { t } = useLingui();
 
   const navigate = useNavigate();
-  const [currentWorkspace] = useRecoilState(currentWorkspaceState);
 
   const [navigationMemorizedUrl, setNavigationMemorizedUrl] = useRecoilState(
     navigationMemorizedUrlState,
@@ -66,6 +65,7 @@ export const SettingsObjectFieldEdit = () => {
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
+  const [currentWorkspace] = useRecoilState(currentWorkspaceState);
   const readonly = isObjectMetadataSettingsReadOnly({
     objectMetadataItem,
     workspaceCustomApplicationId:
