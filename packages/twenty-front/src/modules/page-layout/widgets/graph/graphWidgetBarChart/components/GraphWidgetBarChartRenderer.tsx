@@ -3,14 +3,15 @@ import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/gr
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
-import { buildChartDrilldownUrl } from '@/page-layout/widgets/graph/utils/buildChartDrilldownUrl';
+import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { type ComputedDatum } from '@nivo/bar';
 import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import {
   type BarChartConfiguration,
   type PageLayoutWidget,
@@ -73,7 +74,7 @@ export const GraphWidgetBarChartRenderer = ({
     const displayValue = datum.data[indexBy];
     const rawValue = dimensionMetadata.get(displayValue as string) ?? null;
 
-    const url = buildChartDrilldownUrl({
+    const queryParams = buildChartDrilldownQueryParams({
       objectMetadataItem,
       configuration,
       clickedData: {
@@ -82,6 +83,12 @@ export const GraphWidgetBarChartRenderer = ({
       viewId: indexViewId,
       timezone: configuration.timezone ?? undefined,
     });
+
+    const url = getAppPath(
+      AppPath.RecordIndexPage,
+      { objectNamePlural: objectMetadataItem.namePlural },
+      Object.fromEntries(queryParams),
+    );
 
     navigate(url);
   };

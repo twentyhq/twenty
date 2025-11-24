@@ -1,15 +1,15 @@
-import { type BuildChartDrilldownUrlParams } from '@/page-layout/widgets/graph/types/BuildChartDrilldownUrlParams';
+import { type BuildChartDrilldownQueryParamsInput } from '@/page-layout/widgets/graph/types/BuildChartDrilldownQueryParamsInput';
 import { buildFilterFromChartBucket } from '@/page-layout/widgets/graph/utils/buildFilterFromChartBucket';
 import { buildFilterQueryParams } from '@/page-layout/widgets/graph/utils/buildFilterQueryParams';
 import { isDefined } from 'twenty-shared/utils';
 
-export const buildChartDrilldownUrl = ({
+export const buildChartDrilldownQueryParams = ({
   objectMetadataItem,
   configuration,
   clickedData,
   viewId,
   timezone,
-}: BuildChartDrilldownUrlParams): string => {
+}: BuildChartDrilldownQueryParamsInput): URLSearchParams => {
   const drilldownQueryParams = new URLSearchParams();
 
   if (isDefined(configuration.filter)) {
@@ -49,7 +49,5 @@ export const buildChartDrilldownUrl = ({
     drilldownQueryParams.set('viewId', viewId);
   }
 
-  const drilldownUrl = `/objects/${objectMetadataItem.namePlural}?${drilldownQueryParams.toString()}`;
-
-  return drilldownUrl;
+  return drilldownQueryParams;
 };

@@ -3,14 +3,15 @@ import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/gr
 import { LINE_CHART_IS_STACKED_DEFAULT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartIsStackedDefault';
 import { useGraphLineChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useGraphLineChartWidgetData';
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
-import { buildChartDrilldownUrl } from '@/page-layout/widgets/graph/utils/buildChartDrilldownUrl';
+import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { type LineSeries, type Point } from '@nivo/line';
 import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import {
   type LineChartConfiguration,
   type PageLayoutWidget,
@@ -72,7 +73,7 @@ export const GraphWidgetLineChartRenderer = ({
     const xValue = (point.data as LineChartDataPoint).x;
     const rawValue = dimensionMetadata.get(xValue as string) ?? null;
 
-    const url = buildChartDrilldownUrl({
+    const queryParams = buildChartDrilldownQueryParams({
       objectMetadataItem,
       configuration,
       clickedData: {
@@ -81,6 +82,12 @@ export const GraphWidgetLineChartRenderer = ({
       viewId: indexViewId,
       timezone: configuration.timezone ?? undefined,
     });
+
+    const url = getAppPath(
+      AppPath.RecordIndexPage,
+      { objectNamePlural: objectMetadataItem.namePlural },
+      Object.fromEntries(queryParams),
+    );
 
     navigate(url);
   };

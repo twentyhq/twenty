@@ -5,7 +5,7 @@ import {
   type LineChartConfiguration,
 } from '~/generated/graphql';
 
-export type BuildChartDrilldownUrlParams = {
+export type BuildChartDrilldownQueryParamsInput = {
   objectMetadataItem: ObjectMetadataItem;
   configuration: BarChartConfiguration | LineChartConfiguration;
   clickedData: {
