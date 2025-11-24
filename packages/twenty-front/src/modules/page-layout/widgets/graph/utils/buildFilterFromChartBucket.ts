@@ -17,9 +17,9 @@ type ChartFilter = {
 type BuildFilterFromChartBucketParams = {
   fieldMetadataItem: FieldMetadataItem;
   bucketRawValue: unknown;
-  dateGranularity?: ObjectRecordGroupByDateGranularity | null; // Will be used for date filtering
+  dateGranularity?: ObjectRecordGroupByDateGranularity | null; // TODO: Will be used for date filtering
   subFieldName?: string | null;
-  timezone?: string; // Will be used for date filtering
+  timezone?: string; // TODO: Will be used for date filtering
 };
 
 const formatChartFilterValue = (

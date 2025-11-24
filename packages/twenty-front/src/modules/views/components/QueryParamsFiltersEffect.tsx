@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useFiltersFromQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
 import { useHasFiltersInQueryParams } from '@/views/hooks/internal/useHasFiltersInQueryParams';
-import { useObjectMetadataFromRoute } from '@/views/hooks/internal/useObjectMetadataFromRoute';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useMapViewFiltersToFilters } from '@/views/hooks/useMapViewFiltersToFilters';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,7 +17,14 @@ export const QueryParamsFiltersEffect = () => {
   const { getFiltersFromQueryParams, getFilterGroupsFromQueryParams } =
     useFiltersFromQueryParams();
   const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
-  const { objectMetadataItem } = useObjectMetadataFromRoute();
+
+  const { objectNamePlural = '' } = useParams();
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
+    objectNamePlural,
+  });
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
   const { currentView } = useGetCurrentViewOnly();
 

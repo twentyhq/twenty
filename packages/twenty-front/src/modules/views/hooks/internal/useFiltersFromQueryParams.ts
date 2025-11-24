@@ -1,78 +1,45 @@
 import { isNonEmptyString, isObject } from '@sniptt/guards';
 import qs from 'qs';
-import { useMemo } from 'react';
 import { useRecoilCallback } from 'recoil';
-import z from 'zod';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useObjectMetadataFromRoute } from '@/views/hooks/internal/useObjectMetadataFromRoute';
+import { filterUrlQueryParamsSchema } from '@/views/schemas/filterUrlQueryParamsSchema';
 import { type ViewFilter } from '@/views/types/ViewFilter';
-import { mapUrlFilterGroupToRecordFilterGroup } from '@/views/utils/deserializeFiltersFromUrl';
-import { ViewFilterOperand } from 'twenty-shared/types';
-import {
-  isDefined,
-  isExpectedSubFieldName,
-  relationFilterValueSchemaObject,
-} from 'twenty-shared/utils';
-
-const urlFilterSchema = z.object({
-  field: z.string(),
-  op: z.enum(ViewFilterOperand),
-  value: z.string(),
-  subField: z.string().optional(),
-});
-
-const urlFilterGroupSchema: z.ZodType<{
-  operator: string;
-  filters?: z.infer<typeof urlFilterSchema>[];
-  groups?: {
-    operator: string;
-    filters?: z.infer<typeof urlFilterSchema>[];
-    groups?: unknown[];
-  }[];
-}> = z.lazy(() =>
-  z.object({
-    operator: z.string(),
-    filters: z.array(urlFilterSchema).optional(),
-    groups: z.array(urlFilterGroupSchema).optional(),
-  }),
-);
-
-const filterQueryParamsSchema = z.object({
-  filter: z
-    .record(
-      z.string(),
-      z.partialRecord(
-        z.enum(ViewFilterOperand),
-        z.string().or(z.array(z.string())).or(relationFilterValueSchemaObject),
-      ),
-    )
-    .optional(),
-  filterGroup: urlFilterGroupSchema.optional(),
-});
+import { deserializeUrlRecursiveFilterGroup } from '@/views/utils/deserializeUrlRecursiveFilterGroup';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { type ViewFilterOperand } from 'twenty-shared/types';
+import { isDefined, isExpectedSubFieldName } from 'twenty-shared/utils';
 
 export const useFiltersFromQueryParams = () => {
-  const { searchParams, objectMetadataItem } = useObjectMetadataFromRoute();
+  const [searchParams] = useSearchParams();
+  const { objectNamePlural = '' } = useParams();
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
+    objectNamePlural,
+  });
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
-  const queryParamsValidation = filterQueryParamsSchema.safeParse(
+  const queryParamsValidation = filterUrlQueryParamsSchema.safeParse(
     qs.parse(searchParams.toString()),
   );
 
-  const filterQueryParams = useMemo(
-    () =>
-      queryParamsValidation.success ? queryParamsValidation.data.filter : {},
-    [queryParamsValidation],
-  );
-
-  const hasFiltersQueryParams =
-    isDefined(filterQueryParams) &&
-    Object.entries(filterQueryParams).length > 0;
-
   const getFiltersFromQueryParams = useRecoilCallback(() => {
     const fetchFiltersFromQueryParams = async (): Promise<ViewFilter[]> => {
-      if (!hasFiltersQueryParams) return [];
+      if (!queryParamsValidation.success) return [];
+
+      const filterQueryParams = queryParamsValidation.data.filter;
+
+      if (
+        !isDefined(filterQueryParams) ||
+        Object.entries(filterQueryParams).length === 0
+      ) {
+        return [];
+      }
 
       const promises: Promise<ViewFilter | null>[] = [];
 
@@ -145,15 +112,11 @@ export const useFiltersFromQueryParams = () => {
     };
 
     return fetchFiltersFromQueryParams;
-  }, [filterQueryParams, hasFiltersQueryParams, objectMetadataItem.fields]);
+  }, [queryParamsValidation, objectMetadataItem.fields]);
 
-  const filterGroupQueryParams = useMemo(
-    () =>
-      queryParamsValidation.success
-        ? queryParamsValidation.data.filterGroup
-        : undefined,
-    [queryParamsValidation],
-  );
+  const filterGroupQueryParams = queryParamsValidation.success
+    ? queryParamsValidation.data.filterGroup
+    : undefined;
 
   const getFilterGroupsFromQueryParams = useRecoilCallback(() => {
     const fetchFilterGroupsFromQueryParams = async (): Promise<{
@@ -164,11 +127,12 @@ export const useFiltersFromQueryParams = () => {
         return { recordFilters: [], recordFilterGroups: [] };
       }
 
-      return mapUrlFilterGroupToRecordFilterGroup({
-        urlFilterGroup: filterGroupQueryParams as Parameters<
-          typeof mapUrlFilterGroupToRecordFilterGroup
-        >[0]['urlFilterGroup'],
+      return deserializeUrlRecursiveFilterGroup({
+        urlRecursiveFilterGroup: filterGroupQueryParams as Parameters<
+          typeof deserializeUrlRecursiveFilterGroup
+        >[0]['urlRecursiveFilterGroup'],
         objectMetadataItem,
+        positionInParent: 0,
       });
     };
 

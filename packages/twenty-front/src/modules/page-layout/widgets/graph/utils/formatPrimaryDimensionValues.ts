@@ -23,30 +23,32 @@ export const formatPrimaryDimensionValues = ({
   primaryAxisDateGranularity,
   primaryAxisGroupBySubFieldName,
 }: FormatPrimaryDimensionValuesParameters): FormattedDimensionValue[] => {
-  const formattedValues: FormattedDimensionValue[] = [];
+  return groupByRawResults.reduce<FormattedDimensionValue[]>(
+    (accumulator, rawResult) => {
+      const groupByDimensionValues = rawResult.groupByDimensionValues;
 
-  groupByRawResults.forEach((rawResult) => {
-    const groupByDimensionValues = rawResult.groupByDimensionValues;
+      if (!isDefined(groupByDimensionValues?.[0])) {
+        return accumulator;
+      }
 
-    if (!isDefined(groupByDimensionValues?.[0])) {
-      return;
-    }
+      const rawPrimaryDimensionValue =
+        groupByDimensionValues[0] as RawDimensionValue;
 
-    const rawPrimaryDimensionValue =
-      groupByDimensionValues[0] as RawDimensionValue;
+      const formattedPrimaryDimensionValue = formatDimensionValue({
+        value: rawPrimaryDimensionValue,
+        fieldMetadata: primaryAxisGroupByField,
+        dateGranularity: primaryAxisDateGranularity,
+        subFieldName: primaryAxisGroupBySubFieldName,
+      });
 
-    const formattedPrimaryDimensionValue = formatDimensionValue({
-      value: rawPrimaryDimensionValue,
-      fieldMetadata: primaryAxisGroupByField,
-      dateGranularity: primaryAxisDateGranularity,
-      subFieldName: primaryAxisGroupBySubFieldName,
-    });
-
-    formattedValues.push({
-      formattedPrimaryDimensionValue,
-      rawPrimaryDimensionValue,
-    });
-  });
-
-  return formattedValues;
+      return [
+        ...accumulator,
+        {
+          formattedPrimaryDimensionValue,
+          rawPrimaryDimensionValue,
+        },
+      ];
+    },
+    [],
+  );
 };

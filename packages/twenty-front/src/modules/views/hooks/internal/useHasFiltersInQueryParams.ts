@@ -1,70 +1,23 @@
 import qs from 'qs';
-import { useMemo } from 'react';
-import z from 'zod';
+import { useSearchParams } from 'react-router-dom';
 
-import { useObjectMetadataFromRoute } from '@/views/hooks/internal/useObjectMetadataFromRoute';
-import { ViewFilterOperand } from 'twenty-shared/types';
-import {
-  isDefined,
-  relationFilterValueSchemaObject,
-} from 'twenty-shared/utils';
-
-const urlFilterSchema = z.object({
-  field: z.string(),
-  op: z.enum(ViewFilterOperand),
-  value: z.string(),
-  subField: z.string().optional(),
-});
-
-const urlFilterGroupSchema: z.ZodType<{
-  operator: string;
-  filters?: z.infer<typeof urlFilterSchema>[];
-  groups?: {
-    operator: string;
-    filters?: z.infer<typeof urlFilterSchema>[];
-    groups?: unknown[];
-  }[];
-}> = z.lazy(() =>
-  z.object({
-    operator: z.string(),
-    filters: z.array(urlFilterSchema).optional(),
-    groups: z.array(urlFilterGroupSchema).optional(),
-  }),
-);
-
-const filterQueryParamsSchema = z.object({
-  filter: z
-    .record(
-      z.string(),
-      z.partialRecord(
-        z.enum(ViewFilterOperand),
-        z.string().or(z.array(z.string())).or(relationFilterValueSchemaObject),
-      ),
-    )
-    .optional(),
-  filterGroup: urlFilterGroupSchema.optional(),
-});
+import { filterUrlQueryParamsSchema } from '@/views/schemas/filterUrlQueryParamsSchema';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useHasFiltersInQueryParams = () => {
-  const { searchParams } = useObjectMetadataFromRoute();
+  const [searchParams] = useSearchParams();
 
-  const queryParamsValidation = filterQueryParamsSchema.safeParse(
+  const queryParamsValidation = filterUrlQueryParamsSchema.safeParse(
     qs.parse(searchParams.toString()),
   );
 
-  const filterQueryParams = useMemo(
-    () =>
-      queryParamsValidation.success ? queryParamsValidation.data.filter : {},
-    [queryParamsValidation],
-  );
+  const filterQueryParams = queryParamsValidation.success
+    ? queryParamsValidation.data.filter
+    : {};
 
-  const filterGroupQueryParams = useMemo(
-    () =>
-      queryParamsValidation.success
-        ? queryParamsValidation.data.filterGroup
-        : undefined,
-    [queryParamsValidation],
-  );
+  const filterGroupQueryParams = queryParamsValidation.success
+    ? queryParamsValidation.data.filterGroup
+    : undefined;
 
   const hasFiltersQueryParams =
     (isDefined(filterQueryParams) &&
