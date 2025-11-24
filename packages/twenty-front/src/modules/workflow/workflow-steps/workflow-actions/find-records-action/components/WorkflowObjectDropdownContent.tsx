@@ -8,7 +8,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -19,7 +19,7 @@ type WorkflowObjectDropdownContentProps = {
 
 export const WorkflowObjectDropdownContent = ({
   onOptionClick,
-  showAdvancedOption = false,
+  showAdvancedOption = true,
 }: WorkflowObjectDropdownContentProps) => {
   const { getIcon } = useIcons();
 
@@ -93,24 +93,25 @@ export const WorkflowObjectDropdownContent = ({
     setSearchInputValue('');
   };
 
-  const handleSearchInputChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchInputValue(event.target.value);
-    },
-    [],
-  );
+  const handleSearchInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setSearchInputValue(event.target.value);
+  };
 
-  // const onAdvancedClick={
-  //   !isSystemObjectsOpen ? handleSystemObjectsClick : undefined
-  // }
+  const handleAdvancedClick = () => {
+    if (!isSystemObjectsOpen) {
+      handleSystemObjectsClick();
+    }
+  };
 
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
-      {isSystemObjectsOpen && onBack && (
+      {isSystemObjectsOpen && (
         <DropdownMenuHeader
           StartComponent={
             <DropdownMenuHeaderLeftComponent
-              onClick={onBack}
+              onClick={handleBack}
               Icon={IconChevronLeft}
             />
           }
@@ -121,7 +122,7 @@ export const WorkflowObjectDropdownContent = ({
       <DropdownMenuSearchInput
         autoFocus
         value={searchInputValue}
-        onChange={onSearchInputChange}
+        onChange={handleSearchInputChange}
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
@@ -133,11 +134,11 @@ export const WorkflowObjectDropdownContent = ({
             onClick={() => onOptionClick(option.value)}
           />
         ))}
-        {shouldShowAdvanced && onAdvancedClick && (
+        {shouldShowAdvanced && (
           <MenuItem
             text={<Trans>Advanced</Trans>}
             LeftIcon={IconSettings}
-            onClick={onAdvancedClick}
+            onClick={handleAdvancedClick}
             hasSubMenu
           />
         )}
