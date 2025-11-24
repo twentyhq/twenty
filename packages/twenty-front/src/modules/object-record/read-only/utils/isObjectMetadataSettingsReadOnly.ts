@@ -19,8 +19,10 @@ export const isObjectMetadataSettingsReadOnly = ({
 }: IsObjectMetadataReadOnlyParams) => {
   return (
     isObjectMetadataReadOnly({ objectPermissions, objectMetadataItem }) ||
-    (isDefined(objectMetadataItem?.applicationId) &&
-      isDefined(workspaceCustomApplicationId) &&
-      objectMetadataItem.applicationId !== workspaceCustomApplicationId)
+    (isDefined(objectMetadataItem?.applicationId)
+      ? isDefined(workspaceCustomApplicationId)
+        ? objectMetadataItem.applicationId !== workspaceCustomApplicationId
+        : true
+      : false)
   );
 };
