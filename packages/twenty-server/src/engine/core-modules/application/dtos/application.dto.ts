@@ -1,6 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/applicationVariable/dtos/application-variable.dto';
@@ -19,27 +25,33 @@ export class ApplicationDTO {
   @Field()
   name: string;
 
+  @IsOptional()
   @IsString()
   @Field()
-  description: string;
+  description?: string;
 
+  @IsOptional()
   @IsString()
   @Field()
-  version: string;
-
-  @Field(() => [AgentDTO])
-  agents: AgentDTO[];
-
-  @Field(() => [ServerlessFunctionDTO])
-  serverlessFunctions: ServerlessFunctionDTO[];
-
-  @Field(() => [ObjectMetadataDTO])
-  objects: ObjectMetadataDTO[];
-
-  @Field(() => [ApplicationVariableEntityDTO])
-  applicationVariables: ApplicationVariableEntityDTO[];
+  version?: string;
 
   @IsString()
   @Field()
   universalIdentifier: string;
+
+  @Field(() => Boolean)
+  @IsBoolean()
+  canBeUninstalled: boolean;
+
+  @Field(() => [AgentDTO])
+  agents?: AgentDTO[];
+
+  @Field(() => [ServerlessFunctionDTO])
+  serverlessFunctions?: ServerlessFunctionDTO[];
+
+  @Field(() => [ObjectMetadataDTO])
+  objects?: ObjectMetadataDTO[];
+
+  @Field(() => [ApplicationVariableEntityDTO])
+  applicationVariables?: ApplicationVariableEntityDTO[];
 }

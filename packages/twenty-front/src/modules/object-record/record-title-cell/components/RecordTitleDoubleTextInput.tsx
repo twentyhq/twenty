@@ -38,7 +38,7 @@ type RecordTitleDoubleTextInputProps = {
   ) => void;
   onChange?: (newDoubleTextValue: FieldDoubleText) => void;
   onPaste?: (newDoubleTextValue: FieldDoubleText) => void;
-  sizeVariant?: 'xs' | 'md';
+  sizeVariant?: 'xs' | 'sm' | 'md';
 };
 
 export const RecordTitleDoubleTextInput = ({

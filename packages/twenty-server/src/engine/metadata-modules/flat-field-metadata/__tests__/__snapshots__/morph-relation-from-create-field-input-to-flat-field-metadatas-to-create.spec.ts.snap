@@ -104,7 +104,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
   "result": {
     "flatFieldMetadatas": [
       {
-        "applicationId": null,
+        "applicationId": Any<String>,
         "calendarViewIds": [],
         "createdAt": Any<ClockDate>,
         "defaultValue": null,
@@ -140,7 +140,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "workspaceId": Any<String>,
       },
       {
-        "applicationId": null,
+        "applicationId": Any<String>,
         "calendarViewIds": [],
         "createdAt": Any<ClockDate>,
         "defaultValue": null,
@@ -178,7 +178,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "workspaceId": Any<String>,
       },
       {
-        "applicationId": null,
+        "applicationId": Any<String>,
         "calendarViewIds": [],
         "createdAt": Any<ClockDate>,
         "defaultValue": null,
@@ -214,7 +214,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "workspaceId": Any<String>,
       },
       {
-        "applicationId": null,
+        "applicationId": Any<String>,
         "calendarViewIds": [],
         "createdAt": Any<ClockDate>,
         "defaultValue": null,
@@ -254,7 +254,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
     ],
     "indexMetadatas": [
       {
-        "applicationId": null,
+        "applicationId": Any<String>,
         "createdAt": Any<ClockDate>,
         "flatIndexFieldMetadatas": [
           {
@@ -278,7 +278,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "workspaceId": Any<String>,
       },
       {
-        "applicationId": null,
+        "applicationId": Any<String>,
         "createdAt": Any<ClockDate>,
         "flatIndexFieldMetadatas": [
           {

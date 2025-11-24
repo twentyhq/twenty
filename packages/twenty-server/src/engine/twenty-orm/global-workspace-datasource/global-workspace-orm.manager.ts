@@ -1,16 +1,17 @@
 import { Injectable, type Type } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type ObjectLiteral } from 'typeorm';
+import { EntitySchema, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { buildObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-metadata-item-with-field-maps.util';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import {
@@ -29,6 +30,7 @@ export class GlobalWorkspaceOrmManager {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly entitySchemaFactory: EntitySchemaFactory,
   ) {}
 
   async getRepository<T extends ObjectLiteral>(
@@ -76,21 +78,6 @@ export class GlobalWorkspaceOrmManager {
     fn: () => T | Promise<T>,
   ): Promise<T> {
     const context = await this.loadWorkspaceContext(authContext);
-    const globalDataSource =
-      this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSource();
-
-    if (
-      !globalDataSource.hasWorkspaceEntityMetadataCacheForVersion(
-        authContext.workspace.id,
-        context.metadataVersion,
-      )
-    ) {
-      await globalDataSource.buildWorkspaceMetadata(
-        authContext.workspace.id,
-        context.metadataVersion,
-        context.objectMetadataMaps,
-      );
-    }
 
     return withWorkspaceContext(context, fn);
   }
@@ -149,12 +136,61 @@ export class GlobalWorkspaceOrmManager {
         workspaceId,
       });
 
+    const entitySchemas = await this.buildEntitySchemas(
+      workspaceId,
+      metadataVersion,
+      objectMetadataMaps,
+    );
+
     return {
       authContext,
       objectMetadataMaps,
       metadataVersion,
       featureFlagsMap,
       permissionsPerRoleId,
+      entitySchemas,
     };
+  }
+
+  private async buildEntitySchemas(
+    workspaceId: string,
+    dataSourceMetadataVersion: number,
+    objectMetadataMaps: ObjectMetadataMaps,
+  ) {
+    const cachedEntitySchemaOptions =
+      await this.workspaceCacheStorageService.getORMEntitySchema(
+        workspaceId,
+        dataSourceMetadataVersion,
+      );
+
+    let cachedEntitySchemas: EntitySchema[];
+
+    if (cachedEntitySchemaOptions) {
+      cachedEntitySchemas = cachedEntitySchemaOptions.map(
+        (option) => new EntitySchema(option),
+      );
+    } else {
+      const entitySchemas = await Promise.all(
+        Object.values(objectMetadataMaps.byId)
+          .filter(isDefined)
+          .map((objectMetadata) =>
+            this.entitySchemaFactory.create(
+              workspaceId,
+              objectMetadata,
+              objectMetadataMaps,
+            ),
+          ),
+      );
+
+      await this.workspaceCacheStorageService.setORMEntitySchema(
+        workspaceId,
+        dataSourceMetadataVersion,
+        entitySchemas.map((entitySchema) => entitySchema.options),
+      );
+
+      cachedEntitySchemas = entitySchemas;
+    }
+
+    return cachedEntitySchemas;
   }
 }

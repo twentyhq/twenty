@@ -14,7 +14,7 @@ type GraphWidgetFloatingTooltipProps = {
   items: GraphWidgetTooltipItem[];
   indexLabel?: string;
   highlightedKey?: string;
-  linkTo?: string;
+  onGraphWidgetTooltipClick?: () => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 };
@@ -25,7 +25,7 @@ export const GraphWidgetFloatingTooltip = ({
   items,
   indexLabel,
   highlightedKey,
-  linkTo,
+  onGraphWidgetTooltipClick,
   onMouseEnter,
   onMouseLeave,
 }: GraphWidgetFloatingTooltipProps) => {
@@ -67,7 +67,7 @@ export const GraphWidgetFloatingTooltip = ({
               items={items}
               indexLabel={indexLabel}
               highlightedKey={highlightedKey}
-              linkTo={linkTo}
+              onGraphWidgetTooltipClick={onGraphWidgetTooltipClick}
             />
           </motion.div>
         </AnimatePresence>
