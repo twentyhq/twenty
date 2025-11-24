@@ -7,7 +7,7 @@ import { buildChartDrilldownUrl } from '@/page-layout/widgets/graph/utils/buildC
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { type LineSeries, type Point } from '@nivo/line';
-import { lazy, Suspense, useCallback } from 'react';
+import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -68,31 +68,22 @@ export const GraphWidgetLineChartRenderer = ({
     }),
   );
 
-  const handlePointClick = useCallback(
-    (point: Point<LineSeries>) => {
-      const xValue = (point.data as LineChartDataPoint).x;
-      const rawValue = dimensionMetadata.get(xValue as string) ?? null;
+  const handlePointClick = (point: Point<LineSeries>) => {
+    const xValue = (point.data as LineChartDataPoint).x;
+    const rawValue = dimensionMetadata.get(xValue as string) ?? null;
 
-      const url = buildChartDrilldownUrl({
-        objectMetadataItem,
-        configuration,
-        clickedData: {
-          primaryBucketRawValue: rawValue,
-        },
-        viewId: indexViewId,
-        timezone: configuration.timezone ?? undefined,
-      });
-
-      navigate(url);
-    },
-    [
-      dimensionMetadata,
+    const url = buildChartDrilldownUrl({
       objectMetadataItem,
       configuration,
-      indexViewId,
-      navigate,
-    ],
-  );
+      clickedData: {
+        primaryBucketRawValue: rawValue,
+      },
+      viewId: indexViewId,
+      timezone: configuration.timezone ?? undefined,
+    });
+
+    navigate(url);
+  };
 
   if (loading) {
     return <ChartSkeletonLoader />;

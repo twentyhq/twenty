@@ -7,7 +7,7 @@ import { buildChartDrilldownUrl } from '@/page-layout/widgets/graph/utils/buildC
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { type ComputedDatum } from '@nivo/bar';
-import { lazy, Suspense, useCallback } from 'react';
+import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -69,32 +69,22 @@ export const GraphWidgetBarChartRenderer = ({
     }),
   );
 
-  const handleBarClick = useCallback(
-    (datum: ComputedDatum<BarChartDataItem>) => {
-      const displayValue = datum.data[indexBy];
-      const rawValue = dimensionMetadata.get(displayValue as string) ?? null;
+  const handleBarClick = (datum: ComputedDatum<BarChartDataItem>) => {
+    const displayValue = datum.data[indexBy];
+    const rawValue = dimensionMetadata.get(displayValue as string) ?? null;
 
-      const url = buildChartDrilldownUrl({
-        objectMetadataItem,
-        configuration,
-        clickedData: {
-          primaryBucketRawValue: rawValue,
-        },
-        viewId: indexViewId,
-        timezone: configuration.timezone ?? undefined,
-      });
-
-      navigate(url);
-    },
-    [
-      dimensionMetadata,
-      indexBy,
+    const url = buildChartDrilldownUrl({
       objectMetadataItem,
       configuration,
-      indexViewId,
-      navigate,
-    ],
-  );
+      clickedData: {
+        primaryBucketRawValue: rawValue,
+      },
+      viewId: indexViewId,
+      timezone: configuration.timezone ?? undefined,
+    });
+
+    navigate(url);
+  };
 
   if (loading) {
     return <ChartSkeletonLoader />;
