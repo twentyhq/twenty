@@ -91,12 +91,15 @@ export class AgentChatService {
       await this.messagePartRepository.save(dbParts);
     }
 
-    const messageContent = uiMessage.parts.find(
-      (part) => part.type === 'text',
-    )?.text;
+    // Only generate title from first user message
+    if (uiMessage.role === AgentChatMessageRole.USER) {
+      const messageContent = uiMessage.parts.find(
+        (part) => part.type === 'text',
+      )?.text;
 
-    if (messageContent) {
-      this.generateTitleIfNeeded(threadId, messageContent);
+      if (messageContent) {
+        this.generateTitleIfNeeded(threadId, messageContent);
+      }
     }
 
     return savedMessage;
@@ -131,9 +134,19 @@ export class AgentChatService {
     const thread = await this.threadRepository.findOne({
       where: { id: threadId },
       select: ['id', 'title'],
+      relations: ['messages'],
     });
 
     if (!thread || thread.title || !messageContent) {
+      return;
+    }
+
+    // Only generate title if this is the first user message
+    const userMessageCount = thread.messages?.filter(
+      (msg) => msg.role === AgentChatMessageRole.USER,
+    ).length || 0;
+
+    if (userMessageCount > 1) {
       return;
     }
 

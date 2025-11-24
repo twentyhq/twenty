@@ -12,7 +12,6 @@ import { type ModelId } from 'src/engine/core-modules/ai/constants/ai-models.con
 import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { type AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
-import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
 import { type ExecutionPlan } from 'src/engine/metadata-modules/ai-router/types/router-result.interface';
 
 @Injectable()
