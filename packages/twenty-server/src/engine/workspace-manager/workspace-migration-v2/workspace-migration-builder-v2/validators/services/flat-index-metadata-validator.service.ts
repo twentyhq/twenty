@@ -8,7 +8,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isValidUniqueFieldDefaultValueCombination } from 'src/engine/metadata-modules/field-metadata/utils/is-valid-unique-input.util';
 import { FlatEntityMapsExceptionCode } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
@@ -147,11 +146,7 @@ export class FlatIndexValidatorService {
           if (flatIndexToValidate.isUnique) {
             if (
               isDefined(relatedFlatField.defaultValue) &&
-              !isValidUniqueFieldDefaultValueCombination({
-                defaultValue: relatedFlatField.defaultValue,
-                isUnique: relatedFlatField.isUnique ?? false,
-                type: relatedFlatField.type,
-              })
+              relatedFlatField.isUnique
             ) {
               const fieldName = relatedFlatField.name;
               const fieldType = relatedFlatField.type;
