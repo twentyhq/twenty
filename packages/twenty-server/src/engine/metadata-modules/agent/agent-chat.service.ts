@@ -91,7 +91,6 @@ export class AgentChatService {
       await this.messagePartRepository.save(dbParts);
     }
 
-    // Only generate title from first user message
     if (uiMessage.role === AgentChatMessageRole.USER) {
       const messageContent = uiMessage.parts.find(
         (part) => part.type === 'text',
