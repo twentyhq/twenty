@@ -56,7 +56,9 @@ export const ChartTypeSelectionSection = ({
             }}
             showLabel
             disabled={isDisabled}
-            tooltipContent={t(GRAPH_TYPE_INFORMATION[graphType].label)}
+            tooltipContent={
+              isDisabled ? t`Soon` : t(GRAPH_TYPE_INFORMATION[graphType].label)
+            }
           />
         );
       })}
