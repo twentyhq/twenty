@@ -18,6 +18,7 @@ import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands
 import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-type-to-file-category.command';
 import { MigrateChannelPartialFullSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-channel-partial-full-sync-stages.command';
 import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-search-vectors.command';
+import { CleanNullEquivalentValuesCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-null-equivalent-values';
 import { CleanOrphanedRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-role-targets.command';
 import { CleanOrphanedUserWorkspacesCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-user-workspaces.command';
 import { CreateTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-create-twenty-standard-application.command';
@@ -90,6 +91,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly workspaceCustomApplicationIdNonNullableCommand: WorkspaceCustomApplicationIdNonNullableCommand,
     protected readonly addMessagesImportScheduledSyncStageCommand: AddMessagesImportScheduledSyncStageCommand,
     protected readonly addCalendarEventsImportScheduledSyncStageCommand: AddCalendarEventsImportScheduledSyncStageCommand,
+    protected readonly cleanNullEquivalentValuesCommand: CleanNullEquivalentValuesCommand,
   ) {
     super(
       workspaceRepository,
@@ -139,7 +141,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_1110: VersionCommands = {
-      beforeSyncMetadata: [this.createTwentyStandardApplicationCommand],
+      beforeSyncMetadata: [
+        this.createTwentyStandardApplicationCommand,
+        this.seedStandardApplicationsCommand,
+        this.cleanNullEquivalentValuesCommand,
+      ],
       afterSyncMetadata: [
         this.cleanOrphanedUserWorkspacesCommand,
         this.cleanOrphanedRoleTargetsCommand,
