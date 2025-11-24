@@ -47,17 +47,18 @@ export const ChartTypeSelectionSection = ({
 
         return (
           <MenuPicker
+            id={graphType}
             selected={currentGraphType === graphType}
             key={graphType}
             icon={GRAPH_TYPE_INFORMATION[graphType].icon}
             onClick={() => {
               setCurrentGraphType(graphType);
             }}
-            label={
-              isDisabled ? t`Soon` : t(GRAPH_TYPE_INFORMATION[graphType].label)
-            }
             showLabel
             disabled={isDisabled}
+            tooltipContent={
+              isDisabled ? t`Soon` : t(GRAPH_TYPE_INFORMATION[graphType].label)
+            }
           />
         );
       })}

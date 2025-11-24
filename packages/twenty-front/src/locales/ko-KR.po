@@ -853,10 +853,10 @@ msgstr "응용 프로그램이 생성한 에이전트"
 msgid "Agents used to route queries to specialized agents"
 msgstr "질문을 전문 에이전트에게 라우팅하는 데 사용되는 에이전트"
 
-#. js-lingui-id: 3y9hVY
+#. js-lingui-id: sPQ5qN
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Aggregate"
-msgstr "집계"
+msgid "Aggregate Chart"
+msgstr ""
 
 #. js-lingui-id: jsQZMk
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
@@ -4456,10 +4456,10 @@ msgstr "전체 접근"
 msgid "Functions - Settings"
 msgstr "기능 - 설정"
 
-#. js-lingui-id: IZUMtC
+#. js-lingui-id: vYj1cC
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Gauge"
-msgstr "게이지"
+msgid "Gauge Chart"
+msgstr ""
 
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -4724,10 +4724,10 @@ msgstr "빈 그룹 숨기기"
 msgid "Hide hidden groups"
 msgstr "숨겨진 그룹 숨기기"
 
-#. js-lingui-id: pzu7v4
+#. js-lingui-id: Xkd22/
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Horizontal"
-msgstr "수평"
+msgid "Horizontal Bar Chart"
+msgstr ""
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -5475,10 +5475,10 @@ msgstr "이 필드에 추가할 수 있는 값의 개수 제한"
 msgid "Limit must be greater than 0."
 msgstr ""
 
-#. js-lingui-id: rjuFFw
+#. js-lingui-id: pFkLY3
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Line"
-msgstr "라인"
+msgid "Line Chart"
+msgstr ""
 
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
@@ -6978,10 +6978,10 @@ msgstr "{objectLabel} 기록을 선택하세요"
 msgid "Picture"
 msgstr "사진"
 
-#. js-lingui-id: ZjVniv
+#. js-lingui-id: 3ubdv5
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Pie"
-msgstr "파이"
+msgid "Pie Chart"
+msgstr ""
 
 #. js-lingui-id: fQtTho
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -9573,10 +9573,10 @@ msgstr "버전"
 msgid "Version of the application"
 msgstr "응용 프로그램 버전"
 
-#. js-lingui-id: mX/isJ
+#. js-lingui-id: yIWhRv
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Vertical"
-msgstr "수직"
+msgid "Vertical Bar Chart"
+msgstr ""
 
 #. js-lingui-id: fROFIL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
