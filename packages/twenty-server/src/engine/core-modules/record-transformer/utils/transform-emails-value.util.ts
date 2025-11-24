@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'class-validator';
 
 export const transformEmailsValue = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,7 +18,7 @@ export const transformEmailsValue = (
       ? null
       : '';
 
-  if (additionalEmails) {
+  if (isDefined(additionalEmails)) {
     try {
       const emailArray = (
         isNonEmptyString(additionalEmails)

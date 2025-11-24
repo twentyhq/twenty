@@ -147,7 +147,7 @@ export const findPostgresDefaultNullEquivalentValue = (
             ? POSTGRES_DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE
             : undefined;
         case 'lastName':
-          return isNullEquivalentTextFieldValue(value)
+          return isNullEquivalentTextFieldValue(value) || value === 'NULL'
             ? POSTGRES_DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE
             : undefined;
         default:
