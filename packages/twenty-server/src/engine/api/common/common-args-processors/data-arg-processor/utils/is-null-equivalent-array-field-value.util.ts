@@ -1,3 +1,5 @@
+import isEmpty from 'lodash.isempty';
+
 export const isNullEquivalentArrayFieldValue = (value: unknown): boolean => {
-  return (Array.isArray(value) && value.length === 0) || value === null;
+  return isEmpty(value) || value === null;
 };
