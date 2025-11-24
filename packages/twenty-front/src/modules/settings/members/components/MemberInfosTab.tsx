@@ -12,8 +12,6 @@ import { Section } from 'twenty-ui/layout';
 
 type MemberInfosTabProps = {
   member: WorkspaceMember;
-  avatarUrl?: string | null;
-  onAvatarUpdated: (url: string | null) => void;
   onNameChange: (firstName: string, lastName: string) => void;
   onImpersonate?: () => void;
   onDelete: () => void;
@@ -32,14 +30,15 @@ const StyledActionRow = styled.div`
 
 export const MemberInfosTab = ({
   member,
-  avatarUrl,
-  onAvatarUpdated,
   onNameChange,
   onImpersonate,
   onDelete,
 }: MemberInfosTabProps) => {
   const [firstName, setFirstName] = useState(member.name.firstName);
   const [lastName, setLastName] = useState(member.name.lastName);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(
+    member.avatarUrl || null,
+  );
 
   return (
     <>
@@ -48,7 +47,7 @@ export const MemberInfosTab = ({
         <MemberPictureUploader
           memberId={member.id}
           avatarUrl={avatarUrl}
-          onAvatarUpdated={onAvatarUpdated}
+          onAvatarUpdated={setAvatarUrl}
         />
       </Section>
 

@@ -23,7 +23,6 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { MemberInfosTab } from '@/settings/members/components/MemberInfosTab';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { useState } from 'react';
 import {
   useDeleteUserWorkspaceMutation,
   useImpersonateMutation,
@@ -46,7 +45,6 @@ export const SettingsWorkspaceMember = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { executeImpersonationAuth } = useImpersonationAuth();
   const [impersonate] = useImpersonateMutation();
-  const [avatarUrl, setAvatarUrl] = useState<string | null>();
 
   const { record: member, loading } = useFindOneRecord<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -176,8 +174,6 @@ export const SettingsWorkspaceMember = () => {
           <MemberInfosTab
             member={member}
             onImpersonate={handleImpersonate}
-            avatarUrl={avatarUrl}
-            onAvatarUpdated={(url) => setAvatarUrl(url)}
             onNameChange={debouncedUpdateName}
             onDelete={() => openModal(DELETE_MEMBER_MODAL_ID)}
           />
