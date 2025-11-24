@@ -1,43 +1,41 @@
-import { useState } from 'react';
-
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { t } from '@lingui/core/macro';
 
 type MemberNameFieldsProps = {
+  memberId: string;
   firstName: string;
   lastName: string;
-  onChange: (firstName: string, lastName: string) => void;
-  autoSave?: boolean;
+  onChange: (field: 'firstName' | 'lastName', value: string) => void;
 };
 
 export const MemberNameFields = ({
+  memberId,
   firstName,
   lastName,
   onChange,
-  autoSave = true,
 }: MemberNameFieldsProps) => {
-  const [localFirstName, setLocalFirstName] = useState(firstName);
-  const [localLastName, setLocalLastName] = useState(lastName);
+  const firstNameInstanceId = `${memberId}-first-name`;
+  const lastNameInstanceId = `${memberId}-last-name`;
 
   return (
     <>
       <SettingsTextInput
-        instanceId="workspace-member-first-name"
+        instanceId={firstNameInstanceId}
         label={t`First Name`}
-        value={localFirstName}
+        value={firstName}
+        placeholder="Tim"
         onChange={(value) => {
-          setLocalFirstName(value);
-          if (autoSave) onChange(value, localLastName);
+          onChange('firstName', value);
         }}
         fullWidth
       />
       <SettingsTextInput
-        instanceId="workspace-member-last-name"
+        instanceId={lastNameInstanceId}
         label={t`Last name`}
-        value={localLastName}
+        value={lastName}
+        placeholder="Cook"
         onChange={(value) => {
-          setLocalLastName(value);
-          if (autoSave) onChange(localFirstName, value);
+          onChange('lastName', value);
         }}
         fullWidth
       />

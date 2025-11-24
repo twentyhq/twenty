@@ -58,13 +58,17 @@ export const MemberInfosTab = ({
         />
         <StyledNameRow>
           <MemberNameFields
+            memberId={member.id}
             firstName={firstName}
             lastName={lastName}
-            autoSave
-            onChange={(first, last) => {
-              setFirstName(first);
-              setLastName(last);
-              onNameChange(first, last);
+            onChange={(field, value) => {
+              if (field === 'firstName') {
+                setFirstName(value);
+                onNameChange(value, lastName);
+              } else {
+                setLastName(value);
+                onNameChange(firstName, value);
+              }
             }}
           />
         </StyledNameRow>

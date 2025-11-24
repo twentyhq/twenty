@@ -79,7 +79,13 @@ export const SettingsWorkspaceMember = () => {
 
   const debouncedUpdateName = useDebouncedCallback(
     async (firstName: string, lastName: string) => {
-      if (!member?.id) return;
+      if (
+        !member?.id ||
+        firstName.trim().length < 1 ||
+        lastName.trim().length < 1
+      ) {
+        return;
+      }
       try {
         await updateOneRecord({
           idToUpdate: member.id,
