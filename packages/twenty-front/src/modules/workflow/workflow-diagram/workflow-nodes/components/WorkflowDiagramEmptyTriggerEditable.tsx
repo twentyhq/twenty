@@ -4,6 +4,7 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
+import { useResetWorkflowInsertStepIds } from '@/workflow/workflow-diagram/hooks/useResetWorkflowInsertStepIds';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeContainer';
 import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeIconContainer';
@@ -37,10 +38,14 @@ export const WorkflowDiagramEmptyTriggerEditable = ({ id }: { id: string }) => {
 
   const selected = workflowSelectedNode === id;
 
+  const { resetWorkflowInsertStepIds } = useResetWorkflowInsertStepIds();
+
   const handleClick = () => {
     if (!isInRightDrawer) {
       setCommandMenuNavigationStack([]);
     }
+
+    resetWorkflowInsertStepIds();
 
     if (!isDefined(workflowVisualizerWorkflowId)) {
       return;

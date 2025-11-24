@@ -4,6 +4,7 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { useResetWorkflowInsertStepIds } from '@/workflow/workflow-diagram/hooks/useResetWorkflowInsertStepIds';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
@@ -33,35 +34,41 @@ export const WorkflowDiagramStepNodeEditable = ({
 
   const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
 
+  const { resetWorkflowInsertStepIds } = useResetWorkflowInsertStepIds();
+
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const setCommandMenuNavigationStack = useSetRecoilState(
     commandMenuNavigationStackState,
   );
 
+  const handleClick = () => {
+    if (!isInRightDrawer) {
+      setCommandMenuNavigationStack([]);
+    }
+
+    resetWorkflowInsertStepIds();
+
+    setWorkflowSelectedNode(id);
+
+    if (isDefined(workflowVisualizerWorkflowId)) {
+      openWorkflowEditStepInCommandMenu(
+        workflowVisualizerWorkflowId,
+        data.name,
+        getIcon(getWorkflowNodeIconKey(data)),
+        id,
+      );
+
+      return;
+    }
+  };
+
   return (
     <WorkflowDiagramStepNodeEditableContent
       id={id}
       data={data}
       selected={selected}
-      onClick={() => {
-        if (!isInRightDrawer) {
-          setCommandMenuNavigationStack([]);
-        }
-
-        setWorkflowSelectedNode(id);
-
-        if (isDefined(workflowVisualizerWorkflowId)) {
-          openWorkflowEditStepInCommandMenu(
-            workflowVisualizerWorkflowId,
-            data.name,
-            getIcon(getWorkflowNodeIconKey(data)),
-            id,
-          );
-
-          return;
-        }
-      }}
+      onClick={handleClick}
     />
   );
 };
