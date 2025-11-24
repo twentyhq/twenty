@@ -1,17 +1,12 @@
-import styled from '@emotion/styled';
-import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -19,255 +14,51 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
+import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  H2Title,
-  IconInfoCircle,
-  IconLockOpen,
-  IconPlus,
-  IconTrash,
-  Status,
-} from 'twenty-ui/display';
-import { Button, LightIconButton } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { MenuItem } from 'twenty-ui/navigation';
+import { getSettingsPath } from 'twenty-shared/utils';
+import { IconInfoCircle } from 'twenty-ui/display';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-import { MemberEmailField } from '@/settings/members/components/MemberEmailField';
-import { MemberNameFields } from '@/settings/members/components/MemberNameFields';
-import { MemberPictureUploader } from '@/settings/members/components/MemberPictureUploader';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { MemberInfosTab } from '@/settings/members/components/MemberInfosTab';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { useState } from 'react';
 import {
   useDeleteUserWorkspaceMutation,
-  useGetRolesQuery,
-  useUpdateWorkspaceMemberRoleMutation,
+  useImpersonateMutation,
 } from '~/generated-metadata/graphql';
-
-type WorkspaceMemberWithRoles = WorkspaceMember & {
-  roles?: { id: string; label: string; icon?: string | null }[];
-};
 
 const SETTINGS_WORKSPACE_MEMBER_TABS = {
   COMPONENT_INSTANCE_ID: 'settings-workspace-member-tabs',
   TABS_IDS: {
     INFOS: 'infos',
-    PERMISSIONS: 'permissions',
   },
-} as const;
+};
 
 const DELETE_MEMBER_MODAL_ID = 'workspace-member-delete-modal';
-
-const StyledRoleCard = styled.div`
-  align-items: center;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(2.5)}
-    ${({ theme }) => theme.spacing(3)};
-`;
-
-const StyledRoleInfo = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledNameRow = styled.div`
-  display: grid;
-  gap: ${({ theme }) => theme.spacing(3)};
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-`;
-
-const SettingsWorkspaceMemberInfosTab = ({
-  member,
-  onNameChange,
-  onDelete,
-}: {
-  member: WorkspaceMemberWithRoles;
-  onNameChange: (firstName: string, lastName: string) => void;
-  onDelete: () => void;
-  isDeleting: boolean;
-}) => {
-  const [firstName, setFirstName] = useState(member.name.firstName);
-  const [lastName, setLastName] = useState(member.name.lastName);
-  const [avatarUrl, setAvatarUrl] = useState<string | null | undefined>(
-    member.avatarUrl,
-  );
-
-  useEffect(() => {
-    setFirstName(member.name.firstName);
-    setLastName(member.name.lastName);
-    setAvatarUrl(member.avatarUrl);
-  }, [member]);
-
-  return (
-    <>
-      <Section>
-        <H2Title title={t`Picture`} />
-        <MemberPictureUploader
-          memberId={member.id}
-          avatarUrl={avatarUrl}
-          onAvatarUpdated={(url) => setAvatarUrl(url)}
-        />
-      </Section>
-
-      <Section>
-        <H2Title
-          title={t`Name`}
-          description={t`Your name as it will be displayed`}
-        />
-        <StyledNameRow>
-          <MemberNameFields
-            firstName={firstName}
-            lastName={lastName}
-            onChange={(first, last) => {
-              setFirstName(first);
-              setLastName(last);
-              onNameChange(first, last);
-            }}
-          />
-        </StyledNameRow>
-      </Section>
-
-      <Section>
-        <H2Title
-          title={t`Email`}
-          description={t`The email associated to this account`}
-        />
-        <MemberEmailField email={member.userEmail} />
-      </Section>
-
-      <Section>
-        <H2Title
-          title={t`Danger zone`}
-          description={t`Delete account and all the associated data`}
-        />
-        <Button
-          accent="danger"
-          title={t`Delete account`}
-          variant="secondary"
-          size="small"
-          onClick={onDelete}
-        />
-      </Section>
-    </>
-  );
-};
-
-const SettingsWorkspaceMemberPermissionsTab = ({
-  member,
-  onAssignRole,
-  roles,
-  rolesLoading,
-}: {
-  member: WorkspaceMemberWithRoles;
-  onAssignRole: (roleId: string) => void;
-  roles: { id: string; label: string; icon?: string | null }[];
-  isAssigning: boolean;
-  rolesLoading: boolean;
-}) => {
-  const currentRoles = member.roles ?? [];
-  const assignableRoles = roles.filter(
-    (role) => !currentRoles.find((existing) => existing.id === role.id),
-  );
-  const primaryRole = currentRoles[0]?.label;
-  const additionalRolesCount = currentRoles.length - 1;
-
-  return (
-    <>
-      <Section>
-        <H2Title
-          title={t`Role`}
-          description={t`Customize what this user can view and perform`}
-        />
-        <StyledRoleCard>
-          <StyledRoleInfo>
-            <IconLockOpen size={18} stroke={1.75} />
-            <div>
-              {primaryRole ?? t`No role assigned yet`}
-              {currentRoles.length > 1 && (
-                <div>
-                  <Status
-                    color="gray"
-                    text={t`${additionalRolesCount} more role(s)`}
-                  />
-                </div>
-              )}
-            </div>
-          </StyledRoleInfo>
-          <Dropdown
-            dropdownId="assign-role-dropdown"
-            clickableComponent={
-              <Button
-                title={t`Assign role`}
-                Icon={IconPlus}
-                variant="secondary"
-                size="small"
-                disabled={rolesLoading || assignableRoles.length === 0}
-              />
-            }
-            dropdownComponents={
-              <DropdownContent>
-                <DropdownMenuItemsContainer>
-                  {assignableRoles.length === 0 && (
-                    <MenuItem text={t`No more roles to assign`} disabled />
-                  )}
-                  {assignableRoles.map((role) => (
-                    <MenuItem
-                      key={role.id}
-                      text={role.label}
-                      onClick={() => onAssignRole(role.id)}
-                    />
-                  ))}
-                </DropdownMenuItemsContainer>
-              </DropdownContent>
-            }
-          />
-        </StyledRoleCard>
-      </Section>
-
-      <Section>
-        <H2Title
-          title={t`Permissions`}
-          description={t`Objects and fields permissions settings`}
-        />
-        <Status color="gray" text={t`More granular permissions coming soon`} />
-      </Section>
-    </>
-  );
-};
 
 export const SettingsWorkspaceMember = () => {
   const { workspaceMemberId = '' } = useParams();
   const navigateSettings = useNavigateSettings();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const { openModal, closeModal } = useModal();
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const { executeImpersonationAuth } = useImpersonationAuth();
+  const [impersonate] = useImpersonateMutation();
+  const [avatarUrl, setAvatarUrl] = useState<string | null>();
 
-  const { record: member, loading } =
-    useFindOneRecord<WorkspaceMemberWithRoles>({
-      objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-      objectRecordId: workspaceMemberId,
-      recordGqlFields: {
-        id: true,
-        name: { firstName: true, lastName: true },
-        avatarUrl: true,
-        userEmail: true,
-        roles: { id: true, label: true, icon: true },
-      },
-    });
-
-  const [memberData, setMemberData] = useState<WorkspaceMemberWithRoles | null>(
-    null,
-  );
-
-  useEffect(() => {
-    if (isDefined(member)) {
-      setMemberData(member);
-    }
-  }, [member]);
+  const { record: member, loading } = useFindOneRecord<WorkspaceMember>({
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    objectRecordId: workspaceMemberId,
+    recordGqlFields: {
+      id: true,
+      userId: true,
+      name: { firstName: true, lastName: true },
+      avatarUrl: true,
+      userEmail: true,
+    },
+  });
 
   const tabListComponentId = `${SETTINGS_WORKSPACE_MEMBER_TABS.COMPONENT_INSTANCE_ID}-${workspaceMemberId}`;
   const activeTabId = useRecoilComponentValue(
@@ -282,25 +73,15 @@ export const SettingsWorkspaceMember = () => {
   const [deleteUserFromWorkspace, { loading: isDeleting }] =
     useDeleteUserWorkspaceMutation();
 
-  const [updateWorkspaceMemberRole, { loading: isAssigningRole }] =
-    useUpdateWorkspaceMemberRoleMutation();
-
-  const { data: rolesData, loading: rolesLoading } = useGetRolesQuery();
-  const roles = rolesData?.getRoles ?? [];
-
   const debouncedUpdateName = useDebouncedCallback(
     async (firstName: string, lastName: string) => {
-      if (!memberData?.id) return;
+      if (!member?.id) return;
       try {
         await updateOneRecord({
-          idToUpdate: memberData.id,
+          idToUpdate: member.id,
           updateOneRecordInput: {
             name: { firstName, lastName },
           },
-        });
-        setMemberData({
-          ...memberData,
-          name: { ...memberData.name, firstName, lastName },
         });
       } catch (error) {
         enqueueErrorSnackBar({
@@ -315,10 +96,10 @@ export const SettingsWorkspaceMember = () => {
   );
 
   const handleDeleteMember = async () => {
-    if (!memberData?.id) return;
+    if (!member?.id) return;
     try {
       await deleteUserFromWorkspace({
-        variables: { workspaceMemberIdToDelete: memberData.id },
+        variables: { workspaceMemberIdToDelete: member.id },
       });
       enqueueSuccessSnackBar({ message: t`Member removed from workspace` });
       closeModal(DELETE_MEMBER_MODAL_ID);
@@ -333,54 +114,38 @@ export const SettingsWorkspaceMember = () => {
     }
   };
 
-  const handleAssignRole = async (roleId: string) => {
-    if (!memberData?.id) return;
-
-    try {
-      const { data } = await updateWorkspaceMemberRole({
-        variables: {
-          workspaceMemberId: memberData.id,
-          roleId,
-        },
-      });
-
-      const updatedMember = data?.updateWorkspaceMemberRole;
-      if (isDefined(updatedMember)) {
-        setMemberData({
-          ...memberData,
-          roles: updatedMember.roles ?? memberData.roles,
-        });
-        enqueueSuccessSnackBar({ message: t`Role assigned` });
-      }
-    } catch (error) {
+  const handleImpersonate = async () => {
+    if (!member?.userId || !currentWorkspace?.id) {
       enqueueErrorSnackBar({
-        message:
-          error instanceof Error ? error.message : t`Unable to assign role`,
+        message: t`Cannot impersonate selected user`,
+        options: { duration: 2000 },
       });
+      return;
     }
+
+    await impersonate({
+      variables: {
+        userId: member.userId,
+        workspaceId: currentWorkspace.id,
+      },
+      onCompleted: async (data) => {
+        const { loginToken } = data.impersonate;
+        await executeImpersonationAuth(loginToken.token);
+      },
+      onError: () => {
+        enqueueErrorSnackBar({
+          message: t`Cannot impersonate selected user`,
+          options: { duration: 2000 },
+        });
+      },
+    });
   };
 
-  const tabs = useMemo(
-    () => [
-      {
-        id: SETTINGS_WORKSPACE_MEMBER_TABS.TABS_IDS.INFOS,
-        title: t`Infos`,
-        Icon: IconInfoCircle,
-      },
-      {
-        id: SETTINGS_WORKSPACE_MEMBER_TABS.TABS_IDS.PERMISSIONS,
-        title: t`Permissions`,
-        Icon: IconLockOpen,
-      },
-    ],
-    [],
-  );
-
-  if (loading || !memberData) return null;
+  if (loading || !member) return null;
 
   return (
     <SubMenuTopBarContainer
-      title={`${memberData.name.firstName} ${memberData.name.lastName}`}
+      title={`${member.name.firstName} ${member.name.lastName}`}
       links={[
         {
           children: t`Workspace`,
@@ -391,39 +156,30 @@ export const SettingsWorkspaceMember = () => {
           href: getSettingsPath(SettingsPath.WorkspaceMembersPage),
         },
         {
-          children: `${memberData.name.firstName} ${memberData.name.lastName}`,
+          children: `${member.name.firstName} ${member.name.lastName}`,
         },
       ]}
-      actionButton={
-        <LightIconButton
-          Icon={IconTrash}
-          accent="tertiary"
-          onClick={() => openModal(DELETE_MEMBER_MODAL_ID)}
-        />
-      }
     >
-      <SettingsRolesQueryEffect />
-
       <SettingsPageContainer>
-        <TabList tabs={tabs} componentInstanceId={tabListComponentId} />
+        <TabList
+          tabs={[
+            {
+              id: SETTINGS_WORKSPACE_MEMBER_TABS.TABS_IDS.INFOS,
+              title: t`Infos`,
+              Icon: IconInfoCircle,
+            },
+          ]}
+          componentInstanceId={tabListComponentId}
+        />
 
         {activeTabId === SETTINGS_WORKSPACE_MEMBER_TABS.TABS_IDS.INFOS && (
-          <SettingsWorkspaceMemberInfosTab
-            member={memberData}
-            onNameChange={(first, last) => debouncedUpdateName(first, last)}
+          <MemberInfosTab
+            member={member}
+            onImpersonate={handleImpersonate}
+            avatarUrl={avatarUrl}
+            onAvatarUpdated={(url) => setAvatarUrl(url)}
+            onNameChange={debouncedUpdateName}
             onDelete={() => openModal(DELETE_MEMBER_MODAL_ID)}
-            isDeleting={isDeleting}
-          />
-        )}
-
-        {activeTabId ===
-          SETTINGS_WORKSPACE_MEMBER_TABS.TABS_IDS.PERMISSIONS && (
-          <SettingsWorkspaceMemberPermissionsTab
-            member={memberData}
-            onAssignRole={handleAssignRole}
-            roles={roles}
-            isAssigning={isAssigningRole}
-            rolesLoading={rolesLoading}
           />
         )}
       </SettingsPageContainer>

@@ -7,12 +7,14 @@ type MemberNameFieldsProps = {
   firstName: string;
   lastName: string;
   onChange: (firstName: string, lastName: string) => void;
+  autoSave?: boolean;
 };
 
 export const MemberNameFields = ({
   firstName,
   lastName,
   onChange,
+  autoSave = true,
 }: MemberNameFieldsProps) => {
   const [localFirstName, setLocalFirstName] = useState(firstName);
   const [localLastName, setLocalLastName] = useState(lastName);
@@ -25,7 +27,7 @@ export const MemberNameFields = ({
         value={localFirstName}
         onChange={(value) => {
           setLocalFirstName(value);
-          onChange(value, localLastName);
+          if (autoSave) onChange(value, localLastName);
         }}
         fullWidth
       />
@@ -35,7 +37,7 @@ export const MemberNameFields = ({
         value={localLastName}
         onChange={(value) => {
           setLocalLastName(value);
-          onChange(localFirstName, value);
+          if (autoSave) onChange(localFirstName, value);
         }}
         fullWidth
       />

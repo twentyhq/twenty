@@ -372,11 +372,14 @@ export const SettingsWorkspaceMembers = () => {
                     gridAutoColumns="150px 1fr 40px"
                     mobileGridAutoColumns="100px 1fr 32px"
                     key={workspaceMember.id}
-                    onClick={() =>
+                    onClick={() => {
+                      if (currentWorkspaceMember?.id === workspaceMember.id) {
+                        return;
+                      }
                       navigateSettings(SettingsPath.WorkspaceMemberPage, {
                         workspaceMemberId: workspaceMember.id,
-                      })
-                    }
+                      });
+                    }}
                   >
                     <TableCell>
                       <StyledIconWrapper>
