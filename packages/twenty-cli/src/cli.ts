@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+// rm me
 import chalk from 'chalk';
 import { Command, CommanderError } from 'commander';
 import { readFileSync } from 'fs';
