@@ -1,9 +1,13 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import {
@@ -30,6 +34,14 @@ export const MobileNavigationBar = () => {
   const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
     useRecoilState(currentMobileNavigationDrawerState);
   const { openSettingsMenu } = useOpenSettingsMenu();
+  const { alphaSortedActiveNonSystemObjectMetadataItems } =
+    useFilteredObjectMetadataItems();
+
+  const [, setContextStoreCurrentObjectMetadataItemId] =
+    useRecoilComponentState(
+      contextStoreCurrentObjectMetadataItemIdComponentState,
+      MAIN_CONTEXT_STORE_INSTANCE_ID,
+    );
 
   const activeItemName = isNavigationDrawerExpanded
     ? currentMobileNavigationDrawer
@@ -62,7 +74,22 @@ export const MobileNavigationBar = () => {
     {
       name: 'search',
       Icon: IconSearch,
-      onClick: openRecordsSearchPage,
+      onClick: () => {
+        setIsNavigationDrawerExpanded(false);
+        closeCommandMenu();
+
+        if (isSettingsPage) {
+          const firstObjectMetadataItem =
+            alphaSortedActiveNonSystemObjectMetadataItems[0];
+          if (firstObjectMetadataItem !== undefined) {
+            setContextStoreCurrentObjectMetadataItemId(
+              firstObjectMetadataItem.id,
+            );
+          }
+        }
+
+        openRecordsSearchPage();
+      },
     },
     {
       name: 'settings',
