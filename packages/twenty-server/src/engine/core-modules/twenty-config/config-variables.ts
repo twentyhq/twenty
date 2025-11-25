@@ -992,7 +992,7 @@ export class ConfigVariables {
     description: 'Maximum complexity allowed for GQL queries',
     type: ConfigVariableType.NUMBER,
   })
-  GRAPHQL_MAXIMUM_COMPLEXITY = 2000;
+  GRAPHQL_MAX_COMPLEXITY = 2000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SSL,

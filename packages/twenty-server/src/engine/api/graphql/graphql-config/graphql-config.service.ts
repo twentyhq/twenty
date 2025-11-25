@@ -77,7 +77,7 @@ export class GraphQLConfigService
         this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION,
       ),
       useComputeComplexity(
-        this.twentyConfigService.get('GRAPHQL_MAXIMUM_COMPLEXITY'),
+        this.twentyConfigService.get('GRAPHQL_MAX_COMPLEXITY'),
       ),
     ];
 
