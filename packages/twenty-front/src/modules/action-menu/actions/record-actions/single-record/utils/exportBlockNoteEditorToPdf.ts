@@ -47,16 +47,30 @@ export const exportBlockNoteEditorToPdf = async (
 
   const exporter = new PDFExporter(editor.schema, pdfDefaultSchemaMappings, {
     resolveFileUrl: async (url: string) => {
-      const response = await fetch(url, {
-        mode: 'cors',
-        credentials: 'omit',
-      });
+      try {
+        const response = await fetch(url, {
+          mode: 'cors',
+          credentials: 'omit',
+        });
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch asset at ${url}`);
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch asset at ${url}: ${response.status} ${response.statusText}`,
+          );
+        }
+
+        return await response.blob();
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.message.includes('Failed to fetch asset')
+        ) {
+          throw error;
+        }
+        throw new Error(
+          `Failed to fetch asset at ${url}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        );
       }
-
-      return await response.blob();
     },
   });
 
