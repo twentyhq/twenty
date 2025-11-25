@@ -152,7 +152,7 @@ export const useChartSettingsValues = ({
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_Y:
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_AGGREGATE:
-      case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_PIE_CHART: {
+      case CHART_CONFIGURATION_SETTING_IDS.EACH_SLICE_REPRESENTS: {
         const hasAggregateLabel = isDefined(aggregateField?.label);
         const hasAggregateOperation = isDefined(aggregateOperation);
 
@@ -162,7 +162,7 @@ export const useChartSettingsValues = ({
             : ''
         }`;
       }
-      case CHART_CONFIGURATION_SETTING_IDS.EACH_SLICE_REPRESENTS: {
+      case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_PIE_CHART: {
         const pieChartGroupByField = isDefined(finalGroupByFieldYId)
           ? objectMetadataItem?.fields.find(
               (field) => field.id === finalGroupByFieldYId,
@@ -179,6 +179,7 @@ export const useChartSettingsValues = ({
 
         return pieChartGroupBySubFieldNameLabel ?? pieChartGroupByField?.label;
       }
+
       case CHART_CONFIGURATION_SETTING_IDS.GROUP_BY:
         return groupByFieldY?.label;
       case CHART_CONFIGURATION_SETTING_IDS.AXIS_NAME:
