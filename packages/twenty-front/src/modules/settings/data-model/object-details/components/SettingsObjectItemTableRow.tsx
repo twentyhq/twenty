@@ -1,12 +1,13 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIcons } from 'twenty-ui/display';
-import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 
 export type SettingsObjectMetadataItemTableRowProps = {
   action: ReactNode;
@@ -30,6 +31,12 @@ const StyledNameLabel = styled.div`
   overflow: hidden;
 `;
 
+const StyledInactiveLabel = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+`;
+
 const StyledActionTableCell = styled(TableCell)`
   justify-content: center;
   padding-right: ${({ theme }) => theme.spacing(1)};
@@ -41,6 +48,7 @@ export const SettingsObjectMetadataItemTableRow = ({
   link,
   totalObjectCount,
 }: SettingsObjectMetadataItemTableRowProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   const { getIcon } = useIcons();
@@ -58,6 +66,9 @@ export const SettingsObjectMetadataItemTableRow = ({
         )}
         <StyledNameLabel title={objectMetadataItem.labelPlural}>
           {objectMetadataItem.labelPlural}
+          {!objectMetadataItem.isActive && (
+            <StyledInactiveLabel>{t`Deactivated`}</StyledInactiveLabel>
+          )}
         </StyledNameLabel>
       </StyledNameTableCell>
       <TableCell>

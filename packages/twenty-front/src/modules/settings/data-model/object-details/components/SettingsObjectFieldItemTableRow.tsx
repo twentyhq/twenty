@@ -14,6 +14,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
@@ -29,9 +30,9 @@ import { RelationType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 
+import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 import { RELATION_TYPES } from '../../constants/RelationTypes';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
-import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 
 type SettingsObjectFieldItemTableRowProps = {
   settingsObjectDetailTableItem: SettingsObjectDetailTableItem;
@@ -54,6 +55,12 @@ const StyledNameLabel = styled.div`
   overflow: hidden;
 `;
 
+const StyledInactiveLabel = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+`;
+
 const StyledIconTableCell = styled(TableCell)`
   justify-content: center;
   padding-right: ${({ theme }) => theme.spacing(1)};
@@ -64,6 +71,7 @@ export const SettingsObjectFieldItemTableRow = ({
   mode,
   status,
 }: SettingsObjectFieldItemTableRowProps) => {
+  const { t } = useLingui();
   const { fieldMetadataItem, identifierType, objectMetadataItem } =
     settingsObjectDetailTableItem;
 
@@ -251,6 +259,9 @@ export const SettingsObjectFieldItemTableRow = ({
           )}
           <StyledNameLabel title={fieldMetadataItem.label}>
             {fieldMetadataItem.label}
+            {!fieldMetadataItem.isActive && (
+              <StyledInactiveLabel>{t`Deactivated`}</StyledInactiveLabel>
+            )}
           </StyledNameLabel>
         </StyledNameTableCell>
       </UndecoratedLink>
