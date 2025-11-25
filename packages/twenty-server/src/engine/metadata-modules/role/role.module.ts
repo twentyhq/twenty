@@ -7,7 +7,7 @@ import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentRoleModule } from 'src/engine/metadata-modules/agent-role/agent-role.module';
+import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai-agent-role/ai-agent-role.module';
 import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
 import { PermissionFlagModule } from 'src/engine/metadata-modules/permission-flag/permission-flag.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -23,7 +23,7 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
     TypeOrmModule.forFeature([RoleEntity, RoleTargetsEntity]),
     TypeOrmModule.forFeature([UserWorkspaceEntity, WorkspaceEntity]),
     UserRoleModule,
-    AgentRoleModule,
+    AiAgentRoleModule,
     ApiKeyModule,
     PermissionsModule,
     UserWorkspaceModule,

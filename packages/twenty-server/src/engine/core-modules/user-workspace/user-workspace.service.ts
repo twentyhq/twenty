@@ -19,6 +19,7 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
@@ -53,6 +54,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly userRoleService: UserRoleService,
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
+    private readonly onboardingService: OnboardingService,
   ) {
     super(userWorkspaceRepository);
   }
@@ -171,6 +173,15 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       await this.workspaceInvitationService.invalidateWorkspaceInvitation(
         workspace.id,
         user.email,
+        queryRunner,
+      );
+
+      await this.onboardingService.setOnboardingCreateProfilePending(
+        {
+          userId: user.id,
+          workspaceId: workspace.id,
+          value: true,
+        },
         queryRunner,
       );
     }

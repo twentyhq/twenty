@@ -2,8 +2,10 @@ import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts
 import { useLinksField } from '@/object-record/record-field/ui/meta-types/hooks/useLinksField';
 import { LinksFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldMenuItem';
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { linksSchema } from '@/object-record/record-field/ui/types/guards/isFieldLinksValue';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useContext, useMemo } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
@@ -12,7 +14,11 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 export const LinksFieldInput = () => {
-  const { draftValue, fieldDefinition, setDraftValue } = useLinksField();
+  const { getLatestDraftValue, draftValue, fieldDefinition, setDraftValue } =
+    useLinksField();
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
 
   const { onEscape, onClickOutside } = useContext(FieldInputEventContext);
 
@@ -55,7 +61,8 @@ export const LinksFieldInput = () => {
     _newValue: any,
     event: MouseEvent | TouchEvent,
   ) => {
-    onClickOutside?.({ newValue: draftValue, event });
+    const latestDraftValue = getLatestDraftValue(instanceId);
+    onClickOutside?.({ newValue: latestDraftValue, event });
   };
 
   const handleEscape = (_newValue: any) => {

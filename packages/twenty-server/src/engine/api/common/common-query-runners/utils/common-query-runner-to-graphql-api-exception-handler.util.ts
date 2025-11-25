@@ -30,6 +30,7 @@ export const commonQueryRunnerToGraphqlApiExceptionHandler = (
     case CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT:
       throw new AuthenticationError(error);
     case CommonQueryRunnerExceptionCode.MISSING_SYSTEM_FIELD:
+    case CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR:
       throw new InternalServerError(error);
     default: {
       return assertUnreachable(error.code);

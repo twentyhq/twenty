@@ -1,21 +1,24 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-  GraphQLBoolean,
   GraphQLInputFieldConfigMap,
+  isInputObjectType,
   isObjectType,
 } from 'graphql';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import {
   TypeMapperService,
   TypeOptions,
 } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
+import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
 import { computeRelationConnectInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-relation-connect-input-type-key.util';
 import { extractGraphQLRelationFieldNames } from 'src/engine/api/graphql/workspace-schema-builder/utils/extract-graphql-relation-field-names.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 @Injectable()
 export class RelationFieldMetadataGqlInputTypeGenerator {
@@ -115,16 +118,19 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
   public generateSimpleRelationFieldOrderByInputType({
     fieldMetadata,
     typeOptions,
+    objectMetadataMaps,
   }: {
     fieldMetadata: FieldMetadataEntity<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >;
     typeOptions: TypeOptions;
+    objectMetadataMaps?: ObjectMetadataMaps;
   }) {
     if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
       return {};
 
-    const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
+    const { joinColumnName, fieldMetadataName } =
+      extractGraphQLRelationFieldNames(fieldMetadata);
 
     const type = this.typeMapperService.mapToOrderByType(fieldMetadata.type);
 
@@ -143,32 +149,89 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
       typeOptions,
     );
 
-    return {
+    const fields: GraphQLInputFieldConfigMap = {
       [joinColumnName]: {
         type: modifiedType,
         description: fieldMetadata.description,
       },
     };
+
+    if (
+      isDefined(fieldMetadata.relationTargetObjectMetadataId) &&
+      isDefined(objectMetadataMaps)
+    ) {
+      const targetObjectMetadata =
+        objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
+
+      if (isDefined(targetObjectMetadata)) {
+        const targetOrderByInputTypeKey = computeObjectMetadataInputTypeKey(
+          targetObjectMetadata.nameSingular,
+          GqlInputTypeDefinitionKind.OrderBy,
+        );
+
+        const targetOrderByInputType = this.gqlTypesStorage.getGqlTypeByKey(
+          targetOrderByInputTypeKey,
+        );
+
+        if (
+          isDefined(targetOrderByInputType) &&
+          isInputObjectType(targetOrderByInputType)
+        ) {
+          fields[fieldMetadataName] = {
+            type: targetOrderByInputType,
+            description: `Order by fields of the related ${targetObjectMetadata.nameSingular}`,
+          };
+        }
+      }
+    }
+
+    return fields;
   }
 
   public generateSimpleRelationFieldGroupByInputType(
     fieldMetadata: FieldMetadataEntity<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >,
+    objectMetadataMaps?: ObjectMetadataMaps,
   ): GraphQLInputFieldConfigMap {
     if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
       return {};
 
-    const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
+    const { fieldMetadataName } =
+      extractGraphQLRelationFieldNames(fieldMetadata);
 
-    const type = this.typeMapperService.applyTypeOptions(GraphQLBoolean, {});
+    const fields: GraphQLInputFieldConfigMap = {};
 
-    return {
-      [joinColumnName]: {
-        type,
-        description: fieldMetadata.description,
-      },
-    };
+    if (
+      isDefined(fieldMetadata.relationTargetObjectMetadataId) &&
+      isDefined(objectMetadataMaps)
+    ) {
+      const targetObjectMetadata =
+        objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
+
+      if (isDefined(targetObjectMetadata)) {
+        const targetGroupByInputTypeKey = computeObjectMetadataInputTypeKey(
+          targetObjectMetadata.nameSingular,
+          GqlInputTypeDefinitionKind.GroupBy,
+        );
+
+        const targetGroupByInputType = this.gqlTypesStorage.getGqlTypeByKey(
+          targetGroupByInputTypeKey,
+        );
+
+        if (
+          isDefined(targetGroupByInputType) &&
+          isInputObjectType(targetGroupByInputType)
+        ) {
+          fields[fieldMetadataName] = {
+            type: targetGroupByInputType,
+            description: `Group by fields of the related ${targetObjectMetadata.nameSingular}`,
+          };
+        }
+      }
+    }
+
+    return fields;
   }
 
   public generateConnectRelationFieldInputType({

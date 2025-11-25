@@ -67,7 +67,6 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
-        id: 'test-chart',
         hoveredSliceId: null,
       }),
     );
@@ -80,7 +79,6 @@ describe('usePieChartData', () => {
       percentage: 30,
       colorScheme: mockColorRegistry.red,
       isHovered: false,
-      gradientId: 'redGradient-test-chart-0',
     });
     expect(result.current.enrichedData[1].percentage).toBe(50);
     expect(result.current.enrichedData[2].percentage).toBe(20);
@@ -91,7 +89,6 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
-        id: 'test-chart',
         hoveredSliceId: null,
       }),
     );
@@ -107,7 +104,6 @@ describe('usePieChartData', () => {
         usePieChartData({
           data: mockData,
           colorRegistry: mockColorRegistry,
-          id: 'test-chart',
           hoveredSliceId,
         }),
       { initialProps: { hoveredSliceId: null as DatumId | null } },
@@ -121,57 +117,16 @@ describe('usePieChartData', () => {
     expect(result.current.enrichedData[2].isHovered).toBe(false);
   });
 
-  it('should generate gradient definitions', () => {
-    const { result } = renderHook(() =>
-      usePieChartData({
-        data: mockData,
-        colorRegistry: mockColorRegistry,
-        id: 'test-chart',
-        hoveredSliceId: 'item1',
-      }),
-    );
-
-    expect(result.current.defs).toHaveLength(3);
-    expect(result.current.defs[0]).toMatchObject({
-      id: 'redGradient-test-chart-0',
-      type: 'linearGradient',
-      colors: [
-        { offset: 0, color: 'red3' },
-        { offset: 100, color: 'red4' },
-      ],
-    });
-  });
-
-  it('should generate fill configuration', () => {
-    const { result } = renderHook(() =>
-      usePieChartData({
-        data: mockData,
-        colorRegistry: mockColorRegistry,
-        id: 'test-chart',
-        hoveredSliceId: null,
-      }),
-    );
-
-    expect(result.current.fill).toEqual([
-      { match: { id: 'item1' }, id: 'redGradient-test-chart-0' },
-      { match: { id: 'item2' }, id: 'blueGradient-test-chart-1' },
-      { match: { id: 'item3' }, id: 'redGradient-test-chart-2' },
-    ]);
-  });
-
   it('should handle empty data', () => {
     const { result } = renderHook(() =>
       usePieChartData({
         data: [],
         colorRegistry: mockColorRegistry,
-        id: 'test-chart',
         hoveredSliceId: null,
       }),
     );
 
     expect(result.current.enrichedData).toEqual([]);
-    expect(result.current.defs).toEqual([]);
-    expect(result.current.fill).toEqual([]);
   });
 
   it('should handle single data item', () => {
@@ -183,7 +138,6 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: singleData,
         colorRegistry: mockColorRegistry,
-        id: 'test-chart',
         hoveredSliceId: null,
       }),
     );
@@ -202,7 +156,6 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: dataWithColors,
         colorRegistry: mockColorRegistry,
-        id: 'test-chart',
         hoveredSliceId: null,
       }),
     );
@@ -213,24 +166,19 @@ describe('usePieChartData', () => {
 
   it('should memoize calculations', () => {
     const { result, rerender } = renderHook(
-      ({ id }) =>
+      ({ hoveredSliceId }) =>
         usePieChartData({
           data: mockData,
           colorRegistry: mockColorRegistry,
-          id,
-          hoveredSliceId: null,
+          hoveredSliceId,
         }),
-      { initialProps: { id: 'test-chart' } },
+      { initialProps: { hoveredSliceId: null as DatumId | null } },
     );
 
     const firstEnrichedData = result.current.enrichedData;
-    const firstDefs = result.current.defs;
-    const firstFill = result.current.fill;
 
-    rerender({ id: 'test-chart' });
+    rerender({ hoveredSliceId: null as DatumId | null });
 
     expect(result.current.enrichedData).toBe(firstEnrichedData);
-    expect(result.current.defs).toBe(firstDefs);
-    expect(result.current.fill).toBe(firstFill);
   });
 });

@@ -50,7 +50,7 @@ const returnWorkspaceMemberObjectId = async (): Promise<string> => {
   ).id;
 };
 
-const createUpdatedByField = async (
+const createUpdatedByFieldMetadata = async (
   sourceObjectId: string,
   workspaceMemberObjectId: string,
   objectName: string,
@@ -124,7 +124,7 @@ const createUpdatedByField = async (
   }
 };
 
-const updateUpdatedByField = async (
+const updateUpdatedByFieldValue = async (
   objectName: string,
   workspaceMemberId: string,
   recordId: string,
@@ -184,7 +184,7 @@ export const main = async (params: {
       const workspaceMemberObjectId: string =
         await returnWorkspaceMemberObjectId();
 
-      const isFieldCreated: boolean | undefined = await createUpdatedByField(
+      const isFieldCreated: boolean | undefined = await createUpdatedByFieldMetadata(
         objectMetadata.id,
         workspaceMemberObjectId,
         objectMetadata.namePlural,
@@ -198,7 +198,7 @@ export const main = async (params: {
       }
     }
 
-    const isObjectUpdated: boolean | undefined = await updateUpdatedByField(
+    const isObjectUpdated: boolean | undefined = await updateUpdatedByFieldValue(
       objectMetadata.namePlural,
       workspaceMemberId,
       recordId,

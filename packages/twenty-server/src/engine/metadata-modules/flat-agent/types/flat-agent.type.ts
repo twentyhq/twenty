@@ -1,10 +1,8 @@
-import { type AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { type AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
 import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 
 export const agentEntityRelationProperties = [
   'workspace',
-  'outgoingHandoffs',
-  'incomingHandoffs',
   'application',
 ] as const;
 

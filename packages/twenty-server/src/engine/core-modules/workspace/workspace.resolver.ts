@@ -151,6 +151,13 @@ export class WorkspaceResolver {
     }
   }
 
+  @ResolveField(() => String, { nullable: true })
+  async routerModel(
+    @Parent() _workspace: WorkspaceEntity,
+  ): Promise<string | null> {
+    return 'auto';
+  }
+
   @Mutation(() => SignedFileDTO)
   @UseGuards(
     WorkspaceAuthGuard,
@@ -238,10 +245,17 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
-  async routerModel(
+  async fastModel(
     @Parent() workspace: WorkspaceEntity,
   ): Promise<string | null> {
-    return workspace.routerModel;
+    return workspace.fastModel;
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async smartModel(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<string | null> {
+    return workspace.smartModel;
   }
 
   @ResolveField(() => ApplicationDTO, { nullable: true })
