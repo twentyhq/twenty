@@ -275,11 +275,24 @@ const flatFieldMetadatasToCreateForMorphRelationsPayload = ({
   });
 
   const initialTargetFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: fieldMetadataToUpdate.relationTargetFieldMetadataId ?? '',
+    flatEntityId: fieldMetadataToUpdate.relationTargetFieldMetadataId,
     flatEntityMaps: flatFieldMetadataMaps,
   });
-  const commonTargetFieldLabel = initialTargetFieldMetadata?.label ?? '';
-  const commonTargetFieldName = initialTargetFieldMetadata?.name ?? '';
+  const commonTargetFieldLabel = initialTargetFieldMetadata?.label ?? null;
+  const commonTargetFieldName = initialTargetFieldMetadata?.name ?? null;
+  const commonObjectMetadataId =
+    initialTargetFieldMetadata?.objectMetadataId ?? null;
+
+  if (
+    !isDefined(commonTargetFieldLabel) ||
+    !isDefined(commonTargetFieldName) ||
+    !isDefined(commonObjectMetadataId)
+  ) {
+    throw new FieldMetadataException(
+      'Initial target field metadata or object metadata not found',
+      FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+    );
+  }
 
   morphRelationsUpdatePayload.forEach((morphRelationUpdatePayload) => {
     const { targetObjectMetadataId } = morphRelationUpdatePayload;
@@ -303,19 +316,13 @@ const flatFieldMetadatasToCreateForMorphRelationsPayload = ({
       targetObjectMetadataNamePlural: newTargetObjectMetadata.namePlural,
     });
 
-    checkConflictInOtherFieldMetadataNames({
-      morphId: fieldMetadataToUpdate.morphId ?? '',
-      flatFieldMetadataMaps,
-      newMorphRelationName: computedMorphName,
-    });
-
     const { flatFieldMetadatas, indexMetadatas } =
       generateMorphOrRelationFlatFieldMetadataPair({
         createFieldInput: {
           type: FieldMetadataType.MORPH_RELATION,
           name: computedMorphName,
           label: morphRelationsCommonLabel,
-          objectMetadataId: initialTargetFieldMetadata?.objectMetadataId ?? '',
+          objectMetadataId: commonObjectMetadataId,
           relationCreationPayload: {
             type: fieldMetadataToUpdate.settings.relationType,
             targetObjectMetadataId,
@@ -359,34 +366,4 @@ const getSourceObjectMetadataFromFieldMetadata = (
   }
 
   return sourceFlatObjectMetadata;
-};
-
-const checkConflictInOtherFieldMetadataNames = ({
-  flatFieldMetadataMaps,
-  morphId,
-  newMorphRelationName,
-}: {
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  morphId: string;
-  newMorphRelationName: string;
-}) => {
-  const allExistingFieldMetadataMorphSiblings = Object.values(
-    flatFieldMetadataMaps.byId,
-  )
-    .filter(isDefined)
-    .filter((fieldMetadata) => fieldMetadata.morphId === morphId)
-    .map((fieldMetadata) => fieldMetadata.name);
-
-  const isNameAlreadyExists =
-    allExistingFieldMetadataMorphSiblings.includes(newMorphRelationName);
-
-  if (isNameAlreadyExists) {
-    throw new FieldMetadataException(
-      'Field metadata name already exists',
-      FieldMetadataExceptionCode.FIELD_ALREADY_EXISTS,
-      {
-        userFriendlyMessage: msg`Relation name already exists`,
-      },
-    );
-  }
 };
