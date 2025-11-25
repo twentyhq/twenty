@@ -1,0 +1,1 @@
+export const LINE_CHART_MAXIMUM_NUMBER_OF_SERIES = 50;
