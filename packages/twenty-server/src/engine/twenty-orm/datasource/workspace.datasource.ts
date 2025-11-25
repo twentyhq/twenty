@@ -13,12 +13,9 @@ import {
 import { EntityManagerFactory } from 'typeorm/entity-manager/EntityManagerFactory';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -27,24 +24,13 @@ import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/wor
 import { type WorkspaceQueryRunner } from 'src/engine/twenty-orm/query-runner/workspace-query-runner';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-
-type WorkspaceDatasourceInternalContext = {
-  workspaceId: string;
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
-  objectIdByNameSingular: Record<string, string>;
-  featureFlagsMap: FeatureFlagMap;
-  eventEmitterService: WorkspaceEventEmitter;
-};
 
 type CreateQueryBuilderOptions = {
   calledByWorkspaceEntityManager?: boolean;
 };
 
 export class WorkspaceDataSource extends DataSource {
-  readonly internalContext: WorkspaceDatasourceInternalContext;
+  readonly internalContext: WorkspaceInternalContext;
   readonly manager: WorkspaceEntityManager;
   featureFlagMapVersion: string;
   featureFlagMap: FeatureFlagMap;
@@ -54,7 +40,7 @@ export class WorkspaceDataSource extends DataSource {
   isPoolSharingEnabled: boolean;
 
   constructor(
-    internalContext: WorkspaceDatasourceInternalContext,
+    internalContext: WorkspaceInternalContext,
     options: DataSourceOptions,
     featureFlagMapVersion: string,
     featureFlagMap: FeatureFlagMap,
@@ -84,19 +70,7 @@ export class WorkspaceDataSource extends DataSource {
   override createEntityManager(
     queryRunner?: QueryRunner,
   ): WorkspaceEntityManager {
-    return new WorkspaceEntityManager(
-      {
-        workspaceId: this.internalContext.workspaceId,
-        flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
-        flatIndexMaps: this.internalContext.flatIndexMaps,
-        objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
-        featureFlagsMap: this.internalContext.featureFlagsMap,
-        eventEmitterService: this.internalContext.eventEmitterService,
-      },
-      this,
-      queryRunner,
-    );
+    return new WorkspaceEntityManager(this.internalContext, this, queryRunner);
   }
 
   override createQueryRunner(
