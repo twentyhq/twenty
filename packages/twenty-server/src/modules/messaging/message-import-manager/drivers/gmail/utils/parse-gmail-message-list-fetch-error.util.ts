@@ -83,7 +83,11 @@ export const parseGmailMessageListFetchError = (
         );
       }
 
-      break;
+      return new MessageImportDriverException(
+        message,
+        MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        { cause: options?.cause },
+      );
 
     case 401:
       return new MessageImportDriverException(
