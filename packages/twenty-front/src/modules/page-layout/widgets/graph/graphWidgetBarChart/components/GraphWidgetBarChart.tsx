@@ -33,7 +33,6 @@ import { useCallback, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { CHART_LEGEND_ITEM_THRESHOLD } from '@/page-layout/widgets/graph/constants/ChartLegendItemThreshold';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
@@ -149,10 +148,6 @@ export const GraphWidgetBarChart = ({
   const handleBarLeave = useCallback(() => {
     debouncedHideTooltip();
   }, [debouncedHideTooltip]);
-
-  const areThereTooManyKeys = keys.length > CHART_LEGEND_ITEM_THRESHOLD;
-
-  const shouldShowLegend = showLegend && !areThereTooManyKeys;
 
   const { axisBottom: axisBottomConfig, axisLeft: axisLeftConfig } =
     getBarChartAxisConfigs({
@@ -296,7 +291,7 @@ export const GraphWidgetBarChart = ({
         onMouseLeave={handleTooltipMouseLeave}
       />
       <GraphWidgetLegend
-        show={shouldShowLegend}
+        show={showLegend}
         items={enrichedKeys.map((item) => {
           return {
             id: item.key,
