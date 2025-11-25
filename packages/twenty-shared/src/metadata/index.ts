@@ -15,4 +15,8 @@ export type {
   MetadataValidationErrorResponse,
 } from './MetadataValidationError';
 export { WorkspaceMigrationV2ExceptionCode } from './MetadataValidationError';
+export {
+  CORE_OBJECT_NAMES,
+  RESERVED_METADATA_NAME_KEYWORDS,
+} from './reserved-metadata-name-keywords.constant';
 export { STANDARD_OBJECT_IDS } from './standard-object-ids';

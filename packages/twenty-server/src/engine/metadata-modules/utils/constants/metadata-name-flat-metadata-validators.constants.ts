@@ -1,12 +1,12 @@
 import { msg } from '@lingui/core/macro';
 import camelCase from 'lodash.camelcase';
+import { RESERVED_METADATA_NAME_KEYWORDS } from 'twenty-shared/metadata';
 
 import { type FlatMetadataValidator } from 'src/engine/metadata-modules/types/flat-metadata-validator.type';
 import {
   beneathDatabaseIdentifierMinimumLength,
   exceedsDatabaseIdentifierMaximumLength,
 } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
-import { RESERVED_METADATA_NAME_KEYWORDS } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword';
 import { STARTS_WITH_LOWER_CASE_AND_CONTAINS_ONLY_CAPS_AND_LOWER_LETTERS_AND_NUMBER_STRING_REGEX } from 'src/engine/metadata-modules/utils/validate-metadata-name-start-with-lowercase-letter-and-contain-digits-nor-letters.utils';
 
 export const METADATA_NAME_VALIDATORS: FlatMetadataValidator<string>[] = [
