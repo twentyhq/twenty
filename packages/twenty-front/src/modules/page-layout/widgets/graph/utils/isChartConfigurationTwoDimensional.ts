@@ -1,8 +1,11 @@
-import { type GroupByChartConfiguration } from '@/page-layout/widgets/graph/types/GroupByChartConfiguration';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  type BarChartConfiguration,
+  type LineChartConfiguration,
+} from '~/generated/graphql';
 
 export const isChartConfigurationTwoDimensional = (
-  configuration: GroupByChartConfiguration,
+  configuration: BarChartConfiguration | LineChartConfiguration,
 ): boolean => {
   return isDefined(configuration.secondaryAxisGroupByFieldMetadataId);
 };
