@@ -1,3 +1,4 @@
+import { type PieChartConvertibleFields } from '@/command-menu/pages/page-layout/types/PieChartConvertibleFields';
 import {
   type BarChartConfiguration,
   type LineChartConfiguration,
@@ -5,8 +6,8 @@ import {
 
 export const convertBarOrLineChartConfigToPieChart = (
   configuration: BarChartConfiguration | LineChartConfiguration,
-): Record<string, any> => {
-  const configToUpdate: Record<string, any> = {};
+): PieChartConvertibleFields => {
+  const configToUpdate: PieChartConvertibleFields = {};
 
   if ('primaryAxisGroupByFieldMetadataId' in configuration) {
     configToUpdate.groupByFieldMetadataId =

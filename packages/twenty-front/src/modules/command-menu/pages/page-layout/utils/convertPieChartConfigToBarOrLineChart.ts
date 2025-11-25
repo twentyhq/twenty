@@ -1,9 +1,10 @@
+import { type BarLineChartConvertibleFields } from '@/command-menu/pages/page-layout/types/BarLineChartConvertibleFields';
 import { type PieChartConfiguration } from '~/generated/graphql';
 
 export const convertPieChartConfigToBarOrLineChart = (
   configuration: PieChartConfiguration,
-): Record<string, any> => {
-  const configToUpdate: Record<string, any> = {};
+): BarLineChartConvertibleFields => {
+  const configToUpdate: BarLineChartConvertibleFields = {};
 
   if ('groupByFieldMetadataId' in configuration) {
     configToUpdate.primaryAxisGroupByFieldMetadataId =
