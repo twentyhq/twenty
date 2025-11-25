@@ -25,6 +25,7 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type SendInvitationsOutput } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.output';
@@ -49,6 +50,7 @@ export class WorkspaceInvitationService {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly i18nService: I18nService,
     private readonly fileService: FileService,
+    private readonly throttlerService: ThrottlerService,
   ) {}
 
   async validatePersonalInvitation({
@@ -228,6 +230,8 @@ export class WorkspaceInvitationService {
     workspace: WorkspaceEntity,
     sender: WorkspaceMemberWorkspaceEntity,
   ) {
+    await this.throttleInvitationSending(workspace.id);
+
     const appToken = await this.appTokenRepository.findOne({
       where: {
         id: appTokenId,
@@ -420,5 +424,24 @@ export class WorkspaceInvitationService {
     });
 
     return this.appTokenRepository.save(invitationToken);
+  }
+
+  private async throttleInvitationSending(workspaceId: string) {
+    try {
+      await this.throttlerService.tokenBucketThrottleOrThrow(
+        `workspace-invitation:throttler:${workspaceId}`,
+        1,
+        this.twentyConfigService.get('WORKSPACE_INVITATION_THROTTLE_LIMIT'),
+        this.twentyConfigService.get('WORKSPACE_INVITATION_THROTTLE_TTL_IN_MS'),
+      );
+    } catch {
+      throw new WorkspaceInvitationException(
+        'Workspace invitation sending rate limit exceeded.',
+        WorkspaceInvitationExceptionCode.INVALID_INVITATION,
+        {
+          userFriendlyMessage: msg`Too many workspace invitations sent. Please try again later.`,
+        },
+      );
+    }
   }
 }

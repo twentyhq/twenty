@@ -1,7 +1,6 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -35,7 +34,6 @@ export class WorkspaceInvitationResolver {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
-    private readonly fileService: FileService,
   ) {}
 
   @Mutation(() => String)
@@ -68,6 +66,8 @@ export class WorkspaceInvitationResolver {
         userId: user.id,
       },
     });
+
+    //here
 
     return this.workspaceInvitationService.resendWorkspaceInvitation(
       appTokenId,

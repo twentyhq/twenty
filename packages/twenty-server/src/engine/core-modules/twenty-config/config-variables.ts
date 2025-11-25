@@ -975,7 +975,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  API_RATE_LIMITING_LONG_TTL_IN_MS = 60000;
+  API_RATE_LIMITING_LONG_TTL_IN_MS = 60_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
@@ -993,6 +993,24 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   GRAPHQL_MAX_COMPLEXITY = 2000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Time-to-live for workspace invitation rate limiting in milliseconds',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  WORKSPACE_INVITATION_THROTTLE_TTL_IN_MS = 3_600_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum number of workspace invitations allowed in the rate limiting window',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  WORKSPACE_INVITATION_THROTTLE_LIMIT = 100;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SSL,
