@@ -7,6 +7,9 @@ import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBa
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
+import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
@@ -29,6 +32,7 @@ type TransformOneDimensionalGroupByToBarChartDataResult = {
   keys: string[];
   series: BarChartSeries[];
   hasTooManyGroups: boolean;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
 export const transformOneDimensionalGroupByToBarChartData = ({
@@ -52,6 +56,16 @@ export const transformOneDimensionalGroupByToBarChartData = ({
 
   // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
   const limitedResults = rawResults.slice(0, BAR_CHART_MAXIMUM_NUMBER_OF_BARS);
+
+  const formattedValues = formatPrimaryDimensionValues({
+    groupByRawResults: limitedResults,
+    primaryAxisGroupByField: groupByFieldX,
+    primaryAxisDateGranularity:
+      configuration.primaryAxisDateGranularity ?? undefined,
+    primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
+  });
+
+  const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
 
   const data: BarChartDataItem[] = limitedResults.map((result) => {
     const dimensionValues = result.groupByDimensionValues;
@@ -96,5 +110,6 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     keys: [aggregateValueKey],
     series,
     hasTooManyGroups: rawResults.length > BAR_CHART_MAXIMUM_NUMBER_OF_BARS,
+    formattedToRawLookup,
   };
 };
