@@ -134,10 +134,7 @@ export const successfulCreateInputByFieldMetadataType: {
         rawJsonField: {},
       },
       validateInput: (record: Record<string, any>) => {
-        return (
-          typeof record.rawJsonField === 'object' &&
-          Object.keys(record.rawJsonField).length === 0
-        );
+        return record.rawJsonField === null;
       },
     },
     {
