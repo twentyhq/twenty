@@ -19,6 +19,12 @@ import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import {
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { getGroupByDefinitions } from 'src/engine/api/common/common-query-runners/utils/get-group-by-definitions.util';
+import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
@@ -30,12 +36,11 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.types';
+import { GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.type';
+import { GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
-import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
-import { isGroupByDateField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';
+import { isGroupByRelationField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-relation-field.util';
 import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/parse-group-by-args.util';
-import { removeQuotes } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/remove-quote.util';
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
 import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
@@ -48,7 +53,6 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { formatColumnNameForRelationField } from 'src/engine/twenty-orm/utils/format-column-name-for-relation-field.util';
-import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
 @Injectable()
 export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -84,6 +88,20 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       objectMetadataNameSingular,
     );
 
+    const groupByFields = parseGroupByArgs(
+      args,
+      objectMetadataItemWithFieldMaps,
+      queryRunnerContext.objectMetadataMaps,
+    );
+
+    const objectAlias = getObjectAlias(objectMetadataItemWithFieldMaps);
+
+    this.addJoinForGroupByOnRelationFields({
+      queryBuilder,
+      groupByFields,
+      objectAlias,
+    });
+
     let appliedFilters = args.filter ?? ({} as ObjectRecordFilter);
 
     await this.addFiltersToQueryBuilder({
@@ -95,47 +113,17 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       commonQueryParser,
     });
 
+    const queryBuilderWithFiltersAndWithoutGroupBy = queryBuilder.clone();
+
     ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
       selectedAggregatedFields: args.selectedFieldsResult.aggregate,
       queryBuilder,
       objectMetadataNameSingular,
     });
 
-    const groupByFields = parseGroupByArgs(
-      args,
-      objectMetadataItemWithFieldMaps,
-    );
-
-    const groupByDefinitions = groupByFields.map((groupByField) => {
-      const columnName = isFieldMetadataRelationOrMorphRelation(
-        groupByField.fieldMetadata,
-      )
-        ? formatColumnNameForRelationField(
-            groupByField.fieldMetadata.name,
-            groupByField.fieldMetadata.settings,
-          )
-        : formatColumnNamesFromCompositeFieldAndSubfields(
-            groupByField.fieldMetadata.name,
-            groupByField.subFieldName ? [groupByField.subFieldName] : undefined,
-          )[0];
-      const columnNameWithQuotes = `"${columnName}"`;
-      const alias =
-        removeQuotes(columnNameWithQuotes) +
-        (isGroupByDateField(groupByField)
-          ? `_${groupByField.dateGranularity}`
-          : '');
-
-      return {
-        columnNameWithQuotes,
-        expression: getGroupByExpression({
-          groupByField,
-          columnNameWithQuotes,
-        }),
-        alias,
-        dateGranularity: isGroupByDateField(groupByField)
-          ? groupByField.dateGranularity
-          : undefined,
-      };
+    const groupByDefinitions = getGroupByDefinitions({
+      groupByFields,
+      objectMetadataNameSingular,
     });
 
     groupByDefinitions.forEach((groupByColumn, index) => {
@@ -157,18 +145,6 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     const shouldIncludeRecords = args.includeRecords ?? false;
 
     if (shouldIncludeRecords) {
-      const queryBuilderWithFiltersAndWithoutGroupBy =
-        repository.createQueryBuilder(objectMetadataNameSingular);
-
-      await this.addFiltersToQueryBuilder({
-        args,
-        objectMetadataItemWithFieldMaps,
-        workspaceId: authContext.workspace.id,
-        commonQueryParser,
-        appliedFilters,
-        queryBuilder: queryBuilderWithFiltersAndWithoutGroupBy,
-      });
-
       return this.groupByWithRecordsService.resolveWithRecords({
         queryBuilderWithFiltersAndWithoutGroupBy,
         queryBuilderWithGroupBy: queryBuilder,
@@ -341,6 +317,48 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       groupByDefinitions,
       aggregateFieldNames: Object.keys(selectedFieldsResult.aggregate),
     });
+  }
+
+  private addJoinForGroupByOnRelationFields({
+    queryBuilder,
+    groupByFields,
+    objectAlias,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
+    groupByFields: GroupByField[];
+    objectAlias: string;
+  }): void {
+    const joinAliasSet = new Set<string>();
+
+    for (const groupByField of groupByFields) {
+      if (isGroupByRelationField(groupByField)) {
+        const joinAlias = groupByField.fieldMetadata.name;
+
+        if (
+          !groupByField.fieldMetadata.settings ||
+          !isFieldMetadataRelationOrMorphRelation(groupByField.fieldMetadata)
+        ) {
+          throw new CommonQueryRunnerException(
+            `Field metadata settings are missing or invalid for field ${groupByField.fieldMetadata.name}`,
+            CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        const joinColumnName = formatColumnNameForRelationField(
+          groupByField.fieldMetadata.name,
+          groupByField.fieldMetadata.settings,
+        );
+
+        if (!joinAliasSet.has(joinAlias)) {
+          queryBuilder.leftJoin(
+            `${objectAlias}.${joinAlias}`,
+            `${joinAlias}`,
+            `"${objectAlias}"."${joinColumnName}" = "${joinAlias}"."id"`,
+          );
+          joinAliasSet.add(joinAlias);
+        }
+      }
+    }
   }
 
   async validate(
