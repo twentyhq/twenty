@@ -2,6 +2,7 @@ import { LEGEND_ITEM_ESTIMATED_WIDTH } from '@/page-layout/widgets/graph/constan
 import { LEGEND_LABEL_MAX_WIDTH } from '@/page-layout/widgets/graph/constants/LegendLabelMaxWidth.constant';
 import { LEGEND_PAGINATION_CONTROLS_WIDTH } from '@/page-layout/widgets/graph/constants/LegendPaginationControlsWidth.constant';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -93,7 +94,7 @@ export const GraphWidgetLegend = ({
   >(null);
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
   const containerRef = useRef<HTMLDivElement>(null);
-
+  const theme = useTheme();
   const handleDimensionChange = useCallback(
     ({ width }: { width: number; height: number }) => {
       setContainerWidth(width);
@@ -121,7 +122,6 @@ export const GraphWidgetLegend = ({
 
   const totalPages = Math.ceil(items.length / effectiveItemsPerPage);
 
-  // Reset page to 0 only when items per page changes
   useEffect(() => {
     if (
       previousItemsPerPage !== null &&
@@ -200,7 +200,10 @@ export const GraphWidgetLegend = ({
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            transition={{
+              duration: theme.animation.duration.normal,
+              ease: 'easeInOut',
+            }}
           >
             {visibleItems.map((item) => (
               <StyledLegendItem key={item.id}>
