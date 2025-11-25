@@ -11,6 +11,7 @@ import { fillDateGapsInBarChartData } from '@/page-layout/widgets/graph/graphWid
 import { transformOneDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformOneDimensionalGroupByToBarChartData';
 import { transformTwoDimensionalGroupByToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformTwoDimensionalGroupByToBarChartData';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGroupByResults';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { isDefined } from 'twenty-shared/utils';
@@ -38,6 +39,7 @@ type TransformGroupByDataToBarChartDataResult = {
   showDataLabels: boolean;
   layout?: BarChartLayout;
   hasTooManyGroups: boolean;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
 const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
@@ -50,6 +52,7 @@ const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
   showDataLabels: false,
   layout: BarChartLayout.VERTICAL,
   hasTooManyGroups: false,
+  formattedToRawLookup: new Map(),
 };
 
 export const transformGroupByDataToBarChartData = ({
@@ -195,5 +198,6 @@ export const transformGroupByDataToBarChartData = ({
     showDataLabels,
     layout,
     hasTooManyGroups: baseResult.hasTooManyGroups || dateRangeWasTruncated,
+    formattedToRawLookup: baseResult.formattedToRawLookup,
   };
 };

@@ -92,7 +92,6 @@ export const GraphWidgetBarChart = ({
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
 
-  // Chart dimensions
   const [chartWidth, setChartWidth] = useState<number>(0);
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);

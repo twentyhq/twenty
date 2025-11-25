@@ -1,6 +1,7 @@
 import { type FieldMetadataTypesToTestForCreateInputValidation } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
 import { TEST_TARGET_OBJECT_RECORD_ID_FIELD_VALUE } from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isEmptyObject } from 'twenty-shared/utils';
 
 export const successfulCreateInputByFieldMetadataType: {
   [K in Exclude<
@@ -134,10 +135,7 @@ export const successfulCreateInputByFieldMetadataType: {
         rawJsonField: {},
       },
       validateInput: (record: Record<string, any>) => {
-        return (
-          typeof record.rawJsonField === 'object' &&
-          Object.keys(record.rawJsonField).length === 0
-        );
+        return isEmptyObject(record.rawJsonField);
       },
     },
     {
@@ -145,10 +143,7 @@ export const successfulCreateInputByFieldMetadataType: {
         rawJsonField: null,
       },
       validateInput: (record: Record<string, any>) => {
-        return (
-          typeof record.rawJsonField === 'object' &&
-          Object.keys(record.rawJsonField).length === 0
-        );
+        return record.rawJsonField === null;
       },
     },
     {
