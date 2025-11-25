@@ -22,7 +22,7 @@ import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { BarChartGroupMode } from '~/generated/graphql';
+import { BarChartGroupMode, GraphOrderBy } from '~/generated/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type ChartGroupByFieldSelectionDropdownContentBaseProps<
@@ -103,6 +103,16 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
       [fieldMetadataIdKey]: fieldId,
       [subFieldNameKey]: subFieldName,
     };
+
+    if (
+      !isSecondaryAxis &&
+      isDefined(fieldId) &&
+      (configuration.__typename === 'BarChartConfiguration' ||
+        configuration.__typename === 'LineChartConfiguration') &&
+      !isDefined(configuration.primaryAxisOrderBy)
+    ) {
+      baseConfig['primaryAxisOrderBy'] = GraphOrderBy.FIELD_ASC;
+    }
 
     if (!isSecondaryAxis) {
       return baseConfig;
