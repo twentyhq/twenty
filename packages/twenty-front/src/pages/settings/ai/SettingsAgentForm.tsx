@@ -16,7 +16,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { t } from '@lingui/core/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconLock, IconSettings } from 'twenty-ui/display';
+import { IconList, IconLock, IconSettings } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import {
   type CreateAgentInput,
@@ -31,6 +31,7 @@ import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { SettingsAgentDetailSkeletonLoader } from './components/SettingsAgentDetailSkeletonLoader';
+import { SettingsAgentLogsTab } from './components/SettingsAgentLogsTab';
 import { SettingsAgentRoleTab } from './components/SettingsAgentRoleTab';
 import { SettingsAgentSettingsTab } from './components/SettingsAgentSettingsTab';
 import { SETTINGS_AGENT_DETAIL_TABS } from './constants/SettingsAgentDetailTabs';
@@ -146,6 +147,11 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       id: SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.ROLE,
       title: t`Role`,
       Icon: IconLock,
+    },
+    {
+      id: SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.LOGS,
+      title: t`Logs`,
+      Icon: IconList,
     },
   ];
 
@@ -275,6 +281,10 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
             agent={agent}
           />
         );
+
+      case SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.LOGS:
+        return <SettingsAgentLogsTab agentId={agentId} />;
+
       default:
         return <></>;
     }

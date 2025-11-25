@@ -1,6 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
-import { JSONValue } from 'ai';
 import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -43,43 +42,6 @@ export class AgentMessagePartDTO {
   @Field({ nullable: true })
   errorMessage?: string;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  errorDetails?: Record<string, unknown>;
-
-  @Field({ nullable: true })
-  sourceUrlSourceId?: string;
-
-  @Field({ nullable: true })
-  sourceUrlUrl?: string;
-
-  @Field({ nullable: true })
-  sourceUrlTitle?: string;
-
-  @Field({ nullable: true })
-  sourceDocumentSourceId?: string;
-
-  @Field({ nullable: true })
-  sourceDocumentMediaType?: string;
-
-  @Field({ nullable: true })
-  sourceDocumentTitle?: string;
-
-  @Field({ nullable: true })
-  sourceDocumentFilename?: string;
-
-  @Field({ nullable: true })
-  fileMediaType?: string;
-
-  @Field({ nullable: true })
-  fileFilename?: string;
-
-  @Field({ nullable: true })
-  fileUrl?: string;
-
-  @Field(() => GraphQLJSON, { nullable: true })
-  providerMetadata?: Record<string, Record<string, JSONValue>>;
-
   @Field()
   createdAt: Date;
 }
-

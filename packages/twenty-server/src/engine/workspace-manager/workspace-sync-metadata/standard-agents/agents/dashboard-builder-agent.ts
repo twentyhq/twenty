@@ -67,4 +67,3 @@ Prioritize user needs and dashboard usability.`,
   modelConfiguration: {},
   outputStrategy: 'direct',
 };
-

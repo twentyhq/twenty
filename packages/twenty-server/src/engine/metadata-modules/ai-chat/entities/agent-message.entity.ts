@@ -12,6 +12,7 @@ import {
 
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai-chat/entities/agent-chat-thread.entity';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai-chat/entities/agent-turn.entity';
+
 import { AgentMessagePartEntity } from './agent-message-part.entity';
 
 export enum AgentMessageRole {
@@ -57,4 +58,3 @@ export class AgentMessageEntity {
   @CreateDateColumn()
   createdAt: Date;
 }
-

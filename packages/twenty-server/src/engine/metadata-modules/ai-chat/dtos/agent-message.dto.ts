@@ -27,4 +27,3 @@ export class AgentMessageDTO {
   @Field()
   createdAt: Date;
 }
-

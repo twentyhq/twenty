@@ -11,6 +11,8 @@ import {
 } from 'typeorm';
 
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai-chat/entities/agent-chat-thread.entity';
+import { AgentTurnEvaluationEntity } from 'src/engine/metadata-modules/ai-chat/entities/agent-turn-evaluation.entity';
+
 import { AgentMessageEntity } from './agent-message.entity';
 
 @Entity('agentTurn')
@@ -35,7 +37,9 @@ export class AgentTurnEntity {
   @OneToMany(() => AgentMessageEntity, (message) => message.turn)
   messages: Relation<AgentMessageEntity[]>;
 
+  @OneToMany(() => AgentTurnEvaluationEntity, (evaluation) => evaluation.turn)
+  evaluations: Relation<AgentTurnEvaluationEntity[]>;
+
   @CreateDateColumn()
   createdAt: Date;
 }
-

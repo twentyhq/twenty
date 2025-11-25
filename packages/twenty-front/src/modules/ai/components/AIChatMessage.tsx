@@ -187,9 +187,7 @@ export const AIChatMessage = ({
           </StyledAvatarContainer>
         )}
         <StyledMessageContainer>
-          <StyledMessageText
-            isUser={message.role === AgentMessageRole.USER}
-          >
+          <StyledMessageText isUser={message.role === AgentMessageRole.USER}>
             <AIChatAssistantMessageRenderer
               isLastMessageStreaming={isLastMessageStreaming}
               messageParts={message.parts}

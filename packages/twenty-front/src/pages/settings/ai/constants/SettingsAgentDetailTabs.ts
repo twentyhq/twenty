@@ -3,5 +3,6 @@ export const SETTINGS_AGENT_DETAIL_TABS = {
   TABS_IDS: {
     ROLE: 'role',
     SETTINGS: 'settings',
+    LOGS: 'logs',
   },
 };

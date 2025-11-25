@@ -22,9 +22,12 @@ import { AgentMessagePartEntity } from './entities/agent-message-part.entity';
 import { AgentMessageEntity } from './entities/agent-message.entity';
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
 import { AgentTurnEntity } from './entities/agent-turn.entity';
+import { AgentTurnEvaluationEntity } from './entities/agent-turn-evaluation.entity';
 import { AgentChatResolver } from './resolvers/agent-chat.resolver';
+import { AgentTurnResolver } from './resolvers/agent-turn.resolver';
 import { AgentChatService } from './services/agent-chat.service';
 import { AgentStreamingService } from './services/agent-streaming.service';
+import { AgentTurnGraderService } from './services/agent-turn-grader.service';
 
 @Module({
   imports: [
@@ -33,6 +36,7 @@ import { AgentStreamingService } from './services/agent-streaming.service';
       AgentMessagePartEntity,
       AgentChatThreadEntity,
       AgentTurnEntity,
+      AgentTurnEvaluationEntity,
       FileEntity,
       UserWorkspaceEntity,
     ]),
@@ -51,7 +55,13 @@ import { AgentStreamingService } from './services/agent-streaming.service';
     UserWorkspaceModule,
   ],
   controllers: [AgentChatController],
-  providers: [AgentChatResolver, AgentChatService, AgentStreamingService],
+  providers: [
+    AgentChatResolver,
+    AgentTurnResolver,
+    AgentChatService,
+    AgentStreamingService,
+    AgentTurnGraderService,
+  ],
   exports: [
     AgentChatService,
     AgentStreamingService,
@@ -60,6 +70,7 @@ import { AgentStreamingService } from './services/agent-streaming.service';
       AgentMessagePartEntity,
       AgentChatThreadEntity,
       AgentTurnEntity,
+      AgentTurnEvaluationEntity,
     ]),
   ],
 })

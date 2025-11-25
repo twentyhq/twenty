@@ -96,4 +96,3 @@ export class AgentMessagePartEntity {
   @CreateDateColumn()
   createdAt: Date;
 }
-

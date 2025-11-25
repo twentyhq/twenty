@@ -19,4 +19,3 @@ export const DASHBOARD_MANAGER_ROLE: StandardRoleDefinition = {
   permissionFlags: [PermissionFlagType.LAYOUTS],
   applicationId: null, // TODO: Replace with Twenty application ID
 };
-
