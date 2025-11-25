@@ -113,13 +113,6 @@ export type AgentChatThread = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type AgentHandoff = {
-  __typename?: 'AgentHandoff';
-  description?: Maybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  toAgent: Agent;
-};
-
 export type AgentIdInput = {
   /** The id of the agent. */
   id: Scalars['UUID'];
@@ -753,12 +746,6 @@ export type CoreViewSort = {
   updatedAt: Scalars['DateTime'];
   viewId: Scalars['UUID'];
   workspaceId: Scalars['UUID'];
-};
-
-export type CreateAgentHandoffInput = {
-  description?: InputMaybe<Scalars['String']>;
-  fromAgentId: Scalars['UUID'];
-  toAgentId: Scalars['UUID'];
 };
 
 export type CreateAgentInput = {
@@ -1730,10 +1717,8 @@ export type Mutation = {
   checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
-  createAgentHandoff: Scalars['Boolean'];
   createApiKey: ApiKey;
   createApprovedAccessDomain: ApprovedAccessDomain;
-  createChatThread: AgentChatThread;
   createCoreView: CoreView;
   createCoreViewField: CoreViewField;
   createCoreViewFilter: CoreViewFilter;
@@ -1827,7 +1812,6 @@ export type Mutation = {
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
   publishServerlessFunction: ServerlessFunction;
-  removeAgentHandoff: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
@@ -1947,11 +1931,6 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
-};
-
-
-export type MutationCreateAgentHandoffArgs = {
-  input: CreateAgentHandoffInput;
 };
 
 
@@ -2407,11 +2386,6 @@ export type MutationInitiateOtpProvisioningArgs = {
 
 export type MutationPublishServerlessFunctionArgs = {
   input: PublishServerlessFunctionInput;
-};
-
-
-export type MutationRemoveAgentHandoffArgs = {
-  input: RemoveAgentHandoffInput;
 };
 
 
@@ -3132,17 +3106,12 @@ export type Query = {
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
   billingPortalSession: BillingSessionOutput;
-  chatMessages: Array<AgentChatMessage>;
-  chatThread: AgentChatThread;
-  chatThreads: Array<AgentChatThread>;
   checkUserExists: CheckUserExistOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValidOutput;
   currentUser: User;
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
-  findAgentHandoffTargets: Array<Agent>;
-  findAgentHandoffs: Array<AgentHandoff>;
   findManyAgents: Array<Agent>;
   findManyApplications: Array<Application>;
   findManyCronTriggers: Array<CronTrigger>;
@@ -3223,16 +3192,6 @@ export type QueryBillingPortalSessionArgs = {
 };
 
 
-export type QueryChatMessagesArgs = {
-  threadId: Scalars['UUID'];
-};
-
-
-export type QueryChatThreadArgs = {
-  id: Scalars['UUID'];
-};
-
-
 export type QueryCheckUserExistsArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
@@ -3241,16 +3200,6 @@ export type QueryCheckUserExistsArgs = {
 
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
-};
-
-
-export type QueryFindAgentHandoffTargetsArgs = {
-  input: AgentIdInput;
-};
-
-
-export type QueryFindAgentHandoffsArgs = {
-  input: AgentIdInput;
 };
 
 
@@ -3602,11 +3551,6 @@ export enum RemoteTableStatus {
   NOT_SYNCED = 'NOT_SYNCED',
   SYNCED = 'SYNCED'
 }
-
-export type RemoveAgentHandoffInput = {
-  fromAgentId: Scalars['UUID'];
-  toAgentId: Scalars['UUID'];
-};
 
 export type ResendEmailVerificationTokenOutput = {
   __typename?: 'ResendEmailVerificationTokenOutput';
@@ -4324,6 +4268,7 @@ export type UpdateWorkspaceInput = {
   defaultRoleId?: InputMaybe<Scalars['UUID']>;
   displayName?: InputMaybe<Scalars['String']>;
   editableProfileFields?: InputMaybe<Array<Scalars['String']>>;
+  fastModel?: InputMaybe<Scalars['String']>;
   inviteHash?: InputMaybe<Scalars['String']>;
   isGoogleAuthBypassEnabled?: InputMaybe<Scalars['Boolean']>;
   isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']>;
@@ -4334,7 +4279,7 @@ export type UpdateWorkspaceInput = {
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']>;
   isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']>;
   logo?: InputMaybe<Scalars['String']>;
-  routerModel?: InputMaybe<Scalars['String']>;
+  smartModel?: InputMaybe<Scalars['String']>;
   subdomain?: InputMaybe<Scalars['String']>;
   trashRetentionDays?: InputMaybe<Scalars['Float']>;
 };
@@ -4661,6 +4606,7 @@ export type Workspace = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
   editableProfileFields?: Maybe<Array<Scalars['String']>>;
+  fastModel: Scalars['String'];
   featureFlags?: Maybe<Array<FeatureFlagDto>>;
   hasValidEnterpriseKey: Scalars['Boolean'];
   id: Scalars['UUID'];
@@ -4677,6 +4623,7 @@ export type Workspace = {
   logo?: Maybe<Scalars['String']>;
   metadataVersion: Scalars['Float'];
   routerModel: Scalars['String'];
+  smartModel: Scalars['String'];
   subdomain: Scalars['String'];
   trashRetentionDays: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
