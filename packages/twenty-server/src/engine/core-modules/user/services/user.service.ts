@@ -380,6 +380,28 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     });
   }
 
+  async updateUserFullName({
+    userId,
+    firstName,
+    lastName,
+  }: {
+    userId: string;
+    firstName?: string;
+    lastName?: string;
+  }) {
+    const updatePayload: { firstName?: string; lastName?: string } = {};
+
+    if (isDefined(firstName)) {
+      updatePayload.firstName = firstName;
+    }
+
+    if (isDefined(lastName)) {
+      updatePayload.lastName = lastName;
+    }
+
+    await this.userRepository.update({ id: userId }, updatePayload);
+  }
+
   async enqueueWorkspaceMemberEmailUpdate(
     data: UpdateWorkspaceMemberEmailJobData,
   ) {
