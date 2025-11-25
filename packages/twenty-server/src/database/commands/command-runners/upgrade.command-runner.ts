@@ -14,6 +14,7 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { WorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -25,8 +26,8 @@ import {
 import { getPreviousVersion } from 'src/utils/version/get-previous-version';
 
 export type VersionCommands = {
-  beforeSyncMetadata: ActiveOrSuspendedWorkspacesMigrationCommandRunner[];
-  afterSyncMetadata: ActiveOrSuspendedWorkspacesMigrationCommandRunner[];
+  beforeSyncMetadata: (WorkspacesMigrationCommandRunner | ActiveOrSuspendedWorkspacesMigrationCommandRunner)[];
+  afterSyncMetadata: (WorkspacesMigrationCommandRunner | ActiveOrSuspendedWorkspacesMigrationCommandRunner)[];
 };
 export type AllCommands = Record<string, VersionCommands>;
 const execPromise = promisify(exec);
