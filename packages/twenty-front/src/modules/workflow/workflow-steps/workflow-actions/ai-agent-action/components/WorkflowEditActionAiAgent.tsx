@@ -11,18 +11,23 @@ import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/us
 import { WorkflowAiAgentPermissionsTab } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab';
 import { WORKFLOW_AI_AGENT_TABS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentTabs';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import {
   type AgentResponseSchema,
   type ModelConfiguration,
 } from 'twenty-shared/ai';
+import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLock, IconSparkles } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   useFindOneAgentQuery,
+  useGetRolesQuery,
   useUpdateOneAgentMutation,
 } from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 import { WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID } from '../constants/WorkflowAiAgentTabListComponentId';
 import { WorkflowAiAgentPromptTab } from './WorkflowAiAgentPromptTab';
@@ -45,10 +50,16 @@ const StyledTabList = styled(TabList)`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledPermissionsStepBody = styled(WorkflowStepBody)`
+  padding-block: 0;
+  padding-inline: 0;
+`;
+
 export const WorkflowEditActionAiAgent = ({
   action,
   actionOptions,
 }: WorkflowEditActionAiAgentProps) => {
+  const { t } = useLingui();
   const componentInstanceId = `${WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID}-${action.id}`;
   const agentId = action.settings.input.agentId;
   const { data: agentData, loading: agentLoading } = useFindOneAgentQuery({
@@ -164,6 +175,24 @@ export const WorkflowEditActionAiAgent = ({
   const currentTabId =
     (activeTabId as WorkflowAiAgentTabId) ?? WORKFLOW_AI_AGENT_TABS.PROMPT;
 
+  const navigateSettings = useNavigateSettings();
+  const [permissionsTabViewMode, setPermissionsTabViewMode] = useState<
+    'home' | 'add-permission-objects' | 'add-permission-crud'
+  >('home');
+  const { data: rolesData } = useGetRolesQuery();
+
+  const role = rolesData?.getRoles.find((item) => item.id === agent?.roleId);
+  const objectPermissions = role?.objectPermissions || [];
+  const existingPermissionsCount = objectPermissions.reduce((count, perm) => {
+    return (
+      count +
+      (perm.canReadObjectRecords ? 1 : 0) +
+      (perm.canUpdateObjectRecords ? 1 : 0) +
+      (perm.canSoftDeleteObjectRecords ? 1 : 0) +
+      (perm.canDestroyObjectRecords ? 1 : 0)
+    );
+  }, 0);
+
   const handleAgentResponseFormatChange = async (format: {
     type: 'text' | 'json';
     schema?: AgentResponseSchema;
@@ -176,6 +205,62 @@ export const WorkflowEditActionAiAgent = ({
     }
   };
 
+  const handleViewRole = () => {
+    if (isDefined(role?.id)) {
+      navigateSettings(SettingsPath.RoleDetail, { roleId: role.id });
+    }
+  };
+
+  const getFooterActions = () => {
+    const footerActions: React.ReactNode[] = [];
+
+    if (currentTabId !== WORKFLOW_AI_AGENT_TABS.PERMISSIONS) {
+      return footerActions;
+    }
+
+    if (
+      permissionsTabViewMode === 'add-permission-objects' ||
+      permissionsTabViewMode === 'add-permission-crud'
+    ) {
+      footerActions.push(
+        <Button
+          key="view-role"
+          title={t`View role`}
+          variant="primary"
+          onClick={handleViewRole}
+          disabled={!isDefined(role?.id)}
+          size="small"
+        />,
+      );
+    } else if (permissionsTabViewMode === 'home') {
+      if (existingPermissionsCount > 0 || isDefined(role?.id)) {
+        footerActions.push(
+          <Button
+            key="add-permission"
+            title={t`Add permission`}
+            variant="primary"
+            onClick={() => setPermissionsTabViewMode('add-permission-objects')}
+            disabled={actionOptions.readonly === true}
+            size="small"
+          />,
+        );
+      } else {
+        footerActions.push(
+          <Button
+            key="view-role"
+            title={t`View role`}
+            variant="primary"
+            onClick={handleViewRole}
+            disabled={!isDefined(role?.id)}
+            size="small"
+          />,
+        );
+      }
+    }
+
+    return footerActions;
+  };
+
   return agentLoading ? (
     <RightDrawerSkeletonLoader />
   ) : (
@@ -185,10 +270,17 @@ export const WorkflowEditActionAiAgent = ({
         componentInstanceId={componentInstanceId}
         behaveAsLinks={false}
       />
-      <WorkflowStepBody>
-        {currentTabId === WORKFLOW_AI_AGENT_TABS.PERMISSIONS ? (
-          <WorkflowAiAgentPermissionsTab />
-        ) : (
+      {currentTabId === WORKFLOW_AI_AGENT_TABS.PERMISSIONS ? (
+        <StyledPermissionsStepBody>
+          <WorkflowAiAgentPermissionsTab
+            action={action}
+            readonly={actionOptions.readonly === true}
+            viewMode={permissionsTabViewMode}
+            onViewModeChange={setPermissionsTabViewMode}
+          />
+        </StyledPermissionsStepBody>
+      ) : (
+        <WorkflowStepBody>
           <WorkflowAiAgentPromptTab
             agent={agent}
             readonly={actionOptions.readonly === true}
@@ -198,9 +290,14 @@ export const WorkflowEditActionAiAgent = ({
             onModelConfigurationChange={handleModelConfigurationChange}
             onResponseFormatChange={handleAgentResponseFormatChange}
           />
-        )}
-      </WorkflowStepBody>
-      {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
+        </WorkflowStepBody>
+      )}
+      {!actionOptions.readonly && (
+        <WorkflowStepFooter
+          additionalActions={getFooterActions()}
+          stepId={action.id}
+        />
+      )}
     </>
   );
 };
