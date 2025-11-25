@@ -70,11 +70,39 @@ export const useImapSmtpCaldavConnectionForm = ({
       useCallback(
         (account: ConnectedImapSmtpCaldavAccount | null) => {
           if (isDefined(account)) {
+            const imapData = account.connectionParameters?.IMAP;
+            const smtpData = account.connectionParameters?.SMTP;
+            const caldavData = account.connectionParameters?.CALDAV;
+
             reset({
               handle: account.handle || '',
-              IMAP: account.connectionParameters?.IMAP || undefined,
-              SMTP: account.connectionParameters?.SMTP || undefined,
-              CALDAV: account.connectionParameters?.CALDAV || undefined,
+              IMAP: imapData
+                ? {
+                    host: imapData.host || '',
+                    port: imapData.port ?? 993,
+                    password: imapData.password || '',
+                    secure: imapData.secure ?? true,
+                    username: imapData.username,
+                  }
+                : undefined,
+              SMTP: smtpData
+                ? {
+                    host: smtpData.host || '',
+                    port: smtpData.port ?? 587,
+                    password: smtpData.password || '',
+                    secure: smtpData.secure ?? true,
+                    username: smtpData.username,
+                  }
+                : undefined,
+              CALDAV: caldavData
+                ? {
+                    host: caldavData.host || '',
+                    port: caldavData.port ?? 443,
+                    password: caldavData.password || '',
+                    secure: caldavData.secure ?? true,
+                    username: caldavData.username,
+                  }
+                : undefined,
             });
           }
         },

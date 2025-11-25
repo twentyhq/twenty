@@ -10,6 +10,7 @@ export const GET_CONNECTED_IMAP_SMTP_CALDAV_ACCOUNT = gql`
       connectionParameters {
         IMAP {
           host
+          username
           port
           secure
           password
@@ -24,6 +25,8 @@ export const GET_CONNECTED_IMAP_SMTP_CALDAV_ACCOUNT = gql`
         CALDAV {
           host
           username
+          port
+          secure
           password
         }
       }

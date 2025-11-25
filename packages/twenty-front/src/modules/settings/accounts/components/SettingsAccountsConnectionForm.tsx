@@ -348,6 +348,47 @@ export const SettingsAccountsConnectionForm = ({
               />
             )}
           />
+
+          <StyledFieldRow>
+            <StyledFieldGroup>
+              <Controller
+                name="CALDAV.port"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <SettingsTextInput
+                    instanceId="caldav-port-connection-form"
+                    label={t`CalDAV Port`}
+                    type="number"
+                    placeholder="443"
+                    value={field?.value ? field.value : 443}
+                    onChange={(value) =>
+                      field.onChange(handlePortChange(value))
+                    }
+                    error={fieldState.error?.message}
+                  />
+                )}
+              />
+            </StyledFieldGroup>
+
+            <StyledFieldGroup>
+              <Controller
+                name="CALDAV.secure"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    label={t`CalDAV Encryption`}
+                    options={[
+                      { label: 'SSL/TLS', value: true },
+                      { label: 'None', value: false },
+                    ]}
+                    value={field.value}
+                    onChange={field.onChange}
+                    dropdownId="caldav-secure-dropdown"
+                  />
+                )}
+              />
+            </StyledFieldGroup>
+          </StyledFieldRow>
         </StyledConnectionSection>
       </StyledFormContainer>
     </Section>
