@@ -51,10 +51,12 @@ export const QueryParamsFiltersEffect = () => {
       return;
     }
 
-    Promise.all([
-      getFiltersFromQueryParams(),
-      getFilterGroupsFromQueryParams(),
-    ]).then(([filtersFromParams, filterGroupsFromParams]) => {
+    const loadFiltersFromQueryParams = async () => {
+      const [filtersFromParams, filterGroupsFromParams] = await Promise.all([
+        getFiltersFromQueryParams(),
+        getFilterGroupsFromQueryParams(),
+      ]);
+
       const allRecordFilters = [];
 
       if (
@@ -80,7 +82,9 @@ export const QueryParamsFiltersEffect = () => {
       if (allRecordFilters.length > 0) {
         setCurrentRecordFilters(allRecordFilters);
       }
-    });
+    };
+
+    loadFiltersFromQueryParams();
   }, [
     currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem,
     mapViewFiltersToRecordFilters,

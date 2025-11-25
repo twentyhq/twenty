@@ -86,13 +86,15 @@ export const useFiltersFromQueryParams = () => {
 
           const displayValue = filterValueAsString;
 
+          const filterId = `tmp-${[
+            fieldName,
+            filterOperandFromURL,
+            filterValueFromURL,
+          ].join('-')}`;
+
           return {
             __typename: 'ViewFilter',
-            id: `tmp-${[
-              fieldName,
-              filterOperandFromURL,
-              filterValueFromURL,
-            ].join('-')}`,
+            id: filterId,
             fieldMetadataId: fieldMetadataItem.id,
             operand: filterOperandFromURL as ViewFilterOperand,
             value: filterValueAsString,
