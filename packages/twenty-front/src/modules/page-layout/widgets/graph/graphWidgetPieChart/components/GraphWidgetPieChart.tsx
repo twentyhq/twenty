@@ -1,7 +1,7 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
-import { PieChartEndLines } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartEndLines';
+import { PIE_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartHoverBrightness';
 import { usePieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartData';
 import { usePieChartHandlers } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartHandlers';
 import { usePieChartTooltip } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartTooltip';
@@ -10,17 +10,14 @@ import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/crea
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  ResponsivePie,
-  type PieCustomLayerProps,
-  type PieTooltipProps,
-} from '@nivo/pie';
+import { ResponsivePie, type PieTooltipProps } from '@nivo/pie';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphWidgetPieChartProps = {
   data: PieChartDataItem[];
   showLegend?: boolean;
   id: string;
+  onSliceClick?: (datum: PieChartDataItem) => void;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -32,6 +29,19 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
+const StyledPieChartWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+
+  svg g path {
+    transition: filter 0.15s ease-in-out;
+
+    &:hover {
+      filter: brightness(${PIE_CHART_HOVER_BRIGHTNESS});
+    }
+  }
+`;
+
 export const GraphWidgetPieChart = ({
   data,
   showLegend = true,
@@ -41,6 +51,7 @@ export const GraphWidgetPieChart = ({
   prefix,
   suffix,
   customFormatter,
+  onSliceClick,
 }: GraphWidgetPieChartProps) => {
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
@@ -58,12 +69,11 @@ export const GraphWidgetPieChart = ({
     setHoveredSliceId,
     handleSliceClick,
     hasClickableItems,
-  } = usePieChartHandlers({ data });
+  } = usePieChartHandlers({ data, onSliceClick });
 
-  const { enrichedData, enrichedDataMap, defs, fill } = usePieChartData({
+  const { enrichedData } = usePieChartData({
     data,
     colorRegistry,
-    id,
     hoveredSliceId,
   });
 
@@ -72,19 +82,6 @@ export const GraphWidgetPieChart = ({
     formatOptions,
     displayType,
   });
-
-  const renderSliceEndLines = (
-    layerProps: PieCustomLayerProps<PieChartDataItem>,
-  ) => (
-    <PieChartEndLines
-      dataWithArc={layerProps.dataWithArc}
-      centerX={layerProps.centerX}
-      centerY={layerProps.centerY}
-      innerRadius={layerProps.innerRadius}
-      radius={layerProps.radius}
-      enrichedDataMap={enrichedDataMap}
-    />
-  );
 
   const renderTooltip = ({ datum }: PieTooltipProps<PieChartDataItem>) => {
     const tooltipData = createTooltipData(datum);
@@ -97,23 +94,23 @@ export const GraphWidgetPieChart = ({
     <StyledContainer id={id}>
       <GraphWidgetChartContainer
         $isClickable={hasClickableItems}
-        $cursorSelector='svg g path[fill^="url(#"]'
+        $cursorSelector="svg g path"
       >
-        <ResponsivePie
-          data={data}
-          innerRadius={0.8}
-          colors={enrichedData.map((item) => `url(#${item.gradientId})`)}
-          borderWidth={0}
-          enableArcLinkLabels={false}
-          enableArcLabels={false}
-          tooltip={renderTooltip}
-          onClick={handleSliceClick}
-          onMouseEnter={(datum) => setHoveredSliceId(datum.id)}
-          onMouseLeave={() => setHoveredSliceId(null)}
-          defs={defs}
-          fill={fill}
-          layers={['arcs', renderSliceEndLines]}
-        />
+        <StyledPieChartWrapper>
+          <ResponsivePie
+            data={data}
+            innerRadius={0.8}
+            colors={enrichedData.map((item) => item.colorScheme.solid)}
+            borderWidth={0}
+            enableArcLinkLabels={false}
+            enableArcLabels={false}
+            tooltip={renderTooltip}
+            onClick={handleSliceClick}
+            onMouseEnter={(datum) => setHoveredSliceId(datum.id)}
+            onMouseLeave={() => setHoveredSliceId(null)}
+            layers={['arcs']}
+          />
+        </StyledPieChartWrapper>
       </GraphWidgetChartContainer>
       <GraphWidgetLegend
         show={showLegend}
