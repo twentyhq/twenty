@@ -5,9 +5,10 @@ export type WorkflowAiAgentPermissionsViewMode =
   | 'add-permission-objects'
   | 'add-permission-crud';
 
-export const workflowAiAgentPermissionsViewModeFamilyState =
-  createFamilyState<WorkflowAiAgentPermissionsViewMode, string>({
-    key: 'workflowAiAgentPermissionsViewModeFamilyState',
-    defaultValue: 'home',
-  });
-
+export const workflowAiAgentPermissionsViewModeFamilyState = createFamilyState<
+  WorkflowAiAgentPermissionsViewMode,
+  string
+>({
+  key: 'workflowAiAgentPermissionsViewModeFamilyState',
+  defaultValue: 'home',
+});
