@@ -180,6 +180,7 @@ export const GraphWidgetLegend = ({
             onClick={handlePreviousPage}
             disabled={safeCurrentPage === 0}
             Icon={IconChevronLeft}
+            accent="tertiary"
           />
           <StyledPaginationIndicator>
             {safeCurrentPage + 1}/{totalPages}
