@@ -2,6 +2,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import {
   AggregateOperations,
   FieldMetadataType,
+  GraphOrderBy,
   GraphType,
   type PieChartConfiguration,
 } from '~/generated-metadata/graphql';
@@ -104,7 +105,7 @@ describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
         objectMetadataItem: mockObjectMetadataItem,
         chartConfiguration: buildPieChartConfiguration({
           groupByFieldMetadataId: 'field-1',
-          orderBy: 'ASC' as any,
+          orderBy: GraphOrderBy.VALUE_ASC,
         }),
         aggregateOperation: 'count',
       });
