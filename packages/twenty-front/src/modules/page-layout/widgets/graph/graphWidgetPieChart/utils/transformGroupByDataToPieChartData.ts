@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { getGroupByQueryName } from '@/page-layout/utils/getGroupByQueryName';
+import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
@@ -52,7 +52,7 @@ export const transformGroupByDataToPieChartData = ({
     return EMPTY_PIE_CHART_RESULT;
   }
 
-  const queryName = getGroupByQueryName(objectMetadataItem);
+  const queryName = getGroupByQueryResultGqlFieldName(objectMetadataItem);
   const rawResults = groupByData[queryName];
 
   if (!isDefined(rawResults) || !Array.isArray(rawResults)) {
