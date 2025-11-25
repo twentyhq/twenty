@@ -21,6 +21,8 @@ import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-ve
 import { CleanOrphanedRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-role-targets.command';
 import { CleanOrphanedUserWorkspacesCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-user-workspaces.command';
 import { CreateTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-create-twenty-standard-application.command';
+import { AddCalendarEventsImportScheduledSyncStageCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-add-calendar-events-import-scheduled-sync-stage.command';
+import { AddMessagesImportScheduledSyncStageCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-add-messages-import-scheduled-sync-stage.command';
 import { CreateWorkspaceCustomApplicationCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-create-workspace-custom-application.command';
 import { SetStandardApplicationNotUninstallableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-set-standard-application-not-uninstallable.command';
 import { WorkspaceCustomApplicationIdNonNullableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-workspace-custom-application-id-non-nullable-migration.command';
@@ -84,6 +86,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly createTwentyStandardApplicationCommand: CreateTwentyStandardApplicationCommand,
     protected readonly createWorkspaceCustomApplicationCommand: CreateWorkspaceCustomApplicationCommand,
     protected readonly workspaceCustomApplicationIdNonNullableCommand: WorkspaceCustomApplicationIdNonNullableCommand,
+    protected readonly addMessagesImportScheduledSyncStageCommand: AddMessagesImportScheduledSyncStageCommand,
+    protected readonly addCalendarEventsImportScheduledSyncStageCommand: AddCalendarEventsImportScheduledSyncStageCommand,
   ) {
     super(
       workspaceRepository,
@@ -143,6 +147,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       beforeSyncMetadata: [
         this.createWorkspaceCustomApplicationCommand,
         this.workspaceCustomApplicationIdNonNullableCommand,
+        this.addMessagesImportScheduledSyncStageCommand,
+        this.addCalendarEventsImportScheduledSyncStageCommand,
       ],
       afterSyncMetadata: [this.setStandardApplicationNotUninstallableCommand],
     };
