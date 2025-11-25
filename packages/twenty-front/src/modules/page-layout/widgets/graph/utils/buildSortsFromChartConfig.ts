@@ -1,4 +1,5 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { normalizeChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
 import { isDefined } from 'twenty-shared/utils';
 import {
   GraphOrderBy,
@@ -25,32 +26,30 @@ export const buildSortsFromChartConfig = ({
   objectMetadataItem,
 }: BuildSortsFromChartConfigParams): ChartSort[] => {
   const sorts: ChartSort[] = [];
+  const { groupByFieldMetadataId, orderBy } =
+    normalizeChartConfigurationFields(configuration);
 
-  // Handle primaryAxisOrderBy for Bar and Line charts
   if (
-    'primaryAxisOrderBy' in configuration &&
-    (configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_ASC ||
-      configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC)
+    orderBy === GraphOrderBy.FIELD_ASC ||
+    orderBy === GraphOrderBy.FIELD_DESC
   ) {
-    const primaryField = objectMetadataItem.fields.find(
-      (field) => field.id === configuration.primaryAxisGroupByFieldMetadataId,
-    );
+    const primaryField = groupByFieldMetadataId
+      ? objectMetadataItem.fields.find(
+          (field) => field.id === groupByFieldMetadataId,
+        )
+      : undefined;
 
     if (isDefined(primaryField)) {
       sorts.push({
         fieldName: primaryField.name,
-        direction:
-          configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_ASC
-            ? 'ASC'
-            : 'DESC',
+        direction: orderBy === GraphOrderBy.FIELD_ASC ? 'ASC' : 'DESC',
       });
     }
   }
 
   if (
-    'primaryAxisOrderBy' in configuration &&
-    (configuration.primaryAxisOrderBy === GraphOrderBy.VALUE_ASC ||
-      configuration.primaryAxisOrderBy === GraphOrderBy.VALUE_DESC)
+    orderBy === GraphOrderBy.VALUE_ASC ||
+    orderBy === GraphOrderBy.VALUE_DESC
   ) {
     const aggregateField = objectMetadataItem.fields.find(
       (field) => field.id === configuration.aggregateFieldMetadataId,
@@ -59,47 +58,7 @@ export const buildSortsFromChartConfig = ({
     if (isDefined(aggregateField)) {
       sorts.push({
         fieldName: aggregateField.name,
-        direction:
-          configuration.primaryAxisOrderBy === GraphOrderBy.VALUE_ASC
-            ? 'ASC'
-            : 'DESC',
-      });
-    }
-  }
-
-  // Handle orderBy for Pie charts (they have a different structure)
-  if (
-    'orderBy' in configuration &&
-    (configuration.orderBy === GraphOrderBy.FIELD_ASC ||
-      configuration.orderBy === GraphOrderBy.FIELD_DESC)
-  ) {
-    const groupByField = objectMetadataItem.fields.find(
-      (field) => field.id === configuration.groupByFieldMetadataId,
-    );
-
-    if (isDefined(groupByField)) {
-      sorts.push({
-        fieldName: groupByField.name,
-        direction:
-          configuration.orderBy === GraphOrderBy.FIELD_ASC ? 'ASC' : 'DESC',
-      });
-    }
-  }
-
-  if (
-    'orderBy' in configuration &&
-    (configuration.orderBy === GraphOrderBy.VALUE_ASC ||
-      configuration.orderBy === GraphOrderBy.VALUE_DESC)
-  ) {
-    const aggregateField = objectMetadataItem.fields.find(
-      (field) => field.id === configuration.aggregateFieldMetadataId,
-    );
-
-    if (isDefined(aggregateField)) {
-      sorts.push({
-        fieldName: aggregateField.name,
-        direction:
-          configuration.orderBy === GraphOrderBy.VALUE_ASC ? 'ASC' : 'DESC',
+        direction: orderBy === GraphOrderBy.VALUE_ASC ? 'ASC' : 'DESC',
       });
     }
   }
