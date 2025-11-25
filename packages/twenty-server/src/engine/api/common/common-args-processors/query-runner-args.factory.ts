@@ -109,10 +109,12 @@ export class QueryRunnerArgsFactory {
       return value;
     }
 
-    return this.recordInputTransformerService.process({
+    const processed = await this.recordInputTransformerService.process({
       recordInput: { [key]: value },
       flatObjectMetadata,
       flatFieldMetadataMaps,
     });
+
+    return processed[key] ?? value;
   }
 }
