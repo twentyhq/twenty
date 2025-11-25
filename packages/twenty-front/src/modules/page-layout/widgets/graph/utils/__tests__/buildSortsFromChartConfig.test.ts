@@ -1,11 +1,11 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { buildSortsFromChartConfig } from '@/page-layout/widgets/graph/utils/buildSortsFromChartConfig';
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   type BarChartConfiguration,
   type PieChartConfiguration,
   GraphOrderBy,
 } from '~/generated/graphql';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('buildSortsFromChartConfig', () => {
   const mockObjectMetadataItem: ObjectMetadataItem = {
@@ -47,9 +47,7 @@ describe('buildSortsFromChartConfig', () => {
         objectMetadataItem: mockObjectMetadataItem,
       });
 
-      expect(result).toEqual([
-        { fieldName: 'createdAt', direction: 'ASC' },
-      ]);
+      expect(result).toEqual([{ fieldName: 'createdAt', direction: 'ASC' }]);
     });
 
     it('should sort DESC by groupBy field for Pie charts', () => {
@@ -64,9 +62,7 @@ describe('buildSortsFromChartConfig', () => {
         objectMetadataItem: mockObjectMetadataItem,
       });
 
-      expect(result).toEqual([
-        { fieldName: 'status', direction: 'DESC' },
-      ]);
+      expect(result).toEqual([{ fieldName: 'status', direction: 'DESC' }]);
     });
 
     it('should return empty array when groupBy field not found', () => {
@@ -98,9 +94,7 @@ describe('buildSortsFromChartConfig', () => {
         objectMetadataItem: mockObjectMetadataItem,
       });
 
-      expect(result).toEqual([
-        { fieldName: 'amount', direction: 'ASC' },
-      ]);
+      expect(result).toEqual([{ fieldName: 'amount', direction: 'ASC' }]);
     });
 
     it('should sort DESC by aggregate field for Pie charts', () => {
@@ -115,9 +109,7 @@ describe('buildSortsFromChartConfig', () => {
         objectMetadataItem: mockObjectMetadataItem,
       });
 
-      expect(result).toEqual([
-        { fieldName: 'amount', direction: 'DESC' },
-      ]);
+      expect(result).toEqual([{ fieldName: 'amount', direction: 'DESC' }]);
     });
 
     it('should return empty array when aggregate field not found', () => {

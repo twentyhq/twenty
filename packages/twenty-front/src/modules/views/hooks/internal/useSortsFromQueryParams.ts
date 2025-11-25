@@ -6,11 +6,10 @@ import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObje
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { sortUrlQueryParamsSchema } from '@/views/schemas/sortUrlQueryParamsSchema';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { type ViewSortDirection } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { type ViewSortDirection } from '~/generated/graphql';
 
 export const useSortsFromQueryParams = () => {
-  // Follow the same pattern as useFiltersFromQueryParams - inline composition
   const [searchParams] = useSearchParams();
   const { objectNamePlural = '' } = useParams();
   const { objectNameSingular } = useObjectNameSingularFromPlural({
