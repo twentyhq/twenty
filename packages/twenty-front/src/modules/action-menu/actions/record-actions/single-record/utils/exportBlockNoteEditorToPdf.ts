@@ -45,7 +45,20 @@ export const exportBlockNoteEditorToPdf = async (
     initialContent: parsedBody,
   });
 
-  const exporter = new PDFExporter(editor.schema, pdfDefaultSchemaMappings);
+  const exporter = new PDFExporter(editor.schema, pdfDefaultSchemaMappings, {
+    resolveFileUrl: async (url: string) => {
+      const response = await fetch(url, {
+        mode: 'cors',
+        credentials: 'omit',
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch asset at ${url}`);
+      }
+
+      return await response.blob();
+    },
+  });
 
   const pdfDocument = await exporter.toReactPDFDocument(editor.document);
 
