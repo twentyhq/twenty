@@ -23,6 +23,26 @@ type GraphWidgetLegendProps = {
   show?: boolean;
 };
 
+const StyledAnimationClipContainer = styled.div`
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+`;
+
+const StyledDot = styled.div<{ color: string }>`
+  background: ${({ color }) => color};
+  border-radius: 50%;
+  height: 6px;
+  width: 6px;
+  flex-shrink: 0;
+`;
+
+const StyledItemsWrapper = styled(motion.div)`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(3)};
+  flex-wrap: nowrap;
+`;
+
 const StyledLegendContainer = styled.div<{ needsPagination: boolean }>`
   display: flex;
   flex-wrap: nowrap;
@@ -32,6 +52,7 @@ const StyledLegendContainer = styled.div<{ needsPagination: boolean }>`
   padding-top: ${({ theme }) => theme.spacing(3)};
   overflow: hidden;
   width: 100%;
+  align-items: center;
 `;
 
 const StyledLegendItem = styled.div`
@@ -43,17 +64,9 @@ const StyledLegendItem = styled.div`
   flex-shrink: 0;
 `;
 
-const StyledLegendLabel = styled.div<{ maxWidth: number }>`
+const StyledLegendLabel = styled.div<{ width: number }>`
   color: ${({ theme }) => theme.font.color.light};
-  max-width: ${({ maxWidth }) => maxWidth}px;
-`;
-
-const StyledDot = styled.div<{ color: string }>`
-  background: ${({ color }) => color};
-  border-radius: 50%;
-  height: 6px;
-  width: 6px;
-  flex-shrink: 0;
+  width: ${({ width }) => width}px;
 `;
 
 const StyledPaginationContainer = styled.div`
@@ -67,12 +80,6 @@ const StyledPaginationContainer = styled.div`
 const StyledPaginationIndicator = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.xs};
-`;
-
-const StyledItemsWrapper = styled(motion.div)`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(3)};
-  flex-wrap: nowrap;
 `;
 
 export const GraphWidgetLegend = ({
@@ -184,26 +191,28 @@ export const GraphWidgetLegend = ({
           />
         </StyledPaginationContainer>
       )}
-      <AnimatePresence mode="popLayout" custom={direction}>
-        <StyledItemsWrapper
-          key={safeCurrentPage}
-          custom={direction}
-          variants={variants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{ duration: 0.3, ease: 'easeInOut' }}
-        >
-          {visibleItems.map((item) => (
-            <StyledLegendItem key={item.id}>
-              <StyledDot color={item.color} />
-              <StyledLegendLabel maxWidth={LEGEND_LABEL_MAX_WIDTH}>
-                <OverflowingTextWithTooltip text={item.label} />
-              </StyledLegendLabel>
-            </StyledLegendItem>
-          ))}
-        </StyledItemsWrapper>
-      </AnimatePresence>
+      <StyledAnimationClipContainer>
+        <AnimatePresence mode="popLayout" custom={direction}>
+          <StyledItemsWrapper
+            key={safeCurrentPage}
+            custom={direction}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+          >
+            {visibleItems.map((item) => (
+              <StyledLegendItem key={item.id}>
+                <StyledDot color={item.color} />
+                <StyledLegendLabel width={LEGEND_LABEL_MAX_WIDTH}>
+                  <OverflowingTextWithTooltip text={item.label} />
+                </StyledLegendLabel>
+              </StyledLegendItem>
+            ))}
+          </StyledItemsWrapper>
+        </AnimatePresence>
+      </StyledAnimationClipContainer>
     </StyledLegendContainer>
   );
 };
