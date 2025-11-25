@@ -5,6 +5,10 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
+  CalendarEventListFetchJob,
+  type CalendarEventListFetchJobData,
+} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
+import {
   CalendarChannelSyncStage,
   CalendarChannelSyncStatus,
   type CalendarChannelWorkspaceEntity,
@@ -14,6 +18,10 @@ import {
   MessageChannelSyncStatus,
   type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessagingMessageListFetchJob,
+  type MessagingMessageListFetchJobData,
+} from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 
 export type StartChannelSyncInput = {
   connectedAccountId: string;
@@ -56,9 +64,17 @@ export class ChannelSyncService {
 
     for (const messageChannel of messageChannels) {
       await messageChannelRepository.update(messageChannel.id, {
-        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
         syncStatus: MessageChannelSyncStatus.ONGOING,
       });
+
+      await this.messageQueueService.add<MessagingMessageListFetchJobData>(
+        MessagingMessageListFetchJob.name,
+        {
+          workspaceId,
+          messageChannelId: messageChannel.id,
+        },
+      );
     }
   }
 
@@ -81,9 +97,17 @@ export class ChannelSyncService {
 
     for (const calendarChannel of calendarChannels) {
       await calendarChannelRepository.update(calendarChannel.id, {
-        syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+        syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
         syncStatus: CalendarChannelSyncStatus.ONGOING,
       });
+
+      await this.calendarQueueService.add<CalendarEventListFetchJobData>(
+        CalendarEventListFetchJob.name,
+        {
+          workspaceId,
+          calendarChannelId: calendarChannel.id,
+        },
+      );
     }
   }
 }
