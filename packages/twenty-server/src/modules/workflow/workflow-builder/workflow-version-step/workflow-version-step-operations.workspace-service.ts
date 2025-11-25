@@ -460,17 +460,20 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           // @ts-expect-error legacy noImplicitAny
           isValidUuid(response[key].id)
         ) {
-          const objectMetadataInfo =
-            await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+          const { flatObjectMetadata, flatFieldMetadataMaps } =
+            await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
               field.settings.objectName,
               workspaceId,
             );
 
-          const relationFieldsNames = Object.values(
-            objectMetadataInfo.objectMetadataItemWithFieldsMaps.fieldsById,
-          )
-            .filter((field) => field.type === FieldMetadataType.RELATION)
-            .map((field) => field.name);
+          const relationFieldsNames = flatObjectMetadata.fieldMetadataIds
+            .map((fieldId) => flatFieldMetadataMaps.byId[fieldId])
+            .filter(
+              (fieldMetadata) =>
+                isDefined(fieldMetadata) &&
+                fieldMetadata.type === FieldMetadataType.RELATION,
+            )
+            .map((fieldMetadata) => fieldMetadata!.name);
 
           const repository =
             await this.twentyORMGlobalManager.getRepositoryForWorkspace(

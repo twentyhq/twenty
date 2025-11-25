@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { type ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -23,6 +24,7 @@ export class TimelineActivityService {
     @InjectObjectMetadataRepository(TimelineActivityWorkspaceEntity)
     private readonly timelineActivityRepository: TimelineActivityRepository,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   private targetObjects: Record<ActivityType, string> = {
@@ -279,6 +281,22 @@ export class TimelineActivityService {
       return [];
     }
 
+    const { flatFieldMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatFieldMetadataMaps'],
+        },
+      );
+
+    const fields = objectMetadata.fieldMetadataIds
+      .map((fieldId) => flatFieldMetadataMaps.byId[fieldId])
+      .filter(isDefined);
+
+    const activityObjectMetadataId = fields.find(
+      (field) => field.name === activityType,
+    )?.relationTargetObjectMetadataId;
+
     return events
       .map((event) => {
         const activity = activities.find(
@@ -290,10 +308,6 @@ export class TimelineActivityService {
         if (!isDefined(activity)) {
           return;
         }
-
-        const activityObjectMetadataId = objectMetadata.fields.find(
-          (field) => field.name === activityType,
-        )?.relationTargetObjectMetadataId;
 
         if (!isDefined(activityObjectMetadataId)) {
           return;

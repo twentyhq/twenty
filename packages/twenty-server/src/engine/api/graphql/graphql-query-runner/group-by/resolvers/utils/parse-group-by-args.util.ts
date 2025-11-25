@@ -1,5 +1,5 @@
-import { isDefined } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type GroupByResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -7,18 +7,26 @@ import { type GroupByField } from 'src/engine/api/graphql/graphql-query-runner/g
 import { isGroupByDateFieldDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field-definition.util';
 import { parseGroupByRelationField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/parse-group-by-relation-field.util';
 import { validateSingleKeyForGroupByOrThrow } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/validate-single-key-for-group-by-or-throw.util';
-import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsForObject } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-for-object.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const parseGroupByArgs = (
   args: GroupByResolverArgs,
-  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-  objectMetadataMaps: ObjectMetadataMaps,
+  flatObjectMetadata: FlatObjectMetadata,
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
 ): GroupByField[] => {
   const groupByFieldNames = args.groupBy;
 
   const groupByFields: GroupByField[] = [];
+
+  const { fieldIdByName, fieldIdByJoinColumnName } = buildFieldMapsForObject(
+    flatFieldMetadataMaps,
+    flatObjectMetadata.id,
+  );
 
   for (const fieldNames of groupByFieldNames) {
     validateSingleKeyForGroupByOrThrow({
@@ -29,17 +37,17 @@ export const parseGroupByArgs = (
 
     for (const fieldName of Object.keys(fieldNames)) {
       const fieldMetadataId =
-        objectMetadataItemWithFieldMaps.fieldIdByName[fieldName] ||
-        objectMetadataItemWithFieldMaps.fieldIdByJoinColumnName[fieldName];
-      const fieldMetadata =
-        objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
+        fieldIdByName[fieldName] || fieldIdByJoinColumnName[fieldName];
+      const fieldMetadata = fieldMetadataId
+        ? flatFieldMetadataMaps.byId[fieldMetadataId]
+        : undefined;
 
       if (!isDefined(fieldMetadata) || !isDefined(fieldMetadataId)) {
         throw new Error(`Unidentified field in groupBy: ${fieldName}`);
       }
 
       const isGroupByRelationField =
-        isFieldMetadataRelationOrMorphRelation(fieldMetadata) &&
+        isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
         typeof fieldNames[fieldName] === 'object' &&
         fieldNames[fieldName] !== null &&
         !isGroupByDateFieldDefinition(fieldNames[fieldName]);
@@ -50,7 +58,8 @@ export const parseGroupByArgs = (
           fieldNames,
           fieldName,
           fieldMetadata,
-          objectMetadataMaps,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
           groupByFields,
         });
 

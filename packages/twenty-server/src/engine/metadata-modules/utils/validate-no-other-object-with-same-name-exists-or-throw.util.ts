@@ -7,13 +7,12 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 type ValidateNoOtherObjectWithSameNameExistsOrThrowsParams = {
   objectMetadataNameSingular: string;
   objectMetadataNamePlural: string;
   existingObjectMetadataId?: string;
-  objectMetadataMaps: ObjectMetadataMaps | FlatEntityMaps<FlatObjectMetadata>;
+  objectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 };
 
 export const doesOtherObjectWithSameNameExists = ({

@@ -8,26 +8,24 @@ import {
   type GroupByRelationField,
 } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
 import { isGroupByRelationField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-relation-field.util';
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsForObject } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-for-object.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const prepareForOrderByRelationFieldParsing = ({
   orderByArg,
   fieldMetadata,
-  objectMetadataMaps,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
   groupByFields,
 }: {
   orderByArg: ObjectRecordOrderByForRelationField;
-  fieldMetadata: FieldMetadataEntity;
-  objectMetadataMaps?: ObjectMetadataMaps;
+  fieldMetadata: FlatFieldMetadata;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   groupByFields: GroupByField[];
 }) => {
-  if (!objectMetadataMaps) {
-    throw new UserInputError(
-      `Object metadata maps not found for field ${fieldMetadata.name}`,
-    );
-  }
-
   const relationFieldName = Object.keys(orderByArg)[0];
   const nestedFieldOrderByObject = orderByArg[relationFieldName];
 
@@ -57,17 +55,21 @@ export const prepareForOrderByRelationFieldParsing = ({
     );
   }
 
-  const targetObjectMetadataItem =
-    objectMetadataMaps?.byId[fieldMetadata.relationTargetObjectMetadataId];
+  const targetObjectMetadata =
+    flatObjectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
 
-  if (!isDefined(targetObjectMetadataItem)) {
+  if (!isDefined(targetObjectMetadata)) {
     throw new UserInputError(
       `Target object metadata item not found for field ${fieldMetadata.name}`,
     );
   }
 
-  const nestedFieldMetadataId =
-    targetObjectMetadataItem?.fieldIdByName[nestedFieldName];
+  const { fieldIdByName: targetFieldIdByName } = buildFieldMapsForObject(
+    flatFieldMetadataMaps,
+    targetObjectMetadata.id,
+  );
+
+  const nestedFieldMetadataId = targetFieldIdByName[nestedFieldName];
 
   if (!isDefined(nestedFieldMetadataId)) {
     throw new UserInputError(
@@ -75,12 +77,11 @@ export const prepareForOrderByRelationFieldParsing = ({
     );
   }
 
-  const nestedFieldMetadata =
-    targetObjectMetadataItem?.fieldsById[nestedFieldMetadataId];
+  const nestedFieldMetadata = flatFieldMetadataMaps.byId[nestedFieldMetadataId];
 
   if (!isDefined(nestedFieldMetadata) || !isDefined(nestedFieldMetadataId)) {
     throw new UserInputError(
-      `Nested field "${nestedFieldName}" not found in target object "${targetObjectMetadataItem.nameSingular}"`,
+      `Nested field "${nestedFieldName}" not found in target object "${targetObjectMetadata.nameSingular}"`,
     );
   }
 

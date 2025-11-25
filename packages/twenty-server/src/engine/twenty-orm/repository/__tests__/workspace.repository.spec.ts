@@ -59,10 +59,24 @@ describe('WorkspaceRepository', () => {
 
     mockInternalContext = {
       workspaceId: 'test-workspace-id',
-      objectMetadataMaps: {
-        idByNameSingular: {},
+      flatObjectMetadataMaps: {
+        byId: {},
+        idByUniversalIdentifier: {},
+        universalIdentifiersByApplicationId: {},
       },
+      flatFieldMetadataMaps: {
+        byId: {},
+        idByUniversalIdentifier: {},
+        universalIdentifiersByApplicationId: {},
+      },
+      flatIndexMaps: {
+        byId: {},
+        idByUniversalIdentifier: {},
+        universalIdentifiersByApplicationId: {},
+      },
+      objectIdByNameSingular: {},
       featureFlagsMap: {},
+      eventEmitterService: {} as unknown,
     } as WorkspaceInternalContext;
 
     mockFeatureFlagMap = Object.values(FeatureFlagKey).reduce(

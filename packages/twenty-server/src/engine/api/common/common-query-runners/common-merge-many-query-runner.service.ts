@@ -33,10 +33,12 @@ import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runne
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsForObject } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-for-object.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 @Injectable()
 export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -50,8 +52,11 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     args: CommonExtendedInput<MergeManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord> {
-    const { objectMetadataMaps, objectMetadataItemWithFieldMaps } =
-      queryRunnerContext;
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    } = queryRunnerContext;
 
     const recordsToMerge = await this.fetchRecordsToMerge(
       queryRunnerContext,
@@ -67,7 +72,8 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     const mergedData = this.performDeepMerge(
       recordsToMerge,
       priorityRecord.id,
-      objectMetadataItemWithFieldMaps,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
       args.dryRun ?? false,
     );
 
@@ -84,14 +90,15 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     );
 
     const queryBuilder = queryRunnerContext.repository.createQueryBuilder(
-      objectMetadataItemWithFieldMaps.nameSingular,
+      flatObjectMetadata.nameSingular,
     );
 
     const columnsToReturn = buildColumnsToReturn({
       select: args.selectedFieldsResult.select,
       relations: args.selectedFieldsResult.relations,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     });
 
     await queryBuilder
@@ -123,8 +130,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     const columnsToSelect = buildColumnsToSelect({
       select: args.selectedFieldsResult.select,
       relations: args.selectedFieldsResult.relations,
-      objectMetadataItemWithFieldMaps: context.objectMetadataItemWithFieldMaps,
-      objectMetadataMaps: context.objectMetadataMaps,
+      flatObjectMetadata: context.flatObjectMetadata,
+      flatObjectMetadataMaps: context.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: context.flatFieldMetadataMaps,
     });
 
     const recordsToMerge = await context.repository.find({
@@ -141,8 +149,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
     if (args.dryRun && args.selectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
-        objectMetadataMaps: context.objectMetadataMaps,
-        parentObjectMetadataItem: context.objectMetadataItemWithFieldMaps,
+        flatObjectMetadataMaps: context.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: context.flatFieldMetadataMaps,
+        parentObjectMetadataItem: context.flatObjectMetadata,
         parentObjectRecords: recordsToMerge as ObjectRecord[],
         relations: args.selectedFieldsResult.relations as Record<
           string,
@@ -182,7 +191,8 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
   private performDeepMerge(
     recordsToMerge: ObjectRecord[],
     priorityRecordId: string,
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     isDryRun = false,
   ): Partial<ObjectRecord> {
     const mergedResult: Partial<ObjectRecord> = {};
@@ -194,7 +204,8 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         if (
           !this.shouldExcludeFieldFromMerge(
             fieldName,
-            objectMetadataItemWithFieldMaps,
+            flatObjectMetadata,
+            flatFieldMetadataMaps,
           )
         ) {
           allFieldNames.add(fieldName);
@@ -218,9 +229,12 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       } else if (recordsWithValues.length === 1) {
         mergedResult[fieldName] = recordsWithValues[0].value;
       } else {
-        const fieldMetadata = Object.values(
-          objectMetadataItemWithFieldMaps.fieldsById,
-        ).find((field) => field?.name === fieldName);
+        const { fieldIdByName } = buildFieldMapsForObject(
+          flatFieldMetadataMaps,
+          flatObjectMetadata.id,
+        );
+        const fieldMetadata =
+          flatFieldMetadataMaps.byId[fieldIdByName[fieldName]];
 
         if (!fieldMetadata) {
           return;
@@ -247,11 +261,14 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
   private shouldExcludeFieldFromMerge(
     fieldName: string,
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ): boolean {
-    const fieldMetadata = Object.values(
-      objectMetadataItemWithFieldMaps.fieldsById,
-    ).find((field) => field?.name === fieldName);
+    const { fieldIdByName } = buildFieldMapsForObject(
+      flatFieldMetadataMaps,
+      flatObjectMetadata.id,
+    );
+    const fieldMetadata = flatFieldMetadataMaps.byId[fieldIdByName[fieldName]];
 
     return fieldMetadata?.isSystem ?? false;
   }
@@ -276,18 +293,23 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     priorityRecordId: string,
     mergedData: Partial<ObjectRecord>,
   ): Promise<ObjectRecord> {
-    const { objectMetadataItemWithFieldMaps, objectMetadataMaps, repository } =
-      queryRunnerContext;
+    const {
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      repository,
+    } = queryRunnerContext;
 
     const queryBuilder = repository.createQueryBuilder(
-      objectMetadataItemWithFieldMaps.nameSingular,
+      flatObjectMetadata.nameSingular,
     );
 
     const columnsToReturn = buildColumnsToReturn({
       select: args.selectedFieldsResult.select,
       relations: args.selectedFieldsResult.relations,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     });
 
     const updatedObjectRecords = await queryBuilder
@@ -314,46 +336,54 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     fromIds: string[],
     toId: string,
   ): Promise<void> {
-    const { objectMetadataMaps, objectMetadataItemWithFieldMaps } = context;
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    } = context;
 
-    const relationFieldsPointingToCurrentObject = Object.values(
-      objectMetadataMaps.byId,
-    )
-      .filter(isDefined)
-      .flatMap((metadata) => {
-        const relationFields = Object.values(metadata.fieldsById)
-          .filter(isDefined)
-          .filter((field) =>
-            isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION),
-          )
-          .filter(
-            (field) =>
-              field.relationTargetObjectMetadataId ===
-                objectMetadataItemWithFieldMaps.id && field.isActive,
-          );
+    const relationFieldsPointingToCurrentObject: Array<{
+      objectMetadata: FlatObjectMetadata;
+      fieldName: string;
+      fieldId: string;
+      joinColumnName: string | undefined;
+    }> = [];
 
-        return relationFields
-          .filter((field) => {
-            const relationSettings =
-              field.settings as FieldMetadataRelationSettings;
+    for (const field of Object.values(flatFieldMetadataMaps.byId).filter(
+      isDefined,
+    )) {
+      if (
+        !isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) ||
+        field.relationTargetObjectMetadataId !== flatObjectMetadata.id ||
+        !field.isActive
+      ) {
+        continue;
+      }
 
-            return (
-              relationSettings?.relationType === RelationType.MANY_TO_ONE &&
-              relationSettings?.joinColumnName
-            );
-          })
-          .map((field) => {
-            const relationSettings =
-              field.settings as FieldMetadataRelationSettings;
+      const relationSettings = field.settings as
+        | FieldMetadataRelationSettings
+        | undefined;
 
-            return {
-              objectMetadata: metadata,
-              fieldName: field.name,
-              fieldId: field.id,
-              joinColumnName: relationSettings.joinColumnName,
-            };
-          });
+      if (
+        relationSettings?.relationType !== RelationType.MANY_TO_ONE ||
+        !relationSettings?.joinColumnName
+      ) {
+        continue;
+      }
+
+      const objMetadata = flatObjectMetadataMaps.byId[field.objectMetadataId];
+
+      if (!objMetadata) {
+        continue;
+      }
+
+      relationFieldsPointingToCurrentObject.push({
+        objectMetadata: objMetadata,
+        fieldName: field.name,
+        fieldId: field.id,
+        joinColumnName: relationSettings.joinColumnName,
       });
+    }
 
     for (const relationField of relationFieldsPointingToCurrentObject) {
       if (!relationField.joinColumnName) {
@@ -396,8 +426,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     updatedRecords: ObjectRecord[];
   }): Promise<void> {
     const {
-      objectMetadataMaps,
-      objectMetadataItemWithFieldMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
       authContext,
       workspaceDataSource,
       rolePermissionConfig,
@@ -405,8 +436,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
     if (args.selectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
-        objectMetadataMaps,
-        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        parentObjectMetadataItem: flatObjectMetadata,
         parentObjectRecords: updatedRecords,
         relations: args.selectedFieldsResult.relations as Record<
           string,
@@ -430,8 +462,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
   async processQueryResult(
     queryResult: ObjectRecord,
-    _objectMetadataItemId: string,
-    _objectMetadataMaps: ObjectMetadataMaps,
+    _flatObjectMetadata: FlatObjectMetadata,
+    _flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    _flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     _authContext: WorkspaceAuthContext,
   ): Promise<ObjectRecord> {
     return queryResult;
@@ -441,13 +474,13 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     args: CommonInput<MergeManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<void> {
-    const { objectMetadataItemWithFieldMaps } = queryRunnerContext;
+    const { flatObjectMetadata } = queryRunnerContext;
 
-    assertMutationNotOnRemoteObject(objectMetadataItemWithFieldMaps);
+    assertMutationNotOnRemoteObject(flatObjectMetadata);
 
-    if (!isDefined(objectMetadataItemWithFieldMaps.duplicateCriteria)) {
+    if (!isDefined(flatObjectMetadata.duplicateCriteria)) {
       throw new CommonQueryRunnerException(
-        `Merge is only available for objects with duplicate criteria. Object '${objectMetadataItemWithFieldMaps.nameSingular}' does not have duplicate criteria defined.`,
+        `Merge is only available for objects with duplicate criteria. Object '${flatObjectMetadata.nameSingular}' does not have duplicate criteria defined.`,
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       );
     }

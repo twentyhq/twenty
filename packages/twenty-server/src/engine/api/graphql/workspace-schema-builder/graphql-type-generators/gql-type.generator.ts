@@ -4,6 +4,7 @@ import {
   type CompositeType,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CompositeFieldMetadataGqlEnumTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/enum-types/composite-field-metadata-gql-enum-type.generator';
 import { EnumFieldMetadataGqlEnumTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/enum-types/enum-field-metadata-gql-enum-type.generator';
@@ -19,9 +20,10 @@ import { ObjectMetadataGqlObjectTypeGenerator } from 'src/engine/api/graphql/wor
 import { ObjectMetadataWithRelationsGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/object-metadata-with-relations-gql-object-type.generator';
 import { MutationTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/mutation-type.generator';
 import { QueryTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/query-type.generator';
-import { objectContainsMorphRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-morph-relation-field.util';
-import { objectContainsRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-relation-field';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
+import { getFieldsForObject } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-fields-for-object.util';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 
 @Injectable()
 export class GqlTypeGenerator {
@@ -44,14 +46,14 @@ export class GqlTypeGenerator {
     private readonly mutationTypeGenerator: MutationTypeGenerator,
   ) {}
 
-  async buildAndStore(objectMetadataCollection: ObjectMetadataEntity[]) {
+  async buildAndStore(context: SchemaGenerationContext) {
     const compositeTypeCollection = [...compositeTypeDefinitions.values()];
 
     this.buildAndStoreCompositeFieldMetadataGqlTypes(compositeTypeCollection);
     this.buildAndStoreDateFieldMetadataGroupByGqlTypes();
-    this.buildAndStoreObjectMetadataGqlTypes(objectMetadataCollection);
-    await this.queryTypeGenerator.buildAndStore(objectMetadataCollection);
-    this.mutationTypeGenerator.buildAndStore(objectMetadataCollection);
+    this.buildAndStoreObjectMetadataGqlTypes(context);
+    await this.queryTypeGenerator.buildAndStore(context);
+    this.mutationTypeGenerator.buildAndStore(context);
   }
 
   private buildAndStoreCompositeFieldMetadataGqlTypes(
@@ -75,36 +77,67 @@ export class GqlTypeGenerator {
   }
 
   private buildAndStoreObjectMetadataGqlTypes(
-    dynamicObjectMetadataCollection: ObjectMetadataEntity[],
+    context: SchemaGenerationContext,
   ) {
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } = context;
+    const objectMetadataCollection = Object.values(
+      flatObjectMetadataMaps.byId,
+    ).filter(isDefined);
+
     this.logger.log(
-      `Generating metadata objects: [${dynamicObjectMetadataCollection
+      `Generating metadata objects: [${objectMetadataCollection
         .map((object) => object.nameSingular)
         .join(', ')}]`,
     );
 
-    for (const objectMetadata of dynamicObjectMetadataCollection) {
-      this.enumFieldMetadataGqlEnumTypeGenerator.buildAndStore(objectMetadata);
-      this.objectMetadataGqlObjectTypeGenerator.buildAndStore(objectMetadata);
-      this.edgeGqlObjectTypeGenerator.buildAndStore(objectMetadata);
-      this.connectionGqlObjectTypeGenerator.buildAndStore(objectMetadata);
-      this.groupByConnectionGqlObjectTypeGenerator.buildAndStore(
-        objectMetadata,
-      );
-      this.relationConnectGqlInputTypeGenerator.buildAndStore(objectMetadata);
-      this.objectMetadataGqlInputTypeGenerator.buildAndStore(
-        objectMetadata,
-        dynamicObjectMetadataCollection,
+    for (const flatObjectMetadata of objectMetadataCollection) {
+      const fields = getFieldsForObject(
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
       );
 
-      if (
-        objectContainsRelationField(objectMetadata) ||
-        objectContainsMorphRelationField(objectMetadata)
-      )
+      this.enumFieldMetadataGqlEnumTypeGenerator.buildAndStore(
+        flatObjectMetadata,
+        fields,
+      );
+      this.objectMetadataGqlObjectTypeGenerator.buildAndStore(
+        flatObjectMetadata,
+        fields,
+      );
+      this.edgeGqlObjectTypeGenerator.buildAndStore(flatObjectMetadata);
+      this.connectionGqlObjectTypeGenerator.buildAndStore(
+        flatObjectMetadata,
+        fields,
+      );
+      this.groupByConnectionGqlObjectTypeGenerator.buildAndStore(
+        flatObjectMetadata,
+      );
+      this.relationConnectGqlInputTypeGenerator.buildAndStore(
+        flatObjectMetadata,
+        fields,
+        context,
+      );
+      this.objectMetadataGqlInputTypeGenerator.buildAndStore(
+        flatObjectMetadata,
+        fields,
+        context,
+      );
+
+      if (this.objectContainsRelationOrMorphField(fields)) {
         this.objectMetadataWithRelationsGqlObjectTypeGenerator.buildAndStore(
-          objectMetadata,
-          dynamicObjectMetadataCollection,
+          flatObjectMetadata,
+          fields,
+          context,
         );
+      }
     }
+  }
+
+  private objectContainsRelationOrMorphField(
+    fields: FlatFieldMetadata[],
+  ): boolean {
+    return fields.some((field) =>
+      isMorphOrRelationFieldMetadataType(field.type),
+    );
   }
 }

@@ -40,7 +40,9 @@ export class GroupByResolverFactory
       try {
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(
-            internalContext.objectMetadataMaps,
+            internalContext.flatObjectMetadataMaps,
+            internalContext.flatFieldMetadataMaps,
+            internalContext.objectIdByNameSingular,
           );
 
         const results = await this.commonGroupByQueryRunnerService.execute(
@@ -51,8 +53,7 @@ export class GroupByResolverFactory
         const formattedResults = results.map((group) => {
           const formattedRecords = typeORMObjectRecordsParser.createConnection({
             objectRecords: group.records ?? [],
-            objectName:
-              internalContext.objectMetadataItemWithFieldMaps.nameSingular,
+            objectName: internalContext.flatObjectMetadata.nameSingular,
             objectRecordsAggregatedValues: {},
             selectedAggregatedFields: {},
             take: group.records?.length || 0,

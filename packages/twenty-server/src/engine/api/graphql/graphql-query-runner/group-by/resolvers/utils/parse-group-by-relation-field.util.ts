@@ -1,9 +1,9 @@
 import { UserInputError } from 'apollo-server-core';
-import { isDefined } from 'class-validator';
 import {
   FieldMetadataType,
   type ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   GraphqlQueryRunnerException,
@@ -14,31 +14,35 @@ import { type DateFieldGroupByDefinition } from 'src/engine/api/graphql/graphql-
 import { type GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
 import { isGroupByDateFieldDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field-definition.util';
 import { validateSingleKeyForGroupByOrThrow } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/validate-single-key-for-group-by-or-throw.util';
-import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsForObject } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-for-object.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 const getNestedFieldMetadataDetails = ({
   fieldNames,
   fieldName,
   fieldMetadata,
-  objectMetadataMaps,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
 }: {
   fieldNames: Record<string, unknown>;
   fieldName: string;
-  fieldMetadata: FieldMetadataEntity;
-  objectMetadataMaps: ObjectMetadataMaps;
+  fieldMetadata: FlatFieldMetadata;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }) => {
   const nestedFieldGroupByDefinitions = fieldNames[fieldName] as
     | Record<string, boolean>
     | Record<string, CompositeFieldGroupByDefinition>
     | Record<string, DateFieldGroupByDefinition>;
 
-  const targetObjectMetadata = getTargetObjectMetadataOrThrow(
-    fieldMetadata,
-    objectMetadataMaps,
-  );
+  const targetObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+    flatEntityId: fieldMetadata.relationTargetObjectMetadataId ?? '',
+    flatEntityMaps: flatObjectMetadataMaps,
+  });
 
   const nestedFieldNames = Object.keys(nestedFieldGroupByDefinitions);
 
@@ -49,10 +53,13 @@ const getNestedFieldMetadataDetails = ({
   });
 
   const nestedFieldName = nestedFieldNames[0];
-  const nestedFieldMetadataId =
-    targetObjectMetadata.fieldIdByName[nestedFieldName];
-  const nestedFieldMetadata =
-    targetObjectMetadata.fieldsById[nestedFieldMetadataId];
+  const { fieldIdByName } = buildFieldMapsForObject(
+    flatFieldMetadataMaps,
+    targetObjectMetadata.id,
+  );
+
+  const nestedFieldMetadataId = fieldIdByName[nestedFieldName];
+  const nestedFieldMetadata = flatFieldMetadataMaps.byId[nestedFieldMetadataId];
 
   if (!isDefined(nestedFieldMetadata) || !isDefined(nestedFieldMetadataId)) {
     throw new GraphqlQueryRunnerException(
@@ -86,8 +93,8 @@ const handleNestedCompositeField = ({
 }: {
   nestedFieldGroupByDefinition: CompositeFieldGroupByDefinition;
   nestedFieldName: string;
-  fieldMetadata: FieldMetadataEntity;
-  nestedFieldMetadata: FieldMetadataEntity;
+  fieldMetadata: FlatFieldMetadata;
+  nestedFieldMetadata: FlatFieldMetadata;
   groupByFields: GroupByField[];
 }) => {
   if (
@@ -130,13 +137,15 @@ export const parseGroupByRelationField = ({
   fieldNames,
   fieldName,
   fieldMetadata,
-  objectMetadataMaps,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
   groupByFields,
 }: {
   fieldNames: Record<string, unknown>;
   fieldName: string;
-  fieldMetadata: FieldMetadataEntity;
-  objectMetadataMaps: ObjectMetadataMaps;
+  fieldMetadata: FlatFieldMetadata;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   groupByFields: GroupByField[];
 }) => {
   const { nestedFieldGroupByDefinition, nestedFieldMetadata, nestedFieldName } =
@@ -144,7 +153,8 @@ export const parseGroupByRelationField = ({
       fieldNames,
       fieldName,
       fieldMetadata,
-      objectMetadataMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     });
 
   // Handle date fields in nested relations

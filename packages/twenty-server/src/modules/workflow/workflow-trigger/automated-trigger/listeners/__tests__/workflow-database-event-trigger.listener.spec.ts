@@ -1,13 +1,13 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/workflow-database-event-trigger.listener';
 import { WorkflowTriggerJob } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
-import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
-import { getMockObjectMetadataItemWithFieldsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
 
 describe('WorkflowDatabaseEventTriggerListener', () => {
   let listener: WorkflowDatabaseEventTriggerListener;
@@ -17,6 +17,35 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
   const mockRepository = {
     find: jest.fn(),
   };
+
+  const createMockFlatObjectMetadata = (
+    overrides: Partial<FlatObjectMetadata>,
+  ): FlatObjectMetadata =>
+    ({
+      id: 'test-object-metadata',
+      workspaceId: 'test-workspace',
+      nameSingular: 'testObject',
+      namePlural: 'testObjects',
+      labelSingular: 'Test Object',
+      labelPlural: 'Test Objects',
+      description: 'Test object for testing',
+      targetTableName: 'test_objects',
+      isSystem: false,
+      isCustom: false,
+      isActive: true,
+      isRemote: false,
+      isAuditLogged: true,
+      isSearchable: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      icon: 'Icon123',
+      universalIdentifier: 'test-object-metadata',
+      fieldMetadataIds: [],
+      indexMetadataIds: [],
+      viewIds: [],
+      applicationId: null,
+      ...overrides,
+    }) as FlatObjectMetadata;
 
   beforeEach(async () => {
     twentyORMGlobalManager = {
@@ -46,38 +75,9 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           provide: WorkflowCommonWorkspaceService,
           useValue: {
             getWorkflowById: jest.fn(),
-            getObjectMetadataItemWithFieldsMaps: jest.fn().mockResolvedValue({
-              objectMetadataMaps: {
-                byId: {
-                  'test-object-metadata': {
-                    nameSingular: 'testObject',
-                    namePlural: 'testObjects',
-                  },
-                },
-              },
-              objectMetadataItemWithFieldsMaps:
-                getMockObjectMetadataItemWithFieldsMaps({
-                  id: 'test-object-metadata',
-                  workspaceId: 'test-workspace',
-                  nameSingular: 'testObject',
-                  namePlural: 'testObjects',
-                  labelSingular: 'Test Object',
-                  labelPlural: 'Test Objects',
-                  description: 'Test object for testing',
-                  indexMetadatas: [],
-                  targetTableName: 'test_objects',
-                  isSystem: false,
-                  isCustom: false,
-                  isActive: true,
-                  isRemote: false,
-                  isAuditLogged: true,
-                  isSearchable: true,
-                  icon: 'Icon123',
-                  fieldIdByJoinColumnName: {},
-                  fieldsById: {},
-                  fieldIdByName: {},
-                }),
-            }),
+            getObjectMetadataItemWithFieldsMaps: jest
+              .fn()
+              .mockResolvedValue(undefined),
           },
         },
       ],
@@ -93,30 +93,10 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     const databaseEventName = 'testEvent';
     const workflowId = 'test-workflow';
 
-    const mockPayload = {
+    const mockPayload: WorkspaceEventBatch<any> = {
       workspaceId,
       name: databaseEventName,
-      objectMetadata: getMockObjectMetadataEntity({
-        id: 'test-object-metadata',
-        workspaceId,
-        nameSingular: 'testObject',
-        namePlural: 'testObjects',
-        labelSingular: 'Test Object',
-        labelPlural: 'Test Objects',
-        description: 'Test object for testing',
-        targetTableName: 'test_objects',
-        isSystem: false,
-        isCustom: false,
-        isActive: true,
-        isRemote: false,
-        isAuditLogged: true,
-        isSearchable: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        fields: [],
-        indexMetadatas: [],
-        icon: 'Icon123',
-      }),
+      objectMetadata: createMockFlatObjectMetadata({}),
       events: [
         {
           recordId: 'test-record',
@@ -205,7 +185,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     });
 
     it('should handle create events correctly', async () => {
-      const createPayload = {
+      const createPayload: WorkspaceEventBatch<any> = {
         ...mockPayload,
         name: 'createEvent',
         events: [
@@ -242,7 +222,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     });
 
     it('should handle delete events correctly', async () => {
-      const deletePayload = {
+      const deletePayload: WorkspaceEventBatch<any> = {
         ...mockPayload,
         name: 'deleteEvent',
         events: [
@@ -279,7 +259,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     });
 
     it('should handle destroy events correctly', async () => {
-      const destroyPayload = {
+      const destroyPayload: WorkspaceEventBatch<any> = {
         ...mockPayload,
         name: 'destroyEvent',
         events: [
@@ -316,7 +296,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     });
 
     it('should handle multiple events in a batch', async () => {
-      const batchPayload = {
+      const batchPayload: WorkspaceEventBatch<any> = {
         ...mockPayload,
         events: [
           mockPayload.events[0],

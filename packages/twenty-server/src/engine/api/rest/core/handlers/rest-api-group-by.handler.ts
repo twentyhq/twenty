@@ -29,8 +29,10 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
         groupBy,
         selectedFields,
         authContext,
-        objectMetadataMaps,
-        objectMetadataItemWithFieldMaps,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        objectIdByNameSingular,
         includeRecords,
         orderByForRecords,
       } = await this.parseRequestArgs(request);
@@ -47,8 +49,10 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
         },
         {
           authContext,
-          objectMetadataMaps,
-          objectMetadataItemWithFieldMaps,
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          objectIdByNameSingular,
         },
       );
     } catch (error) {
@@ -57,8 +61,13 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
   }
 
   private async parseRequestArgs(request: AuthenticatedRequest) {
-    const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
-      await this.buildCommonOptions(request);
+    const {
+      authContext,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
+    } = await this.buildCommonOptions(request);
 
     const orderByWithGroupBy = parseOrderByWithGroupByRestRequest(request);
     const orderByForRecordsWithGroupBy =
@@ -73,8 +82,9 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
     if (includeRecords) {
       const selectableFields = await this.computeSelectedFields({
         depth: 0,
-        objectMetadataMapItem: objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
         authContext,
       });
 
@@ -83,8 +93,10 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
 
     return {
       authContext,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
       filter,
       orderBy: orderByWithGroupBy,
       orderByForRecords: orderByForRecordsWithGroupBy,

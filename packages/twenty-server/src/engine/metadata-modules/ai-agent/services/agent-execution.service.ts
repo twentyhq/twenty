@@ -26,7 +26,6 @@ import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai-agent/const
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai-agent/services/agent-actor-context.service';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/ai-agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { type ToolHints } from 'src/engine/metadata-modules/ai-router/types/tool-hints.interface';
-import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
@@ -189,8 +188,12 @@ export class AgentExecutionService {
         workspaceId: workspace.id,
       });
 
-    const objectMetadataMaps =
-      workspaceDataSource.internalContext.objectMetadataMaps;
+    const flatObjectMetadataMaps =
+      workspaceDataSource.internalContext.flatObjectMetadataMaps;
+    const flatFieldMetadataMaps =
+      workspaceDataSource.internalContext.flatFieldMetadataMaps;
+    const objectIdByNameSingular =
+      workspaceDataSource.internalContext.objectIdByNameSingular;
     const objectMetadataPermissions = workspaceDataSource.permissionsPerRoleId;
 
     const contextObject = (
@@ -201,11 +204,13 @@ export class AgentExecutionService {
               return [];
             }
 
-            const objectMetadataMapItem =
-              getObjectMetadataMapItemByNameSingular(
-                objectMetadataMaps,
-                recordsWithObjectMetadataNameSingular.objectMetadataNameSingular,
-              );
+            const objectMetadataId =
+              objectIdByNameSingular[
+                recordsWithObjectMetadataNameSingular.objectMetadataNameSingular
+              ];
+            const objectMetadataMapItem = objectMetadataId
+              ? flatObjectMetadataMaps.byId[objectMetadataId]
+              : undefined;
 
             if (!objectMetadataMapItem) {
               this.logger.warn(
@@ -231,7 +236,10 @@ export class AgentExecutionService {
             const selectOptions = hasRestrictedFields
               ? getAllSelectableColumnNames({
                   restrictedFields,
-                  objectMetadata: { objectMetadataMapItem },
+                  objectMetadata: {
+                    objectMetadataMapItem,
+                    flatFieldMetadataMaps,
+                  },
                 })
               : undefined;
 

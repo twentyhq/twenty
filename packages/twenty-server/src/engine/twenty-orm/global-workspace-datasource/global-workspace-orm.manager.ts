@@ -6,9 +6,10 @@ import { EntitySchema, ObjectLiteral } from 'typeorm';
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { buildObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-metadata-item-with-field-maps.util';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
@@ -99,23 +100,8 @@ export class GlobalWorkspaceOrmManager {
         },
       );
 
-    const { idByNameSingular } = buildObjectIdByNameMaps(
-      flatObjectMetadataMaps,
-    );
-    const objectMetadataMaps: ObjectMetadataMaps = {
-      byId: {},
-      idByNameSingular,
-    };
-
-    for (const [id, flatObj] of Object.entries(flatObjectMetadataMaps.byId)) {
-      if (isDefined(flatObj)) {
-        objectMetadataMaps.byId[id] = buildObjectMetadataItemWithFieldMaps(
-          flatObj,
-          flatFieldMetadataMaps,
-          flatIndexMaps,
-        );
-      }
-    }
+    const { idByNameSingular: objectIdByNameSingular } =
+      buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
     const metadataVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
@@ -139,12 +125,16 @@ export class GlobalWorkspaceOrmManager {
     const entitySchemas = await this.buildEntitySchemas(
       workspaceId,
       metadataVersion,
-      objectMetadataMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     );
 
     return {
       authContext,
-      objectMetadataMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatIndexMaps,
+      objectIdByNameSingular,
       metadataVersion,
       featureFlagsMap,
       permissionsPerRoleId,
@@ -155,7 +145,8 @@ export class GlobalWorkspaceOrmManager {
   private async buildEntitySchemas(
     workspaceId: string,
     dataSourceMetadataVersion: number,
-    objectMetadataMaps: ObjectMetadataMaps,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ) {
     const cachedEntitySchemaOptions =
       await this.workspaceCacheStorageService.getORMEntitySchema(
@@ -170,17 +161,16 @@ export class GlobalWorkspaceOrmManager {
         (option) => new EntitySchema(option),
       );
     } else {
-      const entitySchemas = await Promise.all(
-        Object.values(objectMetadataMaps.byId)
-          .filter(isDefined)
-          .map((objectMetadata) =>
-            this.entitySchemaFactory.create(
-              workspaceId,
-              objectMetadata,
-              objectMetadataMaps,
-            ),
+      const entitySchemas = Object.values(flatObjectMetadataMaps.byId)
+        .filter(isDefined)
+        .map((flatObjectMetadata) =>
+          this.entitySchemaFactory.create(
+            workspaceId,
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
           ),
-      );
+        );
 
       await this.workspaceCacheStorageService.setORMEntitySchema(
         workspaceId,

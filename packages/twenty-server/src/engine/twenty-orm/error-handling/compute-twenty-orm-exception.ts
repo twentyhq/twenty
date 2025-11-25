@@ -5,7 +5,7 @@ import { QueryFailedError } from 'typeorm';
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { handleDuplicateKeyError } from 'src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util';
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
@@ -17,7 +17,7 @@ interface QueryFailedErrorWithCode extends QueryFailedError {
 
 export const computeTwentyORMException = (
   error: Error,
-  objectMetadata?: ObjectMetadataItemWithFieldMaps,
+  objectMetadata?: FlatObjectMetadata,
 ) => {
   if (error instanceof QueryFailedError) {
     if (error.message.includes('Query read timeout')) {
