@@ -6,19 +6,19 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource, type QueryRunner, Table, type TableColumn } from 'typeorm';
 
 import {
-    IndexMetadataException,
-    IndexMetadataExceptionCode,
+  IndexMetadataException,
+  IndexMetadataExceptionCode,
 } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.exception';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import {
-    type WorkspaceMigrationColumnAction,
-    WorkspaceMigrationColumnActionType,
-    type WorkspaceMigrationColumnCreate,
-    type WorkspaceMigrationForeignTable,
-    type WorkspaceMigrationIndexAction,
-    WorkspaceMigrationIndexActionType,
-    type WorkspaceMigrationTableAction,
-    WorkspaceMigrationTableActionType,
+  type WorkspaceMigrationColumnAction,
+  WorkspaceMigrationColumnActionType,
+  type WorkspaceMigrationColumnCreate,
+  type WorkspaceMigrationForeignTable,
+  type WorkspaceMigrationIndexAction,
+  WorkspaceMigrationIndexActionType,
+  type WorkspaceMigrationTableAction,
+  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';

@@ -15,11 +15,12 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
+import { deprecatedGenerateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/deprecated-generate-default-value';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -36,10 +37,8 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 
-// npx nx command twenty-server upgrade:1-11:clean-null-equivalent-values
-
 @Command({
-  name: 'upgrade:1-11:clean-null-equivalent-values',
+  name: 'upgrade:1-12:clean-null-equivalent-values',
   description: 'Clean up null equivalent values in the database',
 })
 export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
@@ -76,23 +75,23 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
       this.logger.log('Dry run mode: No changes will be applied');
     }
 
-    // const featureFlag = await this.featureFlagRepository.findOne({
-    //   where: {
-    //     key: FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED,
-    //     value: true,
-    //     workspaceId,
-    //   },
-    // });
+    const featureFlag = await this.featureFlagRepository.findOne({
+      where: {
+        key: FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED,
+        value: true,
+        workspaceId,
+      },
+    });
 
-    // if (isDefined(featureFlag)) {
-    //   this.logger.log(
-    //     `Feature flag ${FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED} already enabled for workspace ${workspaceId}`,
-    //   );
+    if (isDefined(featureFlag)) {
+      this.logger.log(
+        `Feature flag ${FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED} already enabled for workspace ${workspaceId}`,
+      );
 
-    //   return;
-    // }
+      return;
+    }
 
-    const objectMetadatas = await this.objectMetadataRepository.find({
+    const objectMetadataItems = await this.objectMetadataRepository.find({
       where: { workspaceId },
       relations: [
         'fields',
@@ -101,11 +100,13 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
       ],
     });
 
-    for (const objectMetadata of objectMetadatas) {
-      const tableName = computeObjectTargetTable(objectMetadata);
+    for (const objectMetadataItem of objectMetadataItems) {
+      const tableName = computeObjectTargetTable(objectMetadataItem);
 
-      for (const field of objectMetadata.fields) {
-        const fieldDefaultDefaultValue = generateDefaultValue(field.type);
+      for (const field of objectMetadataItem.fields) {
+        const fieldDefaultDefaultValue = deprecatedGenerateDefaultValue(
+          field.type,
+        );
 
         if (
           isDefined(field.defaultValue) &&
@@ -115,7 +116,7 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
           field.type !== FieldMetadataType.ACTOR
         ) {
           this.logger.log(
-            `Processing field ${field.name} on object ${objectMetadata.nameSingular} (Table: ${tableName})`,
+            `Processing field ${field.name} on object ${objectMetadataItem.nameSingular} (Table: ${tableName})`,
           );
 
           if (isCompositeFieldMetadataType(field.type)) {
@@ -168,7 +169,7 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
             defaultValue: null,
           });
 
-          const relevantIndexes = objectMetadata.indexMetadatas.filter(
+          const relevantIndexes = objectMetadataItem.indexMetadatas.filter(
             (index) =>
               index.isUnique &&
               index.indexFieldMetadatas.some(
@@ -188,7 +189,7 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
 
               const columnNames = index.indexFieldMetadatas.flatMap(
                 (indexFieldMetadata) => {
-                  const fieldMetadata = objectMetadata.fields.find(
+                  const fieldMetadata = objectMetadataItem.fields.find(
                     (f) => f.id === indexFieldMetadata.fieldMetadataId,
                   );
 
@@ -253,20 +254,20 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
         }
       }
 
-      // if (!isDryRun) {
-      //   await this.featureFlagRepository.upsert(
-      //     {
-      //       key: FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED,
-      //       value: true,
-      //       workspaceId,
-      //     },
-      //     ['key', 'workspaceId'],
-      //   );
+      if (!isDryRun) {
+        await this.featureFlagRepository.upsert(
+          {
+            key: FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED,
+            value: true,
+            workspaceId,
+          },
+          ['key', 'workspaceId'],
+        );
 
-      //   this.logger.log(
-      //     `Switched on feature flag ${FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED} for workspace ${workspaceId}`,
-      //   );
-      // }
+        this.logger.log(
+          `Switched on feature flag ${FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED} for workspace ${workspaceId}`,
+        );
+      }
     }
   }
 

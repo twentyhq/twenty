@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CleanNullEquivalentValuesCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-null-equivalent-values';
 import { CleanOrphanedRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-role-targets.command';
 import { CleanOrphanedUserWorkspacesCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-user-workspaces.command';
 import { CreateTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-create-twenty-standard-application.command';
@@ -43,13 +42,11 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     CleanOrphanedUserWorkspacesCommand,
     CleanOrphanedRoleTargetsCommand,
     CreateTwentyStandardApplicationCommand,
-    CleanNullEquivalentValuesCommand,
   ],
   exports: [
     CleanOrphanedUserWorkspacesCommand,
     CleanOrphanedRoleTargetsCommand,
     CreateTwentyStandardApplicationCommand,
-    CleanNullEquivalentValuesCommand,
   ],
 })
 export class V1_11_UpgradeVersionCommandModule {}
