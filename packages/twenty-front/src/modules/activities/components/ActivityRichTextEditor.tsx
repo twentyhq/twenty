@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
@@ -59,6 +60,7 @@ export const ActivityRichTextEditor = ({
   activityObjectNameSingular,
 }: ActivityRichTextEditorProps) => {
   const [activityInStore] = useRecoilState(recordStoreFamilyState(activityId));
+    const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
 
   const cache = useApolloCoreClient().cache;
   const activity = activityInStore as Task | Note | null;
@@ -346,6 +348,11 @@ export const ActivityRichTextEditor = ({
 
   const handleAllKeys = (keyboardEvent: KeyboardEvent) => {
     if (keyboardEvent.key === Key.Escape) {
+      return;
+    }
+
+        // Don't intercept keystrokes when command menu is open
+    if (isCommandMenuOpened) {
       return;
     }
 
