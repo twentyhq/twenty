@@ -9,7 +9,6 @@ import {
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -20,7 +19,7 @@ import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-o
 @Command({
   name: 'upgrade:1-12:add-messages-import-scheduled-sync-stage',
   description:
-    'Add MESSAGES_IMPORT_SCHEDULED sync stage to message channel syncStage field',
+    'Replace message channel syncStage enum with complete MessageChannelSyncStage values and update default to PENDING_CONFIGURATION',
 })
 export class AddMessagesImportScheduledSyncStageCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
@@ -42,7 +41,7 @@ export class AddMessagesImportScheduledSyncStageCommand extends ActiveOrSuspende
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     this.logger.log(
-      `Adding MESSAGES_IMPORT_SCHEDULED sync stage for workspace ${workspaceId}`,
+      `Updating message channel syncStage enum and default value for workspace ${workspaceId}`,
     );
 
     await this.updateMessageChannelSyncStageFieldMetadata(workspaceId, options);
@@ -50,7 +49,7 @@ export class AddMessagesImportScheduledSyncStageCommand extends ActiveOrSuspende
     await this.addMessagesImportScheduledEnumValue(workspaceId, options);
 
     this.logger.log(
-      `Successfully added MESSAGES_IMPORT_SCHEDULED sync stage for workspace ${workspaceId}`,
+      `Successfully updated message channel syncStage enum and default value for workspace ${workspaceId}`,
     );
   }
 
@@ -74,24 +73,64 @@ export class AddMessagesImportScheduledSyncStageCommand extends ActiveOrSuspende
     }
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
+    const tableName = 'messageChannel';
+    const columnName = 'syncStage';
+    const enumName = 'messageChannel_syncStage_enum';
 
     if (options.dryRun) {
       this.logger.log(
-        `Would try to add MESSAGES_IMPORT_SCHEDULED to messageChannel_syncStage_enum for workspace ${workspaceId}`,
+        `Would replace ${enumName} with complete MessageChannelSyncStage enum values for workspace ${workspaceId}`,
       );
-    } else {
-      try {
-        await this.coreDataSource.query(
-          `ALTER TYPE ${schemaName}."messageChannel_syncStage_enum" ADD VALUE IF NOT EXISTS 'MESSAGES_IMPORT_SCHEDULED'`,
-        );
-        this.logger.log(
-          `Added MESSAGES_IMPORT_SCHEDULED to messageChannel_syncStage_enum for workspace ${workspaceId}`,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Error adding MESSAGES_IMPORT_SCHEDULED to messageChannel_syncStage_enum for workspace ${workspaceId}: ${error}`,
-        );
-      }
+
+      return;
+    }
+
+    try {
+      // Convert column to text to avoid type conflicts
+      await this.coreDataSource.query(
+        `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${columnName}" TYPE text`,
+      );
+
+      // Drop the old enum
+      await this.coreDataSource.query(
+        `DROP TYPE IF EXISTS ${schemaName}."${enumName}"`,
+      );
+
+      // Create new enum with all MessageChannelSyncStage values
+      await this.coreDataSource.query(
+        `CREATE TYPE ${schemaName}."${enumName}" AS ENUM (
+          '${MessageChannelSyncStage.PENDING_CONFIGURATION}',
+          '${MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING}',
+          '${MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED}',
+          '${MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING}',
+          '${MessageChannelSyncStage.MESSAGES_IMPORT_PENDING}',
+          '${MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED}',
+          '${MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING}',
+          '${MessageChannelSyncStage.FAILED}'
+        )`,
+      );
+
+      // Convert column back to enum type
+      await this.coreDataSource.query(
+        `ALTER TABLE "${schemaName}"."${tableName}"
+         ALTER COLUMN "${columnName}" TYPE ${schemaName}."${enumName}"
+         USING "${columnName}"::${schemaName}."${enumName}"`,
+      );
+
+      // Update default value to PENDING_CONFIGURATION
+      await this.coreDataSource.query(
+        `ALTER TABLE "${schemaName}"."${tableName}"
+         ALTER COLUMN "${columnName}" SET DEFAULT '${MessageChannelSyncStage.PENDING_CONFIGURATION}'::${schemaName}."${enumName}"`,
+      );
+
+      this.logger.log(
+        `Successfully replaced ${enumName} with complete MessageChannelSyncStage enum values and updated default to PENDING_CONFIGURATION for workspace ${workspaceId}`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Error replacing ${enumName} for workspace ${workspaceId}: ${error}`,
+      );
+      throw error;
     }
   }
 
@@ -130,22 +169,6 @@ export class AddMessagesImportScheduledSyncStageCommand extends ActiveOrSuspende
       return;
     }
 
-    const fieldOptions = (syncStageField.options ||
-      []) as FieldMetadataComplexOption[];
-
-    const hasMessagesImportScheduled = fieldOptions.some(
-      (option) =>
-        option.value === MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
-    );
-
-    if (hasMessagesImportScheduled) {
-      this.logger.log(
-        `MessageChannel syncStage field metadata already has MESSAGES_IMPORT_SCHEDULED for workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
     if (options.dryRun) {
       this.logger.log(
         `Would add MESSAGES_IMPORT_SCHEDULED to MessageChannel syncStage field metadata for workspace ${workspaceId}`,
@@ -154,14 +177,59 @@ export class AddMessagesImportScheduledSyncStageCommand extends ActiveOrSuspende
       return;
     }
 
-    fieldOptions.push({
-      value: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
-      label: 'Messages import scheduled',
-      position: 4,
-      color: 'green',
-    });
+    const syncStageFieldOptions = [
+      {
+        value: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+        label: 'Messages list fetch pending',
+        position: 0,
+        color: 'blue',
+      },
+      {
+        value: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
+        label: 'Messages list fetch scheduled',
+        position: 1,
+        color: 'green',
+      },
+      {
+        value: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
+        label: 'Messages list fetch ongoing',
+        position: 2,
+        color: 'orange',
+      },
+      {
+        value: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+        label: 'Messages import pending',
+        position: 3,
+        color: 'blue',
+      },
+      {
+        value: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
+        label: 'Messages import scheduled',
+        position: 4,
+        color: 'green',
+      },
+      {
+        value: MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
+        label: 'Messages import ongoing',
+        position: 5,
+        color: 'orange',
+      },
+      {
+        value: MessageChannelSyncStage.FAILED,
+        label: 'Failed',
+        position: 6,
+        color: 'red',
+      },
+      {
+        value: MessageChannelSyncStage.PENDING_CONFIGURATION,
+        label: 'Pending configuration',
+        position: 7,
+        color: 'gray',
+      },
+    ];
 
-    syncStageField.options = fieldOptions;
+    syncStageField.options = syncStageFieldOptions;
+    syncStageField.defaultValue = `'${MessageChannelSyncStage.PENDING_CONFIGURATION}'`;
 
     await this.fieldMetadataRepository.save(syncStageField);
 
