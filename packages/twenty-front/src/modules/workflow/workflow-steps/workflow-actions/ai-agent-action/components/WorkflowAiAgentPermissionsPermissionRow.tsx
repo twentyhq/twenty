@@ -16,6 +16,8 @@ type WorkflowAiAgentPermissionsPermissionRowProps = {
   };
   isEnabled: boolean;
   readonly: boolean;
+  showDeleteButton?: boolean;
+  alwaysShowGranted?: boolean;
   onAdd?: () => void;
   onDelete?: () => void;
 };
@@ -24,21 +26,29 @@ export const WorkflowAiAgentPermissionsPermissionRow = ({
   permission,
   isEnabled,
   readonly,
+  showDeleteButton = true,
+  alwaysShowGranted = false,
   onAdd,
   onDelete,
 }: WorkflowAiAgentPermissionsPermissionRowProps) => {
+  const isClickable = !readonly && !isEnabled;
+  const isDisabled = isEnabled && !showDeleteButton;
+
   return (
-    <StyledRow onClick={!readonly && !isEnabled ? onAdd : undefined}>
+    <StyledRow
+      onClick={isClickable ? onAdd : undefined}
+      style={isDisabled ? { opacity: 0.5, cursor: 'not-allowed' } : undefined}
+    >
       <StyledRowLeftContent>
         <StyledIconContainer>
           <PermissionIcon
             permission={permission.key}
-            state={isEnabled ? 'granted' : 'revoked'}
+            state={alwaysShowGranted || isEnabled ? 'granted' : 'revoked'}
           />
         </StyledIconContainer>
         <StyledText>{permission.label}</StyledText>
       </StyledRowLeftContent>
-      {isEnabled && (
+      {isEnabled && showDeleteButton && (
         <IconButton
           Icon={IconTrash}
           variant="tertiary"

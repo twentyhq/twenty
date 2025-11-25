@@ -42,6 +42,8 @@ export const WorkflowAiAgentPermissionsCrudList = ({
               permission={permission}
               isEnabled={isEnabled}
               readonly={readonly}
+              showDeleteButton={false}
+              alwaysShowGranted={true}
               onAdd={() => {
                 void onAddPermission(objectMetadataId, permission.key);
               }}
