@@ -3,7 +3,7 @@ import { type Plugin } from 'graphql-yoga';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
-export const useComputeComplexity = (maximumComplexity = 1000): Plugin => ({
+export const useComputeComplexity = (maximumComplexity: number): Plugin => ({
   onValidate: ({ addValidationRule }) => {
     addValidationRule(
       queryComplexity({

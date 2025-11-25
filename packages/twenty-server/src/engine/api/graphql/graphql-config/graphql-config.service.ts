@@ -76,7 +76,9 @@ export class GraphQLConfigService
       useDisableIntrospectionForUnauthenticatedUsers(
         this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION,
       ),
-      useComputeComplexity(1000),
+      useComputeComplexity(
+        this.twentyConfigService.get('GRAPHQL_MAXIMUM_COMPLEXITY'),
+      ),
     ];
 
     if (Sentry.isInitialized()) {
