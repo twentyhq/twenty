@@ -4,7 +4,7 @@ import {
   TEST_UUID_FIELD_VALUE,
 } from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, isEmptyObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 export const successfulFilterInputByFieldMetadataType: {
   [K in FieldMetadataTypesToTestForFilterInputValidation]: {
@@ -895,7 +895,7 @@ export const successfulFilterInputByFieldMetadataType: {
       gqlFilterInput: { rawJsonField: { is: 'NULL' } },
       restFilterInput: 'rawJsonField[is]:NULL',
       validateFilter: (record: Record<string, any>) => {
-        return isEmptyObject(record.rawJsonField);
+        return record.rawJsonField === null;
       },
     },
     {

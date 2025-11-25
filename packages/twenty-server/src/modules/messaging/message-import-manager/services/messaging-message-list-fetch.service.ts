@@ -30,6 +30,7 @@ import {
   MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
+import { MessagingProcessFolderActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
@@ -50,6 +51,7 @@ export class MessagingMessageListFetchService {
     private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
     private readonly syncMessageFoldersService: SyncMessageFoldersService,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
+    private readonly messagingProcessFolderActionsService: MessagingProcessFolderActionsService,
   ) {}
 
   public async processMessageListFetch(
@@ -57,21 +59,17 @@ export class MessagingMessageListFetchService {
     workspaceId: string,
   ) {
     try {
-      if (
-        messageChannel.pendingGroupEmailsAction ===
-          MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_DELETION ||
-        messageChannel.pendingGroupEmailsAction ===
-          MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_IMPORT
-      ) {
-        this.logger.log(
-          `messageChannelId: ${messageChannel.id} Processing pending group emails action before message list fetch: ${messageChannel.pendingGroupEmailsAction}`,
-        );
+      const pendingGroupEmailActionsProcessed =
+        await this.processPendingGroupEmailActions(messageChannel, workspaceId);
 
-        await this.messagingProcessGroupEmailActionsService.processGroupEmailActions(
-          messageChannel,
-          workspaceId,
-        );
+      if (pendingGroupEmailActionsProcessed) {
+        return;
+      }
 
+      const pendingFolderActionsProcessed =
+        await this.processPendingFolderActions(messageChannel, workspaceId);
+
+      if (pendingFolderActionsProcessed) {
         return;
       }
 
@@ -286,6 +284,65 @@ export class MessagingMessageListFetchService {
         workspaceId,
       );
     }
+  }
+
+  private async processPendingGroupEmailActions(
+    messageChannel: MessageChannelWorkspaceEntity,
+    workspaceId: string,
+  ): Promise<boolean> {
+    const hasPendingGroupEmailAction =
+      messageChannel.pendingGroupEmailsAction ===
+        MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_DELETION ||
+      messageChannel.pendingGroupEmailsAction ===
+        MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_IMPORT;
+
+    if (!hasPendingGroupEmailAction) {
+      return false;
+    }
+
+    this.logger.log(
+      `messageChannelId: ${messageChannel.id} Processing pending group emails action before message list fetch: ${messageChannel.pendingGroupEmailsAction}`,
+    );
+
+    await this.messagingProcessGroupEmailActionsService.processGroupEmailActions(
+      messageChannel,
+      workspaceId,
+    );
+
+    return true;
+  }
+
+  private async processPendingFolderActions(
+    messageChannel: MessageChannelWorkspaceEntity,
+    workspaceId: string,
+  ): Promise<boolean> {
+    const messageFolderRepository =
+      await this.twentyORMManager.getRepository<MessageFolderWorkspaceEntity>(
+        'messageFolder',
+      );
+
+    const foldersWithPendingActions = await messageFolderRepository.find({
+      where: {
+        messageChannelId: messageChannel.id,
+        pendingSyncAction: MessageFolderPendingSyncAction.FOLDER_DELETION,
+      },
+    });
+
+    if (foldersWithPendingActions.length === 0) {
+      return false;
+    }
+
+    this.logger.log(
+      `messageChannelId: ${messageChannel.id} Processing pending folder actions before message list fetch`,
+    );
+
+    await this.messagingProcessFolderActionsService.processFolderActions(
+      messageChannel,
+      foldersWithPendingActions,
+      workspaceId,
+    );
+
+    return true;
   }
 
   private async computeFullSyncMessageChannelMessageAssociationsToDelete(

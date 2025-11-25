@@ -5,7 +5,7 @@ import { DATA_LABELS_SETTING } from '@/command-menu/pages/page-layout/constants/
 import { DATE_GRANULARITY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DateGranularitySetting';
 import { EACH_SLICE_REPRESENTS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/EachSliceRepresentsSetting';
 import { FILTER_SETTING } from '@/command-menu/pages/page-layout/constants/settings/FilterSetting';
-import { SORT_BY_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByXSetting';
+import { PRIMARY_SORT_BY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/PrimarySortBySetting';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 
 export const PIE_CHART_SETTINGS: ChartSettingsGroup[] = [
@@ -17,7 +17,7 @@ export const PIE_CHART_SETTINGS: ChartSettingsGroup[] = [
       DATA_DISPLAY_PIE_CHART_SETTING,
       DATE_GRANULARITY_SETTING,
       EACH_SLICE_REPRESENTS_SETTING,
-      SORT_BY_X_SETTING,
+      PRIMARY_SORT_BY_SETTING,
     ],
   },
   {

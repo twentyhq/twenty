@@ -1,25 +1,26 @@
 import { GRAPH_TYPE_TO_CONFIG_TYPENAME } from '@/command-menu/pages/page-layout/constants/GraphTypeToConfigTypename';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
+import { convertAggregateOperationForDateField } from '@/command-menu/pages/page-layout/utils/convertAggregateOperationForDateField';
+import { convertBarOrLineChartConfigToPieChart } from '@/command-menu/pages/page-layout/utils/convertBarOrLineChartConfigToPieChart';
+import { convertPieChartConfigToBarOrLineChart } from '@/command-menu/pages/page-layout/utils/convertPieChartConfigToBarOrLineChart';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { updateWidgetMinimumSizeForGraphType } from '@/page-layout/utils/updateWidgetMinimumSizeForGraphType';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
 
-export const useUpdateGraphTypeConfig = ({
+export const useGetConfigToUpdateAfterGraphTypeChange = ({
   pageLayoutId,
   widget,
-  configuration,
 }: {
   pageLayoutId: string;
   widget: PageLayoutWidget;
-  configuration: ChartConfiguration;
 }) => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -40,10 +41,41 @@ export const useUpdateGraphTypeConfig = ({
     pageLayoutId,
   );
 
-  const updateGraphTypeConfig = useRecoilCallback(
+  const pageLayoutDraftState = useRecoilComponentCallbackState(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
+
+  const getConfigToUpdateAfterGraphTypeChange = useRecoilCallback(
     ({ set, snapshot }) =>
       (graphType: GraphType) => {
-        const configToUpdate: Record<string, any> = {
+        const currentlyEditingWidgetId = snapshot
+          .getLoadable(currentlyEditingWidgetIdState)
+          .getValue();
+
+        if (!isDefined(currentlyEditingWidgetId)) {
+          throw new Error('No widget is currently being edited');
+        }
+
+        const draftPageLayout = snapshot
+          .getLoadable(pageLayoutDraftState)
+          .getValue();
+
+        const widgetInDraft = draftPageLayout.tabs
+          .flatMap((tab) => tab.widgets)
+          .find((w) => w.id === currentlyEditingWidgetId);
+
+        if (
+          !isDefined(widgetInDraft) ||
+          !isDefined(widgetInDraft.configuration)
+        ) {
+          throw new Error('Widget configuration not found in draft state');
+        }
+
+        const currentConfiguration =
+          widgetInDraft.configuration as ChartConfiguration;
+
+        let configToUpdate: Record<string, any> = {
           __typename: GRAPH_TYPE_TO_CONFIG_TYPENAME[graphType],
           graphType,
         };
@@ -52,33 +84,50 @@ export const useUpdateGraphTypeConfig = ({
           graphType !== GraphType.AGGREGATE &&
           graphType !== GraphType.GAUGE
         ) {
-          const currentAggregateFieldMetadataId =
-            configuration.aggregateFieldMetadataId;
-
           const objectMetadataItem = objectMetadataItems.find(
             (item) => item.id === widget.objectMetadataId,
           );
 
-          if (isDefined(objectMetadataItem)) {
-            const aggregateField = objectMetadataItem.fields.find(
-              (field) => field.id === currentAggregateFieldMetadataId,
+          const convertedAggregateOperation =
+            convertAggregateOperationForDateField(
+              currentConfiguration,
+              objectMetadataItem,
             );
 
-            if (
-              isDefined(aggregateField) &&
-              isFieldMetadataDateKind(aggregateField.type) &&
-              (configuration.aggregateOperation === AggregateOperations.MIN ||
-                configuration.aggregateOperation === AggregateOperations.MAX)
-            ) {
-              configToUpdate.aggregateOperation = AggregateOperations.COUNT;
-            }
+          if (isDefined(convertedAggregateOperation)) {
+            configToUpdate = {
+              ...configToUpdate,
+              aggregateOperation: convertedAggregateOperation,
+            };
           }
         }
 
+        const isPieChart = graphType === GraphType.PIE;
+        const isBarOrLineChart =
+          graphType === GraphType.VERTICAL_BAR ||
+          graphType === GraphType.HORIZONTAL_BAR ||
+          graphType === GraphType.LINE;
+        const wasBarOrLineChart =
+          currentConfiguration.__typename === 'BarChartConfiguration' ||
+          currentConfiguration.__typename === 'LineChartConfiguration';
+        const wasPieChart =
+          currentConfiguration.__typename === 'PieChartConfiguration';
+
+        if (isPieChart && wasBarOrLineChart) {
+          configToUpdate = {
+            ...configToUpdate,
+            ...convertBarOrLineChartConfigToPieChart(currentConfiguration),
+          };
+        }
+
+        if (isBarOrLineChart && wasPieChart) {
+          configToUpdate = {
+            ...configToUpdate,
+            ...convertPieChartConfigToBarOrLineChart(currentConfiguration),
+          };
+        }
+
         const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
-        const currentlyEditingWidgetId = snapshot
-          .getLoadable(currentlyEditingWidgetIdState)
-          .getValue();
 
         if (isDefined(activeTabId) && isDefined(currentlyEditingWidgetId)) {
           const currentLayouts = snapshot
@@ -99,13 +148,13 @@ export const useUpdateGraphTypeConfig = ({
       },
     [
       activeTabIdState,
-      configuration,
       currentlyEditingWidgetIdState,
       objectMetadataItems,
       pageLayoutCurrentLayoutsState,
+      pageLayoutDraftState,
       widget.objectMetadataId,
     ],
   );
 
-  return { updateGraphTypeConfig };
+  return { getConfigToUpdateAfterGraphTypeChange };
 };

@@ -1,10 +1,10 @@
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
+  ActorMetadata,
   FieldMetadataType,
   RelationOnDeleteAction,
-  ActorMetadata,
 } from 'twenty-shared/types';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -85,7 +85,8 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The workflow name`,
     icon: 'IconSettingsAutomation',
   })
-  name: string;
+  @WorkspaceIsNullable()
+  name: string | null;
 
   @WorkspaceField({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.lastPublishedVersionId,
