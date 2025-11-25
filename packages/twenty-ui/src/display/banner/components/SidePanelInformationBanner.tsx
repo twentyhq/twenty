@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconAlertTriangle,
   IconInfoCircle,
@@ -66,7 +67,7 @@ export const SidePanelInformationBanner = ({
         )}
       </StyledIconContainer>
       <StyledMessage>{message}</StyledMessage>
-      {tooltipMessage && (
+      {isDefined(tooltipMessage) && (
         <AppTooltip
           anchorSelect={`[data-tooltip-id='${tooltipId}']`}
           content={tooltipMessage}

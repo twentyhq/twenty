@@ -8,7 +8,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 describe('WorkspaceSchemaFactory', () => {
@@ -43,7 +43,7 @@ describe('WorkspaceSchemaFactory', () => {
           useValue: {},
         },
         {
-          provide: WorkspaceMetadataCacheService,
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
           useValue: {},
         },
         {

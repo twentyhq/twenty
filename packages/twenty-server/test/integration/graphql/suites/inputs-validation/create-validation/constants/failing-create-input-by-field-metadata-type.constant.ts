@@ -9,11 +9,6 @@ export const failingCreateInputByFieldMetadataType: {
   [FieldMetadataType.TEXT]: [
     {
       input: {
-        textField: null,
-      },
-    },
-    {
-      input: {
         textField: {},
       },
     },
