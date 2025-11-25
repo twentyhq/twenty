@@ -1,9 +1,9 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMaximumNumberOfDataPoints.constant';
 import { LINE_CHART_MAXIMUM_NUMBER_OF_SERIES } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMaximumNumberOfSeries.constant';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { isChartConfigurationTwoDimensionalStacked } from '@/page-layout/widgets/graph/utils/isChartConfigurationTwoDimensionalStacked';
 import { transformGroupByDataToLineChartData } from '@/page-layout/widgets/graph/utils/transformGroupByDataToLineChartData';
 import { useMemo } from 'react';
@@ -20,9 +20,12 @@ type UseGraphLineChartWidgetDataResult = {
   yAxisLabel?: string;
   showDataLabels: boolean;
   hasTooManyGroups: boolean;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
   loading: boolean;
   error?: Error;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: ReturnType<
+    typeof useObjectMetadataItemById
+  >['objectMetadataItem'];
 };
 
 const EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS = 1;

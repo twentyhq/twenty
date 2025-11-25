@@ -1,13 +1,13 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
 import { BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfGroupsPerBar.constant';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { transformGroupByDataToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformGroupByDataToBarChartData';
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { isChartConfigurationTwoDimensionalStacked } from '@/page-layout/widgets/graph/utils/isChartConfigurationTwoDimensionalStacked';
+import { type BarDatum } from '@nivo/bar';
 import { useMemo } from 'react';
 import { type BarChartConfiguration } from '~/generated/graphql';
 
@@ -17,7 +17,7 @@ type UseGraphBarChartWidgetDataProps = {
 };
 
 type UseGraphBarChartWidgetDataResult = {
-  data: BarChartDataItem[];
+  data: BarDatum[];
   indexBy: string;
   keys: string[];
   series: BarChartSeries[];
@@ -28,7 +28,10 @@ type UseGraphBarChartWidgetDataResult = {
   loading: boolean;
   error?: Error;
   hasTooManyGroups: boolean;
-  objectMetadataItem: ObjectMetadataItem;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
+  objectMetadataItem: ReturnType<
+    typeof useObjectMetadataItemById
+  >['objectMetadataItem'];
 };
 
 // TODO: Remove this once backend returns total group count
