@@ -9,6 +9,7 @@ import { WorkspaceCustomApplicationIdNonNullableCommand } from 'src/database/com
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 
@@ -21,6 +22,7 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
     ]),
     WorkspaceSchemaManagerModule,
     ApplicationModule,
+    FieldMetadataModule,
   ],
   providers: [
     AddCalendarEventsImportScheduledSyncStageCommand,

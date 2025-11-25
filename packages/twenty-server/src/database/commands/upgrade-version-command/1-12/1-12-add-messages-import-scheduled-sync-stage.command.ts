@@ -1,8 +1,8 @@
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -11,9 +11,9 @@ import {
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { MESSAGE_CHANNEL_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
@@ -31,8 +31,7 @@ export class AddMessagesImportScheduledSyncStageCommand extends ActiveOrSuspende
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
+    private readonly fieldMetadataService: FieldMetadataServiceV2,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -45,19 +44,6 @@ export class AddMessagesImportScheduledSyncStageCommand extends ActiveOrSuspende
       `Adding MESSAGES_IMPORT_SCHEDULED sync stage for workspace ${workspaceId}`,
     );
 
-    await this.updateMessageChannelSyncStageFieldMetadata(workspaceId, options);
-
-    await this.addMessagesImportScheduledEnumValue(workspaceId, options);
-
-    this.logger.log(
-      `Successfully added MESSAGES_IMPORT_SCHEDULED sync stage for workspace ${workspaceId}`,
-    );
-  }
-
-  private async addMessagesImportScheduledEnumValue(
-    workspaceId: string,
-    options: RunOnWorkspaceArgs['options'],
-  ): Promise<void> {
     const messageChannelObject = await this.objectMetadataRepository.findOne({
       where: {
         standardId: STANDARD_OBJECT_IDS.messageChannel,
@@ -68,47 +54,6 @@ export class AddMessagesImportScheduledSyncStageCommand extends ActiveOrSuspende
     if (!messageChannelObject) {
       this.logger.log(
         `MessageChannel object not found for workspace ${workspaceId}, skipping enum migration`,
-      );
-
-      return;
-    }
-
-    const schemaName = getWorkspaceSchemaName(workspaceId);
-
-    if (options.dryRun) {
-      this.logger.log(
-        `Would try to add MESSAGES_IMPORT_SCHEDULED to messageChannel_syncStage_enum for workspace ${workspaceId}`,
-      );
-    } else {
-      try {
-        await this.coreDataSource.query(
-          `ALTER TYPE ${schemaName}."messageChannel_syncStage_enum" ADD VALUE IF NOT EXISTS 'MESSAGES_IMPORT_SCHEDULED'`,
-        );
-        this.logger.log(
-          `Added MESSAGES_IMPORT_SCHEDULED to messageChannel_syncStage_enum for workspace ${workspaceId}`,
-        );
-      } catch (error) {
-        this.logger.error(
-          `Error adding MESSAGES_IMPORT_SCHEDULED to messageChannel_syncStage_enum for workspace ${workspaceId}: ${error}`,
-        );
-      }
-    }
-  }
-
-  private async updateMessageChannelSyncStageFieldMetadata(
-    workspaceId: string,
-    options: RunOnWorkspaceArgs['options'],
-  ): Promise<void> {
-    const messageChannelObject = await this.objectMetadataRepository.findOne({
-      where: {
-        standardId: STANDARD_OBJECT_IDS.messageChannel,
-        workspaceId,
-      },
-    });
-
-    if (!messageChannelObject) {
-      this.logger.log(
-        `MessageChannel object not found for workspace ${workspaceId}, skipping field metadata update`,
       );
 
       return;
@@ -148,25 +93,72 @@ export class AddMessagesImportScheduledSyncStageCommand extends ActiveOrSuspende
 
     if (options.dryRun) {
       this.logger.log(
-        `Would add MESSAGES_IMPORT_SCHEDULED to MessageChannel syncStage field metadata for workspace ${workspaceId}`,
+        `Would add MESSAGES_IMPORT_SCHEDULED sync stage for workspace ${workspaceId}`,
       );
 
       return;
     }
 
-    fieldOptions.push({
-      value: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
-      label: 'Messages import scheduled',
-      position: 4,
-      color: 'green',
+    await this.fieldMetadataService.updateOneField({
+      updateFieldInput: {
+        id: syncStageField.id,
+        options: [
+          {
+            value: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+            label: 'Messages list fetch pending',
+            position: 0,
+            color: 'blue',
+          },
+          {
+            value: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
+            label: 'Messages list fetch scheduled',
+            position: 1,
+            color: 'green',
+          },
+          {
+            value: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
+            label: 'Messages list fetch ongoing',
+            position: 2,
+            color: 'orange',
+          },
+          {
+            value: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+            label: 'Messages import pending',
+            position: 3,
+            color: 'blue',
+          },
+          {
+            value: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
+            label: 'Messages import scheduled',
+            position: 4,
+            color: 'green',
+          },
+          {
+            value: MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
+            label: 'Messages import ongoing',
+            position: 5,
+            color: 'orange',
+          },
+          {
+            value: MessageChannelSyncStage.FAILED,
+            label: 'Failed',
+            position: 6,
+            color: 'red',
+          },
+          {
+            value: MessageChannelSyncStage.PENDING_CONFIGURATION,
+            label: 'Pending configuration',
+            position: 7,
+            color: 'gray',
+          },
+        ],
+      },
+      workspaceId,
+      isSystemBuild: true,
     });
 
-    syncStageField.options = fieldOptions;
-
-    await this.fieldMetadataRepository.save(syncStageField);
-
     this.logger.log(
-      `Added MESSAGES_IMPORT_SCHEDULED to MessageChannel syncStage field metadata for workspace ${workspaceId}`,
+      `Successfully added MESSAGES_IMPORT_SCHEDULED sync stage for workspace ${workspaceId}`,
     );
   }
 }
