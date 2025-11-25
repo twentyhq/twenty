@@ -187,7 +187,7 @@ export const useChartSettingsValues = ({
           isDefined(configuration.axisNameDisplay)
           ? getChartAxisNameDisplayOptions(configuration.axisNameDisplay)
           : undefined;
-      case CHART_CONFIGURATION_SETTING_IDS.PRIMARY_BY_X:
+      case CHART_CONFIGURATION_SETTING_IDS.PRIMARY_SORT_BY:
         return pieChartSortByLabel ?? xAxisOrderByLabel;
       case CHART_CONFIGURATION_SETTING_IDS.SORT_BY_GROUP_BY_FIELD:
         return groupByOrderByLabel;

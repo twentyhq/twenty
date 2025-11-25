@@ -8,6 +8,6 @@ export const PRIMARY_SORT_BY_SETTING: ChartSettingsItem = {
   isBoolean: false,
   Icon: IconArrowsSort,
   label: CHART_CONFIGURATION_SETTING_LABELS.PRIMARY_SORT_BY,
-  id: CHART_CONFIGURATION_SETTING_IDS.PRIMARY_BY_X,
+  id: CHART_CONFIGURATION_SETTING_IDS.PRIMARY_SORT_BY,
   DropdownContent: ChartSortBySelectionDropdownContent,
 };
