@@ -7,12 +7,13 @@ import { type ObjectLiteral } from 'typeorm';
 
 import { ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { type GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { type GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.types';
+import { type GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.type';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
@@ -90,7 +91,7 @@ export class GroupByWithRecordsService {
 
     const recordsResult = await queryBuilderWithPartitionBy.getRawMany();
 
-    if (isDefined(selectedFieldsResult.relations)) {
+    if (!isEmpty(selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
@@ -156,8 +157,10 @@ export class GroupByWithRecordsService {
       queryBuilderForSubQuery,
     );
 
+    const objectAlias = getObjectAlias(objectMetadataItemWithFieldMaps);
+
     const recordSelectWithAlias = Object.keys(columnsToSelect)
-      .map((col) => `"${col}" as "${SUB_QUERY_PREFIX}${col}"`)
+      .map((col) => `"${objectAlias}"."${col}" as "${SUB_QUERY_PREFIX}${col}"`)
       .join(', ');
 
     const groupBySelectWithAlias = groupByDefinitions
@@ -188,6 +191,9 @@ export class GroupByWithRecordsService {
     const mainQuery = mainQueryQueryBuilder
       .from(`(${subQuery.getQuery()})`, 'ranked_records')
       .setParameters(queryBuilderForSubQuery.expressionMap.parameters)
+      .where('rn <= :recordsPerGroupLimit', {
+        recordsPerGroupLimit: RECORDS_PER_GROUP_LIMIT,
+      })
       .select(groupByAliases)
       .addSelect(
         `JSON_AGG(
