@@ -7,6 +7,19 @@ export const useRecordFieldInput = <FieldValue>() => {
   const recordFieldInputDraftValueCallbackState =
     useRecoilComponentCallbackState(recordFieldInputDraftValueComponentState);
 
+  const getLatestDraftValue = useRecoilCallback(
+    ({ snapshot }) =>
+      (instanceId: string) =>
+        snapshot
+          .getLoadable(
+            recordFieldInputDraftValueComponentState.atomFamily({
+              instanceId,
+            }),
+          )
+          .getValue() as FieldInputDraftValue<FieldValue>,
+    [],
+  );
+
   const setDraftValue = useRecoilCallback(
     ({ set }) =>
       (newValue: unknown) => {
@@ -30,6 +43,7 @@ export const useRecordFieldInput = <FieldValue>() => {
   };
 
   return {
+    getLatestDraftValue,
     setDraftValue,
     isDraftValueEmpty,
   };
