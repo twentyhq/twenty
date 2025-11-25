@@ -47,6 +47,7 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
   workspaceId: string;
   morphId?: string | null;
   workspaceCustomApplicationId: string;
+  targetFieldName?: string;
 };
 
 export type SourceTargetMorphOrRelationFlatFieldAndFlatIndex = {
@@ -62,6 +63,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   workspaceCustomApplicationId,
   sourceFlatObjectMetadataJoinColumnName,
   morphId = null,
+  targetFieldName,
 }: GenerateMorphOrRelationFlatFieldMetadataPairArgs): SourceTargetMorphOrRelationFlatFieldAndFlatIndex => {
   const { relationCreationPayload } = createFieldInput;
 
@@ -97,7 +99,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     icon: relationCreationPayload.targetFieldIcon ?? 'Icon123',
     label: relationCreationPayload.targetFieldLabel,
     name:
-      relationCreationPayload.targetFieldName ??
+      targetFieldName ??
       computeMetadataNameFromLabel(relationCreationPayload.targetFieldLabel),
     objectMetadataId: targetFlatObjectMetadata.id,
     type: FieldMetadataType.RELATION,

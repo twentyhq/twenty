@@ -321,7 +321,6 @@ const flatFieldMetadatasToCreateForMorphRelationsPayload = ({
             targetObjectMetadataId,
             targetFieldLabel: commonTargetFieldLabel,
             targetFieldIcon: fieldMetadataToUpdate.icon ?? 'Icon123',
-            targetFieldName: commonTargetFieldName,
           },
         },
         sourceFlatObjectMetadata: sourceObjectMetadata,
@@ -333,6 +332,7 @@ const flatFieldMetadatasToCreateForMorphRelationsPayload = ({
             name: computedMorphName,
           }),
         morphId: fieldMetadataToUpdate.morphId,
+        targetFieldName: commonTargetFieldName,
       });
 
     flatFieldMetadatasToCreate.push(...flatFieldMetadatas);
