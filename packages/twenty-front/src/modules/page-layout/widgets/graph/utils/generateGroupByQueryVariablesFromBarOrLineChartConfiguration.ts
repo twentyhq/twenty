@@ -1,5 +1,4 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type GroupByChartConfiguration } from '@/page-layout/widgets/graph/types/GroupByChartConfiguration';
 import { getGroupByOrderBy } from '@/page-layout/widgets/graph/utils/getGroupByOrderBy';
 import {
   type AggregateOrderByWithGroupByField,
@@ -8,16 +7,20 @@ import {
   type ObjectRecordOrderByWithGroupByDateField,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  type BarChartConfiguration,
+  type LineChartConfiguration,
+} from '~/generated/graphql';
 import { buildGroupByFieldObject } from './buildGroupByFieldObject';
 
-export const generateGroupByQueryVariablesFromChartConfiguration = ({
+export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
   objectMetadataItem,
   chartConfiguration,
   aggregateOperation,
   limit,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  chartConfiguration: GroupByChartConfiguration;
+  chartConfiguration: BarChartConfiguration | LineChartConfiguration;
   aggregateOperation?: string;
   limit?: number;
 }) => {

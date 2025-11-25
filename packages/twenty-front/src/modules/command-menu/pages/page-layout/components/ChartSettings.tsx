@@ -11,7 +11,7 @@ import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pa
 import { useUpdateChartSettingInput } from '@/command-menu/pages/page-layout/hooks/useUpdateChartSettingInput';
 import { useUpdateChartSettingToggle } from '@/command-menu/pages/page-layout/hooks/useUpdateChartSettingToggle';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
-import { useUpdateGraphTypeConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateGraphTypeConfig';
+import { useGetConfigToUpdateAfterGraphTypeChange } from '@/command-menu/pages/page-layout/hooks/useUpdateGraphTypeConfig';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { shouldHideChartSetting } from '@/command-menu/pages/page-layout/utils/shouldHideChartSetting';
@@ -19,6 +19,7 @@ import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
 import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMaximumNumberOfDataPoints.constant';
+import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
 import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/graph/states/hasWidgetTooManyGroupsComponentState';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -76,11 +77,11 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
 
   const { updateChartSettingInput } = useUpdateChartSettingInput(pageLayoutId);
 
-  const { updateGraphTypeConfig } = useUpdateGraphTypeConfig({
-    pageLayoutId,
-    widget,
-    configuration,
-  });
+  const { getConfigToUpdateAfterGraphTypeChange } =
+    useGetConfigToUpdateAfterGraphTypeChange({
+      pageLayoutId,
+      widget,
+    });
 
   const isGroupByEnabled = getChartSettingsValues(
     CHART_CONFIGURATION_SETTING_IDS.GROUP_BY,
@@ -89,7 +90,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
     useRecoilComponentState(hasWidgetTooManyGroupsComponentState);
 
   const handleGraphTypeChange = (graphType: GraphType) => {
-    const configToUpdate = updateGraphTypeConfig(graphType);
+    const configToUpdate = getConfigToUpdateAfterGraphTypeChange(graphType);
 
     updateCurrentWidgetConfig({
       configToUpdate,
@@ -133,7 +134,9 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
     configuration.__typename === 'BarChartConfiguration' ||
     configuration.__typename === 'LineChartConfiguration'
       ? configuration.primaryAxisGroupByFieldMetadataId
-      : null;
+      : configuration.__typename === 'PieChartConfiguration'
+        ? configuration.groupByFieldMetadataId
+        : null;
 
   const primaryAxisField = objectMetadataItem?.fields?.find(
     (field) => field.id === primaryAxisFieldMetadataId,
@@ -155,7 +158,10 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
             message={
               currentGraphType === GraphType.LINE
                 ? t`Undisplayed data: max ${LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart.`
-                : t`Undisplayed data: max ${BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart.`
+                : currentGraphType === GraphType.VERTICAL_BAR ||
+                    currentGraphType === GraphType.HORIZONTAL_BAR
+                  ? t`Undisplayed data: max ${BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart.`
+                  : t`Undisplayed data: max ${PIE_CHART_MAXIMUM_NUMBER_OF_SLICES} slices per chart.`
             }
             tooltipMessage={
               isPrimaryAxisDate
