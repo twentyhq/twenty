@@ -74,12 +74,7 @@ export const MultiItemFieldInput = <T,>({
   useListenClickOutside({
     refs: [containerRef],
     callback: (event) => {
-      const isEditing = inputValue !== '';
-
-      if (isEditing) {
-        handleSubmitInput();
-      }
-
+      handleSubmitInput();
       onClickOutside?.(items, event);
     },
     listenerId: instanceId,
