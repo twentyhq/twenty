@@ -19,6 +19,13 @@ export class RemoveEligibilityColumnsFromAttachment1761900000000
         queryRunner,
         schemaName,
         'attachment',
+        'eligibilityCallUserTaskId',
+      );
+      await this.removeEligibilityColumnsFromTable(
+        queryRunner,
+        schemaName,
+        'attachment',
+        'eligibilityManualUserTaskId',
       );
 
       // Remove eligibility columns from timelineActivity table
@@ -26,6 +33,13 @@ export class RemoveEligibilityColumnsFromAttachment1761900000000
         queryRunner,
         schemaName,
         'timelineActivity',
+        'eligibilityCallUserTaskId',
+      );
+      await this.removeEligibilityColumnsFromTable(
+        queryRunner,
+        schemaName,
+        'timelineActivity',
+        'eligibilityManualUserTaskId',
       );
     }
   }
@@ -34,59 +48,53 @@ export class RemoveEligibilityColumnsFromAttachment1761900000000
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
+    columnName: string,
   ): Promise<void> {
-    const columns = [
-      'eligibilityCallUserTaskId',
-      'eligibilityManualUserTaskId',
-    ];
+    // Check if column exists
+    const columnExists = await queryRunner.query(
+      `
+      SELECT column_name
+      FROM information_schema.columns
+      WHERE table_schema = $1
+        AND table_name = $2
+        AND column_name = $3
+    `,
+      [schemaName, tableName, columnName],
+    );
 
-    for (const columnName of columns) {
-      // Check if column exists
-      const columnExists = await queryRunner.query(
+    if (columnExists.length > 0) {
+      // Drop foreign key constraint if exists
+      await queryRunner.query(
         `
-        SELECT column_name
-        FROM information_schema.columns
-        WHERE table_schema = $1
-          AND table_name = $2
-          AND column_name = $3
+        DO $$
+        DECLARE
+          constraint_name text;
+        BEGIN
+          SELECT tc.constraint_name INTO constraint_name
+          FROM information_schema.table_constraints tc
+          JOIN information_schema.key_column_usage kcu
+            ON tc.constraint_name = kcu.constraint_name
+          WHERE tc.constraint_type = 'FOREIGN KEY'
+            AND tc.table_schema = $1
+            AND tc.table_name = $2
+            AND kcu.column_name = $3;
+
+          IF constraint_name IS NOT NULL THEN
+            EXECUTE format('ALTER TABLE %I.%I DROP CONSTRAINT IF EXISTS %I CASCADE', $1, $2, constraint_name);
+          END IF;
+        END $$;
       `,
         [schemaName, tableName, columnName],
       );
 
-      if (columnExists.length > 0) {
-        // Drop foreign key constraint if exists
-        await queryRunner.query(`
-          DO $$
-          DECLARE
-            constraint_name text;
-          BEGIN
-            SELECT tc.constraint_name INTO constraint_name
-            FROM information_schema.table_constraints tc
-            JOIN information_schema.key_column_usage kcu
-              ON tc.constraint_name = kcu.constraint_name
-              AND tc.table_schema = kcu.table_schema
-            WHERE tc.constraint_type = 'FOREIGN KEY'
-              AND tc.table_schema = '${schemaName}'
-              AND tc.table_name = '${tableName}'
-              AND kcu.column_name = '${columnName}';
-
-            IF constraint_name IS NOT NULL THEN
-              EXECUTE format('ALTER TABLE "${schemaName}"."${tableName}" DROP CONSTRAINT IF EXISTS %I CASCADE', constraint_name);
-            END IF;
-          END $$;
-        `);
-
-        // Drop the column
-        await queryRunner.query(`
-          ALTER TABLE "${schemaName}"."${tableName}"
-          DROP COLUMN IF EXISTS "${columnName}" CASCADE
-        `);
-      }
+      // Drop the column
+      await queryRunner.query(
+        `ALTER TABLE "${schemaName}"."${tableName}" DROP COLUMN IF EXISTS "${columnName}"`
+      );
     }
   }
 
-  public async down(): Promise<void> {
-    // This migration is not reversible as the columns were orphaned
-    // and their original data/constraints are unknown
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    // Cannot restore dropped columns and constraints
   }
 }
