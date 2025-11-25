@@ -54,7 +54,7 @@ export const useGraphWidgetGroupByQuery = ({
   const isPieChart = (
     config: GroupByChartConfiguration,
   ): config is PieChartConfiguration => {
-    return 'groupByFieldMetadataId' in config;
+    return config.__typename === 'PieChartConfiguration';
   };
 
   const groupByQueryVariables = isPieChart(configuration)
