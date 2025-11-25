@@ -75,9 +75,11 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           provide: WorkflowCommonWorkspaceService,
           useValue: {
             getWorkflowById: jest.fn(),
-            getObjectMetadataItemWithFieldsMaps: jest
-              .fn()
-              .mockResolvedValue(undefined),
+            getObjectMetadataInfo: jest.fn().mockResolvedValue({
+              flatObjectMetadata: createMockFlatObjectMetadata({}),
+              flatObjectMetadataMaps: { byId: {}, byName: {} },
+              flatFieldMetadataMaps: { byId: {}, byName: {} },
+            }),
           },
         },
       ],

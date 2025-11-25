@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { shouldGenerateFieldFakeValue } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/should-generate-field-fake-value';
@@ -56,7 +56,7 @@ describe('shouldGenerateFieldFakeValue', () => {
     expect(shouldGenerateFieldFakeValue(field)).toBe(true);
   });
 
-  it('should return false for relation fields', () => {
+  it('should return false for many-to-one relation fields', () => {
     const field = getFlatFieldMetadataMock({
       objectMetadataId: '20202020-0000-0000-0000-000000000001',
       isSystem: false,
@@ -64,6 +64,9 @@ describe('shouldGenerateFieldFakeValue', () => {
       type: FieldMetadataType.RELATION,
       name: 'testField',
       universalIdentifier: 'relation-field-universal-id',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+      },
     });
 
     expect(shouldGenerateFieldFakeValue(field)).toBe(false);
