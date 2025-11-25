@@ -10,9 +10,10 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { WorkflowAiAgentPermissionsTab } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab';
 import { WORKFLOW_AI_AGENT_TABS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentTabs';
+import { workflowAiAgentPermissionsViewModeFamilyState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsViewModeFamilyState';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useRecoilState } from 'recoil';
 import {
   type AgentResponseSchema,
   type ModelConfiguration,
@@ -176,9 +177,9 @@ export const WorkflowEditActionAiAgent = ({
     (activeTabId as WorkflowAiAgentTabId) ?? WORKFLOW_AI_AGENT_TABS.PROMPT;
 
   const navigateSettings = useNavigateSettings();
-  const [permissionsTabViewMode, setPermissionsTabViewMode] = useState<
-    'home' | 'add-permission-objects' | 'add-permission-crud'
-  >('home');
+  const [permissionsTabViewMode, setPermissionsTabViewMode] = useRecoilState(
+    workflowAiAgentPermissionsViewModeFamilyState(action.id),
+  );
   const { data: rolesData } = useGetRolesQuery();
 
   const role = rolesData?.getRoles.find((item) => item.id === agent?.roleId);
@@ -275,8 +276,6 @@ export const WorkflowEditActionAiAgent = ({
           <WorkflowAiAgentPermissionsTab
             action={action}
             readonly={actionOptions.readonly === true}
-            viewMode={permissionsTabViewMode}
-            onViewModeChange={setPermissionsTabViewMode}
           />
         </StyledPermissionsStepBody>
       ) : (

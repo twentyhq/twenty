@@ -2,9 +2,11 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
+import { workflowAiAgentPermissionsViewModeFamilyState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsViewModeFamilyState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
+import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
@@ -91,18 +93,14 @@ const CRUD_PERMISSIONS: Array<{
   },
 ];
 
-type ViewMode = 'home' | 'add-permission-objects' | 'add-permission-crud';
-
 type WorkflowAiAgentPermissionsTabProps = {
   action: WorkflowAiAgentAction;
   readonly: boolean;
-  onViewModeChange?: (viewMode: ViewMode) => void;
 };
 
 export const WorkflowAiAgentPermissionsTab = ({
   action,
   readonly,
-  onViewModeChange,
 }: WorkflowAiAgentPermissionsTabProps) => {
   const agentId = action.settings.input.agentId;
   const { data: agentData, loading: agentLoading } = useFindOneAgentQuery({
@@ -117,41 +115,31 @@ export const WorkflowAiAgentPermissionsTab = ({
 
   const agent = agentData?.findOneAgent;
 
-  const [isAddingPermission, setIsAddingPermission] = useState(false);
+  const [viewMode, setViewMode] = useRecoilState(
+    workflowAiAgentPermissionsViewModeFamilyState(action.id),
+  );
   const [selectedObjectId, setSelectedObjectId] = useState<
     string | undefined
   >();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const notifyViewModeChange = (viewMode: ViewMode) => {
-    if (isDefined(onViewModeChange)) {
-      onViewModeChange(viewMode);
-    }
-  };
-
-  const handleSetIsAddingPermission = (value: boolean) => {
-    setIsAddingPermission(value);
-    if (value) {
-      notifyViewModeChange('add-permission-objects');
-    } else {
-      notifyViewModeChange('home');
-    }
-  };
+  const isAddingPermission =
+    viewMode === 'add-permission-objects' || viewMode === 'add-permission-crud';
 
   const handleSetSelectedObjectId = (objectId: string | undefined) => {
     setSelectedObjectId(objectId);
     if (isDefined(objectId)) {
-      notifyViewModeChange('add-permission-crud');
+      setViewMode('add-permission-crud');
     } else {
       const hasNoRole = !isDefined(role?.id);
       const existingPermissions = getExistingPermissions();
       const cameFromEmptyState = hasNoRole && existingPermissions.length === 0;
       if (cameFromEmptyState) {
-        handleSetIsAddingPermission(false);
+        setViewMode('home');
       } else if (isAddingPermission) {
-        notifyViewModeChange('add-permission-objects');
+        setViewMode('add-permission-objects');
       } else {
-        notifyViewModeChange('home');
+        setViewMode('home');
       }
     }
   };
@@ -312,8 +300,8 @@ export const WorkflowAiAgentPermissionsTab = ({
       refetchQueries: ['GetRoles', 'FindOneAgent'],
     });
 
-    handleSetIsAddingPermission(false);
-    handleSetSelectedObjectId(undefined);
+    setViewMode('home');
+    setSelectedObjectId(undefined);
   };
 
   const handleDeletePermission = async (
@@ -412,7 +400,7 @@ export const WorkflowAiAgentPermissionsTab = ({
             if (isDefined(selectedObjectId)) {
               handleSetSelectedObjectId(undefined);
             } else {
-              handleSetIsAddingPermission(false);
+              setViewMode('home');
             }
           }}
         >
@@ -455,7 +443,7 @@ export const WorkflowAiAgentPermissionsTab = ({
         <WorkflowAiAgentPermissionsObjectsList
           objects={filteredObjects}
           onObjectClick={(objectId) => {
-            handleSetIsAddingPermission(true);
+            setViewMode('add-permission-objects');
             handleSetSelectedObjectId(objectId);
           }}
           readonly={readonly}
