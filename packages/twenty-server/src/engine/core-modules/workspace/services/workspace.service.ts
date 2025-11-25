@@ -70,7 +70,8 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     editableProfileFields: PermissionFlagType.SECURITY,
     isTwoFactorAuthenticationEnforced: PermissionFlagType.SECURITY,
     defaultRoleId: PermissionFlagType.ROLES,
-    routerModel: PermissionFlagType.WORKSPACE,
+    fastModel: PermissionFlagType.WORKSPACE,
+    smartModel: PermissionFlagType.WORKSPACE,
   };
 
   constructor(

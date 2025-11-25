@@ -6,12 +6,12 @@ import { Repository } from 'typeorm';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { AIBillingService } from 'src/engine/metadata-modules/ai-billing/services/ai-billing.service';
+import { AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
 import {
   AgentException,
   AgentExceptionCode,
-} from 'src/engine/metadata-modules/agent/agent.exception';
+} from 'src/engine/metadata-modules/ai-agent/agent.exception';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -21,6 +21,7 @@ import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { AiAgentExecutorService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/ai-agent-executor.service';
+import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
 
 import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.guard';
 
@@ -89,9 +90,10 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
 
       await this.aiBillingService.calculateAndBillUsage(
-        agent?.modelId ?? 'auto',
+        agent?.modelId ?? DEFAULT_SMART_MODEL,
         usage,
         workspaceId,
+        agent?.id || null,
       );
 
       return {

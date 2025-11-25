@@ -8,7 +8,8 @@ import { v4 } from 'uuid';
 
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
+import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -349,7 +350,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           icon: 'IconRobot',
           description: '',
           prompt: '',
-          modelId: 'auto',
+          modelId: DEFAULT_SMART_MODEL,
           responseFormat: { type: 'text' },
           workspaceId,
           isCustom: true,
