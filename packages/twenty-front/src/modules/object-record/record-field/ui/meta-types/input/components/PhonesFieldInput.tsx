@@ -138,7 +138,7 @@ export const PhonesFieldInput = () => {
     event: MouseEvent | TouchEvent,
   ) => {
     const latestDraftValue = getLatestDraftValue(instanceId);
-    onClickOutside?.({ newValue: latestDraftValue ?? draftValue, event });
+    onClickOutside?.({ newValue: latestDraftValue, event });
   };
 
   const handleEscape = (_newValue: any) => {
