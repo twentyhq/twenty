@@ -1,10 +1,8 @@
 import { ApolloError, gql, InMemoryCache } from '@apollo/client';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
-import {
-  DEFAULT_FAST_MODEL,
-  DEFAULT_SMART_MODEL,
-} from '@/ai/constants/aiModelConstants';
+import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
+import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { WorkspaceActivationStatus } from '~/generated/graphql';
 import { ApolloFactory, type Options } from '../apollo.factory';

@@ -2,10 +2,8 @@ import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useRecoilValue } from 'recoil';
 import { type SelectOption } from 'twenty-ui/input';
 
-import {
-  DEFAULT_FAST_MODEL,
-  DEFAULT_SMART_MODEL,
-} from '@/ai/constants/aiModelConstants';
+import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
+import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 
 export const useAiModelOptions = (): SelectOption<string>[] => {
   const aiModels = useRecoilValue(aiModelsState);

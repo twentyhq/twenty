@@ -2,10 +2,8 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
-import {
-  DEFAULT_FAST_MODEL,
-  DEFAULT_SMART_MODEL,
-} from '@/ai/constants/aiModelConstants';
+import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
+import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   StyledSettingsOptionCardContent,

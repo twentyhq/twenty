@@ -1,10 +1,8 @@
 import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceState';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import {
-  DEFAULT_FAST_MODEL,
-  DEFAULT_SMART_MODEL,
-} from '@/ai/constants/aiModelConstants';
+import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
+import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import {
   FeatureFlagKey,
   OnboardingStatus,
