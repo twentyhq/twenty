@@ -596,12 +596,6 @@ msgstr ""
 msgid "Add first filter"
 msgstr ""
 
-#. js-lingui-id: B0gWuX
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Add Handoff"
-msgstr ""
-
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
 msgid "Add inputs to your form"
@@ -789,6 +783,11 @@ msgstr ""
 msgid "Advanced filter"
 msgstr ""
 
+#. js-lingui-id: luNzWN
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Advanced model for complex planning"
+msgstr ""
+
 #. js-lingui-id: miuPUc
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
@@ -814,11 +813,6 @@ msgstr ""
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Agent"
-msgstr ""
-
-#. js-lingui-id: Q37C8E
-#: src/pages/settings/ai/components/SettingsAgentHandoffSection.tsx
-msgid "Agent Handoffs"
 msgstr ""
 
 #. js-lingui-id: mDXkHu
@@ -848,9 +842,9 @@ msgstr ""
 msgid "Agents used to route queries to specialized agents"
 msgstr ""
 
-#. js-lingui-id: 3y9hVY
+#. js-lingui-id: sPQ5qN
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Aggregate"
+msgid "Aggregate Chart"
 msgstr ""
 
 #. js-lingui-id: jsQZMk
@@ -871,6 +865,11 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "AI Model"
+msgstr ""
+
+#. js-lingui-id: tGx4Zn
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "AI Models"
 msgstr ""
 
 #. js-lingui-id: QwgquD
@@ -1667,7 +1666,6 @@ msgid "Can't scan? Copy the"
 msgstr ""
 
 #. js-lingui-id: dEgA5A
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
@@ -2051,6 +2049,11 @@ msgstr ""
 msgid "Configuration"
 msgstr ""
 
+#. js-lingui-id: 9px+al
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Configure AI models for routing and planning"
+msgstr ""
+
 #. js-lingui-id: +zUMwJ
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Configure an SSO connection"
@@ -2104,11 +2107,6 @@ msgstr ""
 #. js-lingui-id: qA9AGQ
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
 msgid "Configure these DNS records with your domain provider"
-msgstr ""
-
-#. js-lingui-id: SpV+F6
-#: src/pages/settings/ai/components/SettingsAgentHandoffSection.tsx
-msgid "Configure which agents this agent can hand off conversations to"
 msgstr ""
 
 #. js-lingui-id: Bh4GBD
@@ -3104,27 +3102,16 @@ msgstr ""
 msgid "Describe what you want the AI to do..."
 msgstr ""
 
-#. js-lingui-id: ptyOy7
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Describe when this handoff should be used"
-msgstr ""
-
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Description"
-msgstr ""
-
-#. js-lingui-id: /mo9tB
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Description (Optional)"
 msgstr ""
 
 #. js-lingui-id: CuAMy4
@@ -3300,6 +3287,11 @@ msgstr ""
 #. js-lingui-id: qaE1sk
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Duplicate node"
+msgstr ""
+
+#. js-lingui-id: mMsEuG
+#: src/modules/command-menu/pages/page-layout/components/WidgetSettingsFooter.tsx
+msgid "Duplicate widget"
 msgstr ""
 
 #. js-lingui-id: 2RpRNn
@@ -4144,11 +4136,6 @@ msgstr ""
 msgid "Failed to create {translatedMetadataName}. Related {relatedEntityNames} validation failed. Please check your configuration and try again."
 msgstr ""
 
-#. js-lingui-id: w/6jdn
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Failed to create handoff"
-msgstr ""
-
 #. js-lingui-id: pUligB
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
 msgid "Failed to delete jobs. Please try again later."
@@ -4169,11 +4156,6 @@ msgstr ""
 msgid "Failed to load webhook"
 msgstr ""
 
-#. js-lingui-id: 99t8X7
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Failed to remove handoff"
-msgstr ""
-
 #. js-lingui-id: A/P7PX
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Failed to remove override"
@@ -4189,14 +4171,19 @@ msgstr ""
 msgid "Failed to save role permissions: {errorMessage}"
 msgstr ""
 
+#. js-lingui-id: YMSYb+
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Failed to update fast model"
+msgstr ""
+
 #. js-lingui-id: HnBqPY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Failed to update price."
 msgstr ""
 
-#. js-lingui-id: yS3a92
+#. js-lingui-id: h/0aT5
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Failed to update router model"
+msgid "Failed to update smart model"
 msgstr ""
 
 #. js-lingui-id: Dzh4a2
@@ -4220,9 +4207,14 @@ msgstr ""
 msgid "False"
 msgstr ""
 
-#. js-lingui-id: 9Ue4+J
+#. js-lingui-id: XVIZ7v
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Fast model to route to the right agent"
+msgid "Fast Model"
+msgstr ""
+
+#. js-lingui-id: UJHTjm
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Fast model updated successfully"
 msgstr ""
 
 #. js-lingui-id: X9kySA
@@ -4446,9 +4438,9 @@ msgstr ""
 msgid "Functions - Settings"
 msgstr ""
 
-#. js-lingui-id: IZUMtC
+#. js-lingui-id: vYj1cC
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Gauge"
+msgid "Gauge Chart"
 msgstr ""
 
 #. js-lingui-id: Weq9zb
@@ -4615,16 +4607,6 @@ msgstr ""
 msgid "h3"
 msgstr ""
 
-#. js-lingui-id: /Oqu/V
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Handoff created successfully"
-msgstr ""
-
-#. js-lingui-id: cZP3a/
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Handoff removed successfully"
-msgstr ""
-
 #. js-lingui-id: vISdlD
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -4714,9 +4696,9 @@ msgstr ""
 msgid "Hide hidden groups"
 msgstr ""
 
-#. js-lingui-id: pzu7v4
+#. js-lingui-id: Xkd22/
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Horizontal"
+msgid "Horizontal Bar Chart"
 msgstr ""
 
 #. js-lingui-id: yY8wAv
@@ -5465,9 +5447,9 @@ msgstr ""
 msgid "Limit must be greater than 0."
 msgstr ""
 
-#. js-lingui-id: rjuFFw
+#. js-lingui-id: pFkLY3
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Line"
+msgid "Line Chart"
 msgstr ""
 
 #. js-lingui-id: pQjjYo
@@ -5521,7 +5503,6 @@ msgid "Loading retention configuration..."
 msgstr ""
 
 #. js-lingui-id: Z3FXyt
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -6160,11 +6141,6 @@ msgstr ""
 msgid "No agents available"
 msgstr ""
 
-#. js-lingui-id: pC+mOo
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "No agents available for handoff"
-msgstr ""
-
 #. js-lingui-id: mU1OkO
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No agents match your search"
@@ -6247,7 +6223,6 @@ msgstr ""
 
 #. js-lingui-id: flmDTf
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "No description"
 msgstr ""
 
@@ -6279,16 +6254,6 @@ msgstr ""
 #. js-lingui-id: pxYUeX
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "No free workflow executions left. Please contact your admin."
-msgstr ""
-
-#. js-lingui-id: S81IYy
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "No handoffs configured for this agent"
-msgstr ""
-
-#. js-lingui-id: zsMgNq
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "No handoffs match your search"
 msgstr ""
 
 #. js-lingui-id: lj3GoP
@@ -6732,13 +6697,12 @@ msgid "Optional secret used to compute the HMAC signature for webhook payloads"
 msgstr ""
 
 #. js-lingui-id: 0zpgxV
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+#: src/modules/ui/layout/dropdown/components/OptionsDropdownMenu.tsx
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
-#: src/modules/action-menu/components/CommandMenuActionMenuDropdown.tsx
 msgid "Options"
 msgstr ""
 
@@ -6969,9 +6933,9 @@ msgstr ""
 msgid "Picture"
 msgstr ""
 
-#. js-lingui-id: ZjVniv
+#. js-lingui-id: 3ubdv5
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Pie"
+msgid "Pie Chart"
 msgstr ""
 
 #. js-lingui-id: fQtTho
@@ -7220,6 +7184,11 @@ msgstr ""
 msgid "Queue: {queueName}"
 msgstr ""
 
+#. js-lingui-id: GaAG2G
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Quick model for routing decisions"
+msgstr ""
+
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Receive an email containing password set link"
@@ -7360,16 +7329,6 @@ msgstr ""
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Remove from favorites"
-msgstr ""
-
-#. js-lingui-id: utQSYi
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Remove handoff"
-msgstr ""
-
-#. js-lingui-id: OwOSPx
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Remove Handoff"
 msgstr ""
 
 #. js-lingui-id: 99VIgC
@@ -7593,26 +7552,6 @@ msgstr ""
 msgid "route trigger"
 msgstr ""
 
-#. js-lingui-id: 4E5bBq
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Router"
-msgstr ""
-
-#. js-lingui-id: jBPgd3
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Router is used in the chat to dispatch to the right agent"
-msgstr ""
-
-#. js-lingui-id: nWR0bQ
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Router Model"
-msgstr ""
-
-#. js-lingui-id: ilPOUX
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Router model updated successfully"
-msgstr ""
-
 #. js-lingui-id: UX0N2y
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Run a workflow and return here to view its executions"
@@ -7791,11 +7730,6 @@ msgstr ""
 msgid "Search for an object..."
 msgstr ""
 
-#. js-lingui-id: OflyKY
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Search handoffs..."
-msgstr ""
-
 #. js-lingui-id: lnwW17
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Search icon"
@@ -7961,11 +7895,6 @@ msgstr ""
 #. js-lingui-id: bP/w4M
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field from a previous step"
-msgstr ""
-
-#. js-lingui-id: l5KvVl
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Select a target agent"
 msgstr ""
 
 #. js-lingui-id: jL3gox
@@ -8304,6 +8233,16 @@ msgstr ""
 #. js-lingui-id: Ik7fz5
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Small section heading"
+msgstr ""
+
+#. js-lingui-id: 5J8ZFl
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Smart Model"
+msgstr ""
+
+#. js-lingui-id: qgvZ/2
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Smart model updated successfully"
 msgstr ""
 
 #. js-lingui-id: w+rJId
@@ -8753,12 +8692,6 @@ msgstr ""
 msgid "Table"
 msgstr ""
 
-#. js-lingui-id: orMfFk
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Target Agent"
-msgstr ""
-
 #. js-lingui-id: GtycJ/
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Tasks"
@@ -8966,11 +8899,6 @@ msgstr ""
 #. js-lingui-id: gWGuHC
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
-msgstr ""
-
-#. js-lingui-id: igSFzI
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "This action cannot be undone. This will permanently remove the handoff configuration."
 msgstr ""
 
 #. js-lingui-id: fTuKde
@@ -9564,9 +9492,9 @@ msgstr ""
 msgid "Version of the application"
 msgstr ""
 
-#. js-lingui-id: mX/isJ
+#. js-lingui-id: yIWhRv
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Vertical"
+msgid "Vertical Bar Chart"
 msgstr ""
 
 #. js-lingui-id: fROFIL

@@ -601,12 +601,6 @@ msgstr "Додајте филтер"
 msgid "Add first filter"
 msgstr "Додајте први филтер"
 
-#. js-lingui-id: B0gWuX
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Add Handoff"
-msgstr "Додај Пренос"
-
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
 msgid "Add inputs to your form"
@@ -794,6 +788,11 @@ msgstr "Напредна функција за побољшање перформ
 msgid "Advanced filter"
 msgstr "Напредни филтер"
 
+#. js-lingui-id: luNzWN
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Advanced model for complex planning"
+msgstr ""
+
 #. js-lingui-id: miuPUc
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
@@ -820,11 +819,6 @@ msgstr "После одређеног временског периода"
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Agent"
 msgstr "Агент"
-
-#. js-lingui-id: Q37C8E
-#: src/pages/settings/ai/components/SettingsAgentHandoffSection.tsx
-msgid "Agent Handoffs"
-msgstr "Преноси Агената"
 
 #. js-lingui-id: mDXkHu
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -853,10 +847,10 @@ msgstr "Агенти створени од стране апликације"
 msgid "Agents used to route queries to specialized agents"
 msgstr "Агенти који се користе за усмеравање упита специјализованим агентима"
 
-#. js-lingui-id: 3y9hVY
+#. js-lingui-id: sPQ5qN
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Aggregate"
-msgstr "Агресивност"
+msgid "Aggregate Chart"
+msgstr ""
 
 #. js-lingui-id: jsQZMk
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
@@ -877,6 +871,11 @@ msgstr "AI"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "AI Model"
 msgstr "AI модел"
+
+#. js-lingui-id: tGx4Zn
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "AI Models"
+msgstr ""
 
 #. js-lingui-id: QwgquD
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -1672,7 +1671,6 @@ msgid "Can't scan? Copy the"
 msgstr "Не можете да скенирате? Копирајте"
 
 #. js-lingui-id: dEgA5A
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
@@ -2056,6 +2054,11 @@ msgstr "Конфигурационе променљиве"
 msgid "Configuration"
 msgstr "Конфигурација"
 
+#. js-lingui-id: 9px+al
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Configure AI models for routing and planning"
+msgstr ""
+
 #. js-lingui-id: +zUMwJ
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Configure an SSO connection"
@@ -2110,11 +2113,6 @@ msgstr "Подесите SMTP подешавања да шаљете имејл�
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
 msgid "Configure these DNS records with your domain provider"
 msgstr "Конфигуришите ове DNS записе код вашег провајдера домена"
-
-#. js-lingui-id: SpV+F6
-#: src/pages/settings/ai/components/SettingsAgentHandoffSection.tsx
-msgid "Configure which agents this agent can hand off conversations to"
-msgstr "Конфигуришите којим агентима овај агент може препустити разговоре"
 
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -3109,28 +3107,17 @@ msgstr "Опадајуће"
 msgid "Describe what you want the AI to do..."
 msgstr "Опишите шта желите да AI уради..."
 
-#. js-lingui-id: ptyOy7
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Describe when this handoff should be used"
-msgstr "Опишите када треба користити ово препуштање"
-
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Description"
 msgstr "Опис"
-
-#. js-lingui-id: /mo9tB
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Description (Optional)"
-msgstr "Опис (опционално)"
 
 #. js-lingui-id: CuAMy4
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
@@ -3306,6 +3293,11 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Duplicate node"
 msgstr "Дуплирати чвор"
+
+#. js-lingui-id: mMsEuG
+#: src/modules/command-menu/pages/page-layout/components/WidgetSettingsFooter.tsx
+msgid "Duplicate widget"
+msgstr ""
 
 #. js-lingui-id: 2RpRNn
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -4149,11 +4141,6 @@ msgstr "Неуспешно креирање {translatedMetadataName}. Покуш
 msgid "Failed to create {translatedMetadataName}. Related {relatedEntityNames} validation failed. Please check your configuration and try again."
 msgstr "Неуспешно креирање {translatedMetadataName}. Валидација повезаног {relatedEntityNames} није успела. Молимо вас да проверите своју конфигурацију и покушате поново."
 
-#. js-lingui-id: w/6jdn
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Failed to create handoff"
-msgstr "Неуспешно креирање препуштања"
-
 #. js-lingui-id: pUligB
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
 msgid "Failed to delete jobs. Please try again later."
@@ -4174,11 +4161,6 @@ msgstr "Није могуће добити одговор"
 msgid "Failed to load webhook"
 msgstr "Грешка при учитавању вебхука"
 
-#. js-lingui-id: 99t8X7
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Failed to remove handoff"
-msgstr "Неуспешно уклањање препуштања"
-
 #. js-lingui-id: A/P7PX
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Failed to remove override"
@@ -4194,15 +4176,20 @@ msgstr "Није успело понављање послова. Покушај�
 msgid "Failed to save role permissions: {errorMessage}"
 msgstr ""
 
+#. js-lingui-id: YMSYb+
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Failed to update fast model"
+msgstr ""
+
 #. js-lingui-id: HnBqPY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Failed to update price."
 msgstr "Није успело ажурирање цене."
 
-#. js-lingui-id: yS3a92
+#. js-lingui-id: h/0aT5
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Failed to update router model"
-msgstr "Није успело ажурирање модела рутирања"
+msgid "Failed to update smart model"
+msgstr ""
 
 #. js-lingui-id: Dzh4a2
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
@@ -4225,10 +4212,15 @@ msgstr "Неуспех у отпремању слике: "
 msgid "False"
 msgstr "Неправда"
 
-#. js-lingui-id: 9Ue4+J
+#. js-lingui-id: XVIZ7v
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Fast model to route to the right agent"
-msgstr "Брз модел за преусмеравање на правог агента"
+msgid "Fast Model"
+msgstr ""
+
+#. js-lingui-id: UJHTjm
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Fast model updated successfully"
+msgstr ""
 
 #. js-lingui-id: X9kySA
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx
@@ -4451,10 +4443,10 @@ msgstr "Потпун приступ"
 msgid "Functions - Settings"
 msgstr "Функције - Подешавања"
 
-#. js-lingui-id: IZUMtC
+#. js-lingui-id: vYj1cC
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Gauge"
-msgstr "Гаџ"
+msgid "Gauge Chart"
+msgstr ""
 
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -4620,16 +4612,6 @@ msgstr ""
 msgid "h3"
 msgstr ""
 
-#. js-lingui-id: /Oqu/V
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Handoff created successfully"
-msgstr "Препуштање успешно креирано"
-
-#. js-lingui-id: cZP3a/
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Handoff removed successfully"
-msgstr "Препуштање успешно уклоњено"
-
 #. js-lingui-id: vISdlD
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -4719,10 +4701,10 @@ msgstr "Сакриј празне групе"
 msgid "Hide hidden groups"
 msgstr "Сакриј скривене групе"
 
-#. js-lingui-id: pzu7v4
+#. js-lingui-id: Xkd22/
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Horizontal"
-msgstr "Хоризонтално"
+msgid "Horizontal Bar Chart"
+msgstr ""
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -5470,10 +5452,10 @@ msgstr "Ограничите колико вредности може бити �
 msgid "Limit must be greater than 0."
 msgstr ""
 
-#. js-lingui-id: rjuFFw
+#. js-lingui-id: pFkLY3
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Line"
-msgstr "Линија"
+msgid "Line Chart"
+msgstr ""
 
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
@@ -5526,7 +5508,6 @@ msgid "Loading retention configuration..."
 msgstr "Учитавање конфигурације задржавања..."
 
 #. js-lingui-id: Z3FXyt
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -6165,11 +6146,6 @@ msgstr "Нема додељених агената"
 msgid "No agents available"
 msgstr "Нема доступних агената"
 
-#. js-lingui-id: pC+mOo
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "No agents available for handoff"
-msgstr "Нема доступних агената за препуштање"
-
 #. js-lingui-id: mU1OkO
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No agents match your search"
@@ -6252,7 +6228,6 @@ msgstr "Нису пронађени избрисани записи који о�
 
 #. js-lingui-id: flmDTf
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "No description"
 msgstr "Нема описа"
 
@@ -6285,16 +6260,6 @@ msgstr "Нема преосталих слободних извршења про
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "No free workflow executions left. Please contact your admin."
 msgstr "Нема више бесплатних извршења workflow-а. Молимо вас ступите у контакт са вашим администратором."
-
-#. js-lingui-id: S81IYy
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "No handoffs configured for this agent"
-msgstr "Нема конфигурисаних препуштања за овог агента"
-
-#. js-lingui-id: zsMgNq
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "No handoffs match your search"
-msgstr "Ниједно препуштање не одговара вашој претрази"
 
 #. js-lingui-id: lj3GoP
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -6737,13 +6702,12 @@ msgid "Optional secret used to compute the HMAC signature for webhook payloads"
 msgstr "Опциони код за израчунавање HMAC потписа за Webhook терет"
 
 #. js-lingui-id: 0zpgxV
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+#: src/modules/ui/layout/dropdown/components/OptionsDropdownMenu.tsx
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
-#: src/modules/action-menu/components/CommandMenuActionMenuDropdown.tsx
 msgid "Options"
 msgstr "Опције"
 
@@ -6974,10 +6938,10 @@ msgstr "Изаберите запис за {objectLabel}"
 msgid "Picture"
 msgstr "Слика"
 
-#. js-lingui-id: ZjVniv
+#. js-lingui-id: 3ubdv5
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Pie"
-msgstr "Пита"
+msgid "Pie Chart"
+msgstr ""
 
 #. js-lingui-id: fQtTho
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -7225,6 +7189,11 @@ msgstr "Перформансе реда"
 msgid "Queue: {queueName}"
 msgstr "Ред: {queueName}"
 
+#. js-lingui-id: GaAG2G
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Quick model for routing decisions"
+msgstr ""
+
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Receive an email containing password set link"
@@ -7366,16 +7335,6 @@ msgstr "Уклони филтер избрисаних"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Remove from favorites"
 msgstr "Уклоните из фаворита"
-
-#. js-lingui-id: utQSYi
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Remove handoff"
-msgstr "Уклони препуштање"
-
-#. js-lingui-id: OwOSPx
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Remove Handoff"
-msgstr "Уклони препуштање"
 
 #. js-lingui-id: 99VIgC
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -7598,26 +7557,6 @@ msgstr "Румунски"
 msgid "route trigger"
 msgstr "тригер руте"
 
-#. js-lingui-id: 4E5bBq
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Router"
-msgstr "Рутирање"
-
-#. js-lingui-id: jBPgd3
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Router is used in the chat to dispatch to the right agent"
-msgstr "Рутер је коришћен у чату за преусмеравање на правог агента"
-
-#. js-lingui-id: nWR0bQ
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Router Model"
-msgstr "Модел рутирања"
-
-#. js-lingui-id: ilPOUX
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Router model updated successfully"
-msgstr "Модел рутирања успешно ажуриран"
-
 #. js-lingui-id: UX0N2y
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Run a workflow and return here to view its executions"
@@ -7796,11 +7735,6 @@ msgstr "Претражите фасцикле..."
 msgid "Search for an object..."
 msgstr "Тражите орјентир..."
 
-#. js-lingui-id: OflyKY
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Search handoffs..."
-msgstr "Претражите препуштања..."
-
 #. js-lingui-id: lnwW17
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Search icon"
@@ -7967,11 +7901,6 @@ msgstr "Погледајте токове рада"
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field from a previous step"
 msgstr "Изаберите поље из претходног корака"
-
-#. js-lingui-id: l5KvVl
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Select a target agent"
-msgstr "Изаберите циљног агента"
 
 #. js-lingui-id: jL3gox
 #: src/modules/object-record/record-field/ui/form-types/components/FormBooleanFieldInput.tsx
@@ -8309,6 +8238,16 @@ msgstr "Прескочи"
 #. js-lingui-id: Ik7fz5
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Small section heading"
+msgstr ""
+
+#. js-lingui-id: 5J8ZFl
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Smart Model"
+msgstr ""
+
+#. js-lingui-id: qgvZ/2
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Smart model updated successfully"
 msgstr ""
 
 #. js-lingui-id: w+rJId
@@ -8758,12 +8697,6 @@ msgstr "Подешавања таба"
 msgid "Table"
 msgstr "Табела"
 
-#. js-lingui-id: orMfFk
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Target Agent"
-msgstr "Циљни агент"
-
 #. js-lingui-id: GtycJ/
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Tasks"
@@ -8972,11 +8905,6 @@ msgstr "Ова акција се не може поништити. Ово ће �
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
 msgstr "Ова акција се не може опозвати. Ово ће трајно обрисати ваш радни простор. <0/> Молимо вас да унесете ваш имејл да потврдите."
-
-#. js-lingui-id: igSFzI
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "This action cannot be undone. This will permanently remove the handoff configuration."
-msgstr "Ова акција се не може поништити. Ово ће трајно уклонити конфигурацију препуштања."
 
 #. js-lingui-id: fTuKde
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -9569,10 +9497,10 @@ msgstr "Верзија"
 msgid "Version of the application"
 msgstr "Верзија апликације"
 
-#. js-lingui-id: mX/isJ
+#. js-lingui-id: yIWhRv
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Vertical"
-msgstr "Вертикално"
+msgid "Vertical Bar Chart"
+msgstr ""
 
 #. js-lingui-id: fROFIL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx

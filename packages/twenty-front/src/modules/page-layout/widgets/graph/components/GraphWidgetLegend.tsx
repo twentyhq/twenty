@@ -1,3 +1,4 @@
+import { CHART_LEGEND_ITEM_THRESHOLD } from '@/page-layout/widgets/graph/constants/ChartLegendItemThreshold';
 import styled from '@emotion/styled';
 
 export type GraphWidgetLegendItem = {
@@ -16,6 +17,7 @@ const StyledLegendContainer = styled.div`
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing(3)};
   justify-content: center;
+  padding-top: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledLegendItem = styled.div`
@@ -42,7 +44,16 @@ export const GraphWidgetLegend = ({
   items,
   show = true,
 }: GraphWidgetLegendProps) => {
-  if (!show || items.length === 0) {
+  const areThereTooManyItems = items.length > CHART_LEGEND_ITEM_THRESHOLD;
+
+  const isItASingleItem = items.length === 1;
+
+  const thereAreNoItems = items.length === 0;
+
+  const shouldShowLegend =
+    show && !areThereTooManyItems && !isItASingleItem && !thereAreNoItems;
+
+  if (!shouldShowLegend) {
     return null;
   }
 

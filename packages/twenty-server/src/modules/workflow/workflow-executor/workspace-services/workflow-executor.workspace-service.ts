@@ -142,7 +142,7 @@ export class WorkflowExecutorWorkspaceService {
     const isError = isDefined(actionOutput.error);
 
     if (!isError) {
-      this.sendWorkflowNodeRunEvent(workspaceId);
+      this.sendWorkflowNodeRunEvent(workspaceId, workflowRun.workflowId);
     }
 
     const { shouldProcessNextSteps } = await this.processStepExecutionResult({
@@ -260,13 +260,18 @@ export class WorkflowExecutorWorkspaceService {
     });
   }
 
-  private sendWorkflowNodeRunEvent(workspaceId: string) {
+  private sendWorkflowNodeRunEvent(workspaceId: string, workflowId: string) {
     this.workspaceEventEmitter.emitCustomBatchEvent<BillingUsageEvent>(
       BILLING_FEATURE_USED,
       [
         {
           eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
           value: 1,
+          dimensions: {
+            execution_type: 'workflow_execution',
+            resource_id: workflowId,
+            execution_context_1: null,
+          },
         },
       ],
       workspaceId,

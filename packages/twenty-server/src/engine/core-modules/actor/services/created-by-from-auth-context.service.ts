@@ -7,8 +7,9 @@ import { buildCreatedByFromApiKey } from 'src/engine/core-modules/actor/utils/bu
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { buildFieldMapsForObject } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-for-object.util';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -21,7 +22,7 @@ export class CreatedByFromAuthContextService {
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   async injectCreatedBy(
@@ -33,10 +34,11 @@ export class CreatedByFromAuthContextService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    const { objectMetadataMaps } =
-      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId: workspace.id,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
         },
       );
 
@@ -44,16 +46,24 @@ export class CreatedByFromAuthContextService {
       `Injecting createdBy from auth context for object ${objectMetadataNameSingular} and workspace ${workspace.id}`,
     );
 
-    const objectMetadata = getObjectMetadataMapItemByNameSingular(
-      objectMetadataMaps,
-      objectMetadataNameSingular,
+    const { idByNameSingular } = buildObjectIdByNameMaps(
+      flatObjectMetadataMaps,
     );
+    const objectId = idByNameSingular[objectMetadataNameSingular];
+    const objectMetadata = objectId
+      ? flatObjectMetadataMaps.byId[objectId]
+      : undefined;
+
+    const fieldIdByName = objectMetadata
+      ? buildFieldMapsForObject(flatFieldMetadataMaps, objectMetadata.id)
+          .fieldIdByName
+      : {};
 
     this.logger.log(
-      `Object metadata found with fields: ${Object.keys(objectMetadata?.fieldIdByName ?? {})}`,
+      `Object metadata found with fields: ${Object.keys(fieldIdByName)}`,
     );
 
-    if (!isDefined(objectMetadata?.fieldIdByName['createdBy'])) {
+    if (!isDefined(fieldIdByName['createdBy'])) {
       this.logger.log(
         `CreatedBy field not found in object metadata, skipping injection`,
       );

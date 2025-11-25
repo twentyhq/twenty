@@ -10,7 +10,7 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { UPDATE_VIEW_BUTTON_DROPDOWN_ID } from '@/views/constants/UpdateViewButtonDropdownId';
-import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
+import { useHasFiltersInQueryParams } from '@/views/hooks/internal/useHasFiltersInQueryParams';
 import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/hooks/useAreViewFilterGroupsDifferentFromRecordFilterGroups';
 import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAreViewFiltersDifferentFromRecordFilters';
 import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
@@ -85,7 +85,7 @@ export const UpdateViewButtonGroup = () => {
     await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
   };
 
-  const { hasFiltersQueryParams } = useViewFromQueryParams();
+  const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
 
   const { viewFilterGroupsAreDifferentFromRecordFilterGroups } =
     useAreViewFilterGroupsDifferentFromRecordFilterGroups();

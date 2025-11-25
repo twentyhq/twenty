@@ -3,8 +3,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
-import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
-import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
@@ -15,11 +13,12 @@ import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-
 import { SearchArticlesTool } from 'src/engine/core-modules/tool/tools/search-articles-tool/search-articles-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
-import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
-import { AgentToolGeneratorService } from 'src/engine/metadata-modules/agent/agent-tool-generator.service';
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
-import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { AgentService } from 'src/engine/metadata-modules/ai-agent/agent.service';
+import { AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
+import { AgentToolGeneratorService } from 'src/engine/metadata-modules/ai-agent/services/agent-tool-generator.service';
+import { ToolAdapterService } from 'src/engine/metadata-modules/ai-tools/services/tool-adapter.service';
+import { ToolService } from 'src/engine/metadata-modules/ai-tools/services/tool.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -27,7 +26,6 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 import { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
@@ -135,9 +133,9 @@ export const createAgentToolTestModule =
           },
         },
         {
-          provide: WorkspaceCacheStorageService,
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
           useValue: {
-            getObjectMetadataMapsOrThrow: jest.fn(),
+            getOrRecomputeManyOrAllFlatEntityMaps: jest.fn(),
           },
         },
         {
@@ -180,20 +178,6 @@ export const createAgentToolTestModule =
             hasToolPermission: jest.fn(),
             checkRolePermissions: jest.fn().mockReturnValue(true),
             checkRolesPermissions: jest.fn().mockResolvedValue(true),
-          },
-        },
-        {
-          provide: AgentHandoffService,
-          useValue: {
-            getHandoffTargets: jest.fn().mockResolvedValue([]),
-            canHandoffTo: jest.fn().mockResolvedValue(true),
-            getAgentHandoffs: jest.fn().mockResolvedValue([]),
-          },
-        },
-        {
-          provide: AgentHandoffExecutorService,
-          useValue: {
-            executeHandoff: jest.fn().mockResolvedValue({ success: true }),
           },
         },
         {
@@ -249,8 +233,6 @@ export const createAgentToolTestModule =
       roleId: testRoleId,
       createdAt: new Date(),
       updatedAt: new Date(),
-      incomingHandoffs: [],
-      outgoingHandoffs: [],
       modelConfiguration: {},
     };
 
@@ -300,27 +282,36 @@ export const createAgentToolTestModule =
     });
 
     // Ensure ToolService input transformation has access to minimal metadata maps
-    const workspaceCacheStorageService =
-      module.get<WorkspaceCacheStorageService>(WorkspaceCacheStorageService);
+    const workspaceManyOrAllFlatEntityMapsCacheService =
+      module.get<WorkspaceManyOrAllFlatEntityMapsCacheService>(
+        WorkspaceManyOrAllFlatEntityMapsCacheService,
+      );
 
-    // Return a barebones object metadata map where fields are unknown (so transformer is a no-op)
+    // Return a barebones flat object metadata map where fields are unknown (so transformer is a no-op)
     const getMapsMock =
-      workspaceCacheStorageService.getObjectMetadataMapsOrThrow as jest.Mock;
+      workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps as jest.Mock;
 
     getMapsMock.mockResolvedValue({
-      byId: {
-        [testObjectMetadata.id]: {
-          ...testObjectMetadata,
-          fieldsById: {},
-          fieldIdByJoinColumnName: {},
-          fieldIdByName: {},
-          indexMetadatas: [],
+      flatObjectMetadataMaps: {
+        byId: {
+          [testObjectMetadata.id]: {
+            ...testObjectMetadata,
+            fieldMetadataIds: [],
+            indexMetadataIds: [],
+            viewIds: [],
+            universalIdentifier: testObjectMetadata.id,
+            applicationId: null,
+          } as any,
         },
+        idByUniversalIdentifier: {},
+        universalIdentifiersByApplicationId: {},
       },
-      idByNameSingular: {
-        [testObjectMetadata.nameSingular]: testObjectMetadata.id,
+      flatFieldMetadataMaps: {
+        byId: {},
+        idByUniversalIdentifier: {},
+        universalIdentifiersByApplicationId: {},
       },
-    });
+    } as any);
 
     return {
       module,

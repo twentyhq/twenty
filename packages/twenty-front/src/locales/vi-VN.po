@@ -601,12 +601,6 @@ msgstr "Thêm bộ lọc"
 msgid "Add first filter"
 msgstr "Thêm bộ lọc đầu tiên"
 
-#. js-lingui-id: B0gWuX
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Add Handoff"
-msgstr "Thêm chuyển giao"
-
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
 msgid "Add inputs to your form"
@@ -794,6 +788,11 @@ msgstr "Tính năng nâng cao để cải thiện hiệu suất truy vấn và �
 msgid "Advanced filter"
 msgstr "Bộ lọc nâng cao"
 
+#. js-lingui-id: luNzWN
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Advanced model for complex planning"
+msgstr ""
+
 #. js-lingui-id: miuPUc
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
@@ -820,11 +819,6 @@ msgstr "Sau một khoảng thời gian đã đặt"
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Agent"
 msgstr "Đại lý"
-
-#. js-lingui-id: Q37C8E
-#: src/pages/settings/ai/components/SettingsAgentHandoffSection.tsx
-msgid "Agent Handoffs"
-msgstr "Chuyển giao đại lý"
 
 #. js-lingui-id: mDXkHu
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -853,10 +847,10 @@ msgstr "Các đại lý được tạo bởi ứng dụng"
 msgid "Agents used to route queries to specialized agents"
 msgstr "Các tác nhân được sử dụng để sắp xếp truy vấn tới các tác nhân chuyên biệt"
 
-#. js-lingui-id: 3y9hVY
+#. js-lingui-id: sPQ5qN
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Aggregate"
-msgstr "Tổng hợp"
+msgid "Aggregate Chart"
+msgstr ""
 
 #. js-lingui-id: jsQZMk
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
@@ -877,6 +871,11 @@ msgstr "AI"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "AI Model"
 msgstr "Mô hình AI"
+
+#. js-lingui-id: tGx4Zn
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "AI Models"
+msgstr ""
 
 #. js-lingui-id: QwgquD
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -1672,7 +1671,6 @@ msgid "Can't scan? Copy the"
 msgstr "Không thể quét? Sao chép"
 
 #. js-lingui-id: dEgA5A
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
@@ -2056,6 +2054,11 @@ msgstr "Biến cấu hình"
 msgid "Configuration"
 msgstr "Cấu Hình"
 
+#. js-lingui-id: 9px+al
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Configure AI models for routing and planning"
+msgstr ""
+
 #. js-lingui-id: +zUMwJ
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Configure an SSO connection"
@@ -2110,11 +2113,6 @@ msgstr "Cấu hình cài đặt SMTP để gửi email từ tài khoản của b
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
 msgid "Configure these DNS records with your domain provider"
 msgstr "Cấu hình các bản ghi DNS này với nhà cung cấp miền của bạn"
-
-#. js-lingui-id: SpV+F6
-#: src/pages/settings/ai/components/SettingsAgentHandoffSection.tsx
-msgid "Configure which agents this agent can hand off conversations to"
-msgstr "Cấu hình những tác nhân mà tác nhân này có thể chuyển giao cuộc hội thoại sang"
 
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -3109,28 +3107,17 @@ msgstr "Giảm dần"
 msgid "Describe what you want the AI to do..."
 msgstr "Mô tả điều bạn muốn AI làm gì..."
 
-#. js-lingui-id: ptyOy7
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Describe when this handoff should be used"
-msgstr "Mô tả khi nào việc chuyển giao này nên được sử dụng"
-
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Description"
 msgstr "Mô tả"
-
-#. js-lingui-id: /mo9tB
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Description (Optional)"
-msgstr "Mô tả (Tùy chọn)"
 
 #. js-lingui-id: CuAMy4
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
@@ -3306,6 +3293,11 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Duplicate node"
 msgstr "Nhân bản nút"
+
+#. js-lingui-id: mMsEuG
+#: src/modules/command-menu/pages/page-layout/components/WidgetSettingsFooter.tsx
+msgid "Duplicate widget"
+msgstr ""
 
 #. js-lingui-id: 2RpRNn
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -4149,11 +4141,6 @@ msgstr "Đã tạo thất bại {translatedMetadataName}. Vui lòng thử lại.
 msgid "Failed to create {translatedMetadataName}. Related {relatedEntityNames} validation failed. Please check your configuration and try again."
 msgstr "Đã tạo thất bại {translatedMetadataName}. Kiểm tra liên quan {relatedEntityNames} không thành công. Vui lòng kiểm tra cấu hình của bạn và thử lại."
 
-#. js-lingui-id: w/6jdn
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Failed to create handoff"
-msgstr "Không tạo được chuyển giao"
-
 #. js-lingui-id: pUligB
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
 msgid "Failed to delete jobs. Please try again later."
@@ -4174,11 +4161,6 @@ msgstr "Không thể lấy được phản hồi"
 msgid "Failed to load webhook"
 msgstr "Không tải được webhook"
 
-#. js-lingui-id: 99t8X7
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Failed to remove handoff"
-msgstr "Không thể xóa chuyển giao"
-
 #. js-lingui-id: A/P7PX
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Failed to remove override"
@@ -4194,15 +4176,20 @@ msgstr "Không thể thử lại các công việc. Vui lòng thử lại sau."
 msgid "Failed to save role permissions: {errorMessage}"
 msgstr ""
 
+#. js-lingui-id: YMSYb+
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Failed to update fast model"
+msgstr ""
+
 #. js-lingui-id: HnBqPY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Failed to update price."
 msgstr "Cập nhật giá thất bại."
 
-#. js-lingui-id: yS3a92
+#. js-lingui-id: h/0aT5
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Failed to update router model"
-msgstr "Cập nhật mô hình router thất bại"
+msgid "Failed to update smart model"
+msgstr ""
 
 #. js-lingui-id: Dzh4a2
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
@@ -4225,10 +4212,15 @@ msgstr "Tải ảnh lên thất bại: "
 msgid "False"
 msgstr "Sai"
 
-#. js-lingui-id: 9Ue4+J
+#. js-lingui-id: XVIZ7v
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Fast model to route to the right agent"
-msgstr "Mô hình nhanh để điều hướng đến đúng đại lý"
+msgid "Fast Model"
+msgstr ""
+
+#. js-lingui-id: UJHTjm
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Fast model updated successfully"
+msgstr ""
 
 #. js-lingui-id: X9kySA
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx
@@ -4451,10 +4443,10 @@ msgstr "\\"
 msgid "Functions - Settings"
 msgstr "Cài đặt - Chức năng"
 
-#. js-lingui-id: IZUMtC
+#. js-lingui-id: vYj1cC
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Gauge"
-msgstr "Đồng hồ đo"
+msgid "Gauge Chart"
+msgstr ""
 
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -4620,16 +4612,6 @@ msgstr ""
 msgid "h3"
 msgstr ""
 
-#. js-lingui-id: /Oqu/V
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Handoff created successfully"
-msgstr "Tạo chuyển giao thành công"
-
-#. js-lingui-id: cZP3a/
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Handoff removed successfully"
-msgstr "Đã xóa chuyển giao thành công"
-
 #. js-lingui-id: vISdlD
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -4719,10 +4701,10 @@ msgstr "Ẩn nhóm trống"
 msgid "Hide hidden groups"
 msgstr "Ẩn nhóm ẩn"
 
-#. js-lingui-id: pzu7v4
+#. js-lingui-id: Xkd22/
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Horizontal"
-msgstr "Ngang"
+msgid "Horizontal Bar Chart"
+msgstr ""
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -5470,10 +5452,10 @@ msgstr "Giới hạn số lượng giá trị có thể được thêm vào trư
 msgid "Limit must be greater than 0."
 msgstr ""
 
-#. js-lingui-id: rjuFFw
+#. js-lingui-id: pFkLY3
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Line"
-msgstr "Đường"
+msgid "Line Chart"
+msgstr ""
 
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
@@ -5526,7 +5508,6 @@ msgid "Loading retention configuration..."
 msgstr "Đang tải cấu hình lưu trữ..."
 
 #. js-lingui-id: Z3FXyt
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -6165,11 +6146,6 @@ msgstr "Không có tác nhân nào được chỉ định"
 msgid "No agents available"
 msgstr "Không có tác nhân nào có sẵn"
 
-#. js-lingui-id: pC+mOo
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "No agents available for handoff"
-msgstr "Không có tác nhân nào sẵn sàng chuyển giao"
-
 #. js-lingui-id: mU1OkO
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No agents match your search"
@@ -6252,7 +6228,6 @@ msgstr "Không tìm thấy bản ghi nào bị xóa khớp với tiêu chí bộ
 
 #. js-lingui-id: flmDTf
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "No description"
 msgstr "Không có mô tả"
 
@@ -6285,16 +6260,6 @@ msgstr "Hết lượt thực thi quy trình miễn phí. Kết thúc giai đoạ
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "No free workflow executions left. Please contact your admin."
 msgstr "Không còn lượt chạy quy trình nào miễn phí. Vui lòng liên hệ quản trị viên của bạn."
-
-#. js-lingui-id: S81IYy
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "No handoffs configured for this agent"
-msgstr "Không có cấu hình chuyển giao cho tác nhân này"
-
-#. js-lingui-id: zsMgNq
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "No handoffs match your search"
-msgstr "Không có chuyển giao nào phù hợp với tìm kiếm của bạn"
 
 #. js-lingui-id: lj3GoP
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -6737,13 +6702,12 @@ msgid "Optional secret used to compute the HMAC signature for webhook payloads"
 msgstr "Bí mật tùy chọn dùng để tính toán chữ ký HMAC cho tải trọng webhook"
 
 #. js-lingui-id: 0zpgxV
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+#: src/modules/ui/layout/dropdown/components/OptionsDropdownMenu.tsx
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
-#: src/modules/action-menu/components/CommandMenuActionMenuDropdown.tsx
 msgid "Options"
 msgstr "Tùy chọn"
 
@@ -6974,10 +6938,10 @@ msgstr "Chọn một bản ghi {objectLabel}"
 msgid "Picture"
 msgstr "Hình ảnh"
 
-#. js-lingui-id: ZjVniv
+#. js-lingui-id: 3ubdv5
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Pie"
-msgstr "Biểu đồ hình tròn"
+msgid "Pie Chart"
+msgstr ""
 
 #. js-lingui-id: fQtTho
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -7225,6 +7189,11 @@ msgstr "Hiệu suất hàng đợi"
 msgid "Queue: {queueName}"
 msgstr "Hàng đợi: {queueName}"
 
+#. js-lingui-id: GaAG2G
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Quick model for routing decisions"
+msgstr ""
+
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Receive an email containing password set link"
@@ -7366,16 +7335,6 @@ msgstr "Gỡ bỏ bộ lọc đã xóa"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Remove from favorites"
 msgstr "Loại bỏ khỏi mục yêu thích"
-
-#. js-lingui-id: utQSYi
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Remove handoff"
-msgstr "Xóa chuyển giao"
-
-#. js-lingui-id: OwOSPx
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Remove Handoff"
-msgstr "Xóa Chuyển Giao"
 
 #. js-lingui-id: 99VIgC
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -7598,26 +7557,6 @@ msgstr "Tiếng Romania"
 msgid "route trigger"
 msgstr "kích hoạt tuyến đường"
 
-#. js-lingui-id: 4E5bBq
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Router"
-msgstr "Bộ chuyển mạch"
-
-#. js-lingui-id: jBPgd3
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Router is used in the chat to dispatch to the right agent"
-msgstr "Bộ chuyển mạch được sử dụng trong trò chuyện để gửi đến đúng đại lý"
-
-#. js-lingui-id: nWR0bQ
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Router Model"
-msgstr "Mô hình Bộ chuyển mạch"
-
-#. js-lingui-id: ilPOUX
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Router model updated successfully"
-msgstr "Cập nhật mô hình bộ chuyển mạch thành công"
-
 #. js-lingui-id: UX0N2y
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Run a workflow and return here to view its executions"
@@ -7796,11 +7735,6 @@ msgstr "Tìm kiếm thư mục..."
 msgid "Search for an object..."
 msgstr "Tìm kiếm một đối tượng..."
 
-#. js-lingui-id: OflyKY
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "Search handoffs..."
-msgstr "Tìm kiếm chuyển giao..."
-
 #. js-lingui-id: lnwW17
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Search icon"
@@ -7967,11 +7901,6 @@ msgstr "Xem các quy trình công việc"
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field from a previous step"
 msgstr "Chọn một trường từ một bước trước đó"
-
-#. js-lingui-id: l5KvVl
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Select a target agent"
-msgstr "Chọn một tác nhân mục tiêu"
 
 #. js-lingui-id: jL3gox
 #: src/modules/object-record/record-field/ui/form-types/components/FormBooleanFieldInput.tsx
@@ -8309,6 +8238,16 @@ msgstr "Bỏ qua"
 #. js-lingui-id: Ik7fz5
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Small section heading"
+msgstr ""
+
+#. js-lingui-id: 5J8ZFl
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Smart Model"
+msgstr ""
+
+#. js-lingui-id: qgvZ/2
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Smart model updated successfully"
 msgstr ""
 
 #. js-lingui-id: w+rJId
@@ -8758,12 +8697,6 @@ msgstr "Cài đặt Tab"
 msgid "Table"
 msgstr "Bảng"
 
-#. js-lingui-id: orMfFk
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-#: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-msgid "Target Agent"
-msgstr "Tác Nhân Mục Tiêu"
-
 #. js-lingui-id: GtycJ/
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Tasks"
@@ -8972,11 +8905,6 @@ msgstr "Hành động này không thể được hoàn tác. Điều này sẽ x
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
 msgstr "Hành động này không thể được hoàn tác. Điều này sẽ xóa vĩnh viễn toàn bộ không gian làm việc của bạn. <0/> Vui lòng nhập email của bạn để xác nhận."
-
-#. js-lingui-id: igSFzI
-#: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
-msgid "This action cannot be undone. This will permanently remove the handoff configuration."
-msgstr "Hành động này không thể được hoàn tác. Điều này sẽ xóa vĩnh viễn cấu hình chuyển giao."
 
 #. js-lingui-id: fTuKde
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -9569,10 +9497,10 @@ msgstr "Phiên bản"
 msgid "Version of the application"
 msgstr "Phiên bản của ứng dụng"
 
-#. js-lingui-id: mX/isJ
+#. js-lingui-id: yIWhRv
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Vertical"
-msgstr "Dọc"
+msgid "Vertical Bar Chart"
+msgstr ""
 
 #. js-lingui-id: fROFIL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
