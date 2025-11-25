@@ -93,6 +93,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         agent?.modelId ?? DEFAULT_SMART_MODEL,
         usage,
         workspaceId,
+        agent?.id || null,
       );
 
       return {

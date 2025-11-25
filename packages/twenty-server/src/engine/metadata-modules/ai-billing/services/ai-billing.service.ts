@@ -47,16 +47,19 @@ export class AIBillingService {
     modelId: ModelId,
     usage: LanguageModelUsage,
     workspaceId: string,
+    agentId?: string | null,
   ): Promise<void> {
     const costInCents = await this.calculateCost(modelId, usage);
     const creditsUsed = Math.round(convertCentsToBillingCredits(costInCents));
 
-    this.sendAiTokenUsageEvent(workspaceId, creditsUsed);
+    this.sendAiTokenUsageEvent(workspaceId, creditsUsed, modelId, agentId);
   }
 
   private sendAiTokenUsageEvent(
     workspaceId: string,
     creditsUsed: number,
+    modelId: ModelId,
+    agentId?: string | null,
   ): void {
     this.workspaceEventEmitter.emitCustomBatchEvent<BillingUsageEvent>(
       BILLING_FEATURE_USED,
@@ -64,6 +67,11 @@ export class AIBillingService {
         {
           eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
           value: creditsUsed,
+          dimensions: {
+            execution_type: 'ai_token',
+            resource_id: agentId || null,
+            execution_context_1: modelId,
+          },
         },
       ],
       workspaceId,

@@ -40,7 +40,6 @@ Agent selection rules (CRITICAL):
 - **helper**: ONLY for questions about HOW TO USE Twenty (features, setup, documentation)
 - **researcher**: For finding external information from the web
 - **workflow-builder**: For creating automation workflows
-- **code-agent**: For writing TypeScript serverless functions
 
 Use "planned" strategy when:
 - Request needs custom code AND context from data/research
@@ -80,32 +79,6 @@ Planned: "Research information about Meta and update the company record"
       { stepNumber: 2, agentName: "data-manipulator", task: "Update the Meta company record with the researched information", expectedOutput: "Updated company record", dependsOn: [1] }
     ],
     reasoning: "Requires web research followed by database update"
-  }
-}
-
-Planned: "Create a workflow that enriches companies by scraping their websites"
-→ {
-  strategy: "planned",
-  plan: {
-    steps: [
-      { stepNumber: 1, agentName: "data-manipulator", task: "Get Company object schema", expectedOutput: "Company fields and types" },
-      { stepNumber: 2, agentName: "code-agent", task: "Write website scraping function using schema", expectedOutput: "TypeScript code", dependsOn: [1] },
-      { stepNumber: 3, agentName: "workflow-builder", task: "Create workflow with generated code", expectedOutput: "Created workflow", dependsOn: [2] }
-    ],
-    reasoning: "Needs schema context for code generation, then workflow integration"
-  }
-}
-
-Planned: "Research Stripe's webhook format and create a workflow to handle payment events"
-→ {
-  strategy: "planned",
-  plan: {
-    steps: [
-      { stepNumber: 1, agentName: "researcher", task: "Find Stripe webhook documentation and event structure", expectedOutput: "Webhook format details" },
-      { stepNumber: 2, agentName: "code-agent", task: "Write webhook handler function for Stripe events", expectedOutput: "Handler code", dependsOn: [1] },
-      { stepNumber: 3, agentName: "workflow-builder", task: "Create workflow with WEBHOOK trigger and handler code", expectedOutput: "Created workflow", dependsOn: [2] }
-    ],
-    reasoning: "Needs external API research before code generation"
   }
 }
 

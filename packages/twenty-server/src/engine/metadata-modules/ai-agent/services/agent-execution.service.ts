@@ -357,6 +357,7 @@ export class AgentExecutionService {
             model.modelId,
             usage,
             workspace.id,
+            agent.id,
           );
         })
         .catch((usageError) => {

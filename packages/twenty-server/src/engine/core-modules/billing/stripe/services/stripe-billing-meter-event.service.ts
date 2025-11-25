@@ -5,6 +5,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import type Stripe from 'stripe';
 
 import { type BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
+import { type BillingDimensions } from 'src/engine/core-modules/billing/types/billing-dimensions.type';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -29,17 +30,33 @@ export class StripeBillingMeterEventService {
     eventName,
     value,
     stripeCustomerId,
+    dimensions,
   }: {
     eventName: BillingMeterEventName;
     value: number;
     stripeCustomerId: string;
+    dimensions?: BillingDimensions;
   }) {
+    const payload: Record<string, string> = {
+      value: value.toString(),
+      stripe_customer_id: stripeCustomerId,
+    };
+
+    if (dimensions) {
+      payload.execution_type = dimensions.execution_type;
+
+      if (dimensions.resource_id !== undefined) {
+        payload.resource_id = dimensions.resource_id || 'none';
+      }
+
+      if (dimensions.execution_context_1 !== undefined) {
+        payload.execution_context_1 = dimensions.execution_context_1 || 'none';
+      }
+    }
+
     await this.stripe.billing.meterEvents.create({
       event_name: eventName,
-      payload: {
-        value: value.toString(),
-        stripe_customer_id: stripeCustomerId,
-      },
+      payload,
     });
   }
 
