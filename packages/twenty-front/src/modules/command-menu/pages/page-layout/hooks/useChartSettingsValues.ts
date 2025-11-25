@@ -102,12 +102,28 @@ export const useChartSettingsValues = ({
         })
       : undefined;
 
+  let pieChartSortByLabel: string | undefined;
+
   if (configuration.__typename === 'PieChartConfiguration') {
     groupByOrderBy = configuration.orderBy;
     groupByFieldYId = configuration.groupByFieldMetadataId;
     groupBySubFieldNameY = configuration.groupBySubFieldName as
       | CompositeFieldSubFieldName
       | undefined;
+
+    pieChartSortByLabel =
+      isDefined(configuration.orderBy) &&
+      isDefined(configuration.groupByFieldMetadataId)
+        ? getXSortOptionLabel({
+            graphOrderBy: configuration.orderBy,
+            groupByFieldMetadataIdX: configuration.groupByFieldMetadataId,
+            groupBySubFieldNameX: configuration.groupBySubFieldName as
+              | CompositeFieldSubFieldName
+              | undefined,
+            aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
+            aggregateOperation: configuration.aggregateOperation ?? undefined,
+          })
+        : undefined;
   }
 
   const finalGroupByFieldYId = groupByFieldYId;
@@ -135,7 +151,8 @@ export const useChartSettingsValues = ({
           ? capitalize(configuration.color)
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_Y:
-      case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_AGGREGATE: {
+      case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_AGGREGATE:
+      case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_PIE_CHART: {
         const hasAggregateLabel = isDefined(aggregateField?.label);
         const hasAggregateOperation = isDefined(aggregateOperation);
 
@@ -145,8 +162,12 @@ export const useChartSettingsValues = ({
             : ''
         }`;
       }
-      case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_PIE_CHART: {
-        const pieChartGroupByField = groupByFieldY;
+      case CHART_CONFIGURATION_SETTING_IDS.EACH_SLICE_REPRESENTS: {
+        const pieChartGroupByField = isDefined(finalGroupByFieldYId)
+          ? objectMetadataItem?.fields.find(
+              (field) => field.id === finalGroupByFieldYId,
+            )
+          : undefined;
         const pieChartGroupBySubFieldNameLabel =
           isDefined(finalGroupBySubFieldNameY) &&
           isDefined(pieChartGroupByField)
@@ -166,7 +187,7 @@ export const useChartSettingsValues = ({
           ? getChartAxisNameDisplayOptions(configuration.axisNameDisplay)
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.PRIMARY_BY_X:
-        return xAxisOrderByLabel;
+        return pieChartSortByLabel ?? xAxisOrderByLabel;
       case CHART_CONFIGURATION_SETTING_IDS.SORT_BY_GROUP_BY_FIELD:
         return groupByOrderByLabel;
       case CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS:
