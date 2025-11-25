@@ -75,9 +75,8 @@ export const MultiItemFieldInput = <T,>({
     refs: [containerRef],
     callback: (event) => {
       const isEditing = inputValue !== '';
-      const isPrimaryItem = items.length === 0;
 
-      if (isEditing && isPrimaryItem) {
+      if (isEditing) {
         handleSubmitInput();
       }
 
