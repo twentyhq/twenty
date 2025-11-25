@@ -351,7 +351,7 @@ export const ActivityRichTextEditor = ({
       return;
     }
 
-        // Don't intercept keystrokes when command menu is open
+    // Don't intercept keystrokes when command menu is open
     if (isCommandMenuOpened) {
       return;
     }
