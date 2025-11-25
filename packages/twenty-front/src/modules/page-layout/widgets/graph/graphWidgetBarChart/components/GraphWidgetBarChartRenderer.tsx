@@ -5,6 +5,8 @@ import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBa
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { type ComputedDatum } from '@nivo/bar';
 import { lazy, Suspense } from 'react';
@@ -50,6 +52,9 @@ export const GraphWidgetBarChartRenderer = ({
 
   const navigate = useNavigate();
   const configuration = widget.configuration as BarChartConfiguration;
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+  );
 
   const hasGroupByOnSecondaryAxis = isDefined(
     configuration.secondaryAxisGroupByFieldMetadataId,
@@ -118,7 +123,7 @@ export const GraphWidgetBarChartRenderer = ({
         rangeMin={configuration.rangeMin ?? undefined}
         rangeMax={configuration.rangeMax ?? undefined}
         omitNullValues={configuration.omitNullValues ?? false}
-        onBarClick={handleBarClick}
+        onBarClick={isPageLayoutInEditMode ? undefined : handleBarClick}
       />
     </Suspense>
   );

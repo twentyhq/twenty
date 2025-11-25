@@ -5,6 +5,8 @@ import { useGraphLineChartWidgetData } from '@/page-layout/widgets/graph/graphWi
 import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { type LineSeries, type Point } from '@nivo/line';
 import { lazy, Suspense } from 'react';
@@ -46,6 +48,9 @@ export const GraphWidgetLineChartRenderer = ({
 
   const navigate = useNavigate();
   const configuration = widget.configuration as LineChartConfiguration;
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+  );
 
   const hasGroupByOnSecondaryAxis = isDefined(
     configuration.secondaryAxisGroupByFieldMetadataId,
@@ -113,7 +118,7 @@ export const GraphWidgetLineChartRenderer = ({
         omitNullValues={configuration.omitNullValues ?? false}
         groupMode={groupMode}
         displayType="shortNumber"
-        onSliceClick={handlePointClick}
+        onSliceClick={isPageLayoutInEditMode ? undefined : handlePointClick}
       />
     </Suspense>
   );
