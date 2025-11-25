@@ -33,7 +33,6 @@ export const GraphWidgetPieChartRenderer = ({
     });
 
   const navigate = useNavigate();
-  const configuration = widget.configuration as PieChartConfiguration;
 
   const indexViewId = useRecoilValue(
     coreIndexViewIdFromObjectMetadataItemFamilySelector({
@@ -64,7 +63,6 @@ export const GraphWidgetPieChartRenderer = ({
       />
       <GraphWidgetPieChart
         data={data}
-        showLegend={configuration.displayDataLabel ?? true}
         id={widget.id}
         displayType="shortNumber"
         onSliceClick={handleSliceClick}
