@@ -9200,6 +9200,11 @@ msgstr ""
 msgid "Undisplayed data: max {LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart."
 msgstr ""
 
+#. js-lingui-id: xliRoG
+#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+msgid "Undisplayed data: max {PIE_CHART_MAXIMUM_NUMBER_OF_SLICES} slices per chart."
+msgstr ""
+
 #. js-lingui-id: fo0VXg
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab.tsx
