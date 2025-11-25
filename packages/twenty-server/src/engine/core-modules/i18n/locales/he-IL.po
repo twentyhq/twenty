@@ -1469,7 +1469,7 @@ msgid "Field type TS_VECTOR is a system type and cannot be created manually."
 msgstr ""
 
 #. js-lingui-id: J4hC2m
-#: src/engine/metadata-modules/constants/search-vector-field.constants.ts
+#: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
 msgid "Field used for full-text search"
 msgstr "שדה המשמש לחיפוש טקסט מלא"
 
@@ -2914,7 +2914,7 @@ msgid "Scopes"
 msgstr "טווחי הרשאה"
 
 #. js-lingui-id: PdVIJC
-#: src/engine/metadata-modules/constants/search-vector-field.constants.ts
+#: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
 msgid "Search vector"
 msgstr "וקטור חיפוש"
 
