@@ -1,9 +1,12 @@
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -141,6 +144,31 @@ describe('updateOne FieldMetadataService morph relation fields v2 - Add one targ
     createdFieldMetadataId = rawCreateOneField.id;
   });
 
+  afterEach(async () => {
+    if (!isDefined(createdFieldMetadataId)) {
+      return;
+    }
+
+    await updateOneFieldMetadata({
+      input: {
+        idToUpdate: createdFieldMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+      expectToFail: false,
+    });
+
+    await deleteOneFieldMetadata({
+      input: {
+        idToDelete: createdFieldMetadataId,
+      },
+      expectToFail: false,
+    });
+
+    createdFieldMetadataId = '';
+  });
+
   it('When adding one object metadata target to pre-existing morph relation, the relation on the target object metadata should be updated', async () => {
     const input = {
       idToUpdate: createdFieldMetadataId,
@@ -184,5 +212,80 @@ describe('updateOne FieldMetadataService morph relation fields v2 - Add one targ
     };
 
     expect(updateOneField?.morphRelations.length).toBe(3);
+  });
+
+  it('Should fail adding one object metadata target to pre-existing morph relation where object is already a target', async () => {
+    const input = {
+      idToUpdate: createdFieldMetadataId,
+      updatePayload: {
+        morphRelationsUpdatePayload: [
+          {
+            targetObjectMetadataId: createdObjectMetadataPersonId,
+          },
+        ],
+      },
+    };
+
+    const { errors } = await updateOneFieldMetadata({
+      expectToFail: true,
+      input,
+      gqlFields: `
+      id
+      name
+      morphRelations {
+        type
+        targetFieldMetadata {
+          id
+          name
+        }
+      }
+      `,
+    });
+
+    expect(errors.length).toBe(1);
+    const [firstError] = errors;
+
+    expect(firstError).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(firstError),
+    );
+    expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
+  });
+
+  // todo @guillim: once we fix the bug, we can re-enable this test
+  xit('Should fail adding one object metadata target to pre-existing morph relation where object is already source object', async () => {
+    const input = {
+      idToUpdate: createdFieldMetadataId,
+      updatePayload: {
+        morphRelationsUpdatePayload: [
+          {
+            targetObjectMetadataId: createdObjectMetadataCompanyId,
+          },
+        ],
+      },
+    };
+
+    const { errors } = await updateOneFieldMetadata({
+      expectToFail: true,
+      input,
+      gqlFields: `
+      id
+      name
+      morphRelations {
+        type
+        targetFieldMetadata {
+          id
+          name
+        }
+      }
+      `,
+    });
+
+    expect(errors.length).toBe(1);
+    const [firstError] = errors;
+
+    expect(firstError).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(firstError),
+    );
+    expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
   });
 });

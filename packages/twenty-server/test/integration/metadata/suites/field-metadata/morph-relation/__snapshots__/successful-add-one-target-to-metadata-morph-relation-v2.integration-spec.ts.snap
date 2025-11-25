@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`updateOne FieldMetadataService morph relation fields v2 - Add one target Should fail adding one object metadata target to pre-existing morph relation where object is already a target 1`] = `
+{
+  "extensions": {
+    "code": "CONFLICT",
+    "subCode": "FIELD_ALREADY_EXISTS",
+    "userFriendlyMessage": "Relation name already exists",
+  },
+  "message": "Field metadata name already exists",
+  "name": "ConflictError",
+}
+`;
