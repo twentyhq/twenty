@@ -20,11 +20,13 @@ type TransformGroupByDataToPieChartDataParams = {
 
 type TransformGroupByDataToPieChartDataResult = {
   data: PieChartDataItem[];
+  showLegend: boolean;
   hasTooManyGroups: boolean;
 };
 
 const EMPTY_PIE_CHART_RESULT: TransformGroupByDataToPieChartDataResult = {
   data: [],
+  showLegend: true,
   hasTooManyGroups: false,
 };
 
@@ -94,8 +96,11 @@ export const transformGroupByDataToPieChartData = ({
     };
   });
 
+  const showLegend = configuration.displayLegend ?? true;
+
   return {
     data,
+    showLegend,
     hasTooManyGroups: rawResults.length > PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
   };
 };

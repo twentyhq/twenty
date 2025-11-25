@@ -26,7 +26,7 @@ export const GraphWidgetPieChartRenderer = ({
 }: {
   widget: PageLayoutWidget;
 }) => {
-  const { data, loading, hasTooManyGroups, objectMetadataItem } =
+  const { data, showLegend, loading, hasTooManyGroups, objectMetadataItem } =
     useGraphPieChartWidgetData({
       objectMetadataItemId: widget.objectMetadataId,
       configuration: widget.configuration as PieChartConfiguration,
@@ -64,6 +64,7 @@ export const GraphWidgetPieChartRenderer = ({
       <GraphWidgetPieChart
         data={data}
         id={widget.id}
+        showLegend={showLegend}
         displayType="shortNumber"
         onSliceClick={handleSliceClick}
       />

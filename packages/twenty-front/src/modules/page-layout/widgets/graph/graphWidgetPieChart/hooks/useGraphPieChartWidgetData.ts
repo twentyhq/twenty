@@ -14,6 +14,7 @@ type UseGraphPieChartWidgetDataProps = {
 
 type UseGraphPieChartWidgetDataResult = {
   data: PieChartDataItem[];
+  showLegend: boolean;
   loading: boolean;
   error?: Error;
   hasTooManyGroups: boolean;

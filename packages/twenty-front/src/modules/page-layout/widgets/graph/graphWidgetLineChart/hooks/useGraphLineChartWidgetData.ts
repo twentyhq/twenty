@@ -16,6 +16,7 @@ type UseGraphLineChartWidgetDataResult = {
   xAxisLabel?: string;
   yAxisLabel?: string;
   showDataLabels: boolean;
+  showLegend: boolean;
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
   loading: boolean;

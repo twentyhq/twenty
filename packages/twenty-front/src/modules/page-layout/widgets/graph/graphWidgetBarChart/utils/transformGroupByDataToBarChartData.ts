@@ -37,6 +37,7 @@ type TransformGroupByDataToBarChartDataResult = {
   xAxisLabel?: string;
   yAxisLabel?: string;
   showDataLabels: boolean;
+  showLegend: boolean;
   layout?: BarChartLayout;
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
@@ -50,6 +51,7 @@ const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
   xAxisLabel: undefined,
   yAxisLabel: undefined,
   showDataLabels: false,
+  showLegend: true,
   layout: BarChartLayout.VERTICAL,
   hasTooManyGroups: false,
   formattedToRawLookup: new Map(),
@@ -146,6 +148,7 @@ export const transformGroupByDataToBarChartData = ({
     : undefined;
 
   const showDataLabels = configuration.displayDataLabel ?? false;
+  const showLegend = configuration.displayLegend ?? true;
 
   const isDateField =
     groupByFieldX.type === FieldMetadataType.DATE ||
@@ -196,6 +199,7 @@ export const transformGroupByDataToBarChartData = ({
     xAxisLabel,
     yAxisLabel,
     showDataLabels,
+    showLegend,
     layout,
     hasTooManyGroups: baseResult.hasTooManyGroups || dateRangeWasTruncated,
     formattedToRawLookup: baseResult.formattedToRawLookup,

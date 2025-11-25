@@ -22,6 +22,7 @@ type UseGraphBarChartWidgetDataResult = {
   xAxisLabel?: string;
   yAxisLabel?: string;
   showDataLabels: boolean;
+  showLegend: boolean;
   layout?: BarChartLayout;
   loading: boolean;
   error?: Error;
