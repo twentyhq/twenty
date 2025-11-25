@@ -1400,7 +1400,37 @@ export const STANDARD_OBJECTS = {
           TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedObjectMetadataId,
       },
     },
-    views: {},
+    views: {
+      allTimelineActivities: {
+        universalIdentifier: '20202020-b101-4b01-8b01-ba5cc01aa001',
+        viewFields: {
+          name: {
+            universalIdentifier: '20202020-bf01-4b01-8b01-ba5cc01aa011',
+          },
+          happensAt: {
+            universalIdentifier: '20202020-bf01-4b01-8b01-ba5cc01aa012',
+          },
+          properties: {
+            universalIdentifier: '20202020-bf01-4b01-8b01-ba5cc01aa019',
+          },
+          workspaceMember: {
+            universalIdentifier: '20202020-bf01-4b01-8b01-ba5cc01aa013',
+          },
+          person: {
+            universalIdentifier: '20202020-bf01-4b01-8b01-ba5cc01aa014',
+          },
+          company: {
+            universalIdentifier: '20202020-bf01-4b01-8b01-ba5cc01aa015',
+          },
+          opportunity: {
+            universalIdentifier: '20202020-bf01-4b01-8b01-ba5cc01aa016',
+          },
+          linkedRecordCachedName: {
+            universalIdentifier: '20202020-bf01-4b01-8b01-ba5cc01aa017',
+          },
+        },
+      },
+    },
   },
   view: {
     universalIdentifier: STANDARD_OBJECT_IDS.view,
