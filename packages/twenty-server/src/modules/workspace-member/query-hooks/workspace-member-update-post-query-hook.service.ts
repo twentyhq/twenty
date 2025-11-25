@@ -15,7 +15,6 @@ import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-r
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceQueryHook({
@@ -26,7 +25,6 @@ export class WorkspaceMemberUpdateOnePostQueryHook
   implements WorkspacePostQueryHookInstance
 {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly userService: UserService,
@@ -38,6 +36,10 @@ export class WorkspaceMemberUpdateOnePostQueryHook
     payload: WorkspaceMemberWorkspaceEntity[],
   ): Promise<void> {
     const workspaceMember = payload[0];
+
+    if (!isDefined(workspaceMember)) {
+      return;
+    }
 
     await this.updateUserNameIfUserHasOnlyOneWorkspaceAndNameHasChanged({
       authContext,
@@ -79,20 +81,20 @@ export class WorkspaceMemberUpdateOnePostQueryHook
     if (!isDefined(user)) {
       throw new CommonQueryRunnerException(
         'User not found',
-        CommonQueryRunnerExceptionCode.BAD_REQUEST, // TODO change
+        CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
 
     const newUserName: { firstName?: string; lastName?: string } = {};
 
     if (
-      isDefined(workspaceMember.name.firstName) &&
+      isDefined(workspaceMember.name?.firstName) &&
       user?.firstName !== workspaceMember.name.firstName
     ) {
       newUserName.firstName = workspaceMember.name.firstName;
     }
     if (
-      isDefined(workspaceMember.name.lastName) &&
+      isDefined(workspaceMember.name?.lastName) &&
       user?.lastName !== workspaceMember.name.lastName
     ) {
       newUserName.lastName = workspaceMember.name.lastName;
