@@ -23,7 +23,6 @@
     "framer-motion": "^11.18.0",
     "fuse.js": "^7.1.0",
     "googleapis": "105",
-    "graphql-query-complexity": "^1.1.0",
     "hex-rgb": "^5.0.0",
     "immer": "^10.1.1",
     "libphonenumber-js": "^1.10.26",
