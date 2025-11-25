@@ -4,7 +4,7 @@ import { useGraphPieChartWidgetData } from '@/page-layout/widgets/graph/graphWid
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
-import { lazy, Suspense, useCallback } from 'react';
+import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
@@ -47,38 +47,29 @@ export const GraphWidgetPieChartRenderer = ({
     }),
   );
 
-  const handleSliceClick = useCallback(
-    (datum: PieChartDataItem) => {
-      const rawValue = formattedToRawLookup.get(datum.id) ?? null;
+  const handleSliceClick = (datum: PieChartDataItem) => {
+    const rawValue = formattedToRawLookup.get(datum.id) ?? null;
 
-      const drilldownQueryParams = buildChartDrilldownQueryParams({
-        objectMetadataItem,
-        configuration,
-        clickedData: {
-          primaryBucketRawValue: rawValue,
-        },
-        viewId: indexViewId,
-        timezone: configuration.timezone ?? undefined,
-      });
-
-      const url = getAppPath(
-        AppPath.RecordIndexPage,
-        {
-          objectNamePlural: objectMetadataItem.namePlural,
-        },
-        Object.fromEntries(drilldownQueryParams),
-      );
-
-      return navigate(url);
-    },
-    [
+    const drilldownQueryParams = buildChartDrilldownQueryParams({
       objectMetadataItem,
       configuration,
-      indexViewId,
-      navigate,
-      formattedToRawLookup,
-    ],
-  );
+      clickedData: {
+        primaryBucketRawValue: rawValue,
+      },
+      viewId: indexViewId,
+      timezone: configuration.timezone ?? undefined,
+    });
+
+    const url = getAppPath(
+      AppPath.RecordIndexPage,
+      {
+        objectNamePlural: objectMetadataItem.namePlural,
+      },
+      Object.fromEntries(drilldownQueryParams),
+    );
+
+    return navigate(url);
+  };
 
   if (loading) {
     return <ChartSkeletonLoader />;

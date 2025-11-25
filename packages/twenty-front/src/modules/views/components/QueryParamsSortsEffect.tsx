@@ -41,5 +41,5 @@ export const QueryParamsSortsEffect = () => {
     currentView?.id,
   ]);
 
-  return <></>;
+  return null;
 };

@@ -53,5 +53,5 @@ export const QueryParamsCleanupEffect = () => {
     setSearchParams,
   ]);
 
-  return <></>;
+  return null;
 };
