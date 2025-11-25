@@ -12,10 +12,10 @@ describe('normalizeChartConfigurationFields', () => {
       const barConfig = {
         primaryAxisGroupByFieldMetadataId: 'field-123',
         primaryAxisGroupBySubFieldName: 'subField',
-        primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.Month,
+        primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         aggregateFieldMetadataId: 'aggregate-456',
-        aggregateOperation: AggregateOperations.Sum,
+        aggregateOperation: AggregateOperations.SUM,
         graphType: GraphType.VERTICAL_BAR,
       } as any;
 
@@ -23,7 +23,9 @@ describe('normalizeChartConfigurationFields', () => {
 
       expect(result.groupByFieldMetadataId).toBe('field-123');
       expect(result.groupBySubFieldName).toBe('subField');
-      expect(result.dateGranularity).toBe(ObjectRecordGroupByDateGranularity.Month);
+      expect(result.dateGranularity).toBe(
+        ObjectRecordGroupByDateGranularity.MONTH,
+      );
       expect(result.orderBy).toBe(GraphOrderBy.FIELD_ASC);
     });
 
@@ -32,7 +34,7 @@ describe('normalizeChartConfigurationFields', () => {
         primaryAxisGroupByFieldMetadataId: 'field-789',
         primaryAxisOrderBy: GraphOrderBy.VALUE_DESC,
         aggregateFieldMetadataId: 'aggregate-012',
-        aggregateOperation: AggregateOperations.Count,
+        aggregateOperation: AggregateOperations.COUNT,
         graphType: GraphType.LINE,
       } as any;
 
@@ -50,10 +52,10 @@ describe('normalizeChartConfigurationFields', () => {
       const pieConfig = {
         groupByFieldMetadataId: 'pie-field',
         groupBySubFieldName: 'pieSubField',
-        dateGranularity: ObjectRecordGroupByDateGranularity.Day,
+        dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
         orderBy: GraphOrderBy.FIELD_DESC,
         aggregateFieldMetadataId: 'pie-aggregate',
-        aggregateOperation: AggregateOperations.Avg,
+        aggregateOperation: AggregateOperations.AVG,
         graphType: GraphType.PIE,
       } as any;
 
@@ -61,7 +63,9 @@ describe('normalizeChartConfigurationFields', () => {
 
       expect(result.groupByFieldMetadataId).toBe('pie-field');
       expect(result.groupBySubFieldName).toBe('pieSubField');
-      expect(result.dateGranularity).toBe(ObjectRecordGroupByDateGranularity.Day);
+      expect(result.dateGranularity).toBe(
+        ObjectRecordGroupByDateGranularity.DAY,
+      );
       expect(result.orderBy).toBe(GraphOrderBy.FIELD_DESC);
     });
 
@@ -69,7 +73,7 @@ describe('normalizeChartConfigurationFields', () => {
       const pieConfig = {
         groupByFieldMetadataId: 'minimal-field',
         aggregateFieldMetadataId: 'minimal-aggregate',
-        aggregateOperation: AggregateOperations.Count,
+        aggregateOperation: AggregateOperations.COUNT,
         graphType: GraphType.PIE,
       } as any;
 
