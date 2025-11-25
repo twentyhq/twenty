@@ -1,12 +1,10 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
-import { BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfGroupsPerBar.constant';
 import { type BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { getBarChartQueryLimit } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartQueryLimit';
 import { transformGroupByDataToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformGroupByDataToBarChartData';
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
-import { isChartConfigurationTwoDimensionalStacked } from '@/page-layout/widgets/graph/utils/isChartConfigurationTwoDimensionalStacked';
 import { type BarDatum } from '@nivo/bar';
 import { useMemo } from 'react';
 import { type BarChartConfiguration } from '~/generated/graphql';
@@ -34,9 +32,6 @@ type UseGraphBarChartWidgetDataResult = {
   >['objectMetadataItem'];
 };
 
-// TODO: Remove this once backend returns total group count
-const EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS = 1;
-
 export const useGraphBarChartWidgetData = ({
   objectMetadataItemId,
   configuration,
@@ -45,11 +40,7 @@ export const useGraphBarChartWidgetData = ({
     objectId: objectMetadataItemId,
   });
 
-  const limit = isChartConfigurationTwoDimensionalStacked(configuration)
-    ? BAR_CHART_MAXIMUM_NUMBER_OF_BARS *
-        BAR_CHART_MAXIMUM_NUMBER_OF_GROUPS_PER_BAR +
-      EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS
-    : BAR_CHART_MAXIMUM_NUMBER_OF_BARS + EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS;
+  const limit = getBarChartQueryLimit(configuration);
 
   const {
     data: groupByData,
