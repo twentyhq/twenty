@@ -16,6 +16,7 @@ const StyledLegendContainer = styled.div`
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing(3)};
   justify-content: center;
+  padding-top: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledLegendItem = styled.div`
