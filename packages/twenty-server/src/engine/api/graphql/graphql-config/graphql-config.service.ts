@@ -33,7 +33,7 @@ import {
 import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useSentryTracing } from 'src/engine/core-modules/exception-handler/hooks/use-sentry-tracing';
-import { useDisableIntrospectionForUnauthenticatedUsers } from 'src/engine/core-modules/graphql/hooks/use-disable-introspection-for-unauthenticated-users.hook.ts.hook';
+import { useDisableIntrospectionForUnauthenticatedUsers } from 'src/engine/core-modules/graphql/hooks/use-disable-introspection-for-unauthenticated-users.hook';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -72,7 +72,9 @@ export class GraphQLConfigService
         i18nService: this.i18nService,
         twentyConfigService: this.twentyConfigService,
       }),
-      useDisableIntrospectionForUnauthenticatedUsers(),
+      useDisableIntrospectionForUnauthenticatedUsers(
+        this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION,
+      ),
     ];
 
     if (Sentry.isInitialized()) {
