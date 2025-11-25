@@ -1,8 +1,8 @@
 import { CHART_LEGEND_ITEM_THRESHOLD } from '@/page-layout/widgets/graph/constants/ChartLegendItemThreshold';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
+import { IconChevronLeft, IconChevronRight } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 
 export type GraphWidgetLegendItem = {
   id: string;
@@ -46,7 +46,7 @@ const StyledDot = styled.div<{ color: string }>`
 const StyledPaginationContainer = styled.div`
   align-items: center;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: ${({ theme }) => theme.spacing(0.5)};
 `;
 
@@ -55,31 +55,10 @@ const StyledPaginationIndicator = styled.span`
   font-size: ${({ theme }) => theme.font.size.xs};
 `;
 
-const StyledPaginationButton = styled.button`
-  align-items: center;
-  background: transparent;
-  border: none;
-  color: ${({ theme }) => theme.font.color.light};
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  padding: 0;
-
-  &:hover:not(:disabled) {
-    color: ${({ theme }) => theme.font.color.primary};
-  }
-
-  &:disabled {
-    color: ${({ theme }) => theme.font.color.extraLight};
-    cursor: not-allowed;
-  }
-`;
-
 export const GraphWidgetLegend = ({
   items,
   show = true,
 }: GraphWidgetLegendProps) => {
-  const theme = useTheme();
   const [currentPage, setCurrentPage] = useState(0);
 
   const isItASingleItem = items.length === 1;
@@ -115,21 +94,19 @@ export const GraphWidgetLegend = ({
     <StyledLegendContainer>
       {needsPagination && (
         <StyledPaginationContainer>
-          <StyledPaginationButton
+          <LightIconButton
             onClick={handlePreviousPage}
             disabled={currentPage === 0}
-          >
-            <IconChevronUp size={theme.icon.size.sm} />
-          </StyledPaginationButton>
+            Icon={IconChevronLeft}
+          />
           <StyledPaginationIndicator>
             {currentPage + 1}/{totalPages}
           </StyledPaginationIndicator>
-          <StyledPaginationButton
+          <LightIconButton
             onClick={handleNextPage}
             disabled={currentPage === totalPages - 1}
-          >
-            <IconChevronDown size={theme.icon.size.sm} />
-          </StyledPaginationButton>
+            Icon={IconChevronRight}
+          />
         </StyledPaginationContainer>
       )}
       {visibleItems.map((item) => (
