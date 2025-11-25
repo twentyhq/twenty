@@ -88,19 +88,29 @@ export class AddCalendarEventsImportScheduledSyncStageCommand extends ActiveOrSu
       return;
     }
 
+    const queryRunner = this.coreDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
-      // Convert column to text to avoid type conflicts
-      await this.coreDataSource.query(
-        `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${columnName}" TYPE text`,
+      // Remove default value first
+      await queryRunner.query(
+        `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${columnName}" DROP DEFAULT`,
       );
 
-      // Drop the old enum
-      await this.coreDataSource.query(
-        `DROP TYPE IF EXISTS ${schemaName}."${enumName}"`,
+      // Convert column to text to remove enum dependency
+      await queryRunner.query(
+        `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${columnName}" TYPE text USING "${columnName}"::text`,
+      );
+
+      // Drop the old enum (now safe since no column uses it)
+      await queryRunner.query(
+        `DROP TYPE IF EXISTS ${schemaName}."${enumName}" CASCADE`,
       );
 
       // Create new enum with all CalendarChannelSyncStage values
-      await this.coreDataSource.query(
+      await queryRunner.query(
         `CREATE TYPE ${schemaName}."${enumName}" AS ENUM (
           '${CalendarChannelSyncStage.PENDING_CONFIGURATION}',
           '${CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING}',
@@ -114,26 +124,32 @@ export class AddCalendarEventsImportScheduledSyncStageCommand extends ActiveOrSu
       );
 
       // Convert column back to enum type
-      await this.coreDataSource.query(
+      await queryRunner.query(
         `ALTER TABLE "${schemaName}"."${tableName}"
          ALTER COLUMN "${columnName}" TYPE ${schemaName}."${enumName}"
          USING "${columnName}"::${schemaName}."${enumName}"`,
       );
 
       // Update default value to PENDING_CONFIGURATION
-      await this.coreDataSource.query(
+      await queryRunner.query(
         `ALTER TABLE "${schemaName}"."${tableName}"
          ALTER COLUMN "${columnName}" SET DEFAULT '${CalendarChannelSyncStage.PENDING_CONFIGURATION}'::${schemaName}."${enumName}"`,
       );
+
+      await queryRunner.commitTransaction();
 
       this.logger.log(
         `Successfully replaced ${enumName} with complete CalendarChannelSyncStage enum values and updated default to PENDING_CONFIGURATION for workspace ${workspaceId}`,
       );
     } catch (error) {
+      await queryRunner.rollbackTransaction();
+
       this.logger.error(
         `Error replacing ${enumName} for workspace ${workspaceId}: ${error}`,
       );
       throw error;
+    } finally {
+      await queryRunner.release();
     }
   }
 
