@@ -1,8 +1,8 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -80,11 +80,9 @@ const StyledRightPartContainer = styled.div`
 export const WorkflowRunDiagramStepNode = ({
   id,
   data,
-  selected,
 }: {
   id: string;
   data: WorkflowRunDiagramStepNodeData;
-  selected: boolean;
 }) => {
   const { getIcon } = useIcons();
   const theme = useTheme();
@@ -94,9 +92,10 @@ export const WorkflowRunDiagramStepNode = ({
   );
   const workflowRunId = useWorkflowRunIdOrThrow();
 
-  const setWorkflowSelectedNode = useSetRecoilComponentState(
-    workflowSelectedNodeComponentState,
-  );
+  const [workflowSelectedNode, setWorkflowSelectedNode] =
+    useRecoilComponentState(workflowSelectedNodeComponentState);
+
+  const selected = workflowSelectedNode === id;
 
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
 
@@ -142,6 +141,7 @@ export const WorkflowRunDiagramStepNode = ({
         data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
         runStatus={data.runStatus}
         onClick={handleClick}
+        selected={selected}
       >
         <WorkflowDiagramHandleTarget />
         <WorkflowNodeIconContainer>
@@ -150,7 +150,7 @@ export const WorkflowRunDiagramStepNode = ({
 
         <WorkflowNodeRightPart>
           <StyledNodeLabelWithCounterPart>
-            <WorkflowNodeLabel runStatus={data.runStatus}>
+            <WorkflowNodeLabel runStatus={data.runStatus} selected={selected}>
               {capitalize(data.nodeType)}
             </WorkflowNodeLabel>
 
@@ -187,7 +187,7 @@ export const WorkflowRunDiagramStepNode = ({
             </StyledRightPartContainer>
           </StyledNodeLabelWithCounterPart>
 
-          <WorkflowNodeTitle runStatus={data.runStatus}>
+          <WorkflowNodeTitle runStatus={data.runStatus} selected={selected}>
             {data.name}
           </WorkflowNodeTitle>
         </WorkflowNodeRightPart>

@@ -23,12 +23,12 @@ import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-mod
 import { fromMorphOrRelationFlatFieldMetadataToRelationDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-morph-or-relation-flat-field-metadata-to-relation-dto.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
+import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 
 export type RelationMetadataLoaderPayload = {
   workspaceId: string;
@@ -74,7 +74,6 @@ export class DataloaderService {
   constructor(
     private readonly i18nService: I18nService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
   ) {}
 
   createLoaders(): IDataloaders {
@@ -302,32 +301,40 @@ export class DataloaderService {
           (dataLoaderParam) => dataLoaderParam.objectMetadata.id,
         );
 
-        const { objectMetadataMaps } =
-          await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-            { workspaceId },
-          );
-
-        const indexMetadataCollection = objectMetadataIds.map((id) => {
-          const objectMetadata = objectMetadataMaps.byId[id];
-
-          if (!isDefined(objectMetadata)) {
-            return [];
-          }
-
-          return Object.values(objectMetadata.indexMetadatas).map(
-            (indexMetadata) => {
-              return {
-                ...indexMetadata,
-                createdAt: new Date(indexMetadata.createdAt),
-                updatedAt: new Date(indexMetadata.updatedAt),
-                id: indexMetadata.id,
-                indexWhereClause: indexMetadata.indexWhereClause ?? undefined,
-                objectMetadataId: id,
-                workspaceId: workspaceId,
-              };
+        const { flatIndexMaps, flatObjectMetadataMaps } =
+          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            {
+              workspaceId,
+              flatMapsKeys: ['flatIndexMaps', 'flatObjectMetadataMaps'],
             },
           );
-        });
+
+        const indexMetadataCollection = objectMetadataIds.map(
+          (objectMetadataId) => {
+            const flatObjectMetadata =
+              findFlatEntityByIdInFlatEntityMapsOrThrow({
+                flatEntityId: objectMetadataId,
+                flatEntityMaps: flatObjectMetadataMaps,
+              });
+
+            const indexMetadatas =
+              findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+                flatEntityIds: flatObjectMetadata.indexMetadataIds,
+                flatEntityMaps: flatIndexMaps,
+              });
+
+            return indexMetadatas.map((indexMetadata) => ({
+              ...indexMetadata,
+              indexFieldMetadatas: indexMetadata.flatIndexFieldMetadatas,
+              createdAt: new Date(indexMetadata.createdAt),
+              updatedAt: new Date(indexMetadata.updatedAt),
+              id: indexMetadata.id,
+              indexWhereClause: indexMetadata.indexWhereClause ?? undefined,
+              objectMetadataId,
+              workspaceId,
+            }));
+          },
+        );
 
         return indexMetadataCollection;
       },
@@ -363,8 +370,8 @@ export class DataloaderService {
               });
             const objectFlatFieldMetadatas =
               findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-                flatEntityMaps: flatFieldMetadataMaps,
                 flatEntityIds: flatObjectMetadata.fieldMetadataIds,
+                flatEntityMaps: flatFieldMetadataMaps,
               });
 
             const overriddenFieldMetadataEntities =
@@ -441,31 +448,23 @@ export class DataloaderService {
     >(async (dataLoaderParams: IndexFieldMetadataLoaderPayload[]) => {
       const workspaceId = dataLoaderParams[0].workspaceId;
 
-      const { objectMetadataMaps } =
-        await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-          { workspaceId },
+      const { flatIndexMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatIndexMaps'],
+          },
         );
 
       return dataLoaderParams.map(
-        ({
-          objectMetadata: { id: objectMetadataId },
-          indexMetadata: { id: indexMetadataId },
-        }) => {
-          const objectMetadata = objectMetadataMaps.byId[objectMetadataId];
-
-          if (!isDefined(objectMetadata)) {
-            return [];
-          }
-
-          const indexMetadataEntity = objectMetadata.indexMetadatas.find(
-            (indexMetadata) => indexMetadata.id === indexMetadataId,
-          );
+        ({ indexMetadata: { id: indexMetadataId } }) => {
+          const indexMetadataEntity = flatIndexMaps.byId[indexMetadataId];
 
           if (!isDefined(indexMetadataEntity)) {
             return [];
           }
 
-          return indexMetadataEntity.indexFieldMetadatas.map(
+          return indexMetadataEntity.flatIndexFieldMetadatas.map(
             (indexFieldMetadata) => {
               return {
                 id: indexFieldMetadata.id,
@@ -486,20 +485,27 @@ export class DataloaderService {
   private createObjectMetadataLoader() {
     return new DataLoader<
       ObjectMetadataLoaderPayload,
-      ObjectMetadataItemWithFieldMaps | null
+      ObjectMetadataDTO | null
     >(async (dataLoaderParams: ObjectMetadataLoaderPayload[]) => {
       const workspaceId = dataLoaderParams[0].workspaceId;
-      const objectMetadataIds = dataLoaderParams.map(
-        (dataLoaderParam) => dataLoaderParam.objectMetadataId,
-      );
 
-      const { objectMetadataMaps } =
-        await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-          { workspaceId },
+      const { flatObjectMetadataMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatObjectMetadataMaps'],
+          },
         );
 
-      return objectMetadataIds.map((objectMetadataId) => {
-        return objectMetadataMaps.byId[objectMetadataId] || null;
+      return dataLoaderParams.map((dataLoaderParam) => {
+        const flatObjectMetadata =
+          flatObjectMetadataMaps.byId[dataLoaderParam.objectMetadataId];
+
+        if (!isDefined(flatObjectMetadata)) {
+          return null;
+        }
+
+        return fromFlatObjectMetadataToObjectMetadataDto(flatObjectMetadata);
       });
     });
   }

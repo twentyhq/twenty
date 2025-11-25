@@ -848,9 +848,9 @@ msgstr ""
 msgid "Agents used to route queries to specialized agents"
 msgstr ""
 
-#. js-lingui-id: 3y9hVY
+#. js-lingui-id: sPQ5qN
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Aggregate"
+msgid "Aggregate Chart"
 msgstr ""
 
 #. js-lingui-id: jsQZMk
@@ -3302,6 +3302,11 @@ msgstr ""
 msgid "Duplicate node"
 msgstr ""
 
+#. js-lingui-id: mMsEuG
+#: src/modules/command-menu/pages/page-layout/components/WidgetSettingsFooter.tsx
+msgid "Duplicate widget"
+msgstr ""
+
 #. js-lingui-id: 2RpRNn
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Duplicate Workflow"
@@ -4446,9 +4451,9 @@ msgstr ""
 msgid "Functions - Settings"
 msgstr ""
 
-#. js-lingui-id: IZUMtC
+#. js-lingui-id: vYj1cC
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Gauge"
+msgid "Gauge Chart"
 msgstr ""
 
 #. js-lingui-id: Weq9zb
@@ -4714,9 +4719,9 @@ msgstr ""
 msgid "Hide hidden groups"
 msgstr ""
 
-#. js-lingui-id: pzu7v4
+#. js-lingui-id: Xkd22/
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Horizontal"
+msgid "Horizontal Bar Chart"
 msgstr ""
 
 #. js-lingui-id: yY8wAv
@@ -5465,9 +5470,9 @@ msgstr ""
 msgid "Limit must be greater than 0."
 msgstr ""
 
-#. js-lingui-id: rjuFFw
+#. js-lingui-id: pFkLY3
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Line"
+msgid "Line Chart"
 msgstr ""
 
 #. js-lingui-id: pQjjYo
@@ -6732,13 +6737,12 @@ msgid "Optional secret used to compute the HMAC signature for webhook payloads"
 msgstr ""
 
 #. js-lingui-id: 0zpgxV
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+#: src/modules/ui/layout/dropdown/components/OptionsDropdownMenu.tsx
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
-#: src/modules/action-menu/components/CommandMenuActionMenuDropdown.tsx
 msgid "Options"
 msgstr ""
 
@@ -6969,9 +6973,9 @@ msgstr ""
 msgid "Picture"
 msgstr ""
 
-#. js-lingui-id: ZjVniv
+#. js-lingui-id: 3ubdv5
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Pie"
+msgid "Pie Chart"
 msgstr ""
 
 #. js-lingui-id: fQtTho
@@ -9564,9 +9568,9 @@ msgstr ""
 msgid "Version of the application"
 msgstr ""
 
-#. js-lingui-id: mX/isJ
+#. js-lingui-id: yIWhRv
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Vertical"
+msgid "Vertical Bar Chart"
 msgstr ""
 
 #. js-lingui-id: fROFIL

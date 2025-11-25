@@ -35,7 +35,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
-import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 
@@ -50,7 +49,6 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
         FileModule,
         TokenModule,
         FileUploadModule,
-        WorkspaceMetadataCacheModule,
         NestjsQueryTypeOrmModule.forFeature([
           UserEntity,
           WorkspaceEntity,

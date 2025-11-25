@@ -76,7 +76,7 @@ export class ViewResolver {
         workspaceId: workspace.id,
       });
 
-      if (objectMetadata) {
+      if (isDefined(objectMetadata)) {
         const i18n = this.i18nService.getI18nInstance(context.req.locale);
         const translatedObjectLabel = resolveObjectMetadataStandardOverride(
           {

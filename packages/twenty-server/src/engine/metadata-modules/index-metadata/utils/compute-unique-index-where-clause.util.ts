@@ -11,19 +11,19 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import {
   IndexMetadataException,
   IndexMetadataExceptionCode,
 } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.exception';
 
+//TODO : To delete once IS_NULL_EQUIVALENCE_ENABLED feature flag removed
 export const computeUniqueIndexWhereClause = (
-  fieldMetadata: Pick<FieldMetadataEntity, 'type' | 'name'>,
+  fieldMetadata: Pick<FieldMetadataEntity, 'type' | 'name' | 'defaultValue'>,
 ) => {
-  const defaultDefaultValue = generateDefaultValue(fieldMetadata.type);
+  const defaultValue = fieldMetadata.defaultValue;
 
-  if (!isDefined(defaultDefaultValue)) return;
+  if (!isDefined(defaultValue)) return;
 
   if (
     fieldMetadata.type === FieldMetadataType.RELATION ||
@@ -36,7 +36,7 @@ export const computeUniqueIndexWhereClause = (
   }
 
   if (!isCompositeFieldMetadataType(fieldMetadata.type)) {
-    return `"${fieldMetadata.name}" != ${defaultDefaultValue}`;
+    return `"${fieldMetadata.name}" != ${defaultValue}`;
   }
 
   const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
@@ -48,7 +48,7 @@ export const computeUniqueIndexWhereClause = (
     );
   }
 
-  const defaultDefaultValueProperties = Object.keys(defaultDefaultValue);
+  const defaultDefaultValueProperties = Object.keys(defaultValue);
 
   const columnNamesWithDefaultValues = compositeType.properties
     .filter(
@@ -57,13 +57,13 @@ export const computeUniqueIndexWhereClause = (
         defaultDefaultValueProperties.includes(property.name),
     )
     .map((property) => {
-      const defaultValue =
-        defaultDefaultValue[property.name as keyof typeof defaultDefaultValue];
+      const defaultValueProperty =
+        defaultValue[property.name as keyof typeof defaultValue];
 
-      if (isNonEmptyString(defaultValue)) {
+      if (isNonEmptyString(defaultValueProperty)) {
         return [
           computeCompositeColumnName(fieldMetadata, property),
-          defaultValue,
+          defaultValueProperty,
         ];
       }
     })
