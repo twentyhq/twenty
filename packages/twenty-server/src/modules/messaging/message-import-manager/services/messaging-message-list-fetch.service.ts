@@ -30,6 +30,7 @@ import {
   MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
+import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
 
@@ -48,6 +49,7 @@ export class MessagingMessageListFetchService {
     private readonly messagingMessagesImportService: MessagingMessagesImportService,
     private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
     private readonly syncMessageFoldersService: SyncMessageFoldersService,
+    private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
   ) {}
 
   public async processMessageListFetch(
@@ -62,7 +64,12 @@ export class MessagingMessageListFetchService {
           MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_IMPORT
       ) {
         this.logger.log(
-          `messageChannelId: ${messageChannel.id} Skipping message list fetch due to pending group emails action: ${messageChannel.pendingGroupEmailsAction}`,
+          `messageChannelId: ${messageChannel.id} Processing pending group emails action before message list fetch: ${messageChannel.pendingGroupEmailsAction}`,
+        );
+
+        await this.messagingProcessGroupEmailActionsService.processGroupEmailActions(
+          messageChannel,
+          workspaceId,
         );
 
         return;

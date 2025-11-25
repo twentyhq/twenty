@@ -284,6 +284,7 @@ export class ApplicationSyncService {
       await this.fieldMetadataServiceV2.createOneField({
         createFieldInput,
         workspaceId,
+        applicationId,
       });
     }
   }
@@ -406,6 +407,7 @@ export class ApplicationSyncService {
 
       const createdObject = await this.objectMetadataServiceV2.createOneObject({
         createObjectInput,
+        applicationId,
         workspaceId,
       });
 
@@ -526,18 +528,21 @@ export class ApplicationSyncService {
         serverlessFunctionId: serverlessFunctionToUpdate.id,
         triggersToSync: serverlessFunctionToSync.triggers || [],
         workspaceId,
+        applicationId,
       });
 
       await this.syncCronTriggersForServerlessFunction({
         serverlessFunctionId: serverlessFunctionToUpdate.id,
         triggersToSync: serverlessFunctionToSync.triggers || [],
         workspaceId,
+        applicationId,
       });
 
       await this.syncRouteTriggersForServerlessFunction({
         serverlessFunctionId: serverlessFunctionToUpdate.id,
         triggersToSync: serverlessFunctionToSync.triggers || [],
         workspaceId,
+        applicationId,
       });
     }
 
@@ -561,24 +566,28 @@ export class ApplicationSyncService {
         await this.serverlessFunctionV2Service.createOne({
           createServerlessFunctionInput,
           workspaceId,
+          applicationId,
         });
 
       await this.syncDatabaseEventTriggersForServerlessFunction({
         serverlessFunctionId: createdServerlessFunction.id,
         triggersToSync: serverlessFunctionToCreate.triggers || [],
         workspaceId,
+        applicationId,
       });
 
       await this.syncCronTriggersForServerlessFunction({
         serverlessFunctionId: createdServerlessFunction.id,
         triggersToSync: serverlessFunctionToCreate.triggers || [],
         workspaceId,
+        applicationId,
       });
 
       await this.syncRouteTriggersForServerlessFunction({
         serverlessFunctionId: createdServerlessFunction.id,
         triggersToSync: serverlessFunctionToCreate.triggers || [],
         workspaceId,
+        applicationId,
       });
     }
   }
@@ -587,10 +596,12 @@ export class ApplicationSyncService {
     serverlessFunctionId,
     triggersToSync,
     workspaceId,
+    applicationId,
   }: {
     serverlessFunctionId: string;
     triggersToSync: ServerlessFunctionTriggerManifest[];
     workspaceId: string;
+    applicationId: string;
   }) {
     const databaseEventTriggersToSync = triggersToSync.filter(
       (trigger) => trigger.type === 'databaseEvent',
@@ -695,6 +706,7 @@ export class ApplicationSyncService {
       await this.databaseEventTriggerV2Service.createOne(
         createDatabaseEventTriggerInput,
         workspaceId,
+        applicationId,
       );
     }
   }
@@ -703,10 +715,12 @@ export class ApplicationSyncService {
     serverlessFunctionId,
     triggersToSync,
     workspaceId,
+    applicationId,
   }: {
     serverlessFunctionId: string;
     triggersToSync: ServerlessFunctionTriggerManifest[];
     workspaceId: string;
+    applicationId: string;
   }) {
     const cronTriggersToSync = triggersToSync.filter(
       (trigger) => trigger.type === 'cron',
@@ -808,6 +822,7 @@ export class ApplicationSyncService {
       await this.cronTriggerV2Service.createOne(
         createCronTriggerInput,
         workspaceId,
+        applicationId,
       );
     }
   }
@@ -816,10 +831,12 @@ export class ApplicationSyncService {
     serverlessFunctionId,
     triggersToSync,
     workspaceId,
+    applicationId,
   }: {
     serverlessFunctionId: string;
     triggersToSync: ServerlessFunctionTriggerManifest[];
     workspaceId: string;
+    applicationId: string;
   }) {
     const routeTriggersToSync = triggersToSync.filter(
       (trigger) => trigger.type === 'route',
@@ -922,6 +939,7 @@ export class ApplicationSyncService {
       await this.routeTriggerV2Service.createOne(
         createRouteTriggerInput,
         workspaceId,
+        applicationId,
       );
     }
   }

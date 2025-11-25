@@ -12,44 +12,12 @@ import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-
-const StyledPageLayoutInfoContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(0.5)};
-`;
-
-const StyledPageLayoutIcon = styled.div<{ iconColor: string }>`
-  align-items: center;
-  background: ${({ theme }) => theme.background.transparent.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ iconColor }) => iconColor};
-  display: flex;
-  flex-shrink: 0;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledPageLayoutTitleContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  min-width: 0;
-`;
-
-const StyledPageLayoutType = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  white-space: nowrap;
-`;
+import { CommandMenuPageInfoLayout } from './CommandMenuPageInfoLayout';
 
 export const CommandMenuPageLayoutInfo = () => {
   const theme = useTheme();
@@ -133,13 +101,14 @@ export const CommandMenuPageLayoutInfo = () => {
   };
 
   return (
-    <StyledPageLayoutInfoContainer>
-      {isDefined(headerIcon) && (
-        <StyledPageLayoutIcon iconColor={headerIconColor}>
+    <CommandMenuPageInfoLayout
+      icon={
+        isDefined(headerIcon) ? (
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        </StyledPageLayoutIcon>
-      )}
-      <StyledPageLayoutTitleContainer>
+        ) : undefined
+      }
+      iconColor={headerIconColor}
+      title={
         <TitleInput
           instanceId={`page-layout-title-${commandMenuPage}-${pageLayoutId}`}
           disabled={isReadonly}
@@ -153,8 +122,8 @@ export const CommandMenuPageLayoutInfo = () => {
           onTab={saveTitle}
           onShiftTab={saveTitle}
         />
-      </StyledPageLayoutTitleContainer>
-      {headerType && <StyledPageLayoutType>{headerType}</StyledPageLayoutType>}
-    </StyledPageLayoutInfoContainer>
+      }
+      label={headerType}
+    />
   );
 };

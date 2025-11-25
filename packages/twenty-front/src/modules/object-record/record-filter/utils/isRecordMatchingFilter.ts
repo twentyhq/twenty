@@ -40,9 +40,8 @@ import {
   type TSVectorFilter,
   type UUIDFilter,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isEmptyObject } from '~/utils/isEmptyObject';
 
 const isLeafFilter = (
   filter: RecordGqlOperationFilter,

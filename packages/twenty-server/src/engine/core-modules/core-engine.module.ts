@@ -11,6 +11,7 @@ import { AiBillingModule } from 'src/engine/metadata-modules/ai-billing/ai-billi
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { ApplicationSyncModule } from 'src/engine/core-modules/application/application-sync.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingWebhookModule } from 'src/engine/core-modules/billing-webhook/billing-webhook.module';
@@ -79,6 +80,7 @@ import { FileModule } from './file/file.module';
     FileModule,
     OpenApiModule,
     ApplicationModule,
+    ApplicationSyncModule,
     AppTokenModule,
     TimelineMessagingModule,
     TimelineCalendarEventModule,

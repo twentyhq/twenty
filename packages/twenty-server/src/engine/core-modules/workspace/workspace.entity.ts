@@ -22,6 +22,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -288,10 +289,7 @@ export class WorkspaceEntity {
   @Column({ type: 'varchar', nullable: false, default: DEFAULT_SMART_MODEL })
   smartModel: ModelId;
 
-  // TODO prastoin
-  // Temporarily setting as nullable for retro compatibility, not udpating TypeScript types
-  @Field(() => String, { nullable: true })
-  @Column({ nullable: true, type: 'uuid' })
+  @Column({ nullable: false, type: 'uuid' })
   workspaceCustomApplicationId: string;
 
   // TODO: delete
@@ -301,6 +299,7 @@ export class WorkspaceEntity {
   @Column({ type: 'varchar', nullable: false, default: 'auto' })
   routerModel: ModelId;
 
+  @Field(() => ApplicationDTO, { nullable: true })
   @ManyToOne(() => ApplicationEntity, {
     onDelete: 'RESTRICT',
     nullable: false,

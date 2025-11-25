@@ -18,10 +18,12 @@ import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands
 import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-type-to-file-category.command';
 import { MigrateChannelPartialFullSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-channel-partial-full-sync-stages.command';
 import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-search-vectors.command';
-import { SeedDashboardViewCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-seed-dashboard-view.command';
 import { CleanOrphanedRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-role-targets.command';
 import { CleanOrphanedUserWorkspacesCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-user-workspaces.command';
 import { CreateTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-create-twenty-standard-application.command';
+import { CreateWorkspaceCustomApplicationCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-create-workspace-custom-application.command';
+import { SetStandardApplicationNotUninstallableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-set-standard-application-not-uninstallable.command';
+import { WorkspaceCustomApplicationIdNonNullableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-workspace-custom-application-id-non-nullable-migration.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
 import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-deduplicate-unique-fields.command';
@@ -33,7 +35,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
-import { SetStandardApplicationNotUninstallableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-set-standard-application-not-uninstallable.command';
 
 @Command({
   name: 'upgrade',
@@ -70,7 +71,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly cleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand: CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
     protected readonly migrateChannelPartialFullSyncStagesCommand: MigrateChannelPartialFullSyncStagesCommand,
     protected readonly makeSureDashboardNamingAvailableCommand: MakeSureDashboardNamingAvailableCommand,
-    protected readonly seedDashboardViewCommand: SeedDashboardViewCommand,
     protected readonly createViewKanbanFieldMetadataIdForeignKeyMigrationCommand: CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand,
     protected readonly flushWorkspaceCacheCommand: FlushCacheCommand,
 
@@ -80,7 +80,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly seedStandardApplicationsCommand: CreateTwentyStandardApplicationCommand,
 
     // 1.12 Commands
-    protected readonlysetStandardApplicationNotUninstallableCommand: SetStandardApplicationNotUninstallableCommand,
+    protected readonly setStandardApplicationNotUninstallableCommand: SetStandardApplicationNotUninstallableCommand,
+    protected readonly createTwentyStandardApplicationCommand: CreateTwentyStandardApplicationCommand,
+    protected readonly createWorkspaceCustomApplicationCommand: CreateWorkspaceCustomApplicationCommand,
+    protected readonly workspaceCustomApplicationIdNonNullableCommand: WorkspaceCustomApplicationIdNonNullableCommand,
   ) {
     super(
       workspaceRepository,
@@ -124,13 +127,12 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [
         this.migrateAttachmentAuthorToCreatedByCommand,
         this.migrateAttachmentTypeToFileCategoryCommand,
-        this.seedDashboardViewCommand,
         this.flushWorkspaceCacheCommand,
       ],
     };
 
     const commands_1110: VersionCommands = {
-      beforeSyncMetadata: [this.seedStandardApplicationsCommand],
+      beforeSyncMetadata: [this.createTwentyStandardApplicationCommand],
       afterSyncMetadata: [
         this.cleanOrphanedUserWorkspacesCommand,
         this.cleanOrphanedRoleTargetsCommand,
@@ -138,10 +140,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_1120: VersionCommands = {
-      beforeSyncMetadata: [],
-      afterSyncMetadata: [
-        this.readonlysetStandardApplicationNotUninstallableCommand,
+      beforeSyncMetadata: [
+        this.createWorkspaceCustomApplicationCommand,
+        this.workspaceCustomApplicationIdNonNullableCommand,
       ],
+      afterSyncMetadata: [this.setStandardApplicationNotUninstallableCommand],
     };
 
     this.allCommands = {

@@ -11,8 +11,8 @@ import { MemoryRouter } from 'react-router-dom';
 import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
-import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import {
   GraphOrderBy,
@@ -181,9 +181,9 @@ const mixedGraphsPageLayoutMocks = {
   ],
 };
 
-const barChartGroupByQuery = generateGroupByQuery({
+const barChartGroupByQuery = generateGroupByAggregateQuery({
   objectMetadataItem: mockPersonObjectMetadataItem,
-  aggregateOperations: ['totalCount'],
+  aggregateOperationGqlFields: ['totalCount'],
 });
 
 const graphqlMocks: MockedResponse[] = [

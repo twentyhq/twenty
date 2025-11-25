@@ -12,6 +12,7 @@ describe('isObjectMetadataSettingsReadOnly', () => {
         isUIReadOnly: false,
         isRemote: false,
       },
+      workspaceCustomApplicationId: 'workspaceApplicationId',
     });
 
     expect(result).toBe(false);
@@ -29,8 +30,22 @@ describe('isObjectMetadataSettingsReadOnly', () => {
         isUIReadOnly: false,
         isRemote: false,
       },
+      workspaceCustomApplicationId: null,
     });
 
     expect(result).toBe(true);
+  });
+
+  it('should return false if object is owned by workspace custom application', () => {
+    const result = isObjectMetadataSettingsReadOnly({
+      objectMetadataItem: {
+        isUIReadOnly: false,
+        isRemote: false,
+        applicationId: 'workspaceApplicationId',
+      },
+      workspaceCustomApplicationId: 'workspaceApplicationId',
+    });
+
+    expect(result).toBe(false);
   });
 });

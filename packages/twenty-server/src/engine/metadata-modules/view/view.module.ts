@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -18,7 +19,6 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { ViewResolver } from 'src/engine/metadata-modules/view/resolvers/view.resolver';
 import { ViewV2Service } from 'src/engine/metadata-modules/view/services/view-v2.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
@@ -32,10 +32,10 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     ViewGroupModule,
     ViewSortModule,
     I18nModule,
+    ApplicationModule,
     FeatureFlagModule,
     PermissionsModule,
     UserRoleModule,
-    WorkspaceMetadataCacheModule,
     WorkspaceCacheStorageModule,
     WorkspaceMigrationV2Module,
     FlatViewModule,

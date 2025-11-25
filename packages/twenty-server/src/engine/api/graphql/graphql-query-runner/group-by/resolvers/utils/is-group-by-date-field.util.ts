@@ -6,5 +6,8 @@ import {
 export const isGroupByDateField = (
   groupByField: GroupByField,
 ): groupByField is GroupByDateField => {
-  return 'dateGranularity' in groupByField;
+  return (
+    'dateGranularity' in groupByField &&
+    !('nestedFieldMetadata' in groupByField)
+  );
 };

@@ -9,11 +9,13 @@ type GetDefaultFlatFieldMetadataArgs = {
   fieldMetadataId: string;
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
   workspaceId: string;
+  workspaceCustomApplicationId: string;
 };
 export const getDefaultFlatFieldMetadata = ({
   createFieldInput,
   fieldMetadataId,
   workspaceId,
+  workspaceCustomApplicationId,
 }: GetDefaultFlatFieldMetadataArgs) => {
   const { defaultValue, settings } = extractAndSanitizeObjectStringFields(
     createFieldInput,
@@ -32,7 +34,6 @@ export const getDefaultFlatFieldMetadata = ({
     isCustom: true,
     isLabelSyncedWithName: createFieldInput.isLabelSyncedWithName ?? false,
     isNullable: generateNullable(
-      createFieldInput.type,
       createFieldInput.isNullable,
       createFieldInput.isRemoteCreation,
     ),
@@ -56,7 +57,7 @@ export const getDefaultFlatFieldMetadata = ({
     updatedAt: createdAt,
     isUIReadOnly: createFieldInput.isUIReadOnly ?? false,
     morphId: null,
-    applicationId: createFieldInput.applicationId ?? null,
+    applicationId: workspaceCustomApplicationId,
     viewFilterIds: [],
     viewGroupIds: [],
     kanbanAggregateOperationViewIds: [],
