@@ -1,5 +1,5 @@
 import qs from 'qs';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
@@ -32,7 +32,7 @@ export const useSortsFromQueryParams = () => {
   const hasSortsQueryParams =
     isDefined(sortQueryParams) && Object.entries(sortQueryParams).length > 0;
 
-  const getSortsFromQueryParams = (): RecordSort[] => {
+  const getSortsFromQueryParams = useCallback((): RecordSort[] => {
     if (!hasSortsQueryParams) return [];
 
     return Object.entries(sortQueryParams)
@@ -50,7 +50,7 @@ export const useSortsFromQueryParams = () => {
         };
       })
       .filter(isDefined);
-  };
+  }, [hasSortsQueryParams, sortQueryParams, objectMetadataItem.fields]);
 
   return {
     hasSortsQueryParams,
