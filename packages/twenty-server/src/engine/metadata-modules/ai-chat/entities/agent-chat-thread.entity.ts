@@ -13,7 +13,8 @@ import {
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { AgentChatMessageEntity } from 'src/engine/metadata-modules/ai-chat/entities/agent-chat-message.entity';
+import { AgentMessageEntity } from 'src/engine/metadata-modules/ai-chat/entities/agent-message.entity';
+import { AgentTurnEntity } from 'src/engine/metadata-modules/ai-chat/entities/agent-turn.entity';
 
 @Entity('agentChatThread')
 export class AgentChatThreadEntity {
@@ -33,8 +34,11 @@ export class AgentChatThreadEntity {
   @Column({ nullable: true, type: 'varchar' })
   title: string;
 
-  @OneToMany(() => AgentChatMessageEntity, (message) => message.thread)
-  messages: Relation<AgentChatMessageEntity[]>;
+  @OneToMany(() => AgentTurnEntity, (turn) => turn.thread)
+  turns: Relation<AgentTurnEntity[]>;
+
+  @OneToMany(() => AgentMessageEntity, (message) => message.thread)
+  messages: Relation<AgentMessageEntity[]>;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -18,9 +18,10 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 import { AgentChatController } from './controllers/agent-chat.controller';
-import { AgentChatMessagePartEntity } from './entities/agent-chat-message-part.entity';
-import { AgentChatMessageEntity } from './entities/agent-chat-message.entity';
+import { AgentMessagePartEntity } from './entities/agent-message-part.entity';
+import { AgentMessageEntity } from './entities/agent-message.entity';
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
+import { AgentTurnEntity } from './entities/agent-turn.entity';
 import { AgentChatResolver } from './resolvers/agent-chat.resolver';
 import { AgentChatService } from './services/agent-chat.service';
 import { AgentStreamingService } from './services/agent-streaming.service';
@@ -28,9 +29,10 @@ import { AgentStreamingService } from './services/agent-streaming.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      AgentChatMessageEntity,
-      AgentChatMessagePartEntity,
+      AgentMessageEntity,
+      AgentMessagePartEntity,
       AgentChatThreadEntity,
+      AgentTurnEntity,
       FileEntity,
       UserWorkspaceEntity,
     ]),
@@ -54,9 +56,10 @@ import { AgentStreamingService } from './services/agent-streaming.service';
     AgentChatService,
     AgentStreamingService,
     TypeOrmModule.forFeature([
-      AgentChatMessageEntity,
-      AgentChatMessagePartEntity,
+      AgentMessageEntity,
+      AgentMessagePartEntity,
       AgentChatThreadEntity,
+      AgentTurnEntity,
     ]),
   ],
 })

@@ -11,16 +11,10 @@ import {
 } from 'typeorm';
 
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai-chat/entities/agent-chat-thread.entity';
+import { AgentMessageEntity } from './agent-message.entity';
 
-import { AgentChatMessagePartEntity } from './agent-chat-message-part.entity';
-
-export enum AgentChatMessageRole {
-  USER = 'user',
-  ASSISTANT = 'assistant',
-}
-
-@Entity('agentChatMessage')
-export class AgentChatMessageEntity {
+@Entity('agentTurn')
+export class AgentTurnEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -28,7 +22,7 @@ export class AgentChatMessageEntity {
   @Index()
   threadId: string;
 
-  @ManyToOne(() => AgentChatThreadEntity, (thread) => thread.messages, {
+  @ManyToOne(() => AgentChatThreadEntity, (thread) => thread.turns, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'threadId' })
@@ -38,12 +32,10 @@ export class AgentChatMessageEntity {
   @Index()
   agentId: string | null;
 
-  @Column({ type: 'enum', enum: AgentChatMessageRole })
-  role: AgentChatMessageRole;
-
-  @OneToMany(() => AgentChatMessagePartEntity, (part) => part.message)
-  parts: Relation<AgentChatMessagePartEntity[]>;
+  @OneToMany(() => AgentMessageEntity, (message) => message.turn)
+  messages: Relation<AgentMessageEntity[]>;
 
   @CreateDateColumn()
   createdAt: Date;
 }
+

@@ -68,78 +68,117 @@ export const SettingsRolePermissionsSettingsSection = ({
         name: t`API Keys & Webhooks`,
         description: t`Manage API keys and webhooks`,
         Icon: IconCode,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
       },
       {
         key: PermissionFlagType.WORKSPACE,
         name: t`Workspace`,
         description: t`Set global workspace preferences`,
         Icon: IconSettings,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
       },
       {
         key: PermissionFlagType.WORKSPACE_MEMBERS,
         name: t`Users`,
         description: t`Add or remove users`,
         Icon: IconUsers,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
       },
       {
         key: PermissionFlagType.ROLES,
         name: t`Roles`,
         description: t`Define user roles and access levels`,
         Icon: IconLockOpen,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
       },
       {
         key: PermissionFlagType.DATA_MODEL,
         name: t`Data Model`,
         description: t`Edit data structure and fields`,
         Icon: IconHierarchy,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
       },
       {
         key: PermissionFlagType.SECURITY,
         name: t`Security`,
         description: t`Manage security policies`,
         Icon: IconKey,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
       },
       {
         key: PermissionFlagType.WORKFLOWS,
         name: t`Workflows`,
         description: t`Manage workflows`,
         Icon: IconSettingsAutomation,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
       },
       {
         key: PermissionFlagType.SSO_BYPASS,
         name: t`SSO Bypass`,
         description: t`Enable bypass options`,
         Icon: IconShield,
+        isRelevantForAgents: false,
+        isRelevantForApiKeys: false,
+        isRelevantForUsers: true,
       },
       {
         key: PermissionFlagType.IMPERSONATE,
         name: t`Impersonate`,
         description: t`Impersonate workspace users`,
         Icon: IconSpy,
+        isRelevantForAgents: false,
+        isRelevantForApiKeys: false,
+        isRelevantForUsers: true,
       },
       {
         key: PermissionFlagType.APPLICATIONS,
         name: t`Applications`,
         description: t`Install and manage applications`,
         Icon: IconApps,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
       },
       {
         key: PermissionFlagType.LAYOUTS,
         name: t`Layouts`,
         description: t`Customize page layouts and UI structure`,
         Icon: IconLayoutSidebarRightCollapse,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
       },
       {
         key: PermissionFlagType.BILLING,
         name: t`Billing`,
         description: t`Manage billing and subscriptions`,
         Icon: IconCreditCard,
+        isRelevantForAgents: false,
+        isRelevantForApiKeys: false,
+        isRelevantForUsers: true,
       },
       {
         key: PermissionFlagType.AI_SETTINGS,
         name: t`AI`,
         description: t`Create and configure AI agents`,
         Icon: IconSparkles,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
       },
     ];
 
@@ -153,30 +192,67 @@ export const SettingsRolePermissionsSettingsSection = ({
       ) {
         return false;
       }
+
+      // Filter based on role assignment capabilities
+      const canBeAssignedOnlyToAgents =
+        settingsDraftRole.canBeAssignedToAgents &&
+        !settingsDraftRole.canBeAssignedToUsers &&
+        !settingsDraftRole.canBeAssignedToApiKeys;
+
+      const canBeAssignedOnlyToApiKeys =
+        settingsDraftRole.canBeAssignedToApiKeys &&
+        !settingsDraftRole.canBeAssignedToUsers &&
+        !settingsDraftRole.canBeAssignedToAgents;
+
+      const canBeAssignedOnlyToUsers =
+        settingsDraftRole.canBeAssignedToUsers &&
+        !settingsDraftRole.canBeAssignedToAgents &&
+        !settingsDraftRole.canBeAssignedToApiKeys;
+
+      if (canBeAssignedOnlyToAgents && !permission.isRelevantForAgents) {
+        return false;
+      }
+
+      if (canBeAssignedOnlyToApiKeys && !permission.isRelevantForApiKeys) {
+        return false;
+      }
+
+      if (canBeAssignedOnlyToUsers && !permission.isRelevantForUsers) {
+        return false;
+      }
+
       return true;
     });
-  }, [isAIEnabled, isApplicationEnabled]);
+  }, [isAIEnabled, isApplicationEnabled, settingsDraftRole]);
+
+  const shouldShowAllAccessToggle =
+    !settingsDraftRole.canBeAssignedToAgents ||
+    settingsDraftRole.canBeAssignedToUsers;
 
   return (
     <Section>
       <H2Title title={t`Settings`} description={t`Settings permissions`} />
-      <StyledCard rounded>
-        <SettingsOptionCardContentToggle
-          Icon={IconSettings}
-          title={t`Settings All Access`}
-          description={t`Ability to edit all settings`}
-          checked={settingsDraftRole.canUpdateAllSettings}
-          disabled={!isEditable}
-          onChange={() => {
-            setSettingsDraftRole({
-              ...settingsDraftRole,
-              canUpdateAllSettings: !settingsDraftRole.canUpdateAllSettings,
-            });
-          }}
-        />
-      </StyledCard>
+      {shouldShowAllAccessToggle && (
+        <StyledCard rounded>
+          <SettingsOptionCardContentToggle
+            Icon={IconSettings}
+            title={t`Settings All Access`}
+            description={t`Ability to edit all settings`}
+            checked={settingsDraftRole.canUpdateAllSettings}
+            disabled={!isEditable}
+            onChange={() => {
+              setSettingsDraftRole({
+                ...settingsDraftRole,
+                canUpdateAllSettings: !settingsDraftRole.canUpdateAllSettings,
+              });
+            }}
+          />
+        </StyledCard>
+      )}
       <AnimatedExpandableContainer
-        isExpanded={!settingsDraftRole.canUpdateAllSettings}
+        isExpanded={
+          !shouldShowAllAccessToggle || !settingsDraftRole.canUpdateAllSettings
+        }
         dimension="height"
         animationDurations={{
           opacity: 0.2,

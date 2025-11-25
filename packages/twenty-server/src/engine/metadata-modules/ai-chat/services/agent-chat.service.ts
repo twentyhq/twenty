@@ -6,28 +6,31 @@ import { Repository } from 'typeorm';
 
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
 
-import { AgentChatMessagePartEntity } from 'src/engine/metadata-modules/ai-chat/entities/agent-chat-message-part.entity';
-import {
-  AgentChatMessageEntity,
-  AgentChatMessageRole,
-} from 'src/engine/metadata-modules/ai-chat/entities/agent-chat-message.entity';
-import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai-chat/entities/agent-chat-thread.entity';
 import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai-agent/agent.exception';
-import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai-chat/utils/mapUIMessagePartsToDBParts';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai-agent/services/agent-title-generation.service';
+import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai-chat/entities/agent-chat-thread.entity';
+import { AgentMessagePartEntity } from 'src/engine/metadata-modules/ai-chat/entities/agent-message-part.entity';
+import {
+  AgentMessageEntity,
+  AgentMessageRole,
+} from 'src/engine/metadata-modules/ai-chat/entities/agent-message.entity';
+import { AgentTurnEntity } from 'src/engine/metadata-modules/ai-chat/entities/agent-turn.entity';
+import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai-chat/utils/mapUIMessagePartsToDBParts';
 
 @Injectable()
 export class AgentChatService {
   constructor(
     @InjectRepository(AgentChatThreadEntity)
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
-    @InjectRepository(AgentChatMessageEntity)
-    private readonly messageRepository: Repository<AgentChatMessageEntity>,
-    @InjectRepository(AgentChatMessagePartEntity)
-    private readonly messagePartRepository: Repository<AgentChatMessagePartEntity>,
+    @InjectRepository(AgentTurnEntity)
+    private readonly turnRepository: Repository<AgentTurnEntity>,
+    @InjectRepository(AgentMessageEntity)
+    private readonly messageRepository: Repository<AgentMessageEntity>,
+    @InjectRepository(AgentMessagePartEntity)
+    private readonly messagePartRepository: Repository<AgentMessagePartEntity>,
     private readonly titleGenerationService: AgentTitleGenerationService,
   ) {}
 
@@ -69,14 +72,33 @@ export class AgentChatService {
   async addMessage({
     threadId,
     uiMessage,
+    agentId,
+    turnId,
   }: {
     threadId: string;
     uiMessage: Omit<ExtendedUIMessage, 'id'>;
     uiMessageParts?: UIMessagePart<UIDataTypes, UITools>[];
+    agentId?: string;
+    turnId?: string;
   }) {
+    let actualTurnId = turnId;
+
+    if (!actualTurnId) {
+      const turn = this.turnRepository.create({
+        threadId,
+        agentId: agentId ?? null,
+      });
+
+      const savedTurn = await this.turnRepository.save(turn);
+
+      actualTurnId = savedTurn.id;
+    }
+
     const message = this.messageRepository.create({
       threadId,
-      role: uiMessage.role as AgentChatMessageRole,
+      turnId: actualTurnId,
+      role: uiMessage.role as AgentMessageRole,
+      agentId: agentId ?? null,
     });
 
     const savedMessage = await this.messageRepository.save(message);
@@ -90,7 +112,7 @@ export class AgentChatService {
       await this.messagePartRepository.save(dbParts);
     }
 
-    if (uiMessage.role === AgentChatMessageRole.USER) {
+    if (uiMessage.role === AgentMessageRole.USER) {
       const messageContent = uiMessage.parts.find(
         (part) => part.type === 'text',
       )?.text;

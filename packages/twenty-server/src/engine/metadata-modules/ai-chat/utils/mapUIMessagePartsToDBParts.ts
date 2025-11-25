@@ -1,7 +1,7 @@
 import { type ToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
-import { type AgentChatMessagePartEntity } from 'src/engine/metadata-modules/ai-chat/entities/agent-chat-message-part.entity';
+import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai-chat/entities/agent-message-part.entity';
 
 const isToolPart = (part: ExtendedUIMessagePart): part is ToolUIPart => {
   return part.type.includes('tool-') && 'toolCallId' in part;
@@ -10,9 +10,9 @@ const isToolPart = (part: ExtendedUIMessagePart): part is ToolUIPart => {
 export const mapUIMessagePartsToDBParts = (
   uiMessageParts: ExtendedUIMessagePart[],
   messageId: string,
-): Partial<AgentChatMessagePartEntity>[] => {
+): Partial<AgentMessagePartEntity>[] => {
   return uiMessageParts.map((part, index) => {
-    const basePart: Partial<AgentChatMessagePartEntity> = {
+    const basePart: Partial<AgentMessagePartEntity> = {
       messageId,
       orderIndex: index,
       type: part.type,

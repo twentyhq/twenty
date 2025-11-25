@@ -16,7 +16,7 @@ import { type ModelId } from 'src/engine/metadata-modules/ai-models/constants/ai
 import { AIBillingService } from 'src/engine/metadata-modules/ai-billing/services/ai-billing.service';
 import { convertCentsToBillingCredits } from 'src/engine/metadata-modules/ai-billing/utils/convert-cents-to-billing-credits.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentChatMessageRole } from 'src/engine/metadata-modules/ai-chat/entities/agent-chat-message.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai-chat/entities/agent-message.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatService } from 'src/engine/metadata-modules/ai-chat/services/agent-chat.service';
 import { AgentExecutionService } from 'src/engine/metadata-modules/ai-agent/services/agent-execution.service';
@@ -199,10 +199,10 @@ export class AgentStreamingService {
               },
             });
 
-            await this.agentChatService.addMessage({
+            const userMessage = await this.agentChatService.addMessage({
               threadId,
               uiMessage: {
-                role: AgentChatMessageRole.USER,
+                role: AgentMessageRole.USER,
                 parts: [
                   {
                     type: 'text',
@@ -218,7 +218,7 @@ export class AgentStreamingService {
             await this.agentChatService.addMessage({
               threadId,
               uiMessage: {
-                role: AgentChatMessageRole.ASSISTANT,
+                role: AgentMessageRole.ASSISTANT,
                 parts: [
                   {
                     type: 'text',
@@ -226,6 +226,7 @@ export class AgentStreamingService {
                   },
                 ],
               },
+              turnId: userMessage.turnId,
             });
 
             return;
@@ -353,10 +354,10 @@ export class AgentStreamingService {
 
                 writer.write(updatedRoutedStatusPart);
 
-                await this.agentChatService.addMessage({
+                const userMessage = await this.agentChatService.addMessage({
                   threadId,
                   uiMessage: {
-                    role: AgentChatMessageRole.USER,
+                    role: AgentMessageRole.USER,
                     parts: [
                       {
                         type: 'text',
@@ -367,6 +368,7 @@ export class AgentStreamingService {
                       },
                     ],
                   },
+                  agentId: agent.id,
                 });
 
                 await this.agentChatService.addMessage({
@@ -375,6 +377,8 @@ export class AgentStreamingService {
                     ...responseMessage,
                     parts: [updatedRoutedStatusPart, ...responseMessage.parts],
                   },
+                  agentId: agent.id,
+                  turnId: userMessage.turnId,
                 });
               },
               sendReasoning: true,

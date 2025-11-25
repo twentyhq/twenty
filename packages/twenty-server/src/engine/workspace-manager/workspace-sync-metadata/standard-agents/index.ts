@@ -1,3 +1,4 @@
+import { DASHBOARD_BUILDER_AGENT } from './agents/dashboard-builder-agent';
 import { DATA_MANIPULATOR_AGENT } from './agents/data-manipulator-agent';
 import { HELPER_AGENT } from './agents/helper-agent';
 import { RESEARCHER_AGENT } from './agents/researcher-agent';
@@ -7,6 +8,7 @@ import { type StandardAgentDefinition } from './types/standard-agent-definition.
 export const standardAgentDefinitions = [
   WORKFLOW_BUILDER_AGENT,
   DATA_MANIPULATOR_AGENT,
+  DASHBOARD_BUILDER_AGENT,
   HELPER_AGENT,
   RESEARCHER_AGENT,
   // CODE_AGENT,

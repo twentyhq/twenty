@@ -12,7 +12,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AgentChatService } from 'src/engine/metadata-modules/ai-chat/services/agent-chat.service';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
-import { AgentChatMessageDTO } from 'src/engine/metadata-modules/ai-chat/dtos/agent-chat-message.dto';
+import { AgentMessageDTO } from 'src/engine/metadata-modules/ai-chat/dtos/agent-message.dto';
 import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai-chat/dtos/agent-chat-thread.dto';
 
 @UseGuards(
@@ -39,7 +39,7 @@ export class AgentChatResolver {
     return this.agentChatService.getThreadById(id, userWorkspaceId);
   }
 
-  @Query(() => [AgentChatMessageDTO])
+  @Query(() => [AgentMessageDTO])
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async chatMessages(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
