@@ -1,3 +1,4 @@
+import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -23,8 +24,6 @@ import {
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLock, IconSparkles } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   useFindOneAgentQuery,
@@ -215,47 +214,32 @@ export const WorkflowEditActionAiAgent = ({
   };
 
   const getFooterActions = () => {
-    const footerActions: React.ReactNode[] = [];
-
     if (currentTabId !== WORKFLOW_AI_AGENT_TABS.PERMISSIONS) {
-      return footerActions;
+      return [];
     }
 
     if (workflowAiAgentPermissionsIsAddingPermission) {
-      footerActions.push(
-        <Button
+      return [
+        <CmdEnterActionButton
           key="view-role"
           title={t`View role`}
-          variant="primary"
           onClick={handleViewRole}
           disabled={!isDefined(role?.id)}
-          accent="blue"
-          size="small"
-          hotkeys={
-            isDefined(role?.id) ? [getOsControlSymbol(), '⏎'] : undefined
-          }
         />,
-      );
+      ];
     }
 
-    if (
-      !workflowAiAgentPermissionsIsAddingPermission &&
-      !actionOptions.readonly
-    ) {
-      footerActions.push(
-        <Button
-          key="add-permission"
-          title={t`Add permission`}
-          variant="primary"
-          onClick={() => setWorkflowAiAgentPermissionsIsAddingPermission(true)}
-          accent="blue"
-          hotkeys={[getOsControlSymbol(), '⏎']}
-          size="small"
-        />,
-      );
+    if (isDefined(actionOptions.readonly)) {
+      return [];
     }
 
-    return footerActions;
+    return [
+      <CmdEnterActionButton
+        key="add-permission"
+        title={t`Add permission`}
+        onClick={() => setWorkflowAiAgentPermissionsIsAddingPermission(true)}
+      />,
+    ];
   };
 
   return agentLoading ? (
