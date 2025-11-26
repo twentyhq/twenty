@@ -3,7 +3,7 @@ const gmailApiErrorMocks = {
   // 400 Bad Request - Invalid query parameters
   badRequest: {
     error: {
-      code: 400,
+      code: '400',
       errors: [
         {
           domain: 'global',
@@ -22,7 +22,7 @@ const gmailApiErrorMocks = {
   // 400 Invalid Grant
   invalidGrant: {
     error: {
-      code: 400,
+      code: '400',
       errors: [
         {
           domain: 'global',
@@ -37,7 +37,7 @@ const gmailApiErrorMocks = {
   // 400 Failed Precondition
   failedPrecondition: {
     error: {
-      code: 400,
+      code: '400',
       errors: [
         {
           domain: 'global',
@@ -61,7 +61,7 @@ const gmailApiErrorMocks = {
           location: 'Authorization',
         },
       ],
-      code: 401,
+      code: '401',
       message: 'Invalid Credentials',
     },
   },
@@ -78,7 +78,7 @@ const gmailApiErrorMocks = {
           locationType: 'parameter',
         },
       ],
-      code: 404,
+      code: '404',
       message: 'Resource not found: userId',
     },
   },
@@ -95,7 +95,7 @@ const gmailApiErrorMocks = {
           locationType: 'parameter',
         },
       ],
-      code: 410,
+      code: '410',
       message: 'Resource has been deleted',
     },
   },
@@ -110,7 +110,7 @@ const gmailApiErrorMocks = {
           message: 'Daily Limit Exceeded',
         },
       ],
-      code: 403,
+      code: '403',
       message: 'Daily Limit Exceeded',
     },
   },
@@ -125,7 +125,7 @@ const gmailApiErrorMocks = {
           message: 'User Rate Limit Exceeded',
         },
       ],
-      code: 403,
+      code: '403',
       message: 'User Rate Limit Exceeded',
     },
   },
@@ -140,7 +140,7 @@ const gmailApiErrorMocks = {
           message: 'Rate Limit Exceeded',
         },
       ],
-      code: 403,
+      code: '403',
       message: 'Rate Limit Exceeded',
     },
   },
@@ -155,7 +155,7 @@ const gmailApiErrorMocks = {
           message: 'The domain administrators have disabled Gmail apps.',
         },
       ],
-      code: 403,
+      code: '403',
       message: 'The domain administrators have disabled Gmail apps.',
     },
   },
@@ -170,7 +170,7 @@ const gmailApiErrorMocks = {
           message: 'Too many concurrent requests for user',
         },
       ],
-      code: 429,
+      code: '429',
       message: 'Too many concurrent requests for user',
     },
   },
@@ -185,14 +185,14 @@ const gmailApiErrorMocks = {
           message: 'Backend Error',
         },
       ],
-      code: 500,
+      code: '500',
       message: 'Backend Error',
     },
   },
 
-  getError: function (code: number, type?: string) {
+  getError: function (code: string, type?: string) {
     switch (code) {
-      case 400:
+      case '400':
         switch (type) {
           case 'invalid_grant':
             return this.invalidGrant;
@@ -201,9 +201,9 @@ const gmailApiErrorMocks = {
           default:
             return this.badRequest;
         }
-      case 401:
+      case '401':
         return this.invalidCredentials;
-      case 403:
+      case '403':
         switch (type) {
           case 'dailyLimit':
             return this.dailyLimitExceeded;
@@ -216,11 +216,11 @@ const gmailApiErrorMocks = {
           default:
             return this.rateLimitExceeded;
         }
-      case 404:
+      case '404':
         return this.notFound;
-      case 410:
+      case '410':
         return this.gone;
-      case 429:
+      case '429':
         switch (type) {
           case 'concurrent':
             return this.tooManyConcurrentRequests;
@@ -229,7 +229,7 @@ const gmailApiErrorMocks = {
           default:
             return this.tooManyConcurrentRequests;
         }
-      case 500:
+      case '500':
         return this.backendError;
       default:
         throw new Error(`Unknown error code: ${code}`);
