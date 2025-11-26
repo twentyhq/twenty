@@ -201,7 +201,7 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
 
                   if (isCompositeFieldMetadataType(fieldMetadata.type)) {
                     const compositeType = compositeTypeDefinitions.get(
-                      field.type,
+                      fieldMetadata.type,
                     ) as CompositeType;
 
                     const uniqueCompositeProperties =
@@ -210,11 +210,11 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
                       );
 
                     return uniqueCompositeProperties.map((subField) =>
-                      computeCompositeColumnName(field.name, subField),
+                      computeCompositeColumnName(fieldMetadata.name, subField),
                     );
                   }
 
-                  return [field.name];
+                  return [fieldMetadata.name];
                 },
               );
 
