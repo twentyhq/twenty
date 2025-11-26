@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   IconAppWindow,
   IconFrame,
+  IconPlus,
   type IconComponent,
 } from 'twenty-ui/display';
 import { type PageLayoutWidget } from '~/generated/graphql';
@@ -142,6 +143,18 @@ export const usePageLayoutHeaderInfo = ({
         isReadonly: commandMenuPage === CommandMenuPages.PageLayoutGraphFilter,
         tab: undefined,
         widgetInEditMode,
+      };
+    }
+
+    case CommandMenuPages.PageLayoutWidgetTypeSelect: {
+      return {
+        headerIcon: IconPlus,
+        headerIconColor: iconColor,
+        headerType: t`Widget`,
+        title: t`New widget`,
+        isReadonly: true,
+        tab: undefined,
+        widgetInEditMode: undefined,
       };
     }
 
