@@ -33,6 +33,7 @@ export const GraphWidgetPieChartRenderer = ({
     hasTooManyGroups,
     objectMetadataItem,
     formattedToRawLookup,
+    showDataLabels,
   } = useGraphPieChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration as PieChartConfiguration,
@@ -85,6 +86,7 @@ export const GraphWidgetPieChartRenderer = ({
         id={widget.id}
         displayType="shortNumber"
         onSliceClick={handleSliceClick}
+        showDataLabels={showDataLabels}
       />
     </Suspense>
   );

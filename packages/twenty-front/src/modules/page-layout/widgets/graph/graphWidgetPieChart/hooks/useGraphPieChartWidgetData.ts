@@ -20,6 +20,7 @@ type UseGraphPieChartWidgetDataResult = {
   hasTooManyGroups: boolean;
   objectMetadataItem: ObjectMetadataItem;
   formattedToRawLookup: Map<string, RawDimensionValue>;
+  showDataLabels: boolean;
 };
 
 // TODO: Remove this once backend returns total group count
@@ -59,6 +60,7 @@ export const useGraphPieChartWidgetData = ({
   return {
     ...transformedData,
     objectMetadataItem,
+    showDataLabels: configuration.displayDataLabel ?? false,
     loading,
     error,
   };
