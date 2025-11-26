@@ -9,7 +9,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useId } from 'react';
-import { Button } from 'twenty-ui/input';
+import { Button, type ButtonSize } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 type OptionsDropdownMenuProps = {
@@ -17,6 +17,7 @@ type OptionsDropdownMenuProps = {
   selectableListId?: string;
   selectableItemIdArray?: string[];
   onOpen?: () => void;
+  buttonSize?: ButtonSize;
   children: ReactNode;
 };
 
@@ -25,6 +26,7 @@ export const OptionsDropdownMenu = ({
   selectableListId,
   selectableItemIdArray = [],
   onOpen,
+  buttonSize,
   children,
 }: OptionsDropdownMenuProps) => {
   const generatedDropdownId = useId();
@@ -68,7 +70,11 @@ export const OptionsDropdownMenu = ({
       dropdownId={dropdownId}
       data-select-disable
       clickableComponent={
-        <Button title={t`Options`} hotkeys={[getOsControlSymbol(), 'O']} />
+        <Button
+          title={t`Options`}
+          hotkeys={[getOsControlSymbol(), 'O']}
+          size={buttonSize}
+        />
       }
       dropdownPlacement="top-end"
       dropdownOffset={{ y: parseInt(theme.spacing(2), 10) }}
