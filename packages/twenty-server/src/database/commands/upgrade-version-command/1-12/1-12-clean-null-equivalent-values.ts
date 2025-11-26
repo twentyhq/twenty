@@ -101,11 +101,9 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
     });
 
     for (const objectMetadataItem of objectMetadataItems) {
-      console.log('objectMetadataItem', objectMetadataItem);
       const tableName = computeObjectTargetTable(objectMetadataItem);
 
       for (const field of objectMetadataItem.fields) {
-        console.log('field', field);
         const fieldDefaultDefaultValue = deprecatedGenerateDefaultValue(
           field.type,
         );
