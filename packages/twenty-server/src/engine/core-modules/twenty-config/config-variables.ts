@@ -986,6 +986,14 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   API_RATE_LIMITING_LONG_LIMIT = 100;
 
+  @CastToPositiveNumber()
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description: 'Maximum complexity allowed for GQL queries',
+    type: ConfigVariableType.NUMBER,
+  })
+  GRAPHQL_MAX_COMPLEXITY = 2000;
+
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SSL,
     description: 'Path to the SSL key for enabling HTTPS in local development',

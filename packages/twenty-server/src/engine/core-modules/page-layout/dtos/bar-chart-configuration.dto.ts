@@ -108,6 +108,11 @@ export class BarChartConfigurationDTO {
   @IsOptional()
   displayDataLabel?: boolean;
 
+  @Field(() => Boolean, { nullable: true, defaultValue: true })
+  @IsBoolean()
+  @IsOptional()
+  displayLegend?: boolean;
+
   @Field(() => Number, { nullable: true })
   @IsNumber()
   @IsOptional()

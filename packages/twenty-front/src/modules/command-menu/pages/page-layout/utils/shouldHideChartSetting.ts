@@ -126,6 +126,12 @@ export const shouldHideChartSetting = (
         );
       }
     }
+
+    if (item.id === CHART_CONFIGURATION_SETTING_IDS.SHOW_LEGEND) {
+      if (configuration.__typename === 'PieChartConfiguration') {
+        return false;
+      }
+    }
   }
 
   return (
