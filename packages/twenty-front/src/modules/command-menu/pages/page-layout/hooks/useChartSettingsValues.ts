@@ -199,6 +199,10 @@ export const useChartSettingsValues = ({
         return groupByOrderByLabel;
       case CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS:
         return configuration.displayDataLabel ?? undefined;
+      case CHART_CONFIGURATION_SETTING_IDS.CENTER_METRIC:
+        return isPieChart
+          ? (configuration.showCenterMetric ?? undefined)
+          : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.STACKED_BARS:
         return configuration.__typename === 'BarChartConfiguration'
           ? configuration.groupMode !== 'GROUPED'

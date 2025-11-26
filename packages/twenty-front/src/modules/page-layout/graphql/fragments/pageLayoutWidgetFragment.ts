@@ -73,6 +73,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         dateGranularity
         orderBy
         displayDataLabel
+        showCenterMetric
         color
         description
         filter

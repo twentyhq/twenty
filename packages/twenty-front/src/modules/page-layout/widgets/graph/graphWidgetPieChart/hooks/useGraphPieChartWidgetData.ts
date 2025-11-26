@@ -21,6 +21,7 @@ type UseGraphPieChartWidgetDataResult = {
   objectMetadataItem: ObjectMetadataItem;
   formattedToRawLookup: Map<string, RawDimensionValue>;
   showDataLabels: boolean;
+  showCenterMetric: boolean;
 };
 
 // TODO: Remove this once backend returns total group count
@@ -61,6 +62,7 @@ export const useGraphPieChartWidgetData = ({
     ...transformedData,
     objectMetadataItem,
     showDataLabels: configuration.displayDataLabel ?? false,
+    showCenterMetric: configuration.showCenterMetric ?? false,
     loading,
     error,
   };
