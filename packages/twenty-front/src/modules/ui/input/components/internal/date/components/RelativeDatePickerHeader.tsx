@@ -4,7 +4,6 @@ import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/in
 import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
 
 import styled from '@emotion/styled';
-import { useId } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import {
   relativeDateFilterSchema,
@@ -22,6 +21,7 @@ const StyledContainer = styled.div<{ noPadding: boolean }>`
 `;
 
 type RelativeDatePickerHeaderProps = {
+  instanceId: string;
   direction: RelativeDateFilterDirection;
   amount?: Nullable<number>;
   unit: RelativeDateFilterUnit;
@@ -32,6 +32,7 @@ type RelativeDatePickerHeaderProps = {
 };
 
 export const RelativeDatePickerHeader = ({
+  instanceId,
   direction,
   unit,
   amount,
@@ -40,8 +41,6 @@ export const RelativeDatePickerHeader = ({
   readonly,
   unitDropdownWidth,
 }: RelativeDatePickerHeaderProps) => {
-  const instanceId = useId();
-
   const amountString = amount?.toString() ?? '';
 
   const textInputValue = direction === 'THIS' ? '' : amountString;
