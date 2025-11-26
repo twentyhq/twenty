@@ -1,34 +1,16 @@
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader';
 import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableRow';
-import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
+import { useSettingsRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   H2Title,
-  IconApps,
-  IconCode,
-  IconCreditCard,
-  IconHierarchy,
-  IconKey,
-  IconLayoutSidebarRightCollapse,
-  IconLockOpen,
   IconSettings,
-  IconSettingsAutomation,
-  IconShield,
-  IconSparkles,
-  IconSpy,
-  IconUsers,
 } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -56,106 +38,7 @@ export const SettingsRolePermissionsSettingsSection = ({
     settingsDraftRoleFamilyState(roleId),
   );
 
-  const isAIEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
-  const isApplicationEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APPLICATION_ENABLED,
-  );
-
-  const settingsPermissionsConfig = useMemo(() => {
-    const allPermissions: SettingsRolePermissionsSettingPermission[] = [
-      {
-        key: PermissionFlagType.API_KEYS_AND_WEBHOOKS,
-        name: t`API Keys & Webhooks`,
-        description: t`Manage API keys and webhooks`,
-        Icon: IconCode,
-      },
-      {
-        key: PermissionFlagType.WORKSPACE,
-        name: t`Workspace`,
-        description: t`Set global workspace preferences`,
-        Icon: IconSettings,
-      },
-      {
-        key: PermissionFlagType.WORKSPACE_MEMBERS,
-        name: t`Users`,
-        description: t`Add or remove users`,
-        Icon: IconUsers,
-      },
-      {
-        key: PermissionFlagType.ROLES,
-        name: t`Roles`,
-        description: t`Define user roles and access levels`,
-        Icon: IconLockOpen,
-      },
-      {
-        key: PermissionFlagType.DATA_MODEL,
-        name: t`Data Model`,
-        description: t`Edit data structure and fields`,
-        Icon: IconHierarchy,
-      },
-      {
-        key: PermissionFlagType.SECURITY,
-        name: t`Security`,
-        description: t`Manage security policies`,
-        Icon: IconKey,
-      },
-      {
-        key: PermissionFlagType.WORKFLOWS,
-        name: t`Workflows`,
-        description: t`Manage workflows`,
-        Icon: IconSettingsAutomation,
-      },
-      {
-        key: PermissionFlagType.SSO_BYPASS,
-        name: t`SSO Bypass`,
-        description: t`Enable bypass options`,
-        Icon: IconShield,
-      },
-      {
-        key: PermissionFlagType.IMPERSONATE,
-        name: t`Impersonate`,
-        description: t`Impersonate workspace users`,
-        Icon: IconSpy,
-      },
-      {
-        key: PermissionFlagType.APPLICATIONS,
-        name: t`Applications`,
-        description: t`Install and manage applications`,
-        Icon: IconApps,
-      },
-      {
-        key: PermissionFlagType.LAYOUTS,
-        name: t`Layouts`,
-        description: t`Customize page layouts and UI structure`,
-        Icon: IconLayoutSidebarRightCollapse,
-      },
-      {
-        key: PermissionFlagType.BILLING,
-        name: t`Billing`,
-        description: t`Manage billing and subscriptions`,
-        Icon: IconCreditCard,
-      },
-      {
-        key: PermissionFlagType.AI_SETTINGS,
-        name: t`AI`,
-        description: t`Create and configure AI agents`,
-        Icon: IconSparkles,
-      },
-    ];
-
-    return allPermissions.filter((permission) => {
-      if (permission.key === PermissionFlagType.AI_SETTINGS && !isAIEnabled) {
-        return false;
-      }
-      if (
-        permission.key === PermissionFlagType.APPLICATIONS &&
-        !isApplicationEnabled
-      ) {
-        return false;
-      }
-      return true;
-    });
-  }, [isAIEnabled, isApplicationEnabled]);
+  const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig();
 
   return (
     <Section>
