@@ -358,12 +358,6 @@ export const WorkflowAiAgentPermissionsTab = ({
       updatedPermission.canDestroyObjectRecords = false;
     }
 
-    const hasAnyPermission =
-      updatedPermission.canReadObjectRecords ||
-      updatedPermission.canUpdateObjectRecords ||
-      updatedPermission.canSoftDeleteObjectRecords ||
-      updatedPermission.canDestroyObjectRecords;
-
     const allObjectPermissions = objectPermissions
       .filter((perm) => perm.objectMetadataId !== objectMetadataId)
       .map((perm) => ({
@@ -374,18 +368,15 @@ export const WorkflowAiAgentPermissionsTab = ({
         canDestroyObjectRecords: perm.canDestroyObjectRecords ?? false,
       }));
 
-    if (hasAnyPermission === true) {
-      allObjectPermissions.push({
-        objectMetadataId: updatedPermission.objectMetadataId,
-        canReadObjectRecords: updatedPermission.canReadObjectRecords ?? false,
-        canUpdateObjectRecords:
-          updatedPermission.canUpdateObjectRecords ?? false,
-        canSoftDeleteObjectRecords:
-          updatedPermission.canSoftDeleteObjectRecords ?? false,
-        canDestroyObjectRecords:
-          updatedPermission.canDestroyObjectRecords ?? false,
-      });
-    }
+    allObjectPermissions.push({
+      objectMetadataId: updatedPermission.objectMetadataId,
+      canReadObjectRecords: updatedPermission.canReadObjectRecords ?? false,
+      canUpdateObjectRecords: updatedPermission.canUpdateObjectRecords ?? false,
+      canSoftDeleteObjectRecords:
+        updatedPermission.canSoftDeleteObjectRecords ?? false,
+      canDestroyObjectRecords:
+        updatedPermission.canDestroyObjectRecords ?? false,
+    });
 
     await upsertObjectPermissions({
       variables: {
