@@ -49,13 +49,6 @@ export const parseGmailMessageListFetchError = (
         { cause: options?.cause },
       );
 
-    case '404':
-      return new MessageImportDriverException(
-        message,
-        MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
-        { cause: options?.cause },
-      );
-
     case '429':
       return new MessageImportDriverException(
         message,
@@ -75,6 +68,7 @@ export const parseGmailMessageListFetchError = (
           { cause: options?.cause },
         );
       }
+
       if (reason === 'domainPolicy') {
         return new MessageImportDriverException(
           message,

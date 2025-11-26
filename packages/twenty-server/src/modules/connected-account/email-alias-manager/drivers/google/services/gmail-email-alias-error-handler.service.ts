@@ -4,8 +4,8 @@ import { parseGmailMessageListFetchError } from 'src/modules/messaging/message-i
 import { parseGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-network-error.util';
 
 @Injectable()
-export class GmailMessageListFetchErrorHandler {
-  private readonly logger = new Logger(GmailMessageListFetchErrorHandler.name);
+export class GmailEmailAliasErrorHandlerService {
+  private readonly logger = new Logger(GmailEmailAliasErrorHandlerService.name);
 
   constructor() {}
 
