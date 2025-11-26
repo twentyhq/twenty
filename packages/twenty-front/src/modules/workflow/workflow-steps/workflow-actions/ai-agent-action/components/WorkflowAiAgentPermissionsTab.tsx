@@ -95,6 +95,16 @@ const CRUD_PERMISSIONS: Array<{
   },
 ];
 
+const CRUD_PERMISSION_ORDER = CRUD_PERMISSIONS.reduce<
+  Record<SettingsRoleObjectPermissionKey, number>
+>(
+  (orderMap, permission, index) => {
+    orderMap[permission.key] = index;
+    return orderMap;
+  },
+  {} as Record<SettingsRoleObjectPermissionKey, number>,
+);
+
 type WorkflowAiAgentPermissionsTabProps = {
   action: WorkflowAiAgentAction;
   readonly: boolean;
@@ -127,7 +137,6 @@ export const WorkflowAiAgentPermissionsTab = ({
 
   const agent = agentData?.findOneAgent;
   const [searchQuery, setSearchQuery] = useState('');
-
   const [createRole] = useCreateOneRoleMutation();
   const [assignRoleToAgent] = useAssignRoleToAgentMutation();
   const [upsertObjectPermissions] = useUpsertObjectPermissionsMutation();
@@ -259,8 +268,6 @@ export const WorkflowAiAgentPermissionsTab = ({
           : (objectPermission?.canDestroyObjectRecords ?? false),
     };
 
-    // Build the complete list of object permissions
-    // Include all existing permissions except the one we're modifying
     const allObjectPermissions = objectPermissions
       .filter((perm) => perm.objectMetadataId !== objectMetadataId)
       .map((perm) => ({
@@ -291,6 +298,9 @@ export const WorkflowAiAgentPermissionsTab = ({
       },
       refetchQueries: ['GetRoles', 'FindOneAgent'],
     });
+
+    setWorkflowAiAgentPermissionsIsAddingPermission(false);
+    setWorkflowAiAgentPermissionsSelectedObjectId(undefined);
   };
 
   const handleDeletePermission = async (
@@ -353,8 +363,6 @@ export const WorkflowAiAgentPermissionsTab = ({
       updatedPermission.canSoftDeleteObjectRecords ||
       updatedPermission.canDestroyObjectRecords;
 
-    // Build the complete list of object permissions
-    // Include all existing permissions except the one we're modifying
     const allObjectPermissions = objectPermissions
       .filter((perm) => perm.objectMetadataId !== objectMetadataId)
       .map((perm) => ({
@@ -365,7 +373,6 @@ export const WorkflowAiAgentPermissionsTab = ({
         canDestroyObjectRecords: perm.canDestroyObjectRecords ?? false,
       }));
 
-    // Only include the updated permission if it still has at least one permission
     if (hasAnyPermission === true) {
       allObjectPermissions.push({
         objectMetadataId: updatedPermission.objectMetadataId,
@@ -403,6 +410,21 @@ export const WorkflowAiAgentPermissionsTab = ({
   }
 
   const existingPermissions = getExistingPermissions();
+  const sortedExistingPermissions = existingPermissions
+    .slice()
+    .sort((permissionA, permissionB) => {
+      if (
+        permissionA.objectMetadataId === permissionB.objectMetadataId &&
+        permissionA.permissionKey !== permissionB.permissionKey
+      ) {
+        return (
+          CRUD_PERMISSION_ORDER[permissionA.permissionKey] -
+          CRUD_PERMISSION_ORDER[permissionB.permissionKey]
+        );
+      }
+
+      return permissionA.objectLabel.localeCompare(permissionB.objectLabel);
+    });
   const selectedObject = isDefined(workflowAiAgentPermissionsSelectedObjectId)
     ? objectMetadataItems.find(
         (item) => item.id === workflowAiAgentPermissionsSelectedObjectId,
@@ -470,9 +492,9 @@ export const WorkflowAiAgentPermissionsTab = ({
         !workflowAiAgentPermissionsIsAddingPermission && (
           <div>
             <StyledLabel>CRUD</StyledLabel>
-            {existingPermissions.length > 0 ? (
+            {sortedExistingPermissions.length > 0 ? (
               <StyledList>
-                {existingPermissions.map((permission) => (
+                {sortedExistingPermissions.map((permission) => (
                   <WorkflowAiAgentPermissionsPermissionRow
                     key={`${permission.objectMetadataId}-${permission.permissionKey}`}
                     permission={{
