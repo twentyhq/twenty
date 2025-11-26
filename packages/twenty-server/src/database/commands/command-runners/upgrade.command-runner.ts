@@ -27,8 +27,14 @@ import {
 import { getPreviousVersion } from 'src/utils/version/get-previous-version';
 
 export type VersionCommands = {
-  beforeSyncMetadata: (WorkspacesMigrationCommandRunner | ActiveOrSuspendedWorkspacesMigrationCommandRunner)[];
-  afterSyncMetadata: (WorkspacesMigrationCommandRunner | ActiveOrSuspendedWorkspacesMigrationCommandRunner)[];
+  beforeSyncMetadata: (
+    | WorkspacesMigrationCommandRunner
+    | ActiveOrSuspendedWorkspacesMigrationCommandRunner
+  )[];
+  afterSyncMetadata: (
+    | WorkspacesMigrationCommandRunner
+    | ActiveOrSuspendedWorkspacesMigrationCommandRunner
+  )[];
 };
 export type AllCommands = Record<string, VersionCommands>;
 const execPromise = promisify(exec);

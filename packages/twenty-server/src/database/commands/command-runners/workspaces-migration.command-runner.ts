@@ -2,13 +2,13 @@ import chalk from 'chalk';
 import { Option } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, MoreThanOrEqual, type Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MigrationCommandRunner } from 'src/database/commands/command-runners/migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { type TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { isDefined } from 'twenty-shared/utils';
 
 export type WorkspacesMigrationCommandOptions = {
   workspaceIds: string[];

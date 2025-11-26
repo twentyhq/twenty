@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { IsNull, Not, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -27,7 +28,6 @@ import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
-import { isDefined } from 'twenty-shared/utils';
 
 @Command({
   name: 'upgrade:1-8:deduplicate-unique-fields',
