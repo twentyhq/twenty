@@ -84,9 +84,9 @@ export class MessagingMessagesImportService {
         refreshToken,
       };
 
-      await this.emailAliasManagerService.refreshHandleAliases(
-        connectedAccountWithFreshTokens,
-      );
+      // await this.emailAliasManagerService.refreshHandleAliases(
+      //   connectedAccountWithFreshTokens,
+      // );
 
       messageIdsToFetch = await this.cacheStorage.setPop(
         `messages-to-import:${workspaceId}:${messageChannel.id}`,

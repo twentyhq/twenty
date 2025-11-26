@@ -1,8 +1,6 @@
-import { type GmailFoldersError } from 'src/modules/messaging/message-folder-manager/drivers/gmail/types/gmail-folders-error.type';
+import { type GmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-api-error.type';
 
-export const isGmailFoldersError = (
-  error: unknown,
-): error is GmailFoldersError => {
+export const isGmailApiError = (error: unknown): error is GmailApiError => {
   if (error === null || typeof error !== 'object') {
     return false;
   }

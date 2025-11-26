@@ -1,4 +1,4 @@
-export type GoogleEmailAliasError = {
+export type GmailApiError = {
   code: string;
   message: string;
 };

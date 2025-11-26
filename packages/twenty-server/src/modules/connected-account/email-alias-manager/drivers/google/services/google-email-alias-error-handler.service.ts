@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isGmailEmailAliasError } from 'src/modules/connected-account/email-alias-manager/drivers/google/utils/is-gmail-email-alias-error.util';
-import { parseGmailEmailAliasError } from 'src/modules/connected-account/email-alias-manager/drivers/google/utils/parse-gmail-email-alias-error.util';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { isGmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-api-error-error.util';
 import { isGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-network-error.util';
+import { parseGmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-api-error.util';
 import { parseGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-network-error.util';
 
 @Injectable()
@@ -21,8 +21,8 @@ export class GmailEmailAliasErrorHandlerService {
       throw parseGmailNetworkError(error);
     }
 
-    if (isGmailEmailAliasError(error)) {
-      throw parseGmailEmailAliasError(error);
+    if (isGmailApiError(error)) {
+      throw parseGmailApiError(error);
     }
 
     throw new MessageImportDriverException(

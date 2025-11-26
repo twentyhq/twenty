@@ -1,24 +1,29 @@
-import { type GoogleEmailAliasError } from 'src/modules/connected-account/email-alias-manager/drivers/google/types/google-email-alias-error.type';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { type GmailApiBatchError } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-api-batch-error.type';
 
-export const parseGmailEmailAliasError = (
-  error: GoogleEmailAliasError,
-): MessageImportDriverException => {
-  const { code, message } = error;
+export const parseGmailApiBatchError = (
+  error: GmailApiBatchError,
+  messageExternalId?: string,
+): MessageImportDriverException | undefined => {
+  const { code, errors } = error;
+
+  const reason = errors?.[0]?.reason;
+  const originalMessage = errors?.[0]?.message;
+  const message = `${errors?.[0]?.message} for message with externalId: ${messageExternalId}`;
 
   switch (code) {
-    case '400':
-      if (message === 'invalid_grant') {
+    case 400:
+      if (reason === 'invalid_grant') {
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
         );
       }
-      if (message === 'failedPrecondition') {
-        if (message.includes('Mail service not enabled')) {
+      if (reason === 'failedPrecondition') {
+        if (originalMessage.includes('Mail service not enabled')) {
           return new MessageImportDriverException(
             message,
             MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
@@ -36,25 +41,31 @@ export const parseGmailEmailAliasError = (
         MessageImportDriverExceptionCode.UNKNOWN,
       );
 
-    case '429':
+    case 404:
+    case 410:
+      return new MessageImportDriverException(
+        message,
+        MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+      );
+
+    case 429:
       return new MessageImportDriverException(
         message,
         MessageImportDriverExceptionCode.TEMPORARY_ERROR,
       );
 
-    case '403':
+    case 403:
       if (
-        message === 'rateLimitExceeded' ||
-        message === 'userRateLimitExceeded' ||
-        message === 'dailyLimitExceeded'
+        reason === 'rateLimitExceeded' ||
+        reason === 'userRateLimitExceeded' ||
+        reason === 'dailyLimitExceeded'
       ) {
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
         );
       }
-
-      if (message === 'domainPolicy') {
+      if (reason === 'domainPolicy') {
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
@@ -63,29 +74,36 @@ export const parseGmailEmailAliasError = (
 
       break;
 
-    case '401':
+    case 401:
       return new MessageImportDriverException(
         message,
         MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
       );
 
-    case '503':
+    case 503:
       return new MessageImportDriverException(
         message,
         MessageImportDriverExceptionCode.TEMPORARY_ERROR,
       );
 
-    case '500':
-    case '502':
-    case '504':
-      if (message === 'backendError') {
+    case 500:
+    case 502:
+    case 504:
+      if (reason === 'backendError') {
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
         );
       }
 
+      if (errors?.[0]?.message.includes(`Authentication backend unavailable`)) {
+        return new MessageImportDriverException(
+          `${code} - ${reason} - ${message}`,
+          MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+        );
+      }
       break;
+
     default:
       break;
   }

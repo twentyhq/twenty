@@ -2,28 +2,22 @@ import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { type GmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-api-error.type';
 
-export const parseGmailMessageListFetchError = (error: {
-  code?: string;
-  errors: {
-    reason: string;
-    message: string;
-  }[];
-}): MessageImportDriverException => {
-  const { code, errors } = error;
-
-  const reason = errors?.[0]?.reason;
-  const message = errors?.[0]?.message;
+export const parseGmailApiError = (
+  error: GmailApiError,
+): MessageImportDriverException => {
+  const { code, message } = error;
 
   switch (code) {
     case '400':
-      if (reason === 'invalid_grant') {
+      if (message === 'invalid_grant') {
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
         );
       }
-      if (reason === 'failedPrecondition') {
+      if (message === 'failedPrecondition') {
         if (message.includes('Mail service not enabled')) {
           return new MessageImportDriverException(
             message,
@@ -56,16 +50,16 @@ export const parseGmailMessageListFetchError = (error: {
 
     case '403':
       if (
-        reason === 'rateLimitExceeded' ||
-        reason === 'userRateLimitExceeded' ||
-        reason === 'dailyLimitExceeded'
+        message === 'rateLimitExceeded' ||
+        message === 'userRateLimitExceeded' ||
+        message === 'dailyLimitExceeded'
       ) {
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
         );
       }
-      if (reason === 'domainPolicy') {
+      if (message === 'domainPolicy') {
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
@@ -89,16 +83,16 @@ export const parseGmailMessageListFetchError = (error: {
     case '500':
     case '502':
     case '504':
-      if (reason === 'backendError') {
+      if (message === 'backendError') {
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
         );
       }
 
-      if (errors?.[0]?.message.includes(`Authentication backend unavailable`)) {
+      if (message.includes(`Authentication backend unavailable`)) {
         return new MessageImportDriverException(
-          `${code} - ${reason} - ${message}`,
+          `${code} - ${message}`,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
         );
       }

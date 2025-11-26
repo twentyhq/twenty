@@ -1,8 +1,8 @@
-import { type GmailMessageListFetchError } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message-list-fetch-error.type';
+import { type GmailApiBatchError } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-api-batch-error.type';
 
-export const isGmailMessageListFetchError = (
+export const isGmailApiBatchError = (
   error: unknown,
-): error is GmailMessageListFetchError => {
+): error is GmailApiBatchError => {
   if (error === null || typeof error !== 'object') {
     return false;
   }

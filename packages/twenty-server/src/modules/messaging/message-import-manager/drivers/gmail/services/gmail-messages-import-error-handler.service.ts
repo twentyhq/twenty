@@ -4,9 +4,9 @@ import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { isGmailMessagesImportError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-messages-import.util';
+import { isGmailApiBatchError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-api-batch-error.util';
 import { isGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-network-error.util';
-import { parseGmailMessagesImportError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-messages-import-error.util';
+import { parseGmailApiBatchError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-api-batch-error.util';
 import { parseGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-network-error.util';
 
 @Injectable()
@@ -22,8 +22,8 @@ export class GmailMessagesImportErrorHandler {
       throw parseGmailNetworkError(error);
     }
 
-    if (isGmailMessagesImportError(error)) {
-      throw parseGmailMessagesImportError(error, messageExternalId);
+    if (isGmailApiBatchError(error)) {
+      throw parseGmailApiBatchError(error, messageExternalId);
     }
 
     throw new MessageImportDriverException(
