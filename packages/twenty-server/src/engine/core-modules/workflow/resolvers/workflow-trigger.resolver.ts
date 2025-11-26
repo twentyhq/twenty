@@ -83,7 +83,7 @@ export class WorkflowTriggerResolver {
     return this.workflowTriggerWorkspaceService.runWorkflowVersion({
       workflowVersionId,
       workflowRunId: workflowRunId ?? undefined,
-          payload: {
+        payload: {
           ...(payload ?? {}),
           workspaceMemberId: workspaceMember.id,
         },
