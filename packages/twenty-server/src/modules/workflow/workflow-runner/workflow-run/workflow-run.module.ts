@@ -23,7 +23,7 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
     RecordPositionModule,
     CacheLockModule,
     MetricsModule,
-    DataSourceModule
+    DataSourceModule,
   ],
   providers: [
     WorkflowRunWorkspaceService,
