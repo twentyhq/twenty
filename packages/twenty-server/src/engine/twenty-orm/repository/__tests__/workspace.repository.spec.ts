@@ -1,4 +1,7 @@
-import { FieldMetadataType, type ObjectsPermissions } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type ObjectsPermissions,
+} from 'twenty-shared/types';
 import {
   type DeepPartial,
   type FindManyOptions,
