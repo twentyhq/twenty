@@ -152,6 +152,14 @@ export const GraphWidgetPieChart = ({
             arcLinkLabelsStraightLength={10}
             arcLinkLabelsTextColor={theme.font.color.light}
             arcLinkLabelsColor={theme.font.color.extraLight}
+            theme={{
+              labels: {
+                text: {
+                  fontSize: theme.font.size.sm,
+                  fontWeight: theme.font.weight.medium,
+                },
+              },
+            }}
           />
         </StyledPieChartWrapper>
       </GraphWidgetChartContainer>

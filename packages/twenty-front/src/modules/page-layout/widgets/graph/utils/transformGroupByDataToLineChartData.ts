@@ -27,6 +27,7 @@ type TransformGroupByDataToLineChartDataResult = {
   xAxisLabel?: string;
   yAxisLabel?: string;
   showDataLabels: boolean;
+  showLegend: boolean;
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
 };
@@ -36,6 +37,7 @@ const EMPTY_LINE_CHART_RESULT: TransformGroupByDataToLineChartDataResult = {
   xAxisLabel: undefined,
   yAxisLabel: undefined,
   showDataLabels: false,
+  showLegend: true,
   hasTooManyGroups: false,
   formattedToRawLookup: new Map(),
 };
@@ -113,6 +115,7 @@ export const transformGroupByDataToLineChartData = ({
     : undefined;
 
   const showDataLabels = configuration.displayDataLabel ?? false;
+  const showLegend = configuration.displayLegend ?? true;
 
   const baseResult = isDefined(groupByFieldY)
     ? transformTwoDimensionalGroupByToLineChartData({
@@ -140,6 +143,7 @@ export const transformGroupByDataToLineChartData = ({
     xAxisLabel,
     yAxisLabel,
     showDataLabels,
+    showLegend,
     formattedToRawLookup: baseResult.formattedToRawLookup,
   };
 };

@@ -22,12 +22,14 @@ type TransformGroupByDataToPieChartDataParams = {
 
 type TransformGroupByDataToPieChartDataResult = {
   data: PieChartDataItem[];
+  showLegend: boolean;
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
 const EMPTY_PIE_CHART_RESULT: TransformGroupByDataToPieChartDataResult = {
   data: [],
+  showLegend: true,
   hasTooManyGroups: false,
   formattedToRawLookup: new Map(),
 };
@@ -99,8 +101,11 @@ export const transformGroupByDataToPieChartData = ({
     };
   });
 
+  const showLegend = configuration.displayLegend ?? true;
+
   return {
     data,
+    showLegend,
     hasTooManyGroups: rawResults.length > PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
     formattedToRawLookup,
   };
