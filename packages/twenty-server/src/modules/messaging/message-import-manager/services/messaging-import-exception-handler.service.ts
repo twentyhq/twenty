@@ -6,7 +6,6 @@ import {
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { ConnectedAccountRefreshAccessTokenException } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStatus,
@@ -44,15 +43,6 @@ export class MessageImportExceptionHandlerService {
     >,
     workspaceId: string,
   ): Promise<void> {
-    if (exception instanceof ConnectedAccountRefreshAccessTokenException) {
-      await this.handleInsufficientPermissionsException(
-        messageChannel,
-        workspaceId,
-      );
-
-      return;
-    }
-
     if (exception instanceof MessageImportDriverException) {
       exception.context = {
         ...exception.context,
