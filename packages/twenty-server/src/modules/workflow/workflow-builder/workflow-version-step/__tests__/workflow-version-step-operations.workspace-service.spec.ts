@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
+import { AiAgentRoleService } from 'src/engine/metadata-modules/ai-agent-role/ai-agent-role.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -27,6 +28,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
   let roleRepository: jest.Mocked<any>;
   let objectMetadataRepository: jest.Mocked<any>;
   let workflowCommonWorkspaceService: jest.Mocked<WorkflowCommonWorkspaceService>;
+  let aiAgentRoleService: jest.Mocked<AiAgentRoleService>;
 
   beforeEach(async () => {
     serverlessFunctionService = {
@@ -59,6 +61,10 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
     workflowCommonWorkspaceService = {
       getObjectMetadataItemWithFieldsMaps: jest.fn(),
     } as unknown as jest.Mocked<WorkflowCommonWorkspaceService>;
+
+    aiAgentRoleService = {
+      deleteAgentOnlyRoleIfUnused: jest.fn(),
+    } as unknown as jest.Mocked<AiAgentRoleService>;
 
     twentyORMGlobalManager = {
       getRepositoryForWorkspace: jest.fn(),
@@ -94,6 +100,10 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         {
           provide: WorkflowCommonWorkspaceService,
           useValue: workflowCommonWorkspaceService,
+        },
+        {
+          provide: AiAgentRoleService,
+          useValue: aiAgentRoleService,
         },
         {
           provide: ScopedWorkspaceContextFactory,
@@ -202,21 +212,19 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         id: 'role-target-id',
         roleId: 'role-id',
       });
-      roleRepository.findOne.mockResolvedValue({
-        id: 'role-id',
-        canBeAssignedToAgents: true,
-        canBeAssignedToUsers: false,
-        canBeAssignedToApiKeys: false,
-      });
-      roleTargetsRepository.count.mockResolvedValue(0);
 
       await service.runWorkflowVersionStepDeletionSideEffects({
         step,
         workspaceId: mockWorkspaceId,
       });
 
-      expect(roleRepository.delete).toHaveBeenCalledWith({
-        id: 'role-id',
+      expect(agentRepository.delete).toHaveBeenCalledWith({
+        id: 'agent-id',
+        workspaceId: mockWorkspaceId,
+      });
+      expect(aiAgentRoleService.deleteAgentOnlyRoleIfUnused).toHaveBeenCalledWith({
+        roleId: 'role-id',
+        roleTargetId: 'role-target-id',
         workspaceId: mockWorkspaceId,
       });
     });
