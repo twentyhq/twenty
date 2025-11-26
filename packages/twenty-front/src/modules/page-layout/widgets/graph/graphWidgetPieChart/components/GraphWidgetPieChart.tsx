@@ -150,7 +150,7 @@ export const GraphWidgetPieChart = ({
             }}
             arcLinkLabelsDiagonalLength={10}
             arcLinkLabelsStraightLength={10}
-            arcLinkLabelsTextColor={theme.font.color.primary}
+            arcLinkLabelsTextColor={theme.font.color.light}
             arcLinkLabelsColor={theme.font.color.extraLight}
             theme={{
               labels: {
