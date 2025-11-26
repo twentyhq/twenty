@@ -25,6 +25,8 @@ type GraphWidgetLegendProps = {
   show?: boolean;
 };
 
+type AnimationDirection = 'forward' | 'backward';
+
 const StyledAnimationClipContainer = styled.div`
   flex: 1;
   min-width: 0;
@@ -111,9 +113,8 @@ export const GraphWidgetLegend = ({
 
   const [containerWidth, setContainerWidth] = useState(0);
 
-  const [animationDirection, setAnimationDirection] = useState<
-    'forward' | 'backward'
-  >('forward');
+  const [animationDirection, setAnimationDirection] =
+    useState<AnimationDirection>('forward');
 
   const theme = useTheme();
 
@@ -150,13 +151,13 @@ export const GraphWidgetLegend = ({
   const slideOffset = availableWidth;
 
   const variants = {
-    enter: (direction: 'forward' | 'backward') => ({
+    enter: (direction: AnimationDirection) => ({
       x: direction === 'forward' ? slideOffset : -slideOffset,
     }),
     center: {
       x: 0,
     },
-    exit: (direction: 'forward' | 'backward') => ({
+    exit: (direction: AnimationDirection) => ({
       x: direction === 'forward' ? -slideOffset : slideOffset,
     }),
   };
