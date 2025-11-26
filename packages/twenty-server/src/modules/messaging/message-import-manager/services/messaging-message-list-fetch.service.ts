@@ -88,7 +88,7 @@ export class MessagingMessageListFetchService {
             })
           : messageChannel;
 
-      if (!freshMessageChannel) {
+      if (!isDefined(freshMessageChannel)) {
         this.logger.error(
           `error processing message list fetch: messageChannelId: ${messageChannel.id} Message channel not found`,
         );
