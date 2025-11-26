@@ -6,10 +6,7 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
-import {
-  H2Title,
-  IconSettings,
-} from 'twenty-ui/display';
+import { H2Title, IconSettings } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
 
 const StyledTable = styled.div`
