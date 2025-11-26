@@ -25,9 +25,9 @@ const rejectUserCreation = (
   message: string,
   userFriendlyMessage: ReturnType<typeof msg>,
 ) => {
-  return async (
+  return (
     args: GenericValidateFlatFieldMetadataTypeSpecificitiesArgs,
-  ): Promise<FlatFieldMetadataValidationError[]> => {
+  ): FlatFieldMetadataValidationError[] => {
     const isCreation = !isDefined(args.updates);
     const isCustomField = args.flatEntityToValidate.isCustom;
 
