@@ -1,9 +1,9 @@
 import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
 } from 'twenty-shared/utils';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import {
@@ -96,7 +96,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
 
   const { flatFieldMetadatasToCreate, flatIndexMetadatasToCreate } =
     isFlatFieldMetadataOfType(
-      existingFlatFieldMetadataToUpdate,
+      flatFieldMetadataFromTo.toFlatFieldMetadata,
       FieldMetadataType.MORPH_RELATION,
     )
       ? computeFlatFieldToUpdateFromMorphRelationUpdatePayload({
@@ -104,7 +104,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
           morphRelationsUpdatePayload:
             rawUpdateFieldInput?.morphRelationsUpdatePayload,
           flatFieldMetadataMaps: flatFieldMetadataMaps,
-          fieldMetadataToUpdate: existingFlatFieldMetadataToUpdate,
+          fieldMetadataToUpdate: flatFieldMetadataFromTo.toFlatFieldMetadata,
           flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
         })
       : {
