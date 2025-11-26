@@ -1,3 +1,4 @@
+import { ResetPaginationOnItemsPerPageChangeEffect } from '@/page-layout/widgets/graph/components/ResetPaginationOnItemsPerPageChangeEffect';
 import { LEGEND_ITEM_ESTIMATED_WIDTH } from '@/page-layout/widgets/graph/constants/LegendItemEstimatedWidth.constant';
 import { LEGEND_LABEL_MAX_WIDTH } from '@/page-layout/widgets/graph/constants/LegendLabelMaxWidth.constant';
 import { LEGEND_PAGINATION_CONTROLS_WIDTH } from '@/page-layout/widgets/graph/constants/LegendPaginationControlsWidth.constant';
@@ -5,7 +6,7 @@ import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDi
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   IconChevronLeft,
   IconChevronRight,
@@ -87,28 +88,30 @@ export const GraphWidgetLegend = ({
   items,
   show = true,
 }: GraphWidgetLegendProps) => {
-  const [currentPage, setCurrentPage] = useState(0);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [previousNumberOfItemsPerPage, setPreviousNumberOfItemsPerPage] =
-    useState<number | null>(null);
-
-  const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const [containerWidth, setContainerWidth] = useState(0);
+
+  const [animationDirection, setAnimationDirection] = useState<
+    'forward' | 'backward'
+  >('forward');
+
   const theme = useTheme();
-  const handleDimensionChange = useCallback(
-    ({ width }: { width: number; height: number }) => {
-      setContainerWidth(width);
-    },
-    [],
-  );
 
   const isItASingleItem = items.length === 1;
   const thereAreNoItems = items.length === 0;
 
   const shouldShowLegend = show && !isItASingleItem && !thereAreNoItems;
 
+  if (!shouldShowLegend) {
+    return null;
+  }
+
   const availableWidthForItems =
     containerWidth - LEGEND_PAGINATION_CONTROLS_WIDTH;
+
   const itemsPerPage = Math.max(
     1,
     Math.floor(availableWidthForItems / LEGEND_ITEM_ESTIMATED_WIDTH),
@@ -122,21 +125,7 @@ export const GraphWidgetLegend = ({
 
   const totalPages = Math.ceil(items.length / effectiveItemsPerPage);
 
-  useEffect(() => {
-    if (
-      previousNumberOfItemsPerPage !== null &&
-      previousNumberOfItemsPerPage !== effectiveItemsPerPage
-    ) {
-      setCurrentPage(0);
-    }
-    setPreviousNumberOfItemsPerPage(effectiveItemsPerPage);
-  }, [effectiveItemsPerPage, previousNumberOfItemsPerPage]);
-
   const safeCurrentPage = Math.min(currentPage, Math.max(0, totalPages - 1));
-
-  if (!shouldShowLegend) {
-    return null;
-  }
 
   const startIndex = safeCurrentPage * effectiveItemsPerPage;
   const endIndex = startIndex + effectiveItemsPerPage;
@@ -148,18 +137,19 @@ export const GraphWidgetLegend = ({
   const handlePreviousPage = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
-    setDirection('backward');
+    setAnimationDirection('backward');
     setCurrentPage((prevPage) => Math.max(0, prevPage - 1));
   };
 
   const handleNextPage = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
-    setDirection('forward');
+    setAnimationDirection('forward');
     setCurrentPage((prevPage) => Math.min(totalPages - 1, prevPage + 1));
   };
 
   const slideOffset = availableWidthForItems;
+
   const variants = {
     enter: (direction: 'forward' | 'backward') => ({
       x: direction === 'forward' ? slideOffset : -slideOffset,
@@ -176,7 +166,13 @@ export const GraphWidgetLegend = ({
     <StyledLegendContainer ref={containerRef} needsPagination={needsPagination}>
       <NodeDimensionEffect
         elementRef={containerRef}
-        onDimensionChange={handleDimensionChange}
+        onDimensionChange={({ width }) => {
+          setContainerWidth(width);
+        }}
+      />
+      <ResetPaginationOnItemsPerPageChangeEffect
+        itemsPerPage={effectiveItemsPerPage}
+        onReset={() => setCurrentPage(0)}
       />
       {needsPagination && (
         <StyledPaginationContainer>
@@ -197,10 +193,14 @@ export const GraphWidgetLegend = ({
         </StyledPaginationContainer>
       )}
       <StyledAnimationClipContainer>
-        <AnimatePresence mode="popLayout" custom={direction} initial={false}>
+        <AnimatePresence
+          mode="popLayout"
+          custom={animationDirection}
+          initial={false}
+        >
           <StyledItemsWrapper
             key={safeCurrentPage}
-            custom={direction}
+            custom={animationDirection}
             variants={variants}
             initial="enter"
             animate="center"
