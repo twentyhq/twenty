@@ -187,15 +187,6 @@ describe('updateOne FieldMetadataService morph relation fields v2 - Add one targ
       gqlFields: `
       id
       name
-      description
-      label
-      relation {
-        type
-        targetFieldMetadata {
-          id
-          name
-        }
-      }
       morphRelations {
         type
         targetFieldMetadata {
@@ -251,8 +242,7 @@ describe('updateOne FieldMetadataService morph relation fields v2 - Add one targ
     expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
   });
 
-  // todo @guillim: once we fix the bug, we can re-enable this test
-  xit('Should fail adding one object metadata target to pre-existing morph relation where object is already source object', async () => {
+  it('Should fail adding one object metadata target to pre-existing morph relation where object is already source object', async () => {
     const input = {
       idToUpdate: createdFieldMetadataId,
       updatePayload: {
