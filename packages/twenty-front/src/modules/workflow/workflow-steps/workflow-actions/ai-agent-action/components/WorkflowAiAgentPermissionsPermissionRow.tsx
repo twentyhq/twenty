@@ -3,6 +3,7 @@ import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-perm
 import { IconTrash } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import {
+  StyledDeleteButton,
   StyledIconContainer,
   StyledRow,
   StyledRowLeftContent,
@@ -49,15 +50,17 @@ export const WorkflowAiAgentPermissionsPermissionRow = ({
         <StyledText>{permission.label}</StyledText>
       </StyledRowLeftContent>
       {isEnabled && showDeleteButton && (
-        <IconButton
-          Icon={IconTrash}
-          variant="tertiary"
-          size="small"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete?.();
-          }}
-        />
+        <StyledDeleteButton data-delete-button>
+          <IconButton
+            Icon={IconTrash}
+            variant="tertiary"
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete?.();
+            }}
+          />
+        </StyledDeleteButton>
       )}
     </StyledRow>
   );

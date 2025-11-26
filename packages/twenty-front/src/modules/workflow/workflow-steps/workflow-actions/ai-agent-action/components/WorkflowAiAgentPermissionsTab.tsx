@@ -90,7 +90,11 @@ export const WorkflowAiAgentPermissionsTab = ({
   const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
     useFilteredObjectMetadataItems();
 
-  const { data: rolesData, loading: rolesLoading } = useGetRolesQuery();
+  const {
+    data: rolesData,
+    loading: rolesLoading,
+    refetch: refetchRoles,
+  } = useGetRolesQuery();
 
   const [searchQuery, setSearchQuery] = useState('');
   const role = rolesData?.getRoles.find(
@@ -130,6 +134,11 @@ export const WorkflowAiAgentPermissionsTab = ({
     searchQuery,
   });
 
+  const refetchAgentAndRoles = async () => {
+    await refetchRoles();
+    await refetchAgent();
+  };
+
   const {
     handleAddPermission,
     handleDeletePermission,
@@ -139,7 +148,7 @@ export const WorkflowAiAgentPermissionsTab = ({
     readonly,
     objectPermissions,
     permissionFlagKeys,
-    refetchAgent,
+    refetchAgentAndRoles,
   });
 
   if (isAgentLoading || rolesLoading) {

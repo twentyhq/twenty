@@ -25,14 +25,14 @@ type UseWorkflowAiAgentPermissionActionsParams = {
   readonly: boolean;
   objectPermissions: ObjectPermission[];
   permissionFlagKeys: PermissionFlagType[];
-  refetchAgent: () => Promise<unknown>;
+  refetchAgentAndRoles: () => Promise<unknown>;
 };
 
 export const useWorkflowAiAgentPermissionActions = ({
   readonly,
   objectPermissions,
   permissionFlagKeys,
-  refetchAgent,
+  refetchAgentAndRoles,
 }: UseWorkflowAiAgentPermissionActionsParams) => {
   const { enqueueSuccessSnackBar } = useSnackBar();
   const workflowAiAgentActionAgent = useRecoilValue(
@@ -102,7 +102,6 @@ export const useWorkflowAiAgentPermissionActions = ({
           canBeAssignedToApiKeys: false,
         },
       },
-      refetchQueries: ['GetRoles'],
     });
 
     await assignRoleToAgent({
@@ -110,10 +109,9 @@ export const useWorkflowAiAgentPermissionActions = ({
         agentId: workflowAiAgentActionAgent.id,
         roleId: generatedRoleId,
       },
-      refetchQueries: ['GetRoles'],
     });
 
-    await refetchAgent();
+    await refetchAgentAndRoles();
 
     return generatedRoleId;
   };
@@ -185,10 +183,9 @@ export const useWorkflowAiAgentPermissionActions = ({
           objectPermissions: allObjectPermissions,
         },
       },
-      refetchQueries: ['GetRoles'],
     });
 
-    await refetchAgent();
+    await refetchAgentAndRoles();
     setWorkflowAiAgentPermissionsIsAddingPermission(false);
     setWorkflowAiAgentPermissionsSelectedObjectId(undefined);
   };
@@ -271,10 +268,9 @@ export const useWorkflowAiAgentPermissionActions = ({
           objectPermissions: allObjectPermissions,
         },
       },
-      refetchQueries: ['GetRoles'],
     });
 
-    await refetchAgent();
+    await refetchAgentAndRoles();
     const permissionLabel = CRUD_PERMISSIONS.find(
       (permission) => permission.key === permissionKey,
     )?.label(objectMetadata.labelPlural);
@@ -306,10 +302,9 @@ export const useWorkflowAiAgentPermissionActions = ({
           permissionFlagKeys: [...permissionFlagKeys, permissionFlagKey],
         },
       },
-      refetchQueries: ['GetRoles'],
     });
 
-    await refetchAgent();
+    await refetchAgentAndRoles();
     setWorkflowAiAgentPermissionsIsAddingPermission(false);
     setWorkflowAiAgentPermissionsSelectedObjectId(undefined);
   };
@@ -336,10 +331,9 @@ export const useWorkflowAiAgentPermissionActions = ({
           permissionFlagKeys: permissionFlagKeysAfterRemoval,
         },
       },
-      refetchQueries: ['GetRoles'],
     });
 
-    await refetchAgent();
+    await refetchAgentAndRoles();
 
     const permissionLabel = permissionFlagLabelMap[permissionFlagKey];
 

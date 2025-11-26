@@ -3,6 +3,7 @@ import { useTheme } from '@emotion/react';
 import { IconTrash } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import {
+  StyledDeleteButton,
   StyledIconContainer,
   StyledRow,
   StyledRowLeftContent,
@@ -42,15 +43,17 @@ export const WorkflowAiAgentPermissionsFlagRow = ({
         <StyledText>{permission.name}</StyledText>
       </StyledRowLeftContent>
       {isEnabled && showDeleteButton && (
-        <IconButton
-          Icon={IconTrash}
-          variant="tertiary"
-          size="small"
-          onClick={(event) => {
-            event.stopPropagation();
-            onDelete?.();
-          }}
-        />
+        <StyledDeleteButton data-delete-button>
+          <IconButton
+            Icon={IconTrash}
+            variant="tertiary"
+            size="small"
+            onClick={(event) => {
+              event.stopPropagation();
+              onDelete?.();
+            }}
+          />
+        </StyledDeleteButton>
       )}
     </StyledRow>
   );

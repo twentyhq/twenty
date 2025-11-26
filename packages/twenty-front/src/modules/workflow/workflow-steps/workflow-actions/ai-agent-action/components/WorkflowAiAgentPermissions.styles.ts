@@ -25,6 +25,15 @@ export const StyledRow = styled.div<{ isDisabled?: boolean }>`
     background-color: ${({ theme, isDisabled }) =>
       isDisabled ? 'inherit' : theme.background.transparent.light};
   }
+
+  :hover [data-delete-button] {
+    opacity: 1;
+  }
+`;
+
+export const StyledDeleteButton = styled.div`
+  opacity: 0;
+  transition: opacity ${({ theme }) => theme.animation.duration.fast}ms;
 `;
 
 export const StyledRowLeftContent = styled.div`
