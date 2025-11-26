@@ -420,36 +420,6 @@ export const WorkflowAiAgentPermissionsTab = ({
 
       {isDefined(agent.roleId) &&
         !workflowAiAgentPermissionsIsAddingPermission && (
-          // <div>
-          //   <StyledLabel>CRUD</StyledLabel>
-          //   {sortedExistingPermissions.length > 0 ? (
-          //     <StyledList>
-          //       {sortedExistingPermissions.map((permission) => (
-          //         <WorkflowAiAgentPermissionsPermissionRow
-          //           key={`${permission.objectMetadataId}-${permission.permissionKey}`}
-          //           permission={{
-          //             key: permission.permissionKey,
-          //             label: permission.permissionLabel,
-          //           }}
-          //           isEnabled={true}
-          //           readonly={readonly}
-          //           onDelete={() => {
-          //             void handleDeletePermission(
-          //               permission.objectMetadataId,
-          //               permission.permissionKey,
-          //             );
-          //           }}
-          //         />
-          //       ))}
-          //     </StyledList>
-          //   ) : (
-          //     <StyledList>
-          //       <StyledEmptyState>
-          //         <StyledText>{t`No permissions added yet`}</StyledText>
-          //       </StyledEmptyState>
-          //     </StyledList>
-          //   )}
-          // </div>
           <WorkflowAiAgentPermissionList
             readonly={readonly}
             objectPermissions={objectPermissions}
