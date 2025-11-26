@@ -156,7 +156,7 @@ export const GraphWidgetPieChart = ({
         </StyledPieChartWrapper>
       </GraphWidgetChartContainer>
       <GraphWidgetLegend
-        show={showLegend}
+        show={showLegend && !hasNoData}
         items={enrichedData.map((item) => ({
           id: item.id,
           label: item.label || item.id,
