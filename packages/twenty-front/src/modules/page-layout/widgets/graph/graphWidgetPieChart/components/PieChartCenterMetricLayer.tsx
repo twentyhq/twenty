@@ -9,7 +9,7 @@ import { type PieCustomLayerProps } from '@nivo/pie';
 
 type PieChartCenterMetricLayerProps = Pick<
   PieCustomLayerProps<PieChartDataItem>,
-  'dataWithArc' | 'centerX' | 'centerY'
+  'dataWithArc' | 'centerX' | 'centerY' | 'innerRadius'
 > & {
   formatOptions: GraphValueFormatOptions;
 };
@@ -18,20 +18,25 @@ export const PieChartCenterMetricLayer = ({
   dataWithArc,
   centerX,
   centerY,
+  innerRadius,
   formatOptions,
 }: PieChartCenterMetricLayerProps) => {
   const theme = useTheme();
   const total = dataWithArc.reduce((sum, datum) => sum + datum.value, 0);
 
+  const valueFontSize = Math.max(innerRadius * 0.25, 12);
+  const labelFontSize = Math.max(innerRadius * 0.12, 10);
+  const labelOffset = Math.max(innerRadius * 0.15, 12);
+
   return (
     <g>
       <text
         x={centerX}
-        y={centerY - 8}
+        y={centerY - labelOffset / 2}
         textAnchor="middle"
         dominantBaseline="central"
         style={{
-          fontSize: theme.font.size.xxl,
+          fontSize: valueFontSize,
           fontWeight: theme.font.weight.semiBold,
           fill: theme.font.color.primary,
         }}
@@ -40,11 +45,11 @@ export const PieChartCenterMetricLayer = ({
       </text>
       <text
         x={centerX}
-        y={centerY + 12}
+        y={centerY + labelOffset}
         textAnchor="middle"
         dominantBaseline="central"
         style={{
-          fontSize: theme.font.size.sm,
+          fontSize: labelFontSize,
           fill: theme.font.color.tertiary,
         }}
       >

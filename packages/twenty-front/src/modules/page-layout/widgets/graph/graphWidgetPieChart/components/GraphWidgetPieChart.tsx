@@ -113,6 +113,7 @@ export const GraphWidgetPieChart = ({
       dataWithArc={props.dataWithArc}
       centerX={props.centerX}
       centerY={props.centerY}
+      innerRadius={props.innerRadius}
       formatOptions={formatOptions}
     />
   );
