@@ -414,7 +414,7 @@ describe('group-by resolver (integration)', () => {
         // Group starting week of monday dec 30th, 2024
         const mondayDec30thGroup = groups.find(
           (group: any) =>
-            group.groupByDimensionValues[0] === '2024-12-30T00:00:00+01',
+            group.groupByDimensionValues[0] === '2024-12-30T00:00:00+01:00',
         );
 
         expect(mondayDec30thGroup.edges[0].node.id).toBe(idJan2);
@@ -423,7 +423,7 @@ describe('group-by resolver (integration)', () => {
         // Group starting week of monday jan 6th, 2025
         const mondayJan6thGroup = groups.find(
           (group: any) =>
-            group.groupByDimensionValues[0] === '2025-01-06T00:00:00+01',
+            group.groupByDimensionValues[0] === '2025-01-06T00:00:00+01:00',
         );
 
         expect(mondayJan6thGroup.totalCount).toBe(1);
@@ -432,7 +432,7 @@ describe('group-by resolver (integration)', () => {
         // Group starting week of monday feb 24th, 2025
         const mondayFeb24thGroup = groups.find(
           (group: any) =>
-            group.groupByDimensionValues[0] === '2025-02-24T00:00:00+01',
+            group.groupByDimensionValues[0] === '2025-02-24T00:00:00+01:00',
         );
 
         expect(mondayFeb24thGroup.edges.length).toBe(2);
@@ -450,7 +450,7 @@ describe('group-by resolver (integration)', () => {
         // Group starting week of monday march 3rd, 2025
         const mondayMarch3rdGroup = groups.find(
           (group: any) =>
-            group.groupByDimensionValues[0] === '2025-03-03T00:00:00+01',
+            group.groupByDimensionValues[0] === '2025-03-03T00:00:00+01:00',
         );
 
         expect(mondayMarch3rdGroup.edges.length).toBe(2);
@@ -493,7 +493,7 @@ describe('group-by resolver (integration)', () => {
         // Group starting week of sunday dec 29th, 2024
         const sundayDec29thGroup = groups.find(
           (group: any) =>
-            group.groupByDimensionValues[0] === '2024-12-29T00:00:00+01',
+            group.groupByDimensionValues[0] === '2024-12-29T00:00:00+01:00',
         );
 
         expect(sundayDec29thGroup).toBeDefined();
@@ -505,7 +505,7 @@ describe('group-by resolver (integration)', () => {
         // Group starting week of sunday jan 5th, 2025
         const sundayJan5thGroup = groups.find(
           (group: any) =>
-            group.groupByDimensionValues[0] === '2025-01-05T00:00:00+01',
+            group.groupByDimensionValues[0] === '2025-01-05T00:00:00+01:00',
         );
 
         expect(sundayJan5thGroup).toBeDefined();
@@ -517,7 +517,7 @@ describe('group-by resolver (integration)', () => {
         // Group starting week of sunday feb 23rd, 2025
         const sundayFeb23rdGroup = groups.find(
           (group: any) =>
-            group.groupByDimensionValues[0] === '2025-02-23T00:00:00+01',
+            group.groupByDimensionValues[0] === '2025-02-23T00:00:00+01:00',
         );
 
         expect(sundayFeb23rdGroup).toBeDefined();
@@ -531,7 +531,7 @@ describe('group-by resolver (integration)', () => {
         // Group starting week of sunday march 2nd, 2025
         const sundayMarch2ndGroup = groups.find(
           (group: any) =>
-            group.groupByDimensionValues[0] === '2025-03-02T00:00:00+01',
+            group.groupByDimensionValues[0] === '2025-03-02T00:00:00+01:00',
         );
 
         expect(sundayMarch2ndGroup).toBeDefined();
@@ -580,7 +580,7 @@ describe('group-by resolver (integration)', () => {
         // Group starting week of saturday dec 28th, 2024
         const saturdayDec28thGroup = groups.find(
           (group: any) =>
-            group.groupByDimensionValues[0] === '2024-12-28T00:00:00+01',
+            group.groupByDimensionValues[0] === '2024-12-28T00:00:00+01:00',
         );
 
         expect(saturdayDec28thGroup).toBeDefined();
@@ -594,7 +594,7 @@ describe('group-by resolver (integration)', () => {
         // Group starting week of saturday jan 4th, 2025
         const saturdayJan4thGroup = groups.find(
           (group: any) =>
-            group.groupByDimensionValues[0] === '2025-01-04T00:00:00+01',
+            group.groupByDimensionValues[0] === '2025-01-04T00:00:00+01:00',
         );
 
         expect(saturdayJan4thGroup).toBeDefined();
@@ -608,7 +608,7 @@ describe('group-by resolver (integration)', () => {
         // Group starting week of saturday march 1st, 2025
         const saturdayMarch1stGroup = groups.find(
           (group: any) =>
-            group.groupByDimensionValues[0] === '2025-03-01T00:00:00+01',
+            group.groupByDimensionValues[0] === '2025-03-01T00:00:00+01:00',
         );
 
         expect(saturdayMarch1stGroup).toBeDefined();
