@@ -1,29 +1,29 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isGmailEmailAliasError } from 'src/modules/connected-account/email-alias-manager/drivers/google/utils/is-gmail-email-alias-error';
+import { parseGmailEmailAliasError } from 'src/modules/connected-account/email-alias-manager/drivers/google/utils/parse-gmail-email-alias-error.util';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { isGmailMessagesImportError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-messages-import.util';
 import { isGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-network-error.util';
-import { parseGmailMessagesImportError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-messages-import-error.util';
 import { parseGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-network-error.util';
 
 @Injectable()
-export class GmailMessagesImportErrorHandler {
-  private readonly logger = new Logger(GmailMessagesImportErrorHandler.name);
+export class GmailFoldersErrorHandlerService {
+  private readonly logger = new Logger(GmailFoldersErrorHandlerService.name);
 
   constructor() {}
 
-  public handleError(error: unknown, messageExternalId: string): void {
-    this.logger.log(`Error fetching messages`, error);
+  public handleError(error: unknown): void {
+    this.logger.log(`Error fetching folders`, error);
 
     if (isGmailNetworkError(error)) {
       throw parseGmailNetworkError(error);
     }
 
-    if (isGmailMessagesImportError(error)) {
-      throw parseGmailMessagesImportError(error, messageExternalId);
+    if (isGmailEmailAliasError(error)) {
+      throw parseGmailEmailAliasError(error);
     }
 
     throw new MessageImportDriverException(

@@ -1,11 +1,11 @@
-import { type GoogleEmailAliasError } from 'src/modules/connected-account/email-alias-manager/drivers/google/types/google-email-alias-error.type';
+import { type GmailFoldersError } from 'src/modules/messaging/message-folder-manager/drivers/gmail/types/gmail-folders-error.type';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 
-export const parseGmailEmailAliasError = (
-  error: GoogleEmailAliasError,
+export const parseGmailFoldersError = (
+  error: GmailFoldersError,
 ): MessageImportDriverException => {
   const { code, errors } = error;
 

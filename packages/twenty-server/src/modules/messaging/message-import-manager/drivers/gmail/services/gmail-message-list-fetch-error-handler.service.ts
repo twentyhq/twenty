@@ -1,5 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { isGmailMessageListFetchError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-message-list-fetch-error.util';
+import { isGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-network-error.util';
 import { parseGmailMessageListFetchError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-message-list-fetch-error.util';
 import { parseGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-network-error.util';
 
@@ -9,16 +15,24 @@ export class GmailMessageListFetchErrorHandler {
 
   constructor() {}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public handleError(error: any): void {
+  public handleError(error: unknown): void {
     this.logger.log(`Error fetching message list`, error);
 
-    const networkError = parseGmailNetworkError(error);
-
-    if (networkError) {
-      throw networkError;
+    if (isGmailNetworkError(error)) {
+      throw parseGmailNetworkError(error);
     }
 
-    throw parseGmailMessageListFetchError(error, { cause: error });
+    if (isGmailMessageListFetchError(error)) {
+      throw parseGmailMessageListFetchError(error);
+    }
+
+    this.logger.error(`Unknown error: ${error}`);
+    throw new MessageImportDriverException(
+      'Unknown error',
+      MessageImportDriverExceptionCode.UNKNOWN,
+      {
+        cause: error as Error,
+      },
+    );
   }
 }
