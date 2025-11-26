@@ -18,6 +18,7 @@ import { useGetRolesQuery } from '~/generated-metadata/graphql';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
+import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 import { WorkflowAiAgentPermissionList } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionList';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
 import { WorkflowAiAgentPermissionsCrudList } from './WorkflowAiAgentPermissionsCrudList';
@@ -191,14 +192,23 @@ export const WorkflowAiAgentPermissionsTab = ({
         value={searchQuery}
         onChange={(value: string) => setSearchQuery(value)}
         placeholder={t`Type anything...`}
+        onKeyDown={(event) => {
+          if (isNonTextWritingKey(event.key)) {
+            event.stopPropagation();
+          }
+        }}
       />
 
       {shouldShowCrudList && isDefined(selectedObject) && (
         <WorkflowAiAgentPermissionsCrudList
-          permissions={CRUD_PERMISSIONS.map((p) => ({
-            key: p.key,
-            label: p.label(selectedObject.labelPlural),
-          }))}
+          permissions={filterBySearchQuery({
+            items: CRUD_PERMISSIONS.map((p) => ({
+              key: p.key,
+              label: p.label(selectedObject.labelPlural),
+            })),
+            searchQuery,
+            getSearchableValues: (permission) => [permission.label],
+          })}
           objectPermissions={objectPermissionForSelected}
           readonly={readonly}
           onAddPermission={handleAddPermission}
