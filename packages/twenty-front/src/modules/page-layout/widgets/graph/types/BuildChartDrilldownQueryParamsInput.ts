@@ -3,11 +3,15 @@ import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDim
 import {
   type BarChartConfiguration,
   type LineChartConfiguration,
+  type PieChartConfiguration,
 } from '~/generated/graphql';
 
 export type BuildChartDrilldownQueryParamsInput = {
   objectMetadataItem: ObjectMetadataItem;
-  configuration: BarChartConfiguration | LineChartConfiguration;
+  configuration:
+    | BarChartConfiguration
+    | LineChartConfiguration
+    | PieChartConfiguration;
   clickedData: {
     primaryBucketRawValue: RawDimensionValue;
   };

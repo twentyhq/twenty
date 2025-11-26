@@ -2,12 +2,13 @@ import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/Char
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphPieChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/useGraphPieChartWidgetData';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { getAppPath } from 'twenty-shared/utils';
 import {
   type PageLayoutWidget,
   type PieChartConfiguration,
@@ -31,6 +32,7 @@ export const GraphWidgetPieChartRenderer = ({
     loading,
     hasTooManyGroups,
     objectMetadataItem,
+    formattedToRawLookup,
     showDataLabels,
   } = useGraphPieChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
@@ -38,6 +40,7 @@ export const GraphWidgetPieChartRenderer = ({
   });
 
   const navigate = useNavigate();
+  const configuration = widget.configuration as PieChartConfiguration;
 
   const indexViewId = useRecoilValue(
     coreIndexViewIdFromObjectMetadataItemFamilySelector({
@@ -45,16 +48,28 @@ export const GraphWidgetPieChartRenderer = ({
     }),
   );
 
-  const handleSliceClick = (_datum: PieChartDataItem) => {
-    return navigate(
-      getAppPath(
-        AppPath.RecordIndexPage,
-        {
-          objectNamePlural: objectMetadataItem.namePlural,
-        },
-        isDefined(indexViewId) ? { viewId: indexViewId } : undefined,
-      ),
+  const handleSliceClick = (datum: PieChartDataItem) => {
+    const rawValue = formattedToRawLookup.get(datum.id) ?? null;
+
+    const drilldownQueryParams = buildChartDrilldownQueryParams({
+      objectMetadataItem,
+      configuration,
+      clickedData: {
+        primaryBucketRawValue: rawValue,
+      },
+      viewId: indexViewId,
+      timezone: configuration.timezone ?? undefined,
+    });
+
+    const url = getAppPath(
+      AppPath.RecordIndexPage,
+      {
+        objectNamePlural: objectMetadataItem.namePlural,
+      },
+      Object.fromEntries(drilldownQueryParams),
     );
+
+    return navigate(url);
   };
 
   if (loading) {
