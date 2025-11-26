@@ -101,9 +101,11 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
     });
 
     for (const objectMetadataItem of objectMetadataItems) {
+      console.log('objectMetadataItem', objectMetadataItem);
       const tableName = computeObjectTargetTable(objectMetadataItem);
 
       for (const field of objectMetadataItem.fields) {
+        console.log('field', field);
         const fieldDefaultDefaultValue = deprecatedGenerateDefaultValue(
           field.type,
         );
@@ -118,13 +120,12 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
           this.logger.log(
             `Processing field ${field.name} on object ${objectMetadataItem.nameSingular} (Table: ${tableName})`,
           );
+          if (!isDryRun) {
+            if (isCompositeFieldMetadataType(field.type)) {
+              const compositeType = compositeTypeDefinitions.get(field.type);
 
-          if (isCompositeFieldMetadataType(field.type)) {
-            const compositeType = compositeTypeDefinitions.get(field.type);
-
-            if (isDefined(compositeType)) {
-              for (const property of compositeType.properties) {
-                if (!isDryRun) {
+              if (isDefined(compositeType)) {
+                for (const property of compositeType.properties) {
                   const columnName = computeCompositeColumnName(
                     field.name,
                     property,
@@ -145,9 +146,7 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
                   );
                 }
               }
-            }
-          } else {
-            if (!isDryRun) {
+            } else {
               await dataSource.query(
                 `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${field.name}" DROP NOT NULL, ALTER COLUMN "${field.name}" DROP DEFAULT`,
                 [],
@@ -162,12 +161,12 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
                 { shouldBypassPermissionChecks: true },
               );
             }
-          }
 
-          await this.fieldMetadataRepository.update(field.id, {
-            isNullable: true,
-            defaultValue: null,
-          });
+            await this.fieldMetadataRepository.update(field.id, {
+              isNullable: true,
+              defaultValue: null,
+            });
+          }
 
           const relevantIndexes = objectMetadataItem.indexMetadatas.filter(
             (index) =>
