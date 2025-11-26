@@ -16,6 +16,7 @@ import { IconChevronLeft } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { useGetRolesQuery } from '~/generated-metadata/graphql';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
+import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 import { WorkflowAiAgentPermissionList } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionList';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
@@ -96,32 +97,30 @@ export const WorkflowAiAgentPermissionsTab = ({
   const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig();
   const actionPermissionsConfig = useActionRolePermissionFlagConfig();
 
-  const normalizedQuery = searchQuery.trim().toLowerCase();
+  type ObjectMetadataListItem = (typeof objectMetadataItems)[number];
+  type PermissionConfigItem = (typeof settingsPermissionsConfig)[number];
+  type ActionPermissionConfigItem = (typeof actionPermissionsConfig)[number];
 
-  const filterByQuery = <T,>(items: T[], getLabel: (item: T) => string) => {
-    if (!normalizedQuery) {
-      return items;
-    }
+  const filteredObjects = filterBySearchQuery<ObjectMetadataListItem>({
+    items: objectMetadataItems,
+    searchQuery,
+    getSearchableValues: (item) => [item.labelSingular, item.labelPlural],
+  });
 
-    return items.filter((item) =>
-      getLabel(item).toLowerCase().includes(normalizedQuery),
-    );
-  };
-
-  const filteredObjects = filterByQuery(
-    objectMetadataItems,
-    (item) => `${item.labelSingular} ${item.labelPlural}`,
+  const filteredSettingsPermissions = filterBySearchQuery<PermissionConfigItem>(
+    {
+      items: settingsPermissionsConfig,
+      searchQuery,
+      getSearchableValues: (permission) => [permission.name],
+    },
   );
 
-  const filteredSettingsPermissions = filterByQuery(
-    settingsPermissionsConfig,
-    (permission) => permission.name,
-  );
-
-  const filteredActionPermissions = filterByQuery(
-    actionPermissionsConfig,
-    (permission) => permission.name,
-  );
+  const filteredActionPermissions =
+    filterBySearchQuery<ActionPermissionConfigItem>({
+      items: actionPermissionsConfig,
+      searchQuery,
+      getSearchableValues: (permission) => [permission.name],
+    });
 
   const enabledSettingsPermissions = settingsPermissionsConfig.filter(
     (permission) => permissionFlagKeys.includes(permission.key),
@@ -131,15 +130,19 @@ export const WorkflowAiAgentPermissionsTab = ({
     (permission) => permissionFlagKeys.includes(permission.key),
   );
 
-  const filteredEnabledSettingsPermissions = filterByQuery(
-    enabledSettingsPermissions,
-    (permission) => permission.name,
-  );
+  const filteredEnabledSettingsPermissions =
+    filterBySearchQuery<PermissionConfigItem>({
+      items: enabledSettingsPermissions,
+      searchQuery,
+      getSearchableValues: (permission) => [permission.name],
+    });
 
-  const filteredEnabledActionPermissions = filterByQuery(
-    enabledActionPermissions,
-    (permission) => permission.name,
-  );
+  const filteredEnabledActionPermissions =
+    filterBySearchQuery<ActionPermissionConfigItem>({
+      items: enabledActionPermissions,
+      searchQuery,
+      getSearchableValues: (permission) => [permission.name],
+    });
 
   const {
     handleAddPermission,

@@ -1,19 +1,10 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
-import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { type ObjectPermission } from '~/generated/graphql';
 import { CRUD_PERMISSIONS } from '../constants/WorkflowAiAgentCrudPermissions';
-import {
-  StyledLabel,
-  StyledList,
-  StyledText,
-} from './WorkflowAiAgentPermissions.styles';
+import { StyledLabel, StyledList } from './WorkflowAiAgentPermissions.styles';
 import { WorkflowAiAgentPermissionsPermissionRow } from './WorkflowAiAgentPermissionsPermissionRow';
-
-const StyledEmptyState = styled.div`
-  padding: ${({ theme }) => theme.spacing(4)};
-`;
 
 const CRUD_PERMISSION_ORDER = CRUD_PERMISSIONS.reduce<
   Record<SettingsRoleObjectPermissionKey, number>
@@ -86,36 +77,32 @@ export const WorkflowAiAgentPermissionList = ({
       return permissionA.objectLabel.localeCompare(permissionB.objectLabel);
     });
 
+  if (sortedExistingPermissions.length === 0) {
+    return null;
+  }
+
   return (
     <div>
       <StyledLabel>{t`CRUD`}</StyledLabel>
-      {sortedExistingPermissions.length > 0 ? (
-        <StyledList>
-          {sortedExistingPermissions.map((permission) => (
-            <WorkflowAiAgentPermissionsPermissionRow
-              key={`${permission.objectMetadataId}-${permission.permissionKey}`}
-              permission={{
-                key: permission.permissionKey,
-                label: permission.permissionLabel,
-              }}
-              isEnabled={true}
-              readonly={readonly}
-              onDelete={() =>
-                onDeletePermission(
-                  permission.objectMetadataId,
-                  permission.permissionKey,
-                )
-              }
-            />
-          ))}
-        </StyledList>
-      ) : (
-        <StyledList>
-          <StyledEmptyState>
-            <StyledText>{t`No permissions added yet`}</StyledText>
-          </StyledEmptyState>
-        </StyledList>
-      )}
+      <StyledList>
+        {sortedExistingPermissions.map((permission) => (
+          <WorkflowAiAgentPermissionsPermissionRow
+            key={`${permission.objectMetadataId}-${permission.permissionKey}`}
+            permission={{
+              key: permission.permissionKey,
+              label: permission.permissionLabel,
+            }}
+            isEnabled={true}
+            readonly={readonly}
+            onDelete={() =>
+              onDeletePermission(
+                permission.objectMetadataId,
+                permission.permissionKey,
+              )
+            }
+          />
+        ))}
+      </StyledList>
     </div>
   );
 };
