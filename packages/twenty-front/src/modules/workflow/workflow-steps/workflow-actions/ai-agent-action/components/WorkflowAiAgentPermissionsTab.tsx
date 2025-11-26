@@ -278,7 +278,6 @@ export const WorkflowAiAgentPermissionsTab = ({
         canDestroyObjectRecords: perm.canDestroyObjectRecords ?? false,
       }));
 
-    // Add the updated permission
     allObjectPermissions.push({
       objectMetadataId: updatedPermission.objectMetadataId,
       canReadObjectRecords: updatedPermission.canReadObjectRecords ?? false,
@@ -467,7 +466,6 @@ export const WorkflowAiAgentPermissionsTab = ({
             objectPermissions={objectPermissionForSelected}
             readonly={readonly}
             onAddPermission={handleAddPermission}
-            onDeletePermission={handleDeletePermission}
             objectMetadataId={selectedObject.id}
           />
         )}
