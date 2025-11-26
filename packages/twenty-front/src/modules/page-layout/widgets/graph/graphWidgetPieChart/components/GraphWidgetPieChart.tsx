@@ -2,6 +2,7 @@ import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/component
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { PIE_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartHoverBrightness';
+import { PIE_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMargins';
 import { usePieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartData';
 import { usePieChartHandlers } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartHandlers';
 import { usePieChartTooltip } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartTooltip';
@@ -18,6 +19,7 @@ type GraphWidgetPieChartProps = {
   showLegend?: boolean;
   id: string;
   onSliceClick?: (datum: PieChartDataItem) => void;
+  showDataLabels?: boolean;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -52,6 +54,7 @@ export const GraphWidgetPieChart = ({
   suffix,
   customFormatter,
   onSliceClick,
+  showDataLabels = false,
 }: GraphWidgetPieChartProps) => {
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
@@ -104,17 +107,23 @@ export const GraphWidgetPieChart = ({
         <StyledPieChartWrapper>
           <ResponsivePie
             data={data}
+            margin={showDataLabels ? PIE_CHART_MARGINS : {}}
             innerRadius={0.8}
             padAngle={1}
             colors={enrichedData.map((item) => item.colorScheme.solid)}
             borderWidth={0}
-            enableArcLinkLabels={false}
+            enableArcLinkLabels={showDataLabels}
             enableArcLabels={false}
             tooltip={renderTooltip}
             onClick={handleSliceClick}
             onMouseEnter={(datum) => setHoveredSliceId(datum.id)}
             onMouseLeave={() => setHoveredSliceId(null)}
-            layers={['arcs']}
+            layers={['arcs', 'arcLinkLabels']}
+            arcLinkLabel={(d) => d.data.value.toString()}
+            arcLinkLabelsDiagonalLength={10}
+            arcLinkLabelsStraightLength={10}
+            arcLinkLabelsTextColor={theme.font.color.light}
+            arcLinkLabelsColor={theme.font.color.extraLight}
           />
         </StyledPieChartWrapper>
       </GraphWidgetChartContainer>

@@ -26,11 +26,16 @@ export const GraphWidgetPieChartRenderer = ({
 }: {
   widget: PageLayoutWidget;
 }) => {
-  const { data, loading, hasTooManyGroups, objectMetadataItem } =
-    useGraphPieChartWidgetData({
-      objectMetadataItemId: widget.objectMetadataId,
-      configuration: widget.configuration as PieChartConfiguration,
-    });
+  const {
+    data,
+    loading,
+    hasTooManyGroups,
+    objectMetadataItem,
+    showDataLabels,
+  } = useGraphPieChartWidgetData({
+    objectMetadataItemId: widget.objectMetadataId,
+    configuration: widget.configuration as PieChartConfiguration,
+  });
 
   const navigate = useNavigate();
 
@@ -66,6 +71,7 @@ export const GraphWidgetPieChartRenderer = ({
         id={widget.id}
         displayType="shortNumber"
         onSliceClick={handleSliceClick}
+        showDataLabels={showDataLabels}
       />
     </Suspense>
   );
