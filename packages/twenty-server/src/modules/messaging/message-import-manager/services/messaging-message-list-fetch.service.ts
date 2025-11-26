@@ -67,6 +67,10 @@ export class MessagingMessageListFetchService {
           messageChannel.id,
         ]);
 
+        this.logger.log(
+          `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Scheduled message list fetch after processing group email action`,
+        );
+
         return;
       }
 
@@ -77,6 +81,10 @@ export class MessagingMessageListFetchService {
         await this.messageChannelSyncStatusService.scheduleMessageListFetch([
           messageChannel.id,
         ]);
+
+        this.logger.log(
+          `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Scheduled message list fetch after processing group email action`,
+        );
 
         return;
       }
