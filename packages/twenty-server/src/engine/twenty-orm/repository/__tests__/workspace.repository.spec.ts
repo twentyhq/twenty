@@ -15,9 +15,9 @@ import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interf
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 describe('WorkspaceRepository', () => {
   let repository: WorkspaceRepository<ObjectLiteral>;
@@ -118,7 +118,7 @@ describe('WorkspaceRepository', () => {
       objectIdByNameSingular: {},
       featureFlagsMap: {},
       eventEmitterService: {} as unknown,
-    } as WorkspaceInternalContext;
+    } as unknown as WorkspaceInternalContext;
 
     mockFeatureFlagMap = Object.values(FeatureFlagKey).reduce(
       (acc, key) => ({ ...acc, [key]: false }),
