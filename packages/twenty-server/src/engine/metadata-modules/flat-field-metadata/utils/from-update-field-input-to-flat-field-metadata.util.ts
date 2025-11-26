@@ -20,6 +20,8 @@ import {
   type FlatFieldMetadataUpdateSideEffects,
   handleFlatFieldMetadataUpdateSideEffect,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-flat-field-metadata-update-side-effect.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 type FromUpdateFieldInputToFlatFieldMetadataArgs = {
   updateFieldInput: UpdateFieldInput;
@@ -93,14 +95,22 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     });
 
   const { flatFieldMetadatasToCreate, flatIndexMetadatasToCreate } =
-    computeFlatFieldToUpdateFromMorphRelationUpdatePayload({
-      workspaceCustomApplicationId,
-      morphRelationsUpdatePayload:
-        rawUpdateFieldInput?.morphRelationsUpdatePayload,
-      flatFieldMetadataMaps: flatFieldMetadataMaps,
-      fieldMetadataToUpdate: existingFlatFieldMetadataToUpdate,
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-    });
+    isFlatFieldMetadataOfType(
+      existingFlatFieldMetadataToUpdate,
+      FieldMetadataType.MORPH_RELATION,
+    )
+      ? computeFlatFieldToUpdateFromMorphRelationUpdatePayload({
+          workspaceCustomApplicationId,
+          morphRelationsUpdatePayload:
+            rawUpdateFieldInput?.morphRelationsUpdatePayload,
+          flatFieldMetadataMaps: flatFieldMetadataMaps,
+          fieldMetadataToUpdate: existingFlatFieldMetadataToUpdate,
+          flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        })
+      : {
+          flatFieldMetadatasToCreate: [],
+          flatIndexMetadatasToCreate: [],
+        };
 
   const initialAccumulator: FlatFieldMetadataAndIndexToUpdate = {
     ...structuredClone(FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS),

@@ -9,8 +9,8 @@ import { FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-en
 import { type FlatFieldMetadataTypeValidator } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { validateEnumSelectFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util';
+import { validateMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util';
 import { validateMorphRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util';
-import { validateRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-flat-field-metadata.util';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 
 const DEFAULT_NO_VALIDATION = (): FlatFieldMetadataValidationError[] => [];
@@ -87,7 +87,7 @@ export class FlatFieldMetadataTypeValidatorService {
       MORPH_RELATION: validateMorphRelationFlatFieldMetadata,
       MULTI_SELECT: validateEnumSelectFlatFieldMetadata,
       RATING: validateEnumSelectFlatFieldMetadata,
-      RELATION: validateRelationFlatFieldMetadata,
+      RELATION: validateMorphOrRelationFlatFieldMetadata,
       SELECT: validateEnumSelectFlatFieldMetadata,
     };
 
