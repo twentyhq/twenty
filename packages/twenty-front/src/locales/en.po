@@ -6100,6 +6100,11 @@ msgstr "New SSO provider"
 msgid "New task"
 msgstr "New task"
 
+#. js-lingui-id: vam7Jz
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
+msgid "New widget"
+msgstr "New widget"
+
 #. js-lingui-id: hXzOVo
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
