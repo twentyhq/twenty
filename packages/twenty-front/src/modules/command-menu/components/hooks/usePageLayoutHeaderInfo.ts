@@ -150,7 +150,7 @@ export const usePageLayoutHeaderInfo = ({
       return {
         headerIcon: IconPlus,
         headerIconColor: iconColor,
-        headerType: t`Widget`,
+        headerType: '',
         title: t`New widget`,
         isReadonly: true,
         tab: undefined,
