@@ -3,12 +3,13 @@ import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-perm
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
+import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
@@ -17,7 +18,6 @@ import {
   type ObjectPermission,
   useAssignRoleToAgentMutation,
   useCreateOneRoleMutation,
-  useFindOneAgentQuery,
   useGetRolesQuery,
   useUpsertObjectPermissionsMutation,
 } from '~/generated-metadata/graphql';
@@ -108,19 +108,18 @@ const CRUD_PERMISSION_ORDER = CRUD_PERMISSIONS.reduce<
 type WorkflowAiAgentPermissionsTabProps = {
   action: WorkflowAiAgentAction;
   readonly: boolean;
+  isAgentLoading: boolean;
+  refetchAgent: () => Promise<unknown>;
 };
 
 export const WorkflowAiAgentPermissionsTab = ({
   action,
   readonly,
+  isAgentLoading,
+  refetchAgent,
 }: WorkflowAiAgentPermissionsTabProps) => {
   const { enqueueSuccessSnackBar } = useSnackBar();
-  const agentId = action.settings.input.agentId;
-  const { data: agentData, loading: agentLoading } = useFindOneAgentQuery({
-    variables: { id: agentId || '' },
-    skip: !agentId,
-  });
-
+  const agent = useRecoilValue(workflowAiAgentActionAgentState(action.id));
   const [
     workflowAiAgentPermissionsSelectedObjectId,
     setWorkflowAiAgentPermissionsSelectedObjectId,
@@ -135,7 +134,6 @@ export const WorkflowAiAgentPermissionsTab = ({
 
   const { data: rolesData, loading: rolesLoading } = useGetRolesQuery();
 
-  const agent = agentData?.findOneAgent;
   const [searchQuery, setSearchQuery] = useState('');
   const [createRole] = useCreateOneRoleMutation();
   const [assignRoleToAgent] = useAssignRoleToAgentMutation();
@@ -223,8 +221,10 @@ export const WorkflowAiAgentPermissionsTab = ({
 
     await assignRoleToAgent({
       variables: { agentId: agent.id, roleId },
-      refetchQueries: ['FindOneAgent', 'GetRoles'],
+      refetchQueries: ['GetRoles'],
     });
+
+    await refetchAgent();
 
     return roleId;
   };
@@ -296,9 +296,10 @@ export const WorkflowAiAgentPermissionsTab = ({
           objectPermissions: allObjectPermissions,
         },
       },
-      refetchQueries: ['GetRoles', 'FindOneAgent'],
+      refetchQueries: ['GetRoles'],
     });
 
+    await refetchAgent();
     setWorkflowAiAgentPermissionsIsAddingPermission(false);
     setWorkflowAiAgentPermissionsSelectedObjectId(undefined);
   };
@@ -393,15 +394,16 @@ export const WorkflowAiAgentPermissionsTab = ({
           objectPermissions: allObjectPermissions,
         },
       },
-      refetchQueries: ['GetRoles', 'FindOneAgent'],
+      refetchQueries: ['GetRoles'],
     });
 
+    await refetchAgent();
     enqueueSuccessSnackBar({
       message: t`${permissionLabel} Permission removed`,
     });
   };
 
-  if (agentLoading || rolesLoading) {
+  if (isAgentLoading || rolesLoading) {
     return <RightDrawerSkeletonLoader />;
   }
 

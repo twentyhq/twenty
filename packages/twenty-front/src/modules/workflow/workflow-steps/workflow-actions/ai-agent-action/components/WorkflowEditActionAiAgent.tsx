@@ -11,6 +11,7 @@ import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/us
 import { WorkflowAiAgentPermissionsTab } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab';
 import { WORKFLOW_AI_AGENT_TABS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentTabs';
 import { useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose';
+import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -65,17 +66,24 @@ export const WorkflowEditActionAiAgent = ({
   const { t } = useLingui();
   const componentInstanceId = `${WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID}-${action.id}`;
   const agentId = action.settings.input.agentId;
-  const { data: agentData, loading: agentLoading } = useFindOneAgentQuery({
-    variables: { id: agentId || '' },
-    skip: !agentId,
-  });
-  useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose();
+  const [agent, setAgent] = useRecoilState(
+    workflowAiAgentActionAgentState(action.id),
+  );
+  const { loading: agentLoading, refetch: refetchAgent } = useFindOneAgentQuery(
+    {
+      variables: { id: agentId || '' },
+      skip: !agentId,
+      onCompleted: (data) => {
+        console.log('fdfd');
+        setAgent(data.findOneAgent);
+      },
+    },
+  );
+  useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose(action.id);
   const [updateAgent] = useUpdateOneAgentMutation();
   const aiModelOptions = useAiModelOptions();
   const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
   const flow = useFlowOrThrow();
-
-  const agent = agentData?.findOneAgent;
 
   const handleAgentPromptChange = useDebouncedCallback(
     async (newPrompt: string) => {
@@ -265,6 +273,8 @@ export const WorkflowEditActionAiAgent = ({
           <WorkflowAiAgentPermissionsTab
             action={action}
             readonly={actionOptions.readonly === true}
+            isAgentLoading={agentLoading}
+            refetchAgent={refetchAgent}
           />
         </StyledPermissionsStepBody>
       ) : (
