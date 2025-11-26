@@ -268,11 +268,11 @@ describe('updateOne FieldMetadataService morph relation fields v2 - Add one targ
         }
         targetObjectMetadata {
           id
-          name
+          nameSingular
         }
         sourceObjectMetadata {
           id
-          name
+          nameSingular
         }
       }
       `,
