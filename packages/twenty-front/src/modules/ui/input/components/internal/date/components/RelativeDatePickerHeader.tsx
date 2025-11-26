@@ -4,6 +4,7 @@ import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/in
 import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
 
 import styled from '@emotion/styled';
+import { useId } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import {
   relativeDateFilterSchema,
@@ -39,6 +40,8 @@ export const RelativeDatePickerHeader = ({
   readonly,
   unitDropdownWidth,
 }: RelativeDatePickerHeaderProps) => {
+  const instanceId = useId();
+
   const amountString = amount?.toString() ?? '';
 
   const textInputValue = direction === 'THIS' ? '' : amountString;
@@ -53,7 +56,7 @@ export const RelativeDatePickerHeader = ({
   return (
     <StyledContainer noPadding={isFormField ?? false}>
       <Select
-        dropdownId="direction-select"
+        dropdownId={`direction-select-${instanceId}`}
         value={direction}
         onChange={(newDirection) => {
           if (amount === undefined && newDirection !== 'THIS') {
@@ -71,7 +74,7 @@ export const RelativeDatePickerHeader = ({
         disabled={readonly}
       />
       <SettingsTextInput
-        instanceId="relative-date-picker-amount"
+        instanceId={`relative-date-picker-amount-${instanceId}`}
         width={50}
         value={textInputValue}
         onChange={(text) => {
@@ -92,7 +95,7 @@ export const RelativeDatePickerHeader = ({
         disabled={direction === 'THIS' || readonly}
       />
       <Select
-        dropdownId="unit-select"
+        dropdownId={`unit-select-${instanceId}`}
         value={unit}
         onChange={(newUnit) => {
           if (direction !== 'THIS' && amount === undefined) {
