@@ -24,7 +24,13 @@ import {
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
-export const ObjectFilterDropdownDateTimeInput = () => {
+type ObjectFilterDropdownDateTimeInputProps = {
+  instanceId: string;
+};
+
+export const ObjectFilterDropdownDateTimeInput = ({
+  instanceId,
+}: ObjectFilterDropdownDateTimeInputProps) => {
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
   const dateLocale = useRecoilValue(dateLocaleState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
@@ -112,6 +118,7 @@ export const ObjectFilterDropdownDateTimeInput = () => {
 
   return (
     <DateTimePicker
+      instanceId={instanceId}
       relativeDate={relativeDate}
       isRelative={isRelativeOperand}
       date={internalDate}

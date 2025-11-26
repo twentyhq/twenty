@@ -24,9 +24,9 @@ import {
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import {
-  FieldMetadataType,
-  FieldMetadataSettings,
   FieldMetadataOptions,
+  FieldMetadataSettings,
+  FieldMetadataType,
 } from 'twenty-shared/types';
 
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';

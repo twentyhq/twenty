@@ -109,6 +109,7 @@ export const DateTimeInput = ({
   return (
     <div ref={wrapperRef}>
       <DateTimePicker
+        instanceId={instanceId}
         date={internalValue ?? null}
         onChange={handleChange}
         onClose={handleClose}

@@ -222,6 +222,7 @@ msgstr "حدث متجمع / مصفى لعرضه على الشريط الزمني
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/timeline-activities-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
@@ -3314,6 +3315,11 @@ msgstr "لم يتم العثور على الكائن الذي تحاول تعي�
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "The opportunity name"
 msgstr "اسم الفرصة"
+
+#. js-lingui-id: lk5nUN
+#: src/engine/core-modules/graphql/hooks/use-compute-complexity.hook.ts
+msgid "The request is too complex to process. Please try reducing the amount of data requested."
+msgstr ""
 
 #. js-lingui-id: Zi9X+u
 #: src/engine/metadata-modules/role/role.service.ts

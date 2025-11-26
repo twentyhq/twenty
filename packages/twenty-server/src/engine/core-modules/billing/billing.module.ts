@@ -36,6 +36,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { AiToolsModule } from 'src/engine/metadata-modules/ai/ai-tools/ai-tools.module';
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 @Module({
@@ -60,6 +61,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
       UserWorkspaceEntity,
       FeatureFlagEntity,
     ]),
+    DataSourceModule,
   ],
   providers: [
     BillingSubscriptionService,

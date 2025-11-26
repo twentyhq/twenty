@@ -2,17 +2,11 @@ import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { type GmailApiBatchError } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-api-batch-error.type';
 
-export const parseGmailMessagesImportError = (
-  error: {
-    code?: number;
-    errors: {
-      reason: string;
-      message: string;
-    }[];
-  },
-  messageExternalId: string,
-  options?: { cause?: Error },
+export const parseGmailApiBatchError = (
+  error: GmailApiBatchError,
+  messageExternalId?: string,
 ): MessageImportDriverException | undefined => {
   const { code, errors } = error;
 
@@ -26,7 +20,6 @@ export const parseGmailMessagesImportError = (
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-          { cause: options?.cause },
         );
       }
       if (reason === 'failedPrecondition') {
@@ -34,21 +27,18 @@ export const parseGmailMessagesImportError = (
           return new MessageImportDriverException(
             message,
             MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-            { cause: options?.cause },
           );
         }
 
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-          { cause: options?.cause },
         );
       }
 
       return new MessageImportDriverException(
         message,
         MessageImportDriverExceptionCode.UNKNOWN,
-        { cause: options?.cause },
       );
 
     case 404:
@@ -56,14 +46,12 @@ export const parseGmailMessagesImportError = (
       return new MessageImportDriverException(
         message,
         MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
-        { cause: options?.cause },
       );
 
     case 429:
       return new MessageImportDriverException(
         message,
         MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-        { cause: options?.cause },
       );
 
     case 403:
@@ -75,14 +63,12 @@ export const parseGmailMessagesImportError = (
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-          { cause: options?.cause },
         );
       }
       if (reason === 'domainPolicy') {
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-          { cause: options?.cause },
         );
       }
 
@@ -92,14 +78,12 @@ export const parseGmailMessagesImportError = (
       return new MessageImportDriverException(
         message,
         MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-        { cause: options?.cause },
       );
 
     case 503:
       return new MessageImportDriverException(
         message,
         MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-        { cause: options?.cause },
       );
 
     case 500:
@@ -109,7 +93,6 @@ export const parseGmailMessagesImportError = (
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-          { cause: options?.cause },
         );
       }
 
@@ -117,7 +100,6 @@ export const parseGmailMessagesImportError = (
         return new MessageImportDriverException(
           `${code} - ${reason} - ${message}`,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-          { cause: options?.cause },
         );
       }
       break;
@@ -129,6 +111,5 @@ export const parseGmailMessagesImportError = (
   return new MessageImportDriverException(
     message,
     MessageImportDriverExceptionCode.UNKNOWN,
-    { cause: options?.cause },
   );
 };

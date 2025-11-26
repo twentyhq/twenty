@@ -17,6 +17,7 @@ const meta: Meta<typeof DateTimePicker> = {
     const [, updateArgs] = useArgs();
     return (
       <DateTimePicker
+        instanceId="story-date-time-picker"
         date={isDefined(date) ? new Date(date) : new Date()}
         onChange={(newDate) => updateArgs({ date: newDate })}
       />

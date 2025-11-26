@@ -5416,6 +5416,11 @@ msgstr ""
 msgid "Leave workspace"
 msgstr ""
 
+#. js-lingui-id: MP1v+1
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Legend"
+msgstr ""
+
 #. js-lingui-id: 8PPI2g
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than or equal"
@@ -6098,6 +6103,11 @@ msgstr ""
 #. js-lingui-id: wl18ST
 #: src/modules/activities/tasks/components/TaskGroups.tsx
 msgid "New task"
+msgstr ""
+
+#. js-lingui-id: vam7Jz
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
+msgid "New widget"
 msgstr ""
 
 #. js-lingui-id: hXzOVo

@@ -217,6 +217,7 @@ msgstr "Aggregated / filtered event to be displayed on the timeline"
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/timeline-activities-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
@@ -3309,6 +3310,11 @@ msgstr "The object you are trying to set permissions for could not be found. It 
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "The opportunity name"
 msgstr "The opportunity name"
+
+#. js-lingui-id: lk5nUN
+#: src/engine/core-modules/graphql/hooks/use-compute-complexity.hook.ts
+msgid "The request is too complex to process. Please try reducing the amount of data requested."
+msgstr "The request is too complex to process. Please try reducing the amount of data requested."
 
 #. js-lingui-id: Zi9X+u
 #: src/engine/metadata-modules/role/role.service.ts

@@ -15,6 +15,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -35,6 +36,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
       DataSourceEntity,
       ApplicationEntity,
     ]),
+    DataSourceModule,
     WorkspaceSchemaManagerModule,
     WorkspaceCacheStorageModule,
     ObjectMetadataModule,
