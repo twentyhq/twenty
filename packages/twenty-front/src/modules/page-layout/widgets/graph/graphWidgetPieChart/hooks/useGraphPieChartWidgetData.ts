@@ -5,6 +5,7 @@ import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { transformGroupByDataToPieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/transformGroupByDataToPieChartData';
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { useMemo } from 'react';
 import { type PieChartConfiguration } from '~/generated/graphql';
 
@@ -20,6 +21,7 @@ type UseGraphPieChartWidgetDataResult = {
   error?: Error;
   hasTooManyGroups: boolean;
   objectMetadataItem: ObjectMetadataItem;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
   showDataLabels: boolean;
 };
 
