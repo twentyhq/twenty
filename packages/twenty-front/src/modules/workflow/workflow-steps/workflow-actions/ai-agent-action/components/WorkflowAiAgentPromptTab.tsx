@@ -1,18 +1,18 @@
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
+import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
+import { useRecoilValue } from 'recoil';
 import {
   type AgentResponseSchema,
   type ModelConfiguration,
 } from 'twenty-shared/ai';
 import { type SelectOption } from 'twenty-ui/input';
-import { type Agent } from '~/generated-metadata/graphql';
 import { SettingsAgentModelCapabilities } from '~/pages/settings/ai/components/SettingsAgentModelCapabilities';
 import { SettingsAgentResponseFormat } from '~/pages/settings/ai/components/SettingsAgentResponseFormat';
 
 type WorkflowAiAgentPromptTabProps = {
-  agent?: Agent | null;
   readonly: boolean;
   aiModelOptions: SelectOption[];
   onPromptChange: (value: string) => void;
@@ -25,7 +25,6 @@ type WorkflowAiAgentPromptTabProps = {
 };
 
 export const WorkflowAiAgentPromptTab = ({
-  agent,
   readonly,
   aiModelOptions,
   onPromptChange,
@@ -33,6 +32,9 @@ export const WorkflowAiAgentPromptTab = ({
   onModelConfigurationChange,
   onResponseFormatChange,
 }: WorkflowAiAgentPromptTabProps) => {
+  const workflowAiAgentActionAgent = useRecoilValue(
+    workflowAiAgentActionAgentState,
+  );
   return (
     <>
       <FormTextFieldInput
@@ -40,32 +42,37 @@ export const WorkflowAiAgentPromptTab = ({
         VariablePicker={WorkflowVariablePicker}
         label={t`Instructions for AI`}
         placeholder={t`Describe what you want the AI to do...`}
-        defaultValue={agent?.prompt || ''}
+        defaultValue={workflowAiAgentActionAgent?.prompt || ''}
         onChange={onPromptChange}
         readonly={readonly}
       />
 
-      {agent ? (
+      {workflowAiAgentActionAgent ? (
         <>
           <Select
             dropdownId="select-agent-model"
             label={t`AI Model`}
             options={aiModelOptions}
-            value={agent.modelId}
+            value={workflowAiAgentActionAgent.modelId}
             onChange={onModelChange}
             disabled={readonly}
           />
 
           <SettingsAgentModelCapabilities
-            selectedModelId={agent.modelId}
-            modelConfiguration={agent.modelConfiguration || {}}
+            selectedModelId={workflowAiAgentActionAgent.modelId}
+            modelConfiguration={
+              workflowAiAgentActionAgent.modelConfiguration || {}
+            }
             onConfigurationChange={onModelConfigurationChange}
             disabled={readonly}
           />
 
           <SettingsAgentResponseFormat
             responseFormat={
-              agent.responseFormat || { type: 'text', schema: {} }
+              workflowAiAgentActionAgent.responseFormat || {
+                type: 'text',
+                schema: {},
+              }
             }
             onResponseFormatChange={onResponseFormatChange}
             disabled={readonly}

@@ -4,11 +4,12 @@ import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permiss
 import { useSettingsRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
+import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import {
@@ -16,13 +17,11 @@ import {
   useCreateOneRoleMutation,
   useUpsertObjectPermissionsMutation,
   useUpsertPermissionFlagsMutation,
-  type Agent,
   type ObjectPermission,
   type PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
 type UseWorkflowAiAgentPermissionActionsParams = {
-  agent: Agent | undefined;
   readonly: boolean;
   objectPermissions: ObjectPermission[];
   permissionFlagKeys: PermissionFlagType[];
@@ -30,13 +29,15 @@ type UseWorkflowAiAgentPermissionActionsParams = {
 };
 
 export const useWorkflowAiAgentPermissionActions = ({
-  agent,
   readonly,
   objectPermissions,
   permissionFlagKeys,
   refetchAgent,
 }: UseWorkflowAiAgentPermissionActionsParams) => {
   const { enqueueSuccessSnackBar } = useSnackBar();
+  const workflowAiAgentActionAgent = useRecoilValue(
+    workflowAiAgentActionAgentState,
+  );
   const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
     useFilteredObjectMetadataItems();
   const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig();
@@ -54,7 +55,7 @@ export const useWorkflowAiAgentPermissionActions = ({
   const [upsertObjectPermissions] = useUpsertObjectPermissionsMutation();
   const [upsertPermissionFlags] = useUpsertPermissionFlagsMutation();
 
-  const roleId = agent?.roleId;
+  const roleId = workflowAiAgentActionAgent?.roleId;
 
   const permissionFlagLabelMap = useMemo(
     () =>
@@ -72,12 +73,15 @@ export const useWorkflowAiAgentPermissionActions = ({
       return roleId;
     }
 
-    if (!isDefined(agent) || readonly) {
+    if (!isDefined(workflowAiAgentActionAgent) || readonly) {
       return undefined;
     }
 
-    const agentDisplayName = agent.label ?? agent.name ?? t`Agent`;
-    const roleName = `${agentDisplayName} role (${agent.id.substring(0, 8)})`;
+    const agentDisplayName =
+      workflowAiAgentActionAgent.label ??
+      workflowAiAgentActionAgent.name ??
+      t`Agent`;
+    const roleName = `${agentDisplayName} role (${workflowAiAgentActionAgent.id.substring(0, 8)})`;
     const generatedRoleId = v4();
 
     await createRole({
@@ -102,7 +106,10 @@ export const useWorkflowAiAgentPermissionActions = ({
     });
 
     await assignRoleToAgent({
-      variables: { agentId: agent.id, roleId: generatedRoleId },
+      variables: {
+        agentId: workflowAiAgentActionAgent.id,
+        roleId: generatedRoleId,
+      },
       refetchQueries: ['GetRoles'],
     });
 

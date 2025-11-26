@@ -71,12 +71,13 @@ type WorkflowAiAgentPermissionsTabProps = {
 };
 
 export const WorkflowAiAgentPermissionsTab = ({
-  action,
   readonly,
   isAgentLoading,
   refetchAgent,
 }: WorkflowAiAgentPermissionsTabProps) => {
-  const agent = useRecoilValue(workflowAiAgentActionAgentState(action.id));
+  const workflowAiAgentActionAgent = useRecoilValue(
+    workflowAiAgentActionAgentState,
+  );
   const [
     workflowAiAgentPermissionsSelectedObjectId,
     setWorkflowAiAgentPermissionsSelectedObjectId,
@@ -92,12 +93,14 @@ export const WorkflowAiAgentPermissionsTab = ({
   const { data: rolesData, loading: rolesLoading } = useGetRolesQuery();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const role = rolesData?.getRoles.find((item) => item.id === agent?.roleId);
+  const role = rolesData?.getRoles.find(
+    (item) => item.id === workflowAiAgentActionAgent?.roleId,
+  );
   const objectPermissions = role?.objectPermissions || [];
   const permissionFlagKeys =
     role?.permissionFlags?.map((permissionFlag) => permissionFlag.flag) ?? [];
   const hasRoleWithPermissions =
-    isDefined(agent?.roleId) &&
+    isDefined(workflowAiAgentActionAgent?.roleId) &&
     (objectPermissions.length > 0 || permissionFlagKeys.length > 0);
   const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig();
   const actionPermissionsConfig = useActionRolePermissionFlagConfig();
@@ -133,7 +136,6 @@ export const WorkflowAiAgentPermissionsTab = ({
     handleAddPermissionFlag,
     handleDeletePermissionFlag,
   } = useWorkflowAiAgentPermissionActions({
-    agent,
     readonly,
     objectPermissions,
     permissionFlagKeys,
@@ -144,7 +146,7 @@ export const WorkflowAiAgentPermissionsTab = ({
     return <RightDrawerSkeletonLoader />;
   }
 
-  if (!isDefined(agent)) {
+  if (!isDefined(workflowAiAgentActionAgent)) {
     return null;
   }
 

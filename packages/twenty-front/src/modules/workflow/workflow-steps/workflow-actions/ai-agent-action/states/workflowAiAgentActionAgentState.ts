@@ -1,10 +1,7 @@
-import { atomFamily } from 'recoil';
+import { atom } from 'recoil';
 import { type Agent } from '~/generated-metadata/graphql';
 
-export const workflowAiAgentActionAgentState = atomFamily<
-  Agent | undefined,
-  string
->({
+export const workflowAiAgentActionAgentState = atom<Agent | undefined>({
   key: 'workflowAiAgentActionAgentState',
   default: undefined,
 });
