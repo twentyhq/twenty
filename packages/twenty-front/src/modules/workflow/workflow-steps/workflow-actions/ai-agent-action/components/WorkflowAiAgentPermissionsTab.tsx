@@ -176,8 +176,7 @@ export const WorkflowAiAgentPermissionsTab = ({
   const shouldShowBackButton =
     isDefined(workflowAiAgentPermissionsSelectedObjectId) ||
     workflowAiAgentPermissionsIsAddingPermission;
-  const shouldShowCrudList =
-    isDefined(selectedObject) && workflowAiAgentPermissionsIsAddingPermission;
+  const shouldShowCrudList = isDefined(selectedObject);
   const shouldShowSelectionLists =
     (!hasRoleWithPermissions || workflowAiAgentPermissionsIsAddingPermission) &&
     !isDefined(selectedObject);
@@ -204,7 +203,7 @@ export const WorkflowAiAgentPermissionsTab = ({
         }}
       />
 
-      {shouldShowCrudList && isDefined(selectedObject) && (
+      {shouldShowCrudList && (
         <WorkflowAiAgentPermissionsCrudList
           permissions={filterBySearchQuery({
             items: CRUD_PERMISSIONS.map((p) => ({
