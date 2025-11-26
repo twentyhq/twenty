@@ -1,8 +1,7 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
+import { useWorkflowAiAgentPermissionActions } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
@@ -13,21 +12,13 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
-import { v4 } from 'uuid';
-import {
-  type ObjectPermission,
-  useAssignRoleToAgentMutation,
-  useCreateOneRoleMutation,
-  useGetRolesQuery,
-  useUpsertObjectPermissionsMutation,
-} from '~/generated-metadata/graphql';
+import { useGetRolesQuery } from '~/generated-metadata/graphql';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 
-import { StyledContainer } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenuStyles';
 import { WorkflowAiAgentPermissionList } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionList';
+import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
 import { WorkflowAiAgentPermissionsCrudList } from './WorkflowAiAgentPermissionsCrudList';
 import { WorkflowAiAgentPermissionsObjectsList } from './WorkflowAiAgentPermissionsObjectsList';
-
 const StyledSearchInput = styled(TextInput)`
   width: 100%;
   height: 40px;
@@ -66,32 +57,6 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledEmptyState = styled.div`
-  padding: ${({ theme }) => theme.spacing(4)};
-`;
-
-const CRUD_PERMISSIONS: Array<{
-  key: SettingsRoleObjectPermissionKey;
-  label: (objectLabel: string) => string;
-}> = [
-  {
-    key: 'canReadObjectRecords',
-    label: (objectLabel: string) => `See ${objectLabel}`,
-  },
-  {
-    key: 'canUpdateObjectRecords',
-    label: (objectLabel: string) => `Edit ${objectLabel}`,
-  },
-  {
-    key: 'canSoftDeleteObjectRecords',
-    label: (objectLabel: string) => `Delete ${objectLabel}`,
-  },
-  {
-    key: 'canDestroyObjectRecords',
-    label: (objectLabel: string) => `Destroy ${objectLabel}`,
-  },
-];
-
 type WorkflowAiAgentPermissionsTabProps = {
   action: WorkflowAiAgentAction;
   readonly: boolean;
@@ -105,7 +70,6 @@ export const WorkflowAiAgentPermissionsTab = ({
   isAgentLoading,
   refetchAgent,
 }: WorkflowAiAgentPermissionsTabProps) => {
-  const { enqueueSuccessSnackBar } = useSnackBar();
   const agent = useRecoilValue(workflowAiAgentActionAgentState(action.id));
   const [
     workflowAiAgentPermissionsSelectedObjectId,
@@ -122,10 +86,6 @@ export const WorkflowAiAgentPermissionsTab = ({
   const { data: rolesData, loading: rolesLoading } = useGetRolesQuery();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [createRole] = useCreateOneRoleMutation();
-  const [assignRoleToAgent] = useAssignRoleToAgentMutation();
-  const [upsertObjectPermissions] = useUpsertObjectPermissionsMutation();
-
   const role = rolesData?.getRoles.find((item) => item.id === agent?.roleId);
   const objectPermissions = role?.objectPermissions || [];
 
@@ -139,214 +99,13 @@ export const WorkflowAiAgentPermissionsTab = ({
       })
     : objectMetadataItems;
 
-  const ensureRoleId = async (): Promise<string | undefined> => {
-    if (isDefined(agent?.roleId)) {
-      return agent.roleId;
-    }
-
-    if (!isDefined(agent) || readonly) {
-      return undefined;
-    }
-
-    const agentDisplayName = agent.label ?? agent.name ?? t`Agent`;
-    const roleName = `${agentDisplayName} role (${agent.id.substring(0, 8)})`;
-
-    const roleId = v4();
-
-    await createRole({
-      variables: {
-        createRoleInput: {
-          id: roleId,
-          label: roleName,
-          description: t`Auto-generated role for ${agentDisplayName}`,
-          icon: 'IconRobot',
-          canAccessAllTools: false,
-          canUpdateAllSettings: false,
-          canReadAllObjectRecords: false,
-          canUpdateAllObjectRecords: false,
-          canSoftDeleteAllObjectRecords: false,
-          canDestroyAllObjectRecords: false,
-          canBeAssignedToAgents: true,
-          canBeAssignedToUsers: false,
-          canBeAssignedToApiKeys: false,
-        },
-      },
-      refetchQueries: ['GetRoles'],
+  const { handleAddPermission, handleDeletePermission } =
+    useWorkflowAiAgentPermissionActions({
+      agent,
+      readonly,
+      objectPermissions,
+      refetchAgent,
     });
-
-    await assignRoleToAgent({
-      variables: { agentId: agent.id, roleId },
-      refetchQueries: ['GetRoles'],
-    });
-
-    await refetchAgent();
-
-    return roleId;
-  };
-
-  const handleAddPermission = async (
-    objectMetadataId: string,
-    permissionKey: SettingsRoleObjectPermissionKey,
-  ) => {
-    const roleId = await ensureRoleId();
-
-    if (!roleId) {
-      return;
-    }
-
-    const objectPermission = objectPermissions.find(
-      (permission) => permission.objectMetadataId === objectMetadataId,
-    );
-
-    const updatedPermission: ObjectPermission = {
-      objectMetadataId,
-      canReadObjectRecords:
-        permissionKey === 'canReadObjectRecords'
-          ? true
-          : (objectPermission?.canReadObjectRecords ??
-            (permissionKey === 'canUpdateObjectRecords' ||
-            permissionKey === 'canSoftDeleteObjectRecords' ||
-            permissionKey === 'canDestroyObjectRecords'
-              ? true
-              : false)),
-      canUpdateObjectRecords:
-        permissionKey === 'canUpdateObjectRecords'
-          ? true
-          : (objectPermission?.canUpdateObjectRecords ?? false),
-      canSoftDeleteObjectRecords:
-        permissionKey === 'canSoftDeleteObjectRecords'
-          ? true
-          : (objectPermission?.canSoftDeleteObjectRecords ?? false),
-      canDestroyObjectRecords:
-        permissionKey === 'canDestroyObjectRecords'
-          ? true
-          : (objectPermission?.canDestroyObjectRecords ?? false),
-    };
-
-    const allObjectPermissions = objectPermissions
-      .filter((perm) => perm.objectMetadataId !== objectMetadataId)
-      .map((perm) => ({
-        objectMetadataId: perm.objectMetadataId,
-        canReadObjectRecords: perm.canReadObjectRecords ?? false,
-        canUpdateObjectRecords: perm.canUpdateObjectRecords ?? false,
-        canSoftDeleteObjectRecords: perm.canSoftDeleteObjectRecords ?? false,
-        canDestroyObjectRecords: perm.canDestroyObjectRecords ?? false,
-      }));
-
-    allObjectPermissions.push({
-      objectMetadataId: updatedPermission.objectMetadataId,
-      canReadObjectRecords: updatedPermission.canReadObjectRecords ?? false,
-      canUpdateObjectRecords: updatedPermission.canUpdateObjectRecords ?? false,
-      canSoftDeleteObjectRecords:
-        updatedPermission.canSoftDeleteObjectRecords ?? false,
-      canDestroyObjectRecords:
-        updatedPermission.canDestroyObjectRecords ?? false,
-    });
-
-    await upsertObjectPermissions({
-      variables: {
-        upsertObjectPermissionsInput: {
-          roleId,
-          objectPermissions: allObjectPermissions,
-        },
-      },
-      refetchQueries: ['GetRoles'],
-    });
-
-    await refetchAgent();
-    setWorkflowAiAgentPermissionsIsAddingPermission(false);
-    setWorkflowAiAgentPermissionsSelectedObjectId(undefined);
-  };
-
-  const handleDeletePermission = async (
-    objectMetadataId: string,
-    permissionKey: SettingsRoleObjectPermissionKey,
-  ) => {
-    if (!isDefined(role?.id) || readonly) {
-      return;
-    }
-
-    const objectPermission = objectPermissions.find(
-      (permission) => permission.objectMetadataId === objectMetadataId,
-    );
-
-    if (!isDefined(objectPermission)) {
-      return;
-    }
-
-    const objectMetadata = objectMetadataItems.find(
-      (item) => item.id === objectMetadataId,
-    );
-
-    if (!objectMetadata) {
-      return;
-    }
-
-    const permissionLabel = CRUD_PERMISSIONS.find(
-      (p) => p.key === permissionKey,
-    )?.label(objectMetadata.labelPlural);
-
-    const updatedPermission: ObjectPermission = {
-      objectMetadataId,
-      canReadObjectRecords:
-        permissionKey === 'canReadObjectRecords'
-          ? false
-          : (objectPermission.canReadObjectRecords ?? false),
-      canUpdateObjectRecords:
-        permissionKey === 'canUpdateObjectRecords'
-          ? false
-          : (objectPermission.canUpdateObjectRecords ?? false),
-      canSoftDeleteObjectRecords:
-        permissionKey === 'canSoftDeleteObjectRecords'
-          ? false
-          : (objectPermission.canSoftDeleteObjectRecords ?? false),
-      canDestroyObjectRecords:
-        permissionKey === 'canDestroyObjectRecords'
-          ? false
-          : (objectPermission.canDestroyObjectRecords ?? false),
-    };
-
-    if (permissionKey === 'canReadObjectRecords') {
-      updatedPermission.canUpdateObjectRecords = false;
-      updatedPermission.canSoftDeleteObjectRecords = false;
-      updatedPermission.canDestroyObjectRecords = false;
-    }
-
-    const allObjectPermissions = objectPermissions
-      .filter((perm) => perm.objectMetadataId !== objectMetadataId)
-      .map((perm) => ({
-        objectMetadataId: perm.objectMetadataId,
-        canReadObjectRecords: perm.canReadObjectRecords ?? false,
-        canUpdateObjectRecords: perm.canUpdateObjectRecords ?? false,
-        canSoftDeleteObjectRecords: perm.canSoftDeleteObjectRecords ?? false,
-        canDestroyObjectRecords: perm.canDestroyObjectRecords ?? false,
-      }));
-
-    allObjectPermissions.push({
-      objectMetadataId: updatedPermission.objectMetadataId,
-      canReadObjectRecords: updatedPermission.canReadObjectRecords ?? false,
-      canUpdateObjectRecords: updatedPermission.canUpdateObjectRecords ?? false,
-      canSoftDeleteObjectRecords:
-        updatedPermission.canSoftDeleteObjectRecords ?? false,
-      canDestroyObjectRecords:
-        updatedPermission.canDestroyObjectRecords ?? false,
-    });
-
-    await upsertObjectPermissions({
-      variables: {
-        upsertObjectPermissionsInput: {
-          roleId: role.id,
-          objectPermissions: allObjectPermissions,
-        },
-      },
-      refetchQueries: ['GetRoles'],
-    });
-
-    await refetchAgent();
-    enqueueSuccessSnackBar({
-      message: t`${permissionLabel} Permission removed`,
-    });
-  };
 
   if (isAgentLoading || rolesLoading) {
     return <RightDrawerSkeletonLoader />;
