@@ -121,6 +121,7 @@ export const GraphWidgetPieChart = ({
       centerY={props.centerY}
       innerRadius={props.innerRadius}
       formatOptions={formatOptions}
+      showCenterMetric={showCenterMetric}
     />
   );
 
@@ -156,11 +157,7 @@ export const GraphWidgetPieChart = ({
               hasNoData ? undefined : (datum) => setHoveredSliceId(datum.id)
             }
             onMouseLeave={hasNoData ? undefined : () => setHoveredSliceId(null)}
-            layers={[
-              'arcs',
-              'arcLinkLabels',
-              ...(showCenterMetric ? [CenterMetricLayer] : []),
-            ]}
+            layers={['arcs', 'arcLinkLabels', CenterMetricLayer]}
             arcLinkLabel={(datum: ComputedDatum<PieChartDataItem>) => {
               const tooltipData = createTooltipData(datum);
               return (

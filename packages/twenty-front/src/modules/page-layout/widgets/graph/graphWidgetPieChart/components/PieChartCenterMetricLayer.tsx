@@ -8,12 +8,14 @@ import {
 import { useTheme } from '@emotion/react';
 import { Trans } from '@lingui/react/macro';
 import { type PieCustomLayerProps } from '@nivo/pie';
+import { AnimatePresence, motion } from 'framer-motion';
 
 type PieChartCenterMetricLayerProps = Pick<
   PieCustomLayerProps<PieChartDataItem>,
   'dataWithArc' | 'centerX' | 'centerY' | 'innerRadius'
 > & {
   formatOptions: GraphValueFormatOptions;
+  showCenterMetric: boolean;
 };
 
 export const PieChartCenterMetricLayer = ({
@@ -22,6 +24,7 @@ export const PieChartCenterMetricLayer = ({
   centerY,
   innerRadius,
   formatOptions,
+  showCenterMetric,
 }: PieChartCenterMetricLayerProps) => {
   const theme = useTheme();
   const total = dataWithArc.reduce((sum, datum) => sum + datum.value, 0);
@@ -40,32 +43,41 @@ export const PieChartCenterMetricLayer = ({
   );
 
   return (
-    <g>
-      <text
-        x={centerX}
-        y={centerY - labelOffset / 2}
-        textAnchor="middle"
-        dominantBaseline="central"
-        style={{
-          fontSize: valueFontSize,
-          fontWeight: theme.font.weight.semiBold,
-          fill: theme.font.color.primary,
-        }}
-      >
-        {formatGraphValue(total, formatOptions)}
-      </text>
-      <text
-        x={centerX}
-        y={centerY + labelOffset}
-        textAnchor="middle"
-        dominantBaseline="central"
-        style={{
-          fontSize: labelFontSize,
-          fill: theme.font.color.tertiary,
-        }}
-      >
-        <Trans>Total</Trans>
-      </text>
-    </g>
+    <AnimatePresence>
+      {showCenterMetric && (
+        <motion.g
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
+        >
+          <text
+            x={centerX}
+            y={centerY - labelOffset / 2}
+            textAnchor="middle"
+            dominantBaseline="central"
+            style={{
+              fontSize: valueFontSize,
+              fontWeight: theme.font.weight.semiBold,
+              fill: theme.font.color.primary,
+            }}
+          >
+            {formatGraphValue(total, formatOptions)}
+          </text>
+          <text
+            x={centerX}
+            y={centerY + labelOffset}
+            textAnchor="middle"
+            dominantBaseline="central"
+            style={{
+              fontSize: labelFontSize,
+              fill: theme.font.color.tertiary,
+            }}
+          >
+            <Trans>Total</Trans>
+          </text>
+        </motion.g>
+      )}
+    </AnimatePresence>
   );
 };

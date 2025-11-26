@@ -27,8 +27,8 @@ export const PIE_CHART_SETTINGS: ChartSettingsGroup[] = [
     items: [
       COLORS_SETTING,
       DATA_LABELS_SETTING,
-      CENTER_METRIC_SETTING,
       SHOW_LEGEND_SETTING,
+      CENTER_METRIC_SETTING,
     ],
   },
 ];
