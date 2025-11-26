@@ -3,7 +3,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AiModule } from 'src/engine/core-modules/ai/ai.module';
+import { AiBillingModule } from 'src/engine/metadata-modules/ai-billing/ai-billing.module';
+import { AiModelsModule } from 'src/engine/metadata-modules/ai-models/ai-models.module';
+import { AiToolsModule } from 'src/engine/metadata-modules/ai-tools/ai-tools.module';
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
 import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-customer-data.command';
 import { BillingSyncPlansDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-plans-data.command';
@@ -42,7 +44,9 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     StripeModule,
     MessageQueueModule,
     PermissionsModule,
-    AiModule,
+    AiBillingModule,
+    AiModelsModule,
+    AiToolsModule,
     WorkspaceDomainsModule,
     TypeOrmModule.forFeature([
       BillingSubscriptionEntity,

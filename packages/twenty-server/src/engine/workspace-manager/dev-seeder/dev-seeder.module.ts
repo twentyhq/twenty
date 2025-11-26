@@ -15,7 +15,6 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
-import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -45,7 +44,6 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     ObjectPermissionModule,
     WorkspacePermissionsCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
-    WorkspaceMetadataCacheModule,
   ],
   exports: [DevSeederService],
   providers: [

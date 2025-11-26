@@ -7,6 +7,9 @@ import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidget
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
+import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,6 +28,7 @@ type TransformOneDimensionalGroupByToLineChartDataParams = {
 type TransformOneDimensionalGroupByToLineChartDataResult = {
   series: LineChartSeries[];
   hasTooManyGroups: boolean;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
 export const transformOneDimensionalGroupByToLineChartData = ({
@@ -41,6 +45,16 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     0,
     LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
   );
+
+  const formattedValues = formatPrimaryDimensionValues({
+    groupByRawResults: limitedResults,
+    primaryAxisGroupByField: groupByFieldX,
+    primaryAxisDateGranularity:
+      configuration.primaryAxisDateGranularity ?? undefined,
+    primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
+  });
+
+  const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
 
   const data: LineChartDataPoint[] = limitedResults
     .map((result) => {
@@ -90,5 +104,6 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     series,
     hasTooManyGroups:
       rawResults.length > LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
+    formattedToRawLookup,
   };
 };

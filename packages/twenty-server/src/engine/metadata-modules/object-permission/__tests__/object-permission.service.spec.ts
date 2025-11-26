@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type UpsertObjectPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
@@ -13,9 +14,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 describe('ObjectPermissionService', () => {
   let service: ObjectPermissionService;
@@ -24,7 +23,7 @@ describe('ObjectPermissionService', () => {
   >;
   let roleRepository: jest.Mocked<Repository<RoleEntity>>;
   let workspacePermissionsCacheService: jest.Mocked<WorkspacePermissionsCacheService>;
-  let workspaceCacheStorageService: jest.Mocked<WorkspaceCacheStorageService>;
+  let workspaceManyOrAllFlatEntityMapsCacheService: jest.Mocked<WorkspaceManyOrAllFlatEntityMapsCacheService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -56,9 +55,9 @@ describe('ObjectPermissionService', () => {
           },
         },
         {
-          provide: WorkspaceCacheStorageService,
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
           useValue: {
-            getObjectMetadataMapsOrThrow: jest.fn(),
+            getOrRecomputeManyOrAllFlatEntityMaps: jest.fn(),
           },
         },
       ],
@@ -72,7 +71,9 @@ describe('ObjectPermissionService', () => {
     workspacePermissionsCacheService = module.get(
       WorkspacePermissionsCacheService,
     );
-    workspaceCacheStorageService = module.get(WorkspaceCacheStorageService);
+    workspaceManyOrAllFlatEntityMapsCacheService = module.get(
+      WorkspaceManyOrAllFlatEntityMapsCacheService,
+    );
   });
 
   describe('upsertObjectPermissions', () => {
@@ -106,18 +107,26 @@ describe('ObjectPermissionService', () => {
         ],
       };
 
-      // Mock object metadata maps with a system object
-      workspaceCacheStorageService.getObjectMetadataMapsOrThrow.mockResolvedValue(
+      // Mock flat object metadata maps with a system object
+      workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
         {
-          byId: {
-            [systemObjectMetadataId]: {
-              id: systemObjectMetadataId,
-              isSystem: true,
-              workspaceId,
-            } as ObjectMetadataItemWithFieldMaps,
+          flatObjectMetadataMaps: {
+            byId: {
+              [systemObjectMetadataId]: {
+                id: systemObjectMetadataId,
+                isSystem: true,
+                workspaceId,
+                fieldMetadataIds: [],
+                indexMetadataIds: [],
+                viewIds: [],
+                universalIdentifier: systemObjectMetadataId,
+                applicationId: null,
+              } as any,
+            },
+            idByUniversalIdentifier: {},
+            universalIdentifiersByApplicationId: {},
           },
-          idByNameSingular: {},
-        },
+        } as any,
       );
 
       // Act & Assert
@@ -155,18 +164,26 @@ describe('ObjectPermissionService', () => {
         ],
       };
 
-      // Mock object metadata maps with a custom object
-      workspaceCacheStorageService.getObjectMetadataMapsOrThrow.mockResolvedValue(
+      // Mock flat object metadata maps with a custom object
+      workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
         {
-          byId: {
-            [customObjectMetadataId]: {
-              id: customObjectMetadataId,
-              isSystem: false,
-              workspaceId,
-            } as ObjectMetadataItemWithFieldMaps,
+          flatObjectMetadataMaps: {
+            byId: {
+              [customObjectMetadataId]: {
+                id: customObjectMetadataId,
+                isSystem: false,
+                workspaceId,
+                fieldMetadataIds: [],
+                indexMetadataIds: [],
+                viewIds: [],
+                universalIdentifier: customObjectMetadataId,
+                applicationId: null,
+              } as any,
+            },
+            idByUniversalIdentifier: {},
+            universalIdentifiersByApplicationId: {},
           },
-          idByNameSingular: {},
-        },
+        } as any,
       );
 
       // Mock successful upsert
@@ -236,12 +253,15 @@ describe('ObjectPermissionService', () => {
         ],
       };
 
-      // Mock empty object metadata maps
-      workspaceCacheStorageService.getObjectMetadataMapsOrThrow.mockResolvedValue(
+      // Mock empty flat object metadata maps
+      workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
         {
-          byId: {},
-          idByNameSingular: {},
-        },
+          flatObjectMetadataMaps: {
+            byId: {},
+            idByUniversalIdentifier: {},
+            universalIdentifiersByApplicationId: {},
+          },
+        } as any,
       );
 
       // Act & Assert

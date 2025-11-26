@@ -31,6 +31,7 @@ export const commonQueryRunnerToRestApiExceptionHandler = (
     case CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT:
       throw new UnauthorizedException(error.message);
     case CommonQueryRunnerExceptionCode.MISSING_SYSTEM_FIELD:
+    case CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR:
       throw new InternalServerErrorException(error.message);
     default: {
       return assertUnreachable(error.code);
