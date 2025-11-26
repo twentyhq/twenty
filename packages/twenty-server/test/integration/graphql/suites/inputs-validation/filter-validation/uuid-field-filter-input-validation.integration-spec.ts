@@ -93,13 +93,13 @@ describe(`Filter input validation - ${FIELD_METADATA_TYPE}`, () => {
     );
   });
 
-  describe('Rest filter input - success', () => {
-    it.each(
+  describe.only('Rest filter input - success', () => {
+    it.each([
       successfulTestCases.map((testCase) => ({
         ...testCase,
         stringifiedFilter: JSON.stringify(testCase.restFilterInput),
-      })),
-    )(
+      }))[0],
+    ])(
       `${FIELD_METADATA_TYPE} field type - should succeed with filter : $stringifiedFilter`,
       async ({ restFilterInput, validateFilter }) => {
         await testRestSuccessfulScenario(

@@ -291,8 +291,9 @@ export class WorkspacePermissionsCacheService {
           restrictedFields,
         };
 
-        permissionsByRoleId[role.id] = objectRecordsPermissions;
       }
+
+      permissionsByRoleId[role.id] = objectRecordsPermissions;
     }
 
     return permissionsByRoleId;

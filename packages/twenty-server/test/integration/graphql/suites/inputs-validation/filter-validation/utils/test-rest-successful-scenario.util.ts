@@ -11,6 +11,7 @@ export const testRestSuccessfulScenario = async (
     path: `/${objectMetadataPluralName}?filter=${encodedFilter}`,
   });
 
+  expect(response.body).toMatchInlineSnapshot()
   const records = response.body.data[objectMetadataPluralName];
 
   expect(response.body.errors).toBeUndefined();
