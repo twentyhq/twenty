@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
@@ -23,7 +25,13 @@ export class GmailMessagesImportErrorHandler {
     }
 
     if (isGmailApiBatchError(error)) {
-      throw parseGmailApiBatchError(error, messageExternalId);
+      const exception = parseGmailApiBatchError(error, messageExternalId);
+
+      if (!isDefined(exception)) {
+        return;
+      }
+
+      throw exception;
     }
 
     throw new MessageImportDriverException(
