@@ -89,9 +89,9 @@ export const GraphWidgetLegend = ({
 }: GraphWidgetLegendProps) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
-  const [previousItemsPerPage, setPreviousItemsPerPage] = useState<
-    number | null
-  >(null);
+  const [previousNumberOfItemsPerPage, setPreviousNumberOfItemsPerPage] =
+    useState<number | null>(null);
+
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
   const containerRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
@@ -124,13 +124,13 @@ export const GraphWidgetLegend = ({
 
   useEffect(() => {
     if (
-      previousItemsPerPage !== null &&
-      previousItemsPerPage !== effectiveItemsPerPage
+      previousNumberOfItemsPerPage !== null &&
+      previousNumberOfItemsPerPage !== effectiveItemsPerPage
     ) {
       setCurrentPage(0);
     }
-    setPreviousItemsPerPage(effectiveItemsPerPage);
-  }, [effectiveItemsPerPage, previousItemsPerPage]);
+    setPreviousNumberOfItemsPerPage(effectiveItemsPerPage);
+  }, [effectiveItemsPerPage, previousNumberOfItemsPerPage]);
 
   const safeCurrentPage = Math.min(currentPage, Math.max(0, totalPages - 1));
 
@@ -145,26 +145,30 @@ export const GraphWidgetLegend = ({
     ? items.slice(startIndex, endIndex)
     : items;
 
-  const handlePreviousPage = () => {
+  const handlePreviousPage = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+
     setDirection('backward');
     setCurrentPage((prevPage) => Math.max(0, prevPage - 1));
   };
 
-  const handleNextPage = () => {
+  const handleNextPage = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+
     setDirection('forward');
     setCurrentPage((prevPage) => Math.min(totalPages - 1, prevPage + 1));
   };
 
   const slideOffset = availableWidthForItems;
   const variants = {
-    enter: (dir: 'forward' | 'backward') => ({
-      x: dir === 'forward' ? slideOffset : -slideOffset,
+    enter: (direction: 'forward' | 'backward') => ({
+      x: direction === 'forward' ? slideOffset : -slideOffset,
     }),
     center: {
       x: 0,
     },
-    exit: (dir: 'forward' | 'backward') => ({
-      x: dir === 'forward' ? -slideOffset : slideOffset,
+    exit: (direction: 'forward' | 'backward') => ({
+      x: direction === 'forward' ? -slideOffset : slideOffset,
     }),
   };
 
@@ -193,7 +197,7 @@ export const GraphWidgetLegend = ({
         </StyledPaginationContainer>
       )}
       <StyledAnimationClipContainer>
-        <AnimatePresence mode="popLayout" custom={direction}>
+        <AnimatePresence mode="popLayout" custom={direction} initial={false}>
           <StyledItemsWrapper
             key={safeCurrentPage}
             custom={direction}
