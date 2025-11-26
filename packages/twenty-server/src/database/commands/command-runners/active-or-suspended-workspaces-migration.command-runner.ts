@@ -12,7 +12,6 @@ import { type TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-gl
 export type ActiveOrSuspendedWorkspacesMigrationCommandOptions =
   WorkspacesMigrationCommandOptions;
 
-// Convenience class that extends the generic base with ACTIVE and SUSPENDED statuses
 export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
   Options extends
     ActiveOrSuspendedWorkspacesMigrationCommandOptions = ActiveOrSuspendedWorkspacesMigrationCommandOptions,
