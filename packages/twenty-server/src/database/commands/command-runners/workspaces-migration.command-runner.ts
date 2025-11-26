@@ -5,8 +5,10 @@ import { In, MoreThanOrEqual, type Repository } from 'typeorm';
 
 import { MigrationCommandRunner } from 'src/database/commands/command-runners/migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { type TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { isDefined } from 'twenty-shared/utils';
 
 export type WorkspacesMigrationCommandOptions = {
   workspaceIds: string[];
@@ -19,7 +21,7 @@ export type WorkspacesMigrationCommandOptions = {
 export type RunOnWorkspaceArgs = {
   options: WorkspacesMigrationCommandOptions;
   workspaceId: string;
-  dataSource: WorkspaceDataSource;
+  dataSource?: WorkspaceDataSource;
   index: number;
   total: number;
 };
@@ -49,7 +51,8 @@ export abstract class WorkspacesMigrationCommandRunner<
   constructor(
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    protected readonly activationStatuses: WorkspaceActivationStatus[]
+    protected readonly dataSourceService: DataSourceService,
+    protected readonly activationStatuses: WorkspaceActivationStatus[],
   ) {
     super();
   }
@@ -135,10 +138,16 @@ export abstract class WorkspacesMigrationCommandRunner<
       );
 
       try {
-        const dataSource =
-          await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        const workspaceHasDataSource =
+          await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
             workspaceId,
-          });
+          );
+
+        const dataSource = isDefined(workspaceHasDataSource)
+          ? await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+              workspaceId,
+            })
+          : undefined;
 
         await this.runOnWorkspace({
           options,
@@ -176,4 +185,3 @@ export abstract class WorkspacesMigrationCommandRunner<
 
   public abstract runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void>;
 }
-

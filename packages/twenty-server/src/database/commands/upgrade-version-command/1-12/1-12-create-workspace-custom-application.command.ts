@@ -11,6 +11,7 @@ import {
 } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
@@ -23,9 +24,10 @@ export class CreateWorkspaceCustomApplicationCommand extends WorkspacesMigration
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly dataSourceService: DataSourceService,
     private readonly applicationService: ApplicationService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager, [
+    super(workspaceRepository, twentyORMGlobalManager, dataSourceService, [
       WorkspaceActivationStatus.ONGOING_CREATION,
       WorkspaceActivationStatus.PENDING_CREATION,
       WorkspaceActivationStatus.ACTIVE,
