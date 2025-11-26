@@ -11,7 +11,11 @@ import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/crea
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ResponsivePie, type PieTooltipProps } from '@nivo/pie';
+import {
+  ResponsivePie,
+  type ComputedDatum,
+  type PieTooltipProps,
+} from '@nivo/pie';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphWidgetPieChartProps = {
@@ -119,7 +123,13 @@ export const GraphWidgetPieChart = ({
             onMouseEnter={(datum) => setHoveredSliceId(datum.id)}
             onMouseLeave={() => setHoveredSliceId(null)}
             layers={['arcs', 'arcLinkLabels']}
-            arcLinkLabel={(d) => d.data.value.toString()}
+            arcLinkLabel={(datum: ComputedDatum<PieChartDataItem>) => {
+              const tooltipData = createTooltipData(datum);
+              return (
+                tooltipData?.tooltipItem.formattedValue ||
+                datum.data.value.toString()
+              );
+            }}
             arcLinkLabelsDiagonalLength={10}
             arcLinkLabelsStraightLength={10}
             arcLinkLabelsTextColor={theme.font.color.light}
