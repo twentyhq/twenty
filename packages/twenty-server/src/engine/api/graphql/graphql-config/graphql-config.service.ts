@@ -33,6 +33,7 @@ import {
 import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useSentryTracing } from 'src/engine/core-modules/exception-handler/hooks/use-sentry-tracing';
+import { useComputeComplexity } from 'src/engine/core-modules/graphql/hooks/use-compute-complexity.hook';
 import { useDisableIntrospectionForUnauthenticatedUsers } from 'src/engine/core-modules/graphql/hooks/use-disable-introspection-for-unauthenticated-users.hook';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -74,6 +75,9 @@ export class GraphQLConfigService
       }),
       useDisableIntrospectionForUnauthenticatedUsers(
         this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION,
+      ),
+      useComputeComplexity(
+        this.twentyConfigService.get('GRAPHQL_MAX_COMPLEXITY'),
       ),
     ];
 
