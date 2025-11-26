@@ -31,6 +31,18 @@ describe('buildSortsFromChartConfig', () => {
         type: FieldMetadataType.DATE_TIME,
         label: 'Created At',
       },
+      {
+        id: 'field-address',
+        name: 'address',
+        type: FieldMetadataType.ADDRESS,
+        label: 'Address',
+      },
+      {
+        id: 'field-fullName',
+        name: 'fullName',
+        type: FieldMetadataType.FULL_NAME,
+        label: 'Full Name',
+      },
     ],
   } as ObjectMetadataItem;
 
@@ -125,6 +137,76 @@ describe('buildSortsFromChartConfig', () => {
       });
 
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('Composite field sorting', () => {
+    it('should include subfield for address composite field in Bar chart', () => {
+      const config = {
+        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
+        primaryAxisGroupByFieldMetadataId: 'field-address',
+        primaryAxisGroupBySubFieldName: 'addressCity',
+        aggregateFieldMetadataId: 'field-amount',
+      } as BarChartConfiguration;
+
+      const result = buildSortsFromChartConfig({
+        configuration: config,
+        objectMetadataItem: mockObjectMetadataItem,
+      });
+
+      expect(result).toEqual([
+        { fieldName: 'address.addressCity', direction: 'ASC' },
+      ]);
+    });
+
+    it('should include subfield for fullName composite field in Pie chart', () => {
+      const config = {
+        orderBy: GraphOrderBy.FIELD_DESC,
+        groupByFieldMetadataId: 'field-fullName',
+        groupBySubFieldName: 'firstName',
+        aggregateFieldMetadataId: 'field-amount',
+      } as PieChartConfiguration;
+
+      const result = buildSortsFromChartConfig({
+        configuration: config,
+        objectMetadataItem: mockObjectMetadataItem,
+      });
+
+      expect(result).toEqual([
+        { fieldName: 'fullName.firstName', direction: 'DESC' },
+      ]);
+    });
+
+    it('should handle composite field without subfield', () => {
+      const config = {
+        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
+        primaryAxisGroupByFieldMetadataId: 'field-address',
+        primaryAxisGroupBySubFieldName: null,
+        aggregateFieldMetadataId: 'field-amount',
+      } as BarChartConfiguration;
+
+      const result = buildSortsFromChartConfig({
+        configuration: config,
+        objectMetadataItem: mockObjectMetadataItem,
+      });
+
+      expect(result).toEqual([{ fieldName: 'address', direction: 'ASC' }]);
+    });
+
+    it('should handle composite field with empty subfield', () => {
+      const config = {
+        primaryAxisOrderBy: GraphOrderBy.FIELD_DESC,
+        primaryAxisGroupByFieldMetadataId: 'field-fullName',
+        primaryAxisGroupBySubFieldName: '',
+        aggregateFieldMetadataId: 'field-amount',
+      } as BarChartConfiguration;
+
+      const result = buildSortsFromChartConfig({
+        configuration: config,
+        objectMetadataItem: mockObjectMetadataItem,
+      });
+
+      expect(result).toEqual([{ fieldName: 'fullName', direction: 'DESC' }]);
     });
   });
 

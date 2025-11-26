@@ -1,5 +1,6 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { normalizeChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
   GraphOrderBy,
@@ -26,7 +27,7 @@ export const buildSortsFromChartConfig = ({
   objectMetadataItem,
 }: BuildSortsFromChartConfigParams): ChartSort[] => {
   const sorts: ChartSort[] = [];
-  const { groupByFieldMetadataId, orderBy } =
+  const { groupByFieldMetadataId, groupBySubFieldName, orderBy } =
     normalizeChartConfigurationFields(configuration);
 
   if (
@@ -40,8 +41,12 @@ export const buildSortsFromChartConfig = ({
       : undefined;
 
     if (isDefined(primaryField)) {
+      const fieldName = isNonEmptyString(groupBySubFieldName)
+        ? `${primaryField.name}.${groupBySubFieldName}`
+        : primaryField.name;
+
       sorts.push({
-        fieldName: primaryField.name,
+        fieldName,
         direction: orderBy === GraphOrderBy.FIELD_ASC ? 'ASC' : 'DESC',
       });
     }
