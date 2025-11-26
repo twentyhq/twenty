@@ -10,7 +10,8 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { WorkflowAiAgentPermissionsTab } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab';
 import { WORKFLOW_AI_AGENT_TABS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentTabs';
-import { workflowAiAgentPermissionsViewModeFamilyState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsViewModeFamilyState';
+import { useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose';
+import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
@@ -22,6 +23,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLock, IconSparkles } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   useFindOneAgentQuery,
@@ -67,6 +69,7 @@ export const WorkflowEditActionAiAgent = ({
     variables: { id: agentId || '' },
     skip: !agentId,
   });
+  useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose();
   const [updateAgent] = useUpdateOneAgentMutation();
   const aiModelOptions = useAiModelOptions();
   const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
@@ -177,22 +180,14 @@ export const WorkflowEditActionAiAgent = ({
     (activeTabId as WorkflowAiAgentTabId) ?? WORKFLOW_AI_AGENT_TABS.PROMPT;
 
   const navigateSettings = useNavigateSettings();
-  const [permissionsTabViewMode, setPermissionsTabViewMode] = useRecoilState(
-    workflowAiAgentPermissionsViewModeFamilyState(action.id),
-  );
   const { data: rolesData } = useGetRolesQuery();
 
+  const [
+    workflowAiAgentPermissionsIsAddingPermission,
+    setWorkflowAiAgentPermissionsIsAddingPermission,
+  ] = useRecoilState(workflowAiAgentPermissionsIsAddingPermissionState);
+
   const role = rolesData?.getRoles.find((item) => item.id === agent?.roleId);
-  const objectPermissions = role?.objectPermissions || [];
-  const existingPermissionsCount = objectPermissions.reduce((count, perm) => {
-    return (
-      count +
-      (perm.canReadObjectRecords ? 1 : 0) +
-      (perm.canUpdateObjectRecords ? 1 : 0) +
-      (perm.canSoftDeleteObjectRecords ? 1 : 0) +
-      (perm.canDestroyObjectRecords ? 1 : 0)
-    );
-  }, 0);
 
   const handleAgentResponseFormatChange = async (format: {
     type: 'text' | 'json';
@@ -219,10 +214,7 @@ export const WorkflowEditActionAiAgent = ({
       return footerActions;
     }
 
-    if (
-      permissionsTabViewMode === 'add-permission-objects' ||
-      permissionsTabViewMode === 'add-permission-crud'
-    ) {
+    if (workflowAiAgentPermissionsIsAddingPermission) {
       footerActions.push(
         <Button
           key="view-role"
@@ -230,33 +222,30 @@ export const WorkflowEditActionAiAgent = ({
           variant="primary"
           onClick={handleViewRole}
           disabled={!isDefined(role?.id)}
+          accent="blue"
+          size="small"
+          hotkeys={
+            isDefined(role?.id) ? [getOsControlSymbol(), '⏎'] : undefined
+          }
+        />,
+      );
+    }
+
+    if (
+      !workflowAiAgentPermissionsIsAddingPermission &&
+      !actionOptions.readonly
+    ) {
+      footerActions.push(
+        <Button
+          key="add-permission"
+          title={t`Add permission`}
+          variant="primary"
+          onClick={() => setWorkflowAiAgentPermissionsIsAddingPermission(true)}
+          accent="blue"
+          hotkeys={[getOsControlSymbol(), '⏎']}
           size="small"
         />,
       );
-    } else if (permissionsTabViewMode === 'home') {
-      if (existingPermissionsCount > 0 || isDefined(role?.id)) {
-        footerActions.push(
-          <Button
-            key="add-permission"
-            title={t`Add permission`}
-            variant="primary"
-            onClick={() => setPermissionsTabViewMode('add-permission-objects')}
-            disabled={actionOptions.readonly === true}
-            size="small"
-          />,
-        );
-      } else {
-        footerActions.push(
-          <Button
-            key="view-role"
-            title={t`View role`}
-            variant="primary"
-            onClick={handleViewRole}
-            disabled={!isDefined(role?.id)}
-            size="small"
-          />,
-        );
-      }
     }
 
     return footerActions;

@@ -3,7 +3,8 @@ import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-perm
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
-import { workflowAiAgentPermissionsViewModeFamilyState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsViewModeFamilyState';
+import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
+import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -110,19 +111,21 @@ export const WorkflowAiAgentPermissionsTab = ({
     skip: !agentId,
   });
 
+  const [
+    workflowAiAgentPermissionsSelectedObjectId,
+    setWorkflowAiAgentPermissionsSelectedObjectId,
+  ] = useRecoilState(workflowAiAgentPermissionsSelectedObjectIdState);
+  const [
+    workflowAiAgentPermissionsIsAddingPermission,
+    setWorkflowAiAgentPermissionsIsAddingPermission,
+  ] = useRecoilState(workflowAiAgentPermissionsIsAddingPermissionState);
+
   const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
     useFilteredObjectMetadataItems();
 
   const { data: rolesData, loading: rolesLoading } = useGetRolesQuery();
 
   const agent = agentData?.findOneAgent;
-
-  const [viewMode, setViewMode] = useRecoilState(
-    workflowAiAgentPermissionsViewModeFamilyState(action.id),
-  );
-  const [selectedObjectId, setSelectedObjectId] = useState<
-    string | undefined
-  >();
   const [searchQuery, setSearchQuery] = useState('');
 
   const [createRole] = useCreateOneRoleMutation();
@@ -288,9 +291,6 @@ export const WorkflowAiAgentPermissionsTab = ({
       },
       refetchQueries: ['GetRoles', 'FindOneAgent'],
     });
-
-    setViewMode('home');
-    setSelectedObjectId(undefined);
   };
 
   const handleDeletePermission = async (
@@ -403,29 +403,11 @@ export const WorkflowAiAgentPermissionsTab = ({
   }
 
   const existingPermissions = getExistingPermissions();
-  const selectedObject = isDefined(selectedObjectId)
-    ? objectMetadataItems.find((item) => item.id === selectedObjectId)
+  const selectedObject = isDefined(workflowAiAgentPermissionsSelectedObjectId)
+    ? objectMetadataItems.find(
+        (item) => item.id === workflowAiAgentPermissionsSelectedObjectId,
+      )
     : undefined;
-
-  const hasRole = isDefined(agent?.roleId);
-  const hasNoRole = !hasRole;
-
-  // Determine which view to show based on agent role and viewMode
-  // Default: If no role, show add permission view. If has role, show home permissions list.
-  const isInAddFlow =
-    viewMode === 'add-permission-objects' || viewMode === 'add-permission-crud';
-  const isInCrudView =
-    viewMode === 'add-permission-crud' && isDefined(selectedObjectId);
-  const isInObjectsView =
-    viewMode === 'add-permission-objects' && !isDefined(selectedObjectId);
-
-  // Show back button only when in add flow AND agent has a role (came from home view)
-  const showBackButton = isInAddFlow && hasRole;
-
-  // Determine what to render
-  const showCrudList = isInCrudView && isDefined(selectedObject);
-  const showObjectsList = isInObjectsView || (hasNoRole && !isInCrudView);
-  const showHomePermissionsList = hasRole && !isInAddFlow;
 
   const objectPermissionForSelected = isDefined(selectedObject)
     ? objectPermissions.find(
@@ -434,23 +416,20 @@ export const WorkflowAiAgentPermissionsTab = ({
     : undefined;
 
   const handleBack = () => {
-    if (isDefined(selectedObjectId)) {
-      setSelectedObjectId(undefined);
-      setViewMode('add-permission-objects');
-    } else {
-      setViewMode('home');
-      setSelectedObjectId(undefined);
-    }
+    isDefined(workflowAiAgentPermissionsSelectedObjectId) &&
+      setWorkflowAiAgentPermissionsSelectedObjectId(undefined);
+    !isDefined(workflowAiAgentPermissionsSelectedObjectId) &&
+      setWorkflowAiAgentPermissionsIsAddingPermission(false);
   };
 
   const handleObjectClick = (objectId: string) => {
-    setSelectedObjectId(objectId);
-    setViewMode('add-permission-crud');
+    setWorkflowAiAgentPermissionsSelectedObjectId(objectId);
   };
 
   return (
     <StyledContainer>
-      {showBackButton && (
+      {(isDefined(workflowAiAgentPermissionsSelectedObjectId) ||
+        workflowAiAgentPermissionsIsAddingPermission) && (
         <StyledBackButton onClick={handleBack}>
           <IconButton Icon={IconChevronLeft} variant="tertiary" size="small" />
           <StyledBackButtonText>{t`Add permission`}</StyledBackButtonText>
@@ -463,60 +442,63 @@ export const WorkflowAiAgentPermissionsTab = ({
         placeholder={t`Type anything...`}
       />
 
-      {showCrudList && isDefined(selectedObject) && (
-        <WorkflowAiAgentPermissionsCrudList
-          permissions={CRUD_PERMISSIONS.map((p) => ({
-            key: p.key,
-            label: p.label(selectedObject.labelPlural),
-          }))}
-          objectPermissions={objectPermissionForSelected}
-          readonly={readonly}
-          onAddPermission={handleAddPermission}
-          onDeletePermission={handleDeletePermission}
-          objectMetadataId={selectedObject.id}
-        />
-      )}
+      {isDefined(selectedObject) &&
+        workflowAiAgentPermissionsIsAddingPermission && (
+          <WorkflowAiAgentPermissionsCrudList
+            permissions={CRUD_PERMISSIONS.map((p) => ({
+              key: p.key,
+              label: p.label(selectedObject.labelPlural),
+            }))}
+            objectPermissions={objectPermissionForSelected}
+            readonly={readonly}
+            onAddPermission={handleAddPermission}
+            onDeletePermission={handleDeletePermission}
+            objectMetadataId={selectedObject.id}
+          />
+        )}
 
-      {showObjectsList && (
-        <WorkflowAiAgentPermissionsObjectsList
-          objects={filteredObjects}
-          onObjectClick={handleObjectClick}
-          readonly={readonly}
-        />
-      )}
+      {(!agent.roleId || workflowAiAgentPermissionsIsAddingPermission) &&
+        !isDefined(selectedObject) && (
+          <WorkflowAiAgentPermissionsObjectsList
+            objects={filteredObjects}
+            onObjectClick={handleObjectClick}
+            readonly={readonly}
+          />
+        )}
 
-      {showHomePermissionsList && (
-        <div>
-          <StyledLabel>CRUD</StyledLabel>
-          {existingPermissions.length > 0 ? (
-            <StyledList>
-              {existingPermissions.map((permission) => (
-                <WorkflowAiAgentPermissionsPermissionRow
-                  key={`${permission.objectMetadataId}-${permission.permissionKey}`}
-                  permission={{
-                    key: permission.permissionKey,
-                    label: permission.permissionLabel,
-                  }}
-                  isEnabled={true}
-                  readonly={readonly}
-                  onDelete={() => {
-                    void handleDeletePermission(
-                      permission.objectMetadataId,
-                      permission.permissionKey,
-                    );
-                  }}
-                />
-              ))}
-            </StyledList>
-          ) : (
-            <StyledList>
-              <StyledEmptyState>
-                <StyledText>{t`No permissions added yet`}</StyledText>
-              </StyledEmptyState>
-            </StyledList>
-          )}
-        </div>
-      )}
+      {isDefined(agent.roleId) &&
+        !workflowAiAgentPermissionsIsAddingPermission && (
+          <div>
+            <StyledLabel>CRUD</StyledLabel>
+            {existingPermissions.length > 0 ? (
+              <StyledList>
+                {existingPermissions.map((permission) => (
+                  <WorkflowAiAgentPermissionsPermissionRow
+                    key={`${permission.objectMetadataId}-${permission.permissionKey}`}
+                    permission={{
+                      key: permission.permissionKey,
+                      label: permission.permissionLabel,
+                    }}
+                    isEnabled={true}
+                    readonly={readonly}
+                    onDelete={() => {
+                      void handleDeletePermission(
+                        permission.objectMetadataId,
+                        permission.permissionKey,
+                      );
+                    }}
+                  />
+                ))}
+              </StyledList>
+            ) : (
+              <StyledList>
+                <StyledEmptyState>
+                  <StyledText>{t`No permissions added yet`}</StyledText>
+                </StyledEmptyState>
+              </StyledList>
+            )}
+          </div>
+        )}
     </StyledContainer>
   );
 };
