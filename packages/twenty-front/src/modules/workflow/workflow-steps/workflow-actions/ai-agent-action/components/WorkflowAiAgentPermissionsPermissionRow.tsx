@@ -51,15 +51,15 @@ export const WorkflowAiAgentPermissionsPermissionRow = ({
       </StyledRowLeftContent>
       {isEnabled && showDeleteButton && (
         <StyledDeleteButton data-delete-button>
-        <IconButton
-          Icon={IconTrash}
-          variant="tertiary"
-          size="small"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete?.();
-          }}
-        />
+          <IconButton
+            Icon={IconTrash}
+            variant="tertiary"
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete?.();
+            }}
+          />
         </StyledDeleteButton>
       )}
     </StyledRow>
