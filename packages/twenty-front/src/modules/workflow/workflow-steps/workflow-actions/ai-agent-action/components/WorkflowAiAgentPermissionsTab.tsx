@@ -96,6 +96,9 @@ export const WorkflowAiAgentPermissionsTab = ({
   const objectPermissions = role?.objectPermissions || [];
   const permissionFlagKeys =
     role?.permissionFlags?.map((permissionFlag) => permissionFlag.flag) ?? [];
+  const hasRoleWithPermissions =
+    isDefined(agent?.roleId) &&
+    (objectPermissions.length > 0 || permissionFlagKeys.length > 0);
   const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig();
   const actionPermissionsConfig = useActionRolePermissionFlagConfig();
 
@@ -174,10 +177,10 @@ export const WorkflowAiAgentPermissionsTab = ({
   const shouldShowCrudList =
     isDefined(selectedObject) && workflowAiAgentPermissionsIsAddingPermission;
   const shouldShowSelectionLists =
-    (!agent.roleId || workflowAiAgentPermissionsIsAddingPermission) &&
+    (!hasRoleWithPermissions || workflowAiAgentPermissionsIsAddingPermission) &&
     !isDefined(selectedObject);
   const shouldShowExistingPermissions =
-    isDefined(agent.roleId) && !workflowAiAgentPermissionsIsAddingPermission;
+    hasRoleWithPermissions && !workflowAiAgentPermissionsIsAddingPermission;
 
   return (
     <StyledContainer>
