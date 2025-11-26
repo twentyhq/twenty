@@ -2,6 +2,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { t } from '@lingui/core/macro';
 import { type ObjectPermission } from '~/generated/graphql';
+import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 import { CRUD_PERMISSIONS } from '../constants/WorkflowAiAgentCrudPermissions';
 import { StyledLabel, StyledList } from './WorkflowAiAgentPermissions.styles';
 import { WorkflowAiAgentPermissionsPermissionRow } from './WorkflowAiAgentPermissionsPermissionRow';
@@ -23,12 +24,14 @@ type WorkflowAiAgentPermissionListProps = {
     objectMetadataId: string,
     permissionKey: SettingsRoleObjectPermissionKey,
   ) => void;
+  searchQuery: string;
 };
 
 export const WorkflowAiAgentPermissionList = ({
   readonly,
   objectPermissions,
   onDeletePermission,
+  searchQuery,
 }: WorkflowAiAgentPermissionListProps) => {
   const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -77,7 +80,16 @@ export const WorkflowAiAgentPermissionList = ({
       return permissionA.objectLabel.localeCompare(permissionB.objectLabel);
     });
 
-  if (sortedExistingPermissions.length === 0) {
+  const filteredPermissions = filterBySearchQuery({
+    items: sortedExistingPermissions,
+    searchQuery,
+    getSearchableValues: (permission) => [
+      permission.permissionLabel,
+      permission.objectLabel,
+    ],
+  });
+
+  if (filteredPermissions.length === 0) {
     return null;
   }
 
@@ -85,7 +97,7 @@ export const WorkflowAiAgentPermissionList = ({
     <div>
       <StyledLabel>{t`CRUD`}</StyledLabel>
       <StyledList>
-        {sortedExistingPermissions.map((permission) => (
+        {filteredPermissions.map((permission) => (
           <WorkflowAiAgentPermissionsPermissionRow
             key={`${permission.objectMetadataId}-${permission.permissionKey}`}
             permission={{

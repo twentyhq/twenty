@@ -246,6 +246,7 @@ export const WorkflowAiAgentPermissionsTab = ({
             readonly={readonly}
             objectPermissions={objectPermissions}
             onDeletePermission={handleDeletePermission}
+            searchQuery={searchQuery}
           />
           <WorkflowAiAgentPermissionsFlagList
             title={t`Settings`}
