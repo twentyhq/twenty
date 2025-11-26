@@ -179,7 +179,7 @@ export const GraphWidgetLegend = ({
   };
 
   return (
-    <AnimatePresence mode="popLayout">
+    <AnimatePresence mode="popLayout" initial={false}>
       {shouldShowLegend && (
         <StyledLegendMotionWrapper
           variants={legendEnterExitVariants}
