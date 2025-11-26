@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { type ValidationContext } from 'graphql';
 import { type Plugin } from 'graphql-yoga';
 
@@ -18,6 +19,9 @@ export const useComputeComplexity = (maximumComplexity: number): Plugin => ({
               context.reportError(
                 new UserInputError(
                   `Query complexity is too high: ${complexity} - Too many fields requested`,
+                  {
+                    userFriendlyMessage: msg`The request is too complex to process. Please try reducing the amount of data requested.`,
+                  },
                 ),
               );
             }
