@@ -25,8 +25,8 @@ type GraphWidgetLegendProps = {
   show?: boolean;
 };
 
-const StyledAnimationClipContainer = styled.div`
-  flex: 1;
+const StyledAnimationClipContainer = styled.div<{ needsPagination: boolean }>`
+  flex: ${({ needsPagination }) => (needsPagination ? 1 : 'none')};
   overflow: hidden;
   position: relative;
 `;
@@ -43,6 +43,7 @@ const StyledItemsWrapper = styled(motion.div)`
   display: flex;
   gap: ${({ theme }) => theme.spacing(3)};
   flex-wrap: nowrap;
+  flex: 1;
 `;
 
 const StyledLegendContainer = styled.div<{ needsPagination: boolean }>`
@@ -66,9 +67,9 @@ const StyledLegendItem = styled.div`
   flex-shrink: 0;
 `;
 
-const StyledLegendLabel = styled.div<{ width: number }>`
+const StyledLegendLabel = styled.div<{ maxWidth?: number }>`
   color: ${({ theme }) => theme.font.color.light};
-  width: ${({ width }) => width}px;
+  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : 'none')};
 `;
 
 const StyledPaginationContainer = styled.div`
@@ -192,7 +193,7 @@ export const GraphWidgetLegend = ({
           />
         </StyledPaginationContainer>
       )}
-      <StyledAnimationClipContainer>
+      <StyledAnimationClipContainer needsPagination={needsPagination}>
         <AnimatePresence
           mode="popLayout"
           custom={animationDirection}
@@ -213,7 +214,11 @@ export const GraphWidgetLegend = ({
             {visibleItems.map((item) => (
               <StyledLegendItem key={item.id}>
                 <StyledDot color={item.color} />
-                <StyledLegendLabel width={LEGEND_LABEL_MAX_WIDTH}>
+                <StyledLegendLabel
+                  maxWidth={
+                    needsPagination ? LEGEND_LABEL_MAX_WIDTH : undefined
+                  }
+                >
                   <OverflowingTextWithTooltip text={item.label} />
                 </StyledLegendLabel>
               </StyledLegendItem>
