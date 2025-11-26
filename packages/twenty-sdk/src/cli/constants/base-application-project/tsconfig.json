@@ -4,8 +4,9 @@
     "sourceMap": true,
     "declaration": true,
     "outDir": "./dist",
-    "rootDir": "src",
+    "rootDir": ".",
     "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
@@ -20,10 +21,7 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "resolveJsonModule": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["src/cli/**"]
+
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

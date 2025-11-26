@@ -270,6 +270,7 @@ const EXCLUDED_DIRECTORIES = [
   '**/__mocks__/**',
   '**/__stories__/**',
   '**/internal/**',
+  '**/cli/**',
 ] as const;
 function getTypeScriptFiles(
   directoryPath: string,

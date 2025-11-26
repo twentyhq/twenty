@@ -18,6 +18,16 @@
         "{projectRoot}/application/dist"
       ]
     },
+    "start": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "build"
+      ],
+      "options": {
+        "cwd": "packages/twenty-sdk",
+        "command": "node dist/cli/cli.js"
+      }
+    },
     "generateBarrels": {
       "executor": "nx:run-commands",
       "cache": true,

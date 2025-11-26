@@ -55814,11 +55814,38 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-sdk@workspace:packages/twenty-sdk"
   dependencies:
+    "@genql/cli": "npm:^3.0.3"
+    "@types/fs-extra": "npm:^11.0.0"
+    "@types/inquirer": "npm:^9.0.0"
+    "@types/jest": "npm:^29.5.0"
+    "@types/lodash.camelcase": "npm:^4.3.7"
+    "@types/lodash.capitalize": "npm:^4"
+    "@types/lodash.kebabcase": "npm:^4.1.7"
+    "@types/lodash.startcase": "npm:^4"
     "@types/node": "npm:^24.0.0"
+    axios: "npm:^1.6.0"
+    chalk: "npm:^5.3.0"
+    chokidar: "npm:^4.0.0"
+    commander: "npm:^12.0.0"
+    dotenv: "npm:^16.4.0"
+    fs-extra: "npm:^11.2.0"
+    graphql: "npm:^16.8.1"
+    inquirer: "npm:^10.0.0"
+    jest: "npm:^29.5.0"
+    jsonc-parser: "npm:^3.2.0"
+    lodash.camelcase: "npm:^4.3.0"
+    lodash.capitalize: "npm:^4.2.1"
+    lodash.kebabcase: "npm:^4.1.1"
+    lodash.startcase: "npm:^4.4.0"
+    tsx: "npm:^4.7.0"
     typescript: "npm:5.9.2"
+    uuid: "npm:^13.0.0"
     vite: "npm:^7.0.0"
     vite-plugin-dts: "npm:3.8.1"
     vite-tsconfig-paths: "npm:^4.2.1"
+    wait-on: "npm:^7.2.0"
+  bin:
+    twenty: dist/cli/cli.js
   languageName: unknown
   linkType: soft
 

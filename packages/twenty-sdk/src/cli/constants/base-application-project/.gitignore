@@ -1,0 +1,5 @@
+# Duplicated with ./gitignore because npm publish does not include .gitignore
+# https://github.com/npm/npm/issues/3763
+
+.yarn/install-state.gz
+.env
