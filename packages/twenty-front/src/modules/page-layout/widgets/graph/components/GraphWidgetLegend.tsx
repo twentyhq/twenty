@@ -37,9 +37,9 @@ const StyledLegendMotionWrapper = styled(motion.div)`
 
 const StyledDot = styled.div<{ color: string }>`
   background: ${({ color }) => color};
-  border-radius: 50%;
-  height: 6px;
-  width: 6px;
+  border-radius: 2px;
+  height: 8px;
+  width: 8px;
   flex-shrink: 0;
 `;
 
