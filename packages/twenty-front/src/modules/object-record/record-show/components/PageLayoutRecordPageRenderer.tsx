@@ -28,12 +28,10 @@ const StyledShowPageRightContainer = styled.div`
   overflow: auto;
 `;
 
-const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
+const StyledContentContainer = styled.div`
+  background: ${({ theme }) => theme.background.primary};
   flex: 1;
   overflow-y: auto;
-  background: ${({ theme }) => theme.background.primary};
-  padding-bottom: ${({ theme, isInRightDrawer }) =>
-    isInRightDrawer ? theme.spacing(16) : 0};
 `;
 
 export const PageLayoutRecordPageRenderer = ({
@@ -76,7 +74,7 @@ export const PageLayoutRecordPageRenderer = ({
       )}
 
       <StyledShowPageRightContainer>
-        <StyledContentContainer isInRightDrawer={isInRightDrawer}>
+        <StyledContentContainer>
           <LayoutRenderingProvider
             value={{
               targetRecordIdentifier: {
