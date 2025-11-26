@@ -236,9 +236,7 @@ export const useChartSettingsValues = ({
           ? getDateGranularityLabel(configuration.dateGranularity)
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.SHOW_LEGEND:
-        return 'displayLegend' in configuration
-          ? (configuration.displayLegend ?? true)
-          : true;
+        return isPieChart ? (configuration.displayLegend ?? true) : true;
       default:
         return '';
     }
