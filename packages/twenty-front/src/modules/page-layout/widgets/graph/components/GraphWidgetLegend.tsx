@@ -71,9 +71,9 @@ const StyledLegendItem = styled.div`
   flex-shrink: 0;
 `;
 
-const StyledLegendLabel = styled.div<{ maxWidth?: number }>`
+const StyledLegendLabel = styled.div<{ width?: number }>`
   color: ${({ theme }) => theme.font.color.light};
-  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : 'none')};
+  width: ${({ width }) => (width ? `${width}px` : 'none')};
 `;
 
 const StyledPaginationContainer = styled.div`
@@ -245,7 +245,7 @@ export const GraphWidgetLegend = ({
                     <StyledLegendItem key={item.id}>
                       <StyledDot color={item.color} />
                       <StyledLegendLabel
-                        maxWidth={
+                        width={
                           needsPagination ? LEGEND_LABEL_MAX_WIDTH : undefined
                         }
                       >
