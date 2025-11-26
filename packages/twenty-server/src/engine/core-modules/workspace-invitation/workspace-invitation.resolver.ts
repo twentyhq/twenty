@@ -67,8 +67,6 @@ export class WorkspaceInvitationResolver {
       },
     });
 
-    //here
-
     return this.workspaceInvitationService.resendWorkspaceInvitation(
       appTokenId,
       workspace,
