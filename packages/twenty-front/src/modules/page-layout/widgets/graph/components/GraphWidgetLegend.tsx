@@ -31,6 +31,10 @@ const StyledAnimationClipContainer = styled.div<{ needsPagination: boolean }>`
   position: relative;
 `;
 
+const StyledLegendMotionWrapper = styled(motion.div)`
+  width: 100%;
+`;
+
 const StyledDot = styled.div<{ color: string }>`
   background: ${({ color }) => color};
   border-radius: 50%;
@@ -85,6 +89,21 @@ const StyledPaginationIndicator = styled.span`
   font-size: ${({ theme }) => theme.font.size.xs};
 `;
 
+const legendEnterExitVariants = {
+  hidden: {
+    y: 10,
+    opacity: 0,
+  },
+  visible: {
+    y: 0,
+    opacity: 1,
+  },
+  exit: {
+    y: 10,
+    opacity: 0,
+  },
+};
+
 export const GraphWidgetLegend = ({
   items,
   show = true,
@@ -105,10 +124,6 @@ export const GraphWidgetLegend = ({
   const thereAreNoItems = items.length === 0;
 
   const shouldShowLegend = show && !isItASingleItem && !thereAreNoItems;
-
-  if (!shouldShowLegend) {
-    return null;
-  }
 
   const availableWidthForItems =
     containerWidth - LEGEND_PAGINATION_CONTROLS_WIDTH;
@@ -164,68 +179,86 @@ export const GraphWidgetLegend = ({
   };
 
   return (
-    <StyledLegendContainer ref={containerRef} needsPagination={needsPagination}>
-      <NodeDimensionEffect
-        elementRef={containerRef}
-        onDimensionChange={({ width }) => {
-          setContainerWidth(width);
-        }}
-      />
-      <ResetPaginationOnItemsPerPageChangeEffect
-        itemsPerPage={effectiveItemsPerPage}
-        onReset={() => setCurrentPage(0)}
-      />
-      {needsPagination && (
-        <StyledPaginationContainer>
-          <LightIconButton
-            onClick={handlePreviousPage}
-            disabled={safeCurrentPage === 0}
-            Icon={IconChevronLeft}
-            accent="tertiary"
-          />
-          <StyledPaginationIndicator>
-            {safeCurrentPage + 1}/{totalPages}
-          </StyledPaginationIndicator>
-          <LightIconButton
-            onClick={handleNextPage}
-            disabled={safeCurrentPage === totalPages - 1}
-            Icon={IconChevronRight}
-          />
-        </StyledPaginationContainer>
-      )}
-      <StyledAnimationClipContainer needsPagination={needsPagination}>
-        <AnimatePresence
-          mode="popLayout"
-          custom={animationDirection}
-          initial={false}
+    <AnimatePresence mode="popLayout">
+      {shouldShowLegend && (
+        <StyledLegendMotionWrapper
+          variants={legendEnterExitVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          transition={{
+            duration: theme.animation.duration.normal,
+            ease: 'easeInOut',
+          }}
         >
-          <StyledItemsWrapper
-            key={safeCurrentPage}
-            custom={animationDirection}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{
-              duration: theme.animation.duration.normal,
-              ease: 'easeInOut',
-            }}
+          <StyledLegendContainer
+            ref={containerRef}
+            needsPagination={needsPagination}
           >
-            {visibleItems.map((item) => (
-              <StyledLegendItem key={item.id}>
-                <StyledDot color={item.color} />
-                <StyledLegendLabel
-                  maxWidth={
-                    needsPagination ? LEGEND_LABEL_MAX_WIDTH : undefined
-                  }
+            <NodeDimensionEffect
+              elementRef={containerRef}
+              onDimensionChange={({ width }) => {
+                setContainerWidth(width);
+              }}
+            />
+            <ResetPaginationOnItemsPerPageChangeEffect
+              itemsPerPage={effectiveItemsPerPage}
+              onReset={() => setCurrentPage(0)}
+            />
+            {needsPagination && (
+              <StyledPaginationContainer>
+                <LightIconButton
+                  onClick={handlePreviousPage}
+                  disabled={safeCurrentPage === 0}
+                  Icon={IconChevronLeft}
+                  accent="tertiary"
+                />
+                <StyledPaginationIndicator>
+                  {safeCurrentPage + 1}/{totalPages}
+                </StyledPaginationIndicator>
+                <LightIconButton
+                  onClick={handleNextPage}
+                  disabled={safeCurrentPage === totalPages - 1}
+                  Icon={IconChevronRight}
+                />
+              </StyledPaginationContainer>
+            )}
+            <StyledAnimationClipContainer needsPagination={needsPagination}>
+              <AnimatePresence
+                mode="popLayout"
+                custom={animationDirection}
+                initial={false}
+              >
+                <StyledItemsWrapper
+                  key={safeCurrentPage}
+                  custom={animationDirection}
+                  variants={variants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{
+                    duration: theme.animation.duration.normal,
+                    ease: 'easeInOut',
+                  }}
                 >
-                  <OverflowingTextWithTooltip text={item.label} />
-                </StyledLegendLabel>
-              </StyledLegendItem>
-            ))}
-          </StyledItemsWrapper>
-        </AnimatePresence>
-      </StyledAnimationClipContainer>
-    </StyledLegendContainer>
+                  {visibleItems.map((item) => (
+                    <StyledLegendItem key={item.id}>
+                      <StyledDot color={item.color} />
+                      <StyledLegendLabel
+                        maxWidth={
+                          needsPagination ? LEGEND_LABEL_MAX_WIDTH : undefined
+                        }
+                      >
+                        <OverflowingTextWithTooltip text={item.label} />
+                      </StyledLegendLabel>
+                    </StyledLegendItem>
+                  ))}
+                </StyledItemsWrapper>
+              </AnimatePresence>
+            </StyledAnimationClipContainer>
+          </StyledLegendContainer>
+        </StyledLegendMotionWrapper>
+      )}
+    </AnimatePresence>
   );
 };
