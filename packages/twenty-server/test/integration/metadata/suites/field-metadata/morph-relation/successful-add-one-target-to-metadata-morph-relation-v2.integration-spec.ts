@@ -1,12 +1,13 @@
+import { isDefined } from 'class-validator';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -193,6 +194,14 @@ describe('updateOne FieldMetadataService morph relation fields v2 - Add one targ
           id
           name
         }
+        targetObjectMetadata {
+          id
+          nameSingular
+        }
+        sourceFieldMetadata {
+          id
+          name
+        }
       }
       `,
     });
@@ -203,87 +212,85 @@ describe('updateOne FieldMetadataService morph relation fields v2 - Add one targ
     };
 
     expect(updateOneField?.morphRelations.length).toBe(3);
+
+    const objectMetadatasWithIndexes = await findManyObjectMetadataWithIndexes({
+      expectToFail: false,
+    });
+
+    const newLyCreatedMorphRelation = updateOneField?.morphRelations.find(
+      (morphRelation) =>
+        morphRelation.targetObjectMetadata.id ===
+        createdObjectMetadataNewTargetId,
+    );
+
+    jestExpectToBeDefined(newLyCreatedMorphRelation);
+
+    const sourceObjectMetadataIndexFieldMetadataList =
+      objectMetadatasWithIndexes.find(
+        (objectMetadataWithIndexes) =>
+          objectMetadataWithIndexes.id === createdObjectMetadataCompanyId,
+      )?.indexMetadataList;
+
+    const isIndexCreated = sourceObjectMetadataIndexFieldMetadataList?.some(
+      (indexList) =>
+        indexList.indexFieldMetadataList.some(
+          (indexField) =>
+            indexField.fieldMetadataId ===
+            newLyCreatedMorphRelation.sourceFieldMetadata.id,
+        ),
+    );
+
+    expect(isIndexCreated).toBe(true);
   });
 
-  it('Should fail adding one object metadata target to pre-existing morph relation where object is already a target', async () => {
+  // todo and the name ?
+  it('Should add a new morph relation target and update the label of the field at the same time and expect the added created morph and the old morphs to follow the updated label', async () => {
     const input = {
       idToUpdate: createdFieldMetadataId,
       updatePayload: {
+        label: 'new label for morph Fields',
         morphRelationsUpdatePayload: [
           {
-            targetObjectMetadataId: createdObjectMetadataPersonId,
+            targetObjectMetadataId: createdObjectMetadataNewTargetId,
           },
         ],
       },
     };
 
-    const { errors } = await updateOneFieldMetadata({
-      expectToFail: true,
+    const result = await updateOneFieldMetadata({
+      expectToFail: false,
       input,
       gqlFields: `
       id
       name
+      label
       morphRelations {
         type
         targetFieldMetadata {
           id
           name
         }
-      }
-      `,
-    });
-
-    expect(errors.length).toBe(1);
-    const [firstError] = errors;
-
-    expect(firstError).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(firstError),
-    );
-    expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
-  });
-
-  it('Should fail adding one object metadata target to pre-existing morph relation where object is already source object', async () => {
-    const input = {
-      idToUpdate: createdFieldMetadataId,
-      updatePayload: {
-        morphRelationsUpdatePayload: [
-          {
-            targetObjectMetadataId: createdObjectMetadataCompanyId,
-          },
-        ],
-      },
-    };
-
-    const { errors } = await updateOneFieldMetadata({
-      expectToFail: true,
-      input,
-      gqlFields: `
-      id
-      name
-      morphRelations {
-        type
-        targetFieldMetadata {
+        sourceFieldMetadata {
           id
           name
-        }
-        targetObjectMetadata {
-          id
-          nameSingular
-        }
-        sourceObjectMetadata {
-          id
-          nameSingular
+          label
         }
       }
       `,
     });
 
-    expect(errors.length).toBe(1);
-    const [firstError] = errors;
+    const updateOneField = result.data
+      ?.updateOneField as unknown as FieldMetadataDTO & {
+      morphRelations: RelationDTO[];
+    };
 
-    expect(firstError).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(firstError),
+    const morphRelationsLabels = updateOneField.morphRelations.map(
+      (morphRelation) => morphRelation.sourceFieldMetadata.label,
     );
-    expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
+
+    expect(morphRelationsLabels[0]).toBe('new label for morph Fields');
+    const morphRelationsLabelsSet = new Set(morphRelationsLabels);
+
+    expect(morphRelationsLabelsSet.size).toBe(1);
   });
 });
