@@ -19,7 +19,10 @@ export const normalizeChartConfigurationFields = (
     | LineChartConfiguration
     | PieChartConfiguration,
 ): NormalizedChartConfigurationFields => {
-  if ('primaryAxisGroupByFieldMetadataId' in configuration) {
+  if (
+    configuration.__typename === 'BarChartConfiguration' ||
+    configuration.__typename === 'LineChartConfiguration'
+  ) {
     return {
       groupByFieldMetadataId: configuration.primaryAxisGroupByFieldMetadataId,
       groupBySubFieldName: configuration.primaryAxisGroupBySubFieldName,
@@ -28,7 +31,7 @@ export const normalizeChartConfigurationFields = (
     };
   }
 
-  if ('groupByFieldMetadataId' in configuration) {
+  if (configuration.__typename === 'PieChartConfiguration') {
     return {
       groupByFieldMetadataId: configuration.groupByFieldMetadataId,
       groupBySubFieldName: configuration.groupBySubFieldName,

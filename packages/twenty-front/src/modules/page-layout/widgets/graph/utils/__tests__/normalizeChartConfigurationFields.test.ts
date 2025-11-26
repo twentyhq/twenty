@@ -10,6 +10,7 @@ describe('normalizeChartConfigurationFields', () => {
   describe('Bar and Line charts (with primaryAxis prefix)', () => {
     it('should extract fields from Bar chart configuration', () => {
       const barConfig = {
+        __typename: 'BarChartConfiguration',
         primaryAxisGroupByFieldMetadataId: 'field-123',
         primaryAxisGroupBySubFieldName: 'subField',
         primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
@@ -31,6 +32,7 @@ describe('normalizeChartConfigurationFields', () => {
 
     it('should extract fields from Line chart configuration', () => {
       const lineConfig = {
+        __typename: 'LineChartConfiguration',
         primaryAxisGroupByFieldMetadataId: 'field-789',
         primaryAxisOrderBy: GraphOrderBy.VALUE_DESC,
         aggregateFieldMetadataId: 'aggregate-012',
@@ -50,6 +52,7 @@ describe('normalizeChartConfigurationFields', () => {
   describe('Pie charts (without prefix)', () => {
     it('should extract fields from Pie chart configuration', () => {
       const pieConfig = {
+        __typename: 'PieChartConfiguration',
         groupByFieldMetadataId: 'pie-field',
         groupBySubFieldName: 'pieSubField',
         dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
@@ -71,6 +74,7 @@ describe('normalizeChartConfigurationFields', () => {
 
     it('should handle minimal Pie chart configuration', () => {
       const pieConfig = {
+        __typename: 'PieChartConfiguration',
         groupByFieldMetadataId: 'minimal-field',
         aggregateFieldMetadataId: 'minimal-aggregate',
         aggregateOperation: AggregateOperations.COUNT,
@@ -98,8 +102,9 @@ describe('normalizeChartConfigurationFields', () => {
       expect(result).toEqual({});
     });
 
-    it('should handle configuration with both field patterns (prefer primaryAxis)', () => {
+    it('should use __typename to determine fields even when both patterns exist', () => {
       const mixedConfig = {
+        __typename: 'BarChartConfiguration',
         primaryAxisGroupByFieldMetadataId: 'primary-field',
         groupByFieldMetadataId: 'fallback-field',
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
@@ -110,6 +115,21 @@ describe('normalizeChartConfigurationFields', () => {
 
       expect(result.groupByFieldMetadataId).toBe('primary-field');
       expect(result.orderBy).toBe(GraphOrderBy.FIELD_ASC);
+    });
+
+    it('should extract Pie fields when __typename is PieChartConfiguration even if primaryAxis fields exist', () => {
+      const mixedConfig = {
+        __typename: 'PieChartConfiguration',
+        primaryAxisGroupByFieldMetadataId: 'primary-field',
+        groupByFieldMetadataId: 'pie-field',
+        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
+        orderBy: GraphOrderBy.FIELD_DESC,
+      } as any;
+
+      const result = normalizeChartConfigurationFields(mixedConfig);
+
+      expect(result.groupByFieldMetadataId).toBe('pie-field');
+      expect(result.orderBy).toBe(GraphOrderBy.FIELD_DESC);
     });
   });
 });

@@ -1,9 +1,9 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { buildSortsForChartFieldOrderBy } from '@/page-layout/widgets/graph/utils/buildSortsForChartFieldOrderBy';
+import { buildSortsForChartValueOrderBy } from '@/page-layout/widgets/graph/utils/buildSortsForChartValueOrderBy';
 import { normalizeChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  GraphOrderBy,
   type BarChartConfiguration,
   type LineChartConfiguration,
   type PieChartConfiguration,
@@ -26,47 +26,26 @@ export const buildSortsFromChartConfig = ({
   configuration,
   objectMetadataItem,
 }: BuildSortsFromChartConfigParams): ChartSort[] => {
-  const sorts: ChartSort[] = [];
-  const { groupByFieldMetadataId, groupBySubFieldName, orderBy } =
-    normalizeChartConfigurationFields(configuration);
+  const normalizedFields = normalizeChartConfigurationFields(configuration);
 
-  if (
-    orderBy === GraphOrderBy.FIELD_ASC ||
-    orderBy === GraphOrderBy.FIELD_DESC
-  ) {
-    const primaryField = groupByFieldMetadataId
-      ? objectMetadataItem.fields.find(
-          (field) => field.id === groupByFieldMetadataId,
-        )
-      : undefined;
+  const fieldSort = buildSortsForChartFieldOrderBy({
+    normalizedFields,
+    objectMetadataItem,
+  });
 
-    if (isDefined(primaryField)) {
-      const fieldName = isNonEmptyString(groupBySubFieldName)
-        ? `${primaryField.name}.${groupBySubFieldName}`
-        : primaryField.name;
-
-      sorts.push({
-        fieldName,
-        direction: orderBy === GraphOrderBy.FIELD_ASC ? 'ASC' : 'DESC',
-      });
-    }
+  if (isDefined(fieldSort)) {
+    return [fieldSort];
   }
 
-  if (
-    orderBy === GraphOrderBy.VALUE_ASC ||
-    orderBy === GraphOrderBy.VALUE_DESC
-  ) {
-    const aggregateField = objectMetadataItem.fields.find(
-      (field) => field.id === configuration.aggregateFieldMetadataId,
-    );
+  const valueSort = buildSortsForChartValueOrderBy({
+    normalizedFields,
+    aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
+    objectMetadataItem,
+  });
 
-    if (isDefined(aggregateField)) {
-      sorts.push({
-        fieldName: aggregateField.name,
-        direction: orderBy === GraphOrderBy.VALUE_ASC ? 'ASC' : 'DESC',
-      });
-    }
+  if (isDefined(valueSort)) {
+    return [valueSort];
   }
 
-  return sorts;
+  return [];
 };
