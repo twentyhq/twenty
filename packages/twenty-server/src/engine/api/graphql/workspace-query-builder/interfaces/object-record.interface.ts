@@ -4,6 +4,7 @@ import {
   type ObjectRecordOrderByForCompositeField,
   type ObjectRecordOrderByForScalarField,
 } from 'twenty-shared/types';
+import { type FirstDayOfTheWeek } from 'twenty-shared/utils';
 
 export type ObjectRecordFilter = Partial<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,6 +28,7 @@ export type ObjectRecordGroupByForCompositeField = Partial<{
 export type ObjectRecordGroupByForDateField = Partial<{
   [Property in keyof ObjectRecord]: {
     granularity: ObjectRecordGroupByDateGranularity;
+    weekStartDay?: FirstDayOfTheWeek;
   };
 }>;
 

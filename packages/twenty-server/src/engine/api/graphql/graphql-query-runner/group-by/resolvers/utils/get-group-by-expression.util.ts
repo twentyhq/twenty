@@ -33,6 +33,20 @@ export const getGroupByExpression = ({
       return `TRIM(TO_CHAR(${columnNameWithQuotes}, 'TMMonth'))`;
     case ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR:
       return `TRIM(TO_CHAR(${columnNameWithQuotes}, '"Q"Q'))`;
+    case ObjectRecordGroupByDateGranularity.WEEK: {
+      const weekStartDay = groupByField.weekStartDay;
+      let shiftedExpression = `DATE_TRUNC('week', ${columnNameWithQuotes})`;
+
+      if (isDefined(weekStartDay)) {
+        if (weekStartDay === 'SUNDAY') {
+          shiftedExpression = `DATE_TRUNC('week', ${columnNameWithQuotes} + INTERVAL '1 day') - INTERVAL '1 day'`;
+        } else if (weekStartDay === 'SATURDAY') {
+          shiftedExpression = `DATE_TRUNC('week', ${columnNameWithQuotes} + INTERVAL '2 days') - INTERVAL '2 days'`;
+        }
+      }
+
+      return `TO_CHAR(${shiftedExpression}, 'YYYY-MM-DD"T"HH24:MI:SSOF')`;
+    }
     case ObjectRecordGroupByDateGranularity.DAY:
     case ObjectRecordGroupByDateGranularity.MONTH:
     case ObjectRecordGroupByDateGranularity.QUARTER:

@@ -72,6 +72,7 @@ export const parseGroupByArgs = (
           groupByFields.push({
             fieldMetadata,
             dateGranularity: fieldGroupByDefinition.granularity,
+            weekStartDay: fieldGroupByDefinition.weekStartDay,
           });
           continue;
         }
