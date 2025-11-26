@@ -12,9 +12,8 @@ import { In, Repository } from 'typeorm';
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandOptions,
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { WorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { RunOnWorkspaceArgs, WorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';

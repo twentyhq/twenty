@@ -9,12 +9,6 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { type DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { type TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
-// Re-export types for backward compatibility
-export type {
-  RunOnWorkspaceArgs,
-  WorkspaceMigrationReport,
-} from 'src/database/commands/command-runners/workspaces-migration.command-runner';
-
 export type ActiveOrSuspendedWorkspacesMigrationCommandOptions =
   WorkspacesMigrationCommandOptions;
 
