@@ -302,6 +302,7 @@ const StyledDatePickerFallback = styled.div`
 `;
 
 type DatePickerProps = {
+  instanceId: string;
   isRelative?: boolean;
   hideHeaderInput?: boolean;
   date: Nullable<string>;
@@ -333,6 +334,7 @@ const ReactDatePicker = lazy<ComponentType<DatePickerPropsType>>(() =>
 );
 
 export const DatePicker = ({
+  instanceId,
   date,
   onChange,
   onClose,
@@ -476,6 +478,7 @@ export const DatePicker = ({
             }) =>
               isRelative ? (
                 <RelativeDatePickerHeader
+                  instanceId={instanceId}
                   direction={relativeDate?.direction ?? 'PAST'}
                   amount={relativeDate?.amount}
                   unit={relativeDate?.unit ?? 'DAY'}
