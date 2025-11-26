@@ -6,8 +6,8 @@ import { In, IsNull, Not, Repository } from 'typeorm';
 
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import {
-    AgentException,
-    AgentExceptionCode,
+  AgentException,
+  AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
