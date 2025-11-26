@@ -2,7 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 import { type ActorMetadata } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
@@ -10,15 +12,15 @@ import { UpdateRecordService } from 'src/engine/core-modules/record-crud/service
 import { generateCreateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-record-input-schema.util';
 import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-record-input-schema.util';
 import { BulkDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/bulk-delete-tool.zod-schema';
+import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
 import { SoftDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/soft-delete-tool.zod-schema';
-import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai-agent/utils/is-workflow-related-object.util';
 import {
   type ToolHints,
   type ToolOperation,
 } from 'src/engine/metadata-modules/ai-router/types/tool-hints.interface';
-import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
@@ -30,8 +32,8 @@ export class ToolService {
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly objectMetadataService: ObjectMetadataServiceV2,
     protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly createRecordService: CreateRecordService,
     private readonly updateRecordService: UpdateRecordService,
     private readonly deleteRecordService: DeleteRecordService,
@@ -78,14 +80,25 @@ export class ToolService {
       return tools;
     }
 
-    const allObjectMetadata =
-      await this.objectMetadataService.findManyWithinWorkspace(workspaceId, {
-        where: {
-          isActive: true,
-          isSystem: false,
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
         },
-        relations: ['fields'],
-      });
+      );
+
+    const allFlatObjects = Object.values(flatObjectMetadataMaps.byId)
+      .filter(isDefined)
+      .filter((obj) => obj.isActive && !obj.isSystem);
+
+    const allObjectMetadata = allFlatObjects.map((flatObject) => ({
+      ...flatObject,
+      fields: getFlatFieldsFromFlatObjectMetadata(
+        flatObject,
+        flatFieldMetadataMaps,
+      ),
+    }));
 
     let filteredObjectMetadata = allObjectMetadata.filter(
       (objectMetadata) => !isWorkflowRelatedObject(objectMetadata),

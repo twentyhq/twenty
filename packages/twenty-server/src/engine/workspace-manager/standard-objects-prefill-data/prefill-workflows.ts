@@ -4,70 +4,22 @@ import { type EntityManager } from 'typeorm';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { fromFieldMetadataEntityToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields';
 
 const QUICK_LEAD_WORKFLOW_ID = '8b213cac-a68b-4ffe-817a-3ec994e9932d';
 const QUICK_LEAD_WORKFLOW_VERSION_ID = 'ac67974f-c524-4288-9d88-af8515400b68';
 
-// Legacy from generateObjectMetadataMaps, probably a better way to deprecate this
-const buildFlatEntityMapsFromObjectMetadataEntities = (
-  objectMetadataItems: ObjectMetadataEntity[],
-): {
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  objectIdByNameSingular: Record<string, string>;
-} => {
-  const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
-    byId: {},
-    idByUniversalIdentifier: {},
-    universalIdentifiersByApplicationId: {},
-  };
-
-  const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
-    byId: {},
-    idByUniversalIdentifier: {},
-    universalIdentifiersByApplicationId: {},
-  };
-
-  const objectIdByNameSingular: Record<string, string> = {};
-
-  for (const objectMetadataItem of objectMetadataItems) {
-    const flatObjectMetadata =
-      fromObjectMetadataEntityToFlatObjectMetadata(objectMetadataItem);
-
-    flatObjectMetadataMaps.byId[objectMetadataItem.id] = flatObjectMetadata;
-    objectIdByNameSingular[objectMetadataItem.nameSingular] =
-      objectMetadataItem.id;
-
-    for (const fieldMetadata of objectMetadataItem.fields) {
-      const flatFieldMetadata =
-        fromFieldMetadataEntityToFlatFieldMetadata(fieldMetadata);
-
-      flatFieldMetadataMaps.byId[fieldMetadata.id] = flatFieldMetadata;
-    }
-  }
-
-  return {
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-    objectIdByNameSingular,
-  };
-};
-
 export const prefillWorkflows = async (
   entityManager: EntityManager,
   schemaName: string,
-  objectMetadataItems: ObjectMetadataEntity[],
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
 ) => {
-  const {
+  const { idByNameSingular: objectIdByNameSingular } = buildObjectIdByNameMaps(
     flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-    objectIdByNameSingular,
-  } = buildFlatEntityMapsFromObjectMetadataEntities(objectMetadataItems);
+  );
 
   const companyObjectMetadataId = objectIdByNameSingular['company'];
   const personObjectMetadataId = objectIdByNameSingular['person'];

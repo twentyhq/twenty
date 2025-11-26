@@ -6,7 +6,7 @@ import { DeleteRecordService } from 'src/engine/core-modules/record-crud/service
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
-import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
@@ -57,9 +57,21 @@ describe('ToolService', () => {
           },
         },
         {
-          provide: ObjectMetadataServiceV2,
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
           useValue: {
-            findManyWithinWorkspace: jest.fn().mockResolvedValue([testObject]),
+            getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
+              flatObjectMetadataMaps: {
+                byId: {
+                  [testObject.id]: {
+                    ...testObject,
+                    fieldMetadataIds: [],
+                  },
+                },
+              },
+              flatFieldMetadataMaps: {
+                byId: {},
+              },
+            }),
           },
         },
         {

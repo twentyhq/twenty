@@ -152,6 +152,7 @@ describe('WorkspaceRepository', () => {
         id: 'test-metadata-id',
         nameSingular: 'test-entity',
         namePlural: 'test-entities',
+        fieldMetadataIds: ['test-field-id'],
         fieldIdByName: {
           id: 'test-field-id',
         },

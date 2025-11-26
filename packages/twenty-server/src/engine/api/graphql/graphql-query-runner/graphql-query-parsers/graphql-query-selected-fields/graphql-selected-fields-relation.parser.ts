@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   GraphqlQuerySelectedFieldsParser,
   type GraphqlQuerySelectedFieldsResult,
@@ -32,8 +34,14 @@ export class GraphqlQuerySelectedFieldsRelationParser {
 
     accumulator.relations[fieldKey] = true;
 
+    if (!isDefined(fieldMetadata.relationTargetObjectMetadataId)) {
+      throw new Error(
+        `Relation target object metadata id not found for field ${fieldMetadata.name}`,
+      );
+    }
+
     const targetObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: fieldMetadata.relationTargetObjectMetadataId ?? '',
+      flatEntityId: fieldMetadata.relationTargetObjectMetadataId,
       flatEntityMaps: this.flatObjectMetadataMaps,
     });
 

@@ -39,8 +39,14 @@ const getNestedFieldMetadataDetails = ({
     | Record<string, CompositeFieldGroupByDefinition>
     | Record<string, DateFieldGroupByDefinition>;
 
+  if (!isDefined(fieldMetadata.relationTargetObjectMetadataId)) {
+    throw new UserInputError(
+      `Relation target object metadata id not found for field ${fieldMetadata.name}`,
+    );
+  }
+
   const targetObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-    flatEntityId: fieldMetadata.relationTargetObjectMetadataId ?? '',
+    flatEntityId: fieldMetadata.relationTargetObjectMetadataId,
     flatEntityMaps: flatObjectMetadataMaps,
   });
 

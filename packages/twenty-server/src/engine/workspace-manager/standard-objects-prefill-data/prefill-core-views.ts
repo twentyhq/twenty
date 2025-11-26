@@ -2,6 +2,9 @@ import { isString } from '@sniptt/guards';
 import { type DataSource, type QueryRunner } from 'typeorm';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
@@ -36,19 +39,45 @@ import { workspaceMembersAllView } from 'src/engine/workspace-manager/standard-o
 type PrefillCoreViewsArgs = {
   coreDataSource: DataSource;
   workspaceId: string;
-  objectMetadataItems: ObjectMetadataEntity[];
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   featureFlags?: Record<string, boolean>;
   workspaceSchemaName: string;
   twentyStandardFlatApplication: FlatApplication;
 };
 
+// This is a temporary function to build the object metadata items from the flat maps.
+// We should use the maps in the seeders instead.
+const buildObjectMetadataItemsFromFlatMaps = (
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+): ObjectMetadataEntity[] => {
+  return Object.values(flatObjectMetadataMaps.byId)
+    .filter((flatObjectMetadata) => flatObjectMetadata !== undefined)
+    .map((flatObjectMetadata) => {
+      const fields = flatObjectMetadata.fieldMetadataIds
+        .map((fieldId) => flatFieldMetadataMaps.byId[fieldId])
+        .filter((field) => field !== undefined);
+
+      return {
+        ...flatObjectMetadata,
+        fields,
+      } as unknown as ObjectMetadataEntity;
+    });
+};
+
 export const prefillCoreViews = async ({
   coreDataSource,
   workspaceId,
-  objectMetadataItems,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
   workspaceSchemaName,
   twentyStandardFlatApplication,
 }: PrefillCoreViewsArgs): Promise<ViewEntity[]> => {
+  const objectMetadataItems = buildObjectMetadataItemsFromFlatMaps(
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  );
   const views = [
     companiesAllView,
     peopleAllView,

@@ -103,12 +103,11 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     return {
       ...args,
-      filter:
-        this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
-          args.filter,
-          flatObjectMetadata,
-          flatFieldMetadataMaps,
-        ) || {},
+      filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
+        args.filter,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      ),
     };
   }
 
