@@ -16,6 +16,7 @@ export class GmailMessageListFetchErrorHandler {
   constructor() {}
 
   public handleError(error: unknown): void {
+    this.logger.error(`Gmail: Error fetching message list: ${error}`);
     if (isGmailNetworkError(error)) {
       throw parseGmailNetworkError(error);
     }
@@ -24,7 +25,6 @@ export class GmailMessageListFetchErrorHandler {
       throw parseGmailMessageListFetchError(error);
     }
 
-    this.logger.error(`Error fetching message list: ${error}`);
     throw new MessageImportDriverException(
       'Unknown error',
       MessageImportDriverExceptionCode.UNKNOWN,

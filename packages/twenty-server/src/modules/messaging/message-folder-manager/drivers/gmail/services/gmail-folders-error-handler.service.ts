@@ -16,6 +16,7 @@ export class GmailFoldersErrorHandlerService {
   constructor() {}
 
   public handleError(error: unknown): void {
+    this.logger.error(`Gmail: Error fetching folders: ${error}`);
     if (isGmailNetworkError(error)) {
       throw parseGmailNetworkError(error);
     }
@@ -24,7 +25,6 @@ export class GmailFoldersErrorHandlerService {
       throw parseGmailFoldersError(error);
     }
 
-    this.logger.error(`Error fetching folders: ${error}`);
     throw new MessageImportDriverException(
       'Unknown error',
       MessageImportDriverExceptionCode.UNKNOWN,

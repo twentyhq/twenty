@@ -16,6 +16,8 @@ export class GmailMessagesImportErrorHandler {
   constructor() {}
 
   public handleError(error: unknown, messageExternalId: string): void {
+    this.logger.error(`Gmail: Error importing messages: ${error}`);
+
     if (isGmailNetworkError(error)) {
       throw parseGmailNetworkError(error);
     }
@@ -24,7 +26,6 @@ export class GmailMessagesImportErrorHandler {
       throw parseGmailMessagesImportError(error, messageExternalId);
     }
 
-    this.logger.error(`Error importing messages: ${error}`);
     throw new MessageImportDriverException(
       'Unknown error',
       MessageImportDriverExceptionCode.UNKNOWN,

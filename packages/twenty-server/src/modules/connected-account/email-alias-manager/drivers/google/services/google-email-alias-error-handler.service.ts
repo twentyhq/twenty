@@ -16,6 +16,7 @@ export class GmailEmailAliasErrorHandlerService {
   constructor() {}
 
   public handleError(error: unknown): void {
+    this.logger.error(`Google: Error getting email aliases: ${error}`);
     if (isGmailNetworkError(error)) {
       throw parseGmailNetworkError(error);
     }
@@ -24,7 +25,6 @@ export class GmailEmailAliasErrorHandlerService {
       throw parseGmailEmailAliasError(error);
     }
 
-    this.logger.error(`Unknown error: ${error}`);
     throw new MessageImportDriverException(
       'Unknown error',
       MessageImportDriverExceptionCode.UNKNOWN,
