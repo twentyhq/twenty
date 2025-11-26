@@ -129,9 +129,14 @@ export class WorkspaceMigrationRunnerV2Service {
 
     if (shouldInvalidateRoleMapCache) {
       asyncOperations.push(
-        this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache({
-          workspaceId,
-        }),
+        ...[
+          this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache({
+            workspaceId,
+          }),
+          this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
+            workspaceId,
+          }),
+        ],
       );
     }
 
