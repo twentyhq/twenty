@@ -1,3 +1,4 @@
+import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/GraphWidgetLegendDot';
 import { LEGEND_ITEM_ESTIMATED_WIDTH } from '@/page-layout/widgets/graph/constants/LegendItemEstimatedWidth.constant';
 import { LEGEND_LABEL_MAX_WIDTH } from '@/page-layout/widgets/graph/constants/LegendLabelMaxWidth.constant';
 import { LEGEND_PAGINATION_CONTROLS_WIDTH } from '@/page-layout/widgets/graph/constants/LegendPaginationControlsWidth.constant';
@@ -33,14 +34,6 @@ const StyledAnimationClipContainer = styled.div`
 
 const StyledLegendMotionWrapper = styled(motion.div)`
   width: 100%;
-`;
-
-const StyledDot = styled.div<{ color: string }>`
-  background: ${({ color }) => color};
-  border-radius: 2px;
-  height: 8px;
-  width: 8px;
-  flex-shrink: 0;
 `;
 
 const StyledItemsWrapper = styled(motion.div)<{ centered?: boolean }>`
@@ -245,7 +238,7 @@ export const GraphWidgetLegend = ({
                       key={item.id}
                       canShrink={!needsPagination}
                     >
-                      <StyledDot color={item.color} />
+                      <GraphWidgetLegendDot color={item.color} />
                       <StyledLegendLabel fixedWidth={needsPagination}>
                         <OverflowingTextWithTooltip text={item.label} />
                       </StyledLegendLabel>
