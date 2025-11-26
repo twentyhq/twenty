@@ -75,7 +75,7 @@ const StyledLegendItem = styled.div<{ canShrink?: boolean }>`
 `;
 
 const StyledLegendLabel = styled.div<{ fixedWidth?: boolean }>`
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${({ theme }) => theme.font.color.secondary};
   ${({ fixedWidth }) => fixedWidth && `width: ${LEGEND_LABEL_MAX_WIDTH}px;`}
   overflow: hidden;
 `;
