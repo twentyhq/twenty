@@ -53,7 +53,7 @@ export class MessagingMessagesImportService {
     try {
       if (
         messageChannel.syncStage !==
-        MessageChannelSyncStage.MESSAGES_IMPORT_PENDING
+        MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED
       ) {
         return;
       }
