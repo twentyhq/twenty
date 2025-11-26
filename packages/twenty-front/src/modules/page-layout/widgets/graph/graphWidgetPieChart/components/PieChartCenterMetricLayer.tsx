@@ -8,7 +8,7 @@ import {
 import { useTheme } from '@emotion/react';
 import { Trans } from '@lingui/react/macro';
 import { type PieCustomLayerProps } from '@nivo/pie';
-import { AnimatePresence, motion } from 'framer-motion';
+import { animated, useSpring } from '@react-spring/web';
 
 type PieChartCenterMetricLayerProps = Pick<
   PieCustomLayerProps<PieChartDataItem>,
@@ -42,42 +42,41 @@ export const PieChartCenterMetricLayer = ({
     PIE_CHART_CENTER_METRIC_MIN_SIZES.labelOffset,
   );
 
+  const springProps = useSpring({
+    opacity: showCenterMetric ? 1 : 0,
+    config: { duration: theme.animation.duration.fast },
+    ease: 'easeInOut',
+  });
+
   return (
-    <AnimatePresence>
-      {showCenterMetric && (
-        <motion.g
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.15 }}
-        >
-          <text
-            x={centerX}
-            y={centerY - labelOffset / 2}
-            textAnchor="middle"
-            dominantBaseline="central"
-            style={{
-              fontSize: valueFontSize,
-              fontWeight: theme.font.weight.semiBold,
-              fill: theme.font.color.primary,
-            }}
-          >
-            {formatGraphValue(total, formatOptions)}
-          </text>
-          <text
-            x={centerX}
-            y={centerY + labelOffset}
-            textAnchor="middle"
-            dominantBaseline="central"
-            style={{
-              fontSize: labelFontSize,
-              fill: theme.font.color.tertiary,
-            }}
-          >
-            <Trans>Total</Trans>
-          </text>
-        </motion.g>
-      )}
-    </AnimatePresence>
+    <g>
+      <animated.text
+        x={centerX}
+        y={centerY - labelOffset / 2}
+        textAnchor="middle"
+        dominantBaseline="central"
+        style={{
+          ...springProps,
+          fontSize: valueFontSize,
+          fontWeight: theme.font.weight.semiBold,
+          fill: theme.font.color.primary,
+        }}
+      >
+        {formatGraphValue(total, formatOptions)}
+      </animated.text>
+      <animated.text
+        x={centerX}
+        y={centerY + labelOffset}
+        textAnchor="middle"
+        dominantBaseline="central"
+        style={{
+          ...springProps,
+          fontSize: labelFontSize,
+          fill: theme.font.color.tertiary,
+        }}
+      >
+        <Trans>Total</Trans>
+      </animated.text>
+    </g>
   );
 };
