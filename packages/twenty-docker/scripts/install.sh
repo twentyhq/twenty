@@ -93,6 +93,12 @@ fi
 echo "# === Randomly generated secret ===" >> .env
 echo "APP_SECRET=$(openssl rand -base64 32)" >> .env
 
+# Generate random strings for JWT authentication
+echo "ACCESS_TOKEN_SECRET=$(openssl rand -base64 32)" >> .env
+echo "LOGIN_TOKEN_SECRET=$(openssl rand -base64 32)" >> .env
+echo "REFRESH_TOKEN_SECRET=$(openssl rand -base64 32)" >> .env
+echo "FILE_TOKEN_SECRET=$(openssl rand -base64 32)" >> .env
+
 echo "" >> .env
 echo "PG_DATABASE_PASSWORD=$(openssl rand -hex 32)" >> .env
 
