@@ -193,8 +193,7 @@ export const WorkflowEditActionAiAgent = ({
     activeTabIdComponentState,
     componentInstanceId,
   );
-  const currentTabId =
-    (activeTabId as WorkflowAiAgentTabId) ?? WORKFLOW_AI_AGENT_TABS.PROMPT;
+  const currentTabId = activeTabId ?? WORKFLOW_AI_AGENT_TABS.PROMPT;
 
   const navigateSettings = useNavigateSettings();
   const { data: rolesData } = useGetRolesQuery();
