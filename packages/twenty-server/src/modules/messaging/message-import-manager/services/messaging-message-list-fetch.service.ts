@@ -63,6 +63,10 @@ export class MessagingMessageListFetchService {
         await this.processPendingGroupEmailActions(messageChannel, workspaceId);
 
       if (pendingGroupEmailActionsProcessed) {
+        await this.messageChannelSyncStatusService.scheduleMessageListFetch([
+          messageChannel.id,
+        ]);
+
         return;
       }
 
@@ -70,6 +74,10 @@ export class MessagingMessageListFetchService {
         await this.processPendingFolderActions(messageChannel, workspaceId);
 
       if (pendingFolderActionsProcessed) {
+        await this.messageChannelSyncStatusService.scheduleMessageListFetch([
+          messageChannel.id,
+        ]);
+
         return;
       }
 
