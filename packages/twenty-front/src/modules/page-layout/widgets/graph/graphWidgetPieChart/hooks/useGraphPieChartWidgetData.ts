@@ -1,5 +1,6 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from '@/page-layout/widgets/graph/constants/ExtraItemToDetectTooManyGroups.constant';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { transformGroupByDataToPieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/transformGroupByDataToPieChartData';
@@ -15,6 +16,7 @@ type UseGraphPieChartWidgetDataProps = {
 
 type UseGraphPieChartWidgetDataResult = {
   data: PieChartDataItem[];
+  showLegend: boolean;
   loading: boolean;
   error?: Error;
   hasTooManyGroups: boolean;
@@ -23,9 +25,6 @@ type UseGraphPieChartWidgetDataResult = {
   showDataLabels: boolean;
   showCenterMetric: boolean;
 };
-
-// TODO: Remove this once backend returns total group count
-const EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS = 1;
 
 export const useGraphPieChartWidgetData = ({
   objectMetadataItemId,

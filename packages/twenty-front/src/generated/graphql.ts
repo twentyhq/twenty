@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -321,6 +321,7 @@ export type BarChartConfiguration = {
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
+  displayLegend?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   firstDayOfTheWeek?: Maybe<Scalars['Int']>;
   graphType: GraphType;
@@ -1647,6 +1648,7 @@ export type LineChartConfiguration = {
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
+  displayLegend?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   firstDayOfTheWeek?: Maybe<Scalars['Int']>;
   graphType: GraphType;
@@ -3039,6 +3041,7 @@ export type PieChartConfiguration = {
   dateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
+  displayLegend?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   firstDayOfTheWeek?: Maybe<Scalars['Int']>;
   graphType: GraphType;
@@ -5086,6 +5089,7 @@ export const PageLayoutWidgetFragmentFragmentDoc = gql`
       omitNullValues
       axisNameDisplay
       displayDataLabel
+      displayLegend
       rangeMin
       rangeMax
       color
@@ -5110,6 +5114,7 @@ export const PageLayoutWidgetFragmentFragmentDoc = gql`
       omitNullValues
       axisNameDisplay
       displayDataLabel
+      displayLegend
       rangeMin
       rangeMax
       color

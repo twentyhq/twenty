@@ -12,6 +12,7 @@ import { OMIT_NULL_VALUES_SETTING } from '@/command-menu/pages/page-layout/const
 import { PRIMARY_SORT_BY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/PrimarySortBySetting';
 import { RANGE_MAX_SETTING } from '@/command-menu/pages/page-layout/constants/settings/RangeMaxSetting';
 import { RANGE_MIN_SETTING } from '@/command-menu/pages/page-layout/constants/settings/RangeMinSetting';
+import { SHOW_LEGEND_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ShowLegendSetting';
 import { SORT_BY_GROUP_BY_FIELD_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByGroupByFieldSetting';
 import { STACKED_BARS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/StackedBarsSetting';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
@@ -65,6 +66,7 @@ export const getBarChartSettings = (
         AXIS_NAME_SETTING,
         STACKED_BARS_SETTING,
         DATA_LABELS_SETTING,
+        SHOW_LEGEND_SETTING,
       ],
     },
   ];

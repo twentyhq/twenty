@@ -2,119 +2,98 @@ import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { type GmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-api-error.type';
 
-export const parseGmailMessageListFetchError = (
-  error: {
-    code?: number;
-    errors: {
-      reason: string;
-      message: string;
-    }[];
-  },
-  options?: { cause?: Error },
+export const parseGmailApiError = (
+  error: GmailApiError,
 ): MessageImportDriverException => {
-  const { code, errors } = error;
-
-  const reason = errors?.[0]?.reason;
-  const message = errors?.[0]?.message;
+  const { code, message } = error;
 
   switch (code) {
-    case 400:
-      if (reason === 'invalid_grant') {
+    case '400':
+      if (message === 'invalid_grant') {
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-          { cause: options?.cause },
         );
       }
-      if (reason === 'failedPrecondition') {
+      if (message === 'failedPrecondition') {
         if (message.includes('Mail service not enabled')) {
           return new MessageImportDriverException(
             message,
             MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-            { cause: options?.cause },
           );
         }
 
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-          { cause: options?.cause },
         );
       }
 
       return new MessageImportDriverException(
         message,
         MessageImportDriverExceptionCode.UNKNOWN,
-        { cause: options?.cause },
       );
 
-    case 404:
+    case '404':
       return new MessageImportDriverException(
         message,
         MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
-        { cause: options?.cause },
       );
 
-    case 429:
+    case '429':
       return new MessageImportDriverException(
         message,
         MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-        { cause: options?.cause },
       );
 
-    case 403:
+    case '403':
       if (
-        reason === 'rateLimitExceeded' ||
-        reason === 'userRateLimitExceeded' ||
-        reason === 'dailyLimitExceeded'
+        message === 'rateLimitExceeded' ||
+        message === 'userRateLimitExceeded' ||
+        message === 'dailyLimitExceeded'
       ) {
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-          { cause: options?.cause },
         );
       }
-      if (reason === 'domainPolicy') {
+      if (message === 'domainPolicy') {
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-          { cause: options?.cause },
         );
       }
 
       break;
 
-    case 401:
+    case '401':
       return new MessageImportDriverException(
         message,
         MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-        { cause: options?.cause },
       );
 
-    case 503:
+    case '503':
       return new MessageImportDriverException(
         message,
         MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-        { cause: options?.cause },
       );
 
-    case 500:
-    case 502:
-    case 504:
-      if (reason === 'backendError') {
+    case '500':
+    case '502':
+    case '504':
+      if (message === 'backendError') {
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-          { cause: options?.cause },
         );
       }
 
-      if (errors?.[0]?.message.includes(`Authentication backend unavailable`)) {
+      if (message.includes(`Authentication backend unavailable`)) {
         return new MessageImportDriverException(
-          `${code} - ${reason} - ${message}`,
+          `${code} - ${message}`,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-          { cause: options?.cause },
         );
       }
       break;
@@ -126,6 +105,5 @@ export const parseGmailMessageListFetchError = (
   return new MessageImportDriverException(
     message,
     MessageImportDriverExceptionCode.UNKNOWN,
-    { cause: options?.cause },
   );
 };

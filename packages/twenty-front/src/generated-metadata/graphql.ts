@@ -321,6 +321,7 @@ export type BarChartConfiguration = {
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
+  displayLegend?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   firstDayOfTheWeek?: Maybe<Scalars['Int']>;
   graphType: GraphType;
@@ -1671,6 +1672,7 @@ export type LineChartConfiguration = {
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
+  displayLegend?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   firstDayOfTheWeek?: Maybe<Scalars['Int']>;
   graphType: GraphType;
@@ -3105,6 +3107,7 @@ export type PieChartConfiguration = {
   dateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
+  displayLegend?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   firstDayOfTheWeek?: Maybe<Scalars['Int']>;
   graphType: GraphType;
