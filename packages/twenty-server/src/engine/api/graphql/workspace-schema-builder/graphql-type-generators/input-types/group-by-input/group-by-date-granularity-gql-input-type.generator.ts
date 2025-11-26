@@ -42,7 +42,6 @@ export class GroupByDateGranularityInputTypeGenerator {
       throw new Error('DateGranularityEnum not found');
     }
 
-    // Create FirstDayOfTheWeek enum
     const firstDayOfWeekEnum = new GraphQLEnumType({
       name: 'FirstDayOfTheWeek',
       values: firstDayOfWeekSchema.options.reduce(

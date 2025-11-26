@@ -86,6 +86,7 @@ export const ChartDateGranularitySelectionDropdownContent = ({
 
   const dateGranularityOptions: ObjectRecordGroupByDateGranularity[] = [
     ObjectRecordGroupByDateGranularity.DAY,
+    ObjectRecordGroupByDateGranularity.WEEK,
     ObjectRecordGroupByDateGranularity.MONTH,
     ObjectRecordGroupByDateGranularity.QUARTER,
     ObjectRecordGroupByDateGranularity.YEAR,
