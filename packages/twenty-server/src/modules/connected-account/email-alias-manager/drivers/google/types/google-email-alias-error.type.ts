@@ -1,7 +1,4 @@
 export type GoogleEmailAliasError = {
-  code?: string;
-  errors: {
-    reason: string;
-    message: string;
-  }[];
+  code: string;
+  message: string;
 };

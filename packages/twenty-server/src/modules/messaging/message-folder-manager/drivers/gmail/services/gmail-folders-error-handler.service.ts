@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isGmailEmailAliasError } from 'src/modules/connected-account/email-alias-manager/drivers/google/utils/is-gmail-email-alias-error.util';
-import { parseGmailEmailAliasError } from 'src/modules/connected-account/email-alias-manager/drivers/google/utils/parse-gmail-email-alias-error.util';
+import { isGmailFoldersError } from 'src/modules/messaging/message-folder-manager/drivers/gmail/utils/is-gmail-folders-error.util';
+import { parseGmailFoldersError } from 'src/modules/messaging/message-folder-manager/drivers/gmail/utils/parse-gmail-folders-error.util';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
@@ -20,8 +20,8 @@ export class GmailFoldersErrorHandlerService {
       throw parseGmailNetworkError(error);
     }
 
-    if (isGmailEmailAliasError(error)) {
-      throw parseGmailEmailAliasError(error);
+    if (isGmailFoldersError(error)) {
+      throw parseGmailFoldersError(error);
     }
 
     this.logger.error(`Error fetching folders: ${error}`);

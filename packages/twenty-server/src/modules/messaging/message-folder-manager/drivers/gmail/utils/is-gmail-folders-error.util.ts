@@ -1,8 +1,8 @@
-import { type GoogleEmailAliasError } from 'src/modules/connected-account/email-alias-manager/drivers/google/types/google-email-alias-error.type';
+import { type GmailFoldersError } from 'src/modules/messaging/message-folder-manager/drivers/gmail/types/gmail-folders-error.type';
 
-export const isGmailEmailAliasError = (
+export const isGmailFoldersError = (
   error: unknown,
-): error is GoogleEmailAliasError => {
+): error is GmailFoldersError => {
   if (error === null || typeof error !== 'object') {
     return false;
   }
