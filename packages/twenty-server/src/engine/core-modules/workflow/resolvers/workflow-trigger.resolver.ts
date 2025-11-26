@@ -83,8 +83,7 @@ export class WorkflowTriggerResolver {
     return this.workflowTriggerWorkspaceService.runWorkflowVersion({
       workflowVersionId,
       workflowRunId: workflowRunId ?? undefined,
-      payload: payload ?? {},
-      createdBy: buildCreatedByFromFullNameMetadata({
+        payload: { ...(payload ?? {}), workspaceMemberId: workspaceMember.id },      createdBy: buildCreatedByFromFullNameMetadata({
         fullNameMetadata: {
           firstName: workspaceMember.name.firstName,
           lastName: workspaceMember.name.lastName,
