@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
 
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import {
-  AgentException,
-  AgentExceptionCode,
+    AgentException,
+    AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -173,5 +174,40 @@ export class AgentRoleService {
     return {
       roleToAssignIsSameAsCurrentRole: Boolean(existingRoleTarget),
     };
+  }
+
+  public async deleteAgentOnlyRoleIfUnused({
+    roleId,
+    roleTargetId,
+    workspaceId,
+  }: {
+    roleId: string;
+    roleTargetId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const role = await this.roleRepository.findOne({
+      where: { id: roleId, workspaceId },
+    });
+
+    if (
+      !isDefined(role) ||
+      !role.canBeAssignedToAgents ||
+      role.canBeAssignedToUsers ||
+      role.canBeAssignedToApiKeys
+    ) {
+      return;
+    }
+
+    const remainingAssignments = await this.roleTargetsRepository.count({
+      where: {
+        roleId,
+        workspaceId,
+        id: Not(roleTargetId),
+      },
+    });
+
+    if (remainingAssignments === 0) {
+      await this.roleRepository.delete({ id: roleId, workspaceId });
+    }
   }
 }

@@ -8,8 +8,10 @@ import { v4 } from 'uuid';
 
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
+import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
@@ -52,9 +54,12 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly serverlessFunctionService: ServerlessFunctionService,
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
+    @InjectRepository(RoleTargetsEntity)
+    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly agentRoleService: AgentRoleService,
   ) {}
 
   async runWorkflowVersionStepDeletionSideEffects({
@@ -89,7 +94,22 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         });
 
         if (isDefined(agent)) {
+          const roleTarget = await this.roleTargetsRepository.findOne({
+            where: {
+              agentId: agent.id,
+              workspaceId,
+            },
+          });
+
           await this.agentRepository.delete({ id: agent.id, workspaceId });
+
+          if (isDefined(roleTarget?.roleId) && isDefined(roleTarget?.id)) {
+            await this.agentRoleService.deleteAgentOnlyRoleIfUnused({
+              roleId: roleTarget.roleId,
+              roleTargetId: roleTarget.id,
+              workspaceId,
+            });
+          }
         }
         break;
       }

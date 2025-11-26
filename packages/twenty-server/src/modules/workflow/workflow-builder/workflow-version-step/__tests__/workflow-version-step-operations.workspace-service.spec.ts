@@ -3,6 +3,8 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
@@ -21,6 +23,8 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
   let twentyORMGlobalManager: jest.Mocked<TwentyORMGlobalManager>;
   let serverlessFunctionService: jest.Mocked<ServerlessFunctionService>;
   let agentRepository: jest.Mocked<any>;
+  let roleTargetsRepository: jest.Mocked<any>;
+  let roleRepository: jest.Mocked<any>;
   let objectMetadataRepository: jest.Mocked<any>;
   let workflowCommonWorkspaceService: jest.Mocked<WorkflowCommonWorkspaceService>;
 
@@ -34,6 +38,16 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
     } as unknown as jest.Mocked<ServerlessFunctionService>;
 
     agentRepository = {
+      findOne: jest.fn(),
+      delete: jest.fn(),
+    };
+
+    roleTargetsRepository = {
+      findOne: jest.fn(),
+      count: jest.fn(),
+    };
+
+    roleRepository = {
       findOne: jest.fn(),
       delete: jest.fn(),
     };
@@ -64,6 +78,14 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         {
           provide: getRepositoryToken(AgentEntity),
           useValue: agentRepository,
+        },
+        {
+          provide: getRepositoryToken(RoleTargetsEntity),
+          useValue: roleTargetsRepository,
+        },
+        {
+          provide: getRepositoryToken(RoleEntity),
+          useValue: roleRepository,
         },
         {
           provide: getRepositoryToken(ObjectMetadataEntity),
@@ -151,6 +173,50 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
 
       expect(agentRepository.delete).toHaveBeenCalledWith({
         id: 'agent-id',
+        workspaceId: mockWorkspaceId,
+      });
+    });
+
+    it('should delete attached role when it is agent-only and unassigned elsewhere', async () => {
+      const step = {
+        id: 'step-id',
+        name: 'AI Agent Step',
+        type: WorkflowActionType.AI_AGENT,
+        valid: true,
+        nextStepIds: [],
+        settings: {
+          input: {
+            agentId: 'agent-id',
+            prompt: '',
+          },
+          outputSchema: {},
+          errorHandlingOptions: {
+            continueOnFailure: { value: false },
+            retryOnFailure: { value: false },
+          },
+        },
+      } as unknown as WorkflowAction;
+
+      agentRepository.findOne.mockResolvedValue({ id: 'agent-id' });
+      roleTargetsRepository.findOne.mockResolvedValue({
+        id: 'role-target-id',
+        roleId: 'role-id',
+      });
+      roleRepository.findOne.mockResolvedValue({
+        id: 'role-id',
+        canBeAssignedToAgents: true,
+        canBeAssignedToUsers: false,
+        canBeAssignedToApiKeys: false,
+      });
+      roleTargetsRepository.count.mockResolvedValue(0);
+
+      await service.runWorkflowVersionStepDeletionSideEffects({
+        step,
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(roleRepository.delete).toHaveBeenCalledWith({
+        id: 'role-id',
         workspaceId: mockWorkspaceId,
       });
     });
