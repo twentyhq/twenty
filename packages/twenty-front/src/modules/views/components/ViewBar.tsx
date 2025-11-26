@@ -13,6 +13,7 @@ import { ViewPickerDropdown } from '@/views/view-picker/components/ViewPickerDro
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { VIEW_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ViewSortDropdownId';
 import { ObjectSortDropdownComponentInstanceContext } from '@/object-record/object-sort-dropdown/states/context/ObjectSortDropdownComponentInstanceContext';
+import { QueryParamsCleanupEffect } from '@/views/components/QueryParamsCleanupEffect';
 import { ViewBarAnyFieldFilterEffect } from '@/views/components/ViewBarAnyFieldFilterEffect';
 import { ViewBarFilterDropdown } from '@/views/components/ViewBarFilterDropdown';
 import { ViewBarRecordFieldEffect } from '@/views/components/ViewBarRecordFieldEffect';
@@ -52,7 +53,7 @@ export const ViewBar = ({
       <ViewBarRecordSortEffect />
       <QueryParamsFiltersEffect />
       <QueryParamsSortsEffect />
-      {/* <QueryParamsCleanupEffect /> */}
+      <QueryParamsCleanupEffect />
       <ViewBarPageTitle />
       <TopBar
         className={className}
