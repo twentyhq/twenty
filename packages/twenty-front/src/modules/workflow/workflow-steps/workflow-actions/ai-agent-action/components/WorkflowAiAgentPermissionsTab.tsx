@@ -185,14 +185,20 @@ export const WorkflowAiAgentPermissionsTab = ({
     setWorkflowAiAgentPermissionsSelectedObjectId(objectId);
   };
 
+  const shouldShowBackButton =
+    isDefined(workflowAiAgentPermissionsSelectedObjectId) ||
+    workflowAiAgentPermissionsIsAddingPermission;
+  const shouldShowCrudList =
+    isDefined(selectedObject) && workflowAiAgentPermissionsIsAddingPermission;
   const shouldShowSelectionLists =
     (!agent.roleId || workflowAiAgentPermissionsIsAddingPermission) &&
     !isDefined(selectedObject);
+  const shouldShowExistingPermissions =
+    isDefined(agent.roleId) && !workflowAiAgentPermissionsIsAddingPermission;
 
   return (
     <StyledContainer>
-      {(isDefined(workflowAiAgentPermissionsSelectedObjectId) ||
-        workflowAiAgentPermissionsIsAddingPermission) && (
+      {shouldShowBackButton && (
         <StyledBackButton onClick={handleBack}>
           <IconButton Icon={IconChevronLeft} variant="tertiary" size="small" />
           <StyledBackButtonText>{t`Add permission`}</StyledBackButtonText>
@@ -205,19 +211,18 @@ export const WorkflowAiAgentPermissionsTab = ({
         placeholder={t`Type anything...`}
       />
 
-      {isDefined(selectedObject) &&
-        workflowAiAgentPermissionsIsAddingPermission && (
-          <WorkflowAiAgentPermissionsCrudList
-            permissions={CRUD_PERMISSIONS.map((p) => ({
-              key: p.key,
-              label: p.label(selectedObject.labelPlural),
-            }))}
-            objectPermissions={objectPermissionForSelected}
-            readonly={readonly}
-            onAddPermission={handleAddPermission}
-            objectMetadataId={selectedObject.id}
-          />
-        )}
+      {shouldShowCrudList && isDefined(selectedObject) && (
+        <WorkflowAiAgentPermissionsCrudList
+          permissions={CRUD_PERMISSIONS.map((p) => ({
+            key: p.key,
+            label: p.label(selectedObject.labelPlural),
+          }))}
+          objectPermissions={objectPermissionForSelected}
+          readonly={readonly}
+          onAddPermission={handleAddPermission}
+          objectMetadataId={selectedObject.id}
+        />
+      )}
 
       {shouldShowSelectionLists && (
         <>
@@ -243,32 +248,31 @@ export const WorkflowAiAgentPermissionsTab = ({
         </>
       )}
 
-      {isDefined(agent.roleId) &&
-        !workflowAiAgentPermissionsIsAddingPermission && (
-          <>
-            <WorkflowAiAgentPermissionList
-              readonly={readonly}
-              objectPermissions={objectPermissions}
-              onDeletePermission={handleDeletePermission}
-            />
-            <WorkflowAiAgentPermissionsFlagList
-              title={t`Settings`}
-              permissions={filteredEnabledSettingsPermissions}
-              enabledPermissionFlagKeys={permissionFlagKeys}
-              readonly={readonly}
-              showDeleteButton={!readonly}
-              onDeletePermissionFlag={handleDeletePermissionFlag}
-            />
-            <WorkflowAiAgentPermissionsFlagList
-              title={t`Actions`}
-              permissions={filteredEnabledActionPermissions}
-              enabledPermissionFlagKeys={permissionFlagKeys}
-              readonly={readonly}
-              showDeleteButton={!readonly}
-              onDeletePermissionFlag={handleDeletePermissionFlag}
-            />
-          </>
-        )}
+      {shouldShowExistingPermissions && (
+        <>
+          <WorkflowAiAgentPermissionList
+            readonly={readonly}
+            objectPermissions={objectPermissions}
+            onDeletePermission={handleDeletePermission}
+          />
+          <WorkflowAiAgentPermissionsFlagList
+            title={t`Settings`}
+            permissions={filteredEnabledSettingsPermissions}
+            enabledPermissionFlagKeys={permissionFlagKeys}
+            readonly={readonly}
+            showDeleteButton={!readonly}
+            onDeletePermissionFlag={handleDeletePermissionFlag}
+          />
+          <WorkflowAiAgentPermissionsFlagList
+            title={t`Actions`}
+            permissions={filteredEnabledActionPermissions}
+            enabledPermissionFlagKeys={permissionFlagKeys}
+            readonly={readonly}
+            showDeleteButton={!readonly}
+            onDeletePermissionFlag={handleDeletePermissionFlag}
+          />
+        </>
+      )}
     </StyledContainer>
   );
 };

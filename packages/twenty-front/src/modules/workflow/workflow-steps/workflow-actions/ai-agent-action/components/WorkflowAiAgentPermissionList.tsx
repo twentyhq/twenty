@@ -5,9 +5,9 @@ import { t } from '@lingui/core/macro';
 import { type ObjectPermission } from '~/generated/graphql';
 import { CRUD_PERMISSIONS } from '../constants/WorkflowAiAgentCrudPermissions';
 import {
-    StyledLabel,
-    StyledList,
-    StyledText,
+  StyledLabel,
+  StyledList,
+  StyledText,
 } from './WorkflowAiAgentPermissions.styles';
 import { WorkflowAiAgentPermissionsPermissionRow } from './WorkflowAiAgentPermissionsPermissionRow';
 

@@ -74,7 +74,6 @@ export const WorkflowEditActionAiAgent = ({
       variables: { id: agentId || '' },
       skip: !agentId,
       onCompleted: (data) => {
-        console.log('fdfd');
         setAgent(data.findOneAgent);
       },
     },
