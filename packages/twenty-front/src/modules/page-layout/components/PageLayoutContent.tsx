@@ -13,7 +13,8 @@ import styled from '@emotion/styled';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledContainer = styled.div<{ isInPinnedTab: boolean }>`
-  background: ${({ theme }) => theme.background.primary};
+  background: ${({ theme, isInPinnedTab }) =>
+    isInPinnedTab ? theme.background.secondary : theme.background.primary};
   box-sizing: border-box;
   flex: 1;
   min-height: 100%;
