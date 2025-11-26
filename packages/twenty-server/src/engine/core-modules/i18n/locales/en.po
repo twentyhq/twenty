@@ -3311,6 +3311,11 @@ msgstr "The object you are trying to set permissions for could not be found. It 
 msgid "The opportunity name"
 msgstr "The opportunity name"
 
+#. js-lingui-id: lk5nUN
+#: src/engine/core-modules/graphql/hooks/use-compute-complexity.hook.ts
+msgid "The request is too complex to process. Please try reducing the amount of data requested."
+msgstr "The request is too complex to process. Please try reducing the amount of data requested."
+
 #. js-lingui-id: Zi9X+u
 #: src/engine/metadata-modules/role/role.service.ts
 msgid "The role you are looking for could not be found. It may have been deleted or you may not have access to it."

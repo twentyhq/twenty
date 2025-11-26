@@ -5421,6 +5421,11 @@ msgstr "이메일을 보낼 필요가 없다면 비워 두세요."
 msgid "Leave workspace"
 msgstr "워크스페이스 나가기"
 
+#. js-lingui-id: MP1v+1
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Legend"
+msgstr ""
+
 #. js-lingui-id: 8PPI2g
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than or equal"

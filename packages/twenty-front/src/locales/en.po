@@ -5416,6 +5416,11 @@ msgstr "Leave blank if you don't need to send emails."
 msgid "Leave workspace"
 msgstr "Leave workspace"
 
+#. js-lingui-id: MP1v+1
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Legend"
+msgstr "Legend"
+
 #. js-lingui-id: 8PPI2g
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than or equal"
