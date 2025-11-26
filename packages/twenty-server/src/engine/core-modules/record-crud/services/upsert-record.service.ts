@@ -15,7 +15,7 @@ import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-me
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { buildFieldMapsForObject } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-for-object.util';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { computeUniqueIndexWhereClause } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-index-where-clause.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -106,7 +106,10 @@ export class UpsertRecordService {
         });
 
       const { fieldIdByName, fieldIdByJoinColumnName } =
-        buildFieldMapsForObject(flatFieldMetadataMaps, flatObjectMetadata.id);
+        buildFieldMapsFromFlatObjectMetadata(
+          flatFieldMetadataMaps,
+          flatObjectMetadata,
+        );
 
       const uniqueFieldsToUpdate = fieldsToUpdateArray
         .map(

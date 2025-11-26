@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { type EntitySchemaRelationOptions } from 'typeorm';
 
-import { getFieldsForObject } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-fields-for-object.util';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -24,7 +24,7 @@ export class EntitySchemaRelationFactory {
   ): EntitySchemaRelationMap {
     const entitySchemaRelationMap: EntitySchemaRelationMap = {};
 
-    const flatFieldMetadatas = getFieldsForObject(
+    const flatFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
       flatObjectMetadata,
       flatFieldMetadataMaps,
     );

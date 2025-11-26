@@ -18,7 +18,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsForObject } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-for-object.util';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -242,9 +242,9 @@ export class WorkflowDatabaseEventTriggerListener {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }) {
-    const { fieldIdByJoinColumnName } = buildFieldMapsForObject(
+    const { fieldIdByJoinColumnName } = buildFieldMapsFromFlatObjectMetadata(
       flatFieldMetadataMaps,
-      flatObjectMetadata.id,
+      flatObjectMetadata,
     );
 
     for (const [joinColumnName, joinFieldId] of Object.entries(

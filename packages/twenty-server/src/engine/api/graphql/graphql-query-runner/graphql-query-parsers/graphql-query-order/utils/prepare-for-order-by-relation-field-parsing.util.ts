@@ -10,7 +10,7 @@ import {
 import { isGroupByRelationField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-relation-field.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsForObject } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-for-object.util';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const prepareForOrderByRelationFieldParsing = ({
@@ -64,10 +64,11 @@ export const prepareForOrderByRelationFieldParsing = ({
     );
   }
 
-  const { fieldIdByName: targetFieldIdByName } = buildFieldMapsForObject(
-    flatFieldMetadataMaps,
-    targetObjectMetadata.id,
-  );
+  const { fieldIdByName: targetFieldIdByName } =
+    buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      targetObjectMetadata,
+    );
 
   const nestedFieldMetadataId = targetFieldIdByName[nestedFieldName];
 

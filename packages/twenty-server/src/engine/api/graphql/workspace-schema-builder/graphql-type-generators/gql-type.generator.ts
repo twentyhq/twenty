@@ -21,7 +21,7 @@ import { ObjectMetadataWithRelationsGqlObjectTypeGenerator } from 'src/engine/ap
 import { MutationTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/mutation-type.generator';
 import { QueryTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/query-type.generator';
 import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
-import { getFieldsForObject } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-fields-for-object.util';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 
@@ -91,7 +91,7 @@ export class GqlTypeGenerator {
     );
 
     for (const flatObjectMetadata of objectMetadataCollection) {
-      const fields = getFieldsForObject(
+      const fields = getFlatFieldsFromFlatObjectMetadata(
         flatObjectMetadata,
         flatFieldMetadataMaps,
       );

@@ -7,7 +7,7 @@ import { capitalize } from 'twenty-shared/utils';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsForObject } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-for-object.util';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 
@@ -26,10 +26,11 @@ export function formatData<T>(
     ) as T;
   }
 
-  const { fieldIdByName, fieldIdByJoinColumnName } = buildFieldMapsForObject(
-    flatFieldMetadataMaps,
-    flatObjectMetadata.id,
-  );
+  const { fieldIdByName, fieldIdByJoinColumnName } =
+    buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const newData: Record<string, any> = {};

@@ -13,7 +13,7 @@ import { transformPhonesValue } from 'src/engine/core-modules/record-transformer
 import { transformRichTextV2Value } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text-v2.util';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsForObject } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-for-object.util';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
@@ -29,9 +29,9 @@ export class RecordInputTransformerService {
   }): Promise<Partial<ObjectRecord>> {
     let transformedEntries = {};
 
-    const { fieldIdByName } = buildFieldMapsForObject(
+    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
       flatFieldMetadataMaps,
-      flatObjectMetadata.id,
+      flatObjectMetadata,
     );
 
     for (const [key, value] of Object.entries(recordInput)) {

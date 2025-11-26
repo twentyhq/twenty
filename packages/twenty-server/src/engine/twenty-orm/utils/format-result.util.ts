@@ -15,7 +15,7 @@ import {
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsForObject } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-for-object.util';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils/get-composite-field-metadata-collection';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
@@ -50,9 +50,9 @@ export function formatResult<T>(
     throw new Error('Object metadata is missing');
   }
 
-  const { fieldIdByName } = buildFieldMapsForObject(
+  const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
     flatFieldMetadataMaps,
-    flatObjectMetadata.id,
+    flatObjectMetadata,
   );
 
   const compositeFieldMetadataMap = getCompositeFieldMetadataMap(

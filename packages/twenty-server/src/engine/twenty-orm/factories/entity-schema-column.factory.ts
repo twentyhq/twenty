@@ -9,7 +9,7 @@ import { type ColumnType, type EntitySchemaColumnOptions } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { getFieldsForObject } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-fields-for-object.util';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
@@ -36,7 +36,7 @@ export class EntitySchemaColumnFactory {
   ): EntitySchemaColumnMap {
     let entitySchemaColumnMap: EntitySchemaColumnMap = {};
 
-    const fieldMetadataCollection = getFieldsForObject(
+    const fieldMetadataCollection = getFlatFieldsFromFlatObjectMetadata(
       flatObjectMetadata,
       flatFieldMetadataMaps,
     );

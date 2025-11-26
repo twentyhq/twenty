@@ -8,7 +8,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsForObject } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-for-object.util';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ConnectObject } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
@@ -136,9 +136,9 @@ const computeRecordToConnectCondition = (
   uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[];
   targetObjectNameSingular: string;
 } => {
-  const { fieldIdByName } = buildFieldMapsForObject(
+  const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
     flatFieldMetadataMaps,
-    flatObjectMetadata.id,
+    flatObjectMetadata,
   );
 
   const field = flatFieldMetadataMaps.byId[fieldIdByName[connectFieldName]];

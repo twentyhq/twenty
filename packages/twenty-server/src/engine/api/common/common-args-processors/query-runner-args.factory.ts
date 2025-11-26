@@ -8,7 +8,7 @@ import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsForObject } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-for-object.util';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
@@ -28,9 +28,9 @@ export class QueryRunnerArgsFactory {
       return filter;
     }
 
-    const { fieldIdByName } = buildFieldMapsForObject(
+    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
       flatFieldMetadataMaps,
-      flatObjectMetadata.id,
+      flatObjectMetadata,
     );
 
     const overrideFilter = (filterObject: ObjectRecordFilter) => {

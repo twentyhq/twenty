@@ -54,7 +54,7 @@ import { transformRichTextV2Value } from 'src/engine/core-modules/record-transfo
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsForObject } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-for-object.util';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
@@ -91,10 +91,11 @@ export class DataArgProcessor {
         workspace.id,
       );
 
-    const { fieldIdByName, fieldIdByJoinColumnName } = buildFieldMapsForObject(
-      flatFieldMetadataMaps,
-      flatObjectMetadata.id,
-    );
+    const { fieldIdByName, fieldIdByJoinColumnName } =
+      buildFieldMapsFromFlatObjectMetadata(
+        flatFieldMetadataMaps,
+        flatObjectMetadata,
+      );
 
     const processedRecords: Partial<ObjectRecord>[] = [];
 

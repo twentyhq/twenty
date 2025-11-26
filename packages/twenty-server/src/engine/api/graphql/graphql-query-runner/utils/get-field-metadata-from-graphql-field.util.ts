@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsForObject } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-for-object.util';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -21,9 +21,9 @@ export function getFieldMetadataFromGraphQLField({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: GetFieldMetadataFromGraphQLFieldArgs): FlatFieldMetadata | undefined {
-  const { fieldIdByName } = buildFieldMapsForObject(
+  const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
     flatFieldMetadataMaps,
-    flatObjectMetadata.id,
+    flatObjectMetadata,
   );
 
   const sourceFieldMetadataId = fieldIdByName[graphQLField];

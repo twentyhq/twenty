@@ -35,7 +35,7 @@ import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner
 import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsForObject } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-for-object.util';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
@@ -229,9 +229,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       } else if (recordsWithValues.length === 1) {
         mergedResult[fieldName] = recordsWithValues[0].value;
       } else {
-        const { fieldIdByName } = buildFieldMapsForObject(
+        const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
           flatFieldMetadataMaps,
-          flatObjectMetadata.id,
+          flatObjectMetadata,
         );
         const fieldMetadata =
           flatFieldMetadataMaps.byId[fieldIdByName[fieldName]];
@@ -264,9 +264,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     flatObjectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ): boolean {
-    const { fieldIdByName } = buildFieldMapsForObject(
+    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
       flatFieldMetadataMaps,
-      flatObjectMetadata.id,
+      flatObjectMetadata,
     );
     const fieldMetadata = flatFieldMetadataMaps.byId[fieldIdByName[fieldName]];
 

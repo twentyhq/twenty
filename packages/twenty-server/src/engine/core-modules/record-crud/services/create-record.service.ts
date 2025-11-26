@@ -14,7 +14,7 @@ import { RecordPositionService } from 'src/engine/core-modules/record-position/s
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { buildFieldMapsForObject } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-for-object.util';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
@@ -86,7 +86,10 @@ export class CreateRecordService {
       });
 
       const { fieldIdByName, fieldIdByJoinColumnName } =
-        buildFieldMapsForObject(flatFieldMetadataMaps, flatObjectMetadata.id);
+        buildFieldMapsFromFlatObjectMetadata(
+          flatFieldMetadataMaps,
+          flatObjectMetadata,
+        );
 
       const validObjectRecord = Object.fromEntries(
         Object.entries(objectRecord).filter(
