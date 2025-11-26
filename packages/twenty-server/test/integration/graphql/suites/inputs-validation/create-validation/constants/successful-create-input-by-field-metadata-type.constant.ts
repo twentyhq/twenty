@@ -1,6 +1,7 @@
 import { type FieldMetadataTypesToTestForCreateInputValidation } from 'test/integration/graphql/suites/inputs-validation/types/field-metadata-type-to-test';
 import { TEST_TARGET_OBJECT_RECORD_ID_FIELD_VALUE } from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isEmptyObject } from 'twenty-shared/utils';
 
 export const successfulCreateInputByFieldMetadataType: {
   [K in Exclude<
@@ -134,7 +135,7 @@ export const successfulCreateInputByFieldMetadataType: {
         rawJsonField: {},
       },
       validateInput: (record: Record<string, any>) => {
-        return Object.keys(record.rawJsonField).length === 0;
+        return isEmptyObject(record.rawJsonField);
       },
     },
     {
@@ -182,7 +183,9 @@ export const successfulCreateInputByFieldMetadataType: {
         arrayField: [],
       },
       validateInput: (record: Record<string, any>) => {
-        return record.arrayField.length === 0;
+        return (
+          Array.isArray(record.arrayField) && record.arrayField.length === 0
+        );
       },
     },
     {
@@ -190,7 +193,9 @@ export const successfulCreateInputByFieldMetadataType: {
         arrayField: null,
       },
       validateInput: (record: Record<string, any>) => {
-        return record.arrayField === null;
+        return (
+          Array.isArray(record.arrayField) && record.arrayField.length === 0
+        );
       },
     },
   ],
@@ -229,7 +234,10 @@ export const successfulCreateInputByFieldMetadataType: {
         multiSelectField: [],
       },
       validateInput: (record: Record<string, any>) => {
-        return record.multiSelectField.length === 0;
+        return (
+          Array.isArray(record.multiSelectField) &&
+          record.multiSelectField.length === 0
+        );
       },
     },
     {
@@ -237,7 +245,10 @@ export const successfulCreateInputByFieldMetadataType: {
         multiSelectField: null,
       },
       validateInput: (record: Record<string, any>) => {
-        return record.multiSelectField === null;
+        return (
+          Array.isArray(record.multiSelectField) &&
+          record.multiSelectField.length === 0
+        );
       },
     },
   ],

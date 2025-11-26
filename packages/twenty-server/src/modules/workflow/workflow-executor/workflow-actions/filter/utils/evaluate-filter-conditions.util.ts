@@ -319,6 +319,9 @@ function evaluateNumberFilter(filter: ResolvedFilter): boolean {
     case ViewFilterOperand.IS_NOT_EMPTY:
       return isNonEmptyString(leftValue);
 
+    case ViewFilterOperand.IS:
+      return Number(leftValue) === Number(rightValue);
+
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for number filter`,

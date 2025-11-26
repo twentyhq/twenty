@@ -3,7 +3,6 @@ import { Draggable } from '@hello-pangea/dnd';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { StyledTabContainer, TabContent } from 'twenty-ui/input';
 
@@ -16,12 +15,9 @@ type PageLayoutTabListReorderableTabProps = {
 };
 
 const StyledTabContent = styled(TabContent)<{ isBeingEdited: boolean }>`
-  ${({ isBeingEdited, theme }) =>
-    isBeingEdited &&
-    css`
-      border: 1px solid ${theme.color.blue};
-      border-radius: ${theme.border.radius.sm};
-    `}
+  outline: ${({ isBeingEdited, theme }) =>
+    isBeingEdited ? `1px solid ${theme.color.blue}` : 'none'};
+  outline-offset: -1px;
 `;
 
 export const PageLayoutTabListReorderableTab = ({

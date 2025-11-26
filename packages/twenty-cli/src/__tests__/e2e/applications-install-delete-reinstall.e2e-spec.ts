@@ -1,6 +1,6 @@
 import { existsSync } from 'fs';
-import { AppUninstallCommand } from 'src/commands/app-uninstall.command';
 import { AppSyncCommand } from '../../commands/app-sync.command';
+import { AppUninstallCommand } from '../../commands/app-uninstall.command';
 import { COVERED_APPLICATION_FOLDERS } from './constants/covered-applications-folder.constant';
 import { getTestedApplicationPath } from './utils/get-tested-application-path.util';
 

@@ -146,9 +146,11 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
   async updateOneField({
     updateFieldInput,
     workspaceId,
+    isSystemBuild = false,
   }: {
     updateFieldInput: Omit<UpdateFieldInput, 'workspaceId'>;
     workspaceId: string;
+    isSystemBuild?: boolean;
   }): Promise<FlatFieldMetadata> {
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
@@ -256,7 +258,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
             }),
           },
           buildOptions: {
-            isSystemBuild: false,
+            isSystemBuild,
             inferDeletionFromMissingEntities: {
               index: true,
               viewGroup: true,

@@ -1,6 +1,5 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
-import { CHART_LEGEND_ITEM_THRESHOLD } from '@/page-layout/widgets/graph/constants/ChartLegendItemThreshold';
 import {
   CustomCrosshairLayer,
   type SliceHoverData,
@@ -202,9 +201,6 @@ export const GraphWidgetLineChart = ({
   );
   const axisLeftConfig = getLineChartAxisLeftConfig(yAxisLabel, formatOptions);
 
-  const areThereTooManySeries = data.length > CHART_LEGEND_ITEM_THRESHOLD;
-  const shouldShowLegend = showLegend && !areThereTooManySeries;
-
   return (
     <StyledContainer id={id}>
       <GraphWidgetChartContainer
@@ -279,7 +275,7 @@ export const GraphWidgetLineChart = ({
         onMouseEnter={handleTooltipMouseEnter}
         onMouseLeave={handleTooltipMouseLeave}
       />
-      <GraphWidgetLegend show={shouldShowLegend} items={legendItems} />
+      <GraphWidgetLegend show={showLegend} items={legendItems} />
     </StyledContainer>
   );
 };

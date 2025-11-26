@@ -19,5 +19,7 @@ export const getSelectedColumnsFromRestrictedFields = (
     },
   });
 
-  return Object.keys(selectableFields);
+  return Object.keys(selectableFields).filter(
+    (columnName) => selectableFields[columnName],
+  );
 };

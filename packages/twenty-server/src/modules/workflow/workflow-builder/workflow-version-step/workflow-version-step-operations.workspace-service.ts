@@ -8,8 +8,9 @@ import { v4 } from 'uuid';
 
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
-import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { AiAgentRoleService } from 'src/engine/metadata-modules/ai-agent-role/ai-agent-role.service';
+import { AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
+import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
@@ -27,7 +28,6 @@ import {
   type WorkflowEmptyAction,
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
   outputSchema: {},
   errorHandlingOptions: {
@@ -59,7 +59,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
-    private readonly agentRoleService: AgentRoleService,
+    private readonly aiAgentRoleService: AiAgentRoleService,
   ) {}
 
   async runWorkflowVersionStepDeletionSideEffects({
@@ -104,7 +104,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           await this.agentRepository.delete({ id: agent.id, workspaceId });
 
           if (isDefined(roleTarget?.roleId) && isDefined(roleTarget?.id)) {
-            await this.agentRoleService.deleteAgentOnlyRoleIfUnused({
+            await this.aiAgentRoleService.deleteAgentOnlyRoleIfUnused({
               roleId: roleTarget.roleId,
               roleTargetId: roleTarget.id,
               workspaceId,
@@ -369,7 +369,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           icon: 'IconRobot',
           description: '',
           prompt: '',
-          modelId: 'auto',
+          modelId: DEFAULT_SMART_MODEL,
           responseFormat: { type: 'text' },
           workspaceId,
           isCustom: true,

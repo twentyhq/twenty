@@ -150,6 +150,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
     mockWorkflowRunWorkspaceService.getWorkflowRunOrFail.mockReturnValue({
       state: { flow: { steps: mockSteps }, stepInfos: mockStepInfos },
+      workflowId: 'workflow-id',
     });
 
     it('should execute a step and continue to the next step on success', async () => {
@@ -185,6 +186,11 @@ describe('WorkflowExecutorWorkspaceService', () => {
           {
             eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
             value: 1,
+            dimensions: {
+              execution_type: 'workflow_execution',
+              resource_id: 'workflow-id',
+              execution_context_1: null,
+            },
           },
         ],
         'workspace-id',
@@ -391,7 +397,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
   describe('sendWorkflowNodeRunEvent', () => {
     it('should emit a billing event', () => {
-      service['sendWorkflowNodeRunEvent']('workspace-id');
+      service['sendWorkflowNodeRunEvent']('workspace-id', 'workflow-id');
 
       expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
         BILLING_FEATURE_USED,
@@ -399,6 +405,11 @@ describe('WorkflowExecutorWorkspaceService', () => {
           {
             eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
             value: 1,
+            dimensions: {
+              execution_type: 'workflow_execution',
+              resource_id: 'workflow-id',
+              execution_context_1: null,
+            },
           },
         ],
         'workspace-id',

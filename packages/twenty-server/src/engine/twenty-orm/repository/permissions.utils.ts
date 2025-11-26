@@ -215,7 +215,20 @@ export const validateQueryIsPermittedOrThrow = ({
     return;
   }
 
-  const allFieldsSelected = expressionMap.selects.some(
+  let expressionMapSelectsOnMainEntity = expressionMap.selects;
+
+  if (!isEmpty(expressionMap.joinAttributes)) {
+    const { selectsWithoutJoinedAliases } =
+      validatePermissionsForJoinsAndReturnSelectsWithoutJoins({
+        expressionMap,
+        objectsPermissions,
+        objectMetadataMaps,
+      });
+
+    expressionMapSelectsOnMainEntity = selectsWithoutJoinedAliases;
+  }
+
+  const allFieldsSelected = expressionMapSelectsOnMainEntity.some(
     (select) => select.selection === mainEntity,
   );
 
@@ -224,7 +237,8 @@ export const validateQueryIsPermittedOrThrow = ({
 
   selectedColumns = getSelectedColumnsFromExpressionMap({
     operationType,
-    expressionMap,
+    expressionMapReturning: expressionMap.returning,
+    expressionMapSelects: expressionMapSelectsOnMainEntity,
     allFieldsSelected,
   });
 
@@ -257,6 +271,63 @@ export const validateQueryIsPermittedOrThrow = ({
     allFieldsSelected,
     updatedColumns,
   });
+};
+
+const validatePermissionsForJoinsAndReturnSelectsWithoutJoins = ({
+  expressionMap,
+  objectsPermissions,
+  objectMetadataMaps,
+}: {
+  expressionMap: QueryExpressionMap;
+  objectsPermissions: ObjectsPermissions;
+  objectMetadataMaps: ObjectMetadataMaps;
+}) => {
+  const joinAttributesAliases = new Set(
+    expressionMap.joinAttributes.map((join) => join.alias.name),
+  );
+
+  const indexesOfSelectsForJoinedAlias: number[] = [];
+
+  for (const [_index, joinedAlias] of joinAttributesAliases.entries()) {
+    const entity = expressionMap.aliases.find(
+      (alias) => alias.type === 'join' && alias.name === joinedAlias,
+    )?.metadata;
+
+    if (isDefined(entity)) {
+      for (const [index, select] of expressionMap.selects.entries()) {
+        const regex = /"(\w+)"\."(\w+)"/;
+        const extractedAlias = select.selection.match(regex)?.[1]; // "person"."name" -> "person"
+
+        if (isDefined(extractedAlias) && extractedAlias === joinedAlias) {
+          indexesOfSelectsForJoinedAlias.push(index);
+
+          const selectedColumns = getSelectedColumnsFromExpressionMap({
+            operationType: 'select',
+            expressionMapSelects: expressionMap.selects.filter(
+              (_select, indexOfSelect) => indexOfSelect === index,
+            ),
+            allFieldsSelected: false,
+          });
+
+          validateOperationIsPermittedOrThrow({
+            entityName: entity.name,
+            operationType: 'select' as OperationType,
+            objectsPermissions,
+            objectMetadataMaps,
+            selectedColumns,
+            allFieldsSelected: false,
+            updatedColumns: [],
+          });
+        }
+      }
+    }
+  }
+
+  const selectsWithoutJoinedAliases = expressionMap.selects.filter(
+    (_select, index) => !indexesOfSelectsForJoinedAlias.includes(index),
+  );
+
+  return { selectsWithoutJoinedAliases };
 };
 
 const validateReadFieldPermissionOrThrow = ({
@@ -336,12 +407,14 @@ const validateUpdateFieldPermissionOrThrow = ({
 
 const getSelectedColumnsFromExpressionMap = ({
   operationType,
-  expressionMap,
+  expressionMapReturning,
+  expressionMapSelects,
   allFieldsSelected,
 }: {
   operationType: string;
-  expressionMap: QueryExpressionMap;
+  expressionMapSelects: { selection: string }[];
   allFieldsSelected: boolean;
+  expressionMapReturning?: string | string[];
 }) => {
   let selectedColumns: string[] | '*' = [];
 
@@ -350,17 +423,16 @@ const getSelectedColumnsFromExpressionMap = ({
       operationType,
     )
   ) {
-    if (!isDefined(expressionMap.returning)) {
+    if (!isDefined(expressionMapReturning)) {
       throw new InternalServerError(
         'Returning columns are not set for update query',
       );
     }
     selectedColumns =
-      expressionMap.returning === '*' ? '*' : [expressionMap.returning].flat();
+      expressionMapReturning === '*' ? '*' : [expressionMapReturning].flat();
   } else if (!allFieldsSelected) {
-    selectedColumns = getSelectedColumnsFromExpressionMapSelects(
-      expressionMap.selects,
-    );
+    selectedColumns =
+      getSelectedColumnsFromExpressionMapSelects(expressionMapSelects);
   }
 
   return selectedColumns;

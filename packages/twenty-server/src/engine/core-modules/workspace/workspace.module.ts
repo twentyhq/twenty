@@ -5,6 +5,7 @@ import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -28,13 +29,12 @@ import { WorkspaceWorkspaceMemberListener } from 'src/engine/core-modules/worksp
 import { workspaceAutoResolverOpts } from 'src/engine/core-modules/workspace/workspace.auto-resolver-opts';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.resolver';
-import { AgentModule } from 'src/engine/metadata-modules/agent/agent.module';
+import { AiAgentModule } from 'src/engine/metadata-modules/ai-agent/ai-agent.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
-import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 
@@ -49,7 +49,6 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
         FileModule,
         TokenModule,
         FileUploadModule,
-        WorkspaceMetadataCacheModule,
         NestjsQueryTypeOrmModule.forFeature([
           UserEntity,
           WorkspaceEntity,
@@ -65,13 +64,14 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
         PermissionsModule,
         WorkspaceCacheStorageModule,
         RoleModule,
-        AgentModule,
+        AiAgentModule,
         DnsManagerModule,
         WorkspaceDomainsModule,
         SubdomainManagerModule,
         CustomDomainManagerModule,
         ViewModule,
         WorkspaceManyOrAllFlatEntityMapsCacheModule,
+        ApplicationModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,

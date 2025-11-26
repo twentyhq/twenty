@@ -1,9 +1,11 @@
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useEmailsField } from '@/object-record/record-field/ui/meta-types/hooks/useEmailsField';
 import { EmailsFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/EmailsFieldMenuItem';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { emailsSchema } from '@/object-record/record-field/ui/types/guards/isFieldEmailsValue';
 import { emailSchema } from '@/object-record/record-field/ui/validation-schemas/emailSchema';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo } from 'react';
@@ -14,11 +16,15 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 export const EmailsFieldInput = () => {
-  const { setDraftValue, draftValue, fieldDefinition } = useEmailsField();
+  const { getLatestDraftValue, setDraftValue, draftValue, fieldDefinition } =
+    useEmailsField();
   const { copyToClipboard } = useCopyToClipboard();
   const { t } = useLingui();
 
   const { onEscape, onClickOutside } = useContext(FieldInputEventContext);
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
 
   const emails = useMemo<string[]>(
     () =>
@@ -72,7 +78,8 @@ export const EmailsFieldInput = () => {
     _newValue: any,
     event: MouseEvent | TouchEvent,
   ) => {
-    onClickOutside?.({ newValue: draftValue, event });
+    const latestDraftValue = getLatestDraftValue(instanceId);
+    onClickOutside?.({ newValue: latestDraftValue, event });
   };
 
   const handleEscape = (_newValue: any) => {

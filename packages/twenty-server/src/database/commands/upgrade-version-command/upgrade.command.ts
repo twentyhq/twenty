@@ -21,8 +21,11 @@ import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-ve
 import { CleanOrphanedRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-role-targets.command';
 import { CleanOrphanedUserWorkspacesCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-user-workspaces.command';
 import { CreateTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-create-twenty-standard-application.command';
+import { AddCalendarEventsImportScheduledSyncStageCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-add-calendar-events-import-scheduled-sync-stage.command';
+import { AddMessagesImportScheduledSyncStageCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-add-messages-import-scheduled-sync-stage.command';
 import { CreateWorkspaceCustomApplicationCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-create-workspace-custom-application.command';
 import { SetStandardApplicationNotUninstallableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-set-standard-application-not-uninstallable.command';
+import { WorkspaceCustomApplicationIdNonNullableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-workspace-custom-application-id-non-nullable-migration.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
 import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-deduplicate-unique-fields.command';
@@ -32,6 +35,7 @@ import { MigrateWorkflowStepFilterOperandValueCommand } from 'src/database/comma
 import { RegeneratePersonSearchVectorWithPhonesCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-regenerate-person-search-vector-with-phones.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
@@ -47,6 +51,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyConfigService: TwentyConfigService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly dataSourceService: DataSourceService,
     protected readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
 
     // 1.6 Commands
@@ -79,14 +84,18 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly seedStandardApplicationsCommand: CreateTwentyStandardApplicationCommand,
 
     // 1.12 Commands
-    protected readonlysetStandardApplicationNotUninstallableCommand: SetStandardApplicationNotUninstallableCommand,
+    protected readonly setStandardApplicationNotUninstallableCommand: SetStandardApplicationNotUninstallableCommand,
     protected readonly createTwentyStandardApplicationCommand: CreateTwentyStandardApplicationCommand,
     protected readonly createWorkspaceCustomApplicationCommand: CreateWorkspaceCustomApplicationCommand,
+    protected readonly workspaceCustomApplicationIdNonNullableCommand: WorkspaceCustomApplicationIdNonNullableCommand,
+    protected readonly addMessagesImportScheduledSyncStageCommand: AddMessagesImportScheduledSyncStageCommand,
+    protected readonly addCalendarEventsImportScheduledSyncStageCommand: AddCalendarEventsImportScheduledSyncStageCommand,
   ) {
     super(
       workspaceRepository,
       twentyConfigService,
       twentyORMGlobalManager,
+      dataSourceService,
       syncWorkspaceMetadataCommand,
     );
 
@@ -138,10 +147,13 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_1120: VersionCommands = {
-      beforeSyncMetadata: [this.createWorkspaceCustomApplicationCommand],
-      afterSyncMetadata: [
-        this.readonlysetStandardApplicationNotUninstallableCommand,
+      beforeSyncMetadata: [
+        this.createWorkspaceCustomApplicationCommand,
+        this.workspaceCustomApplicationIdNonNullableCommand,
+        this.addMessagesImportScheduledSyncStageCommand,
+        this.addCalendarEventsImportScheduledSyncStageCommand,
       ],
+      afterSyncMetadata: [this.setStandardApplicationNotUninstallableCommand],
     };
 
     this.allCommands = {
