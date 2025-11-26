@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { GraphQLEnumType, GraphQLInputObjectType } from 'graphql';
-import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
-import { firstDayOfWeekSchema, isDefined } from 'twenty-shared/utils';
+import {
+  FirstDayOfTheWeek,
+  ObjectRecordGroupByDateGranularity,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
@@ -44,7 +47,7 @@ export class GroupByDateGranularityInputTypeGenerator {
 
     const firstDayOfWeekEnum = new GraphQLEnumType({
       name: 'FirstDayOfTheWeek',
-      values: firstDayOfWeekSchema.options.reduce(
+      values: Object.values(FirstDayOfTheWeek).reduce(
         (acc, option) => {
           acc[option] = { value: option };
 
