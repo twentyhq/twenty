@@ -87,7 +87,12 @@ export const GraphWidgetPieChart = ({
     const tooltipData = createTooltipData(datum);
     if (!isDefined(tooltipData)) return null;
 
-    return <GraphWidgetTooltip items={[tooltipData.tooltipItem]} />;
+    return (
+      <GraphWidgetTooltip
+        items={[tooltipData.tooltipItem]}
+        onGraphWidgetTooltipClick={() => handleSliceClick(datum)}
+      />
+    );
   };
 
   return (
@@ -100,6 +105,7 @@ export const GraphWidgetPieChart = ({
           <ResponsivePie
             data={data}
             innerRadius={0.8}
+            padAngle={1}
             colors={enrichedData.map((item) => item.colorScheme.solid)}
             borderWidth={0}
             enableArcLinkLabels={false}
