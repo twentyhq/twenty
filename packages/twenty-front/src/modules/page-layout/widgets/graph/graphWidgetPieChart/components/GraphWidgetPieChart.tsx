@@ -16,6 +16,7 @@ import {
   type ComputedDatum,
   type PieTooltipProps,
 } from '@nivo/pie';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphWidgetPieChartProps = {
@@ -107,7 +108,10 @@ export const GraphWidgetPieChart = ({
     );
   };
 
-  const hasNoData = data.length === 0;
+  const hasNoData = useMemo(
+    () => data.length === 0 || data.every((item) => item.value === 0),
+    [data],
+  );
 
   const chartData = hasNoData ? emptyStateData : data;
   const chartColors = hasNoData
