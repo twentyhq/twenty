@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isGmailEmailAliasError } from 'src/modules/connected-account/email-alias-manager/drivers/google/utils/is-gmail-email-alias-error';
+import { isGmailEmailAliasError } from 'src/modules/connected-account/email-alias-manager/drivers/google/utils/is-gmail-email-alias-error.util';
 import { parseGmailEmailAliasError } from 'src/modules/connected-account/email-alias-manager/drivers/google/utils/parse-gmail-email-alias-error.util';
 import {
   MessageImportDriverException,
@@ -16,8 +16,6 @@ export class GmailFoldersErrorHandlerService {
   constructor() {}
 
   public handleError(error: unknown): void {
-    this.logger.log(`Error fetching folders`, error);
-
     if (isGmailNetworkError(error)) {
       throw parseGmailNetworkError(error);
     }
@@ -26,10 +24,10 @@ export class GmailFoldersErrorHandlerService {
       throw parseGmailEmailAliasError(error);
     }
 
+    this.logger.error(`Error fetching folders: ${error}`);
     throw new MessageImportDriverException(
       'Unknown error',
       MessageImportDriverExceptionCode.UNKNOWN,
-      { cause: error as Error },
     );
   }
 }
