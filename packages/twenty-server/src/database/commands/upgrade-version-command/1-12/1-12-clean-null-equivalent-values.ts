@@ -130,7 +130,7 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
                   );
 
                   await dataSource.query(
-                    `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${columnName}" DROP NOT NULL`,
+                    `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${columnName}" DROP NOT NULL, ALTER COLUMN "${columnName}" DROP DEFAULT`,
                     [],
                     undefined,
                     { shouldBypassPermissionChecks: true },
