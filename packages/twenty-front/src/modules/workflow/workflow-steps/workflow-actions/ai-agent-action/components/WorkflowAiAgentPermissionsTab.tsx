@@ -22,14 +22,11 @@ import {
   useUpsertObjectPermissionsMutation,
 } from '~/generated-metadata/graphql';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
-import {
-  StyledLabel,
-  StyledList,
-  StyledText,
-} from './WorkflowAiAgentPermissions.styles';
+
+import { StyledContainer } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenuStyles';
+import { WorkflowAiAgentPermissionList } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionList';
 import { WorkflowAiAgentPermissionsCrudList } from './WorkflowAiAgentPermissionsCrudList';
 import { WorkflowAiAgentPermissionsObjectsList } from './WorkflowAiAgentPermissionsObjectsList';
-import { WorkflowAiAgentPermissionsPermissionRow } from './WorkflowAiAgentPermissionsPermissionRow';
 
 const StyledSearchInput = styled(TextInput)`
   width: 100%;
@@ -95,16 +92,6 @@ const CRUD_PERMISSIONS: Array<{
   },
 ];
 
-const CRUD_PERMISSION_ORDER = CRUD_PERMISSIONS.reduce<
-  Record<SettingsRoleObjectPermissionKey, number>
->(
-  (orderMap, permission, index) => {
-    orderMap[permission.key] = index;
-    return orderMap;
-  },
-  {} as Record<SettingsRoleObjectPermissionKey, number>,
-);
-
 type WorkflowAiAgentPermissionsTabProps = {
   action: WorkflowAiAgentAction;
   readonly: boolean;
@@ -141,38 +128,6 @@ export const WorkflowAiAgentPermissionsTab = ({
 
   const role = rolesData?.getRoles.find((item) => item.id === agent?.roleId);
   const objectPermissions = role?.objectPermissions || [];
-
-  const getExistingPermissions = () => {
-    const existingPermissions: Array<{
-      objectMetadataId: string;
-      objectLabel: string;
-      permissionKey: SettingsRoleObjectPermissionKey;
-      permissionLabel: string;
-    }> = [];
-
-    objectPermissions.forEach((objectPermission) => {
-      const objectMetadata = objectMetadataItems.find(
-        (item) => item.id === objectPermission.objectMetadataId,
-      );
-
-      if (!objectMetadata) {
-        return;
-      }
-
-      CRUD_PERMISSIONS.forEach((crud) => {
-        if (objectPermission[crud.key] === true) {
-          existingPermissions.push({
-            objectMetadataId: objectPermission.objectMetadataId,
-            objectLabel: objectMetadata.labelPlural,
-            permissionKey: crud.key,
-            permissionLabel: crud.label(objectMetadata.labelPlural),
-          });
-        }
-      });
-    });
-
-    return existingPermissions;
-  };
 
   const filteredObjects = searchQuery.trim()
     ? objectMetadataItems.filter((item) => {
@@ -401,22 +356,6 @@ export const WorkflowAiAgentPermissionsTab = ({
     return null;
   }
 
-  const existingPermissions = getExistingPermissions();
-  const sortedExistingPermissions = existingPermissions
-    .slice()
-    .sort((permissionA, permissionB) => {
-      if (
-        permissionA.objectMetadataId === permissionB.objectMetadataId &&
-        permissionA.permissionKey !== permissionB.permissionKey
-      ) {
-        return (
-          CRUD_PERMISSION_ORDER[permissionA.permissionKey] -
-          CRUD_PERMISSION_ORDER[permissionB.permissionKey]
-        );
-      }
-
-      return permissionA.objectLabel.localeCompare(permissionB.objectLabel);
-    });
   const selectedObject = isDefined(workflowAiAgentPermissionsSelectedObjectId)
     ? objectMetadataItems.find(
         (item) => item.id === workflowAiAgentPermissionsSelectedObjectId,
@@ -481,36 +420,41 @@ export const WorkflowAiAgentPermissionsTab = ({
 
       {isDefined(agent.roleId) &&
         !workflowAiAgentPermissionsIsAddingPermission && (
-          <div>
-            <StyledLabel>CRUD</StyledLabel>
-            {sortedExistingPermissions.length > 0 ? (
-              <StyledList>
-                {sortedExistingPermissions.map((permission) => (
-                  <WorkflowAiAgentPermissionsPermissionRow
-                    key={`${permission.objectMetadataId}-${permission.permissionKey}`}
-                    permission={{
-                      key: permission.permissionKey,
-                      label: permission.permissionLabel,
-                    }}
-                    isEnabled={true}
-                    readonly={readonly}
-                    onDelete={() => {
-                      void handleDeletePermission(
-                        permission.objectMetadataId,
-                        permission.permissionKey,
-                      );
-                    }}
-                  />
-                ))}
-              </StyledList>
-            ) : (
-              <StyledList>
-                <StyledEmptyState>
-                  <StyledText>{t`No permissions added yet`}</StyledText>
-                </StyledEmptyState>
-              </StyledList>
-            )}
-          </div>
+          // <div>
+          //   <StyledLabel>CRUD</StyledLabel>
+          //   {sortedExistingPermissions.length > 0 ? (
+          //     <StyledList>
+          //       {sortedExistingPermissions.map((permission) => (
+          //         <WorkflowAiAgentPermissionsPermissionRow
+          //           key={`${permission.objectMetadataId}-${permission.permissionKey}`}
+          //           permission={{
+          //             key: permission.permissionKey,
+          //             label: permission.permissionLabel,
+          //           }}
+          //           isEnabled={true}
+          //           readonly={readonly}
+          //           onDelete={() => {
+          //             void handleDeletePermission(
+          //               permission.objectMetadataId,
+          //               permission.permissionKey,
+          //             );
+          //           }}
+          //         />
+          //       ))}
+          //     </StyledList>
+          //   ) : (
+          //     <StyledList>
+          //       <StyledEmptyState>
+          //         <StyledText>{t`No permissions added yet`}</StyledText>
+          //       </StyledEmptyState>
+          //     </StyledList>
+          //   )}
+          // </div>
+          <WorkflowAiAgentPermissionList
+            readonly={readonly}
+            objectPermissions={objectPermissions}
+            onDeletePermission={handleDeletePermission}
+          />
         )}
     </StyledContainer>
   );
