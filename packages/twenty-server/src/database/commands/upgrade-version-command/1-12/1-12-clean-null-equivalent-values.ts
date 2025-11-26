@@ -149,7 +149,7 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
           } else {
             if (!isDryRun) {
               await dataSource.query(
-                `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${field.name}" DROP NOT NULL`,
+                `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${field.name}" DROP NOT NULL, ALTER COLUMN "${field.name}" DROP DEFAULT`,
                 [],
                 undefined,
                 { shouldBypassPermissionChecks: true },
@@ -253,21 +253,20 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
           }
         }
       }
+    }
+    if (!isDryRun) {
+      await this.featureFlagRepository.upsert(
+        {
+          key: FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED,
+          value: true,
+          workspaceId,
+        },
+        ['key', 'workspaceId'],
+      );
 
-      if (!isDryRun) {
-        await this.featureFlagRepository.upsert(
-          {
-            key: FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED,
-            value: true,
-            workspaceId,
-          },
-          ['key', 'workspaceId'],
-        );
-
-        this.logger.log(
-          `Switched on feature flag ${FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED} for workspace ${workspaceId}`,
-        );
-      }
+      this.logger.log(
+        `Switched on feature flag ${FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED} for workspace ${workspaceId}`,
+      );
     }
   }
 
