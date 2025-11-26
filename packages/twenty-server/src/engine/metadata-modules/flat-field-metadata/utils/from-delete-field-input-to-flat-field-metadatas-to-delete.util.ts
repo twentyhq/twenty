@@ -52,6 +52,13 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
     );
   }
 
+  if (!flatFieldMetadataToDelete.isCustom) {
+    throw new FieldMetadataException(
+      'Deleting standard fields is not allowed',
+      FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+    );
+  }
+
   const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: flatFieldMetadataToDelete.objectMetadataId,
     flatEntityMaps: existingFlatObjectMetadataMaps,

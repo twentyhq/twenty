@@ -144,7 +144,11 @@ export class FlatObjectMetadataValidatorService {
         });
       }
 
-      if (!buildOptions.isSystemBuild && flatObjectMetadataToDelete.isActive) {
+      if (
+        !buildOptions.isSystemBuild &&
+        flatObjectMetadataToDelete.isActive &&
+        isStandardMetadata(flatObjectMetadataToDelete)
+      ) {
         validationResult.errors.push({
           code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
           message: t`Active objects cannot be deleted`,

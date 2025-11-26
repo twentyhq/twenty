@@ -249,6 +249,7 @@ export class FlatFieldMetadataValidatorService {
 
     if (
       flatFieldMetadataToDelete.isActive &&
+      !flatFieldMetadataToDelete.isCustom &&
       !relationTargetObjectMetadataHasBeenDeleted &&
       !parentObjectMetadataHasBeenDeleted
     ) {
