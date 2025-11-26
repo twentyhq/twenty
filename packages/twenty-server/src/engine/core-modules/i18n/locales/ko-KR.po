@@ -3316,6 +3316,11 @@ msgstr "권한을 설정하려는 객체를 찾을 수 없습니다. 삭제되�
 msgid "The opportunity name"
 msgstr "기회 이름"
 
+#. js-lingui-id: lk5nUN
+#: src/engine/core-modules/graphql/hooks/use-compute-complexity.hook.ts
+msgid "The request is too complex to process. Please try reducing the amount of data requested."
+msgstr ""
+
 #. js-lingui-id: Zi9X+u
 #: src/engine/metadata-modules/role/role.service.ts
 msgid "The role you are looking for could not be found. It may have been deleted or you may not have access to it."
