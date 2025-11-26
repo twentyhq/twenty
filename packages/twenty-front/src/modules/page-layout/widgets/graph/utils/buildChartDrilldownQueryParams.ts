@@ -26,11 +26,10 @@ export const buildChartDrilldownQueryParams = ({
     });
   }
 
-  const normalizedFields = normalizeChartConfigurationFields(configuration);
   const { groupByFieldMetadataId, dateGranularity, groupBySubFieldName } =
-    normalizedFields;
+    normalizeChartConfigurationFields(configuration);
 
-  const primaryField = groupByFieldMetadataId
+  const primaryField = isDefined(groupByFieldMetadataId)
     ? objectMetadataItem.fields.find(
         (field) => field.id === groupByFieldMetadataId,
       )
