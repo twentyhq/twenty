@@ -1,11 +1,15 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
+import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
 import {
   OrderByDirection,
   type AggregateOrderByWithGroupByField,
   type ObjectRecordGroupByDateGranularity,
   type ObjectRecordOrderByForCompositeField,
+  type ObjectRecordOrderByForRelationField,
   type ObjectRecordOrderByForScalarField,
   type ObjectRecordOrderByWithGroupByDateField,
 } from 'twenty-shared/types';
@@ -14,6 +18,7 @@ import {
   isDefined,
   isFieldMetadataDateKind,
 } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { GraphOrderBy } from '~/generated/graphql';
 
 const mapOrderByToDirection = (orderByEnum: GraphOrderBy): OrderByDirection => {
@@ -37,17 +42,20 @@ export const getGroupByOrderBy = ({
   groupBySubFieldName,
   aggregateOperation,
   dateGranularity,
+  objectMetadataItems,
 }: {
   graphOrderBy: GraphOrderBy;
   groupByField: FieldMetadataItem;
   groupBySubFieldName?: string | null;
   aggregateOperation?: string;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
+  objectMetadataItems?: ObjectMetadataItem[];
 }):
   | AggregateOrderByWithGroupByField
   | ObjectRecordOrderByForScalarField
   | ObjectRecordOrderByWithGroupByDateField
-  | ObjectRecordOrderByForCompositeField => {
+  | ObjectRecordOrderByForCompositeField
+  | ObjectRecordOrderByForRelationField => {
   switch (graphOrderBy) {
     case GraphOrderBy.FIELD_ASC:
     case GraphOrderBy.FIELD_DESC: {
@@ -67,6 +75,61 @@ export const getGroupByOrderBy = ({
           [groupByField.name]: {
             orderBy: mapOrderByToDirection(graphOrderBy),
             granularity: dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY,
+          },
+        };
+      } else if (
+        isFieldRelation(groupByField) ||
+        isFieldMorphRelation(groupByField)
+      ) {
+        if (!isDefined(groupBySubFieldName)) {
+          return {
+            [`${groupByField.name}Id`]: mapOrderByToDirection(graphOrderBy),
+          };
+        }
+
+        const parts = groupBySubFieldName.split('.');
+        const nestedFieldName = parts[0];
+        const nestedSubFieldName = parts[1];
+
+        const targetObjectNameSingular =
+          groupByField.relation?.targetObjectMetadata?.nameSingular;
+        const targetObjectMetadataItem = objectMetadataItems?.find(
+          (item) => item.nameSingular === targetObjectNameSingular,
+        );
+        const nestedField = targetObjectMetadataItem?.fields.find(
+          (f) => f.name === nestedFieldName,
+        );
+
+        const isNestedFieldDate =
+          nestedField?.type === FieldMetadataType.DATE ||
+          nestedField?.type === FieldMetadataType.DATE_TIME;
+
+        const direction = mapOrderByToDirection(graphOrderBy);
+
+        if (isNestedFieldDate && isDefined(dateGranularity)) {
+          return {
+            [groupByField.name]: {
+              [nestedFieldName]: {
+                orderBy: direction,
+                granularity: dateGranularity,
+              },
+            },
+          };
+        }
+
+        if (isDefined(nestedSubFieldName)) {
+          return {
+            [groupByField.name]: {
+              [nestedFieldName]: {
+                [nestedSubFieldName]: direction,
+              },
+            },
+          };
+        }
+
+        return {
+          [groupByField.name]: {
+            [nestedFieldName]: direction,
           },
         };
       } else {

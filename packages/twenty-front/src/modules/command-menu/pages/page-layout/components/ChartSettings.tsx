@@ -125,6 +125,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
             isGroupByEnabled as boolean,
             configuration,
             objectMetadataItem,
+            objectMetadataItems,
           ),
       )
       .map((item) => item.id),
@@ -180,6 +181,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                 isGroupByEnabled as boolean,
                 configuration,
                 objectMetadataItem,
+                objectMetadataItems,
               ),
           );
 

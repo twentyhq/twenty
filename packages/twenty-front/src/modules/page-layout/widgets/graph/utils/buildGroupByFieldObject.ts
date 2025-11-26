@@ -8,6 +8,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+export type GroupByFieldObject = Record<
+  string,
+  boolean | Record<string, boolean | string | Record<string, boolean | string>>
+>;
+
 export const buildGroupByFieldObject = ({
   field,
   subFieldName,
@@ -16,7 +21,7 @@ export const buildGroupByFieldObject = ({
   field: FieldMetadataItem;
   subFieldName?: string | null;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
-}): Record<string, boolean | Record<string, boolean | string>> => {
+}): GroupByFieldObject => {
   const isRelation = isFieldRelation(field) || isFieldMorphRelation(field);
   const isComposite = isCompositeFieldType(field.type);
   const isDateField =
@@ -24,7 +29,39 @@ export const buildGroupByFieldObject = ({
     field.type === FieldMetadataType.DATE_TIME;
 
   if (isRelation) {
-    return { [`${field.name}Id`]: true };
+    if (!isDefined(subFieldName)) {
+      return { [`${field.name}Id`]: true };
+    }
+
+    const parts = subFieldName.split('.');
+    const nestedFieldName = parts[0];
+    const nestedSubFieldName = parts[1];
+
+    if (isDefined(dateGranularity)) {
+      return {
+        [field.name]: {
+          [nestedFieldName]: {
+            granularity: dateGranularity,
+          },
+        },
+      };
+    }
+
+    if (isDefined(nestedSubFieldName)) {
+      return {
+        [field.name]: {
+          [nestedFieldName]: {
+            [nestedSubFieldName]: true,
+          },
+        },
+      };
+    }
+
+    return {
+      [field.name]: {
+        [nestedFieldName]: true,
+      },
+    };
   }
 
   if (isComposite) {

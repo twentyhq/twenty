@@ -67,6 +67,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
         const result =
           generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
             objectMetadataItem: mockObjectMetadataItem,
+            objectMetadataItems: [],
             chartConfiguration: buildBarChartConfiguration({
               graphType: GraphType.VERTICAL_BAR,
               primaryAxisGroupByFieldMetadataId: 'field-1',
@@ -81,6 +82,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
         const result =
           generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
             objectMetadataItem: mockObjectMetadataItem,
+            objectMetadataItems: [],
             chartConfiguration: buildBarChartConfiguration({
               graphType: GraphType.VERTICAL_BAR,
               primaryAxisGroupByFieldMetadataId: 'field-1',
@@ -97,6 +99,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
         const result =
           generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
             objectMetadataItem: mockObjectMetadataItem,
+            objectMetadataItems: [],
             chartConfiguration: buildBarChartConfiguration({
               graphType: GraphType.VERTICAL_BAR,
               primaryAxisGroupByFieldMetadataId: 'field-4',
@@ -111,6 +114,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
         const result =
           generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
             objectMetadataItem: mockObjectMetadataItem,
+            objectMetadataItems: [],
             chartConfiguration: buildBarChartConfiguration({
               graphType: GraphType.VERTICAL_BAR,
               primaryAxisGroupByFieldMetadataId: 'field-3',
@@ -128,6 +132,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
         const result =
           generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
             objectMetadataItem: mockObjectMetadataItem,
+            objectMetadataItems: [],
             chartConfiguration: buildBarChartConfiguration({
               graphType: GraphType.HORIZONTAL_BAR,
               primaryAxisGroupByFieldMetadataId: 'field-1',
@@ -142,6 +147,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
         const result =
           generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
             objectMetadataItem: mockObjectMetadataItem,
+            objectMetadataItems: [],
             chartConfiguration: buildBarChartConfiguration({
               graphType: GraphType.HORIZONTAL_BAR,
               primaryAxisGroupByFieldMetadataId: 'field-1',
@@ -159,6 +165,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
       const result =
         generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
           objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItems: [],
           chartConfiguration: buildLineChartConfiguration({
             graphType: GraphType.LINE,
             primaryAxisGroupByFieldMetadataId: 'field-1',
@@ -173,6 +180,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
       const result =
         generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
           objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItems: [],
           chartConfiguration: buildLineChartConfiguration({
             graphType: GraphType.LINE,
             primaryAxisGroupByFieldMetadataId: 'field-1',
@@ -189,6 +197,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
       const result =
         generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
           objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItems: [],
           chartConfiguration: buildLineChartConfiguration({
             graphType: GraphType.LINE,
             primaryAxisGroupByFieldMetadataId: 'field-3',
@@ -204,6 +213,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
       const result =
         generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
           objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItems: [],
           chartConfiguration: buildLineChartConfiguration({
             graphType: GraphType.LINE,
             primaryAxisGroupByFieldMetadataId: 'field-4',
@@ -218,6 +228,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
       const result =
         generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
           objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItems: [],
           chartConfiguration: buildLineChartConfiguration({
             graphType: GraphType.LINE,
             primaryAxisGroupByFieldMetadataId: 'field-1',
@@ -234,6 +245,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
       expect(() =>
         generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
           objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItems: [],
           chartConfiguration: buildBarChartConfiguration({
             primaryAxisGroupByFieldMetadataId: 'invalid-field',
           }),
@@ -245,6 +257,7 @@ describe('generateGroupByQueryVariablesFromBarOrLineChartConfiguration', () => {
       expect(() =>
         generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
           objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItems: [],
           chartConfiguration: buildLineChartConfiguration({
             primaryAxisGroupByFieldMetadataId: 'invalid-field',
           }),

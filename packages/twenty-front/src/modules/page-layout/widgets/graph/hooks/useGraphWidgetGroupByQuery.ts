@@ -1,4 +1,5 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
 import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
 import { useGraphWidgetQueryCommon } from '@/page-layout/widgets/graph/hooks/useGraphWidgetQueryCommon';
@@ -30,6 +31,8 @@ export const useGraphWidgetGroupByQuery = ({
       configuration,
     });
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   if (!isDefined(aggregateField)) {
     throw new Error('Aggregate field not found');
   }
@@ -60,12 +63,14 @@ export const useGraphWidgetGroupByQuery = ({
   const groupByQueryVariables = isPieChart(configuration)
     ? generateGroupByQueryVariablesFromPieChartConfiguration({
         objectMetadataItem,
+        objectMetadataItems,
         chartConfiguration: configuration,
         aggregateOperation: aggregateOperation,
         limit,
       })
     : generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
         objectMetadataItem,
+        objectMetadataItems,
         chartConfiguration: configuration as
           | BarChartConfiguration
           | LineChartConfiguration,

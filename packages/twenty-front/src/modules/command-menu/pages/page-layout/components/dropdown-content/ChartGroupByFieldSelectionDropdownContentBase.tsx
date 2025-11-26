@@ -1,4 +1,5 @@
 import { ChartGroupByFieldSelectionCompositeFieldView } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionCompositeFieldView';
+import { ChartGroupByFieldSelectionRelationFieldView } from '@/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionRelationFieldView';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
@@ -22,7 +23,7 @@ import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { BarChartGroupMode } from '~/generated/graphql';
+import { BarChartGroupMode, RelationType } from '~/generated/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type ChartGroupByFieldSelectionDropdownContentBaseProps<
@@ -41,6 +42,9 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
   const [searchQuery, setSearchQuery] = useState('');
 
   const [selectedCompositeField, setSelectedCompositeField] =
+    useState<FieldMetadataItem | null>(null);
+
+  const [selectedRelationField, setSelectedRelationField] =
     useState<FieldMetadataItem | null>(null);
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -77,8 +81,15 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
         items: sourceObjectMetadataItem?.fields || [],
         searchQuery,
         getSearchableValues: (item) => [item.label, item.name],
-        // TODO: remove the relation filter once group by is supported for relation fields
-      }).filter((field) => !isFieldRelation(field) && !field.isSystem),
+      }).filter((field) => {
+        if (field.isSystem === true) {
+          return false;
+        }
+        if (isFieldRelation(field)) {
+          return field.relation?.type === RelationType.MANY_TO_ONE;
+        }
+        return true;
+      }),
     [sourceObjectMetadataItem?.fields, searchQuery],
   );
 
@@ -130,7 +141,9 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
   };
 
   const handleSelectField = (fieldMetadataItem: FieldMetadataItem) => {
-    if (isCompositeFieldType(fieldMetadataItem.type)) {
+    if (isFieldRelation(fieldMetadataItem)) {
+      setSelectedRelationField(fieldMetadataItem);
+    } else if (isCompositeFieldType(fieldMetadataItem.type)) {
       setSelectedCompositeField(fieldMetadataItem);
     } else {
       updateCurrentWidgetConfig({
@@ -147,11 +160,15 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
     closeDropdown();
   };
 
-  const handleBack = () => {
+  const handleBackFromComposite = () => {
     setSelectedCompositeField(null);
   };
 
-  const handleSelectSubField = (subFieldName: string) => {
+  const handleBackFromRelation = () => {
+    setSelectedRelationField(null);
+  };
+
+  const handleSelectCompositeSubField = (subFieldName: string) => {
     if (!isDefined(selectedCompositeField)) {
       return;
     }
@@ -165,13 +182,35 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
     closeDropdown();
   };
 
+  const handleSelectRelationSubField = (subFieldName: string) => {
+    if (!isDefined(selectedRelationField)) {
+      return;
+    }
+
+    updateCurrentWidgetConfig({
+      configToUpdate: buildConfigUpdate(selectedRelationField.id, subFieldName),
+    });
+    closeDropdown();
+  };
+
+  if (isDefined(selectedRelationField)) {
+    return (
+      <ChartGroupByFieldSelectionRelationFieldView
+        relationField={selectedRelationField}
+        currentSubFieldName={currentSubFieldName}
+        onBack={handleBackFromRelation}
+        onSelectSubField={handleSelectRelationSubField}
+      />
+    );
+  }
+
   if (isDefined(selectedCompositeField)) {
     return (
       <ChartGroupByFieldSelectionCompositeFieldView
         compositeField={selectedCompositeField}
         currentSubFieldName={currentSubFieldName}
-        onBack={handleBack}
-        onSelectSubField={handleSelectSubField}
+        onBack={handleBackFromComposite}
+        onSelectSubField={handleSelectCompositeSubField}
       />
     );
   }
@@ -216,11 +255,15 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
                 text={fieldMetadataItem.label}
                 selected={
                   !isCompositeFieldType(fieldMetadataItem.type) &&
+                  !isFieldRelation(fieldMetadataItem) &&
                   currentGroupByFieldMetadataId === fieldMetadataItem.id
                 }
                 focused={selectedItemId === fieldMetadataItem.id}
                 LeftIcon={getIcon(fieldMetadataItem.icon)}
-                hasSubMenu={isCompositeFieldType(fieldMetadataItem.type)}
+                hasSubMenu={
+                  isCompositeFieldType(fieldMetadataItem.type) ||
+                  isFieldRelation(fieldMetadataItem)
+                }
                 onClick={() => {
                   handleSelectField(fieldMetadataItem);
                 }}
