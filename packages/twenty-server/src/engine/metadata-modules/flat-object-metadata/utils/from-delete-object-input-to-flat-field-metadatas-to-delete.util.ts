@@ -52,13 +52,6 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
     );
   }
 
-  if (!flatObjectMetadataToDelete.isCustom) {
-    throw new ObjectMetadataException(
-      'Deleting standard objects is not allowed',
-      ObjectMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED,
-    );
-  }
-
   const objectFlatFieldMetadatas =
     findManyFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
