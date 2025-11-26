@@ -1,7 +1,7 @@
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { type PermissionFlagType } from '~/generated-metadata/graphql';
-import { StyledLabel, StyledList } from './WorkflowAiAgentPermissions.styles';
 import { WorkflowAiAgentPermissionsFlagRow } from './WorkflowAiAgentPermissionsFlagRow';
+import { StyledLabel, StyledList } from './WorkflowAiAgentPermissionsStyles';
 
 type WorkflowAiAgentPermissionsFlagListProps = {
   title: string;

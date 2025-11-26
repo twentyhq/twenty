@@ -1,8 +1,8 @@
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { t } from '@lingui/core/macro';
 import { type ObjectPermission } from '~/generated-metadata/graphql';
-import { StyledLabel, StyledList } from './WorkflowAiAgentPermissions.styles';
 import { WorkflowAiAgentPermissionsPermissionRow } from './WorkflowAiAgentPermissionsPermissionRow';
+import { StyledLabel, StyledList } from './WorkflowAiAgentPermissionsStyles';
 type WorkflowAiAgentPermissionsCrudListProps = {
   permissions: Array<{
     key: SettingsRoleObjectPermissionKey;

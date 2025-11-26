@@ -4,8 +4,8 @@ import { t } from '@lingui/core/macro';
 import { type ObjectPermission } from '~/generated/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 import { CRUD_PERMISSIONS } from '../constants/WorkflowAiAgentCrudPermissions';
-import { StyledLabel, StyledList } from './WorkflowAiAgentPermissions.styles';
 import { WorkflowAiAgentPermissionsPermissionRow } from './WorkflowAiAgentPermissionsPermissionRow';
+import { StyledLabel, StyledList } from './WorkflowAiAgentPermissionsStyles';
 
 const CRUD_PERMISSION_ORDER = CRUD_PERMISSIONS.reduce<
   Record<SettingsRoleObjectPermissionKey, number>

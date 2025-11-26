@@ -8,7 +8,7 @@ import {
   StyledRow,
   StyledRowLeftContent,
   StyledText,
-} from './WorkflowAiAgentPermissions.styles';
+} from './WorkflowAiAgentPermissionsStyles';
 
 type WorkflowAiAgentPermissionsFlagRowProps = {
   permission: SettingsRolePermissionsSettingPermission;
@@ -44,15 +44,15 @@ export const WorkflowAiAgentPermissionsFlagRow = ({
       </StyledRowLeftContent>
       {isEnabled && showDeleteButton && (
         <StyledDeleteButton data-delete-button>
-          <IconButton
-            Icon={IconTrash}
-            variant="tertiary"
-            size="small"
-            onClick={(event) => {
-              event.stopPropagation();
-              onDelete?.();
-            }}
-          />
+        <IconButton
+          Icon={IconTrash}
+          variant="tertiary"
+          size="small"
+          onClick={(event) => {
+            event.stopPropagation();
+            onDelete?.();
+          }}
+        />
         </StyledDeleteButton>
       )}
     </StyledRow>

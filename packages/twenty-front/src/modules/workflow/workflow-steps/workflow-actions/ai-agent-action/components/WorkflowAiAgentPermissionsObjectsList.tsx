@@ -1,5 +1,5 @@
-import { StyledLabel, StyledList } from './WorkflowAiAgentPermissions.styles';
 import { WorkflowAiAgentPermissionsObjectRow } from './WorkflowAiAgentPermissionsObjectRow';
+import { StyledLabel, StyledList } from './WorkflowAiAgentPermissionsStyles';
 
 type WorkflowAiAgentPermissionsObjectsListProps = {
   objects: Array<{

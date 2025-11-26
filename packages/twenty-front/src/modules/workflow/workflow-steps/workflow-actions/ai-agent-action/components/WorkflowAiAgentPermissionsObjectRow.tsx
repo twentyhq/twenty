@@ -6,7 +6,7 @@ import {
   StyledRow,
   StyledRowLeftContent,
   StyledText,
-} from './WorkflowAiAgentPermissions.styles';
+} from './WorkflowAiAgentPermissionsStyles';
 
 type WorkflowAiAgentPermissionsObjectRowProps = {
   objectMetadata: {
