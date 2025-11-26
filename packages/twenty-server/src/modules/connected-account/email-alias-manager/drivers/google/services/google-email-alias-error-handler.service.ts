@@ -10,13 +10,13 @@ import { parseGmailApiError } from 'src/modules/messaging/message-import-manager
 import { parseGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-network-error.util';
 
 @Injectable()
-export class GmailMessageListFetchErrorHandler {
-  private readonly logger = new Logger(GmailMessageListFetchErrorHandler.name);
+export class GmailEmailAliasErrorHandlerService {
+  private readonly logger = new Logger(GmailEmailAliasErrorHandlerService.name);
 
   constructor() {}
 
   public handleError(error: unknown): void {
-    this.logger.error(`Gmail: Error fetching message list: ${error}`);
+    this.logger.error(`Google: Error getting email aliases: ${error}`);
     if (isGmailNetworkError(error)) {
       throw parseGmailNetworkError(error);
     }
