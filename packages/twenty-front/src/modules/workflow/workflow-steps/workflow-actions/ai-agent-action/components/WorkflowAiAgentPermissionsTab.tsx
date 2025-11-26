@@ -14,7 +14,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
-import { useGetRolesQuery } from '~/generated-metadata/graphql';
+import { type Agent, useGetRolesQuery } from '~/generated-metadata/graphql';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -67,7 +67,7 @@ type WorkflowAiAgentPermissionsTabProps = {
   action: WorkflowAiAgentAction;
   readonly: boolean;
   isAgentLoading: boolean;
-  refetchAgent: () => Promise<unknown>;
+  refetchAgent: () => Promise<{ data?: { findOneAgent?: Agent } }>;
 };
 
 export const WorkflowAiAgentPermissionsTab = ({
@@ -78,6 +78,7 @@ export const WorkflowAiAgentPermissionsTab = ({
   const workflowAiAgentActionAgent = useRecoilValue(
     workflowAiAgentActionAgentState,
   );
+
   const [
     workflowAiAgentPermissionsSelectedObjectId,
     setWorkflowAiAgentPermissionsSelectedObjectId,
@@ -136,7 +137,10 @@ export const WorkflowAiAgentPermissionsTab = ({
 
   const refetchAgentAndRoles = async () => {
     await refetchRoles();
-    await refetchAgent();
+    const result = await refetchAgent();
+    return {
+      refetchedAgent: result?.data?.findOneAgent,
+    };
   };
 
   const {
