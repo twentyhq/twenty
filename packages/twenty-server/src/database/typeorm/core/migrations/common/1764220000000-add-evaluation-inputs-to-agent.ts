@@ -8,7 +8,7 @@ export class AddEvaluationInputsToAgent1764220000000
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       ALTER TABLE "core"."agent"
-      ADD COLUMN "evaluationInputs" text[] DEFAULT '{}'
+      ADD COLUMN "evaluationInputs" text[] NOT NULL DEFAULT '{}'
     `);
   }
 

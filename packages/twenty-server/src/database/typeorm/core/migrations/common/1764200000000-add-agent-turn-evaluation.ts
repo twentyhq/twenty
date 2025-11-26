@@ -16,13 +16,13 @@ export class AddAgentTurnEvaluation1764200000000 implements MigrationInterface {
     `);
 
     await queryRunner.query(`
-      CREATE INDEX "IDX_agentTurnEvaluation_turnId"
+      CREATE INDEX "IDX_c94f072dbd3c11f7df51db5293"
       ON "core"."agentTurnEvaluation" ("turnId")
     `);
 
     await queryRunner.query(`
       ALTER TABLE "core"."agentTurnEvaluation"
-      ADD CONSTRAINT "FK_agentTurnEvaluation_turnId"
+      ADD CONSTRAINT "FK_c94f072dbd3c11f7df51db52934"
       FOREIGN KEY ("turnId")
       REFERENCES "core"."agentTurn"("id")
       ON DELETE CASCADE ON UPDATE NO ACTION
@@ -32,10 +32,10 @@ export class AddAgentTurnEvaluation1764200000000 implements MigrationInterface {
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       ALTER TABLE "core"."agentTurnEvaluation"
-      DROP CONSTRAINT "FK_agentTurnEvaluation_turnId"
+      DROP CONSTRAINT "FK_c94f072dbd3c11f7df51db52934"
     `);
     await queryRunner.query(`
-      DROP INDEX "core"."IDX_agentTurnEvaluation_turnId"
+      DROP INDEX "core"."IDX_c94f072dbd3c11f7df51db5293"
     `);
     await queryRunner.query(`DROP TABLE "core"."agentTurnEvaluation"`);
   }
