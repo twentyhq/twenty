@@ -9,17 +9,17 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { PageLayoutType } from '~/generated/graphql';
 
-type PageLayoutLeftPanelProps = {
-  pinnedLeftTabId: string;
+type PageLayoutPinnedTabPanelProps = {
+  pinnedTabId: string;
 };
 
-export const PageLayoutLeftPanel = ({
-  pinnedLeftTabId,
-}: PageLayoutLeftPanelProps) => {
+export const PageLayoutPinnedTabPanel = ({
+  pinnedTabId,
+}: PageLayoutPinnedTabPanelProps) => {
   const { currentPageLayout } = useCurrentPageLayout();
   const targetRecordIdentifier = useTargetRecord();
   const { isInRightDrawer } = useLayoutRenderingContext();
-  const pinnedTab = usePageLayoutTabWithVisibleWidgetsOrThrow(pinnedLeftTabId);
+  const pinnedTab = usePageLayoutTabWithVisibleWidgetsOrThrow(pinnedTabId);
 
   if (currentPageLayout?.type !== PageLayoutType.RECORD_PAGE) {
     return null;
@@ -40,7 +40,7 @@ export const PageLayoutLeftPanel = ({
 
       <PageLayoutContentProvider
         value={{
-          tabId: pinnedLeftTabId,
+          tabId: pinnedTabId,
           layoutMode,
         }}
       >

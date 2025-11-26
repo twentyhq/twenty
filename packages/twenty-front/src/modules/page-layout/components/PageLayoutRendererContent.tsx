@@ -1,6 +1,6 @@
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
+import { PageLayoutPinnedTabPanel } from '@/page-layout/components/PageLayoutPinnedTabPanel';
 import { PageLayoutTabHeader } from '@/page-layout/components/PageLayoutTabHeader';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
@@ -86,44 +86,50 @@ export const PageLayoutRendererContent = () => {
     return null;
   }
 
+  const sortedTabs = sortTabsByPosition(currentPageLayout.tabs);
+
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
-    tabs: currentPageLayout.tabs,
+    tabs: sortedTabs,
     isMobile,
     isInRightDrawer,
     isEditMode: isPageLayoutInEditMode,
   });
 
-  const { tabsToRenderInTabList, pinnedLeftTab } = getTabsByDisplayMode({
+  const { pinnedTab, otherTabs } = getTabsByDisplayMode({
     tabs: tabsWithVisibleWidgets,
     pageLayoutType: currentPageLayout.type,
-    isMobile,
-    isInRightDrawer,
   });
 
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(
     currentPageLayout.id,
   );
 
-  const sortedTabs = sortTabsByPosition(tabsToRenderInTabList);
+  const tabsForTabList =
+    isMobile || isInRightDrawer ? tabsWithVisibleWidgets : otherTabs;
+
+  const showPinnedTabPanel =
+    !isMobile && !isInRightDrawer && isDefined(pinnedTab);
+
+  const showTabList = tabsForTabList.length > 1 || isPageLayoutInEditMode;
 
   return (
     <ShowPageContainer>
-      {isDefined(pinnedLeftTab) && (
-        <PageLayoutLeftPanel pinnedLeftTabId={pinnedLeftTab.id} />
+      {showPinnedTabPanel && (
+        <PageLayoutPinnedTabPanel pinnedTabId={pinnedTab.id} />
       )}
 
       <StyledShowPageRightContainer>
         <StyledTabsAndDashboardContainer>
           <PageLayoutTabListEffect
-            tabs={sortedTabs}
+            tabs={tabsForTabList}
             componentInstanceId={tabListInstanceId}
             defaultTabIdToFocusOnMobileAndSidePanel={
               currentPageLayout.defaultTabIdToFocusOnMobileAndSidePanel
             }
           />
-          {(sortedTabs.length > 1 || isPageLayoutInEditMode) && (
+          {showTabList && (
             <StyledPageLayoutTabList
-              tabs={sortedTabs}
+              tabs={tabsForTabList}
               behaveAsLinks={false}
               componentInstanceId={tabListInstanceId}
               onAddTab={handleAddTab}

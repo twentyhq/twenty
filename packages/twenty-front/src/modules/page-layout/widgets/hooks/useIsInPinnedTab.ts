@@ -3,6 +3,7 @@ import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageL
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
+import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,21 +20,21 @@ export const useIsInPinnedTab = () => {
     isPageLayoutInEditModeComponentState,
   );
 
+  const sortedTabs = sortTabsByPosition(currentPageLayout.tabs);
+
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
-    tabs: currentPageLayout.tabs,
+    tabs: sortedTabs,
     isMobile,
     isInRightDrawer,
     isEditMode: isPageLayoutInEditMode,
   });
 
-  const { pinnedLeftTab } = getTabsByDisplayMode({
+  const { pinnedTab } = getTabsByDisplayMode({
     tabs: tabsWithVisibleWidgets,
     pageLayoutType: currentPageLayout.type,
-    isMobile,
-    isInRightDrawer,
   });
 
   return {
-    isInPinnedTab: isDefined(pinnedLeftTab) && pinnedLeftTab.id === tabId,
+    isInPinnedTab: isDefined(pinnedTab) && pinnedTab.id === tabId,
   };
 };

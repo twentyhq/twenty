@@ -4,39 +4,31 @@ import { PageLayoutType } from '~/generated/graphql';
 type GetTabsByDisplayModeParams = {
   tabs: PageLayoutTab[];
   pageLayoutType: PageLayoutType;
-  isMobile: boolean;
-  isInRightDrawer: boolean;
 };
 
 export const getTabsByDisplayMode = ({
   tabs,
   pageLayoutType,
-  isMobile,
-  isInRightDrawer,
 }: GetTabsByDisplayModeParams) => {
-  if (
-    isMobile ||
-    isInRightDrawer ||
-    pageLayoutType !== PageLayoutType.RECORD_PAGE
-  ) {
+  if (pageLayoutType !== PageLayoutType.RECORD_PAGE) {
     return {
-      tabsToRenderInTabList: tabs,
-      pinnedLeftTab: undefined,
+      pinnedTab: undefined,
+      otherTabs: tabs,
     };
   }
 
   if (tabs.length === 1) {
     return {
-      tabsToRenderInTabList: tabs,
-      pinnedLeftTab: undefined,
+      pinnedTab: undefined,
+      otherTabs: tabs,
     };
   }
 
-  const tabsToRenderInTabList = tabs.slice(1);
-  const pinnedLeftTab = tabs[0];
+  const pinnedTab = tabs[0];
+  const otherTabs = tabs.slice(1);
 
   return {
-    tabsToRenderInTabList,
-    pinnedLeftTab,
+    pinnedTab,
+    otherTabs,
   };
 };
