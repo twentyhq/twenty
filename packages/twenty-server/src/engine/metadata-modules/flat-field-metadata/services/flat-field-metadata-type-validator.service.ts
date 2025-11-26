@@ -8,12 +8,11 @@ import { FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-en
 import { type FlatFieldMetadataTypeValidator } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { validateEnumSelectFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util';
-import { validateMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util';
+import { validateMorphRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util';
+import { validateRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-flat-field-metadata.util';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 
-const DEFAULT_NO_VALIDATION = async (): Promise<
-  FlatFieldMetadataValidationError[]
-> => [];
+const DEFAULT_NO_VALIDATION = (): FlatFieldMetadataValidationError[] => [];
 
 export type GenericValidateFlatFieldMetadataTypeSpecificitiesArgs =
   FlatEntityValidationArgs<'fieldMetadata'> & {
@@ -46,19 +45,16 @@ export class FlatFieldMetadataTypeValidatorService {
       TEXT: DEFAULT_NO_VALIDATION,
       TS_VECTOR: DEFAULT_NO_VALIDATION,
       UUID: DEFAULT_NO_VALIDATION,
-
-      MORPH_RELATION: async (args) => {
-        return validateMorphOrRelationFlatFieldMetadata(args);
-      },
+      MORPH_RELATION: validateMorphRelationFlatFieldMetadata,
       MULTI_SELECT: validateEnumSelectFlatFieldMetadata,
       RATING: validateEnumSelectFlatFieldMetadata,
-      RELATION: validateMorphOrRelationFlatFieldMetadata,
+      RELATION: validateRelationFlatFieldMetadata,
       SELECT: validateEnumSelectFlatFieldMetadata,
     };
 
-  public async validateFlatFieldMetadataTypeSpecificities(
+  public validateFlatFieldMetadataTypeSpecificities(
     args: GenericValidateFlatFieldMetadataTypeSpecificitiesArgs,
-  ): Promise<FlatFieldMetadataValidationError[]> {
+  ): FlatFieldMetadataValidationError[] {
     const { flatEntityToValidate } = args;
     const fieldType = flatEntityToValidate.type;
     const fieldMetadataTypeValidator =
@@ -75,7 +71,7 @@ export class FlatFieldMetadataTypeValidatorService {
       ];
     }
 
-    return await fieldMetadataTypeValidator(
+    return fieldMetadataTypeValidator(
       // @ts-expect-error TODO could be improved
       args,
     );

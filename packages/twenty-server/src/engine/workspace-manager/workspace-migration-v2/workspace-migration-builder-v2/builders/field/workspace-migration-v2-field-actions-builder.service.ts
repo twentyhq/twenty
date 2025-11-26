@@ -29,9 +29,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     >
   > {
     const validationResult =
-      await this.flatFieldValidatorService.validateFlatFieldMetadataCreation(
-        args,
-      );
+      this.flatFieldValidatorService.validateFlatFieldMetadataCreation(args);
 
     if (validationResult.errors.length > 0) {
       return {
@@ -93,9 +91,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     >
   > {
     const validationResult =
-      await this.flatFieldValidatorService.validateFlatFieldMetadataUpdate(
-        args,
-      );
+      this.flatFieldValidatorService.validateFlatFieldMetadataUpdate(args);
 
     if (validationResult.errors.length > 0) {
       return {
