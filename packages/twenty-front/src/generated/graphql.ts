@@ -53,6 +53,7 @@ export type Agent = {
   applicationId?: Maybe<Scalars['UUID']>;
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
+  evaluationInputs: Array<Scalars['String']>;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   isCustom: Scalars['Boolean'];
@@ -118,6 +119,25 @@ export type AgentMessagePart = {
   toolName?: Maybe<Scalars['String']>;
   toolOutput?: Maybe<Scalars['JSON']>;
   type: Scalars['String'];
+};
+
+export type AgentTurn = {
+  __typename?: 'AgentTurn';
+  agentId?: Maybe<Scalars['UUID']>;
+  createdAt: Scalars['DateTime'];
+  evaluations: Array<AgentTurnEvaluation>;
+  id: Scalars['UUID'];
+  messages: Array<AgentMessage>;
+  threadId: Scalars['UUID'];
+};
+
+export type AgentTurnEvaluation = {
+  __typename?: 'AgentTurnEvaluation';
+  comment?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  score: Scalars['Int'];
+  turnId: Scalars['UUID'];
 };
 
 export type AggregateChartConfiguration = {
@@ -752,6 +772,7 @@ export type CoreViewSort = {
 
 export type CreateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
+  evaluationInputs?: InputMaybe<Array<Scalars['String']>>;
   icon?: InputMaybe<Scalars['String']>;
   label: Scalars['String'];
   modelConfiguration?: InputMaybe<Scalars['JSON']>;
@@ -3980,6 +4001,7 @@ export type UuidFilterComparison = {
 
 export type UpdateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
+  evaluationInputs?: InputMaybe<Array<Scalars['String']>>;
   icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
   label?: InputMaybe<Scalars['String']>;

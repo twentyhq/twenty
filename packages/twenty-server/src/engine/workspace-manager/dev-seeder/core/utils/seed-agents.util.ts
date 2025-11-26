@@ -1,6 +1,6 @@
 import { type QueryRunner } from 'typeorm';
 
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai-chat/entities/agent-message.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,

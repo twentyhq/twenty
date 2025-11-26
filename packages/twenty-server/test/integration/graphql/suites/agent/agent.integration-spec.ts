@@ -1,15 +1,15 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { AiAgentRoleService } from 'src/engine/metadata-modules/ai-agent-role/ai-agent-role.service';
-import { AgentChatService } from 'src/engine/metadata-modules/ai-chat/services/agent-chat.service';
-import { AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
+import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import {
   AgentException,
   AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai-agent/agent.exception';
-import { AgentResolver } from 'src/engine/metadata-modules/ai-agent/agent.resolver';
-import { AgentService } from 'src/engine/metadata-modules/ai-agent/agent.service';
+} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+import { AgentResolver } from 'src/engine/metadata-modules/ai/ai-agent/agent.resolver';
+import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 

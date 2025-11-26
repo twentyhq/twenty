@@ -3,9 +3,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AiBillingModule } from 'src/engine/metadata-modules/ai-billing/ai-billing.module';
-import { AiModelsModule } from 'src/engine/metadata-modules/ai-models/ai-models.module';
-import { AiToolsModule } from 'src/engine/metadata-modules/ai-tools/ai-tools.module';
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
 import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-customer-data.command';
 import { BillingSyncPlansDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-plans-data.command';
@@ -36,6 +33,9 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
+import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
+import { AiToolsModule } from 'src/engine/metadata-modules/ai/ai-tools/ai-tools.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 @Module({

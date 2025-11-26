@@ -15,7 +15,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, Status } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { GET_AGENT_TURNS } from './graphql/queries/getAgentTurns';
+import { GET_AGENT_TURNS } from '@/ai/graphql/queries/getAgentTurns';
 
 const StyledTable = styled(Table)`
   margin-top: ${({ theme }) => theme.spacing(3)};
@@ -177,12 +177,15 @@ export const SettingsAgentTurnDetail = () => {
                     );
                   }),
               ).map((message) => {
-                const isUser = message.role === 'user';
+                const roleLabel =
+                  message.role === 'user'
+                    ? t`User`
+                    : message.role === 'system'
+                      ? t`System`
+                      : t`Assistant`;
                 return (
                   <StyledMessageBubble key={message.id}>
-                    <StyledMessageRole>
-                      {isUser ? t`User` : t`Assistant`}
-                    </StyledMessageRole>
+                    <StyledMessageRole>{roleLabel}</StyledMessageRole>
                     <StyledMessageContent>
                       <AIChatAssistantMessageRenderer
                         messageParts={message.parts}

@@ -1,5 +1,5 @@
+import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { type StandardAgentDefinition } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/types/standard-agent-definition.interface';
-import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
 import { DASHBOARD_MANAGER_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/dashboard-manager-role';
 
 export const DASHBOARD_BUILDER_AGENT: StandardAgentDefinition = {
@@ -66,4 +66,5 @@ Prioritize user needs and dashboard usability.`,
   standardRoleId: DASHBOARD_MANAGER_ROLE.standardId,
   modelConfiguration: {},
   outputStrategy: 'direct',
+  evaluationInputs: [],
 };

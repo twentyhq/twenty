@@ -1,6 +1,7 @@
 import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useParams } from 'react-router-dom';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -16,7 +17,12 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { t } from '@lingui/core/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconList, IconLock, IconSettings } from 'twenty-ui/display';
+import {
+  IconList,
+  IconListCheck,
+  IconLock,
+  IconSettings,
+} from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import {
   type CreateAgentInput,
@@ -27,10 +33,11 @@ import {
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { SettingsAgentDetailSkeletonLoader } from './components/SettingsAgentDetailSkeletonLoader';
+import { SettingsAgentEvalsTab } from './components/SettingsAgentEvalsTab';
 import { SettingsAgentLogsTab } from './components/SettingsAgentLogsTab';
 import { SettingsAgentRoleTab } from './components/SettingsAgentRoleTab';
 import { SettingsAgentSettingsTab } from './components/SettingsAgentSettingsTab';
@@ -55,6 +62,9 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const navigateApp = useNavigateApp();
   const { enqueueErrorSnackBar } = useSnackBar();
   const [isReadonlyMode, setIsReadonlyMode] = useState(false);
+  const [originalFormValues, setOriginalFormValues] = useState<
+    ReturnType<typeof useSettingsAgentFormState>['formValues'] | null
+  >(null);
 
   const isEditMode = mode === 'edit';
   const isCreateMode = mode === 'create';
@@ -83,7 +93,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         if (isDefined(agent.applicationId)) {
           setIsReadonlyMode(true);
         }
-        resetForm({
+        const initialValues = {
           name: agent.name,
           label: agent.label,
           description: agent.description,
@@ -94,7 +104,10 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           isCustom: agent.isCustom,
           modelConfiguration: agent.modelConfiguration || {},
           responseFormat: agent.responseFormat || { type: 'text', schema: {} },
-        });
+          evaluationInputs: agent.evaluationInputs || [],
+        };
+        resetForm(initialValues);
+        setOriginalFormValues(initialValues);
       } else {
         enqueueErrorSnackBar({
           message: t`Agent not found`,
@@ -131,6 +144,94 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     isDefined(formValues.role) &&
     !isDeeplyEqual(settingsDraftRole, settingsPersistedRole);
 
+  const autoSave = useDebouncedCallback(async () => {
+    if (
+      isCreateMode ||
+      isReadonlyMode ||
+      !validateForm() ||
+      isSubmitting ||
+      !agent
+    ) {
+      return;
+    }
+
+    const hasChanges =
+      originalFormValues && !isDeeplyEqual(formValues, originalFormValues);
+
+    if (!hasChanges && !isRoleDirty) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      if (isRoleDirty && isDefined(formValues.role)) {
+        try {
+          await saveDraftRoleToDB();
+        } catch (error) {
+          if (error instanceof ApolloError) {
+            enqueueErrorSnackBar({
+              apolloError: error,
+            });
+          } else {
+            const errorMessage =
+              error instanceof Error ? error.message : String(error);
+            enqueueErrorSnackBar({
+              message: t`Failed to save role permissions: ${errorMessage}`,
+            });
+          }
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
+      await updateAgent({
+        variables: {
+          input: {
+            id: agent.id,
+            name: formValues.name || '',
+            label: formValues.label,
+            description: formValues.description,
+            icon: formValues.icon,
+            modelId: formValues.modelId,
+            roleId: formValues.role,
+            prompt: formValues.prompt,
+            modelConfiguration: formValues.modelConfiguration,
+            responseFormat: formValues.responseFormat,
+            evaluationInputs: formValues.evaluationInputs,
+          },
+        },
+      });
+
+      setOriginalFormValues({ ...formValues });
+    } catch (error) {
+      enqueueErrorSnackBar({
+        apolloError: error instanceof ApolloError ? error : undefined,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, 1_000);
+
+  useEffect(() => {
+    if (isEditMode && !loading && isDefined(originalFormValues)) {
+      autoSave();
+    }
+  }, [
+    formValues,
+    isRoleDirty,
+    isEditMode,
+    loading,
+    originalFormValues,
+    autoSave,
+  ]);
+
+  useEffect(() => {
+    return () => {
+      autoSave.flush();
+    };
+  }, [autoSave]);
+
   if (!isCreateMode && !loading && !agent) {
     return null;
   }
@@ -147,6 +248,11 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       id: SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.ROLE,
       title: t`Role`,
       Icon: IconLock,
+    },
+    {
+      id: SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.EVALS,
+      title: t`Evals`,
+      Icon: IconListCheck,
     },
     {
       id: SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.LOGS,
@@ -198,6 +304,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           prompt: formValues.prompt,
           modelConfiguration: formValues.modelConfiguration,
           responseFormat: formValues.responseFormat,
+          evaluationInputs: formValues.evaluationInputs,
         };
 
         await createAgent({
@@ -224,6 +331,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
             prompt: formValues.prompt,
             modelConfiguration: formValues.modelConfiguration,
             responseFormat: formValues.responseFormat,
+            evaluationInputs: formValues.evaluationInputs,
           },
         },
       });
@@ -282,6 +390,22 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           />
         );
 
+      case SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.EVALS:
+        return (
+          <SettingsAgentEvalsTab
+            agentId={agentId}
+            evaluationInputs={formValues.evaluationInputs}
+            onEvaluationInputsChange={(inputs) =>
+              handleFieldChange('evaluationInputs', inputs)
+            }
+            disabled={
+              process.env.NODE_ENV === 'development'
+                ? isReadonlyMode
+                : isReadonlyMode || (isEditMode ? !agent?.isCustom : false)
+            }
+          />
+        );
+
       case SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.LOGS:
         return <SettingsAgentLogsTab agentId={agentId} />;
 
@@ -296,7 +420,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       <SubMenuTopBarContainer
         title={title}
         actionButton={
-          isCreateMode || (isEditMode && agent?.isCustom) ? (
+          isCreateMode ? (
             <SaveAndCancelButtons
               onSave={handleSave}
               onCancel={handleCancel}

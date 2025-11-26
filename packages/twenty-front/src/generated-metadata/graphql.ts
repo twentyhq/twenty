@@ -53,6 +53,7 @@ export type Agent = {
   applicationId?: Maybe<Scalars['UUID']>;
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
+  evaluationInputs: Array<Scalars['String']>;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   isCustom: Scalars['Boolean'];
@@ -118,6 +119,25 @@ export type AgentMessagePart = {
   toolName?: Maybe<Scalars['String']>;
   toolOutput?: Maybe<Scalars['JSON']>;
   type: Scalars['String'];
+};
+
+export type AgentTurn = {
+  __typename?: 'AgentTurn';
+  agentId?: Maybe<Scalars['UUID']>;
+  createdAt: Scalars['DateTime'];
+  evaluations: Array<AgentTurnEvaluation>;
+  id: Scalars['UUID'];
+  messages: Array<AgentMessage>;
+  threadId: Scalars['UUID'];
+};
+
+export type AgentTurnEvaluation = {
+  __typename?: 'AgentTurnEvaluation';
+  comment?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  score: Scalars['Int'];
+  turnId: Scalars['UUID'];
 };
 
 export type AggregateChartConfiguration = {
@@ -752,6 +772,7 @@ export type CoreViewSort = {
 
 export type CreateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
+  evaluationInputs?: InputMaybe<Array<Scalars['String']>>;
   icon?: InputMaybe<Scalars['String']>;
   label: Scalars['String'];
   modelConfiguration?: InputMaybe<Scalars['JSON']>;
@@ -1830,6 +1851,7 @@ export type Mutation = {
   emailPasswordResetLink: EmailPasswordResetLinkOutput;
   enablePostgresProxy: PostgresCredentials;
   endSubscriptionTrialPeriod: BillingEndTrialPeriodOutput;
+  evaluateAgentTurn: AgentTurnEvaluation;
   executeOneServerlessFunction: ServerlessFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientTokenOutput;
@@ -1850,6 +1872,7 @@ export type Mutation = {
   restorePageLayoutWidget: PageLayoutWidget;
   retryJobs: RetryJobsResponse;
   revokeApiKey?: Maybe<ApiKey>;
+  runEvaluationInput: AgentTurn;
   runWorkflowVersion: RunWorkflowVersionOutput;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendInvitations: SendInvitationsOutput;
@@ -2380,6 +2403,11 @@ export type MutationEmailPasswordResetLinkArgs = {
 };
 
 
+export type MutationEvaluateAgentTurnArgs = {
+  turnId: Scalars['UUID'];
+};
+
+
 export type MutationExecuteOneServerlessFunctionArgs = {
   input: ExecuteServerlessFunctionInput;
 };
@@ -2481,6 +2509,12 @@ export type MutationRetryJobsArgs = {
 
 export type MutationRevokeApiKeyArgs = {
   input: RevokeApiKeyInput;
+};
+
+
+export type MutationRunEvaluationInputArgs = {
+  agentId: Scalars['UUID'];
+  input: Scalars['String'];
 };
 
 
@@ -3172,6 +3206,7 @@ export type PublishServerlessFunctionInput = {
 
 export type Query = {
   __typename?: 'Query';
+  agentTurns: Array<AgentTurn>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
   billingPortalSession: BillingSessionOutput;
@@ -3254,6 +3289,11 @@ export type Query = {
   versionInfo: VersionInfo;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
+};
+
+
+export type QueryAgentTurnsArgs = {
+  agentId: Scalars['UUID'];
 };
 
 
@@ -4124,6 +4164,7 @@ export type UuidFilterComparison = {
 
 export type UpdateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
+  evaluationInputs?: InputMaybe<Array<Scalars['String']>>;
   icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
   label?: InputMaybe<Scalars['String']>;
@@ -4904,7 +4945,7 @@ export type WorkspaceUrlsAndId = {
   workspaceUrls: WorkspaceUrls;
 };
 
-export type AgentFieldsFragment = { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string };
+export type AgentFieldsFragment = { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string };
 
 export type AssignRoleToAgentMutationVariables = Exact<{
   agentId: Scalars['UUID'];
@@ -4924,14 +4965,21 @@ export type CreateOneAgentMutationVariables = Exact<{
 }>;
 
 
-export type CreateOneAgentMutation = { __typename?: 'Mutation', createOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type CreateOneAgentMutation = { __typename?: 'Mutation', createOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type DeleteOneAgentMutationVariables = Exact<{
   input: AgentIdInput;
 }>;
 
 
-export type DeleteOneAgentMutation = { __typename?: 'Mutation', deleteOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type DeleteOneAgentMutation = { __typename?: 'Mutation', deleteOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string } };
+
+export type EvaluateAgentTurnMutationVariables = Exact<{
+  turnId: Scalars['UUID'];
+}>;
+
+
+export type EvaluateAgentTurnMutation = { __typename?: 'Mutation', evaluateAgentTurn: { __typename?: 'AgentTurnEvaluation', id: string, turnId: string, score: number, comment?: string | null, createdAt: string } };
 
 export type RemoveRoleFromAgentMutationVariables = Exact<{
   agentId: Scalars['UUID'];
@@ -4940,24 +4988,39 @@ export type RemoveRoleFromAgentMutationVariables = Exact<{
 
 export type RemoveRoleFromAgentMutation = { __typename?: 'Mutation', removeRoleFromAgent: boolean };
 
+export type RunEvaluationInputMutationVariables = Exact<{
+  agentId: Scalars['UUID'];
+  input: Scalars['String'];
+}>;
+
+
+export type RunEvaluationInputMutation = { __typename?: 'Mutation', runEvaluationInput: { __typename?: 'AgentTurn', id: string, threadId: string, agentId?: string | null, createdAt: string, evaluations: Array<{ __typename?: 'AgentTurnEvaluation', id: string, score: number, comment?: string | null, createdAt: string }> } };
+
 export type UpdateOneAgentMutationVariables = Exact<{
   input: UpdateAgentInput;
 }>;
 
 
-export type UpdateOneAgentMutation = { __typename?: 'Mutation', updateOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type UpdateOneAgentMutation = { __typename?: 'Mutation', updateOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type FindManyAgentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyAgentsQuery = { __typename?: 'Query', findManyAgents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string }> };
+export type FindManyAgentsQuery = { __typename?: 'Query', findManyAgents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }> };
 
 export type FindOneAgentQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
-export type FindOneAgentQuery = { __typename?: 'Query', findOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type FindOneAgentQuery = { __typename?: 'Query', findOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string } };
+
+export type GetAgentTurnsQueryVariables = Exact<{
+  agentId: Scalars['UUID'];
+}>;
+
+
+export type GetAgentTurnsQuery = { __typename?: 'Query', agentTurns: Array<{ __typename?: 'AgentTurn', id: string, threadId: string, agentId?: string | null, createdAt: string, evaluations: Array<{ __typename?: 'AgentTurnEvaluation', id: string, score: number, comment?: string | null, createdAt: string }>, messages: Array<{ __typename?: 'AgentMessage', id: string, role: string, createdAt: string, parts: Array<{ __typename?: 'AgentMessagePart', id: string, type: string, textContent?: string | null, reasoningContent?: string | null, toolName?: string | null, toolCallId?: string | null, toolInput?: any | null, toolOutput?: any | null, errorMessage?: string | null, state?: string | null, errorDetails?: any | null, sourceUrlSourceId?: string | null, sourceUrlUrl?: string | null, sourceUrlTitle?: string | null, sourceDocumentSourceId?: string | null, sourceDocumentMediaType?: string | null, sourceDocumentTitle?: string | null, sourceDocumentFilename?: string | null, fileMediaType?: string | null, fileFilename?: string | null, fileUrl?: string | null, providerMetadata?: any | null }> }> }> };
 
 export type GetChatMessagesQueryVariables = Exact<{
   threadId: Scalars['UUID'];
@@ -4990,7 +5053,7 @@ export type UpdateOneApplicationVariableMutationVariables = Exact<{
 
 export type UpdateOneApplicationVariableMutation = { __typename?: 'Mutation', updateOneApplicationVariable: boolean };
 
-export type ApplicationFieldsFragment = { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, serverlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, handlerPath: string, handlerName: string, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, createdAt: string, updatedAt: string }> | null }> };
+export type ApplicationFieldsFragment = { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, serverlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, handlerPath: string, handlerName: string, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, createdAt: string, updatedAt: string }> | null }> };
 
 export type FindManyApplicationsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5002,7 +5065,7 @@ export type FindOneApplicationQueryVariables = Exact<{
 }>;
 
 
-export type FindOneApplicationQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, serverlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, handlerPath: string, handlerName: string, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, createdAt: string, updatedAt: string }> | null }> } };
+export type FindOneApplicationQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, serverlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, handlerPath: string, handlerName: string, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, createdAt: string, updatedAt: string }> | null }> } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -5782,7 +5845,7 @@ export type UpsertPermissionFlagsMutation = { __typename?: 'Mutation', upsertPer
 export type GetRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string }>, apiKeys: Array<{ __typename?: 'ApiKeyForRole', id: string, name: string, expiresAt: string, revokedAt?: string | null }>, permissionFlags?: Array<{ __typename?: 'PermissionFlag', id: string, flag: PermissionFlagType, roleId: string }> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, fieldPermissions?: Array<{ __typename?: 'FieldPermission', objectMetadataId: string, fieldMetadataId: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null, id: string, roleId: string }> | null }> };
+export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, apiKeys: Array<{ __typename?: 'ApiKeyForRole', id: string, name: string, expiresAt: string, revokedAt?: string | null }>, permissionFlags?: Array<{ __typename?: 'PermissionFlag', id: string, flag: PermissionFlagType, roleId: string }> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, fieldPermissions?: Array<{ __typename?: 'FieldPermission', objectMetadataId: string, fieldMetadataId: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null, id: string, roleId: string }> | null }> };
 
 export type CreateApprovedAccessDomainMutationVariables = Exact<{
   input: CreateApprovedAccessDomainInput;
@@ -6435,6 +6498,7 @@ export const AgentFieldsFragmentDoc = gql`
   roleId
   isCustom
   modelConfiguration
+  evaluationInputs
   applicationId
   createdAt
   updatedAt
@@ -7211,6 +7275,43 @@ export function useDeleteOneAgentMutation(baseOptions?: Apollo.MutationHookOptio
 export type DeleteOneAgentMutationHookResult = ReturnType<typeof useDeleteOneAgentMutation>;
 export type DeleteOneAgentMutationResult = Apollo.MutationResult<DeleteOneAgentMutation>;
 export type DeleteOneAgentMutationOptions = Apollo.BaseMutationOptions<DeleteOneAgentMutation, DeleteOneAgentMutationVariables>;
+export const EvaluateAgentTurnDocument = gql`
+    mutation EvaluateAgentTurn($turnId: UUID!) {
+  evaluateAgentTurn(turnId: $turnId) {
+    id
+    turnId
+    score
+    comment
+    createdAt
+  }
+}
+    `;
+export type EvaluateAgentTurnMutationFn = Apollo.MutationFunction<EvaluateAgentTurnMutation, EvaluateAgentTurnMutationVariables>;
+
+/**
+ * __useEvaluateAgentTurnMutation__
+ *
+ * To run a mutation, you first call `useEvaluateAgentTurnMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEvaluateAgentTurnMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [evaluateAgentTurnMutation, { data, loading, error }] = useEvaluateAgentTurnMutation({
+ *   variables: {
+ *      turnId: // value for 'turnId'
+ *   },
+ * });
+ */
+export function useEvaluateAgentTurnMutation(baseOptions?: Apollo.MutationHookOptions<EvaluateAgentTurnMutation, EvaluateAgentTurnMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EvaluateAgentTurnMutation, EvaluateAgentTurnMutationVariables>(EvaluateAgentTurnDocument, options);
+      }
+export type EvaluateAgentTurnMutationHookResult = ReturnType<typeof useEvaluateAgentTurnMutation>;
+export type EvaluateAgentTurnMutationResult = Apollo.MutationResult<EvaluateAgentTurnMutation>;
+export type EvaluateAgentTurnMutationOptions = Apollo.BaseMutationOptions<EvaluateAgentTurnMutation, EvaluateAgentTurnMutationVariables>;
 export const RemoveRoleFromAgentDocument = gql`
     mutation RemoveRoleFromAgent($agentId: UUID!) {
   removeRoleFromAgent(agentId: $agentId)
@@ -7242,6 +7343,49 @@ export function useRemoveRoleFromAgentMutation(baseOptions?: Apollo.MutationHook
 export type RemoveRoleFromAgentMutationHookResult = ReturnType<typeof useRemoveRoleFromAgentMutation>;
 export type RemoveRoleFromAgentMutationResult = Apollo.MutationResult<RemoveRoleFromAgentMutation>;
 export type RemoveRoleFromAgentMutationOptions = Apollo.BaseMutationOptions<RemoveRoleFromAgentMutation, RemoveRoleFromAgentMutationVariables>;
+export const RunEvaluationInputDocument = gql`
+    mutation RunEvaluationInput($agentId: UUID!, $input: String!) {
+  runEvaluationInput(agentId: $agentId, input: $input) {
+    id
+    threadId
+    agentId
+    createdAt
+    evaluations {
+      id
+      score
+      comment
+      createdAt
+    }
+  }
+}
+    `;
+export type RunEvaluationInputMutationFn = Apollo.MutationFunction<RunEvaluationInputMutation, RunEvaluationInputMutationVariables>;
+
+/**
+ * __useRunEvaluationInputMutation__
+ *
+ * To run a mutation, you first call `useRunEvaluationInputMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRunEvaluationInputMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [runEvaluationInputMutation, { data, loading, error }] = useRunEvaluationInputMutation({
+ *   variables: {
+ *      agentId: // value for 'agentId'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRunEvaluationInputMutation(baseOptions?: Apollo.MutationHookOptions<RunEvaluationInputMutation, RunEvaluationInputMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RunEvaluationInputMutation, RunEvaluationInputMutationVariables>(RunEvaluationInputDocument, options);
+      }
+export type RunEvaluationInputMutationHookResult = ReturnType<typeof useRunEvaluationInputMutation>;
+export type RunEvaluationInputMutationResult = Apollo.MutationResult<RunEvaluationInputMutation>;
+export type RunEvaluationInputMutationOptions = Apollo.BaseMutationOptions<RunEvaluationInputMutation, RunEvaluationInputMutationVariables>;
 export const UpdateOneAgentDocument = gql`
     mutation UpdateOneAgent($input: UpdateAgentInput!) {
   updateOneAgent(input: $input) {
@@ -7344,6 +7488,79 @@ export function useFindOneAgentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type FindOneAgentQueryHookResult = ReturnType<typeof useFindOneAgentQuery>;
 export type FindOneAgentLazyQueryHookResult = ReturnType<typeof useFindOneAgentLazyQuery>;
 export type FindOneAgentQueryResult = Apollo.QueryResult<FindOneAgentQuery, FindOneAgentQueryVariables>;
+export const GetAgentTurnsDocument = gql`
+    query GetAgentTurns($agentId: UUID!) {
+  agentTurns(agentId: $agentId) {
+    id
+    threadId
+    agentId
+    createdAt
+    evaluations {
+      id
+      score
+      comment
+      createdAt
+    }
+    messages {
+      id
+      role
+      createdAt
+      parts {
+        id
+        type
+        textContent
+        reasoningContent
+        toolName
+        toolCallId
+        toolInput
+        toolOutput
+        errorMessage
+        state
+        errorDetails
+        sourceUrlSourceId
+        sourceUrlUrl
+        sourceUrlTitle
+        sourceDocumentSourceId
+        sourceDocumentMediaType
+        sourceDocumentTitle
+        sourceDocumentFilename
+        fileMediaType
+        fileFilename
+        fileUrl
+        providerMetadata
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAgentTurnsQuery__
+ *
+ * To run a query within a React component, call `useGetAgentTurnsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAgentTurnsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAgentTurnsQuery({
+ *   variables: {
+ *      agentId: // value for 'agentId'
+ *   },
+ * });
+ */
+export function useGetAgentTurnsQuery(baseOptions: Apollo.QueryHookOptions<GetAgentTurnsQuery, GetAgentTurnsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAgentTurnsQuery, GetAgentTurnsQueryVariables>(GetAgentTurnsDocument, options);
+      }
+export function useGetAgentTurnsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAgentTurnsQuery, GetAgentTurnsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAgentTurnsQuery, GetAgentTurnsQueryVariables>(GetAgentTurnsDocument, options);
+        }
+export type GetAgentTurnsQueryHookResult = ReturnType<typeof useGetAgentTurnsQuery>;
+export type GetAgentTurnsLazyQueryHookResult = ReturnType<typeof useGetAgentTurnsLazyQuery>;
+export type GetAgentTurnsQueryResult = Apollo.QueryResult<GetAgentTurnsQuery, GetAgentTurnsQueryVariables>;
 export const GetChatMessagesDocument = gql`
     query GetChatMessages($threadId: UUID!) {
   chatMessages(threadId: $threadId) {

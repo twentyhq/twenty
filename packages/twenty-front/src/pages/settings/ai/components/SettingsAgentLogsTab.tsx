@@ -19,8 +19,8 @@ import {
   AnimatedPlaceholderEmptyTitle,
 } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { EVALUATE_AGENT_TURN } from '../graphql/mutations/evaluateAgentTurn';
-import { GET_AGENT_TURNS } from '../graphql/queries/getAgentTurns';
+import { EVALUATE_AGENT_TURN } from '@/ai/graphql/mutations/evaluateAgentTurn';
+import { GET_AGENT_TURNS } from '@/ai/graphql/queries/getAgentTurns';
 
 const StyledTable = styled(Table)`
   margin-top: ${({ theme }) => theme.spacing(3)};
@@ -44,7 +44,7 @@ const StyledDateCell = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-const StyledEvaluationCell = styled(TableCell)`
+const StyledInputCell = styled(TableCell)`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -102,13 +102,24 @@ export const SettingsAgentLogsTab = ({
     return 'red';
   };
 
+  const getUserMessageInput = (messages: any[]) => {
+    const userMessage = messages?.find((message) => message.role === 'user');
+    if (!userMessage) return null;
+
+    const textParts = userMessage.parts
+      ?.filter((part: any) => part.type === 'text' && part.textContent)
+      .map((part: any) => part.textContent);
+
+    return textParts?.join(' ') || null;
+  };
+
   if (loading) {
     return (
       <StyledTable>
         <StyledTableHeaderRow>
           <TableHeader>{t`Date`}</TableHeader>
           <TableHeader>{t`Score`}</TableHeader>
-          <TableHeader>{t`Evaluation`}</TableHeader>
+          <TableHeader>{t`Input`}</TableHeader>
           <TableHeader />
         </StyledTableHeaderRow>
         {Array.from({ length: 3 }).map((_, index) => (
@@ -139,11 +150,12 @@ export const SettingsAgentLogsTab = ({
       <StyledTableHeaderRow>
         <TableHeader>{t`Date`}</TableHeader>
         <TableHeader>{t`Score`}</TableHeader>
-        <TableHeader>{t`Evaluation`}</TableHeader>
+        <TableHeader>{t`Input`}</TableHeader>
         <TableHeader />
       </StyledTableHeaderRow>
       {turns.map((turn: any) => {
         const latestEvaluation = getLatestEvaluation(turn.evaluations);
+        const userInput = getUserMessageInput(turn.messages);
 
         return (
           <StyledTableRow key={turn.id}>
@@ -162,13 +174,6 @@ export const SettingsAgentLogsTab = ({
                   text={`${latestEvaluation.score}`}
                 />
               ) : (
-                <span>-</span>
-              )}
-            </StyledScoreCell>
-            <StyledEvaluationCell>
-              {latestEvaluation ? (
-                latestEvaluation.comment || t`No comment`
-              ) : (
                 <Button
                   size="small"
                   variant="secondary"
@@ -179,7 +184,8 @@ export const SettingsAgentLogsTab = ({
                   title={t`Evaluate`}
                 />
               )}
-            </StyledEvaluationCell>
+            </StyledScoreCell>
+            <StyledInputCell>{userInput || t`No input`}</StyledInputCell>
             <StyledActionCell>
               {latestEvaluation && (
                 <UndecoratedLink
