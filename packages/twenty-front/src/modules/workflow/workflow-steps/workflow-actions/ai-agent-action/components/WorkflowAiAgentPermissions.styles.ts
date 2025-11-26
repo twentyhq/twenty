@@ -9,7 +9,7 @@ export const StyledLabel = styled(Label)`
   margin: ${({ theme }) => theme.spacing(3, 3, 0)};
 `;
 
-export const StyledRow = styled.div`
+export const StyledRow = styled.div<{ isDisabled?: boolean }>`
   align-items: center;
   display: flex;
   justify-content: space-between;
@@ -17,10 +17,13 @@ export const StyledRow = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
   box-sizing: border-box;
   border-radius: ${({ theme }) => theme.spacing(1)};
-  cursor: pointer;
+  cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'pointer')};
+  opacity: ${({ isDisabled }) => (isDisabled ? 0.5 : 1)};
+  pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
 
   :hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
+    background-color: ${({ theme, isDisabled }) =>
+      isDisabled ? 'inherit' : theme.background.transparent.light};
   }
 `;
 

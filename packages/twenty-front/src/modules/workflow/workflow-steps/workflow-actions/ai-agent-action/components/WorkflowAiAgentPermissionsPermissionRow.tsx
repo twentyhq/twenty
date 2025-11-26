@@ -37,7 +37,7 @@ export const WorkflowAiAgentPermissionsPermissionRow = ({
   return (
     <StyledRow
       onClick={isClickable ? onAdd : undefined}
-      style={isDisabled ? { opacity: 0.5, cursor: 'not-allowed' } : undefined}
+      isDisabled={isDisabled}
     >
       <StyledRowLeftContent>
         <StyledIconContainer>
