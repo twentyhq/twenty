@@ -3,8 +3,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
-import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
-import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
@@ -15,11 +13,11 @@ import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-
 import { SearchArticlesTool } from 'src/engine/core-modules/tool/tools/search-articles-tool/search-articles-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
-import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
-import { AgentToolGeneratorService } from 'src/engine/metadata-modules/agent/agent-tool-generator.service';
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
-import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { AgentService } from 'src/engine/metadata-modules/ai-agent/agent.service';
+import { AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
+import { AgentToolGeneratorService } from 'src/engine/metadata-modules/ai-agent/services/agent-tool-generator.service';
+import { ToolAdapterService } from 'src/engine/metadata-modules/ai-tools/services/tool-adapter.service';
+import { ToolService } from 'src/engine/metadata-modules/ai-tools/services/tool.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -183,20 +181,6 @@ export const createAgentToolTestModule =
           },
         },
         {
-          provide: AgentHandoffService,
-          useValue: {
-            getHandoffTargets: jest.fn().mockResolvedValue([]),
-            canHandoffTo: jest.fn().mockResolvedValue(true),
-            getAgentHandoffs: jest.fn().mockResolvedValue([]),
-          },
-        },
-        {
-          provide: AgentHandoffExecutorService,
-          useValue: {
-            executeHandoff: jest.fn().mockResolvedValue({ success: true }),
-          },
-        },
-        {
           provide: WorkflowToolWorkspaceService,
           useValue: {
             generateWorkflowTools: jest.fn().mockResolvedValue({}),
@@ -249,8 +233,6 @@ export const createAgentToolTestModule =
       roleId: testRoleId,
       createdAt: new Date(),
       updatedAt: new Date(),
-      incomingHandoffs: [],
-      outgoingHandoffs: [],
       modelConfiguration: {},
     };
 

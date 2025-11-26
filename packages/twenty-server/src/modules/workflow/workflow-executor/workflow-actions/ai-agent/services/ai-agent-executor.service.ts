@@ -11,18 +11,18 @@ import {
 import { type ActorMetadata } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
-import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
-import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
-import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
-import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
-import { AgentExecutionResult } from 'src/engine/metadata-modules/agent/agent-execution.service';
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai-models/constants/ai-telemetry.const';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai-models/services/ai-model-registry.service';
+import { ToolAdapterService } from 'src/engine/metadata-modules/ai-tools/services/tool-adapter.service';
+import { ToolService } from 'src/engine/metadata-modules/ai-tools/services/tool.service';
+import { AgentExecutionResult } from 'src/engine/metadata-modules/ai-agent/services/agent-execution.service';
+import { AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
 import {
   AgentException,
   AgentExceptionCode,
-} from 'src/engine/metadata-modules/agent/agent.exception';
-import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
-import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
+} from 'src/engine/metadata-modules/ai-agent/agent.exception';
+import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai-agent/constants/agent-config.const';
+import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai-agent/constants/agent-system-prompts.const';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
@@ -115,7 +115,7 @@ export class AiAgentExecutorService {
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
 
       const textResponse = await generateText({
-        system: `You are executing as part of a workflow automation. ${agent ? agent.prompt : ''}`,
+        system: `${AGENT_SYSTEM_PROMPTS.BASE}\n${AGENT_SYSTEM_PROMPTS.WORKFLOW_ADDITIONS}\n\n${agent ? agent.prompt : ''}`,
         tools,
         model: registeredModel.model,
         prompt: userPrompt,

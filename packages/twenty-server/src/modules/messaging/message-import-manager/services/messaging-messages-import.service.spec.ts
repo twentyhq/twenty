@@ -49,7 +49,7 @@ describe('MessagingMessagesImportService', () => {
 
     mockMessageChannel = {
       id: 'message-channel-id',
-      syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+      syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
       connectedAccountId: mockConnectedAccount.id,
       handle: 'test@gmail.com',
     } as MessageChannelWorkspaceEntity;
@@ -192,9 +192,9 @@ describe('MessagingMessagesImportService', () => {
       );
   });
 
-  it('should fails if SyncStage is not MESSAGES_IMPORT_PENDING', async () => {
+  it('should fails if SyncStage is not MESSAGES_IMPORT_SCHEDULED', async () => {
     mockMessageChannel.syncStage =
-      MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING;
+      MessageChannelSyncStage.MESSAGES_IMPORT_PENDING;
 
     expect(
       service.processMessageBatchImport(

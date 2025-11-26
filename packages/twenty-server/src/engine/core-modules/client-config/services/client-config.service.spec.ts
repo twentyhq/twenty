@@ -3,7 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai-models/services/ai-model-registry.service';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';

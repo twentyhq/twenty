@@ -10,7 +10,6 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE,
   DEFAULT_COMPOSITE_FIELDS_NULL_EQUIVALENT_VALUE,
-  DEFAULT_RAW_JSON_FIELD_NULL_EQUIVALENT_VALUE,
   DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE,
 } from 'src/engine/api/common/common-args-processors/data-arg-processor/constants/null-equivalent-values.constant';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -197,10 +196,6 @@ function formatFieldMetadataValue(
       fieldMetadataType === FieldMetadataType.ARRAY
     ) {
       return DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE;
-    }
-
-    if (fieldMetadataType === FieldMetadataType.RAW_JSON) {
-      return DEFAULT_RAW_JSON_FIELD_NULL_EQUIVALENT_VALUE;
     }
 
     if (fieldMetadataType === FieldMetadataType.TEXT) {

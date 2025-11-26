@@ -44,6 +44,13 @@ export const useChartSettingsValues = ({
     configuration.__typename === 'BarChartConfiguration' ||
     configuration.__typename === 'LineChartConfiguration';
 
+  const hasColorProperty =
+    isBarOrLineChart ||
+    configuration.__typename === 'GaugeChartConfiguration' ||
+    configuration.__typename === 'PieChartConfiguration';
+
+  const isPieChart = configuration.__typename === 'PieChartConfiguration';
+
   let groupByFieldXId: string | undefined;
   let groupByFieldYId: string | undefined;
   let groupBySubFieldNameX: CompositeFieldSubFieldName | undefined;
@@ -102,12 +109,28 @@ export const useChartSettingsValues = ({
         })
       : undefined;
 
+  let pieChartSortByLabel: string | undefined;
+
   if (configuration.__typename === 'PieChartConfiguration') {
     groupByOrderBy = configuration.orderBy;
     groupByFieldYId = configuration.groupByFieldMetadataId;
     groupBySubFieldNameY = configuration.groupBySubFieldName as
       | CompositeFieldSubFieldName
       | undefined;
+
+    pieChartSortByLabel =
+      isDefined(configuration.orderBy) &&
+      isDefined(configuration.groupByFieldMetadataId)
+        ? getXSortOptionLabel({
+            graphOrderBy: configuration.orderBy,
+            groupByFieldMetadataIdX: configuration.groupByFieldMetadataId,
+            groupBySubFieldNameX: configuration.groupBySubFieldName as
+              | CompositeFieldSubFieldName
+              | undefined,
+            aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
+            aggregateOperation: configuration.aggregateOperation ?? undefined,
+          })
+        : undefined;
   }
 
   const finalGroupByFieldYId = groupByFieldYId;
@@ -131,11 +154,12 @@ export const useChartSettingsValues = ({
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_X:
         return groupBySubFieldNameXLabel ?? groupByFieldX?.label;
       case CHART_CONFIGURATION_SETTING_IDS.COLORS:
-        return 'color' in configuration && isDefined(configuration.color)
+        return hasColorProperty && isDefined(configuration.color)
           ? capitalize(configuration.color)
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_Y:
-      case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_AGGREGATE: {
+      case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_AGGREGATE:
+      case CHART_CONFIGURATION_SETTING_IDS.EACH_SLICE_REPRESENTS: {
         const hasAggregateLabel = isDefined(aggregateField?.label);
         const hasAggregateOperation = isDefined(aggregateOperation);
 
@@ -145,15 +169,32 @@ export const useChartSettingsValues = ({
             : ''
         }`;
       }
+      case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_PIE_CHART: {
+        const pieChartGroupByField = isDefined(finalGroupByFieldYId)
+          ? objectMetadataItem?.fields.find(
+              (field) => field.id === finalGroupByFieldYId,
+            )
+          : undefined;
+        const pieChartGroupBySubFieldNameLabel =
+          isDefined(finalGroupBySubFieldNameY) &&
+          isDefined(pieChartGroupByField)
+            ? getFieldLabelWithSubField({
+                field: pieChartGroupByField,
+                subFieldName: finalGroupBySubFieldNameY,
+              })
+            : undefined;
+
+        return pieChartGroupBySubFieldNameLabel ?? pieChartGroupByField?.label;
+      }
+
       case CHART_CONFIGURATION_SETTING_IDS.GROUP_BY:
         return groupByFieldY?.label;
       case CHART_CONFIGURATION_SETTING_IDS.AXIS_NAME:
-        return 'axisNameDisplay' in configuration &&
-          isDefined(configuration.axisNameDisplay)
+        return isBarOrLineChart && isDefined(configuration.axisNameDisplay)
           ? getChartAxisNameDisplayOptions(configuration.axisNameDisplay)
           : undefined;
-      case CHART_CONFIGURATION_SETTING_IDS.SORT_BY_X:
-        return xAxisOrderByLabel;
+      case CHART_CONFIGURATION_SETTING_IDS.PRIMARY_SORT_BY:
+        return pieChartSortByLabel ?? xAxisOrderByLabel;
       case CHART_CONFIGURATION_SETTING_IDS.SORT_BY_GROUP_BY_FIELD:
         return groupByOrderByLabel;
       case CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS:
@@ -167,32 +208,31 @@ export const useChartSettingsValues = ({
           ? configuration.isStacked !== false
           : true;
       case CHART_CONFIGURATION_SETTING_IDS.OMIT_NULL_VALUES:
-        return 'omitNullValues' in configuration
+        return isBarOrLineChart
           ? (configuration.omitNullValues ?? false)
           : false;
       case CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE:
-        return 'rangeMin' in configuration
+        return isBarOrLineChart
           ? (configuration.rangeMin?.toString() ?? '')
           : '';
       case CHART_CONFIGURATION_SETTING_IDS.MAX_RANGE:
-        return 'rangeMax' in configuration
+        return isBarOrLineChart
           ? (configuration.rangeMax?.toString() ?? '')
           : '';
       case CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY_X:
-        return 'primaryAxisDateGranularity' in configuration &&
+        return isBarOrLineChart &&
           isDefined(configuration.primaryAxisDateGranularity)
           ? getDateGranularityLabel(configuration.primaryAxisDateGranularity)
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY_Y:
-        return 'secondaryAxisGroupByDateGranularity' in configuration &&
+        return isBarOrLineChart &&
           isDefined(configuration.secondaryAxisGroupByDateGranularity)
           ? getDateGranularityLabel(
               configuration.secondaryAxisGroupByDateGranularity,
             )
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY:
-        return 'dateGranularity' in configuration &&
-          isDefined(configuration.dateGranularity)
+        return isPieChart && isDefined(configuration.dateGranularity)
           ? getDateGranularityLabel(configuration.dateGranularity)
           : undefined;
       default:

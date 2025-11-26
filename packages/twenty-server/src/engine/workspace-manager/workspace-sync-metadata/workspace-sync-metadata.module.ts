@@ -5,7 +5,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentRoleModule } from 'src/engine/metadata-modules/agent-role/agent-role.module';
+import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai-agent-role/ai-agent-role.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -42,7 +42,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
     DataSourceModule,
     TypeOrmModule.forFeature([WorkspaceEntity, FeatureFlagEntity]),
     WorkspaceMetadataVersionModule,
-    AgentRoleModule,
+    AiAgentRoleModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   providers: [
