@@ -154,16 +154,19 @@ export const transformGroupByDataToBarChartData = ({
     groupByFieldX.type === FieldMetadataType.DATE ||
     groupByFieldX.type === FieldMetadataType.DATE_TIME;
 
-  const dateGapFillResult = isDateField
-    ? fillDateGapsInBarChartData({
-        data: filteredResults,
-        keys: [aggregateField.name],
-        dateGranularity:
-          configuration.primaryAxisDateGranularity ??
-          GRAPH_DEFAULT_DATE_GRANULARITY,
-        hasSecondDimension: isDefined(groupByFieldY),
-      })
-    : { data: filteredResults, wasTruncated: false };
+  const omitNullValues = configuration.omitNullValues ?? false;
+
+  const dateGapFillResult =
+    isDateField && !omitNullValues
+      ? fillDateGapsInBarChartData({
+          data: filteredResults,
+          keys: [aggregateField.name],
+          dateGranularity:
+            configuration.primaryAxisDateGranularity ??
+            GRAPH_DEFAULT_DATE_GRANULARITY,
+          hasSecondDimension: isDefined(groupByFieldY),
+        })
+      : { data: filteredResults, wasTruncated: false };
 
   const filteredResultsWithDateGaps = dateGapFillResult.data;
   const dateRangeWasTruncated = dateGapFillResult.wasTruncated;

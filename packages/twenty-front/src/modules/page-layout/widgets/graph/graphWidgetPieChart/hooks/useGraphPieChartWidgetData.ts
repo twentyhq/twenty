@@ -20,6 +20,7 @@ type UseGraphPieChartWidgetDataResult = {
   error?: Error;
   hasTooManyGroups: boolean;
   objectMetadataItem: ObjectMetadataItem;
+  showDataLabels: boolean;
 };
 
 export const useGraphPieChartWidgetData = ({
@@ -56,6 +57,7 @@ export const useGraphPieChartWidgetData = ({
   return {
     ...transformedData,
     objectMetadataItem,
+    showDataLabels: configuration.displayDataLabel ?? false,
     loading,
     error,
   };
