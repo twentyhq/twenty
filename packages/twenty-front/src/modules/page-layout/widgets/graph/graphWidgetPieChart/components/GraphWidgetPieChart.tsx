@@ -5,7 +5,6 @@ import { PieChartCenterMetricLayer } from '@/page-layout/widgets/graph/graphWidg
 import { PIE_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartHoverBrightness';
 import { PIE_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMargins';
 import { usePieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartData';
-import { usePieChartHandlers } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartHandlers';
 import { usePieChartTooltip } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartTooltip';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
@@ -83,17 +82,9 @@ export const GraphWidgetPieChart = ({
     customFormatter,
   };
 
-  const {
-    hoveredSliceId,
-    setHoveredSliceId,
-    handleSliceClick,
-    hasClickableItems,
-  } = usePieChartHandlers({ data, onSliceClick });
-
   const { enrichedData } = usePieChartData({
     data,
     colorRegistry,
-    hoveredSliceId,
   });
 
   const { createTooltipData } = usePieChartTooltip({
@@ -101,6 +92,12 @@ export const GraphWidgetPieChart = ({
     formatOptions,
     displayType,
   });
+
+  const handleSliceClick = (datum: ComputedDatum<PieChartDataItem>) => {
+    if (isDefined(onSliceClick)) {
+      onSliceClick(datum.data);
+    }
+  };
 
   const renderTooltip = ({ datum }: PieTooltipProps<PieChartDataItem>) => {
     const tooltipData = createTooltipData(datum);
@@ -138,7 +135,7 @@ export const GraphWidgetPieChart = ({
   return (
     <StyledContainer id={id}>
       <GraphWidgetChartContainer
-        $isClickable={!hasNoData && hasClickableItems}
+        $isClickable={!hasNoData && isDefined(onSliceClick)}
         $cursorSelector="svg g path"
       >
         <StyledPieChartWrapper preventHover={hasNoData}>
@@ -152,11 +149,7 @@ export const GraphWidgetPieChart = ({
             enableArcLinkLabels={showDataLabels && !hasNoData}
             enableArcLabels={false}
             tooltip={hasNoData ? () => null : renderTooltip}
-            onClick={hasNoData ? undefined : handleSliceClick}
-            onMouseEnter={
-              hasNoData ? undefined : (datum) => setHoveredSliceId(datum.id)
-            }
-            onMouseLeave={hasNoData ? undefined : () => setHoveredSliceId(null)}
+            onClick={hasNoData ? undefined : (datum) => handleSliceClick(datum)}
             layers={['arcs', 'arcLinkLabels', CenterMetricLayer]}
             arcLinkLabel={(datum: ComputedDatum<PieChartDataItem>) => {
               const tooltipData = createTooltipData(datum);

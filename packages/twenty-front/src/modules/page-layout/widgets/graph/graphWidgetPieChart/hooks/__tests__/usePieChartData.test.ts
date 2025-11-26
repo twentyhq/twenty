@@ -67,7 +67,6 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
-        hoveredSliceId: null,
       }),
     );
 
@@ -78,43 +77,9 @@ describe('usePieChartData', () => {
       label: 'Item 1',
       percentage: 30,
       colorScheme: mockColorRegistry.red,
-      isHovered: false,
     });
     expect(result.current.enrichedData[1].percentage).toBe(50);
     expect(result.current.enrichedData[2].percentage).toBe(20);
-  });
-
-  it('should calculate middle angles for each slice', () => {
-    const { result } = renderHook(() =>
-      usePieChartData({
-        data: mockData,
-        colorRegistry: mockColorRegistry,
-        hoveredSliceId: null,
-      }),
-    );
-
-    expect(result.current.enrichedData[0].middleAngle).toBe(54);
-    expect(result.current.enrichedData[1].middleAngle).toBe(198);
-    expect(result.current.enrichedData[2].middleAngle).toBe(324);
-  });
-
-  it('should handle hover state', () => {
-    const { result, rerender } = renderHook(
-      ({ hoveredSliceId }: { hoveredSliceId: DatumId | null }) =>
-        usePieChartData({
-          data: mockData,
-          colorRegistry: mockColorRegistry,
-          hoveredSliceId,
-        }),
-      { initialProps: { hoveredSliceId: null as DatumId | null } },
-    );
-
-    expect(result.current.enrichedData[1].isHovered).toBe(false);
-
-    rerender({ hoveredSliceId: 'item2' as DatumId });
-    expect(result.current.enrichedData[1].isHovered).toBe(true);
-    expect(result.current.enrichedData[0].isHovered).toBe(false);
-    expect(result.current.enrichedData[2].isHovered).toBe(false);
   });
 
   it('should handle empty data', () => {
@@ -122,7 +87,6 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: [],
         colorRegistry: mockColorRegistry,
-        hoveredSliceId: null,
       }),
     );
 
@@ -138,12 +102,10 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: singleData,
         colorRegistry: mockColorRegistry,
-        hoveredSliceId: null,
       }),
     );
 
     expect(result.current.enrichedData[0].percentage).toBe(100);
-    expect(result.current.enrichedData[0].middleAngle).toBe(180);
   });
 
   it('should handle custom colors in data items', () => {
@@ -156,7 +118,6 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: dataWithColors,
         colorRegistry: mockColorRegistry,
-        hoveredSliceId: null,
       }),
     );
 
@@ -166,11 +127,10 @@ describe('usePieChartData', () => {
 
   it('should memoize calculations', () => {
     const { result, rerender } = renderHook(
-      ({ hoveredSliceId }) =>
+      () =>
         usePieChartData({
           data: mockData,
           colorRegistry: mockColorRegistry,
-          hoveredSliceId,
         }),
       { initialProps: { hoveredSliceId: null as DatumId | null } },
     );
