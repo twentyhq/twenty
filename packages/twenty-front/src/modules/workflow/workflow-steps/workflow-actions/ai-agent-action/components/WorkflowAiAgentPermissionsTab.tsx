@@ -23,6 +23,7 @@ import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-
 import { WorkflowAiAgentPermissionsCrudList } from './WorkflowAiAgentPermissionsCrudList';
 import { WorkflowAiAgentPermissionsFlagList } from './WorkflowAiAgentPermissionsFlagList';
 import { WorkflowAiAgentPermissionsObjectsList } from './WorkflowAiAgentPermissionsObjectsList';
+import { getFilteredPermissions } from './workflowAiAgentPermissions.utils';
 const StyledSearchInput = styled(TextInput)`
   width: 100%;
   height: 40px;
@@ -98,51 +99,29 @@ export const WorkflowAiAgentPermissionsTab = ({
   const actionPermissionsConfig = useActionRolePermissionFlagConfig();
 
   type ObjectMetadataListItem = (typeof objectMetadataItems)[number];
-  type PermissionConfigItem = (typeof settingsPermissionsConfig)[number];
-  type ActionPermissionConfigItem = (typeof actionPermissionsConfig)[number];
-
   const filteredObjects = filterBySearchQuery<ObjectMetadataListItem>({
     items: objectMetadataItems,
     searchQuery,
     getSearchableValues: (item) => [item.labelSingular, item.labelPlural],
   });
 
-  const filteredSettingsPermissions = filterBySearchQuery<PermissionConfigItem>(
-    {
-      items: settingsPermissionsConfig,
-      searchQuery,
-      getSearchableValues: (permission) => [permission.name],
-    },
-  );
+  const {
+    filteredPermissions: filteredSettingsPermissions,
+    filteredEnabledPermissions: filteredEnabledSettingsPermissions,
+  } = getFilteredPermissions({
+    permissions: settingsPermissionsConfig,
+    permissionFlagKeys,
+    searchQuery,
+  });
 
-  const filteredActionPermissions =
-    filterBySearchQuery<ActionPermissionConfigItem>({
-      items: actionPermissionsConfig,
-      searchQuery,
-      getSearchableValues: (permission) => [permission.name],
-    });
-
-  const enabledSettingsPermissions = settingsPermissionsConfig.filter(
-    (permission) => permissionFlagKeys.includes(permission.key),
-  );
-
-  const enabledActionPermissions = actionPermissionsConfig.filter(
-    (permission) => permissionFlagKeys.includes(permission.key),
-  );
-
-  const filteredEnabledSettingsPermissions =
-    filterBySearchQuery<PermissionConfigItem>({
-      items: enabledSettingsPermissions,
-      searchQuery,
-      getSearchableValues: (permission) => [permission.name],
-    });
-
-  const filteredEnabledActionPermissions =
-    filterBySearchQuery<ActionPermissionConfigItem>({
-      items: enabledActionPermissions,
-      searchQuery,
-      getSearchableValues: (permission) => [permission.name],
-    });
+  const {
+    filteredPermissions: filteredActionPermissions,
+    filteredEnabledPermissions: filteredEnabledActionPermissions,
+  } = getFilteredPermissions({
+    permissions: actionPermissionsConfig,
+    permissionFlagKeys,
+    searchQuery,
+  });
 
   const {
     handleAddPermission,
