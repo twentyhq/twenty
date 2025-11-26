@@ -16,6 +16,7 @@ import { MessagingGetMessageListService } from 'src/modules/messaging/message-im
 import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
+import { MessagingProcessFolderActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 
 describe('MessagingMessageListFetchService', () => {
@@ -78,15 +79,21 @@ describe('MessagingMessageListFetchService', () => {
     };
 
     const mockMessageFolderRepository = {
-      find: jest.fn().mockResolvedValue([
-        {
-          id: 'inbox-folder-id',
-          name: 'inbox',
-          syncCursor: 'inbox-sync-cursor',
-          messageChannelId: 'microsoft-message-channel-id',
-          isSynced: true,
-        },
-      ]),
+      find: jest.fn().mockImplementation(({ where }) => {
+        if (where?.pendingSyncAction === 'FOLDER_DELETION') {
+          return [];
+        }
+
+        return [
+          {
+            id: 'inbox-folder-id',
+            name: 'inbox',
+            syncCursor: 'inbox-sync-cursor',
+            messageChannelId: 'microsoft-message-channel-id',
+            isSynced: true,
+          },
+        ];
+      }),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -236,6 +243,12 @@ describe('MessagingMessageListFetchService', () => {
           provide: MessagingProcessGroupEmailActionsService,
           useValue: {
             processGroupEmailActions: jest.fn().mockResolvedValue(undefined),
+          },
+        },
+        {
+          provide: MessagingProcessFolderActionsService,
+          useValue: {
+            processFolderActions: jest.fn().mockResolvedValue(undefined),
           },
         },
       ],
