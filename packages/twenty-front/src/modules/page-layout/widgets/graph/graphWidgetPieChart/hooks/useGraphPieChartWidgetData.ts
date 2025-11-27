@@ -23,6 +23,7 @@ type UseGraphPieChartWidgetDataResult = {
   objectMetadataItem: ObjectMetadataItem;
   formattedToRawLookup: Map<string, RawDimensionValue>;
   showDataLabels: boolean;
+  showCenterMetric: boolean;
 };
 
 export const useGraphPieChartWidgetData = ({
@@ -60,6 +61,7 @@ export const useGraphPieChartWidgetData = ({
     ...transformedData,
     objectMetadataItem,
     showDataLabels: configuration.displayDataLabel ?? false,
+    showCenterMetric: configuration.showCenterMetric ?? false,
     loading,
     error,
   };

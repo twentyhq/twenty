@@ -1,0 +1,189 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`updateOne FieldMetadataService morph relation fields v2 - Add one target Should fail adding one object metadata target to pre-existing morph relation where object is already a target 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "fieldNamePersonForMorphRelationSecond" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "fieldNamePersonForMorphRelationSecond" is not available as it is already used by another field",
+              "value": "fieldNamePersonForMorphRelationSecond",
+            },
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by another join column name",
+              "userFriendlyMessage": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by join column name",
+              "value": "fieldNamePersonForMorphRelationSecondId",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "fieldNamePersonForMorphRelationSecond",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
+              "userFriendlyMessage": "Relation field target metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "toto",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+      ],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_ALREADY_EXISTS",
+              "message": "Index with same name already exists",
+              "userFriendlyMessage": "Index with same name already exists",
+            },
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_4ff93dd3375abd83d29ed3d01b4",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
+      "objectMetadata": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while updating field",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`updateOne FieldMetadataService morph relation fields v2 - Add one target Should fail adding one object metadata target to pre-existing morph relation where object is already source object 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Source object cannot be the target object",
+              "userFriendlyMessage": "Source object cannot be the target object",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "fieldNameCompanyForMorphRelationSecond",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
+              "userFriendlyMessage": "Relation field target metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "toto",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+      ],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_59563a0476bb3b8760e33ae6d5b",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
+      "objectMetadata": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while updating field",
+  "name": "GraphQLError",
+}
+`;

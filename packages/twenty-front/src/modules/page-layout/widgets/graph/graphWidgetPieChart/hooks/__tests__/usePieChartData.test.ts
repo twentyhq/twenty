@@ -57,9 +57,9 @@ describe('usePieChartData', () => {
   };
 
   const mockData: PieChartDataItem[] = [
-    { id: 'item1', value: 30, label: 'Item 1' },
-    { id: 'item2', value: 50, label: 'Item 2' },
-    { id: 'item3', value: 20, label: 'Item 3' },
+    { id: 'item1', value: 30 },
+    { id: 'item2', value: 50 },
+    { id: 'item3', value: 20 },
   ];
 
   it('should enrich data with color schemes and percentages', () => {
@@ -67,7 +67,6 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
-        hoveredSliceId: null,
       }),
     );
 
@@ -75,46 +74,11 @@ describe('usePieChartData', () => {
     expect(result.current.enrichedData[0]).toMatchObject({
       id: 'item1',
       value: 30,
-      label: 'Item 1',
       percentage: 30,
       colorScheme: mockColorRegistry.red,
-      isHovered: false,
     });
     expect(result.current.enrichedData[1].percentage).toBe(50);
     expect(result.current.enrichedData[2].percentage).toBe(20);
-  });
-
-  it('should calculate middle angles for each slice', () => {
-    const { result } = renderHook(() =>
-      usePieChartData({
-        data: mockData,
-        colorRegistry: mockColorRegistry,
-        hoveredSliceId: null,
-      }),
-    );
-
-    expect(result.current.enrichedData[0].middleAngle).toBe(54);
-    expect(result.current.enrichedData[1].middleAngle).toBe(198);
-    expect(result.current.enrichedData[2].middleAngle).toBe(324);
-  });
-
-  it('should handle hover state', () => {
-    const { result, rerender } = renderHook(
-      ({ hoveredSliceId }: { hoveredSliceId: DatumId | null }) =>
-        usePieChartData({
-          data: mockData,
-          colorRegistry: mockColorRegistry,
-          hoveredSliceId,
-        }),
-      { initialProps: { hoveredSliceId: null as DatumId | null } },
-    );
-
-    expect(result.current.enrichedData[1].isHovered).toBe(false);
-
-    rerender({ hoveredSliceId: 'item2' as DatumId });
-    expect(result.current.enrichedData[1].isHovered).toBe(true);
-    expect(result.current.enrichedData[0].isHovered).toBe(false);
-    expect(result.current.enrichedData[2].isHovered).toBe(false);
   });
 
   it('should handle empty data', () => {
@@ -122,7 +86,6 @@ describe('usePieChartData', () => {
       usePieChartData({
         data: [],
         colorRegistry: mockColorRegistry,
-        hoveredSliceId: null,
       }),
     );
 
@@ -130,47 +93,36 @@ describe('usePieChartData', () => {
   });
 
   it('should handle single data item', () => {
-    const singleData: PieChartDataItem[] = [
-      { id: 'single', value: 100, label: 'Single Item' },
-    ];
+    const singleData: PieChartDataItem[] = [{ id: 'single', value: 100 }];
 
     const { result } = renderHook(() =>
       usePieChartData({
         data: singleData,
         colorRegistry: mockColorRegistry,
-        hoveredSliceId: null,
       }),
     );
 
     expect(result.current.enrichedData[0].percentage).toBe(100);
-    expect(result.current.enrichedData[0].middleAngle).toBe(180);
   });
 
-  it('should handle custom colors in data items', () => {
-    const dataWithColors: PieChartDataItem[] = [
-      { id: 'item1', value: 50, label: 'Item 1', color: 'blue' },
-      { id: 'item2', value: 50, label: 'Item 2' },
-    ];
-
+  it('should assign colors based on index', () => {
     const { result } = renderHook(() =>
       usePieChartData({
-        data: dataWithColors,
+        data: mockData,
         colorRegistry: mockColorRegistry,
-        hoveredSliceId: null,
       }),
     );
 
-    expect(result.current.enrichedData[0].colorScheme.name).toBe('blue');
+    expect(result.current.enrichedData[0].colorScheme.name).toBe('red');
     expect(result.current.enrichedData[1].colorScheme.name).toBe('blue');
   });
 
   it('should memoize calculations', () => {
     const { result, rerender } = renderHook(
-      ({ hoveredSliceId }) =>
+      () =>
         usePieChartData({
           data: mockData,
           colorRegistry: mockColorRegistry,
-          hoveredSliceId,
         }),
       { initialProps: { hoveredSliceId: null as DatumId | null } },
     );
