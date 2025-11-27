@@ -57,9 +57,9 @@ describe('usePieChartData', () => {
   };
 
   const mockData: PieChartDataItem[] = [
-    { id: 'item1', value: 30, label: 'Item 1' },
-    { id: 'item2', value: 50, label: 'Item 2' },
-    { id: 'item3', value: 20, label: 'Item 3' },
+    { id: 'item1', value: 30 },
+    { id: 'item2', value: 50 },
+    { id: 'item3', value: 20 },
   ];
 
   it('should enrich data with color schemes and percentages', () => {
@@ -74,7 +74,6 @@ describe('usePieChartData', () => {
     expect(result.current.enrichedData[0]).toMatchObject({
       id: 'item1',
       value: 30,
-      label: 'Item 1',
       percentage: 30,
       colorScheme: mockColorRegistry.red,
     });
@@ -94,9 +93,7 @@ describe('usePieChartData', () => {
   });
 
   it('should handle single data item', () => {
-    const singleData: PieChartDataItem[] = [
-      { id: 'single', value: 100, label: 'Single Item' },
-    ];
+    const singleData: PieChartDataItem[] = [{ id: 'single', value: 100 }];
 
     const { result } = renderHook(() =>
       usePieChartData({
@@ -108,20 +105,15 @@ describe('usePieChartData', () => {
     expect(result.current.enrichedData[0].percentage).toBe(100);
   });
 
-  it('should handle custom colors in data items', () => {
-    const dataWithColors: PieChartDataItem[] = [
-      { id: 'item1', value: 50, label: 'Item 1', color: 'blue' },
-      { id: 'item2', value: 50, label: 'Item 2' },
-    ];
-
+  it('should assign colors based on index', () => {
     const { result } = renderHook(() =>
       usePieChartData({
-        data: dataWithColors,
+        data: mockData,
         colorRegistry: mockColorRegistry,
       }),
     );
 
-    expect(result.current.enrichedData[0].colorScheme.name).toBe('blue');
+    expect(result.current.enrichedData[0].colorScheme.name).toBe('red');
     expect(result.current.enrichedData[1].colorScheme.name).toBe('blue');
   });
 

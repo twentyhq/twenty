@@ -31,9 +31,7 @@ type GraphWidgetPieChartProps = {
   showCenterMetric?: boolean;
 } & GraphValueFormatOptions;
 
-const emptyStateData: PieChartDataItem[] = [
-  { id: 'empty', label: '', value: 1 },
-];
+const emptyStateData: PieChartDataItem[] = [{ id: 'empty', value: 1 }];
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -177,7 +175,7 @@ export const GraphWidgetPieChart = ({
         show={showLegend && !hasNoData}
         items={enrichedData.map((item) => ({
           id: item.id,
-          label: item.label || item.id,
+          label: item.id,
           color: item.colorScheme.solid,
         }))}
       />
