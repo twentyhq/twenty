@@ -91,14 +91,18 @@ export const WorkflowEditActionAiAgent = ({
         return;
       }
 
-      await updateAgent({
+      const response = await updateAgent({
         variables: {
           input: {
             id: workflowAiAgentActionAgent.id,
             prompt: newPrompt,
           },
         },
-        refetchQueries: ['FindOneAgent'],
+      });
+
+      setWorkflowAiAgentActionAgent({
+        ...workflowAiAgentActionAgent,
+        ...response.data?.updateOneAgent,
       });
     },
     500,
@@ -112,14 +116,18 @@ export const WorkflowEditActionAiAgent = ({
       return;
     }
 
-    await updateAgent({
+    const response = await updateAgent({
       variables: {
         input: {
           id: workflowAiAgentActionAgent.id,
           modelId,
         },
       },
-      refetchQueries: ['FindOneAgent'],
+    });
+
+    setWorkflowAiAgentActionAgent({
+      ...workflowAiAgentActionAgent,
+      ...response.data?.updateOneAgent,
     });
   };
 
@@ -133,14 +141,17 @@ export const WorkflowEditActionAiAgent = ({
       return;
     }
 
-    await updateAgent({
+    const response = await updateAgent({
       variables: {
         input: {
           id: workflowAiAgentActionAgent.id,
           modelConfiguration: configuration,
         },
       },
-      refetchQueries: ['FindOneAgent'],
+    });
+    setWorkflowAiAgentActionAgent({
+      ...workflowAiAgentActionAgent,
+      ...response.data?.updateOneAgent,
     });
   };
 
@@ -155,14 +166,18 @@ export const WorkflowEditActionAiAgent = ({
       return;
     }
 
-    await updateAgent({
+    const response = await updateAgent({
       variables: {
         input: {
           id: workflowAiAgentActionAgent.id,
           responseFormat: format,
         },
       },
-      refetchQueries: ['FindOneAgent'],
+    });
+
+    setWorkflowAiAgentActionAgent({
+      ...workflowAiAgentActionAgent,
+      ...response.data?.updateOneAgent,
     });
 
     await updateWorkflowVersionStep({
@@ -193,7 +208,8 @@ export const WorkflowEditActionAiAgent = ({
     activeTabIdComponentState,
     componentInstanceId,
   );
-  const currentTabId = activeTabId ?? WORKFLOW_AI_AGENT_TABS.PROMPT;
+  const currentTabId =
+    (activeTabId as WorkflowAiAgentTabId) ?? WORKFLOW_AI_AGENT_TABS.PROMPT;
 
   const navigateSettings = useNavigateSettings();
   const { data: rolesData } = useGetRolesQuery();
