@@ -1,11 +1,19 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
+import { buildDateFilterForDayGranularity } from '@/page-layout/widgets/graph/utils/buildDateFilterForDayGranularity';
+import { buildDateRangeFiltersForGranularity } from '@/page-layout/widgets/graph/utils/buildDateRangeFiltersForGranularity';
+import { isCyclicalDateGranularity } from '@/page-layout/widgets/graph/utils/isCyclicalDateGranularity';
+import { isTimeRangeDateGranularity } from '@/page-layout/widgets/graph/utils/isTimeRangeDateGranularity';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
+  ObjectRecordGroupByDateGranularity,
   ViewFilterOperand,
-  type ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import {
+  getFilterTypeFromFieldType,
+  isDefined,
+  isFieldMetadataDateKind,
+} from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type ChartFilter = {
@@ -17,9 +25,9 @@ type ChartFilter = {
 type BuildFilterFromChartBucketParams = {
   fieldMetadataItem: FieldMetadataItem;
   bucketRawValue: unknown;
-  dateGranularity?: ObjectRecordGroupByDateGranularity | null; // TODO: Will be used for date filtering
+  dateGranularity?: ObjectRecordGroupByDateGranularity | null;
   subFieldName?: string | null;
-  timezone?: string; // TODO: Will be used for date filtering
+  timezone?: string;
 };
 
 const formatChartFilterValue = (
@@ -43,7 +51,9 @@ const formatChartFilterValue = (
 export const buildFilterFromChartBucket = ({
   fieldMetadataItem,
   bucketRawValue,
+  dateGranularity,
   subFieldName,
+  timezone,
 }: BuildFilterFromChartBucketParams): ChartFilter[] => {
   const fieldName = isNonEmptyString(subFieldName)
     ? `${fieldMetadataItem.name}.${subFieldName}`
@@ -57,6 +67,43 @@ export const buildFilterFromChartBucket = ({
         value: '',
       },
     ];
+  }
+
+  if (isFieldMetadataDateKind(fieldMetadataItem.type)) {
+    const parsedBucketDate = new Date(String(bucketRawValue));
+
+    if (isNaN(parsedBucketDate.getTime())) {
+      return [];
+    }
+
+    if (isCyclicalDateGranularity(dateGranularity)) {
+      return [];
+    }
+
+    if (
+      !isDefined(dateGranularity) ||
+      dateGranularity === ObjectRecordGroupByDateGranularity.DAY ||
+      dateGranularity === ObjectRecordGroupByDateGranularity.NONE
+    ) {
+      return buildDateFilterForDayGranularity(
+        parsedBucketDate,
+        fieldMetadataItem.type,
+        fieldName,
+        timezone,
+      );
+    }
+
+    if (isTimeRangeDateGranularity(dateGranularity)) {
+      return buildDateRangeFiltersForGranularity(
+        parsedBucketDate,
+        dateGranularity,
+        fieldMetadataItem.type,
+        fieldName,
+        timezone,
+      );
+    }
+
+    return [];
   }
 
   const availableOperands = getRecordFilterOperands({

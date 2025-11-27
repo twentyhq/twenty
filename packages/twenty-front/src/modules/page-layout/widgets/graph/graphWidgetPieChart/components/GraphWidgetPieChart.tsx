@@ -18,11 +18,14 @@ import {
 } from '@nivo/pie';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { type PieChartConfiguration } from '~/generated/graphql';
 
 type GraphWidgetPieChartProps = {
   data: PieChartDataItem[];
   showLegend?: boolean;
   id: string;
+  objectMetadataItemId: string;
+  configuration: PieChartConfiguration;
   onSliceClick?: (datum: PieChartDataItem) => void;
   showDataLabels?: boolean;
   showCenterMetric?: boolean;
@@ -59,6 +62,8 @@ export const GraphWidgetPieChart = ({
   data,
   showLegend = true,
   id,
+  objectMetadataItemId,
+  configuration,
   displayType,
   decimals,
   prefix,
@@ -158,8 +163,8 @@ export const GraphWidgetPieChart = ({
             }}
           />
           <PieChartCenterMetric
-            data={data}
-            formatOptions={formatOptions}
+            objectMetadataItemId={objectMetadataItemId}
+            configuration={configuration}
             show={showCenterMetric && !hasNoData}
           />
         </StyledPieChartWrapper>

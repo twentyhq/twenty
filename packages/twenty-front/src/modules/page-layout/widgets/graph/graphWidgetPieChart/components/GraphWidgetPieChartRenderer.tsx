@@ -91,6 +91,8 @@ export const GraphWidgetPieChartRenderer = ({
       <GraphWidgetPieChart
         data={data}
         id={widget.id}
+        objectMetadataItemId={widget.objectMetadataId}
+        configuration={configuration}
         showLegend={showLegend}
         displayType="shortNumber"
         onSliceClick={isPageLayoutInEditMode ? undefined : handleSliceClick}

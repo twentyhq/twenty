@@ -1,13 +1,44 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphWidgetPieChart';
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
+import {
+  AggregateOperations,
+  GraphType,
+  type PieChartConfiguration,
+} from '~/generated/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { RootDecorator } from '~/testing/decorators/RootDecorator';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+
+const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow(
+  CoreObjectNameSingular.Company,
+);
+const idField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: companyObjectMetadataItem,
+  fieldName: 'id',
+});
+
+const mockObjectMetadataItemId = companyObjectMetadataItem.id;
+const mockConfiguration: PieChartConfiguration = {
+  aggregateFieldMetadataId: idField.id,
+  aggregateOperation: AggregateOperations.COUNT,
+  graphType: GraphType.PIE,
+  groupByFieldMetadataId: idField.id,
+};
 
 const meta: Meta<typeof GraphWidgetPieChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetPieChart',
   component: GraphWidgetPieChart,
-  decorators: [ComponentDecorator, I18nFrontDecorator],
+  decorators: [
+    ComponentDecorator,
+    I18nFrontDecorator,
+    ObjectMetadataItemsDecorator,
+    RootDecorator,
+  ],
   parameters: {
     layout: 'centered',
   },
@@ -72,6 +103,8 @@ export const Default: Story = {
         decimals={args.decimals}
         showLegend={args.showLegend}
         id={args.id}
+        objectMetadataItemId={mockObjectMetadataItemId}
+        configuration={mockConfiguration}
       />
     </Container>
   ),
@@ -93,6 +126,8 @@ export const WithCenterMetric: Story = {
         data={args.data}
         showCenterMetric={args.showCenterMetric}
         id={args.id}
+        objectMetadataItemId={mockObjectMetadataItemId}
+        configuration={mockConfiguration}
       />
     </Container>
   ),
@@ -114,6 +149,8 @@ export const WithDataLabels: Story = {
         data={args.data}
         showDataLabels={args.showDataLabels}
         id={args.id}
+        objectMetadataItemId={mockObjectMetadataItemId}
+        configuration={mockConfiguration}
       />
     </Container>
   ),
@@ -141,6 +178,8 @@ export const Revenue: Story = {
         decimals={args.decimals}
         showLegend={args.showLegend}
         id={args.id}
+        objectMetadataItemId={mockObjectMetadataItemId}
+        configuration={mockConfiguration}
       />
     </Container>
   ),
@@ -167,6 +206,8 @@ export const TaskStatus: Story = {
         decimals={args.decimals}
         showLegend={args.showLegend}
         id={args.id}
+        objectMetadataItemId={mockObjectMetadataItemId}
+        configuration={mockConfiguration}
       />
     </Container>
   ),
@@ -192,6 +233,8 @@ export const TwoSlices: Story = {
         decimals={args.decimals}
         showLegend={args.showLegend}
         id={args.id}
+        objectMetadataItemId={mockObjectMetadataItemId}
+        configuration={mockConfiguration}
       />
     </Container>
   ),
@@ -222,6 +265,8 @@ export const ManySlices: Story = {
         decimals={args.decimals}
         showLegend={args.showLegend}
         id={args.id}
+        objectMetadataItemId={mockObjectMetadataItemId}
+        configuration={mockConfiguration}
       />
     </Container>
   ),
@@ -248,6 +293,8 @@ export const WithoutLegend: Story = {
         decimals={args.decimals}
         showLegend={args.showLegend}
         id={args.id}
+        objectMetadataItemId={mockObjectMetadataItemId}
+        configuration={mockConfiguration}
       />
     </Container>
   ),
@@ -275,6 +322,8 @@ export const MarketShare: Story = {
         decimals={args.decimals}
         showLegend={args.showLegend}
         id={args.id}
+        objectMetadataItemId={mockObjectMetadataItemId}
+        configuration={mockConfiguration}
       />
     </Container>
   ),
@@ -302,13 +351,20 @@ export const Storage: Story = {
         decimals={args.decimals}
         showLegend={args.showLegend}
         id={args.id}
+        objectMetadataItemId={mockObjectMetadataItemId}
+        configuration={mockConfiguration}
       />
     </Container>
   ),
 };
 
 export const Catalog: Story = {
-  decorators: [CatalogDecorator, I18nFrontDecorator],
+  decorators: [
+    CatalogDecorator,
+    I18nFrontDecorator,
+    ObjectMetadataItemsDecorator,
+    RootDecorator,
+  ],
   parameters: {
     catalog: {
       dimensions: [
@@ -355,6 +411,8 @@ export const Catalog: Story = {
         displayType="percentage"
         showLegend={true}
         id={args.id}
+        objectMetadataItemId={mockObjectMetadataItemId}
+        configuration={mockConfiguration}
       />
     </Container>
   ),
