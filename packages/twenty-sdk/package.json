@@ -9,8 +9,7 @@
     "twenty": "dist/cli/cli.js"
   },
   "files": [
-    "dist",
-    "application"
+    "dist"
   ],
   "scripts": {
     "build": "vite build && tsc --project tsconfig.cli.json && cp -R src/cli/constants/base-application-project dist/cli/constants"
@@ -54,18 +53,9 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
-    },
-    "./application": {
-      "types": "./dist/application/index.d.ts",
-      "import": "./dist/application.mjs",
-      "require": "./dist/application.cjs"
     }
   },
   "typesVersions": {
-    "*": {
-      "application": [
-        "dist/application/index.d.ts"
-      ]
-    }
+    "*": {}
   }
 }

@@ -21,6 +21,22 @@ const NX_PROJECT_CONFIGURATION_PATH = path.join(
   PACKAGE_PATH,
   NX_PROJECT_CONFIGURATION_FILENAME,
 );
+const EXCLUDED_EXTENSIONS = [
+  '**/*.test.ts',
+  '**/*.test.tsx',
+  '**/*.spec.ts',
+  '**/*.spec.tsx',
+  '**/*.stories.ts',
+  '**/*.stories.tsx',
+] as const;
+const EXCLUDED_DIRECTORIES = [
+  '**/__tests__/**',
+  '**/__mocks__/**',
+  '**/__stories__/**',
+  '**/internal/**',
+  '**/cli/**',
+] as const;
+const ROOT_DIRECTORIES = ['application'];
 
 const prettierConfigFile = prettier.resolveConfigFile();
 if (prettierConfigFile == null) {
@@ -257,25 +273,10 @@ const computeProjectNxBuildOutputsPath = (moduleDirectories: string[]) => {
   return ['{projectRoot}/dist', ...dynamicOutputsPath];
 };
 
-const EXCLUDED_EXTENSIONS = [
-  '**/*.test.ts',
-  '**/*.test.tsx',
-  '**/*.spec.ts',
-  '**/*.spec.tsx',
-  '**/*.stories.ts',
-  '**/*.stories.tsx',
-] as const;
-const EXCLUDED_DIRECTORIES = [
-  '**/__tests__/**',
-  '**/__mocks__/**',
-  '**/__stories__/**',
-  '**/internal/**',
-  '**/cli/**',
-] as const;
-function getTypeScriptFiles(
+const getTypeScriptFiles = (
   directoryPath: string,
   includeIndex: boolean = false,
-): string[] {
+): string[] => {
   const pattern = slash(path.join(directoryPath, '**', '*.{ts,tsx}'));
   const files = globSync(pattern, {
     cwd: SRC_PATH,
@@ -288,7 +289,7 @@ function getTypeScriptFiles(
       !file.endsWith('.d.ts') &&
       (includeIndex ? true : !file.endsWith('index.ts')),
   );
-}
+};
 
 const getKind = (
   node: ts.VariableStatement,
@@ -306,10 +307,10 @@ const getKind = (
   return 'var';
 };
 
-function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
+const extractExportsFromSourceFile = (sourceFile: ts.SourceFile) => {
   const exports: DeclarationOccurrence[] = [];
 
-  function visit(node: ts.Node) {
+  const visit = (node: ts.Node) => {
     if (!ts.canHaveModifiers(node)) {
       return ts.forEachChild(node, visit);
     }
@@ -410,11 +411,11 @@ function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
         break;
     }
     return ts.forEachChild(node, visit);
-  }
+  };
 
   visit(sourceFile);
   return exports;
-}
+};
 
 type ExportKind =
   | 'type'
@@ -431,7 +432,7 @@ type FileExports = Array<{
   exports: DeclarationOccurrence[];
 }>;
 
-function findAllExports(directoryPath: string): FileExports {
+const findAllExports = (directoryPath: string): FileExports => {
   const results: FileExports = [];
 
   const files = getTypeScriptFiles(directoryPath);
@@ -454,7 +455,7 @@ function findAllExports(directoryPath: string): FileExports {
   }
 
   return results;
-}
+};
 
 type ExportByBarrel = {
   barrel: {
@@ -485,15 +486,39 @@ const retrieveExportsByBarrel = (barrelDirectories: string[]) => {
 
 const main = () => {
   const moduleDirectories = getSubDirectoryPaths(SRC_PATH);
+
+  const rootDirectory = moduleDirectories.find((dir) =>
+    ROOT_DIRECTORIES.includes(getLastPathFolder(dir)),
+  );
+
+  const otherBarrelDirectories = moduleDirectories.filter(
+    (dir) => !ROOT_DIRECTORIES.includes(getLastPathFolder(dir)),
+  );
+
   const exportsByBarrel = retrieveExportsByBarrel(moduleDirectories);
   const moduleIndexFiles = generateModuleIndexFiles(exportsByBarrel);
-  const packageJsonConfig =
-    computePackageJsonFilesAndExportsConfig(moduleDirectories);
-  const nxBuildOutputsPath =
-    computeProjectNxBuildOutputsPath(moduleDirectories);
+
+  const packageJsonConfig = computePackageJsonFilesAndExportsConfig(
+    otherBarrelDirectories,
+  );
+  const nxBuildOutputsPath = computeProjectNxBuildOutputsPath(
+    otherBarrelDirectories,
+  );
 
   updateNxProjectConfigurationBuildOutputs(nxBuildOutputsPath);
   writeInPackageJson(packageJsonConfig);
   moduleIndexFiles.forEach(createTypeScriptFile);
+
+  // Ensure top-level src/index.ts re-exports the root directories barrel so consumers can `import * from "twenty-sdk"`
+  // We intentionally keep this file minimal: it delegates to the generated src/<rootDirectory>/index.ts
+  if (rootDirectory) {
+    createTypeScriptFile({
+      path: SRC_PATH,
+      filename: INDEX_FILENAME,
+      content: ROOT_DIRECTORIES.map(
+        (rootDirectory) => `export * from "./${rootDirectory}";`,
+      ).join('\n'),
+    });
+  }
 };
 main();

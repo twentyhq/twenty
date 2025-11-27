@@ -13,9 +13,7 @@
         "^build"
       ],
       "outputs": [
-        "{projectRoot}/dist",
-        "{projectRoot}/application/package.json",
-        "{projectRoot}/application/dist"
+        "{projectRoot}/dist"
       ]
     },
     "start": {
