@@ -1,8 +1,8 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
-  type OrderByDirection,
   type ObjectRecordOrderByForRelationField,
   type ObjectRecordOrderByForScalarField,
+  type OrderByDirection,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
