@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
@@ -15,6 +15,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ApiKeyController } from './controllers/api-key.controller';
 
 @Module({
@@ -31,7 +32,7 @@ import { ApiKeyController } from './controllers/api-key.controller';
     FeatureFlagModule,
     RoleTargetV2Module,
     TokenModule,
-    // forwardRef(() => PermissionsModule),
+    forwardRef(() => PermissionsModule),
   ],
   providers: [ApiKeyService, ApiKeyResolver, ApiKeyRoleService],
   controllers: [ApiKeyController],

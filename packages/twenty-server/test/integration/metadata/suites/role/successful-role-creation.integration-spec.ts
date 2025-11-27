@@ -33,26 +33,25 @@ describe('Role creation should succeed', () => {
         canBeAssignedToApiKeys: false,
       },
     });
+    createdRoleId = data?.createOneRole?.id;
 
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
-    expect(data.createOneRole.id).toBeDefined();
-    expect(data.createOneRole.label).toBe('Test Custom Role');
-    expect(data.createOneRole.description).toBe(
-      'A custom role for integration testing',
-    );
-    expect(data.createOneRole.icon).toBe('IconSettings');
-    expect(data.createOneRole.isEditable).toBe(true);
-    expect(data.createOneRole.canUpdateAllSettings).toBe(false);
-    expect(data.createOneRole.canAccessAllTools).toBe(true);
-    expect(data.createOneRole.canReadAllObjectRecords).toBe(true);
-    expect(data.createOneRole.canUpdateAllObjectRecords).toBe(false);
-    expect(data.createOneRole.canSoftDeleteAllObjectRecords).toBe(false);
-    expect(data.createOneRole.canDestroyAllObjectRecords).toBe(false);
-    expect(data.createOneRole.canBeAssignedToUsers).toBe(true);
-    expect(data.createOneRole.canBeAssignedToAgents).toBe(false);
-    expect(data.createOneRole.canBeAssignedToApiKeys).toBe(false);
-
-    createdRoleId = data.createOneRole.id;
+    expect(data.createOneRole).toMatchObject({
+      id: expect.any(String),
+      label: 'Test Custom Role',
+      description: 'A custom role for integration testing',
+      icon: 'IconSettings',
+      isEditable: true,
+      canUpdateAllSettings: false,
+      canAccessAllTools: true,
+      canReadAllObjectRecords: true,
+      canUpdateAllObjectRecords: false,
+      canSoftDeleteAllObjectRecords: false,
+      canDestroyAllObjectRecords: false,
+      canBeAssignedToUsers: true,
+      canBeAssignedToAgents: false,
+      canBeAssignedToApiKeys: false,
+    });
   });
 });

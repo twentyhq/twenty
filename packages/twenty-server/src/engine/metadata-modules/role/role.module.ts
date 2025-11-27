@@ -23,6 +23,7 @@ import { WorkspaceFlatRoleMapCacheService } from 'src/engine/metadata-modules/ro
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
 @Module({
@@ -55,6 +56,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     RoleResolver,
     WorkspaceFlatRoleMapCacheService,
     WorkspaceFlatRoleTargetMapCacheService,
+    WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
   ],
   exports: [
     RoleService,

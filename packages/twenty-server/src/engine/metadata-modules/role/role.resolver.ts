@@ -1,4 +1,9 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import {
+  UseFilters,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+} from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -51,6 +56,7 @@ import {
 import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Resolver(() => RoleDTO)
@@ -63,6 +69,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
+@UseInterceptors(WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor)
 export class RoleResolver {
   constructor(
     private readonly userRoleService: UserRoleService,
