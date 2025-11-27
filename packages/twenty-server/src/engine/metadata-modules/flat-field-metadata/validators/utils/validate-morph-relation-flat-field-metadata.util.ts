@@ -45,18 +45,16 @@ export const validateMorphRelationFlatFieldMetadata = (
     });
   }
 
-  if (isDefined(updates)) {
-    const sourceObjectMetadataId = flatFieldMetadataToValidate.objectMetadataId;
-    const targetObjectMetadataId =
-      flatFieldMetadataToValidate.relationTargetObjectMetadataId;
+  const sourceObjectMetadataId = flatFieldMetadataToValidate.objectMetadataId;
+  const targetObjectMetadataId =
+    flatFieldMetadataToValidate.relationTargetObjectMetadataId;
 
-    if (sourceObjectMetadataId === targetObjectMetadataId) {
-      errors.push({
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: 'Source object cannot be the target object',
-        userFriendlyMessage: msg`Source object cannot be the target object`,
-      });
-    }
+  if (sourceObjectMetadataId === targetObjectMetadataId) {
+    errors.push({
+      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      message: 'Source object cannot be the target object',
+      userFriendlyMessage: msg`Source object cannot be the target object`,
+    });
   }
 
   return errors;
