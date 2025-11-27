@@ -5,6 +5,7 @@ import crypto from 'crypto';
 
 import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
+import { isNonEmptyString } from '@sniptt/guards';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail } from 'twenty-emails';
@@ -305,6 +306,13 @@ export class WorkspaceInvitationService {
               }
             : {},
         });
+
+        if (!isNonEmptyString(sender.userEmail)) {
+          throw new WorkspaceInvitationException(
+            'Sender email is missing',
+            WorkspaceInvitationExceptionCode.EMAIL_MISSING,
+          );
+        }
 
         const emailData = {
           link: link.toString(),
