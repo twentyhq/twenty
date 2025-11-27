@@ -30,12 +30,12 @@ export class ObjectMetadataOrderByBaseGenerator {
   public generateFields({
     fields,
     logger,
-    orderByDateGranularity,
+    isForGroupBy,
     context,
   }: {
     fields: FlatFieldMetadata[];
     logger: Logger;
-    orderByDateGranularity?: boolean;
+    isForGroupBy?: boolean;
     context?: SchemaGenerationContext;
   }): GraphQLInputFieldConfigMap {
     const allGeneratedFields: GraphQLInputFieldConfigMap = {};
@@ -59,6 +59,7 @@ export class ObjectMetadataOrderByBaseGenerator {
             {
               fieldMetadata,
               typeOptions,
+              isForGroupBy,
               context,
             },
           );
@@ -72,7 +73,7 @@ export class ObjectMetadataOrderByBaseGenerator {
         generatedFields = this.generateAtomicFieldOrderByInputType({
           fieldMetadata,
           typeOptions,
-          orderByDateGranularity,
+          isForGroupBy,
           logger,
         });
       }
@@ -117,15 +118,15 @@ export class ObjectMetadataOrderByBaseGenerator {
     fieldMetadata,
     typeOptions,
     logger,
-    orderByDateGranularity,
+    isForGroupBy,
   }: {
     fieldMetadata: FlatFieldMetadata;
     typeOptions: TypeOptions;
     logger: Logger;
-    orderByDateGranularity?: boolean;
+    isForGroupBy?: boolean;
   }) {
     if (
-      orderByDateGranularity === true &&
+      isForGroupBy === true &&
       (fieldMetadata.type === FieldMetadataType.DATE ||
         fieldMetadata.type === FieldMetadataType.DATE_TIME)
     ) {
@@ -135,7 +136,7 @@ export class ObjectMetadataOrderByBaseGenerator {
         );
 
       if (!isDefined(orderByDateGranularityInputType)) {
-        throw new Error('OrderByDateGranularityInputType not found');
+        throw new Error('isForGroupByInputType not found');
       }
 
       return {

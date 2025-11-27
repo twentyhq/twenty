@@ -1,4 +1,3 @@
-import { UserInputError } from 'apollo-server-core';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -11,6 +10,7 @@ import { type DateFieldGroupByDefinition } from 'src/engine/api/graphql/graphql-
 import { type GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
 import { isGroupByDateFieldDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field-definition.util';
 import { validateSingleKeyForGroupByOrThrow } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/validate-single-key-for-group-by-or-throw.util';
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
