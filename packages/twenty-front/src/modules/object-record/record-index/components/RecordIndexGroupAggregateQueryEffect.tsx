@@ -114,6 +114,7 @@ export const RecordIndexGroupAggregateQueryEffect = ({
     recordAggregateGqlField,
     recordIndexAggregateDisplayLabelCallbackState,
     objectMetadataItem,
+    recordGroupDefinitions,
   ]);
 
   return null;

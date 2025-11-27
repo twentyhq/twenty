@@ -44,8 +44,7 @@ const StyledRecordChipContainer = styled.div`
 export const RecordBoardCardHeader = () => {
   const { recordId } = useContext(RecordBoardCardContext);
 
-  const { objectMetadataItem, recordBoardId, selectFieldMetadataItem } =
-    useContext(RecordBoardContext);
+  const { objectMetadataItem, recordBoardId } = useContext(RecordBoardContext);
   const { rowIndex, columnIndex } = useContext(RecordBoardCardContext);
   const { activateBoardCard } = useActiveRecordBoardCard(recordBoardId);
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);

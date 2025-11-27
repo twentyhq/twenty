@@ -1,5 +1,6 @@
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RECORD_BOARD_FETCH_MORE_THROTTLING_WAIT_TIME_IN_MS_TO_AVOID_REACT_FREEZE } from '@/object-record/record-board/constants/RecordBoardFetchMoreThrottlingWaitTimeInMSToAvoidReactFreeze';
+
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
 import { recordBoardIsFetchingMoreComponentState } from '@/object-record/record-board/states/recordBoardIsFetchingMoreComponentState';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
