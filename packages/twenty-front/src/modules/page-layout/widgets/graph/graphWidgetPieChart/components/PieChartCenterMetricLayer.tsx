@@ -1,82 +1,56 @@
-import { PIE_CHART_CENTER_METRIC_MIN_SIZES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartCenterMetricMinSizes';
-import { PIE_CHART_CENTER_METRIC_RATIOS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartCenterMetricRatios';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
-import { type PieCustomLayerProps } from '@nivo/pie';
-import { animated, useSpring } from '@react-spring/web';
 
-type PieChartCenterMetricLayerProps = Pick<
-  PieCustomLayerProps<PieChartDataItem>,
-  'dataWithArc' | 'centerX' | 'centerY' | 'innerRadius'
-> & {
+type PieChartCenterMetricProps = {
+  data: PieChartDataItem[];
   formatOptions: GraphValueFormatOptions;
-  showCenterMetric: boolean;
+  show: boolean;
 };
 
-export const PieChartCenterMetricLayer = ({
-  dataWithArc,
-  centerX,
-  centerY,
-  innerRadius,
+const StyledCenterMetricContainer = styled.div<{ show: boolean }>`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  left: 50%;
+  opacity: ${({ show }) => (show ? 1 : 0)};
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: opacity ${({ theme }) => theme.animation.duration.fast}s
+    ease-in-out;
+`;
+
+const StyledValue = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: clamp(12px, 10cqmin, 48px);
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+`;
+
+const StyledLabel = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: clamp(10px, 5cqmin, 24px);
+`;
+
+export const PieChartCenterMetric = ({
+  data,
   formatOptions,
-  showCenterMetric,
-}: PieChartCenterMetricLayerProps) => {
-  const theme = useTheme();
-  const total = dataWithArc.reduce((sum, datum) => sum + datum.value, 0);
-
-  const valueFontSize = Math.max(
-    innerRadius * PIE_CHART_CENTER_METRIC_RATIOS.valueFontSize,
-    PIE_CHART_CENTER_METRIC_MIN_SIZES.valueFontSize,
-  );
-  const labelFontSize = Math.max(
-    innerRadius * PIE_CHART_CENTER_METRIC_RATIOS.labelFontSize,
-    PIE_CHART_CENTER_METRIC_MIN_SIZES.labelFontSize,
-  );
-  const labelOffset = Math.max(
-    innerRadius * PIE_CHART_CENTER_METRIC_RATIOS.labelOffset,
-    PIE_CHART_CENTER_METRIC_MIN_SIZES.labelOffset,
-  );
-
-  const springProps = useSpring({
-    opacity: showCenterMetric ? 1 : 0,
-    config: { duration: theme.animation.duration.fast },
-    ease: 'easeInOut',
-  });
+  show,
+}: PieChartCenterMetricProps) => {
+  const total = data.reduce((sum, datum) => sum + datum.value, 0);
 
   return (
-    <g>
-      <animated.text
-        x={centerX}
-        y={centerY - labelOffset / 2}
-        textAnchor="middle"
-        dominantBaseline="central"
-        style={{
-          ...springProps,
-          fontSize: valueFontSize,
-          fontWeight: theme.font.weight.semiBold,
-          fill: theme.font.color.primary,
-        }}
-      >
-        {formatGraphValue(total, formatOptions)}
-      </animated.text>
-      <animated.text
-        x={centerX}
-        y={centerY + labelOffset}
-        textAnchor="middle"
-        dominantBaseline="central"
-        style={{
-          ...springProps,
-          fontSize: labelFontSize,
-          fill: theme.font.color.tertiary,
-        }}
-      >
+    <StyledCenterMetricContainer show={show}>
+      <StyledValue>{formatGraphValue(total, formatOptions)}</StyledValue>
+      <StyledLabel>
         <Trans>Total</Trans>
-      </animated.text>
-    </g>
+      </StyledLabel>
+    </StyledCenterMetricContainer>
   );
 };

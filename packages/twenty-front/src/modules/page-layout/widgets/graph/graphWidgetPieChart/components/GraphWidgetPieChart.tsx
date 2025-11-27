@@ -1,7 +1,7 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
-import { PieChartCenterMetricLayer } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer';
+import { PieChartCenterMetric } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer';
 import { PIE_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartHoverBrightness';
 import { PIE_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMargins';
 import { usePieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartData';
@@ -14,13 +14,10 @@ import styled from '@emotion/styled';
 import {
   ResponsivePie,
   type ComputedDatum,
-  type PieCustomLayerProps,
   type PieTooltipProps,
 } from '@nivo/pie';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-
-type CenterMetricLayerProps = PieCustomLayerProps<PieChartDataItem>;
 
 type GraphWidgetPieChartProps = {
   data: PieChartDataItem[];
@@ -43,8 +40,10 @@ const StyledContainer = styled.div`
 `;
 
 const StyledPieChartWrapper = styled.div<{ preventHover: boolean }>`
-  width: 100%;
+  container-type: size;
   height: 100%;
+  position: relative;
+  width: 100%;
 
   svg g path {
     transition: filter 0.15s ease-in-out;
@@ -109,17 +108,6 @@ export const GraphWidgetPieChart = ({
     );
   };
 
-  const CenterMetricLayer = (props: CenterMetricLayerProps) => (
-    <PieChartCenterMetricLayer
-      dataWithArc={props.dataWithArc}
-      centerX={props.centerX}
-      centerY={props.centerY}
-      innerRadius={props.innerRadius}
-      formatOptions={formatOptions}
-      showCenterMetric={showCenterMetric}
-    />
-  );
-
   const hasNoData = useMemo(
     () => data.length === 0 || data.every((item) => item.value === 0),
     [data],
@@ -148,7 +136,7 @@ export const GraphWidgetPieChart = ({
             enableArcLabels={false}
             tooltip={hasNoData ? () => null : renderTooltip}
             onClick={hasNoData ? undefined : (datum) => handleSliceClick(datum)}
-            layers={['arcs', 'arcLinkLabels', CenterMetricLayer]}
+            layers={['arcs', 'arcLinkLabels']}
             arcLinkLabel={(datum: ComputedDatum<PieChartDataItem>) => {
               const tooltipData = createTooltipData(datum);
               return (
@@ -168,6 +156,11 @@ export const GraphWidgetPieChart = ({
                 },
               },
             }}
+          />
+          <PieChartCenterMetric
+            data={data}
+            formatOptions={formatOptions}
+            show={showCenterMetric && !hasNoData}
           />
         </StyledPieChartWrapper>
       </GraphWidgetChartContainer>
