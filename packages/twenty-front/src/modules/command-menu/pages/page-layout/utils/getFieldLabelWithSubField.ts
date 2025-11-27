@@ -1,3 +1,4 @@
+import { getRelationFieldLabel } from '@/command-menu/pages/page-layout/utils/getRelationFieldLabel';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
@@ -26,46 +27,7 @@ export const getFieldLabelWithSubField = ({
   }
 
   if (isFieldRelation(field)) {
-    if (!isDefined(objectMetadataItems)) {
-      return field.label;
-    }
-
-    const targetObjectNameSingular =
-      field.relation?.targetObjectMetadata?.nameSingular;
-    const targetObjectMetadataItem = objectMetadataItems.find(
-      (item) => item.nameSingular === targetObjectNameSingular,
-    );
-
-    if (!isDefined(targetObjectMetadataItem)) {
-      return field.label;
-    }
-
-    const parts = subFieldName.split('.');
-    const nestedFieldName = parts[0];
-    const nestedSubFieldName = parts[1];
-
-    const nestedField = targetObjectMetadataItem.fields.find(
-      (f) => f.name === nestedFieldName,
-    );
-
-    if (!isDefined(nestedField)) {
-      return field.label;
-    }
-
-    if (
-      isDefined(nestedSubFieldName) &&
-      isCompositeFieldType(nestedField.type)
-    ) {
-      const compositeSubFieldLabel = getCompositeSubFieldLabel(
-        nestedField.type as CompositeFieldType,
-        nestedSubFieldName as CompositeFieldSubFieldName,
-      );
-      return compositeSubFieldLabel
-        ? `${field.label} ${nestedField.label} ${compositeSubFieldLabel}`
-        : `${field.label} ${nestedField.label}`;
-    }
-
-    return `${field.label} ${nestedField.label}`;
+    return getRelationFieldLabel(field, subFieldName, objectMetadataItems);
   }
 
   if (isCompositeFieldType(field.type)) {
