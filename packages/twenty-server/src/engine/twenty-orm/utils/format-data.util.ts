@@ -7,7 +7,10 @@ import { capitalize } from 'twenty-shared/utils';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import {
+  buildFieldMapsFromFlatObjectMetadata,
+  type FieldMapsForObject,
+} from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 
@@ -15,22 +18,26 @@ export function formatData<T>(
   data: T,
   flatObjectMetadata: FlatObjectMetadata,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  fieldMapsForObject?: FieldMapsForObject,
 ): T {
   if (!data) {
     return data;
   }
 
-  if (Array.isArray(data)) {
-    return data.map((item) =>
-      formatData(item, flatObjectMetadata, flatFieldMetadataMaps),
-    ) as T;
-  }
-
-  const { fieldIdByName, fieldIdByJoinColumnName } =
+  const fieldMaps =
+    fieldMapsForObject ??
     buildFieldMapsFromFlatObjectMetadata(
       flatFieldMetadataMaps,
       flatObjectMetadata,
     );
+
+  if (Array.isArray(data)) {
+    return data.map((item) =>
+      formatData(item, flatObjectMetadata, flatFieldMetadataMaps, fieldMaps),
+    ) as T;
+  }
+
+  const { fieldIdByName, fieldIdByJoinColumnName } = fieldMaps;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const newData: Record<string, any> = {};
