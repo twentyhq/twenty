@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphWidgetPieChart';
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 import {
@@ -8,19 +9,36 @@ import {
   type PieChartConfiguration,
 } from '~/generated/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { RootDecorator } from '~/testing/decorators/RootDecorator';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-const mockObjectMetadataItemId = '20202020-1234-1234-1234-123456789012';
+const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow(
+  CoreObjectNameSingular.Company,
+);
+const idField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: companyObjectMetadataItem,
+  fieldName: 'id',
+});
+
+const mockObjectMetadataItemId = companyObjectMetadataItem.id;
 const mockConfiguration: PieChartConfiguration = {
-  aggregateFieldMetadataId: '20202020-1234-1234-1234-123456789012',
+  aggregateFieldMetadataId: idField.id,
   aggregateOperation: AggregateOperations.COUNT,
   graphType: GraphType.PIE,
-  groupByFieldMetadataId: '20202020-1234-1234-1234-123456789012',
+  groupByFieldMetadataId: idField.id,
 };
 
 const meta: Meta<typeof GraphWidgetPieChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetPieChart',
   component: GraphWidgetPieChart,
-  decorators: [ComponentDecorator, I18nFrontDecorator],
+  decorators: [
+    ComponentDecorator,
+    I18nFrontDecorator,
+    ObjectMetadataItemsDecorator,
+    RootDecorator,
+  ],
   parameters: {
     layout: 'centered',
   },
@@ -341,7 +359,12 @@ export const Storage: Story = {
 };
 
 export const Catalog: Story = {
-  decorators: [CatalogDecorator, I18nFrontDecorator],
+  decorators: [
+    CatalogDecorator,
+    I18nFrontDecorator,
+    ObjectMetadataItemsDecorator,
+    RootDecorator,
+  ],
   parameters: {
     catalog: {
       dimensions: [
