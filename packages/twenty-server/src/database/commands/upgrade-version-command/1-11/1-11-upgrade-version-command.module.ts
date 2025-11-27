@@ -6,7 +6,6 @@ import { CleanOrphanedUserWorkspacesCommand } from 'src/database/commands/upgrad
 import { CreateTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-create-twenty-standard-application.command';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -28,7 +27,6 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
       UserWorkspaceEntity,
       RoleTargetsEntity,
       ApplicationEntity,
-      FeatureFlagEntity,
     ]),
     DataSourceModule,
     WorkspaceSchemaManagerModule,
