@@ -17,8 +17,9 @@ import {
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 
 @Injectable()
@@ -30,15 +31,17 @@ export class FieldMetadataMorphRelationService {
   async createMorphRelationFieldMetadataItems({
     fieldMetadataForCreate,
     morphRelationsCreationPayload,
-    objectMetadata,
+    flatObjectMetadata,
     fieldMetadataRepository,
-    objectMetadataMaps,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
   }: {
     fieldMetadataForCreate: CreateFieldInput;
     morphRelationsCreationPayload: CreateFieldInput['morphRelationsCreationPayload'];
-    objectMetadata: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadata: FlatObjectMetadata;
     fieldMetadataRepository: Repository<FieldMetadataEntity>;
-    objectMetadataMaps: ObjectMetadataMaps;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }): Promise<FieldMetadataEntity[]> {
     if (
       !isDefined(morphRelationsCreationPayload) ||
@@ -62,7 +65,9 @@ export class FieldMetadataMorphRelationService {
 
     for (const relationCreationPayload of morphRelationsCreationPayload) {
       const targetObjectMetadata =
-        objectMetadataMaps.byId[relationCreationPayload.targetObjectMetadataId];
+        flatObjectMetadataMaps.byId[
+          relationCreationPayload.targetObjectMetadataId
+        ];
 
       if (!isDefined(targetObjectMetadata)) {
         throw new FieldMetadataException(
@@ -95,8 +100,9 @@ export class FieldMetadataMorphRelationService {
         {
           fieldMetadataInput: relationFieldMetadataForCreate,
           fieldMetadataType: relationFieldMetadataForCreate.type,
-          objectMetadataMaps,
-          objectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          flatObjectMetadata,
         },
       );
 
@@ -126,7 +132,7 @@ export class FieldMetadataMorphRelationService {
           {
             fieldMetadataInput: targetFieldMetadataToCreate,
             relationCreationPayload: {
-              targetObjectMetadataId: objectMetadata.id,
+              targetObjectMetadataId: flatObjectMetadata.id,
               targetFieldLabel: fieldMetadataForCreate.label,
               targetFieldIcon: fieldMetadataForCreate.icon ?? 'Icon123',
               type:

@@ -1,5 +1,5 @@
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
+import { mockCompanyObjectMetadataInfo } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record-event';
 import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields';
 
@@ -25,33 +25,13 @@ describe('generateFakeObjectRecordEvent', () => {
     },
   };
 
-  const companyMockObjectMetadataItem =
-    mockObjectMetadataItemsWithFieldMaps.find(
-      (item) => item.nameSingular === 'company',
-    )!;
-
-  const mockObjectMetadataMaps = {
-    byId: {
-      [companyMockObjectMetadataItem.id]: companyMockObjectMetadataItem,
-    },
-    idByNameSingular: {
-      [companyMockObjectMetadataItem.nameSingular]:
-        companyMockObjectMetadataItem.id,
-    },
-  };
-
-  const objectMetadataInfo = {
-    objectMetadataMaps: mockObjectMetadataMaps,
-    objectMetadataItemWithFieldsMaps: companyMockObjectMetadataItem,
-  };
-
   beforeEach(() => {
     (generateObjectRecordFields as jest.Mock).mockReturnValue(mockFields);
   });
 
   it('should generate record with "after" prefix for CREATED action', () => {
     const result = generateFakeObjectRecordEvent(
-      objectMetadataInfo,
+      mockCompanyObjectMetadataInfo,
       DatabaseEventAction.CREATED,
     );
 
@@ -82,7 +62,7 @@ describe('generateFakeObjectRecordEvent', () => {
 
   it('should generate record with "after" prefix for UPDATED action', () => {
     const result = generateFakeObjectRecordEvent(
-      objectMetadataInfo,
+      mockCompanyObjectMetadataInfo,
       DatabaseEventAction.UPDATED,
     );
 
@@ -113,7 +93,7 @@ describe('generateFakeObjectRecordEvent', () => {
 
   it('should generate record with "before" prefix for DELETED action', () => {
     const result = generateFakeObjectRecordEvent(
-      objectMetadataInfo,
+      mockCompanyObjectMetadataInfo,
       DatabaseEventAction.DELETED,
     );
 
@@ -144,7 +124,7 @@ describe('generateFakeObjectRecordEvent', () => {
 
   it('should generate record with "before" prefix for DESTROYED action', () => {
     const result = generateFakeObjectRecordEvent(
-      objectMetadataInfo,
+      mockCompanyObjectMetadataInfo,
       DatabaseEventAction.DESTROYED,
     );
 
@@ -175,7 +155,7 @@ describe('generateFakeObjectRecordEvent', () => {
 
   it('should generate record with "after" prefix for UPSERTED action', () => {
     const result = generateFakeObjectRecordEvent(
-      objectMetadataInfo,
+      mockCompanyObjectMetadataInfo,
       DatabaseEventAction.UPSERTED,
     );
 
@@ -207,7 +187,7 @@ describe('generateFakeObjectRecordEvent', () => {
   it('should throw error for unknown action', () => {
     expect(() => {
       generateFakeObjectRecordEvent(
-        objectMetadataInfo,
+        mockCompanyObjectMetadataInfo,
         'UNKNOWN' as DatabaseEventAction,
       );
     }).toThrow("Unknown action 'UNKNOWN'");

@@ -9,12 +9,14 @@ import { type ColumnType, type EntitySchemaColumnOptions } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import {
   TwentyORMException,
@@ -29,12 +31,14 @@ type EntitySchemaColumnMap = {
 @Injectable()
 export class EntitySchemaColumnFactory {
   create(
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ): EntitySchemaColumnMap {
     let entitySchemaColumnMap: EntitySchemaColumnMap = {};
 
-    const fieldMetadataCollection = Object.values(
-      objectMetadataItemWithFieldMaps.fieldsById,
+    const fieldMetadataCollection = getFlatFieldsFromFlatObjectMetadata(
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
     );
 
     for (const fieldMetadata of fieldMetadataCollection) {
@@ -117,7 +121,7 @@ export class EntitySchemaColumnFactory {
   }
 
   private createCompositeColumns(
-    fieldMetadata: FieldMetadataEntity,
+    fieldMetadata: FlatFieldMetadata,
   ): EntitySchemaColumnMap {
     const entitySchemaColumnMap: EntitySchemaColumnMap = {};
     const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);

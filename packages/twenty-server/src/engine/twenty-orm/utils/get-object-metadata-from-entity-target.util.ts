@@ -6,8 +6,7 @@ import {
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
@@ -17,7 +16,7 @@ import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspac
 export const getObjectMetadataFromEntityTarget = <T extends ObjectLiteral>(
   entityTarget: EntityTarget<T>,
   internalContext: WorkspaceInternalContext,
-): ObjectMetadataItemWithFieldMaps => {
+): FlatObjectMetadata => {
   const objectMetadataName =
     typeof entityTarget === 'string'
       ? entityTarget
@@ -33,19 +32,26 @@ export const getObjectMetadataFromEntityTarget = <T extends ObjectLiteral>(
     );
   }
 
-  const objectMetadata = getObjectMetadataMapItemByNameSingular(
-    internalContext.objectMetadataMaps,
-    objectMetadataName,
-  );
+  const objectMetadataId =
+    internalContext.objectIdByNameSingular[objectMetadataName];
 
-  if (!objectMetadata) {
+  if (!objectMetadataId) {
     throw new TwentyORMException(
       `Object metadata for object "${objectMetadataName}" is missing ` +
         `in workspace "${internalContext.workspaceId}" ` +
         `with object metadata collection length: ${
-          Object.keys(internalContext.objectMetadataMaps.idByNameSingular)
-            .length
+          Object.keys(internalContext.objectIdByNameSingular).length
         }`,
+      TwentyORMExceptionCode.MALFORMED_METADATA,
+    );
+  }
+
+  const objectMetadata =
+    internalContext.flatObjectMetadataMaps.byId[objectMetadataId];
+
+  if (!objectMetadata) {
+    throw new TwentyORMException(
+      `Object metadata for object "${objectMetadataName}" (id: ${objectMetadataId}) is missing`,
       TwentyORMExceptionCode.MALFORMED_METADATA,
     );
   }

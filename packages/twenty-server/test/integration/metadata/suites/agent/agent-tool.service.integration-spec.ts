@@ -1,3 +1,5 @@
+import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
+
 import {
   type AgentToolTestContext,
   createAgentToolTestModule,
@@ -45,7 +47,11 @@ describe('AgentToolGeneratorService Integration', () => {
         });
       jest
         .spyOn(context.objectMetadataService, 'findManyWithinWorkspace')
-        .mockResolvedValue([context.testObjectMetadata]);
+        .mockResolvedValue([
+          fromObjectMetadataEntityToFlatObjectMetadata(
+            context.testObjectMetadata,
+          ),
+        ]);
 
       const tools = await context.agentToolService.generateToolsForAgent(
         context.testAgentId,
@@ -89,7 +95,11 @@ describe('AgentToolGeneratorService Integration', () => {
         });
       jest
         .spyOn(context.objectMetadataService, 'findManyWithinWorkspace')
-        .mockResolvedValue([context.testObjectMetadata]);
+        .mockResolvedValue([
+          fromObjectMetadataEntityToFlatObjectMetadata(
+            context.testObjectMetadata,
+          ),
+        ]);
 
       const tools = await context.agentToolService.generateToolsForAgent(
         context.testAgentId,
@@ -146,7 +156,9 @@ describe('AgentToolGeneratorService Integration', () => {
         });
       jest
         .spyOn(context.objectMetadataService, 'findManyWithinWorkspace')
-        .mockResolvedValue([workflowObject]);
+        .mockResolvedValue([
+          fromObjectMetadataEntityToFlatObjectMetadata(workflowObject),
+        ]);
 
       const tools = await context.agentToolService.generateToolsForAgent(
         context.testAgentId,

@@ -10,7 +10,7 @@ import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { SearchArticlesTool } from 'src/engine/core-modules/tool/tools/search-articles-tool/search-articles-tool';
 import { ToolAdapterService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool-adapter.service';
 import { ToolService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool.service';
-import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -27,7 +27,7 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
     TokenModule,
     FeatureFlagModule,
     RecordCrudModule,
-    ObjectMetadataModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspacePermissionsCacheModule,
     WorkspaceCacheStorageModule,
     UserRoleModule,

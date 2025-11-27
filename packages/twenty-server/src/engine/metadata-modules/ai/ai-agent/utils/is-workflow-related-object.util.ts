@@ -1,7 +1,5 @@
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-
 // All workflow-related standard object IDs that should be filtered out from agent access
 const WORKFLOW_STANDARD_OBJECT_IDS = [
   STANDARD_OBJECT_IDS.workflow,
@@ -10,9 +8,9 @@ const WORKFLOW_STANDARD_OBJECT_IDS = [
   STANDARD_OBJECT_IDS.workflowAutomatedTrigger,
 ] as const;
 
-export const isWorkflowRelatedObject = (
-  objectMetadata: ObjectMetadataEntity,
-): boolean => {
+export const isWorkflowRelatedObject = (objectMetadata: {
+  standardId: string | null;
+}): boolean => {
   return (
     objectMetadata.standardId !== null &&
     WORKFLOW_STANDARD_OBJECT_IDS.includes(

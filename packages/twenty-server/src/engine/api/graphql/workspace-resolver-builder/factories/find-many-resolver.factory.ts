@@ -47,15 +47,16 @@ export class FindManyResolverFactory
 
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(
-            internalContext.objectMetadataMaps,
+            internalContext.flatObjectMetadataMaps,
+            internalContext.flatFieldMetadataMaps,
+            internalContext.objectIdByNameSingular,
           );
 
         return typeORMObjectRecordsParser.createConnection({
           objectRecords: records,
           objectRecordsAggregatedValues: aggregatedValues,
           selectedAggregatedFields: selectedFieldsResult.aggregate,
-          objectName:
-            internalContext.objectMetadataItemWithFieldMaps.nameSingular,
+          objectName: internalContext.flatObjectMetadata.nameSingular,
           take: args.first ?? args.last ?? QUERY_MAX_RECORDS,
           totalCount,
           order: args.orderBy,

@@ -12,18 +12,16 @@ import { type UpdateRecordParams } from 'src/engine/core-modules/record-crud/typ
 import { getSelectedColumnsFromRestrictedFields } from 'src/engine/core-modules/record-crud/utils/get-selected-columns-from-restricted-fields.util';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class UpdateRecordService {
   private readonly logger = new Logger(UpdateRecordService.name);
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly recordInputTransformerService: RecordInputTransformerService,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
   async execute(params: UpdateRecordParams): Promise<ToolOutput> {
@@ -60,20 +58,34 @@ export class UpdateRecordService {
           rolePermissionConfig,
         );
 
-      const { objectMetadataItemWithFieldsMaps } =
-        await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-          objectName,
-          workspaceId,
+      const {
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        objectIdByNameSingular,
+      } = repository.internalContext;
+
+      const objectId = objectIdByNameSingular[objectName];
+
+      if (!isDefined(objectId)) {
+        throw new RecordCrudException(
+          `Object ${objectName} not found`,
+          RecordCrudExceptionCode.INVALID_REQUEST,
         );
+      }
+
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityMaps: flatObjectMetadataMaps,
+        flatEntityId: objectId,
+      });
 
       const restrictedFields =
-        repository.objectRecordsPermissions?.[
-          objectMetadataItemWithFieldsMaps.id
-        ]?.restrictedFields;
+        repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+          ?.restrictedFields;
 
       const selectedColumns = getSelectedColumnsFromRestrictedFields(
         restrictedFields,
-        objectMetadataItemWithFieldsMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
       );
 
       const previousObjectRecord = await repository.findOne({
@@ -102,8 +114,8 @@ export class UpdateRecordService {
 
       if (
         !canObjectBeManagedByWorkflow({
-          nameSingular: objectMetadataItemWithFieldsMaps.nameSingular,
-          isSystem: objectMetadataItemWithFieldsMaps.isSystem,
+          nameSingular: flatObjectMetadata.nameSingular,
+          isSystem: flatObjectMetadata.isSystem,
         })
       ) {
         throw new RecordCrudException(
@@ -129,7 +141,8 @@ export class UpdateRecordService {
       const transformedObjectRecord =
         await this.recordInputTransformerService.process({
           recordInput: objectRecordWithFilteredFields,
-          objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
         });
 
       const updatedObjectRecord = {

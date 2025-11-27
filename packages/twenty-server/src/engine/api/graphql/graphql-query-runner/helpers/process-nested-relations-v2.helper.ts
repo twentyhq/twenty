@@ -11,13 +11,14 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
-import { getFieldMetadataFromGraphQLField } from 'src/engine/api/graphql/graphql-query-runner/utils/get-field-metadata-from-graphql-field.util';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
@@ -28,7 +29,8 @@ export class ProcessNestedRelationsV2Helper {
   constructor() {}
 
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>({
-    objectMetadataMaps,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
     parentObjectMetadataItem,
     parentObjectRecords,
     parentObjectRecordsAggregatedValues = {},
@@ -40,8 +42,9 @@ export class ProcessNestedRelationsV2Helper {
     rolePermissionConfig,
     selectedFields,
   }: {
-    objectMetadataMaps: ObjectMetadataMaps;
-    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    parentObjectMetadataItem: FlatObjectMetadata;
     parentObjectRecords: T[];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parentObjectRecordsAggregatedValues?: Record<string, any>;
@@ -57,7 +60,8 @@ export class ProcessNestedRelationsV2Helper {
     const processRelationTasks = Object.entries(relations).map(
       ([sourceFieldName, nestedRelations]) =>
         this.processRelation({
-          objectMetadataMaps,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
           parentObjectMetadataItem,
           parentObjectRecords,
           parentObjectRecordsAggregatedValues,
@@ -79,7 +83,8 @@ export class ProcessNestedRelationsV2Helper {
   }
 
   private async processRelation<T extends ObjectRecord = ObjectRecord>({
-    objectMetadataMaps,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
     parentObjectMetadataItem,
     parentObjectRecords,
     parentObjectRecordsAggregatedValues,
@@ -92,8 +97,9 @@ export class ProcessNestedRelationsV2Helper {
     rolePermissionConfig,
     selectedFields,
   }: {
-    objectMetadataMaps: ObjectMetadataMaps;
-    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    parentObjectMetadataItem: FlatObjectMetadata;
     parentObjectRecords: T[];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parentObjectRecordsAggregatedValues: Record<string, any>;
@@ -106,11 +112,19 @@ export class ProcessNestedRelationsV2Helper {
     rolePermissionConfig?: RolePermissionConfig;
     selectedFields: Record<string, unknown>;
   }): Promise<void> {
-    const sourceFieldMetadata = getFieldMetadataFromGraphQLField({
-      objectMetadataItem: parentObjectMetadataItem,
-      graphQLField: sourceFieldName,
-      objectMetadataMaps,
+    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      parentObjectMetadataItem,
+    );
+
+    const sourceFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: fieldIdByName[sourceFieldName],
+      flatEntityMaps: flatFieldMetadataMaps,
     });
+
+    if (!sourceFieldMetadata) {
+      return;
+    }
 
     if (
       !isFieldMetadataEntityOfType(
@@ -136,7 +150,8 @@ export class ProcessNestedRelationsV2Helper {
     const relationType = sourceFieldMetadata.settings?.relationType;
     const { targetRelationName, targetObjectMetadata, targetRelation } =
       this.getTargetObjectMetadata({
-        objectMetadataMaps,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
         parentObjectMetadataItem,
         sourceFieldName,
       });
@@ -155,8 +170,9 @@ export class ProcessNestedRelationsV2Helper {
     const columnsToSelect = buildColumnsToSelect({
       select: selectedFields,
       relations: nestedRelations,
-      objectMetadataItemWithFieldMaps: targetObjectMetadata,
-      objectMetadataMaps,
+      flatObjectMetadata: targetObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     });
 
     targetObjectQueryBuilder = targetObjectQueryBuilder.setFindOptions({
@@ -208,23 +224,11 @@ export class ProcessNestedRelationsV2Helper {
       relationType,
     });
 
-    const targetObjectMetadataItemWithFieldsMaps =
-      getObjectMetadataMapItemByNameSingular(
-        objectMetadataMaps,
-        targetObjectMetadata.nameSingular,
-      );
-
-    if (!targetObjectMetadataItemWithFieldsMaps) {
-      throw new GraphqlQueryRunnerException(
-        `Object ${targetObjectMetadata.nameSingular} not found`,
-        GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
-      );
-    }
-
     if (Object.keys(nestedRelations).length > 0) {
       await this.processNestedRelations({
-        objectMetadataMaps,
-        parentObjectMetadataItem: targetObjectMetadataItemWithFieldsMaps,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        parentObjectMetadataItem: targetObjectMetadata,
         parentObjectRecords: relationResults as ObjectRecord[],
         parentObjectRecordsAggregatedValues: relationAggregatedFieldsResult,
         relations: nestedRelations as Record<
@@ -242,23 +246,36 @@ export class ProcessNestedRelationsV2Helper {
   }
 
   private getTargetObjectMetadata({
-    objectMetadataMaps,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
     parentObjectMetadataItem,
     sourceFieldName,
   }: {
-    objectMetadataMaps: ObjectMetadataMaps;
-    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    parentObjectMetadataItem: FlatObjectMetadata;
     sourceFieldName: string;
   }) {
-    const targetFieldMetadata = getFieldMetadataFromGraphQLField({
-      objectMetadataItem: parentObjectMetadataItem,
-      graphQLField: sourceFieldName,
-      objectMetadataMaps,
+    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      parentObjectMetadataItem,
+    );
+
+    const targetFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: fieldIdByName[sourceFieldName],
+      flatEntityMaps: flatFieldMetadataMaps,
     });
+
+    if (!targetFieldMetadata) {
+      throw new GraphqlQueryRunnerException(
+        `Field ${sourceFieldName} not found on object ${parentObjectMetadataItem.nameSingular}`,
+        GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND,
+      );
+    }
 
     const targetObjectMetadata = getTargetObjectMetadataOrThrow(
       targetFieldMetadata,
-      objectMetadataMaps,
+      flatObjectMetadataMaps,
     );
 
     if (
@@ -272,14 +289,11 @@ export class ProcessNestedRelationsV2Helper {
     }
 
     const targetRelation =
-      objectMetadataMaps.byId[
-        targetFieldMetadata.relationTargetObjectMetadataId
-      ]?.fieldsById[targetFieldMetadata.relationTargetFieldMetadataId];
+      flatFieldMetadataMaps.byId[
+        targetFieldMetadata.relationTargetFieldMetadataId
+      ];
 
-    const targetRelationName =
-      objectMetadataMaps.byId[
-        targetFieldMetadata.relationTargetObjectMetadataId
-      ]?.fieldsById[targetFieldMetadata.relationTargetFieldMetadataId]?.name;
+    const targetRelationName = targetRelation?.name;
 
     return { targetRelationName, targetObjectMetadata, targetRelation };
   }

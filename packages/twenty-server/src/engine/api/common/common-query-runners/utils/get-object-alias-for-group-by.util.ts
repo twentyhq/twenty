@@ -1,7 +1,7 @@
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const getObjectAlias = (
-  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+  flatObjectMetadata: FlatObjectMetadata,
 ): string => {
-  return objectMetadataItemWithFieldMaps.nameSingular;
+  return flatObjectMetadata.nameSingular;
 };

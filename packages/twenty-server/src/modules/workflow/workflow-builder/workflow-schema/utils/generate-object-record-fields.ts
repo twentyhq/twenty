@@ -1,6 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type FieldOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record';
@@ -17,67 +18,71 @@ export const generateObjectRecordFields = ({
   depth?: number;
   maxDepth?: number;
 }): Record<string, FieldOutputSchema> => {
-  const objectMetadata = objectMetadataInfo.objectMetadataItemWithFieldsMaps;
+  const { flatObjectMetadata, flatObjectMetadataMaps, flatFieldMetadataMaps } =
+    objectMetadataInfo;
 
-  return Object.values(objectMetadata.fieldsById).reduce(
-    (acc: Record<string, FieldOutputSchema>, field) => {
-      if (!shouldGenerateFieldFakeValue(field)) {
-        return acc;
+  const result: Record<string, FieldOutputSchema> = {};
+
+  for (const fieldId of flatObjectMetadata.fieldMetadataIds) {
+    const field = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityId: fieldId,
+    });
+
+    if (!shouldGenerateFieldFakeValue(field)) {
+      continue;
+    }
+
+    if (field.type !== FieldMetadataType.RELATION) {
+      result[field.name] = generateFakeRecordField({
+        type: field.type,
+        label: field.label,
+        icon: field.icon ?? undefined,
+        fieldMetadataId: field.id,
+      });
+
+      continue;
+    }
+
+    if (!isDefined(field.relationTargetObjectMetadataId)) {
+      continue;
+    }
+
+    if (depth < maxDepth) {
+      const relationTargetObjectMetadata =
+        flatObjectMetadataMaps.byId[field.relationTargetObjectMetadataId];
+
+      if (!isDefined(relationTargetObjectMetadata)) {
+        continue;
       }
 
-      if (field.type !== FieldMetadataType.RELATION) {
-        acc[field.name] = generateFakeRecordField({
-          type: field.type,
-          label: field.label,
-          icon: field.icon ?? undefined,
-          fieldMetadataId: field.id,
-        });
+      result[field.name] = {
+        isLeaf: false,
+        icon: field.icon ?? undefined,
+        label: field.label,
+        type: field.type,
+        fieldMetadataId: field.id,
+        value: generateFakeObjectRecord({
+          objectMetadataInfo: {
+            flatObjectMetadata: relationTargetObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          },
+          depth: depth + 1,
+        }),
+      };
+    } else if (depth === maxDepth) {
+      const relationIdFieldName = `${field.name}Id`;
+      const relationIdFieldLabel = camelToTitleCase(relationIdFieldName);
 
-        return acc;
-      }
+      result[relationIdFieldName] = generateFakeRecordField({
+        type: FieldMetadataType.UUID,
+        label: relationIdFieldLabel,
+        icon: field.icon ?? undefined,
+        fieldMetadataId: field.id,
+      });
+    }
+  }
 
-      if (!isDefined(field.relationTargetObjectMetadataId)) {
-        return acc;
-      }
-
-      if (depth < maxDepth) {
-        const relationTargetObjectMetadata =
-          objectMetadataInfo.objectMetadataMaps.byId[
-            field.relationTargetObjectMetadataId
-          ];
-
-        if (!isDefined(relationTargetObjectMetadata)) {
-          return acc;
-        }
-
-        acc[field.name] = {
-          isLeaf: false,
-          icon: field.icon ?? undefined,
-          label: field.label,
-          type: field.type,
-          fieldMetadataId: field.id,
-          value: generateFakeObjectRecord({
-            objectMetadataInfo: {
-              objectMetadataItemWithFieldsMaps: relationTargetObjectMetadata,
-              objectMetadataMaps: objectMetadataInfo.objectMetadataMaps,
-            },
-            depth: depth + 1,
-          }),
-        };
-      } else if (depth === maxDepth) {
-        const relationIdFieldName = `${field.name}Id`;
-        const relationIdFieldLabel = camelToTitleCase(relationIdFieldName);
-
-        acc[relationIdFieldName] = generateFakeRecordField({
-          type: FieldMetadataType.UUID,
-          label: relationIdFieldLabel,
-          icon: field.icon ?? undefined,
-          fieldMetadataId: field.id,
-        });
-      }
-
-      return acc;
-    },
-    {} as Record<string, FieldOutputSchema>,
-  );
+  return result;
 };

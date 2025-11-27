@@ -5,15 +5,48 @@ import { FieldMetadataType, NumberDataType } from 'twenty-shared/types';
 import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { computeSchemaComponents } from 'src/engine/core-modules/open-api/utils/components.utils';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 describe('computeSchemaComponents', () => {
   faker.seed(1);
   it('should compute schema components', () => {
+    const flatObjectMetadata: FlatObjectMetadata = {
+      ...objectMetadataItemMock,
+      universalIdentifier: 'objectName',
+      fieldMetadataIds: objectMetadataItemMock.fields.map((f) => f.id),
+    } as any;
+
+    const flatFieldMetadataMaps = {
+      byId: Object.fromEntries(
+        objectMetadataItemMock.fields.map((f) => [f.id, f as any]),
+      ),
+      idByUniversalIdentifier: {},
+      universalIdentifiersByApplicationId: {},
+    };
+
+    const relationTargetObjectMetadata: FlatObjectMetadata = {
+      id: 'relationTargetObjectId',
+      nameSingular: 'relationTargetObject',
+      namePlural: 'relationTargetObjects',
+      universalIdentifier: 'relationTargetObject',
+      fieldMetadataIds: [],
+    } as any;
+
+    const flatObjectMetadataMaps = {
+      byId: {
+        [flatObjectMetadata.id]: flatObjectMetadata,
+        [relationTargetObjectMetadata.id]: relationTargetObjectMetadata,
+      },
+      idByUniversalIdentifier: {},
+      universalIdentifiersByApplicationId: {},
+    };
+
     expect(
-      computeSchemaComponents([
-        objectMetadataItemMock,
-      ] as ObjectMetadataEntity[]),
+      computeSchemaComponents(
+        [flatObjectMetadata],
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      ),
     ).toMatchInlineSnapshot(`
 {
   "ObjectName": {
@@ -819,17 +852,37 @@ describe('computeSchemaComponents', () => {
   ];
 
   it.each(testsCases)('$title', ({ context: field }) => {
+    const flatObjectMetadata: FlatObjectMetadata = {
+      targetTableName: 'testingObject',
+      id: 'mockObjectId',
+      nameSingular: 'objectName',
+      namePlural: 'objectsName',
+      universalIdentifier: 'objectName',
+      fieldMetadataIds: [field.id],
+    } as any;
+
+    const flatFieldMetadataMaps = {
+      byId: {
+        [field.id]: field as any,
+      },
+      idByUniversalIdentifier: {},
+      universalIdentifiersByApplicationId: {},
+    };
+
+    const flatObjectMetadataMaps = {
+      byId: {
+        [flatObjectMetadata.id]: flatObjectMetadata,
+      },
+      idByUniversalIdentifier: {},
+      universalIdentifiersByApplicationId: {},
+    };
+
     expect(
-      computeSchemaComponents([
-        {
-          targetTableName: 'testingObject',
-          id: 'mockObjectId',
-          nameSingular: 'objectName',
-          namePlural: 'objectsName',
-          //@ts-expect-error Passing partial FieldMetadataEntity array
-          fields: [field],
-        },
-      ]),
+      computeSchemaComponents(
+        [flatObjectMetadata],
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      ),
     ).toMatchSnapshot();
   });
 });
