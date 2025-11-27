@@ -1,4 +1,3 @@
-import ts from 'typescript';
 import { join } from 'path';
 import {
   createProgram,
@@ -6,6 +5,8 @@ import {
   parseJsonConfigFileContent,
   readConfigFile,
   sys,
+  type Program,
+  type Diagnostic,
 } from 'typescript';
 
 const getProgramFromTsconfig = ({
@@ -41,7 +42,7 @@ export const getTsProgramAndDiagnostics = async ({
   appPath,
 }: {
   appPath: string;
-}): Promise<{ program: ts.Program; diagnostics: ts.Diagnostic[] }> => {
+}): Promise<{ program: Program; diagnostics: Diagnostic[] }> => {
   const program = getProgramFromTsconfig({
     appPath,
     tsconfigPath: 'tsconfig.json',

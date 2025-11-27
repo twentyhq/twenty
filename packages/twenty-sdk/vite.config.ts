@@ -1,7 +1,9 @@
+// @ts-ignore
 import path from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import tsconfigPaths from 'vite-tsconfig-paths';
+// @ts-ignore
 import packageJson from './package.json';
 
 const moduleEntries = Object.keys((packageJson as any).exports || {})
