@@ -194,7 +194,7 @@
     "vite-plugin-svgr": "^4.2.0"
   },
   "engines": {
-    "node": "^24.5.0",
+    "node": ">=24.5.0",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2"
   },
@@ -207,7 +207,8 @@
     "typescript": "5.9.2",
     "graphql-redis-subscriptions/ioredis": "^5.6.0",
     "prosemirror-view": "1.40.0",
-    "prosemirror-transform": "1.10.4"
+    "prosemirror-transform": "1.10.4",
+    "jwa": "2.0.1"
   },
   "version": "0.2.1",
   "nx": {},
