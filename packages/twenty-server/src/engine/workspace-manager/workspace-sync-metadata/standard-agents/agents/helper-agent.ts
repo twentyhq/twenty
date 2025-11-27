@@ -1,4 +1,4 @@
-import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
+import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { type StandardAgentDefinition } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/types/standard-agent-definition.interface';
 
 export const HELPER_AGENT: StandardAgentDefinition = {
@@ -36,4 +36,5 @@ Always base answers on official Twenty documentation. Be patient and helpful.`,
   responseFormat: { type: 'text' },
   isCustom: false,
   modelConfiguration: {},
+  evaluationInputs: [],
 };

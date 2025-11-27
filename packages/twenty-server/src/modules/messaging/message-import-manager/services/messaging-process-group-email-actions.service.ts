@@ -110,14 +110,6 @@ export class MessagingProcessGroupEmailActionsService {
         }
       },
     );
-
-    await this.messageChannelSyncStatusService.scheduleMessageListFetch([
-      messageChannel.id,
-    ]);
-
-    this.logger.log(
-      `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Scheduled message list fetch after processing group email action`,
-    );
   }
 
   private async handleGroupEmailsDeletion(

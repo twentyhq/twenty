@@ -31,6 +31,7 @@ import { peopleAllView } from 'src/engine/workspace-manager/standard-objects-pre
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksAssignedToMeView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me';
 import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view';
+import { timelineActivitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/timeline-activities-all.view';
 import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
@@ -95,6 +96,7 @@ export const prefillCoreViews = async ({
     messagesAllView,
     messageThreadsAllView,
     calendarEventsAllView,
+    timelineActivitiesAllView,
   ].map((seeder) =>
     seeder({
       objectMetadataItems,

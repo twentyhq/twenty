@@ -3,7 +3,7 @@ import { type MigrationInterface, type QueryRunner } from 'typeorm';
 import {
   DEFAULT_FAST_MODEL,
   DEFAULT_SMART_MODEL,
-} from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 
 export class AddFastAndSmartModelsToWorkspace1763997530458
   implements MigrationInterface

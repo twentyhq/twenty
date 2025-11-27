@@ -35,6 +35,7 @@ import { MigrateWorkflowStepFilterOperandValueCommand } from 'src/database/comma
 import { RegeneratePersonSearchVectorWithPhonesCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-regenerate-person-search-vector-with-phones.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
@@ -50,6 +51,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyConfigService: TwentyConfigService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly dataSourceService: DataSourceService,
     protected readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
 
     // 1.6 Commands
@@ -93,6 +95,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       workspaceRepository,
       twentyConfigService,
       twentyORMGlobalManager,
+      dataSourceService,
       syncWorkspaceMetadataCommand,
     );
 

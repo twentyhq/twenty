@@ -31,7 +31,7 @@ const isFieldAvailable = (field: FlatFieldMetadata, forResponse: boolean) => {
 const getFieldZodType = (field: FlatFieldMetadata): z.ZodTypeAny => {
   switch (field.type) {
     case FieldMetadataType.UUID:
-      return z.uuidv4();
+      return z.string().uuidv4();
 
     case FieldMetadataType.TEXT:
     case FieldMetadataType.RICH_TEXT:
@@ -41,7 +41,7 @@ const getFieldZodType = (field: FlatFieldMetadata): z.ZodTypeAny => {
       return z.string().datetime();
 
     case FieldMetadataType.DATE:
-      return z.date();
+      return z.string().date();
 
     case FieldMetadataType.NUMBER: {
       const settings =

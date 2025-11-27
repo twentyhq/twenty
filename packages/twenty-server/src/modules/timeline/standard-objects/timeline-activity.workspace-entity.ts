@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -36,6 +36,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   labelPlural: msg`Timeline Activities`,
   description: msg`Aggregated / filtered event to be displayed on the timeline`,
   icon: STANDARD_OBJECT_ICONS.timelineActivity,
+  labelIdentifierStandardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()

@@ -62,16 +62,8 @@ export class MessagingMessageListFetchService {
       const pendingGroupEmailActionsProcessed =
         await this.processPendingGroupEmailActions(messageChannel, workspaceId);
 
-      if (pendingGroupEmailActionsProcessed) {
-        return;
-      }
-
       const pendingFolderActionsProcessed =
         await this.processPendingFolderActions(messageChannel, workspaceId);
-
-      if (pendingFolderActionsProcessed) {
-        return;
-      }
 
       await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
         [messageChannel.id],
@@ -81,19 +73,42 @@ export class MessagingMessageListFetchService {
         `messageChannelId: ${messageChannel.id} Processing message list fetch`,
       );
 
+      const messageChannelRepository =
+        await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+          'messageChannel',
+        );
+
+      const freshMessageChannel =
+        pendingGroupEmailActionsProcessed || pendingFolderActionsProcessed
+          ? await messageChannelRepository.findOne({
+              where: {
+                id: messageChannel.id,
+              },
+              relations: ['connectedAccount', 'messageFolders'],
+            })
+          : messageChannel;
+
+      if (!isDefined(freshMessageChannel)) {
+        this.logger.error(
+          `error processing message list fetch: messageChannelId: ${messageChannel.id} Message channel not found`,
+        );
+
+        return;
+      }
+
       const { accessToken, refreshToken } =
         await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
           {
-            connectedAccount: messageChannel.connectedAccount,
+            connectedAccount: freshMessageChannel.connectedAccount,
             workspaceId,
-            messageChannelId: messageChannel.id,
+            messageChannelId: freshMessageChannel.id,
           },
         );
 
       const messageChannelWithFreshTokens = {
-        ...messageChannel,
+        ...freshMessageChannel,
         connectedAccount: {
-          ...messageChannel.connectedAccount,
+          ...freshMessageChannel.connectedAccount,
           accessToken,
           refreshToken,
         },
@@ -114,7 +129,7 @@ export class MessagingMessageListFetchService {
 
       const messageFolders = await messageFolderRepository.find({
         where: {
-          messageChannelId: messageChannel.id,
+          messageChannelId: freshMessageChannel.id,
           pendingSyncAction: MessageFolderPendingSyncAction.NONE,
         },
       });
@@ -126,7 +141,7 @@ export class MessagingMessageListFetchService {
         );
 
       await this.cacheStorage.del(
-        `messages-to-import:${workspaceId}:${messageChannel.id}`,
+        `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
       );
 
       const messageExternalIds = messageLists.flatMap(
@@ -140,12 +155,12 @@ export class MessagingMessageListFetchService {
       const isFullSync =
         messageLists.every(
           (messageList) => !isNonEmptyString(messageList.previousSyncCursor),
-        ) && !isNonEmptyString(messageChannel.syncCursor);
+        ) && !isNonEmptyString(freshMessageChannel.syncCursor);
 
       let totalMessagesToImportCount = 0;
 
       this.logger.log(
-        `messageChannelId: ${messageChannel.id} Is full sync: ${isFullSync} and toImportCount: ${messageExternalIds.length}, toDeleteCount: ${messageExternalIdsToDelete.length}, cursors: ${messageLists.map(
+        `messageChannelId: ${freshMessageChannel.id} Is full sync: ${isFullSync} and toImportCount: ${messageExternalIds.length}, toDeleteCount: ${messageExternalIdsToDelete.length}, cursors: ${messageLists.map(
           (messageList) => {
             messageList.nextSyncCursor;
           },
@@ -166,7 +181,7 @@ export class MessagingMessageListFetchService {
         const existingMessageChannelMessageAssociations =
           await messageChannelMessageAssociationRepository.find({
             where: {
-              messageChannelId: messageChannel.id,
+              messageChannelId: freshMessageChannel.id,
               messageExternalId: In(messageExternalIdsChunk),
             },
           });
@@ -186,7 +201,7 @@ export class MessagingMessageListFetchService {
 
         if (messageExternalIdsToImport.length) {
           this.logger.log(
-            `messageChannelId: ${messageChannel.id} Adding ${messageExternalIdsToImport.length} message external ids to import in batch ${index + 1}`,
+            `messageChannelId: ${freshMessageChannel.id} Adding ${messageExternalIdsToImport.length} message external ids to import in batch ${index + 1}`,
           );
 
           totalMessagesToImportCount += messageExternalIdsToImport.length;
@@ -211,7 +226,7 @@ export class MessagingMessageListFetchService {
 
       const fullSyncMessageChannelMessageAssociationsToDelete = isFullSync
         ? await this.computeFullSyncMessageChannelMessageAssociationsToDelete(
-            messageChannel,
+            freshMessageChannel,
             messageExternalIds,
           )
         : [];
@@ -226,14 +241,14 @@ export class MessagingMessageListFetchService {
 
       if (allMessageExternalIdsToDelete.length) {
         this.logger.log(
-          `messageChannelId: ${messageChannel.id} Deleting ${allMessageExternalIdsToDelete.length} message channel message associations`,
+          `messageChannelId: ${freshMessageChannel.id} Deleting ${allMessageExternalIdsToDelete.length} message channel message associations`,
         );
 
         const toDeleteChunks = chunk(allMessageExternalIdsToDelete, 200);
 
         for (const [index, toDeleteChunk] of toDeleteChunks.entries()) {
           this.logger.log(
-            `messageChannelId: ${messageChannel.id} Deleting ${toDeleteChunk.length} message channel message associations in batch ${index + 1}`,
+            `messageChannelId: ${freshMessageChannel.id} Deleting ${toDeleteChunk.length} message channel message associations in batch ${index + 1}`,
           );
 
           await this.messagingMessageCleanerService.deleteMessagesChannelMessageAssociationsAndRelatedOrphans(
@@ -249,7 +264,7 @@ export class MessagingMessageListFetchService {
       }
 
       this.logger.log(
-        `messageChannelId: ${messageChannel.id} Total messages to import count: ${totalMessagesToImportCount}`,
+        `messageChannelId: ${freshMessageChannel.id} Total messages to import count: ${totalMessagesToImportCount}`,
       );
 
       if (totalMessagesToImportCount === 0) {
@@ -261,7 +276,7 @@ export class MessagingMessageListFetchService {
       }
 
       this.logger.log(
-        `messageChannelId: ${messageChannel.id} Scheduling direct messages import`,
+        `messageChannelId: ${freshMessageChannel.id} Scheduling direct messages import`,
       );
 
       await this.messageChannelSyncStatusService.scheduleMessagesImport([

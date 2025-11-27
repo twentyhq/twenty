@@ -3,12 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Command, Option } from 'nest-commander';
 import { LessThan, Repository } from 'typeorm';
 
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import {
-  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  type RunOnWorkspaceArgs,
-} from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
 @Command({
@@ -22,8 +21,9 @@ export class DeleteWorkflowRunsCommand extends ActiveOrSuspendedWorkspacesMigrat
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly dataSourceService: DataSourceService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager);
+    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
 
   @Option({
