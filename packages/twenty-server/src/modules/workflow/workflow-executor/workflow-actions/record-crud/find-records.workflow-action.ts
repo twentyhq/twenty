@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  FieldMetadataComplexOption,
+  FieldMetadataDefaultOption,
+} from 'twenty-shared/types';
+import {
   computeRecordGqlOperationFilter,
   isDefined,
   resolveInput,
 } from 'twenty-shared/utils';
-import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
-} from 'twenty-shared/types';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -74,14 +74,12 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-    // Get object metadata to compute gqlOperationFilter
     const { flatObjectMetadata, flatFieldMetadataMaps } =
       await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
         workflowActionInput.objectName,
         workspaceId,
       );
 
-    // Get fields for the object from field metadata maps and map to PartialFieldMetadataItem
     const fields = flatObjectMetadata.fieldMetadataIds
       .map((fieldId) => {
         const field = flatFieldMetadataMaps.byId[fieldId];
@@ -105,8 +103,6 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       })
       .filter(isDefined);
 
-    // Compute gqlOperationFilter from resolved recordFilters and recordFilterGroups
-    // This happens after variable resolution, so filter values contain actual resolved values
     const gqlOperationFilter =
       workflowActionInput.filter?.recordFilters &&
       workflowActionInput.filter?.recordFilterGroups
