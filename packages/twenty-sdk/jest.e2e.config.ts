@@ -4,7 +4,7 @@ const jestConfig: JestConfigWithTsJest = {
   // For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string
   // Prettier v3 should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1
   prettierPath: null,
-  displayName: 'twenty-cli-e2e',
+  displayName: 'twenty-sdk-e2e',
   silent: false,
   errorOnDeprecated: true,
   maxConcurrency: 1,
