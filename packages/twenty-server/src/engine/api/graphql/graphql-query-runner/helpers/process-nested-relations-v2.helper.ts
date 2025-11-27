@@ -17,7 +17,10 @@ import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-contex
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import {
+  buildFieldMapsFromFlatObjectMetadata,
+  type FieldMapsForObject,
+} from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
@@ -112,13 +115,13 @@ export class ProcessNestedRelationsV2Helper {
     rolePermissionConfig?: RolePermissionConfig;
     selectedFields: Record<string, unknown>;
   }): Promise<void> {
-    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+    const fieldMaps = buildFieldMapsFromFlatObjectMetadata(
       flatFieldMetadataMaps,
       parentObjectMetadataItem,
     );
 
     const sourceFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldIdByName[sourceFieldName],
+      flatEntityId: fieldMaps.fieldIdByName[sourceFieldName],
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
@@ -154,6 +157,7 @@ export class ProcessNestedRelationsV2Helper {
         flatFieldMetadataMaps,
         parentObjectMetadataItem,
         sourceFieldName,
+        fieldMaps,
       });
 
     const targetObjectRepository = workspaceDataSource.getRepository(
@@ -250,19 +254,16 @@ export class ProcessNestedRelationsV2Helper {
     flatFieldMetadataMaps,
     parentObjectMetadataItem,
     sourceFieldName,
+    fieldMaps,
   }: {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     parentObjectMetadataItem: FlatObjectMetadata;
     sourceFieldName: string;
+    fieldMaps: FieldMapsForObject;
   }) {
-    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-      flatFieldMetadataMaps,
-      parentObjectMetadataItem,
-    );
-
     const targetFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldIdByName[sourceFieldName],
+      flatEntityId: fieldMaps.fieldIdByName[sourceFieldName],
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
