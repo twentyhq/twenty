@@ -1,5 +1,5 @@
+import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { type StandardAgentDefinition } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/types/standard-agent-definition.interface';
-import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
 
 export const RESEARCHER_AGENT: StandardAgentDefinition = {
   standardId: '20202020-0002-0001-0001-000000000005',
@@ -39,4 +39,5 @@ Be persistent in finding accurate information.`,
       enabled: true,
     },
   },
+  evaluationInputs: [],
 };

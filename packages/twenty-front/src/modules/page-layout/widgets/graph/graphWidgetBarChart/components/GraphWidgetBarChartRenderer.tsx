@@ -1,3 +1,4 @@
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
@@ -5,7 +6,6 @@ import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBa
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { type ComputedDatum } from '@nivo/bar';
@@ -40,6 +40,7 @@ export const GraphWidgetBarChartRenderer = ({
     xAxisLabel,
     yAxisLabel,
     showDataLabels,
+    showLegend,
     layout,
     loading,
     hasTooManyGroups,
@@ -116,6 +117,7 @@ export const GraphWidgetBarChartRenderer = ({
         xAxisLabel={xAxisLabel}
         yAxisLabel={yAxisLabel}
         showValues={showDataLabels}
+        showLegend={showLegend}
         layout={layout}
         groupMode={groupMode}
         id={widget.id}

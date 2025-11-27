@@ -527,6 +527,7 @@ msgid "Active API keys created by you or your team."
 msgstr "Active API keys created by you or your team."
 
 #. js-lingui-id: m16xKo
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 #: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx
 msgid "Add"
 msgstr "Add"
@@ -678,6 +679,11 @@ msgstr "Add SSO Identity Provider"
 msgid "Add task"
 msgstr "Add task"
 
+#. js-lingui-id: 6Tl23V
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+msgid "Add test input for evaluation (e.g., \"Find all customers in NY\")"
+msgstr "Add test input for evaluation (e.g., \"Find all customers in NY\")"
+
 #. js-lingui-id: FQArA8
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
 msgid "Add these records to verify your domain."
@@ -810,10 +816,17 @@ msgid "After a set amount of time"
 msgstr "After a set amount of time"
 
 #. js-lingui-id: iEQQyu
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Agent"
 msgstr "Agent"
+
+#. js-lingui-id: WrQ+BN
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "Agent interactions will appear here once the agent is used in conversations"
+msgstr "Agent interactions will appear here once the agent is used in conversations"
 
 #. js-lingui-id: mDXkHu
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -849,6 +862,9 @@ msgstr "Aggregate Chart"
 
 #. js-lingui-id: jsQZMk
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -1234,6 +1250,11 @@ msgstr "Approved Domains"
 msgid "Arabic"
 msgstr "Arabic"
 
+#. js-lingui-id: 4CHeVx
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+msgid "Are you sure you want to delete this evaluation input?"
+msgstr "Are you sure you want to delete this evaluation input?"
+
 #. js-lingui-id: OJOR8q
 #: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
 msgid "Are you sure you want to destroy these records? They won't be recoverable anymore."
@@ -1314,10 +1335,10 @@ msgstr "Assignable to Agents"
 msgid "Assignable to API Keys"
 msgstr "Assignable to API Keys"
 
-#. js-lingui-id: 6cOTMx
+#. js-lingui-id: OUbMUU
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
-msgid "Assignable to team members"
-msgstr "Assignable to team members"
+msgid "Assignable to Workspace Members"
+msgstr "Assignable to Workspace Members"
 
 #. js-lingui-id: 7qh2Hx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -1333,6 +1354,11 @@ msgstr "Assigned to"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Assignment"
 msgstr "Assignment"
+
+#. js-lingui-id: d/bvvp
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "Assistant"
+msgstr "Assistant"
 
 #. js-lingui-id: UHs3Ds
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getHoursDescription.ts
@@ -2004,6 +2030,11 @@ msgstr "Command Icon"
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
 msgid "Commas and dot - {commasAndDotExample}"
 msgstr "Commas and dot - {commasAndDotExample}"
+
+#. js-lingui-id: NBdIgR
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "Comment"
+msgstr "Comment"
 
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -2742,6 +2773,9 @@ msgid "database trigger"
 msgstr "database trigger"
 
 #. js-lingui-id: mYGY3B
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
@@ -2928,6 +2962,8 @@ msgstr "delete"
 #. js-lingui-id: cnGeoo
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
@@ -2990,6 +3026,11 @@ msgstr "Delete API key"
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Delete dashboard"
 msgstr "Delete dashboard"
+
+#. js-lingui-id: gf2eXy
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+msgid "Delete Evaluation Input"
+msgstr "Delete Evaluation Input"
 
 #. js-lingui-id: x2p4/4
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -3832,6 +3873,26 @@ msgstr "Error while switching subscription."
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Establish Webhook endpoints for notifications on asynchronous events."
 
+#. js-lingui-id: 4ASb34
+#: src/pages/settings/ai/SettingsAgentForm.tsx
+msgid "Evals"
+msgstr "Evals"
+
+#. js-lingui-id: UKdZ7G
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "Evaluate"
+msgstr "Evaluate"
+
+#. js-lingui-id: 9uDn0Y
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+msgid "Evaluation input executed successfully"
+msgstr "Evaluation input executed successfully"
+
+#. js-lingui-id: Y3MReI
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "Evaluations"
+msgstr "Evaluations"
+
 #. js-lingui-id: poC90w
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Event visibility"
@@ -4146,6 +4207,16 @@ msgstr "Failed to delete jobs. Please try again later."
 msgid "Failed to duplicate workflow"
 msgstr "Failed to duplicate workflow"
 
+#. js-lingui-id: dqEkUR
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "Failed to evaluate turn"
+msgstr "Failed to evaluate turn"
+
+#. js-lingui-id: P/885a
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+msgid "Failed to execute evaluation input"
+msgstr "Failed to execute evaluation input"
+
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AIChatErrorMessage.tsx
 msgid "Failed to get response"
@@ -4167,6 +4238,7 @@ msgid "Failed to retry jobs. Please try again later."
 msgstr "Failed to retry jobs. Please try again later."
 
 #. js-lingui-id: y3HIOa
+#: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Failed to save role permissions: {errorMessage}"
 msgstr "Failed to save role permissions: {errorMessage}"
@@ -4726,6 +4798,11 @@ msgstr "How your system is doing"
 msgid "Http"
 msgstr "Http"
 
+#. js-lingui-id: DvpBQM
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "HTTP Request"
+msgstr "HTTP Request"
+
 #. js-lingui-id: 0yRnXS
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "https://example.com/webhook"
@@ -4925,6 +5002,8 @@ msgid "Indexes"
 msgstr "Indexes"
 
 #. js-lingui-id: XU5AOg
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
 msgid "Input"
 msgstr "Input"
@@ -5416,6 +5495,11 @@ msgstr "Leave blank if you don't need to send emails."
 msgid "Leave workspace"
 msgstr "Leave workspace"
 
+#. js-lingui-id: MP1v+1
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Legend"
+msgstr "Legend"
+
 #. js-lingui-id: 8PPI2g
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than or equal"
@@ -5532,6 +5616,7 @@ msgid "Logout"
 msgstr "Logout"
 
 #. js-lingui-id: w/bY7R
+#: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 msgid "Logs"
 msgstr "Logs"
@@ -5555,6 +5640,11 @@ msgstr "loop"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Mail Account"
 msgstr "Mail Account"
+
+#. js-lingui-id: MOLprz
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Make HTTP requests to external APIs"
+msgstr "Make HTTP requests to external APIs"
 
 #. js-lingui-id: n0FHLv
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -5743,6 +5833,11 @@ msgstr "Message Sync and Calendar Sync are not available because the service is 
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminConnectedAccountHealthStatus.tsx
 msgid "Message Sync is not available because the service is down"
 msgstr "Message Sync is not available because the service is down"
+
+#. js-lingui-id: t7TeQU
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "Messages"
+msgstr "Messages"
 
 #. js-lingui-id: 6GBt0m
 #: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
@@ -6100,6 +6195,11 @@ msgstr "New SSO provider"
 msgid "New task"
 msgstr "New task"
 
+#. js-lingui-id: vam7Jz
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
+msgid "New widget"
+msgstr "New widget"
+
 #. js-lingui-id: hXzOVo
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -6171,6 +6271,11 @@ msgstr "No available fields to select"
 msgid "No change detected"
 msgstr "No change detected"
 
+#. js-lingui-id: wgUPZ1
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "No comment"
+msgstr "No comment"
+
 #. js-lingui-id: YFLMyY
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
 msgid "No config variables match your current filters. Try adjusting your filters or search criteria."
@@ -6231,6 +6336,16 @@ msgstr "No description"
 msgid "No email exchange has occurred with this record yet."
 msgstr "No email exchange has occurred with this record yet."
 
+#. js-lingui-id: p3Hivn
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+msgid "No evaluation inputs yet. Add your first test input above."
+msgstr "No evaluation inputs yet. Add your first test input above."
+
+#. js-lingui-id: ntMCci
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "No evaluations yet for this turn"
+msgstr "No evaluations yet for this turn"
+
 #. js-lingui-id: RM6uKY
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 msgid "No fields selected"
@@ -6256,6 +6371,11 @@ msgstr "No free workflow executions left. End trial period and activate your bil
 msgid "No free workflow executions left. Please contact your admin."
 msgstr "No free workflow executions left. Please contact your admin."
 
+#. js-lingui-id: gIrKyO
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "No input"
+msgstr "No input"
+
 #. js-lingui-id: lj3GoP
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "No jobs found"
@@ -6277,6 +6397,11 @@ msgstr "No jobs were retried{errorDetails}"
 msgid "No latest version found"
 msgstr "No latest version found"
 
+#. js-lingui-id: 5sf2dF
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "No logs yet"
+msgstr "No logs yet"
+
 #. js-lingui-id: UwvrGq
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "No members"
@@ -6291,6 +6416,11 @@ msgstr "No members assigned"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "No members match your search"
 msgstr "No members match your search"
+
+#. js-lingui-id: JzzHsG
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "No messages found for this turn"
+msgstr "No messages found for this turn"
 
 #. js-lingui-id: 0NudpV
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -7552,6 +7682,11 @@ msgstr "Romanian"
 msgid "route trigger"
 msgstr "route trigger"
 
+#. js-lingui-id: 3JjdaA
+#: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+msgid "Run"
+msgstr "Run"
+
 #. js-lingui-id: UX0N2y
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Run a workflow and return here to view its executions"
@@ -7603,6 +7738,13 @@ msgstr "Schema"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Schema name"
 msgstr "Schema name"
+
+#. js-lingui-id: Eq6YVV
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "Score"
+msgstr "Score"
 
 #. js-lingui-id: A1taO8
 #: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
@@ -8620,6 +8762,7 @@ msgid "Synchronize Objects Labels and API Names"
 msgstr "Synchronize Objects Labels and API Names"
 
 #. js-lingui-id: D+NlUC
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "System"
 msgstr "System"
@@ -9130,6 +9273,34 @@ msgstr "TTL"
 msgid "Turkish"
 msgstr "Turkish"
 
+#. js-lingui-id: n0iUzM
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "Turn"
+msgstr "Turn"
+
+#. js-lingui-id: qsUXL3
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "Turn Details"
+msgstr "Turn Details"
+
+#. js-lingui-id: fFSDTy
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "Turn evaluated successfully"
+msgstr "Turn evaluated successfully"
+
+#. js-lingui-id: 8680YN
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "Turn not found"
+msgstr "Turn not found"
+
+#. js-lingui-id: NCGTnP
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+msgid "Turn Not Found"
+msgstr "Turn Not Found"
+
 #. js-lingui-id: YIjS4q
 #: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
 msgid "Twitter/X Search"
@@ -9381,6 +9552,7 @@ msgstr "Use our API or add your first {objectLabel} manually"
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -9518,6 +9690,11 @@ msgstr "view"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 msgid "View"
 msgstr "View"
+
+#. js-lingui-id: nK72s8
+#: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+msgid "View all evaluations"
+msgstr "View all evaluations"
 
 #. js-lingui-id: KANz0G
 #: src/modules/billing/components/SettingsBillingContent.tsx
@@ -9764,6 +9941,9 @@ msgstr "Workflows"
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx

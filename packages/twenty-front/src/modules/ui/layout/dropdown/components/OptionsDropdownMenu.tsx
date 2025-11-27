@@ -26,7 +26,6 @@ export const OptionsDropdownMenu = ({
   selectableListId,
   selectableItemIdArray = [],
   onOpen,
-  buttonSize,
   children,
 }: OptionsDropdownMenuProps) => {
   const generatedDropdownId = useId();
@@ -73,7 +72,7 @@ export const OptionsDropdownMenu = ({
         <Button
           title={t`Options`}
           hotkeys={[getOsControlSymbol(), 'O']}
-          size={buttonSize}
+          size="small"
         />
       }
       dropdownPlacement="top-end"

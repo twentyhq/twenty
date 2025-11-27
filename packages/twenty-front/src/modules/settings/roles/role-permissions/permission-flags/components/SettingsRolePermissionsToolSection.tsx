@@ -1,14 +1,29 @@
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader';
 import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableRow';
-import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig';
+import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
 
-import { H2Title, IconTool } from 'twenty-ui/display';
+import {
+  H2Title,
+  IconApi,
+  IconAt,
+  IconDownload,
+  IconFileExport,
+  IconFileImport,
+  IconFileUpload,
+  IconMail,
+  IconSparkles,
+  IconTable,
+  IconTool,
+  IconUser,
+} from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
+import { FeatureFlagKey, PermissionFlagType } from '~/generated/graphql';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -36,28 +51,174 @@ export const SettingsRolePermissionsToolSection = ({
     settingsDraftRoleFamilyState(roleId),
   );
 
-  const actionPermissionsConfig = useActionRolePermissionFlagConfig();
+  const isAIEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+
+  const allPermissions: SettingsRolePermissionsSettingPermission[] = [
+    {
+      key: PermissionFlagType.AI,
+      name: t`Ask AI`,
+      description: t`Chat with AI agents and use AI features`,
+      Icon: IconSparkles,
+      isToolPermission: true,
+      isRelevantForAgents: false,
+      isRelevantForApiKeys: true,
+      isRelevantForUsers: true,
+    },
+    {
+      key: PermissionFlagType.UPLOAD_FILE,
+      name: t`Upload Files`,
+      description: t`Allow uploading files and attachments`,
+      Icon: IconFileUpload,
+      isToolPermission: true,
+      isRelevantForAgents: false,
+      isRelevantForApiKeys: true,
+      isRelevantForUsers: true,
+    },
+    {
+      key: PermissionFlagType.DOWNLOAD_FILE,
+      name: t`Download Files`,
+      description: t`Allow downloading files and attachments`,
+      Icon: IconDownload,
+      isToolPermission: true,
+      isRelevantForAgents: false,
+      isRelevantForApiKeys: true,
+      isRelevantForUsers: true,
+    },
+    {
+      key: PermissionFlagType.SEND_EMAIL_TOOL,
+      name: t`Send Email`,
+      description: t`Send emails via connected accounts`,
+      Icon: IconMail,
+      isToolPermission: true,
+      isRelevantForAgents: true,
+      isRelevantForApiKeys: true,
+      isRelevantForUsers: true,
+    },
+    {
+      key: PermissionFlagType.HTTP_REQUEST_TOOL,
+      name: t`HTTP Request`,
+      description: t`Make HTTP requests to external APIs`,
+      Icon: IconApi,
+      isToolPermission: true,
+      isRelevantForAgents: true,
+      isRelevantForApiKeys: false,
+      isRelevantForUsers: false,
+    },
+    {
+      key: PermissionFlagType.IMPORT_CSV,
+      name: t`Import CSV`,
+      description: t`Allow importing data from CSV files`,
+      Icon: IconFileImport,
+      isToolPermission: true,
+      isRelevantForAgents: false,
+      isRelevantForApiKeys: true,
+      isRelevantForUsers: true,
+    },
+    {
+      key: PermissionFlagType.EXPORT_CSV,
+      name: t`Export CSV`,
+      description: t`Allow exporting data to CSV files`,
+      Icon: IconFileExport,
+      isToolPermission: true,
+      isRelevantForAgents: false,
+      isRelevantForApiKeys: true,
+      isRelevantForUsers: true,
+    },
+    {
+      key: PermissionFlagType.CONNECTED_ACCOUNTS,
+      name: t`Sync Account`,
+      description: t`Sync email and calendar accounts`,
+      Icon: IconAt,
+      isToolPermission: true,
+      isRelevantForAgents: false,
+      isRelevantForApiKeys: false,
+      isRelevantForUsers: true,
+    },
+    {
+      key: PermissionFlagType.PROFILE_INFORMATION,
+      name: t`Edit Profile`,
+      description: t`Edit own profile information`,
+      Icon: IconUser,
+      isToolPermission: true,
+      isRelevantForAgents: false,
+      isRelevantForApiKeys: false,
+      isRelevantForUsers: true,
+    },
+    {
+      key: PermissionFlagType.VIEWS,
+      name: t`Manage Views`,
+      description: t`Create, edit, and delete workspace views`,
+      Icon: IconTable,
+      isToolPermission: true,
+      isRelevantForAgents: true,
+      isRelevantForApiKeys: true,
+      isRelevantForUsers: true,
+    },
+  ];
+
+  const toolPermissionsConfig = allPermissions.filter((permission) => {
+    if (permission.key === PermissionFlagType.AI && !isAIEnabled) {
+      return false;
+    }
+
+    const canBeAssignedOnlyToAgents =
+      settingsDraftRole.canBeAssignedToAgents &&
+      !settingsDraftRole.canBeAssignedToUsers &&
+      !settingsDraftRole.canBeAssignedToApiKeys;
+
+    const canBeAssignedOnlyToApiKeys =
+      settingsDraftRole.canBeAssignedToApiKeys &&
+      !settingsDraftRole.canBeAssignedToUsers &&
+      !settingsDraftRole.canBeAssignedToAgents;
+
+    const canBeAssignedOnlyToUsers =
+      settingsDraftRole.canBeAssignedToUsers &&
+      !settingsDraftRole.canBeAssignedToAgents &&
+      !settingsDraftRole.canBeAssignedToApiKeys;
+
+    if (canBeAssignedOnlyToAgents && !permission.isRelevantForAgents) {
+      return false;
+    }
+
+    if (canBeAssignedOnlyToApiKeys && !permission.isRelevantForApiKeys) {
+      return false;
+    }
+
+    if (canBeAssignedOnlyToUsers && !permission.isRelevantForUsers) {
+      return false;
+    }
+
+    return true;
+  });
+
+  const shouldShowAllAccessToggle =
+    !settingsDraftRole.canBeAssignedToAgents ||
+    settingsDraftRole.canBeAssignedToUsers;
 
   return (
     <Section>
       <H2Title title={t`Actions`} description={t`Actions permissions`} />
-      <StyledCard rounded>
-        <SettingsOptionCardContentToggle
-          Icon={IconTool}
-          title={t`All Actions Access`}
-          description={t`Grants permission to perform all available actions without restriction`}
-          checked={settingsDraftRole.canAccessAllTools}
-          disabled={!isEditable}
-          onChange={() => {
-            setSettingsDraftRole({
-              ...settingsDraftRole,
-              canAccessAllTools: !settingsDraftRole.canAccessAllTools,
-            });
-          }}
-        />
-      </StyledCard>
+      {shouldShowAllAccessToggle && (
+        <StyledCard rounded>
+          <SettingsOptionCardContentToggle
+            Icon={IconTool}
+            title={t`All Actions Access`}
+            description={t`Grants permission to perform all available actions without restriction`}
+            checked={settingsDraftRole.canAccessAllTools}
+            disabled={!isEditable}
+            onChange={() => {
+              setSettingsDraftRole({
+                ...settingsDraftRole,
+                canAccessAllTools: !settingsDraftRole.canAccessAllTools,
+              });
+            }}
+          />
+        </StyledCard>
+      )}
       <AnimatedExpandableContainer
-        isExpanded={!settingsDraftRole.canAccessAllTools}
+        isExpanded={
+          !shouldShowAllAccessToggle || !settingsDraftRole.canAccessAllTools
+        }
         dimension="height"
         animationDurations={{
           opacity: 0.2,
@@ -69,11 +230,11 @@ export const SettingsRolePermissionsToolSection = ({
         <StyledTable>
           <SettingsRolePermissionsSettingsTableHeader
             roleId={roleId}
-            settingsPermissionsConfig={actionPermissionsConfig}
+            settingsPermissionsConfig={toolPermissionsConfig}
             isEditable={isEditable}
           />
           <StyledTableRows>
-            {actionPermissionsConfig.map((permission) => (
+            {toolPermissionsConfig.map((permission) => (
               <SettingsRolePermissionsSettingsTableRow
                 key={permission.key}
                 roleId={roleId}

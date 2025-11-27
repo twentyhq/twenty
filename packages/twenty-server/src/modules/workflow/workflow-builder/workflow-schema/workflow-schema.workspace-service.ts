@@ -16,7 +16,7 @@ import { Repository } from 'typeorm';
 
 import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
-import { AgentEntity } from 'src/engine/metadata-modules/ai-agent/entities/agent.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { DEFAULT_ITERATOR_CURRENT_ITEM } from 'src/modules/workflow/workflow-builder/workflow-schema/constants/default-iterator-current-item.const';
