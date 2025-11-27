@@ -84,10 +84,21 @@ export class ImapClientProvider {
     let client: ImapFlow | null = null;
     let timeoutId: NodeJS.Timeout | null = null;
 
+    const isNonEmptyStringUsername = isNonEmptyString(
+      connectionParameters.IMAP?.username,
+    );
+
     if (!isDefined(connectionParameters.IMAP?.username)) {
       throw new CustomError(
-        'Handle is required',
+        'Username is required',
         MessageImportManagerExceptionCode.IMAP_USERNAME_REQUIRED,
+      );
+    }
+
+    if (!isDefined(connectedAccount.handle)) {
+      throw new CustomError(
+        'Handle is required',
+        MessageImportManagerExceptionCode.HANDLE_REQUIRED,
       );
     }
     try {
@@ -96,7 +107,7 @@ export class ImapClientProvider {
         port: connectionParameters.IMAP?.port || 993,
         secure: connectionParameters.IMAP?.secure,
         auth: {
-          user: isNonEmptyString(connectionParameters.IMAP?.username)
+          user: isNonEmptyStringUsername
             ? connectionParameters.IMAP?.username
             : connectedAccount.handle,
           pass: connectionParameters.IMAP?.password || '',
