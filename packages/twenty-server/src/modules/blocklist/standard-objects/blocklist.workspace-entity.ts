@@ -14,7 +14,6 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { BLOCKLIST_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.blocklist,
@@ -34,9 +33,9 @@ export class BlocklistWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Handle`,
     description: msg`Handle`,
     icon: 'IconAt',
+    defaultValue: 'defaultHandle',
   })
-  @WorkspaceIsNullable()
-  handle: string | null;
+  handle: string;
 
   @WorkspaceRelation({
     standardId: BLOCKLIST_STANDARD_FIELD_IDS.workspaceMember,
