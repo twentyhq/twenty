@@ -48,11 +48,16 @@ export const usePieChartCenterMetricData = ({
       aggregateField.type,
     );
 
+  const recordGqlFieldsAggregate = useMemo(
+    () => ({
+      [aggregateField.name]: [extendedAggregateOperation],
+    }),
+    [aggregateField.name, extendedAggregateOperation],
+  );
+
   const { data: centerMetricData } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
-    recordGqlFieldsAggregate: {
-      [aggregateField.name]: [extendedAggregateOperation],
-    },
+    recordGqlFieldsAggregate,
     filter: gqlOperationFilter,
     skip,
   });
