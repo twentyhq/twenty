@@ -6,6 +6,7 @@ import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/is
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -13,10 +14,12 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/display';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type ChartGroupByFieldSelectionRelationFieldViewProps = {
   relationField: FieldMetadataItem;
@@ -32,6 +35,8 @@ export const ChartGroupByFieldSelectionRelationFieldView = ({
   onSelectSubField,
 }: ChartGroupByFieldSelectionRelationFieldViewProps) => {
   const { getIcon } = useIcons();
+
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [selectedCompositeField, setSelectedCompositeField] =
     useState<FieldMetadataItem | null>(null);
@@ -63,10 +68,14 @@ export const ChartGroupByFieldSelectionRelationFieldView = ({
       return [];
     }
 
-    return targetObjectMetadataItem.fields.filter(
-      (field) => !field.isSystem && !isFieldRelation(field),
-    );
-  }, [targetObjectMetadataItem]);
+    return filterBySearchQuery({
+      items: targetObjectMetadataItem.fields.filter(
+        (field) => !field.isSystem && !isFieldRelation(field),
+      ),
+      searchQuery,
+      getSearchableValues: (field) => [field.label, field.name],
+    });
+  }, [targetObjectMetadataItem, searchQuery]);
 
   const handleSelectField = (fieldMetadataItem: FieldMetadataItem) => {
     if (isCompositeFieldType(fieldMetadataItem.type)) {
@@ -114,36 +123,48 @@ export const ChartGroupByFieldSelectionRelationFieldView = ({
         {relationField.label}
       </DropdownMenuHeader>
       <DropdownMenuSeparator />
+      <DropdownMenuSearchInput
+        autoFocus
+        type="text"
+        placeholder={t`Search fields`}
+        onChange={(event) => setSearchQuery(event.target.value)}
+        value={searchQuery}
+      />
+      <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        <SelectableList
-          selectableListInstanceId={dropdownId}
-          focusId={dropdownId}
-          selectableItemIdArray={availableFields.map((field) => field.id)}
-        >
-          {availableFields.map((fieldMetadataItem) => (
-            <SelectableListItem
-              key={fieldMetadataItem.id}
-              itemId={fieldMetadataItem.id}
-              onEnter={() => {
-                handleSelectField(fieldMetadataItem);
-              }}
-            >
-              <MenuItemSelect
-                text={fieldMetadataItem.label}
-                selected={
-                  !isCompositeFieldType(fieldMetadataItem.type) &&
-                  currentNestedFieldName === fieldMetadataItem.name
-                }
-                focused={selectedItemId === fieldMetadataItem.id}
-                LeftIcon={getIcon(fieldMetadataItem.icon)}
-                hasSubMenu={isCompositeFieldType(fieldMetadataItem.type)}
-                onClick={() => {
+        {availableFields.length === 0 ? (
+          <MenuItem text={t`No fields available`} />
+        ) : (
+          <SelectableList
+            selectableListInstanceId={dropdownId}
+            focusId={dropdownId}
+            selectableItemIdArray={availableFields.map((field) => field.id)}
+          >
+            {availableFields.map((fieldMetadataItem) => (
+              <SelectableListItem
+                key={fieldMetadataItem.id}
+                itemId={fieldMetadataItem.id}
+                onEnter={() => {
                   handleSelectField(fieldMetadataItem);
                 }}
-              />
-            </SelectableListItem>
-          ))}
-        </SelectableList>
+              >
+                <MenuItemSelect
+                  text={fieldMetadataItem.label}
+                  selected={
+                    !isCompositeFieldType(fieldMetadataItem.type) &&
+                    currentNestedFieldName === fieldMetadataItem.name
+                  }
+                  focused={selectedItemId === fieldMetadataItem.id}
+                  LeftIcon={getIcon(fieldMetadataItem.icon)}
+                  hasSubMenu={isCompositeFieldType(fieldMetadataItem.type)}
+                  onClick={() => {
+                    handleSelectField(fieldMetadataItem);
+                  }}
+                />
+              </SelectableListItem>
+            ))}
+          </SelectableList>
+        )}
       </DropdownMenuItemsContainer>
     </>
   );
