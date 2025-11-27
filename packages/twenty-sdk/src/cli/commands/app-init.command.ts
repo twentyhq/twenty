@@ -95,7 +95,7 @@ export class AppInitCommand {
     const appDescription = description.trim();
 
     const appDirectory = directory
-      ? path.join(CURRENT_EXECUTION_DIRECTORY, kebabCase(directory))
+      ? path.join(CURRENT_EXECUTION_DIRECTORY, directory)
       : path.join(CURRENT_EXECUTION_DIRECTORY, kebabCase(appName));
 
     return { appName, appDisplayName, appDirectory, appDescription };

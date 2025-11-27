@@ -12,7 +12,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "vite build && tsc --project tsconfig.cli.json && cp -R src/cli/constants/base-application-project dist/cli/constants"
+    "build": "vite build && tsc --project tsconfig.cli.json"
   },
   "dependencies": {
     "@genql/cli": "^3.0.3",
