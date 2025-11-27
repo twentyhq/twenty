@@ -3390,16 +3390,6 @@ msgstr "워크플로 버전 상태"
 msgid "There was an issue with your connection settings. Please try again."
 msgstr "연결 설정에 문제가 있습니다. 다시 시도하십시오."
 
-#. js-lingui-id: Bm40Ow
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} is already taken. Please choose a different value."
-msgstr "이 {fieldName}은 이미 사용 중입니다. 다른 값을 선택하십시오."
-
-#. js-lingui-id: CYyoPc
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} with value {duplicatedValues} is already taken. Please choose a different value."
-msgstr "값 {duplicatedValues}가 있는 이 {fieldName}은 이미 사용 중입니다. 다른 값을 선택하십시오."
-
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -3409,11 +3399,6 @@ msgstr "이 API 키는 철회되어 더 이상 사용할 수 없습니다."
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "이 API 키의 기한이 만료되었습니다. 새 키를 만드십시오."
-
-#. js-lingui-id: r/Z8XK
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This combination of {fieldNames} already exists. Please use different values."
-msgstr "이 {fieldNames} 조합이 이미 존재합니다. 다른 값을 사용하십시오."
 
 #. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts

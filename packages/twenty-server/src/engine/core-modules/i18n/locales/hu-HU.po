@@ -3390,16 +3390,6 @@ msgstr "A munkafolyamat verzió státusza"
 msgid "There was an issue with your connection settings. Please try again."
 msgstr "Kapcsolati beállításai nem megfelelőek. Kérjük, próbálja újra."
 
-#. js-lingui-id: Bm40Ow
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} is already taken. Please choose a different value."
-msgstr "Ez a {fieldName} már foglalt. Kérjük, válasszon másik értéket."
-
-#. js-lingui-id: CYyoPc
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} with value {duplicatedValues} is already taken. Please choose a different value."
-msgstr "Ez a {fieldName} értékkel {duplicatedValues} már foglalt. Kérjük, válasszon másik értéket."
-
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -3409,11 +3399,6 @@ msgstr "Ez az API kulcs visszavonásra került és már nem használható."
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "Ez az API kulcs lejárt. Kérjük, hozzon létre egy újat."
-
-#. js-lingui-id: r/Z8XK
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This combination of {fieldNames} already exists. Please use different values."
-msgstr "Ez a {fieldNames} kombináció már létezik. Kérjük, használjon más értékeket."
 
 #. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
