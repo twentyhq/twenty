@@ -1,0 +1,249 @@
+---
+title: How to Merge Duplicate Contacts or Companies
+info: "Identify and merge duplicate records to maintain clean data."
+difficulty: "intermediate"
+time: "10 minutes"
+---
+
+<Frame>
+  <img src="/images/user-guide/data-quality/merge-duplicates.png" alt="Merge Duplicates" />
+</Frame>
+
+Duplicate records can clutter your CRM and make it hard to get accurate insights. Twenty provides tools to identify and merge duplicates while preserving all your important data and relationships.
+
+## Why Duplicates Happen
+
+Understanding how duplicates are created helps you prevent them:
+
+**Common causes**:
+- Multiple team members adding the same contact
+- Importing data from different sources
+- Slight variations in names or email addresses
+- People changing jobs but keeping the same email
+- Manual data entry errors
+
+## Finding Duplicate Records
+
+### Manual Detection
+Look for these warning signs:
+- Similar names with slight spelling differences
+- Same company with different formatting
+- Multiple records for the same person
+- Identical email addresses (Twenty prevents this, but you might see variations)
+
+### Using Views to Spot Duplicates
+Create views that help identify potential duplicates:
+
+**For People**:
+1. Sort by last name to see similar names together
+2. Filter by company to find multiple contacts at the same organization
+3. Look for similar email domains
+
+**For Companies**:
+1. Sort alphabetically to spot similar company names
+2. Check for different versions of the same domain
+3. Look for variations in company formatting (Inc vs Incorporated)
+
+### Search Techniques
+Use Twenty's search to find potential duplicates:
+- Search for partial names or company names
+- Try different spellings or abbreviations
+- Search by phone number or email domain
+
+## Before You Merge: Preparation
+
+### Review Both Records Carefully
+Before merging, examine both records to understand:
+- Which record has more complete information
+- What unique data each record contains
+- Any relationships or activities that might be lost
+- Which record has the correct contact information
+
+### Document Important Information
+Make note of:
+- Unique field values that should be preserved
+- Related opportunities, tasks, or notes
+- Any custom field data that differs between records
+- Contact preferences or important notes
+
+### Check Related Records
+Look at what's connected to each duplicate:
+- Opportunities and deals
+- Tasks and activities
+- Notes and communications
+- Email and calendar history
+
+## Merging Records Step by Step
+
+<Note>
+Currently, Twenty doesn't have an automated merge feature, but you can manually consolidate duplicate records effectively.
+</Note>
+
+### Step 1: Choose the Primary Record
+Decide which record to keep as the primary one:
+- Usually the one with more complete information
+- The one with more recent activity
+- The one with the correct email address
+- The one that other team members are familiar with
+
+### Step 2: Consolidate Information
+Update the primary record with any missing information from the duplicate:
+1. Open both records in separate tabs
+2. Copy unique information from the duplicate to the primary record
+3. Update any fields that have better data in the duplicate
+4. Ensure all contact information is current and accurate
+
+### Step 3: Transfer Relationships
+Move important connections to the primary record:
+
+**For Opportunities**:
+1. Open each opportunity linked to the duplicate
+2. Change the contact or company field to point to the primary record
+3. Verify the relationship is correctly established
+
+**For Tasks and Notes**:
+1. Review tasks assigned to or related to the duplicate
+2. Update the assignee or related record to the primary
+3. Move important notes to the primary record
+
+**For Activities**:
+1. Check email and calendar history
+2. Add important notes about past interactions to the primary record
+3. Ensure no critical communication history is lost
+
+### Step 4: Clean Up Custom Fields
+If you have custom fields with different values:
+1. Determine which values are correct or most recent
+2. Update the primary record with the best information
+3. Combine information where appropriate (like adding tags or categories)
+
+### Step 5: Delete the Duplicate
+Once you've transferred all important information:
+1. Double-check that everything has been moved to the primary record
+2. Verify all relationships are correctly established
+3. Delete the duplicate record
+4. Empty the trash if you're certain the merge is complete
+
+## Merging Companies
+
+### Special Considerations for Companies
+Company merges require extra attention to:
+
+**Domain Consistency**: Ensure the primary company has the correct domain format
+**Employee Records**: All people linked to the duplicate company need to be relinked
+**Opportunity History**: Sales history and deals must be preserved
+**Integration Data**: Email and calendar sync data should be maintained
+
+### Company Merge Process
+1. **Identify the correct company record** (usually the one with the right domain)
+2. **Update company information** with any missing details from the duplicate
+3. **Relink all employees** from the duplicate company to the primary company
+4. **Transfer all opportunities** associated with the duplicate company
+5. **Move tasks and notes** related to the company
+6. **Update any custom fields** with consolidated information
+7. **Delete the duplicate company** after verification
+
+## Preventing Future Duplicates
+
+### Data Entry Best Practices
+- Always search before creating new records
+- Use consistent naming conventions
+- Standardize company name formats
+- Double-check email addresses for typos
+
+### Import Guidelines
+- Clean your data before importing
+- Use Twenty's duplicate detection during import
+- Import in small batches to catch issues early
+- Review imported data for potential duplicates
+
+### Team Training
+- Train team members on search techniques
+- Establish data entry standards
+- Create guidelines for handling uncertain cases
+- Regular team reviews of data quality
+
+### Automated Prevention
+Set up workflows to help prevent duplicates:
+- Create alerts when similar records are created
+- Automate data standardization (like company name formatting)
+- Set up validation rules for critical fields
+- Monitor for potential duplicates regularly
+
+## Advanced Duplicate Management
+
+### Handling Complex Cases
+Some situations require special attention:
+
+**Person Changed Companies**:
+- Update their company relationship rather than creating a new record
+- Preserve their history with the previous company
+- Update contact information if needed
+
+**Company Acquisitions**:
+- Keep both company records if they maintain separate identities
+- Link them with a relationship field if available
+- Update people records to reflect new company structure
+
+**Multiple Email Addresses**:
+- Choose the primary email address for the main record
+- Add other email addresses in notes or custom fields
+- Ensure email sync uses the correct primary address
+
+### Bulk Duplicate Handling
+For large-scale duplicate issues:
+1. **Export your data** to work with it in spreadsheet software
+2. **Use duplicate detection tools** in Excel or Google Sheets
+3. **Create a merge plan** before making changes in Twenty
+4. **Process duplicates in batches** to maintain data quality
+5. **Verify results** after each batch
+
+## Quality Assurance After Merging
+
+### Verification Checklist
+After merging records, verify:
+- [ ] All important information was preserved
+- [ ] Relationships are correctly established
+- [ ] No orphaned records exist
+- [ ] Email and calendar sync still works
+- [ ] Team members can find the consolidated record
+- [ ] Reports and views show correct data
+
+### Testing Integrations
+If you use integrations, test that they still work correctly:
+- Email sync with the merged contact
+- Calendar integration with updated company
+- Workflow triggers with consolidated data
+- API connections with merged records
+
+## Troubleshooting Merge Issues
+
+### Lost Information
+If you realize information was lost during a merge:
+- Check if the deleted record is in trash and can be restored
+- Review any notes or activity history that might contain the lost data
+- Contact team members who might remember the missing information
+- Check email history for additional context
+
+### Broken Relationships
+If relationships aren't working after a merge:
+- Manually reestablish the connections
+- Check permissions on the merged record
+- Verify the related records still exist
+- Update any workflows that might be affected
+
+### Integration Problems
+If integrations stop working after merging:
+- Update integration settings with new record IDs
+- Refresh connections to external systems
+- Test email and calendar sync
+- Contact support if issues persist
+
+## Next Steps
+
+After mastering duplicate management:
+- [Set up duplicate detection workflows](/user-guide/How-To Tutorials/admins/automations-workflows/how-to-create-duplicate-detection-workflows)
+- [Learn about data validation rules](/user-guide/How-To Tutorials/admins/data-model/how-to-set-up-validation-rules-for-data-quality)
+- [Explore data quality management](/user-guide/Features & Configuration/advanced-features/data-governance)
+
+Clean, duplicate-free data is essential for getting accurate insights from your CRM. Regular attention to duplicate management keeps your data reliable and your team productive.

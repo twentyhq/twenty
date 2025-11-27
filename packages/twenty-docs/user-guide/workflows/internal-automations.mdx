@@ -17,9 +17,9 @@ Below are workflow examples you could roll out to automate repetitive tasks to r
 
 **Solution**: Create a workflow that automatically updates an "is personal email" field whenever an email address is added or updated.
 
-**Trigger**: Record is Updated (People object, Email field)  
+**Trigger**: Record is Updated (People object, Email field)
 
-**Actions**: 
+**Actions**:
 - Code action to check if email domain matches common personal providers (gmail.com, yahoo.com, etc.)
 - Update Record to set the "is personal email" flag
 
@@ -28,7 +28,7 @@ Below are workflow examples you could roll out to automate repetitive tasks to r
 
 **Solution**: Automatically assign new leads to sales reps using a round-robin system.
 
-**Trigger**: Record is Created (People object)    
+**Trigger**: Record is Created (People object)
 
 **Actions**:
 - Search Records to find the last assigned rep
@@ -41,7 +41,7 @@ Below are workflow examples you could roll out to automate repetitive tasks to r
 
 **Solution**: Route leads to the appropriate sales rep based on location, company size, or industry.
 
-**Trigger**: Record is Created (People or Companies object)  
+**Trigger**: Record is Created (People or Companies object)
 
 **Actions**:
 - Code action to determine territory based on location/industry rules
@@ -56,7 +56,7 @@ Below are workflow examples you could roll out to automate repetitive tasks to r
 
 **Solution**: Automatically handle all post-win activities when an opportunity moves to "Closed Won".
 
-**Trigger**: Record is Updated (Opportunities object, Stage field = "Closed Won")  
+**Trigger**: Record is Updated (Opportunities object, Stage field = "Closed Won")
 
 **Actions**:
 - Update Record to change Company type from "Prospect" to "Customer"
@@ -69,7 +69,7 @@ Below are workflow examples you could roll out to automate repetitive tasks to r
 
 **Solution**: Automatically update customer status when renewal deals are lost.
 
-**Trigger**: Record is Updated (Opportunities object, Stage = "Closed Lost" AND Type = "Renewal")  
+**Trigger**: Record is Updated (Opportunities object, Stage = "Closed Lost" AND Type = "Renewal")
 
 **Actions**:
 - Update Record to change Company type from "Customer" to "Churn Customer"
@@ -82,7 +82,7 @@ Below are workflow examples you could roll out to automate repetitive tasks to r
 
 **Solution**: Send automatic alerts when opportunities haven't been updated recently.
 
-**Trigger**: On a Schedule (daily)  
+**Trigger**: On a Schedule (daily)
 
 **Actions**:
 - Search Records for opportunities not updated in X days
@@ -97,7 +97,7 @@ Below are workflow examples you could roll out to automate repetitive tasks to r
 
 **Solution**: Send automated weekly email reminders with task summaries.
 
-**Trigger**: On a Schedule (every Monday at 8 AM)  
+**Trigger**: On a Schedule (every Monday at 8 AM)
 
 **Actions**:
 - Search Records for tasks due this week by assignee
@@ -110,7 +110,7 @@ Below are workflow examples you could roll out to automate repetitive tasks to r
 
 **Solution**: Automatically create follow-up tasks when meetings are scheduled or completed.
 
-**Trigger**: Record is Created (Activities object, Type = "Meeting")  
+**Trigger**: Record is Created (Activities object, Type = "Meeting")
 
 **Actions**:
 - Create Record for pre-meeting preparation task
@@ -123,7 +123,7 @@ Below are workflow examples you could roll out to automate repetitive tasks to r
 
 **Solution**: Automatically sync fields between related objects until nested fields are available.
 
-**Trigger**: Record is Updated (Opportunities object, Point of Contact field)  
+**Trigger**: Record is Updated (Opportunities object, Point of Contact field)
 
 **Actions**:
 - Search Records to find the linked person's details
@@ -138,7 +138,7 @@ Below are workflow examples you could roll out to automate repetitive tasks to r
 
 **Solution**: Automatically format phone numbers to a standard format when they're entered.
 
-**Trigger**: Record is Updated (People object, Phone field)  
+**Trigger**: Record is Updated (People object, Phone field)
 
 **Actions**:
 - Code action to parse and format phone number
@@ -146,6 +146,6 @@ Below are workflow examples you could roll out to automate repetitive tasks to r
 - Update Record to add country code if missing
 
 
-For more complex automation needs, consider our [Professional Services](/user-guide/workflows/professional-services) or explore [External Tool Integration](/user-guide/workflows/external-tool-integration).
+For more complex automation needs, consider our [Professional Services](/user-guide/Twenty Resources/professional-services/implementation-services) or explore [External Tool Integration](/user-guide/How-To Tutorials/admins/automations-workflows/how-to-integrate-external-services-in-workflows).
 
 

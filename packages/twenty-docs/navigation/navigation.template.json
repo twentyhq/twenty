@@ -3,6 +3,175 @@
     "userGuide": {
       "label": "User Guide",
       "groups": {
+        "gettingStartedWithTwenty": {
+          "label": "Getting Started with Twenty",
+          "groups": {
+            "introduction": {
+              "label": "Introduction"
+            },
+            "createYourWorkspace": {
+              "label": "Create Your Workspace"
+            },
+            "learnTheInterface": {
+              "label": "Learn the Interface"
+            },
+            "firstConfiguration": {
+              "label": "First Configuration"
+            },
+            "importExport": {
+              "label": "Import & Export"
+            }
+          }
+        },
+        "howToTutorials": {
+          "label": "How-To Tutorials",
+          "groups": {
+            "endUsers": {
+              "label": "End-Users",
+              "groups": {
+                "workingWithData": {
+                  "label": "Working with Data"
+                },
+                "emailCalendarActivityTracking": {
+                  "label": "Email, Calendar & Activity Tracking"
+                },
+                "viewsDailyCrmUsage": {
+                  "label": "Views & Daily CRM Usage"
+                },
+                "pipelinesSalesExecution": {
+                  "label": "Pipelines & Sales Execution"
+                },
+                "workspaceCustomization": {
+                  "label": "Workspace Customization"
+                },
+                "notesTasksCollaboration": {
+                  "label": "Notes, Tasks & Collaboration"
+                }
+              }
+            },
+            "admins": {
+              "label": "Admins",
+              "groups": {
+                "workspaceSetup": {
+                  "label": "Workspace Setup"
+                },
+                "userManagementPermissions": {
+                  "label": "User Management & Permissions"
+                },
+                "dataModel": {
+                  "label": "Data Model"
+                },
+                "automationsWorkflows": {
+                  "label": "Automations & Workflows"
+                },
+                "dashboards": {
+                  "label": "Dashboards"
+                },
+                "customLayouts": {
+                  "label": "Custom Layouts"
+                },
+                "aiAgents": {
+                  "label": "AI Agents"
+                }
+              }
+            },
+            "developers": {
+              "label": "Developers",
+              "groups": {
+                "api": {
+                  "label": "API"
+                },
+                "webhooks": {
+                  "label": "Webhooks"
+                },
+                "integrationsApps": {
+                  "label": "Integrations & Apps"
+                }
+              }
+            }
+          }
+        },
+        "featuresConfiguration": {
+          "label": "Features & Configuration",
+          "groups": {
+            "objects": {
+              "label": "Objects"
+            },
+            "fields": {
+              "label": "Fields"
+            },
+            "views": {
+              "label": "Views"
+            },
+            "pipelines": {
+              "label": "Pipelines"
+            },
+            "automationsWorkflows": {
+              "label": "Automations & Workflows"
+            },
+            "emailCalendar": {
+              "label": "Email & Calendar"
+            },
+            "collaborationTools": {
+              "label": "Collaboration Tools"
+            },
+            "integrations": {
+              "label": "Integrations"
+            },
+            "reporting": {
+              "label": "Reporting"
+            },
+            "settings": {
+              "label": "Settings"
+            },
+            "billing": {
+              "label": "Billing"
+            },
+            "aiAssistant": {
+              "label": "AI Assistant"
+            },
+            "advancedFeatures": {
+              "label": "Advanced Features"
+            }
+          }
+        },
+        "troubleshootingFaq": {
+          "label": "Troubleshooting & FAQ",
+          "groups": {
+            "commonProblems": {
+              "label": "Common Problems"
+            },
+            "workspaceAdminIssues": {
+              "label": "Workspace Admin Issues"
+            },
+            "developerTroubleshooting": {
+              "label": "Developer Troubleshooting"
+            },
+            "generalFaq": {
+              "label": "General FAQ"
+            },
+            "settingsFaq": {
+              "label": "Settings FAQ"
+            }
+          }
+        },
+        "twentyResources": {
+          "label": "Twenty Resources",
+          "groups": {
+            "glossary": {
+              "label": "Glossary"
+            },
+            "community": {
+              "label": "Community"
+            },
+            "contactSupport": {
+              "label": "Contact & Support"
+            },
+            "professionalServices": {
+              "label": "Professional Services"
+            }
+          }
+        },
         "gettingStarted": {
           "label": "Getting Started"
         },

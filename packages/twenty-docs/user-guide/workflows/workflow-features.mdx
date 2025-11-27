@@ -20,7 +20,7 @@ Starts the workflow when a new record is created in a selected object (People, C
 ### Record is Updated
 Starts the workflow when changes are made to an existing record.
 
-**Configuration**: 
+**Configuration**:
 - Select the object type
 - Optionally specify which fields to monitor for changes
 
@@ -50,7 +50,7 @@ Choose how the workflow should handle record selection:
 - **Global**: No record is required to trigger this workflow. The workflow is triggered from anywhere (from any object) and does not use record(s) as input.
 
 - **Single**: The selected record(s) will be passed to your workflow. This is configured for a given object. Several records can be selected before triggering the workflow. The workflow will run as many times as there are records selected.
-  
+
   <Warning>
   You cannot run more than 100 workflows in parallel at any given time.
   </Warning>
@@ -69,7 +69,7 @@ Choose how the workflow should handle record selection:
 ### On a Schedule
 Starts the workflow on a recurring basis you define.
 
-**Configuration**: 
+**Configuration**:
 - Select time unit (minutes, hours, days)
 - Enter a value or use custom cron expressions for advanced scheduling
 
@@ -230,7 +230,7 @@ A **Run** is a record of workflow execution containing:
 - Author and timestamps
 - Error messages if applicable
 
-**Viewing Runs**: 
+**Viewing Runs**:
 - Check the **Runs** panel in the workflow editor
 - Open **Workflow Runs** view for monitoring across all workflows
 
@@ -269,5 +269,5 @@ A **Run** is a record of workflow execution containing:
 - **Update Management**: Test changes in draft before activation
 - **Team Coordination**: Document workflows for team members
 
-For practical examples of these features in action, see our [Internal Automations](/user-guide/workflows/internal-automations) and [External Tool Integration](/user-guide/workflows/external-tool-integration) guides.
+For practical examples of these features in action, see our [Internal Automations](/user-guide/How-To Tutorials/admins/automations-workflows/how-to-create-a-trigger-based-workflow) and [External Tool Integration](/user-guide/How-To Tutorials/admins/automations-workflows/how-to-integrate-external-services-in-workflows) guides.
 

@@ -1,0 +1,222 @@
+---
+title: How to Link Records Using Relation Fields
+info: "Connect records across different objects using relation fields."
+difficulty: "intermediate"
+time: "8 minutes"
+---
+
+<Frame>
+  <img src="/images/user-guide/relations/link-records.png" alt="Link Records" />
+</Frame>
+
+Relation fields are one of Twenty's most powerful features. They let you connect records from different objects, creating a web of relationships that mirrors your real business connections.
+
+## What You'll Learn
+
+By the end of this guide, you'll know how to create meaningful connections between your people, companies, opportunities, and any custom objects you've created.
+
+## Understanding Relation Fields
+
+Think of relation fields as digital threads that connect related information. When you link a person to a company, you're not just storing data - you're creating a relationship that helps you understand the full context of your business interactions.
+
+**Common relationships**:
+- People work for Companies
+- Opportunities belong to Companies
+- Tasks are assigned to People
+- Notes relate to any record type
+
+## Linking Records Step by Step
+
+### Step 1: Identify the Relationship
+Before creating links, think about how your records relate to each other. Ask yourself:
+- Does this person work for a specific company?
+- Is this opportunity associated with a particular contact?
+- Should this task be assigned to a team member?
+
+### Step 2: Open the Record
+1. Navigate to the record you want to link from
+2. Click on the record to open its detail view
+3. Look for relation fields (they usually show as dropdowns or search boxes)
+
+### Step 3: Create the Link
+1. Click on the relation field you want to populate
+2. Start typing the name of the record you want to link to
+3. Select the correct record from the search results
+4. The link is created immediately
+
+### Step 4: Verify the Connection
+- Check that the linked record appears in the relation field
+- Navigate to the linked record to see the reverse relationship
+- Verify that all related information is now accessible
+
+## Common Linking Scenarios
+
+### Linking People to Companies
+
+**When to do this**: Every time you add a new contact, link them to their company.
+
+**How to do it**:
+1. Open the person's record
+2. Find the "Company" relation field
+3. Type the company name or search for it
+4. Select the correct company from the results
+
+**What happens**: The person now appears in the company's "People" list, and you can see all company information when viewing the person.
+
+### Connecting Opportunities to Contacts
+
+**When to do this**: When you're tracking a sales opportunity and want to associate it with the main contact.
+
+**How to do it**:
+1. Open the opportunity record
+2. Look for "Point of Contact" or similar relation field
+3. Search for and select the primary contact
+4. The opportunity is now linked to both the person and their company
+
+**What happens**: You can see all opportunities when viewing the contact's record, and the opportunity shows contact information.
+
+### Assigning Tasks to Records
+
+**When to do this**: When you need to create follow-up actions related to specific people, companies, or deals.
+
+**How to do it**:
+1. Create or open a task
+2. Use the "Relations" field to connect it to relevant records
+3. You can link one task to multiple records (person, company, and opportunity)
+
+**What happens**: The task appears in the timeline of all linked records, giving complete context.
+
+## Advanced Linking Techniques
+
+### Multi-Object Relationships
+Some relation fields let you connect to multiple types of objects. For example, a task might relate to a person, their company, and an opportunity all at once.
+
+**To create multi-object links**:
+1. Open the record with the multi-relation field
+2. Click the relation field
+3. Search for records from any object type
+4. Add as many connections as needed
+
+### Bulk Linking
+When you have many records that need the same relationship:
+
+**Using views**:
+1. Create a view that shows the records you want to link
+2. Select multiple records using checkboxes
+3. Use bulk edit to set the same relation field for all selected records
+
+**During import**:
+1. Include relation data in your CSV import
+2. Use unique identifiers (email for people, domain for companies)
+3. Twenty will create the relationships automatically
+
+### Linking During Record Creation
+You can create relationships while adding new records:
+
+1. When creating a new person, start typing a company name in the Company field
+2. If the company doesn't exist, select "Create new company"
+3. Both the person and company are created with the relationship established
+
+## Managing Existing Links
+
+### Updating Relationships
+To change an existing relationship:
+1. Open the record with the relation field
+2. Click on the current linked record
+3. Clear the field and search for a new record to link
+4. Select the new record to update the relationship
+
+### Removing Links
+To remove a relationship:
+1. Click on the relation field
+2. Click the "X" next to the linked record
+3. The relationship is removed (but both records remain)
+
+### Viewing All Relationships
+To see all connections for a record:
+1. Open the record's detail view
+2. Scroll through all relation fields
+3. Check the timeline for related activities
+4. Use the "Related" tab if available
+
+## Troubleshooting Common Issues
+
+### Can't Find the Record to Link
+**Problem**: The record you want to link to doesn't appear in search results.
+
+**Solutions**:
+- Check that the record actually exists
+- Verify you have permission to view the target record
+- Try searching with different terms (name, email, company)
+- Check if the record is in a different object than expected
+
+### Relationship Not Appearing
+**Problem**: You created a link but don't see it reflected in both records.
+
+**Solutions**:
+- Refresh your browser
+- Check that you have permission to view both sides of the relationship
+- Verify the relationship was actually saved
+- Look for the reverse relationship field on the linked record
+
+### Wrong Record Linked
+**Problem**: You accidentally linked to the wrong record.
+
+**Solutions**:
+- Open the relation field and remove the incorrect link
+- Search for and select the correct record
+- Double-check that you're linking the right records
+
+## Best Practices for Linking Records
+
+### Plan Your Relationships
+- Think about how your business processes connect different types of information
+- Create a simple diagram of how your objects should relate
+- Start with basic relationships and add complexity gradually
+
+### Use Consistent Linking Patterns
+- Always link people to their companies
+- Connect opportunities to both companies and primary contacts
+- Assign tasks to the people responsible for completing them
+- Link notes to all relevant records for context
+
+### Maintain Data Quality
+- Regularly review relationships to ensure they're still accurate
+- Update links when people change companies or roles
+- Remove outdated relationships that no longer apply
+- Use workflows to automate relationship maintenance
+
+### Leverage Relationship Data
+- Create views that show related information together
+- Use filters based on relationship data
+- Build reports that span multiple objects
+- Set up workflows that trigger based on relationship changes
+
+## Integration with Other Features
+
+### Views and Relationships
+Create powerful views using relationship data:
+- Show all people from companies in a specific industry
+- Display opportunities with their associated contacts
+- List tasks assigned to people in particular roles
+
+### Workflows and Relationships
+Automate processes based on relationships:
+- When an opportunity closes, create tasks for the associated contact
+- If a person changes companies, update all related opportunities
+- Send notifications to company owners when new people are added
+
+### Reporting with Relationships
+Generate insights across connected data:
+- Revenue by company size (using people-company relationships)
+- Task completion rates by assignee
+- Opportunity conversion rates by contact source
+
+## Next Steps
+
+After mastering record linking:
+- [Learn about creating custom relation fields](/user-guide/How-To Tutorials/admins/data-model/how-to-create-relation-fields)
+- [Explore advanced relationship patterns](/user-guide/How-To Tutorials/admins/data-model/how-to-create-many-to-many-relations)
+- [Set up workflows that use relationship data](/user-guide/How-To Tutorials/admins/automations-workflows/how-to-use-conditional-logic-in-workflows)
+
+Relationships are what make your CRM data truly powerful. When you connect related information, you create a comprehensive view of your business that helps you make better decisions and serve your customers more effectively.

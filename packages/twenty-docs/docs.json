@@ -144,6 +144,488 @@
                   "user-guide/resources/glossary",
                   "user-guide/resources/github"
                 ]
+              },
+              {
+                "group": "Getting Started with Twenty",
+                "icon": "play",
+                "pages": [
+                  {
+                    "group": "Introduction",
+                    "pages": [
+                      "user-guide/Getting Started with Twenty/introduction/what-is-twenty-crm",
+                      "user-guide/Getting Started with Twenty/introduction/key-concepts",
+                      "user-guide/Getting Started with Twenty/introduction/core-benefits-and-use-cases"
+                    ]
+                  },
+                  {
+                    "group": "Create Your Workspace",
+                    "pages": [
+                      "user-guide/Getting Started with Twenty/create-your-workspace/create-a-workspace",
+                      "user-guide/Getting Started with Twenty/create-your-workspace/cloud-vs-self-hosted",
+                      "user-guide/Getting Started with Twenty/create-your-workspace/first-login-and-basic-setup"
+                    ]
+                  },
+                  {
+                    "group": "Learn the Interface",
+                    "pages": [
+                      "user-guide/Getting Started with Twenty/learn-the-interface/navigation-overview",
+                      "user-guide/Getting Started with Twenty/learn-the-interface/using-the-sidebar",
+                      "user-guide/Getting Started with Twenty/learn-the-interface/using-the-command-palette",
+                      "user-guide/Getting Started with Twenty/learn-the-interface/keyboard-shortcuts"
+                    ]
+                  },
+                  {
+                    "group": "First Configuration",
+                    "pages": [
+                      "user-guide/Getting Started with Twenty/first-configuration/connect-your-mailbox-and-calendar",
+                      "user-guide/Getting Started with Twenty/first-configuration/adding-your-first-users",
+                      "user-guide/Getting Started with Twenty/first-configuration/setting-time-zone-currency-locale",
+                      "user-guide/Getting Started with Twenty/first-configuration/updating-workspace-appearance-logo-branding",
+                      "user-guide/Getting Started with Twenty/first-configuration/configure-your-data-model"
+                    ]
+                  },
+                  {
+                    "group": "Import & Export",
+                    "pages": [
+                      "user-guide/Getting Started with Twenty/import-export/import-data-from-csv",
+                      "user-guide/Getting Started with Twenty/import-export/export-all-workspace-data",
+                      "user-guide/Getting Started with Twenty/import-export/migrating-from-other-crms",
+                      "user-guide/Getting Started with Twenty/import-export/data-import-troubleshooting"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "How-To Tutorials",
+                "icon": "academic-cap",
+                "pages": [
+                  {
+                    "group": "End-Users",
+                    "pages": [
+                      {
+                        "group": "Working with Data",
+                        "pages": [
+                          "user-guide/How-To Tutorials/end-users/working-with-data/how-to-add-a-new-contact",
+                          "user-guide/How-To Tutorials/end-users/working-with-data/how-to-add-a-company-and-link-contacts",
+                          "user-guide/How-To Tutorials/end-users/working-with-data/how-to-update-existing-records",
+                          "user-guide/How-To Tutorials/end-users/working-with-data/how-to-link-records-using-relation-fields",
+                          "user-guide/How-To Tutorials/end-users/working-with-data/how-to-merge-duplicate-contacts-or-companies",
+                          "user-guide/How-To Tutorials/end-users/working-with-data/how-to-import-data-using-csv-files",
+                          "user-guide/How-To Tutorials/end-users/working-with-data/how-to-edit-my-data-model",
+                          "user-guide/How-To Tutorials/end-users/working-with-data/how-to-create-a-custom-field"
+                        ]
+                      },
+                      {
+                        "group": "Email, Calendar & Activity Tracking",
+                        "pages": [
+                          "user-guide/How-To Tutorials/end-users/email-calendar-activity-tracking/how-to-connect-my-mailbox",
+                          "user-guide/How-To Tutorials/end-users/email-calendar-activity-tracking/how-to-connect-my-calendar",
+                          "user-guide/How-To Tutorials/end-users/email-calendar-activity-tracking/how-to-log-emails-into-twenty",
+                          "user-guide/How-To Tutorials/end-users/email-calendar-activity-tracking/how-to-log-meetings-into-twenty",
+                          "user-guide/How-To Tutorials/end-users/email-calendar-activity-tracking/how-to-track-email-and-meeting-activity-on-records",
+                          "user-guide/How-To Tutorials/end-users/email-calendar-activity-tracking/how-to-log-a-call"
+                        ]
+                      },
+                      {
+                        "group": "Views & Daily CRM Usage",
+                        "pages": [
+                          "user-guide/How-To Tutorials/end-users/views-daily-crm-usage/how-to-create-a-new-view",
+                          "user-guide/How-To Tutorials/end-users/views-daily-crm-usage/how-to-save-filters-and-sorting",
+                          "user-guide/How-To Tutorials/end-users/views-daily-crm-usage/how-to-share-a-view-with-my-team",
+                          "user-guide/How-To Tutorials/end-users/views-daily-crm-usage/how-to-switch-between-table-kanban-board-calendar-views",
+                          "user-guide/How-To Tutorials/end-users/views-daily-crm-usage/how-to-use-inline-editing-in-views",
+                          "user-guide/How-To Tutorials/end-users/views-daily-crm-usage/how-to-chose-the-fields-displayed-on-a-given-view",
+                          "user-guide/How-To Tutorials/end-users/views-daily-crm-usage/how-to-reorder-the-fields-displayed-on-a-given-view",
+                          "user-guide/How-To Tutorials/end-users/views-daily-crm-usage/how-to-open-a-record-page-in-full-screen-instead-of-the-side-panel",
+                          "user-guide/How-To Tutorials/end-users/views-daily-crm-usage/how-to-track-all-activity-on-a-record",
+                          "user-guide/How-To Tutorials/end-users/views-daily-crm-usage/how-to-duplicate-a-view"
+                        ]
+                      },
+                      {
+                        "group": "Pipelines & Sales Execution",
+                        "pages": [
+                          "user-guide/How-To Tutorials/end-users/pipelines-sales-execution/how-to-use-a-pipeline",
+                          "user-guide/How-To Tutorials/end-users/pipelines-sales-execution/how-to-create-several-pipelines",
+                          "user-guide/How-To Tutorials/end-users/pipelines-sales-execution/how-to-edit-the-stages-of-my-pipeline",
+                          "user-guide/How-To Tutorials/end-users/pipelines-sales-execution/how-to-move-deals-across-stages",
+                          "user-guide/How-To Tutorials/end-users/pipelines-sales-execution/how-to-create-tasks-from-a-deal",
+                          "user-guide/How-To Tutorials/end-users/pipelines-sales-execution/how-to-track-stage-probability-and-progress",
+                          "user-guide/How-To Tutorials/end-users/pipelines-sales-execution/how-to-assign-deals-to-teammates",
+                          "user-guide/How-To Tutorials/end-users/pipelines-sales-execution/how-to-chose-and-order-the-fields-displayed-in-the-cards",
+                          "user-guide/How-To Tutorials/end-users/pipelines-sales-execution/how-to-display-the-weighted-amount",
+                          "user-guide/How-To Tutorials/end-users/pipelines-sales-execution/how-to-display-the-total-amount-per-stage-or-any-other-aggregation",
+                          "user-guide/How-To Tutorials/end-users/pipelines-sales-execution/how-to-flag-staled-opportunities"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Admins",
+                    "pages": [
+                      {
+                        "group": "Workspace Setup",
+                        "pages": [
+                          "user-guide/How-To Tutorials/admins/workspace-setup/how-to-manage-workspace-settings",
+                          "user-guide/How-To Tutorials/admins/workspace-setup/how-to-manage-experience-settings",
+                          "user-guide/How-To Tutorials/admins/workspace-setup/how-to-set-up-a-custom-domain",
+                          "user-guide/How-To Tutorials/admins/workspace-setup/how-to-manage-billing-and-plans"
+                        ]
+                      },
+                      {
+                        "group": "User Management & Permissions",
+                        "pages": [
+                          "user-guide/How-To Tutorials/admins/user-management-permissions/how-to-add-or-remove-users",
+                          "user-guide/How-To Tutorials/admins/user-management-permissions/how-to-manage-roles-and-permissions",
+                          "user-guide/How-To Tutorials/admins/user-management-permissions/object-level-and-field-level-permission-examples"
+                        ]
+                      },
+                      {
+                        "group": "Data Model",
+                        "pages": [
+                          "user-guide/How-To Tutorials/admins/data-model/how-to-deactivate-an-object-or-a-field",
+                          "user-guide/How-To Tutorials/admins/data-model/how-to-create-custom-objects",
+                          "user-guide/How-To Tutorials/admins/data-model/how-to-create-fields-all-field-types-explained",
+                          "user-guide/How-To Tutorials/admins/data-model/how-to-create-relation-fields",
+                          "user-guide/How-To Tutorials/admins/data-model/how-to-create-many-to-many-relations",
+                          "user-guide/How-To Tutorials/admins/data-model/how-to-establish-naming-conventions-for-data-consistency",
+                          "user-guide/How-To Tutorials/admins/data-model/how-to-set-up-validation-rules-for-data-quality",
+                          "user-guide/How-To Tutorials/admins/data-model/how-to-migrate-data-when-changing-field-types",
+                          "user-guide/How-To Tutorials/admins/data-model/how-to-set-up-formula-fields",
+                          "user-guide/How-To Tutorials/admins/data-model/how-to-set-up-lookup-fields",
+                          "user-guide/How-To Tutorials/admins/data-model/how-to-set-up-rollup-fields",
+                          "user-guide/How-To Tutorials/admins/data-model/how-to-set-up-conditional-fields",
+                          "user-guide/How-To Tutorials/admins/data-model/how-to-bulk-update-field-properties"
+                        ]
+                      },
+                      {
+                        "group": "Automations & Workflows",
+                        "pages": [
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-build-your-first-workflow",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-create-a-trigger-based-workflow",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-create-a-scheduled-workflow",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-use-conditional-logic-in-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-create-multi-step-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-send-emails-from-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-create-tasks-from-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-update-records-from-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-create-records-from-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-integrate-external-services-in-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-test-and-debug-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-monitor-workflow-performance",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-create-approval-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-set-up-escalation-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-create-data-sync-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-create-notification-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-create-lead-scoring-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-create-follow-up-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-create-data-validation-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-create-assignment-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-create-duplicate-detection-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-create-reporting-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/how-to-create-backup-workflows",
+                          "user-guide/How-To Tutorials/admins/automations-workflows/workflow-best-practices-and-common-patterns"
+                        ]
+                      },
+                      {
+                        "group": "Dashboards",
+                        "pages": [
+                          "user-guide/How-To Tutorials/admins/dashboards/how-to-create-a-new-dashboard",
+                          "user-guide/How-To Tutorials/admins/dashboards/how-to-add-charts-and-widgets-to-dashboards",
+                          "user-guide/How-To Tutorials/admins/dashboards/how-to-customize-dashboard-layouts",
+                          "user-guide/How-To Tutorials/admins/dashboards/how-to-share-dashboards-with-teams"
+                        ]
+                      },
+                      {
+                        "group": "Custom Layouts",
+                        "pages": [
+                          "user-guide/How-To Tutorials/admins/custom-layouts/how-to-create-custom-page-layouts"
+                        ]
+                      },
+                      {
+                        "group": "AI Agents",
+                        "pages": [
+                          "user-guide/How-To Tutorials/admins/ai-agents/how-to-create-and-configure-ai-agents",
+                          "user-guide/How-To Tutorials/admins/ai-agents/how-to-train-ai-agents-with-your-data"
+                        ]
+                      },
+                      {
+                        "group": "Workspace Governance",
+                        "pages": [
+                          "user-guide/How-To Tutorials/admins/workspace-governance/how-to-set-up-data-retention-policies",
+                          "user-guide/How-To Tutorials/admins/workspace-governance/how-to-manage-data-privacy-and-compliance",
+                          "user-guide/How-To Tutorials/admins/workspace-governance/how-to-set-up-audit-trails",
+                          "user-guide/How-To Tutorials/admins/workspace-governance/how-to-backup-and-restore-workspace-data"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Developers",
+                    "pages": [
+                      {
+                        "group": "API",
+                        "pages": [
+                          "user-guide/How-To Tutorials/developers/api/how-to-authenticate-with-the-api",
+                          "user-guide/How-To Tutorials/developers/api/how-to-query-data-using-graphql",
+                          "user-guide/How-To Tutorials/developers/api/how-to-create-and-update-records-via-api",
+                          "user-guide/How-To Tutorials/developers/api/how-to-handle-api-errors-and-rate-limits"
+                        ]
+                      },
+                      {
+                        "group": "Webhooks",
+                        "pages": [
+                          "user-guide/How-To Tutorials/developers/webhooks/how-to-set-up-webhooks",
+                          "user-guide/How-To Tutorials/developers/webhooks/how-to-handle-webhook-events",
+                          "user-guide/How-To Tutorials/developers/webhooks/how-to-secure-webhook-endpoints"
+                        ]
+                      },
+                      {
+                        "group": "Integrations & Apps",
+                        "pages": [
+                          "user-guide/How-To Tutorials/developers/integrations-apps/how-to-build-a-custom-integration",
+                          "user-guide/How-To Tutorials/developers/integrations-apps/how-to-use-serverless-functions",
+                          "user-guide/How-To Tutorials/developers/integrations-apps/how-to-publish-an-app-to-the-marketplace"
+                        ]
+                      },
+                      {
+                        "group": "Examples",
+                        "pages": [
+                          "user-guide/How-To Tutorials/developers/examples/example-crm-data-sync-with-external-system",
+                          "user-guide/How-To Tutorials/developers/examples/example-custom-dashboard-with-external-data",
+                          "user-guide/How-To Tutorials/developers/examples/example-automated-lead-qualification-system"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Features & Configuration",
+                "icon": "cog",
+                "pages": [
+                  {
+                    "group": "Objects",
+                    "pages": [
+                      "user-guide/Features & Configuration/objects/standard-objects-overview",
+                      "user-guide/Features & Configuration/objects/people-object",
+                      "user-guide/Features & Configuration/objects/companies-object",
+                      "user-guide/Features & Configuration/objects/opportunities-object",
+                      "user-guide/Features & Configuration/objects/tasks-object",
+                      "user-guide/Features & Configuration/objects/notes-object",
+                      "user-guide/Features & Configuration/objects/custom-objects",
+                      "user-guide/Features & Configuration/objects/object-permissions-and-access-control"
+                    ]
+                  },
+                  {
+                    "group": "Fields",
+                    "pages": [
+                      "user-guide/Features & Configuration/fields/field-types-reference",
+                      "user-guide/Features & Configuration/fields/text-and-number-fields",
+                      "user-guide/Features & Configuration/fields/date-and-time-fields",
+                      "user-guide/Features & Configuration/fields/select-and-multi-select-fields",
+                      "user-guide/Features & Configuration/fields/relation-fields",
+                      "user-guide/Features & Configuration/fields/formula-fields",
+                      "user-guide/Features & Configuration/fields/lookup-and-rollup-fields",
+                      "user-guide/Features & Configuration/fields/field-validation-and-constraints"
+                    ]
+                  },
+                  {
+                    "group": "Views",
+                    "pages": [
+                      "user-guide/Features & Configuration/views/table-views",
+                      "user-guide/Features & Configuration/views/kanban-board-views",
+                      "user-guide/Features & Configuration/views/calendar-views",
+                      "user-guide/Features & Configuration/views/filtering-and-sorting",
+                      "user-guide/Features & Configuration/views/view-permissions-and-sharing"
+                    ]
+                  },
+                  {
+                    "group": "Pipelines",
+                    "pages": [
+                      "user-guide/Features & Configuration/pipelines/pipeline-configuration",
+                      "user-guide/Features & Configuration/pipelines/stage-management",
+                      "user-guide/Features & Configuration/pipelines/probability-and-forecasting",
+                      "user-guide/Features & Configuration/pipelines/pipeline-automation"
+                    ]
+                  },
+                  {
+                    "group": "Automations & Workflows",
+                    "pages": [
+                      "user-guide/Features & Configuration/automations-workflows/workflow-triggers",
+                      "user-guide/Features & Configuration/automations-workflows/workflow-actions",
+                      "user-guide/Features & Configuration/automations-workflows/conditional-logic",
+                      "user-guide/Features & Configuration/automations-workflows/workflow-scheduling",
+                      "user-guide/Features & Configuration/automations-workflows/workflow-monitoring"
+                    ]
+                  },
+                  {
+                    "group": "Email & Calendar",
+                    "pages": [
+                      "user-guide/Features & Configuration/email-calendar/email-sync-configuration",
+                      "user-guide/Features & Configuration/email-calendar/calendar-integration",
+                      "user-guide/Features & Configuration/email-calendar/email-templates",
+                      "user-guide/Features & Configuration/email-calendar/activity-tracking"
+                    ]
+                  },
+                  {
+                    "group": "Collaboration Tools",
+                    "pages": [
+                      "user-guide/Features & Configuration/collaboration-tools/tasks-and-reminders",
+                      "user-guide/Features & Configuration/collaboration-tools/notes-and-comments",
+                      "user-guide/Features & Configuration/collaboration-tools/team-sharing-and-permissions",
+                      "user-guide/Features & Configuration/collaboration-tools/notifications"
+                    ]
+                  },
+                  {
+                    "group": "Integrations",
+                    "pages": [
+                      "user-guide/Features & Configuration/integrations/available-integrations",
+                      "user-guide/Features & Configuration/integrations/api-and-webhooks",
+                      "user-guide/Features & Configuration/integrations/third-party-apps",
+                      "user-guide/Features & Configuration/integrations/custom-integrations"
+                    ]
+                  },
+                  {
+                    "group": "Reporting",
+                    "pages": [
+                      "user-guide/Features & Configuration/reporting/dashboard-overview",
+                      "user-guide/Features & Configuration/reporting/charts-and-visualizations",
+                      "user-guide/Features & Configuration/reporting/data-export-and-reporting"
+                    ]
+                  },
+                  {
+                    "group": "Settings",
+                    "pages": [
+                      "user-guide/Features & Configuration/settings/workspace-settings",
+                      "user-guide/Features & Configuration/settings/user-preferences",
+                      "user-guide/Features & Configuration/settings/security-settings"
+                    ]
+                  },
+                  {
+                    "group": "Billing",
+                    "pages": [
+                      "user-guide/Features & Configuration/billing/subscription-plans",
+                      "user-guide/Features & Configuration/billing/billing-management",
+                      "user-guide/Features & Configuration/billing/usage-tracking"
+                    ]
+                  },
+                  {
+                    "group": "AI Assistant",
+                    "pages": [
+                      "user-guide/Features & Configuration/ai-assistant/ai-chat-overview",
+                      "user-guide/Features & Configuration/ai-assistant/ai-features-overview",
+                      "user-guide/Features & Configuration/ai-assistant/ai-agents-configuration",
+                      "user-guide/Features & Configuration/ai-assistant/ai-data-insights"
+                    ]
+                  },
+                  {
+                    "group": "Advanced Features",
+                    "pages": [
+                      "user-guide/Features & Configuration/advanced-features/serverless-functions",
+                      "user-guide/Features & Configuration/advanced-features/custom-page-layouts",
+                      "user-guide/Features & Configuration/advanced-features/advanced-permissions",
+                      "user-guide/Features & Configuration/advanced-features/data-governance"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Troubleshooting & FAQ",
+                "icon": "question-mark-circle",
+                "pages": [
+                  {
+                    "group": "Common Problems",
+                    "pages": [
+                      "user-guide/Troubleshooting & FAQ/common-problems/login-and-authentication-issues",
+                      "user-guide/Troubleshooting & FAQ/common-problems/email-sync-not-working",
+                      "user-guide/Troubleshooting & FAQ/common-problems/data-import-problems",
+                      "user-guide/Troubleshooting & FAQ/common-problems/performance-issues",
+                      "user-guide/Troubleshooting & FAQ/common-problems/browser-compatibility",
+                      "user-guide/Troubleshooting & FAQ/common-problems/can-i-restore-deleted-data"
+                    ]
+                  },
+                  {
+                    "group": "Workspace Admin Issues",
+                    "pages": [
+                      "user-guide/Troubleshooting & FAQ/workspace-admin-issues/user-management-problems",
+                      "user-guide/Troubleshooting & FAQ/workspace-admin-issues/permissions-and-access-control-issues",
+                      "user-guide/Troubleshooting & FAQ/workspace-admin-issues/workflow-automation-problems",
+                      "user-guide/Troubleshooting & FAQ/workspace-admin-issues/data-model-configuration-issues",
+                      "user-guide/Troubleshooting & FAQ/workspace-admin-issues/billing-and-subscription-issues"
+                    ]
+                  },
+                  {
+                    "group": "Developer Troubleshooting",
+                    "pages": [
+                      "user-guide/Troubleshooting & FAQ/developer-troubleshooting/api-authentication-errors",
+                      "user-guide/Troubleshooting & FAQ/developer-troubleshooting/webhook-delivery-issues",
+                      "user-guide/Troubleshooting & FAQ/developer-troubleshooting/integration-setup-problems",
+                      "user-guide/Troubleshooting & FAQ/developer-troubleshooting/serverless-function-errors"
+                    ]
+                  },
+                  {
+                    "group": "FAQ (General)",
+                    "pages": [
+                      "user-guide/Troubleshooting & FAQ/faq-general/what-data-does-twenty-store",
+                      "user-guide/Troubleshooting & FAQ/faq-general/how-secure-is-my-data",
+                      "user-guide/Troubleshooting & FAQ/faq-general/can-i-use-twenty-offline",
+                      "user-guide/Troubleshooting & FAQ/faq-general/what-are-the-system-requirements",
+                      "user-guide/Troubleshooting & FAQ/faq-general/how-do-i-migrate-from-another-crm"
+                    ]
+                  },
+                  {
+                    "group": "Settings FAQ",
+                    "pages": [
+                      "user-guide/Troubleshooting & FAQ/settings-faq/how-to-change-workspace-url",
+                      "user-guide/Troubleshooting & FAQ/settings-faq/how-to-transfer-workspace-ownership",
+                      "user-guide/Troubleshooting & FAQ/settings-faq/how-to-delete-a-workspace",
+                      "user-guide/Troubleshooting & FAQ/settings-faq/how-to-reset-my-password"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Twenty Resources",
+                "icon": "book-open",
+                "pages": [
+                  {
+                    "group": "Glossary",
+                    "pages": [
+                      "user-guide/Twenty Resources/glossary/crm-terminology",
+                      "user-guide/Twenty Resources/glossary/twenty-specific-terms"
+                    ]
+                  },
+                  {
+                    "group": "Community",
+                    "pages": [
+                      "user-guide/Twenty Resources/community/github",
+                      "user-guide/Twenty Resources/community/discord",
+                      "user-guide/Twenty Resources/community/contributing-to-twenty"
+                    ]
+                  },
+                  {
+                    "group": "Release Notes / Changelog",
+                    "pages": [
+                      "user-guide/Twenty Resources/release-notes-changelog/latest-updates",
+                      "user-guide/Twenty Resources/release-notes-changelog/version-history"
+                    ]
+                  },
+                  {
+                    "group": "Contact & Support",
+                    "pages": [
+                      "user-guide/Twenty Resources/contact-support/getting-help",
+                      "user-guide/Twenty Resources/contact-support/reporting-bugs",
+                      "user-guide/Twenty Resources/contact-support/feature-requests"
+                    ]
+                  },
+                  {
+                    "group": "Professional Services",
+                    "pages": [
+                      "user-guide/Twenty Resources/professional-services/implementation-services",
+                      "user-guide/Twenty Resources/professional-services/training-and-consulting"
+                    ]
+                  }
+                ]
               }
             ]
           },

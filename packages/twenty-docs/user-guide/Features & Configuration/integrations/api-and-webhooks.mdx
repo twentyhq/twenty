@@ -1,0 +1,186 @@
+---
+title: API and Webhooks
+info: "Create and manage API keys for authentication and set up webhooks for real-time notifications."
+image: /images/user-guide/api/api.png
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+## API Keys
+
+API keys allow automated access to your CRM data, synchronize data with other systems, and create custom integrations or solutions.
+
+### Create an API Key
+
+1. Go to **Settings → APIs & Webhooks**
+2. Click **+ Create key** at the top right
+3. Configure your API key:
+   - **Name**: Give your API key a descriptive name
+   - **Expiration Date**: Set when the key should expire
+4. Click **Save** to generate your API key
+5. **Important**: Copy and store your API key immediately, it's only shown once
+
+Once created, your API key provides access to your custom API documentation and playground where you can test endpoints with your actual data model.
+
+<Warning>
+Since your API key gives access to sensitive information, you shouldn't share it with services you don't fully trust. If leaked, someone can use it maliciously. If your API key's security is compromised, immediately disable it and generate a new one.
+</Warning>
+<VimeoEmbed videoId="928786722" title="Creating API key" />
+
+### Manage API Keys
+
+**Regenerate an API Key:**
+1. Go to **Settings → APIs & Webhooks**
+2. Click on the API key you want to regenerate
+3. Click the **Regenerate** button
+4. Copy and store the new API key immediately
+
+**Delete an API Key:**
+1. Find the API key in your list
+2. Click on the key to open its details
+3. Click **Delete** to remove it permanently
+
+## Webhooks
+
+Webhooks allow Twenty to send real-time notifications to your external systems when specific events occur in your workspace.
+
+### Create a Webhook
+
+1. Go to **Settings → APIs & Webhooks**
+2. Click **+ Create webhook**
+3. Configure your webhook:
+   - **URL**: The endpoint where Twenty will send notifications
+   - **Description**: Optional description of the webhook's purpose
+   - **Object**: Choose which object to monitor (People, Companies, etc.)
+   - **Events**: Select which events trigger the webhook:
+     - **Created**: When new records are added
+     - **Updated**: When existing records are modified
+     - **Deleted**: When records are removed
+
+4. Click **Save** to activate your webhook
+
+<VimeoEmbed videoId="928786754" title="Creating webhook" />
+
+### Webhook Events
+
+Twenty sends webhook notifications for these events:
+- **Record Created**: A new record is added to the selected object
+- **Record Updated**: An existing record is modified
+- **Record Deleted**: A record is removed from the object
+
+### Webhook Payload
+
+When an event occurs, Twenty sends a POST request to your webhook URL with a JSON payload containing:
+- **Event type**: The type of event that occurred
+- **Object**: The object that was affected
+- **Record data**: The current state of the record
+- **Timestamp**: When the event occurred
+- **Workspace ID**: Your workspace identifier
+
+### Testing Webhooks
+
+To test your webhook:
+1. Set up a test endpoint (you can use tools like webhook.site for testing)
+2. Create a webhook pointing to your test URL
+3. Perform an action in Twenty that should trigger the webhook
+4. Check your test endpoint to see if the webhook was received
+
+### Webhook Security
+
+**Verify Webhook Sources:**
+- Check the request headers to ensure webhooks come from Twenty
+- Validate the payload structure matches expected format
+- Consider implementing webhook signature verification
+
+**Handle Failures:**
+- Implement retry logic for failed webhook deliveries
+- Log webhook events for debugging and monitoring
+- Set up alerts for webhook failures
+
+### Common Webhook Use Cases
+
+**Data Synchronization:**
+- Sync Twenty data with external databases
+- Update records in other business systems
+- Maintain data consistency across platforms
+
+**Automation Triggers:**
+- Trigger workflows in external systems
+- Send notifications to team communication tools
+- Update dashboards and reporting systems
+
+**Real-time Updates:**
+- Push updates to mobile applications
+- Refresh external dashboards
+- Notify external services of changes
+
+## API Documentation and Playground
+
+### Accessing API Documentation
+
+Once you have an API key:
+1. Go to **Settings → APIs & Webhooks**
+2. Click on your API key
+3. Click **Open API Documentation**
+4. This opens your personalized API docs with your data model
+
+### Using the API Playground
+
+The API playground lets you test API calls with your actual data:
+1. Select an endpoint from the documentation
+2. Configure parameters and request body
+3. Click **Try it out** to execute the request
+4. View the response and debug any issues
+
+### GraphQL API
+
+Twenty uses GraphQL for its API, which provides:
+- **Flexible queries**: Request exactly the data you need
+- **Strong typing**: Clear data structure and validation
+- **Real-time subscriptions**: Live updates for data changes
+- **Introspection**: Self-documenting API structure
+
+## Best Practices
+
+### API Key Management
+- **Use descriptive names**: Make it clear what each API key is for
+- **Set expiration dates**: Regularly rotate API keys for security
+- **Limit scope**: Create separate keys for different integrations
+- **Monitor usage**: Track API key usage and performance
+
+### Webhook Implementation
+- **Handle retries**: Implement exponential backoff for failed deliveries
+- **Validate payloads**: Always verify webhook data before processing
+- **Log events**: Keep records of webhook deliveries for debugging
+- **Secure endpoints**: Use HTTPS and validate webhook sources
+
+### Integration Security
+- **Store keys securely**: Never expose API keys in client-side code
+- **Use environment variables**: Keep credentials out of source code
+- **Implement rate limiting**: Protect your endpoints from abuse
+- **Monitor access**: Track API usage and watch for anomalies
+
+## Troubleshooting
+
+### API Issues
+- **Authentication errors**: Verify API key is correct and not expired
+- **Permission errors**: Check that API key has access to requested resources
+- **Rate limiting**: Implement proper retry logic with backoff
+- **Data format errors**: Validate request structure against documentation
+
+### Webhook Issues
+- **Delivery failures**: Check endpoint URL and server availability
+- **Timeout errors**: Ensure webhook endpoint responds quickly
+- **Payload errors**: Verify your endpoint can handle the webhook format
+- **Security blocks**: Check if firewalls are blocking Twenty's requests
+
+## Next Steps
+
+After setting up API access:
+- [Explore Available Integrations](/user-guide/Features & Configuration/integrations/available-integrations)
+- [Learn Custom Integration Development](/user-guide/How-To Tutorials/developers/integrations-apps/how-to-build-a-custom-integration)
+- [Set up Webhook Security](/user-guide/How-To Tutorials/developers/webhooks/how-to-secure-webhook-endpoints)

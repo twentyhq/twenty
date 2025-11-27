@@ -1,0 +1,296 @@
+---
+title: How to import data using csv files
+info: "Import bulk data from CSV files into your Twenty workspace."
+difficulty: "intermediate"
+time: "15 minutes"
+---
+
+<Frame>
+  <img src="/images/user-guide/import-export/import-csv.png" alt="Import CSV" />
+</Frame>
+
+Importing your existing data is often the first step in setting up Twenty. Whether you're migrating from another CRM, importing from spreadsheets, or bringing in data from other systems, CSV import makes it easy to get your data into Twenty quickly and accurately.
+
+## Before You Start
+
+### What You'll Need
+- Your data in CSV, Excel (.xlsx), or Excel (.xls) format
+- Admin or import permissions in your Twenty workspace
+- Clean, organized data with consistent formatting
+- Understanding of your data structure and relationships
+
+### File Requirements
+- **Maximum file size**: 10MB per import
+- **Maximum records**: 10,000 records per file
+- **Supported formats**: .csv, .xlsx, .xls
+- **Character encoding**: UTF-8 recommended for special characters
+
+## Preparing Your Data
+
+### Clean Your Data First
+
+**Remove duplicates**:
+- Use spreadsheet software to identify and remove duplicate entries
+- Check for similar entries with slight variations
+- Decide how to handle near-duplicates before importing
+
+**Standardize formatting**:
+- Use consistent date formats (YYYY-MM-DD or MM/DD/YYYY)
+- Standardize phone number formats
+- Ensure email addresses are properly formatted
+- Use consistent naming conventions
+
+**Handle missing data**:
+- Decide whether to leave fields empty or use default values
+- Remove rows with critical missing information
+- Consider creating separate imports for incomplete records
+
+### Structure Your Columns
+
+**Use clear column headers**:
+- Make headers descriptive and easy to understand
+- Avoid special characters or spaces in headers when possible
+- Use consistent naming that matches Twenty's field names
+
+**Organize related data**:
+- Group related information together
+- Consider the order of columns for easier mapping
+- Separate different object types into different files
+
+### Example Data Structure
+
+**For People (Contacts)**:
+```csv
+First Name,Last Name,Email,Phone,Company,Job Title,Notes
+John,Smith,john@example.com,555-0123,Acme Corp,Sales Manager,Key contact for renewals
+Jane,Doe,jane@techco.com,555-0124,TechCo,Developer,Technical decision maker
+```
+
+**For Companies**:
+```csv
+Name,Domain,Industry,Employee Count,Website,Address
+Acme Corp,acme.com,Manufacturing,500,https://acme.com,"123 Main St, City, State"
+TechCo,techco.com,Technology,50,https://techco.com,"456 Tech Ave, City, State"
+```
+
+## Step-by-Step Import Process
+
+### Step 1: Access the Import Feature
+
+1. Navigate to the object you want to import data into (People, Companies, etc.)
+2. Click the **Options** button in the top right corner
+3. Select **Import** from the dropdown menu
+4. The import wizard will open
+
+<img src="/images/user-guide/import-export/import-button.png" style={{width:'100%'}} alt="Import Button Location" />
+
+### Step 2: Upload Your File
+
+1. **Choose your file**: Click "Choose file" or drag and drop your CSV/Excel file
+2. **Verify file details**: Check that the file size and record count are within limits
+3. **Select sheet** (for Excel files): Choose which sheet contains your data
+4. **Preview data**: Review the first few rows to ensure they look correct
+
+<img src="/images/user-guide/import-export/file-upload.png" style={{width:'100%'}} alt="File Upload Interface" />
+
+### Step 3: Map Your Fields
+
+This is the most important step in the import process:
+
+1. **Review column mapping**: Twenty will attempt to automatically match your columns to existing fields
+2. **Adjust mappings**: Click on any dropdown to change which Twenty field a column maps to
+3. **Handle unmapped columns**: Decide whether to skip columns or create new fields
+4. **Set required fields**: Ensure all required fields are mapped to columns with data
+
+**Mapping options**:
+- **Map to existing field**: Connect your column to a field that already exists in Twenty
+- **Create new field**: Twenty can create custom fields for unmapped columns
+- **Do not import**: Skip columns that aren't needed
+
+<img src="/images/user-guide/import-export/field-mapping.png" style={{width:'100%'}} alt="Field Mapping Interface" />
+
+### Step 4: Configure Import Settings
+
+**Duplicate handling**:
+- **Skip duplicates**: Don't import records that already exist
+- **Update existing**: Update existing records with new information
+- **Import as new**: Create new records even if duplicates exist
+
+**Validation settings**:
+- **Strict validation**: Reject records that don't meet field requirements
+- **Flexible validation**: Import what's possible, skip problematic records
+- **Custom validation**: Set specific rules for your import
+
+### Step 5: Review and Import
+
+1. **Preview import**: Review a sample of how your data will be imported
+2. **Check for errors**: Address any validation issues or mapping problems
+3. **Start import**: Click "Import" to begin the process
+4. **Monitor progress**: Watch the progress bar and any status messages
+
+<img src="/images/user-guide/import-export/import-preview.png" style={{width:'100%'}} alt="Import Preview" />
+
+## Handling Relationships During Import
+
+### Linking People to Companies
+
+**Method 1: Use Company Name**
+- Include a "Company" column in your People import
+- Twenty will attempt to match company names to existing Company records
+- Create companies first if they don't exist
+
+**Method 2: Use Company Domain**
+- Include a "Company Domain" column
+- More reliable than company names for matching
+- Ensures accurate linking even with slight name variations
+
+### Creating Relationships
+
+**Import order matters**:
+1. Import parent objects first (Companies)
+2. Then import child objects (People)
+3. Finally import dependent objects (Opportunities, Tasks)
+
+**Relationship identifiers**:
+- Use unique identifiers like email addresses or domains
+- Avoid using names alone, as they can be ambiguous
+- Consider using Twenty's internal IDs for existing records
+
+## Common Import Scenarios
+
+### Migrating from Another CRM
+
+**Export from your current system**:
+1. Export all objects you need (contacts, companies, deals, etc.)
+2. Clean and standardize the exported data
+3. Map fields between your old system and Twenty
+4. Import in the correct order to preserve relationships
+
+**Preserve important data**:
+- Export all custom fields and notes
+- Include activity history where possible
+- Maintain relationship connections
+- Document any data that can't be directly imported
+
+### Importing from Spreadsheets
+
+**Organize your spreadsheet data**:
+1. Separate different types of records into different sheets
+2. Use consistent column headers
+3. Remove any merged cells or complex formatting
+4. Ensure data is in a simple table format
+
+### Bulk Data Updates
+
+**Updating existing records**:
+1. Export current data from Twenty
+2. Make changes in your spreadsheet software
+3. Include the Twenty record ID column to ensure updates target the correct records
+4. Import with "Update existing" option selected
+
+## Troubleshooting Import Issues
+
+### Common Error Messages
+
+**"Duplicate entry found"**:
+- **Cause**: Record with same unique identifier already exists
+- **Solution**: Choose appropriate duplicate handling option or clean data first
+
+**"Invalid data format"**:
+- **Cause**: Data doesn't match expected field type
+- **Solution**: Check date formats, number formats, and field type requirements
+
+**"Required field missing"**:
+- **Cause**: Required field is empty or not mapped
+- **Solution**: Ensure all required fields have data or default values
+
+**"File too large"**:
+- **Cause**: File exceeds size or record limits
+- **Solution**: Split large files into smaller batches
+
+### Data Quality Issues
+
+**Inconsistent formatting**:
+- Standardize data before import
+- Use spreadsheet functions to clean data
+- Consider using data validation rules
+
+**Missing relationships**:
+- Ensure parent records exist before importing child records
+- Use reliable identifiers for linking records
+- Import in the correct order
+
+**Character encoding problems**:
+- Save CSV files with UTF-8 encoding
+- Check for special characters that might cause issues
+- Test with a small sample first
+
+## Post-Import Best Practices
+
+### Verify Your Import
+
+**Check record counts**:
+- Compare imported record count with your source file
+- Verify that all expected records were created
+- Look for any records that were skipped or failed
+
+**Review data quality**:
+- Spot-check imported records for accuracy
+- Verify that relationships were created correctly
+- Check that custom fields populated properly
+
+**Test functionality**:
+- Ensure email sync works with imported contacts
+- Verify that workflows trigger correctly with new data
+- Test any integrations that depend on the imported data
+
+### Clean Up After Import
+
+**Remove test data**:
+- Delete any test records created during import testing
+- Clean up any duplicate records that weren't caught
+
+**Organize your data**:
+- Create views to organize your newly imported data
+- Set up filters to find specific subsets of imported records
+- Update any existing views that should include new data
+
+**Update team members**:
+- Notify your team about the new data
+- Provide guidance on how to work with imported records
+- Update any documentation or processes that reference the data
+
+## Advanced Import Techniques
+
+### Batch Processing
+
+**For large datasets**:
+1. Split large files into smaller batches (2,000-5,000 records each)
+2. Import batches sequentially to avoid system overload
+3. Verify each batch before proceeding to the next
+4. Keep track of which batches have been imported
+
+### Custom Field Creation
+
+**During import**:
+- Twenty can create custom fields for unmapped columns
+- Choose appropriate field types for your data
+- Consider whether fields should be required or optional
+- Plan field organization before importing
+
+### Data Transformation
+
+**Before import**:
+- Use spreadsheet formulas to transform data formats
+- Combine multiple columns into single fields where appropriate
+- Split single columns into multiple fields if needed
+- Calculate derived values (like full names from first/last names)
+
+## Next Steps
+
+After successfully importing your data:
+- [Learn how to create views](/user-guide/How-To Tutorials/end-users/views-daily-crm-usage/how-to-create-a-new-view) to organize your imported data
+- [Set up workflows](/user-guide/How-To Tutorials/admins/automations-workflows/how-to-build-your-first-workflow) to automate processes with your new data
+- [Explore data quality management](/user-guide/How-To Tutorials/admins/data-model/how-to-set-up-validation-rules-for-data-quality) to maintain clean data
+
+Successful data import sets the foundation for everything you'll do in Twenty. Take time to prepare your data properly, and your CRM will be much more effective from day one.

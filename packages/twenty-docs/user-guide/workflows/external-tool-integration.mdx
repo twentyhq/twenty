@@ -24,7 +24,7 @@ Below are workflow examples you could roll out to connect Twenty with the rest o
 - Set the webhook method to POST
 - Define the expected body structure in the trigger
 
-**Trigger**: Webhook (POST request from your form)  
+**Trigger**: Webhook (POST request from your form)
 
 **Actions**:
 - Search Records to check if person/company already exists
@@ -37,7 +37,7 @@ Below are workflow examples you could roll out to connect Twenty with the rest o
 
 **Solution**: Regularly sync product data into Twenty to give sellers context about their accounts.
 
-**Trigger**: On a Schedule (daily or weekly)  
+**Trigger**: On a Schedule (daily or weekly)
 
 **Actions**:
 - HTTP Request to your data warehouse API
@@ -52,7 +52,7 @@ Below are workflow examples you could roll out to connect Twenty with the rest o
 
 **Solution**: Automatically create notes and action items from call recording systems.
 
-**Trigger**: Webhook (from call recording platform)  
+**Trigger**: Webhook (from call recording platform)
 
 **Actions**:
 - Code action to extract meeting summary and action items
@@ -66,7 +66,7 @@ Below are workflow examples you could roll out to connect Twenty with the rest o
 
 **Solution**: Automatically enrich records using external data providers.
 
-**Trigger**: Record is Created (People or Companies object)  
+**Trigger**: Record is Created (People or Companies object)
 
 **Actions**:
 - HTTP Request to enrichment API
@@ -85,7 +85,7 @@ Below are workflow examples you could roll out to connect Twenty with the rest o
 
 **Setup**: Create a view in Twenty with all newsletter recipients
 
-**Trigger**: Launch Manually (when no record is selected)  
+**Trigger**: Launch Manually (when no record is selected)
 
 **Actions**:
 - Search Records using the newsletter view criteria
@@ -99,7 +99,7 @@ Below are workflow examples you could roll out to connect Twenty with the rest o
 
 **Solution**: Send new leads or customers to your email automation platform when specific events occur.
 
-**Trigger**: Record is Created (People object with specific criteria)  
+**Trigger**: Record is Created (People object with specific criteria)
 
 **Actions**:
 - Code action to determine appropriate email sequence
@@ -114,7 +114,7 @@ Below are workflow examples you could roll out to connect Twenty with the rest o
 
 **Option 1 - External Tool**:
 
-**Trigger**: Record is Updated (People object)  
+**Trigger**: Record is Updated (People object)
 
 **Actions**:
 - HTTP Request to send lead data to scoring platform
@@ -124,7 +124,7 @@ Below are workflow examples you could roll out to connect Twenty with the rest o
 
 **Option 2 - Internal Logic**:
 
-**Trigger**: Record is Updated (People object)  
+**Trigger**: Record is Updated (People object)
 
 **Actions**:
 - Code action with scoring algorithm (company size, industry, behavior)
@@ -136,7 +136,7 @@ Below are workflow examples you could roll out to connect Twenty with the rest o
 
 **Solution**: Automatically send deal data to your invoicing system when opportunities are won.
 
-**Trigger**: Record is Updated (Opportunities object, Stage = "Closed Won")  
+**Trigger**: Record is Updated (Opportunities object, Stage = "Closed Won")
 
 **Actions**:
 - Search Records to get complete customer information
@@ -155,7 +155,7 @@ Below are workflow examples you could roll out to connect Twenty with the rest o
 
 **From Twenty to External System**:
 
-**Trigger**: Record is Updated (any relevant object)  
+**Trigger**: Record is Updated (any relevant object)
 
 **Actions**:
 - HTTP Request to update external system
@@ -163,7 +163,7 @@ Below are workflow examples you could roll out to connect Twenty with the rest o
 
 **From External System to Twenty**:
 
-**Trigger**: Webhook (from external system)  
+**Trigger**: Webhook (from external system)
 
 **Actions**:
 - Search Records to find matching record
@@ -175,7 +175,7 @@ Below are workflow examples you could roll out to connect Twenty with the rest o
 
 **Solution**: Use Code actions for data transformation and validation.
 
-**Trigger**: Webhook or On a Schedule  
+**Trigger**: Webhook or On a Schedule
 
 **Actions**:
 - Code action to validate incoming data format
@@ -190,8 +190,8 @@ Below are workflow examples you could roll out to connect Twenty with the rest o
 - Use HTTPS for all external API calls
 - Be mindful of API rate limits - use scheduled workflows when possible
 - Consider batch updates "On a Schedule" when real-time processing isn't required
-- Remember the 100 concurrent workflow limit per workspace - use "Bulk" availability for manual triggers when processing multiple records (see [Workflow Features](/user-guide/workflows/workflow-features) for details)
+- Remember the 100 concurrent workflow limit per workspace - use "Bulk" availability for manual triggers when processing multiple records (see [Workflow Features](/user-guide/Features & Configuration/automations-workflows/workflow-triggers) for details)
 - Test with sample data before activating workflows
 
-For troubleshooting integration issues, see our [Workflow Troubleshooting](/user-guide/workflows/workflow-troubleshooting) guide. For help implementing complex integrations, consider our [Professional Services](/user-guide/workflows/professional-services).
+For troubleshooting integration issues, see our [Workflow Troubleshooting](/user-guide/Troubleshooting & FAQ/workspace-admin-issues/workflow-automation-problems) guide. For help implementing complex integrations, consider our [Professional Services](/user-guide/Twenty Resources/professional-services/implementation-services).
 

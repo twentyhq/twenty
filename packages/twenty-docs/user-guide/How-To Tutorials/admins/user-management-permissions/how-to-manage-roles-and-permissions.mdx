@@ -1,0 +1,228 @@
+---
+title: How to Manage Roles and Permissions
+info: "Learn how to control access: assign roles and set permissions."
+image: /images/user-guide/permissions/permissions.png
+difficulty: "intermediate"
+time: "15 minutes"
+---
+
+<Frame>
+  <img src="/images/user-guide/permissions/permissions.png" alt="Header" />
+</Frame>
+
+Twenty's permission system allows you to control access to three main areas:
+- **Objects and Fields**: Control who can view, edit, or delete records and individual fields
+- **Settings**: Manage access to workspace configuration and administrative functions
+- **Actions**: Control general workspace actions like importing data or sending emails
+
+## Create a Role
+
+To create a new role:
+
+1. Go to **Settings → Roles**
+2. Under **All Roles**, click on **+ Create Role**
+3. Enter a role name
+4. In the default **Permissions** tab, configure permissions
+5. Click **Save** to finish
+
+## Delete a Role
+
+To delete a role:
+
+1. Go to **Settings → Roles**
+2. Click on the role you want to remove
+3. Open the **Settings** tab, then click **Delete Role**
+4. Click **Confirm** in the modal
+
+Note: If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. All except the **Admin** role can be deleted. There must always be at least one member assigned to the **Admin** role.
+
+## Assign Roles to Members
+
+### View Current Assignments
+- Go to **Settings → Roles**
+- See all roles and how many members are assigned to each
+- View which members have which roles
+
+### Assign a Role to a Member
+1. Go to **Settings → Roles**
+2. Click on the role you want to assign
+3. Open the **Assignment** tab
+4. Click **+ Assign to member**
+5. Select the workspace member from the list
+6. Confirm the assignment
+
+## Configuring Object Permissions
+
+### Setting Object Access
+Control which objects users can access:
+1. Go to **Settings** → **Data Model**
+2. Select the object you want to configure
+3. Click on **Permissions** tab
+4. Set permissions for each role:
+   - **Admin**: Typically has full access
+   - **Member**: Configure based on business needs
+   - **Viewer**: Usually read-only or no access
+
+### Permission Combinations
+You can create different permission combinations:
+- **Full Access**: Read, Create, Update, Delete
+- **Editor**: Read, Create, Update (no delete)
+- **Creator**: Read, Create (no edit or delete)
+- **Read-Only**: Read only
+- **No Access**: Object is hidden from user
+
+### Example Permission Configurations
+
+**Sales Team Setup**:
+- **People**: Full access (sales reps manage contacts)
+- **Companies**: Full access (account management)
+- **Opportunities**: Full access (sales pipeline)
+- **Tasks**: Full access (activity management)
+- **Workflows**: Read-only (can see but not modify automations)
+
+**Marketing Team Setup**:
+- **People**: Read, Create, Update (lead management)
+- **Companies**: Read, Create, Update (account research)
+- **Opportunities**: Read-only (pipeline visibility)
+- **Tasks**: Full access (campaign tasks)
+- **Workflows**: Read-only (automation visibility)
+
+**Executive Team Setup**:
+- **All Objects**: Read-only (dashboard and reporting access)
+- **Reports**: Full access (analytics and insights)
+- **Workflows**: Read-only (process visibility)
+
+## Advanced Permission Scenarios
+
+### Department-Based Permissions
+Create role-based access for different departments:
+
+**HR Department**:
+- **People**: Full access for employee records
+- **Companies**: Read-only for organizational context
+- **Opportunities**: No access (not relevant to HR)
+- **Custom HR Objects**: Full access
+
+**Finance Department**:
+- **Companies**: Read access for billing information
+- **Opportunities**: Read access for revenue forecasting
+- **People**: Limited access for contact information
+- **Custom Finance Objects**: Full access
+
+### Project-Based Access
+Configure permissions for project teams:
+- **Project Managers**: Full access to project-related objects
+- **Team Members**: Edit access to assigned tasks and activities
+- **Stakeholders**: Read-only access to project status and reports
+- **External Partners**: Limited read access to relevant project data
+
+### Temporary Access Management
+Handle temporary or contractor access:
+- **Consultants**: Time-limited access to specific objects
+- **Auditors**: Read-only access to all relevant data
+- **Temporary Staff**: Limited permissions that can be easily revoked
+- **Vendors**: Access only to objects relevant to their work
+
+## Permission Best Practices
+
+### Security Principles
+- **Principle of Least Privilege**: Give users only the minimum access needed
+- **Regular Reviews**: Audit permissions quarterly to ensure they're still appropriate
+- **Role-Based Access**: Use roles rather than individual permissions when possible
+- **Documentation**: Document why specific permissions are granted
+
+### Implementation Strategy
+- **Start Restrictive**: Begin with minimal permissions and add as needed
+- **Test Thoroughly**: Verify permissions work as expected before rolling out
+- **User Training**: Ensure users understand their access levels and limitations
+- **Feedback Loop**: Gather user feedback on permission effectiveness
+
+### Common Patterns
+- **Hierarchical Access**: Managers have broader access than team members
+- **Departmental Boundaries**: Limit cross-department data access
+- **Sensitive Data Protection**: Restrict access to confidential information
+- **Audit Trail**: Maintain logs of permission changes
+
+## Troubleshooting Permissions
+
+### Common Permission Issues
+
+**User Can't See Expected Data**:
+- Check object-level permissions for their role
+- Verify the user is assigned to the correct role
+- Ensure the object isn't deactivated
+- Check for view-level filters that might hide data
+
+**User Can't Perform Expected Actions**:
+- Verify they have the required permission level (Create, Update, Delete)
+- Check if the specific field has restrictions
+- Ensure they have access to related objects needed for the action
+- Verify workspace-level permissions aren't blocking the action
+
+**Permission Changes Not Taking Effect**:
+- Ask user to refresh their browser or log out/in
+- Check if there are conflicting permission settings
+- Verify the permission change was saved correctly
+- Allow time for permission changes to propagate
+
+### Permission Conflicts
+When permissions conflict:
+- **Most Restrictive Wins**: The most limiting permission takes precedence
+- **Explicit Over Implicit**: Directly assigned permissions override inherited ones
+- **Role Hierarchy**: Higher-level roles can override lower-level restrictions
+- **Object vs. Field**: Field-level restrictions can override object permissions
+
+## Monitoring and Auditing Permissions
+
+### Permission Auditing
+Regularly review and audit permissions:
+- **User Access Reviews**: Quarterly review of who has access to what
+- **Permission Reports**: Generate reports showing current permission assignments
+- **Access Logs**: Monitor who accesses sensitive data and when
+- **Change Tracking**: Keep records of permission modifications
+
+### Compliance Considerations
+Ensure permissions meet regulatory requirements:
+- **Data Privacy**: Restrict access to personal information as required by GDPR/CCPA
+- **Financial Data**: Limit access to financial information per SOX requirements
+- **Healthcare**: Ensure HIPAA compliance for medical information
+- **Industry Standards**: Meet industry-specific access control requirements
+
+## Advanced Permission Features
+
+### Custom Roles (Coming Soon)
+Create workspace-specific roles:
+- **Role Templates**: Save common permission combinations
+- **Inheritance**: Base new roles on existing ones
+- **Conditional Permissions**: Permissions that change based on data values
+- **Time-Based Access**: Permissions that expire automatically
+
+### Dynamic Permissions (Roadmap)
+Future permission enhancements:
+- **Record-Level Permissions**: Control access to individual records
+- **Conditional Access**: Permissions based on field values or relationships
+- **Geographic Restrictions**: Location-based access controls
+- **Time-Based Permissions**: Access that varies by time of day or date
+
+## Integration with Other Features
+
+### Permissions and Workflows
+How permissions interact with automation:
+- **Workflow Execution**: Workflows run with admin permissions by default
+- **User-Triggered Actions**: Respect the triggering user's permissions
+- **Notification Permissions**: Only send notifications to users with appropriate access
+- **Data Modification**: Workflows can modify data users can't directly access
+
+### Permissions and API Access
+API access respects user permissions:
+- **API Keys**: Inherit permissions from the user who created them
+- **Webhook Permissions**: Respect object and field permissions
+- **Data Export**: Only export data the user has permission to see
+- **Integration Access**: Third-party integrations limited by user permissions
+
+## Next Steps
+
+After setting up permissions:
+- [Learn User Management](/user-guide/How-To Tutorials/admins/user-management-permissions/how-to-add-or-remove-users)
+- [Explore Object-Level Permissions](/user-guide/How-To Tutorials/admins/user-management-permissions/object-level-and-field-level-permission-examples)
+- [Set up Workspace Governance](/user-guide/How-To Tutorials/admins/workspace-governance/how-to-manage-data-privacy-and-compliance)

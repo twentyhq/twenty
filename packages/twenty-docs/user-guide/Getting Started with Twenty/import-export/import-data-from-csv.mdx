@@ -1,0 +1,144 @@
+---
+title: Import Data from CSV
+info: "Learn how to import your existing data into Twenty using CSV files."
+image: /images/user-guide/import-export-data/import-export-data.png
+sectionInfo: Discover Twenty, an open-source CRM.
+tags: ["import", "csv", "data-migration", "getting-started", "setup"]
+---
+
+<Frame>
+  <img src="/images/user-guide/import-export-data/import-export-data.png" alt="Header" />
+</Frame>
+
+Importing your existing data into Twenty is straightforward with CSV files. Whether you're migrating from another CRM or bringing in data from spreadsheets, this guide will walk you through the process.
+
+## Quick Summary
+
+**What you can import:** Contacts, companies, opportunities, tasks, notes, and custom objects via CSV files.
+
+**File requirements:**
+- **Format:** CSV, XLSX, or XLS files
+- **Size limit:** 10,000 records per file
+- **Encoding:** UTF-8 recommended
+
+**Key steps:** Prepare your CSV → Upload file → Map fields → Preview import → Execute import
+
+**Pro tip:** Start with a small test batch to verify field mapping before importing all your data.
+
+## Before You Start
+
+### Prepare Your Data
+- **Clean your data**: Remove duplicates and ensure consistency
+- **Check file size**: Limit each CSV file to 10,000 records maximum
+- **Format correctly**: Use the proper CSV format with headers
+
+### Download Sample Files
+Before importing, download the sample CSV file for the object you want to import. This shows you the exact format Twenty expects and helps prevent errors.
+
+## Step-by-Step Import Process
+
+### 1. Access the Import Feature
+1. Press `Cmd + K` (Mac) or `Ctrl + K` (Windows) to open the command menu
+2. Type "import" and select the import option for your object type
+3. Or navigate to the object (People, Companies, etc.) and look for the import option
+
+### 2. Choose Your Object Type
+Select what type of records you're importing:
+- **People**: Individual contacts
+- **Companies**: Organizations and businesses
+- **Opportunities**: Deals and sales prospects
+- **Custom Objects**: Any custom objects you've created
+
+### 3. Upload Your CSV File
+1. Click "Choose File" and select your CSV
+2. Twenty will analyze your file and show a preview
+3. Review the column mapping to ensure fields match correctly
+
+### 4. Map Your Fields
+- **Automatic mapping**: Twenty tries to match your columns automatically
+- **Manual adjustments**: Drag and drop to correct any mismatched fields
+- **Required fields**: Ensure all required fields are mapped (usually email for People, domain for Companies)
+
+### 5. Review and Fix Errors
+- **Yellow highlights**: Indicate potential issues that need attention
+- **Duplicate detection**: Twenty will flag potential duplicates
+- **Data validation**: Fix any format errors before proceeding
+
+### 6. Complete the Import
+1. Review the summary of records to be imported
+2. Click "Import" to start the process
+3. Monitor the progress bar
+4. Review the completion report
+
+## Import Guidelines by Object Type
+
+### People Import
+- **Email is required**: Each person must have a unique email address
+- **No duplicate emails**: Two people cannot share the same email
+- **Company linking**: You can link people to existing companies during import
+
+### Companies Import
+- **Domain is key**: Company domains must be unique
+- **Industry and size**: Include these fields for better organization
+- **Website format**: Use full URLs (https://example.com)
+
+### Opportunities Import
+- **Link to companies**: Opportunities should be connected to existing companies
+- **Stage mapping**: Ensure your stages match Twenty's pipeline stages
+- **Amount format**: Use numbers without currency symbols
+
+## Common Import Issues and Solutions
+
+### Duplicate Records
+**Problem**: CSV contains duplicate emails or domains
+**Solution**: Clean your data before import or use Twenty's duplicate detection
+
+### Format Errors
+**Problem**: Dates, numbers, or other fields in wrong format
+**Solution**: Check the sample file for correct formatting
+
+### Missing Required Fields
+**Problem**: Import fails due to missing required information
+**Solution**: Ensure all required fields (email, domain) are included
+
+### Large File Size
+**Problem**: File too large to import
+**Solution**: Split into smaller files of 10,000 records or less
+
+## Best Practices
+
+### Data Preparation
+- **Standardize formats**: Use consistent date formats, phone number formats, etc.
+- **Clean text fields**: Remove extra spaces and special characters
+- **Validate emails**: Ensure email addresses are properly formatted
+
+### Import Strategy
+- **Start small**: Test with a small batch first
+- **Import in order**: Import Companies first, then People, then Opportunities
+- **Review results**: Check imported data before proceeding with larger batches
+
+### After Import
+- **Verify data**: Spot-check imported records for accuracy
+- **Set up views**: Create filtered views to organize your new data
+- **Train your team**: Show team members where to find the imported data
+
+## Troubleshooting
+
+### Import Stuck or Failed
+1. Check your internet connection
+2. Verify file format and size
+3. Try importing a smaller batch
+4. Contact support if issues persist
+
+### Data Not Appearing
+1. Refresh your browser
+2. Check the correct object view
+3. Clear any active filters
+4. Verify the import completed successfully
+
+## Next Steps
+
+After importing your data:
+- [Set up views](/user-guide/How-To Tutorials/end-users/views-daily-crm-usage/how-to-create-a-new-view) to organize your records
+- [Connect your email](/user-guide/Getting Started with Twenty/first-configuration/connect-your-mailbox-and-calendar) to link communications
+- [Create workflows](/user-guide/How-To Tutorials/admins/automations-workflows/how-to-build-your-first-workflow) to automate processes
