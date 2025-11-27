@@ -62,10 +62,10 @@ describe('getBarChartSettings', () => {
       const result = getBarChartSettings(GraphType.VERTICAL_BAR);
 
       expect(result).toHaveLength(4);
-      expect(result[0].heading).toBe('Data');
-      expect(result[1].heading).toBe('X axis');
-      expect(result[2].heading).toBe('Y axis');
-      expect(result[3].heading).toBe('Style');
+      expect(result[0].heading).toBe(CHART_SETTINGS_HEADINGS.DATA);
+      expect(result[1].heading).toBe(CHART_SETTINGS_HEADINGS.X_AXIS);
+      expect(result[2].heading).toBe(CHART_SETTINGS_HEADINGS.Y_AXIS);
+      expect(result[3].heading).toBe(CHART_SETTINGS_HEADINGS.STYLE);
     });
   });
 
@@ -110,10 +110,10 @@ describe('getBarChartSettings', () => {
       const result = getBarChartSettings(GraphType.HORIZONTAL_BAR);
 
       expect(result).toHaveLength(4);
-      expect(result[0].heading).toBe('Data');
-      expect(result[1].heading).toBe('X axis');
-      expect(result[2].heading).toBe('Y axis');
-      expect(result[3].heading).toBe('Style');
+      expect(result[0].heading).toBe(CHART_SETTINGS_HEADINGS.DATA);
+      expect(result[1].heading).toBe(CHART_SETTINGS_HEADINGS.X_AXIS);
+      expect(result[2].heading).toBe(CHART_SETTINGS_HEADINGS.Y_AXIS);
+      expect(result[3].heading).toBe(CHART_SETTINGS_HEADINGS.STYLE);
     });
   });
 

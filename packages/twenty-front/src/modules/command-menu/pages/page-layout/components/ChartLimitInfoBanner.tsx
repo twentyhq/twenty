@@ -10,7 +10,6 @@ type ChartLimitInfoBannerProps = {
   primaryAxisDateGranularity: Parameters<
     typeof getChartLimitMessage
   >[0]['primaryAxisDateGranularity'];
-  primaryAxisFieldLabel: string | undefined;
 };
 
 export const ChartLimitInfoBanner = ({
