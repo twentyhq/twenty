@@ -149,13 +149,17 @@ describe('ViewFilterService', () => {
   });
 
   describe('create', () => {
-    const validViewFilterData = {
-      fieldMetadataId: 'field-id',
-      viewId: 'view-id',
+    const validViewFilterData: Parameters<
+      typeof viewFilterService.createOne
+    >[0] = {
+      createViewFilterInput: {
+        fieldMetadataId: 'field-id',
+        viewId: 'view-id',
+        operand: ViewFilterOperand.CONTAINS,
+        value: 'test',
+        positionInViewFilterGroup: 0,
+      },
       workspaceId: 'workspace-id',
-      operand: ViewFilterOperand.CONTAINS,
-      value: 'test',
-      positionInViewFilterGroup: 0,
     };
 
     it('should create a view filter successfully', async () => {
@@ -166,7 +170,7 @@ describe('ViewFilterService', () => {
         .spyOn(viewFilterRepository, 'save')
         .mockResolvedValue(mockViewFilter);
 
-      const result = await viewFilterService.create(validViewFilterData);
+      const result = await viewFilterService.createOne(validViewFilterData);
 
       expect(viewFilterRepository.create).toHaveBeenCalledWith(
         validViewFilterData,
@@ -176,9 +180,12 @@ describe('ViewFilterService', () => {
     });
 
     it('should throw exception when workspaceId is missing', async () => {
-      const invalidData = { ...validViewFilterData, workspaceId: undefined };
+      const invalidData = {
+        ...validViewFilterData,
+        workspaceId: undefined as unknown as string,
+      };
 
-      await expect(viewFilterService.create(invalidData)).rejects.toThrow(
+      await expect(viewFilterService.createOne(invalidData)).rejects.toThrow(
         new ViewFilterException(
           generateViewFilterExceptionMessage(
             ViewFilterExceptionMessageKey.WORKSPACE_ID_REQUIRED,
@@ -196,7 +203,7 @@ describe('ViewFilterService', () => {
     it('should throw exception when viewId is missing', async () => {
       const invalidData = { ...validViewFilterData, viewId: undefined };
 
-      await expect(viewFilterService.create(invalidData)).rejects.toThrow(
+      await expect(viewFilterService.createOne(invalidData)).rejects.toThrow(
         new ViewFilterException(
           generateViewFilterExceptionMessage(
             ViewFilterExceptionMessageKey.VIEW_ID_REQUIRED,
@@ -214,10 +221,13 @@ describe('ViewFilterService', () => {
     it('should throw exception when fieldMetadataId is missing', async () => {
       const invalidData = {
         ...validViewFilterData,
-        fieldMetadataId: undefined,
+        createViewFilterInput: {
+          ...validViewFilterData.createViewFilterInput,
+          fieldMetadataId: undefined as unknown as string,
+        },
       };
 
-      await expect(viewFilterService.create(invalidData)).rejects.toThrow(
+      await expect(viewFilterService.createOne(invalidData)).rejects.toThrow(
         new ViewFilterException(
           generateViewFilterExceptionMessage(
             ViewFilterExceptionMessageKey.FIELD_METADATA_ID_REQUIRED,
@@ -247,11 +257,13 @@ describe('ViewFilterService', () => {
         .spyOn(viewFilterRepository, 'save')
         .mockResolvedValue(updatedViewFilter);
 
-      const result = await viewFilterService.update(
-        id,
+      const result = await viewFilterService.updateOne({
+        updateViewFilterInput: {
+          id,
+          update: updateData,
+        },
         workspaceId,
-        updateData,
-      );
+      });
 
       expect(viewFilterService.findById).toHaveBeenCalledWith(id, workspaceId);
       expect(viewFilterRepository.save).toHaveBeenCalledWith({
@@ -269,7 +281,13 @@ describe('ViewFilterService', () => {
       jest.spyOn(viewFilterService, 'findById').mockResolvedValue(null);
 
       await expect(
-        viewFilterService.update(id, workspaceId, updateData),
+        viewFilterService.updateOne({
+          updateViewFilterInput: {
+            id,
+            update: updateData,
+          },
+          workspaceId,
+        }),
       ).rejects.toThrow(
         new ViewFilterException(
           generateViewFilterExceptionMessage(
@@ -294,7 +312,10 @@ describe('ViewFilterService', () => {
         .spyOn(viewFilterRepository, 'softDelete')
         .mockResolvedValue({} as any);
 
-      const result = await viewFilterService.delete(id, workspaceId);
+      const result = await viewFilterService.deleteOne({
+        deleteViewFilterInput: { id },
+        workspaceId,
+      });
 
       expect(viewFilterService.findById).toHaveBeenCalledWith(id, workspaceId);
       expect(viewFilterRepository.softDelete).toHaveBeenCalledWith(id);
@@ -307,7 +328,12 @@ describe('ViewFilterService', () => {
 
       jest.spyOn(viewFilterService, 'findById').mockResolvedValue(null);
 
-      await expect(viewFilterService.delete(id, workspaceId)).rejects.toThrow(
+      await expect(
+        viewFilterService.deleteOne({
+          deleteViewFilterInput: { id },
+          workspaceId,
+        }),
+      ).rejects.toThrow(
         new ViewFilterException(
           generateViewFilterExceptionMessage(
             ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
@@ -329,7 +355,12 @@ describe('ViewFilterService', () => {
         .mockResolvedValue(mockViewFilter);
       jest.spyOn(viewFilterRepository, 'delete').mockResolvedValue({} as any);
 
-      const result = await viewFilterService.destroy(id, workspaceId);
+      const result = await viewFilterService.destroyOne({
+        destroyViewFilterInput: {
+          id,
+        },
+        workspaceId,
+      });
 
       expect(viewFilterRepository.findOne).toHaveBeenCalledWith({
         where: { id, workspaceId },
