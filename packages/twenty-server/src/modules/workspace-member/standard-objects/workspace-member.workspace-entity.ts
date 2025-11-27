@@ -185,8 +185,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCircleUsers',
   })
   @WorkspaceIsSystem()
-  @WorkspaceIsNullable()
-  userId: string | null;
+  userId: string;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeZone,
