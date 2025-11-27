@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { type AxiosResponse } from 'axios';
 import { type gmail_v1 as gmailV1 } from 'googleapis';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { GmailFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-fetch-by-batch.service';
 import { GmailMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-messages-import-error-handler.service';
 import { parseAndFormatGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util';
+import { MessageImportManagerExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/message-import-manager.exception';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
 @Injectable()
@@ -24,6 +25,12 @@ export class GmailGetMessagesService {
       'accessToken' | 'id' | 'handle' | 'handleAliases'
     >,
   ): Promise<MessageWithParticipants[]> {
+    if (!isDefined(connectedAccount.accessToken)) {
+      throw new CustomError(
+        'Access token is required',
+        MessageImportManagerExceptionCode.ACCESS_TOKEN_REQUIRED,
+      );
+    }
     const { messageIdsByBatch, batchResponses } =
       await this.fetchByBatchesService.fetchAllByBatches(
         messageIds,
