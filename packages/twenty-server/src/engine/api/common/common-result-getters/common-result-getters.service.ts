@@ -15,8 +15,12 @@ import { AttachmentQueryResultGetterHandler } from 'src/engine/api/graphql/works
 import { PersonQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/person-query-result-getter.handler';
 import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 // TODO: find a way to prevent conflict between handlers executing logic on object relations
 // And this factory that is also executing logic on object relations
@@ -45,8 +49,9 @@ export class CommonResultGettersService {
 
   public async processRecordArray(
     recordArray: ObjectRecord[],
-    objectMetadataItemId: string,
-    objectMetadataMaps: ObjectMetadataMaps,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     workspaceId: string,
   ) {
     return await Promise.all(
@@ -54,8 +59,9 @@ export class CommonResultGettersService {
         async (record: ObjectRecord) =>
           await this.processRecord(
             record,
-            objectMetadataItemId,
-            objectMetadataMaps,
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
             workspaceId,
           ),
       ),
@@ -64,28 +70,26 @@ export class CommonResultGettersService {
 
   public async processRecord(
     record: ObjectRecord,
-    objectMetadataItemId: string,
-    objectMetadataMaps: ObjectMetadataMaps,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     workspaceId: string,
   ): Promise<ObjectRecord> {
-    const objectMetadataMapItem = objectMetadataMaps.byId[objectMetadataItemId];
+    const handler = this.getHandler(flatObjectMetadata.nameSingular);
 
-    if (!isDefined(objectMetadataMapItem)) {
-      throw new Error('Object metadata map item is not defined');
-    }
-
-    const handler = this.getHandler(objectMetadataMapItem.nameSingular);
+    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
 
     const relationFields = Object.keys(record)
       .map(
         (recordFieldName) =>
-          objectMetadataMapItem.fieldsById[
-            objectMetadataMapItem.fieldIdByName[recordFieldName]
-          ],
+          flatFieldMetadataMaps.byId[fieldIdByName[recordFieldName]],
       )
       .filter(isDefined)
       .filter((fieldMetadata) =>
-        isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION),
+        isFlatFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION),
       );
 
     const relationFieldsProcessedMap = {} as Record<
@@ -104,18 +108,26 @@ export class CommonResultGettersService {
         continue;
       }
 
+      const targetFlatObjectMetadata =
+        findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId: relationField.relationTargetObjectMetadataId,
+          flatEntityMaps: flatObjectMetadataMaps,
+        });
+
       relationFieldsProcessedMap[relationField.name] =
         relationField.settings?.relationType === RelationType.ONE_TO_MANY
           ? await this.processRecordArray(
               record[relationField.name],
-              relationField.relationTargetObjectMetadataId,
-              objectMetadataMaps,
+              targetFlatObjectMetadata,
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
               workspaceId,
             )
           : await this.processRecord(
               record[relationField.name],
-              relationField.relationTargetObjectMetadataId,
-              objectMetadataMaps,
+              targetFlatObjectMetadata,
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
               workspaceId,
             );
     }

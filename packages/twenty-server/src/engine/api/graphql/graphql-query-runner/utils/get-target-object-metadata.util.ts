@@ -2,13 +2,14 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const getTargetObjectMetadataOrThrow = (
-  fieldMetadata: FieldMetadataEntity,
-  objectMetadataMaps: ObjectMetadataMaps,
-) => {
+  fieldMetadata: FlatFieldMetadata,
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+): FlatObjectMetadata => {
   if (!fieldMetadata.relationTargetObjectMetadataId) {
     throw new GraphqlQueryRunnerException(
       `Relation target object metadata id not found for field ${fieldMetadata.name}`,
@@ -17,7 +18,7 @@ export const getTargetObjectMetadataOrThrow = (
   }
 
   const targetObjectMetadata =
-    objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
+    flatObjectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
 
   if (!targetObjectMetadata) {
     throw new GraphqlQueryRunnerException(

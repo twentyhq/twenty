@@ -15,16 +15,15 @@ import {
   TypeOptions,
 } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
+import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
 import { computeFieldInputTypeOptions } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-field-input-type-options.util';
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
 import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
 import { getAvailableAggregationsFromObjectFields } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
-import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
@@ -39,29 +38,24 @@ export class ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator {
     private readonly typeMapperService: TypeMapperService,
   ) {}
 
-  private objectMetadataMaps?: ObjectMetadataMaps;
-
   public buildAndStore({
-    objectMetadata,
-    objectMetadataCollection,
+    flatObjectMetadata,
+    fields,
+    context,
   }: {
-    objectMetadata: ObjectMetadataEntity;
-    objectMetadataCollection?: ObjectMetadataEntity[];
+    flatObjectMetadata: FlatObjectMetadata;
+    fields: FlatFieldMetadata[];
+    context: SchemaGenerationContext;
   }) {
-    if (isDefined(objectMetadataCollection)) {
-      this.objectMetadataMaps = generateObjectMetadataMaps(
-        objectMetadataCollection,
-      );
-    }
-
     const inputType = new GraphQLInputObjectType({
-      name: `${pascalCase(objectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.OrderByWithGroupBy.toString()}Input`,
-      description: objectMetadata.description,
-      fields: () => this.generateFields(objectMetadata),
+      name: `${pascalCase(flatObjectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.OrderByWithGroupBy.toString()}Input`,
+      description: flatObjectMetadata.description,
+      fields: () =>
+        this.generateFields(flatObjectMetadata.nameSingular, fields, context),
     }) as GraphQLInputObjectType;
 
     const key = computeObjectMetadataInputTypeKey(
-      objectMetadata.nameSingular,
+      flatObjectMetadata.nameSingular,
       GqlInputTypeDefinitionKind.OrderByWithGroupBy,
     );
 
@@ -69,36 +63,47 @@ export class ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator {
   }
 
   private generateFields(
-    objectMetadata: ObjectMetadataEntity,
+    objectNameSingular: string,
+    fields: FlatFieldMetadata[],
+    context: SchemaGenerationContext,
   ): GraphQLInputFieldConfigMap {
     return {
-      ...this.generateOrderByOnAggregateFields(objectMetadata),
-      ...this.generateOrderByOnDimensionValuesFields(objectMetadata),
+      ...this.generateOrderByOnAggregateFields(
+        objectNameSingular,
+        fields,
+        context,
+      ),
+      ...this.generateOrderByOnDimensionValuesFields(fields, context),
     };
   }
 
   private generateOrderByOnAggregateFields(
-    objectMetadata: ObjectMetadataEntity,
+    objectNameSingular: string,
+    fields: FlatFieldMetadata[],
+    context: SchemaGenerationContext,
   ): GraphQLInputFieldConfigMap {
     const allAggregatedFields: GraphQLInputFieldConfigMap = {};
 
-    for (const fieldMetadata of objectMetadata.fields) {
-      fieldMetadata.isNullable = true;
+    for (const fieldMetadata of fields) {
+      const modifiedFieldMetadata = {
+        ...fieldMetadata,
+        isNullable: true,
+      };
 
       const typeOptions = computeFieldInputTypeOptions(
-        fieldMetadata,
+        modifiedFieldMetadata,
         GqlInputTypeDefinitionKind.OrderBy,
       );
 
       let generatedFields;
 
-      if (isFieldMetadataRelationOrMorphRelation(fieldMetadata)) {
+      if (isMorphOrRelationFlatFieldMetadata(fieldMetadata)) {
         generatedFields =
           this.relationFieldMetadataGqlInputTypeGenerator.generateSimpleRelationFieldOrderByInputType(
             {
               fieldMetadata,
               typeOptions,
-              objectMetadataMaps: this.objectMetadataMaps,
+              context,
             },
           );
       } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {
@@ -117,7 +122,7 @@ export class ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator {
     }
 
     const aggregateInputType = new GraphQLInputObjectType({
-      name: `${pascalCase(objectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.OrderByWithGroupBy.toString()}AggregateInput`,
+      name: `${pascalCase(objectNameSingular)}${GqlInputTypeDefinitionKind.OrderByWithGroupBy.toString()}AggregateInput`,
       description: 'Aggregate-based ordering',
       fields: () => allAggregatedFields,
     }) as GraphQLInputObjectType;
@@ -131,18 +136,19 @@ export class ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator {
   }
 
   private generateOrderByOnDimensionValuesFields(
-    objectMetadata: ObjectMetadataEntity,
+    fields: FlatFieldMetadata[],
+    context: SchemaGenerationContext,
   ) {
     return this.objectMetadataOrderByBaseGenerator.generateFields({
-      objectMetadata,
+      fields,
       logger: this.logger,
       orderByDateGranularity: true,
-      objectMetadataMaps: this.objectMetadataMaps,
+      context,
     });
   }
 
   private generateCompositeFieldOrderByInputType(
-    fieldMetadata: FieldMetadataEntity,
+    fieldMetadata: FlatFieldMetadata,
     typeOptions: TypeOptions,
   ) {
     const key = computeCompositeFieldInputTypeKey(
@@ -169,7 +175,7 @@ export class ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator {
   }
 
   private generateAtomicFieldOrderByInputType(
-    fieldMetadata: FieldMetadataEntity,
+    fieldMetadata: FlatFieldMetadata,
     typeOptions: TypeOptions,
   ) {
     const orderByType = this.typeMapperService.mapToOrderByType(
@@ -193,7 +199,7 @@ export class ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator {
   }
 
   private generateAggregateFieldOrderByInputType(
-    fieldMetadata: FieldMetadataEntity,
+    fieldMetadata: FlatFieldMetadata,
   ) {
     const aggregations = getAvailableAggregationsFromObjectFields([
       fieldMetadata,

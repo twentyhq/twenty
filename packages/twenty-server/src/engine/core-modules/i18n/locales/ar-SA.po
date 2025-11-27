@@ -1723,6 +1723,7 @@ msgid "Invalid relation creation payload"
 msgstr "تحميل إنشاء العلاقة غير صالح"
 
 #. js-lingui-id: iWv3nK
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid relation field target"
 msgstr ""
@@ -2973,6 +2974,11 @@ msgstr "بعض المعلومات المقدمة غير صالحة. يُرجى �
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
 msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
 msgstr "بعض الأذونات التي اخترتها غير صالحة. يرجى المحاولة مرة أخرى بإعدادات أذونات صالحة."
+
+#. js-lingui-id: OmgwCE
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
+msgid "Source object cannot be the target object"
+msgstr ""
 
 #. js-lingui-id: 3PRxO3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts

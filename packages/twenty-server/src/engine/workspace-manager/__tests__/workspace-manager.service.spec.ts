@@ -11,6 +11,7 @@ import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.serv
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -143,6 +144,12 @@ describe('WorkspaceManagerService', () => {
             getDataSourceForWorkspace: jest.fn().mockResolvedValue({
               transaction: jest.fn(),
             }),
+          },
+        },
+        {
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
+          useValue: {
+            invalidateEntireCache: jest.fn(),
           },
         },
       ],

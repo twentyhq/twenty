@@ -193,13 +193,19 @@ export class DevSeederMetadataService {
     featureFlags?: Record<string, boolean>;
     twentyStandardFlatApplication: FlatApplication;
   }): Promise<void> {
-    const createdObjectMetadata =
-      await this.objectMetadataServiceV2.findManyWithinWorkspace(workspaceId);
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
+      );
 
     await prefillCoreViews({
       coreDataSource: this.coreDataSource,
       workspaceId,
-      objectMetadataItems: createdObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       workspaceSchemaName: dataSourceMetadata.schema,
       featureFlags,
       twentyStandardFlatApplication,

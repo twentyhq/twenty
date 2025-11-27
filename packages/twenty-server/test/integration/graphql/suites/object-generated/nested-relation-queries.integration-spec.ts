@@ -602,7 +602,21 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
 
   it('should connect a morph relation ownerSurveyResult on pet via the connect feature', async () => {
     const PET_OBJECT_NAME = 'pet';
+    const SURVEY_RESULT_OBJECT_NAME = 'surveyResult';
     const TEST_PET_ID = TEST_PET_ID_1;
+    const TEST_SURVEY_RESULT_ID = TEST_SURVEY_RESULT_1_ID;
+
+    // Create the survey result record first
+    await makeGraphqlAPIRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: SURVEY_RESULT_OBJECT_NAME,
+        gqlFields: 'id',
+        data: {
+          id: TEST_SURVEY_RESULT_ID,
+          name: 'Test Survey Result',
+        },
+      }),
+    );
 
     await makeGraphqlAPIRequest(
       createOneOperationFactory({
@@ -614,8 +628,6 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
         },
       }),
     );
-
-    const TEST_SURVEY_RESULT_ID = TEST_SURVEY_RESULT_1_ID;
 
     const updatePetOwnerSurveyResultOp = updateOneOperationFactory({
       objectMetadataSingularName: PET_OBJECT_NAME,
@@ -630,7 +642,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       },
     });
 
-    let response = await makeGraphqlAPIRequest(updatePetOwnerSurveyResultOp);
+    const response = await makeGraphqlAPIRequest(updatePetOwnerSurveyResultOp);
 
     expect(response.body.data.updatePet).toBeDefined();
     expect(response.body.data.updatePet.ownerSurveyResult).toBeDefined();
@@ -642,7 +654,21 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
 
   it('should disconnect a morph relation successfully', async () => {
     const PET_OBJECT_NAME = 'pet';
+    const SURVEY_RESULT_OBJECT_NAME = 'surveyResult';
     const TEST_PET_ID = TEST_PET_ID_2;
+    const TEST_SURVEY_RESULT_ID = TEST_SURVEY_RESULT_1_ID;
+
+    // Create the survey result record first (if not already created by previous test)
+    await makeGraphqlAPIRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: SURVEY_RESULT_OBJECT_NAME,
+        gqlFields: 'id',
+        data: {
+          id: TEST_SURVEY_RESULT_ID,
+          name: 'Test Survey Result',
+        },
+      }),
+    );
 
     await makeGraphqlAPIRequest(
       createOneOperationFactory({
@@ -654,8 +680,6 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
         },
       }),
     );
-
-    const TEST_SURVEY_RESULT_ID = TEST_SURVEY_RESULT_1_ID;
 
     const updatePetOwnerSurveyResultOp = updateOneOperationFactory({
       objectMetadataSingularName: PET_OBJECT_NAME,

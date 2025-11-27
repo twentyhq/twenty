@@ -9,8 +9,6 @@
     "@linaria/core": "^6.2.0",
     "@linaria/react": "^6.2.1",
     "@radix-ui/colors": "^3.0.0",
-    "@sentry/profiling-node": "^9.26.0",
-    "@sentry/react": "^9.26.0",
     "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^3.31.0",
     "@wyw-in-js/vite": "^0.7.0",

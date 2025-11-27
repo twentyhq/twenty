@@ -11,10 +11,11 @@ import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schem
 import { ArgsTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/args-type/args-type.generator';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
+import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
 import { GraphQLRootTypeFieldConfigMap } from 'src/engine/api/graphql/workspace-schema-builder/types/graphql-field-config-map.types';
 import { computeObjectMetadataObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-object-type-key.util';
 import { getResolverArgs } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-resolver-args.util';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
 
 @Injectable()
@@ -29,7 +30,7 @@ export class RootTypeGenerator {
   ) {}
 
   buildAndStore(
-    objectMetadataCollection: ObjectMetadataEntity[],
+    context: SchemaGenerationContext,
     workspaceResolverMethodNames: readonly WorkspaceResolverBuilderMethodNames[],
     objectTypeName: GqlOperation,
   ) {
@@ -47,6 +48,10 @@ export class RootTypeGenerator {
       );
     }
 
+    const objectMetadataCollection = Object.values(
+      context.flatObjectMetadataMaps.byId,
+    ).filter(isDefined);
+
     this.gqlTypesStorage.addGqlType(
       objectTypeName,
       new GraphQLObjectType({
@@ -60,7 +65,7 @@ export class RootTypeGenerator {
   }
 
   private generateFields(
-    objectMetadataCollection: ObjectMetadataEntity[],
+    objectMetadataCollection: FlatObjectMetadata[],
     workspaceResolverMethodNames: readonly WorkspaceResolverBuilderMethodNames[],
   ): GraphQLRootTypeFieldConfigMap {
     const fieldConfigMap: GraphQLRootTypeFieldConfigMap = {};

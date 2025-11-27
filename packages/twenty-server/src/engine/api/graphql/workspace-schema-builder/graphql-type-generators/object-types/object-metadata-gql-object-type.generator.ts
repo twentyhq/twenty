@@ -16,11 +16,11 @@ import { GraphQLOutputTypeFieldConfigMap } from 'src/engine/api/graphql/workspac
 import { computeCompositeFieldObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-object-type-key.util';
 import { computeEnumFieldGqlTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-enum-field-gql-type-key.util';
 import { computeObjectMetadataObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-object-type-key.util';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
@@ -35,29 +35,33 @@ export class ObjectMetadataGqlObjectTypeGenerator {
     private readonly typeMapperService: TypeMapperService,
   ) {}
 
-  public buildAndStore(objectMetadata: ObjectMetadataEntity) {
+  public buildAndStore(
+    flatObjectMetadata: FlatObjectMetadata,
+    fields: FlatFieldMetadata[],
+  ) {
     const kind = ObjectTypeDefinitionKind.Plain;
     const key = computeObjectMetadataObjectTypeKey(
-      objectMetadata.nameSingular,
+      flatObjectMetadata.nameSingular,
       ObjectTypeDefinitionKind.Plain,
     );
 
     this.gqlTypesStorage.addGqlType(
       key,
       new GraphQLObjectType({
-        name: `${pascalCase(objectMetadata.nameSingular)}${kind.toString()}`,
-        description: objectMetadata.description,
-        fields: this.generateFields(objectMetadata),
+        name: `${pascalCase(flatObjectMetadata.nameSingular)}${kind.toString()}`,
+        description: flatObjectMetadata.description,
+        fields: this.generateFields(flatObjectMetadata.nameSingular, fields),
       }),
     );
   }
 
   private generateFields(
-    objectMetadata: ObjectMetadataEntity,
+    objectNameSingular: string,
+    fields: FlatFieldMetadata[],
   ): GraphQLOutputTypeFieldConfigMap {
     const allGeneratedFields: GraphQLOutputTypeFieldConfigMap = {};
 
-    for (const field of objectMetadata.fields) {
+    for (const field of fields) {
       const typeFactoryOptions = {
         nullable: field.isNullable ?? undefined,
         isArray: field.type === FieldMetadataType.MULTI_SELECT,
@@ -66,13 +70,11 @@ export class ObjectMetadataGqlObjectTypeGenerator {
         isIdField: false,
       };
 
-      if (isMorphOrRelationFieldMetadataType(field.type)) {
+      if (isMorphOrRelationFlatFieldMetadata(field)) {
         const relationFieldObjectType =
           this.relationFieldMetadataGqlObjectTypeGenerator.generateRelationFieldObjectType(
             {
-              fieldMetadata: field as FieldMetadataEntity<
-                FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
-              >,
+              fieldMetadata: field,
               typeOptions: typeFactoryOptions,
             },
           );
@@ -96,7 +98,7 @@ export class ObjectMetadataGqlObjectTypeGenerator {
           !isDefined(compositeFieldObjectType) ||
           isInputObjectType(compositeFieldObjectType)
         ) {
-          const message = `Could not find a GraphQL output type for ${field.name} composite field metadata of object ${objectMetadata.nameSingular}`;
+          const message = `Could not find a GraphQL output type for ${field.name} composite field metadata of object ${objectNameSingular}`;
 
           this.logger.error(message, {
             type: field.type,
@@ -109,7 +111,7 @@ export class ObjectMetadataGqlObjectTypeGenerator {
         type = compositeFieldObjectType;
       } else if (isEnumFieldMetadataType(field.type)) {
         const enumFieldEnumTypeKey = computeEnumFieldGqlTypeKey(
-          objectMetadata.nameSingular,
+          objectNameSingular,
           field.name,
         );
 
@@ -120,7 +122,7 @@ export class ObjectMetadataGqlObjectTypeGenerator {
           !isDefined(enumFieldEnumType) ||
           isInputObjectType(enumFieldEnumType)
         ) {
-          const message = `Could not find a GraphQL output type for ${field.name} enum field metadata of object ${objectMetadata.nameSingular}`;
+          const message = `Could not find a GraphQL output type for ${field.name} enum field metadata of object ${objectNameSingular}`;
 
           this.logger.error(message, {
             type: field.type,
@@ -138,7 +140,7 @@ export class ObjectMetadataGqlObjectTypeGenerator {
         );
 
         if (!isDefined(type)) {
-          const message = `Could not find a GraphQL output type for ${field.name} scalar field metadata of object ${objectMetadata.nameSingular}`;
+          const message = `Could not find a GraphQL output type for ${field.name} scalar field metadata of object ${objectNameSingular}`;
 
           this.logger.error(message, {
             type: field.type,

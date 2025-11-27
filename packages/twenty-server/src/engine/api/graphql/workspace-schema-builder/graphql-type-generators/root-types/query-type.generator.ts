@@ -6,7 +6,7 @@ import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/work
 import { GqlOperation } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-operation.enum';
 import { RootTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/root-type.generator';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
 
 @Injectable()
 export class QueryTypeGenerator {
@@ -15,9 +15,9 @@ export class QueryTypeGenerator {
     private readonly gqlTypesStorage: GqlTypesStorage,
   ) {}
 
-  async buildAndStore(objectMetadataCollection: ObjectMetadataEntity[]) {
+  async buildAndStore(context: SchemaGenerationContext) {
     return this.rootTypeGenerator.buildAndStore(
-      objectMetadataCollection,
+      context,
       workspaceResolverBuilderMethodNames.queries,
       GqlOperation.Query,
     );

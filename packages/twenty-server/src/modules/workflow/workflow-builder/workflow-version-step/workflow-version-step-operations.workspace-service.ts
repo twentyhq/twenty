@@ -6,6 +6,7 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -26,7 +27,6 @@ import {
   type WorkflowEmptyAction,
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
   outputSchema: {},
   errorHandlingOptions: {
@@ -460,14 +460,15 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           // @ts-expect-error legacy noImplicitAny
           isValidUuid(response[key].id)
         ) {
-          const objectMetadataInfo =
-            await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+          const { flatObjectMetadata, flatFieldMetadataMaps } =
+            await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
               field.settings.objectName,
               workspaceId,
             );
 
-          const relationFieldsNames = Object.values(
-            objectMetadataInfo.objectMetadataItemWithFieldsMaps.fieldsById,
+          const relationFieldsNames = getFlatFieldsFromFlatObjectMetadata(
+            flatObjectMetadata,
+            flatFieldMetadataMaps,
           )
             .filter((field) => field.type === FieldMetadataType.RELATION)
             .map((field) => field.name);
