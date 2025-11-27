@@ -152,22 +152,16 @@ export class CalendarEventParticipantService {
       savedParticipants.push(...savedParticipantsChunk.raw);
     }
 
-    const savedParticipantsWithoutNulls = savedParticipants.filter(
-      (
-        participant,
-      ): participant is typeof participant & {
-        handle: string;
-        displayName: string;
-      } => isDefined(participant.handle) && isDefined(participant.displayName),
-    );
-
     if (calendarChannel.isContactAutoCreationEnabled) {
       await this.messageQueueService.add<CreateCompanyAndContactJobData>(
         CreateCompanyAndContactJob.name,
         {
           workspaceId,
           connectedAccount,
-          contactsToCreate: savedParticipantsWithoutNulls,
+          contactsToCreate: savedParticipants.map((participant) => ({
+            handle: participant.handle ?? '',
+            displayName: participant.displayName ?? participant.handle ?? '',
+          })),
           source: FieldActorSource.CALENDAR,
         },
       );
