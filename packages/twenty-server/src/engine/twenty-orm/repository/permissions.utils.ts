@@ -215,9 +215,9 @@ export const validateQueryIsPermittedOrThrow = ({
   objectIdByNameSingular,
   shouldBypassPermissionChecks,
 }: ValidateQueryIsPermittedOrThrowArgs) => {
-    if (shouldBypassPermissionChecks) {
-      return;
-    }
+  if (shouldBypassPermissionChecks) {
+    return;
+  }
 
   const { mainEntity, operationType, isSubQuery } =
     getTargetEntityAndOperationType(expressionMap);
@@ -268,8 +268,11 @@ export const validateQueryIsPermittedOrThrow = ({
           }
         });
 
-      expressionMapSelectsOnMainEntity = selectsWithoutJoinedAliases;
-    })
+        return acc;
+      }, []);
+    } else {
+      updatedColumns = Object.keys(valuesSet ?? {});
+    }
   }
 
   validateOperationIsPermittedOrThrow({
