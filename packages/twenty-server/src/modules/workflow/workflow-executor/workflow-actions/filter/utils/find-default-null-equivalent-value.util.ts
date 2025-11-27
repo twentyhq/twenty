@@ -7,11 +7,15 @@ import {
 import { isNullEquivalentArrayFieldValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/is-null-equivalent-array-field-value.util';
 import { isNullEquivalentTextFieldValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/is-null-equivalent-text-field-value.util';
 
-export const findDefaultNullEquivalentValue = (
-  value: unknown,
-  fieldMetadataType: string,
-  key?: string,
-) => {
+export const findDefaultNullEquivalentValue = ({
+  value,
+  fieldMetadataType,
+  key,
+}: {
+  value: unknown;
+  fieldMetadataType: string;
+  key?: string;
+}) => {
   switch (fieldMetadataType) {
     case FieldMetadataType.TEXT:
       return isNullEquivalentTextFieldValue(value)

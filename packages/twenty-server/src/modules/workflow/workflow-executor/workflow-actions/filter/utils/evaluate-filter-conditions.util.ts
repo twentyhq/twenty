@@ -159,11 +159,11 @@ function evaluateTextAndArrayFilter(
   filterType: string,
   compositeFieldSubFieldName: string | undefined,
 ): boolean {
-  const nullEquivalentRightValue = findDefaultNullEquivalentValue(
-    filter.rightOperand,
-    filterType,
-    compositeFieldSubFieldName,
-  );
+  const nullEquivalentRightValue = findDefaultNullEquivalentValue({
+    value: filter.rightOperand,
+    fieldMetadataType: filterType,
+    key: compositeFieldSubFieldName,
+  });
 
   switch (filter.operand) {
     case ViewFilterOperand.CONTAINS:

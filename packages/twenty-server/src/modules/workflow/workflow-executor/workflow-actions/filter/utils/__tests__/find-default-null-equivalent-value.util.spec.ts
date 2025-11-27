@@ -11,19 +11,28 @@ describe('findDefaultNullEquivalentValue', () => {
     describe('TEXT', () => {
       it('should return DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE for null', () => {
         expect(
-          findDefaultNullEquivalentValue(null, FieldMetadataType.TEXT),
+          findDefaultNullEquivalentValue({
+            value: null,
+            fieldMetadataType: FieldMetadataType.TEXT,
+          }),
         ).toBe(DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE);
       });
 
       it('should return DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE for empty string', () => {
-        expect(findDefaultNullEquivalentValue('', FieldMetadataType.TEXT)).toBe(
-          DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE,
-        );
+        expect(
+          findDefaultNullEquivalentValue({
+            value: '',
+            fieldMetadataType: FieldMetadataType.TEXT,
+          }),
+        ).toBe(DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE);
       });
 
       it('should return undefined for non-null equivalent value', () => {
         expect(
-          findDefaultNullEquivalentValue('value', FieldMetadataType.TEXT),
+          findDefaultNullEquivalentValue({
+            value: 'value',
+            fieldMetadataType: FieldMetadataType.TEXT,
+          }),
         ).toBeUndefined();
       });
     });
@@ -31,13 +40,19 @@ describe('findDefaultNullEquivalentValue', () => {
     describe('ARRAY', () => {
       it('should return DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE for null', () => {
         expect(
-          findDefaultNullEquivalentValue(null, FieldMetadataType.ARRAY),
+          findDefaultNullEquivalentValue({
+            value: null,
+            fieldMetadataType: FieldMetadataType.ARRAY,
+          }),
         ).toBe(DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE);
       });
 
       it('should return DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE for empty array', () => {
         expect(
-          findDefaultNullEquivalentValue([], FieldMetadataType.ARRAY),
+          findDefaultNullEquivalentValue({
+            value: [],
+            fieldMetadataType: FieldMetadataType.ARRAY,
+          }),
         ).toBe(DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE);
       });
     });
@@ -46,13 +61,21 @@ describe('findDefaultNullEquivalentValue', () => {
   describe('ACTOR', () => {
     it('should return text default for name', () => {
       expect(
-        findDefaultNullEquivalentValue('', FieldMetadataType.ACTOR, 'name'),
+        findDefaultNullEquivalentValue({
+          value: '',
+          fieldMetadataType: FieldMetadataType.ACTOR,
+          key: 'name',
+        }),
       ).toBe(DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE);
     });
 
     it('should return undefined for context', () => {
       expect(
-        findDefaultNullEquivalentValue({}, FieldMetadataType.ACTOR, 'context'),
+        findDefaultNullEquivalentValue({
+          value: {},
+          fieldMetadataType: FieldMetadataType.ACTOR,
+          key: 'context',
+        }),
       ).toBe(undefined);
     });
   });
@@ -67,7 +90,11 @@ describe('findDefaultNullEquivalentValue', () => {
       'addressCountry',
     ])('should return text default for %s', (key) => {
       expect(
-        findDefaultNullEquivalentValue('', FieldMetadataType.ADDRESS, key),
+        findDefaultNullEquivalentValue({
+          value: '',
+          fieldMetadataType: FieldMetadataType.ADDRESS,
+          key,
+        }),
       ).toBe(DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE);
     });
   });
@@ -75,21 +102,21 @@ describe('findDefaultNullEquivalentValue', () => {
   describe('EMAILS', () => {
     it('should return text default for primaryEmail', () => {
       expect(
-        findDefaultNullEquivalentValue(
-          '',
-          FieldMetadataType.EMAILS,
-          'primaryEmail',
-        ),
+        findDefaultNullEquivalentValue({
+          value: '',
+          fieldMetadataType: FieldMetadataType.EMAILS,
+          key: 'primaryEmail',
+        }),
       ).toBe(DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE);
     });
 
     it('should return array default for additionalEmails', () => {
       expect(
-        findDefaultNullEquivalentValue(
-          [],
-          FieldMetadataType.EMAILS,
-          'additionalEmails',
-        ),
+        findDefaultNullEquivalentValue({
+          value: [],
+          fieldMetadataType: FieldMetadataType.EMAILS,
+          key: 'additionalEmails',
+        }),
       ).toBe(DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE);
     });
   });
@@ -97,21 +124,21 @@ describe('findDefaultNullEquivalentValue', () => {
   describe('LINKS', () => {
     it('should return text default for primaryLinkUrl', () => {
       expect(
-        findDefaultNullEquivalentValue(
-          '',
-          FieldMetadataType.LINKS,
-          'primaryLinkUrl',
-        ),
+        findDefaultNullEquivalentValue({
+          value: '',
+          fieldMetadataType: FieldMetadataType.LINKS,
+          key: 'primaryLinkUrl',
+        }),
       ).toBe(DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE);
     });
 
     it('should return text default for primaryLinkLabel', () => {
       expect(
-        findDefaultNullEquivalentValue(
-          '',
-          FieldMetadataType.LINKS,
-          'primaryLinkLabel',
-        ),
+        findDefaultNullEquivalentValue({
+          value: '',
+          fieldMetadataType: FieldMetadataType.LINKS,
+          key: 'primaryLinkLabel',
+        }),
       ).toBe(DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE);
     });
   });
@@ -119,31 +146,31 @@ describe('findDefaultNullEquivalentValue', () => {
   describe('PHONES', () => {
     it('should return text default for primaryPhoneNumber', () => {
       expect(
-        findDefaultNullEquivalentValue(
-          '',
-          FieldMetadataType.PHONES,
-          'primaryPhoneNumber',
-        ),
+        findDefaultNullEquivalentValue({
+          value: '',
+          fieldMetadataType: FieldMetadataType.PHONES,
+          key: 'primaryPhoneNumber',
+        }),
       ).toBe(DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE);
     });
 
     it('should return text default for primaryPhoneCountryCode', () => {
       expect(
-        findDefaultNullEquivalentValue(
-          '',
-          FieldMetadataType.PHONES,
-          'primaryPhoneCountryCode',
-        ),
+        findDefaultNullEquivalentValue({
+          value: '',
+          fieldMetadataType: FieldMetadataType.PHONES,
+          key: 'primaryPhoneCountryCode',
+        }),
       ).toBe(DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE);
     });
 
     it('should return text default for primaryPhoneCallingCode', () => {
       expect(
-        findDefaultNullEquivalentValue(
-          '',
-          FieldMetadataType.PHONES,
-          'primaryPhoneCallingCode',
-        ),
+        findDefaultNullEquivalentValue({
+          value: '',
+          fieldMetadataType: FieldMetadataType.PHONES,
+          key: 'primaryPhoneCallingCode',
+        }),
       ).toBe(DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE);
     });
   });
@@ -151,21 +178,21 @@ describe('findDefaultNullEquivalentValue', () => {
   describe('RICH_TEXT_V2', () => {
     it('should return undefined for blocknote', () => {
       expect(
-        findDefaultNullEquivalentValue(
-          {},
-          FieldMetadataType.RICH_TEXT_V2,
-          'blocknote',
-        ),
+        findDefaultNullEquivalentValue({
+          value: {},
+          fieldMetadataType: FieldMetadataType.RICH_TEXT_V2,
+          key: 'blocknote',
+        }),
       ).toBe(undefined);
     });
 
     it('should return text default for markdown', () => {
       expect(
-        findDefaultNullEquivalentValue(
-          '',
-          FieldMetadataType.RICH_TEXT_V2,
-          'markdown',
-        ),
+        findDefaultNullEquivalentValue({
+          value: '',
+          fieldMetadataType: FieldMetadataType.RICH_TEXT_V2,
+          key: 'markdown',
+        }),
       ).toBe(DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE);
     });
   });
@@ -175,7 +202,11 @@ describe('findDefaultNullEquivalentValue', () => {
       'should return text default for %s',
       (key) => {
         expect(
-          findDefaultNullEquivalentValue('', FieldMetadataType.FULL_NAME, key),
+          findDefaultNullEquivalentValue({
+            value: '',
+            fieldMetadataType: FieldMetadataType.FULL_NAME,
+            key,
+          }),
         ).toBe(DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE);
       },
     );
@@ -184,12 +215,19 @@ describe('findDefaultNullEquivalentValue', () => {
 
 it('should return undefined for unknown type', () => {
   expect(
-    findDefaultNullEquivalentValue(null, 'UNKNOWN' as any),
+    findDefaultNullEquivalentValue({
+      value: null,
+      fieldMetadataType: 'UNKNOWN' as any,
+    }),
   ).toBeUndefined();
 });
 
 it('should return undefined for unknown composite key', () => {
   expect(
-    findDefaultNullEquivalentValue('', FieldMetadataType.ACTOR, 'unknown'),
+    findDefaultNullEquivalentValue({
+      value: '',
+      fieldMetadataType: FieldMetadataType.ACTOR,
+      key: 'unknown',
+    }),
   ).toBeUndefined();
 });
