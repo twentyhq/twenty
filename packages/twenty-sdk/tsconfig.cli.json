@@ -11,9 +11,6 @@
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
     "declarationMap": true,
-    "paths": {
-      "@/cli/*": ["./cli/*"]
-    }
   },
   "include": ["src/cli/**/*.ts"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts", "**/*.e2e-spec.ts", "**/__tests__/**"]
