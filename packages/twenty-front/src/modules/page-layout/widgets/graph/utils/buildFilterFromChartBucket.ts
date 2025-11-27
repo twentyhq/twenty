@@ -9,7 +9,11 @@ import {
   ObjectRecordGroupByDateGranularity,
   ViewFilterOperand,
 } from 'twenty-shared/types';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import {
+  getFilterTypeFromFieldType,
+  isDefined,
+  isFieldMetadataDateKind,
+} from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type ChartFilter = {
@@ -65,10 +69,7 @@ export const buildFilterFromChartBucket = ({
     ];
   }
 
-  if (
-    fieldMetadataItem.type === FieldMetadataType.DATE ||
-    fieldMetadataItem.type === FieldMetadataType.DATE_TIME
-  ) {
+  if (isFieldMetadataDateKind(fieldMetadataItem.type)) {
     const parsedBucketDate = new Date(String(bucketRawValue));
 
     if (isNaN(parsedBucketDate.getTime())) {
@@ -80,7 +81,7 @@ export const buildFilterFromChartBucket = ({
     }
 
     if (
-      !dateGranularity ||
+      !isDefined(dateGranularity) ||
       dateGranularity === ObjectRecordGroupByDateGranularity.DAY ||
       dateGranularity === ObjectRecordGroupByDateGranularity.NONE
     ) {
