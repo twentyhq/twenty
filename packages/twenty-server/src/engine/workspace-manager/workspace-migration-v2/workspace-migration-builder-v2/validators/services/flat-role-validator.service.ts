@@ -151,10 +151,12 @@ export class FlatRoleValidatorService {
       flatEntityUpdates,
       property: 'label',
     });
+
     if (isDefined(flatRoleLabelUpdate)) {
       const existingRoles = Object.values(optimisticFlatRoleMaps.byId).filter(
         isDefined,
       );
+
       validationResult.errors.push(
         ...validateRoleLabelUniqueness({
           label: flatRoleLabelUpdate.to,

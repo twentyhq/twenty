@@ -24,4 +24,3 @@ export const validateRoleIsEditable = ({
 
   return errors;
 };
-

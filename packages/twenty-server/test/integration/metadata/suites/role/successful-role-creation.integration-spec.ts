@@ -56,4 +56,3 @@ describe('Role creation should succeed', () => {
     createdRoleId = data.createOneRole.id;
   });
 });
-

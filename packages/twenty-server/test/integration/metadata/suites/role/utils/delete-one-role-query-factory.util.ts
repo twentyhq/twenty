@@ -9,10 +9,10 @@ export const deleteOneRoleQueryFactory = ({
   input,
 }: PerformMetadataQueryParams<DeleteOneRoleFactoryInput>) => ({
   query: gql`
-        mutation DeleteOneRole($idToDelete: UUID!) {
-          deleteOneRole(roleId: $idToDelete)
-      }
-      `,
+    mutation DeleteOneRole($idToDelete: UUID!) {
+      deleteOneRole(roleId: $idToDelete)
+    }
+  `,
   variables: {
     idToDelete: input.idToDelete,
   },
