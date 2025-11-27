@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isNonEmptyString, isNull } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { ImapFlow } from 'imapflow';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
@@ -84,11 +84,7 @@ export class ImapClientProvider {
     let client: ImapFlow | null = null;
     let timeoutId: NodeJS.Timeout | null = null;
 
-    const isNonEmptyStringUsername = isNonEmptyString(
-      connectionParameters.IMAP?.username,
-    );
-
-    if (isNull(connectionParameters.IMAP?.username)) {
+    if (!isDefined(connectionParameters.IMAP?.username)) {
       throw new CustomError(
         'Username is required',
         MessageImportManagerExceptionCode.IMAP_USERNAME_REQUIRED,
@@ -107,7 +103,7 @@ export class ImapClientProvider {
         port: connectionParameters.IMAP?.port || 993,
         secure: connectionParameters.IMAP?.secure,
         auth: {
-          user: isNonEmptyStringUsername
+          user: isNonEmptyString(connectionParameters.IMAP?.username)
             ? connectionParameters.IMAP?.username
             : connectedAccount.handle,
           pass: connectionParameters.IMAP?.password || '',
