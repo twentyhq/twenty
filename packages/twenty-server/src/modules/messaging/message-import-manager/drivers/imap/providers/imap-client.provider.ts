@@ -3,10 +3,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ImapFlow } from 'imapflow';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageImportManagerExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/message-import-manager.exception';
 
 type ConnectedAccountIdentifier = Pick<
   ConnectedAccountWorkspaceEntity,
@@ -83,6 +84,12 @@ export class ImapClientProvider {
     let client: ImapFlow | null = null;
     let timeoutId: NodeJS.Timeout | null = null;
 
+    if (!isDefined(connectionParameters.IMAP?.username)) {
+      throw new CustomError(
+        'Handle is required',
+        MessageImportManagerExceptionCode.IMAP_USERNAME_REQUIRED,
+      );
+    }
     try {
       client = new ImapFlow({
         host: connectionParameters.IMAP?.host || '',
