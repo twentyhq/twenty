@@ -3,6 +3,7 @@ import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pa
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
+import { buildChartGroupByFieldConfigUpdate } from '@/command-menu/pages/page-layout/utils/buildChartGroupByFieldConfigUpdate';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
@@ -22,7 +23,6 @@ import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { BarChartGroupMode } from '~/generated/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type ChartGroupByFieldSelectionDropdownContentBaseProps<
@@ -93,48 +93,18 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
     return null;
   }
 
-  const buildConfigUpdate = (
-    fieldId: string | null,
-    subFieldName: string | null,
-  ) => {
-    const isSecondaryAxis =
-      fieldMetadataIdKey === 'secondaryAxisGroupByFieldMetadataId';
-    const baseConfig = {
-      [fieldMetadataIdKey]: fieldId,
-      [subFieldNameKey]: subFieldName,
-    };
-
-    if (!isSecondaryAxis) {
-      return baseConfig;
-    }
-
-    if (configuration.__typename === 'BarChartConfiguration') {
-      return {
-        ...baseConfig,
-        groupMode: isDefined(fieldId)
-          ? (configuration.groupMode ?? BarChartGroupMode.STACKED)
-          : null,
-      };
-    }
-
-    if (configuration.__typename === 'LineChartConfiguration') {
-      return {
-        ...baseConfig,
-        isStacked: isDefined(fieldId)
-          ? (configuration.isStacked ?? true)
-          : null,
-      };
-    }
-
-    return baseConfig;
-  };
-
   const handleSelectField = (fieldMetadataItem: FieldMetadataItem) => {
     if (isCompositeFieldType(fieldMetadataItem.type)) {
       setSelectedCompositeField(fieldMetadataItem);
     } else {
       updateCurrentWidgetConfig({
-        configToUpdate: buildConfigUpdate(fieldMetadataItem.id, null),
+        configToUpdate: buildChartGroupByFieldConfigUpdate({
+          configuration,
+          fieldMetadataIdKey,
+          subFieldNameKey,
+          fieldId: fieldMetadataItem.id,
+          subFieldName: null,
+        }),
       });
       closeDropdown();
     }
@@ -142,7 +112,13 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
 
   const handleSelectNone = () => {
     updateCurrentWidgetConfig({
-      configToUpdate: buildConfigUpdate(null, null),
+      configToUpdate: buildChartGroupByFieldConfigUpdate({
+        configuration,
+        fieldMetadataIdKey,
+        subFieldNameKey,
+        fieldId: null,
+        subFieldName: null,
+      }),
     });
     closeDropdown();
   };
@@ -157,10 +133,13 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
     }
 
     updateCurrentWidgetConfig({
-      configToUpdate: buildConfigUpdate(
-        selectedCompositeField.id,
+      configToUpdate: buildChartGroupByFieldConfigUpdate({
+        configuration,
+        fieldMetadataIdKey,
+        subFieldNameKey,
+        fieldId: selectedCompositeField.id,
         subFieldName,
-      ),
+      }),
     });
     closeDropdown();
   };
