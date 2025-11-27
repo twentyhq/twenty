@@ -2,9 +2,14 @@ import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import * as path from 'path';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 import { copyBaseApplicationProject } from '../utils/app-template';
 import kebabCase from 'lodash.kebabcase';
 import { convertToLabel } from '../utils/convert-to-label';
+import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
+
+const execPromise = promisify(exec);
 
 export class AppInitCommand {
   async execute(directory?: string): Promise<void> {
@@ -25,7 +30,14 @@ export class AppInitCommand {
         appDirectory,
       });
 
-      this.logSuccess(appDirectory);
+      try {
+        await execPromise('yarn', { cwd: appDirectory });
+      } catch (error: any) {
+        console.error(chalk.red('yarn install failed:'), error.stdout);
+        process.exit(1);
+      }
+
+      await this.logSuccess(appDirectory);
     } catch (error) {
       console.error(
         chalk.red('Initialization failed:'),
@@ -78,8 +90,8 @@ export class AppInitCommand {
     const appDescription = description.trim();
 
     const appDirectory = directory
-      ? path.join(process.cwd(), kebabCase(directory))
-      : path.join(process.cwd(), kebabCase(appName));
+      ? path.join(CURRENT_EXECUTION_DIRECTORY, kebabCase(directory))
+      : path.join(CURRENT_EXECUTION_DIRECTORY, kebabCase(appName));
 
     return { appName, appDisplayName, appDirectory, appDescription };
   }
@@ -114,7 +126,7 @@ export class AppInitCommand {
     console.log(chalk.green('✅ Application created successfully!'));
     console.log('');
     console.log(chalk.blue('Next steps:'));
-    console.log(`  cd ${appDirectory}`);
+    console.log(`  cd ${appDirectory.split('/').reverse()[0] ?? ''}`);
     console.log('  twenty app dev');
   }
 }
