@@ -5,15 +5,15 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
-import { type FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
 export class QueryRunnerArgsFactory {
   constructor(
-    private readonly recordPositionService: RecordPositionService,
     private readonly recordInputTransformerService: RecordInputTransformerService,
   ) {}
 
@@ -21,11 +21,17 @@ export class QueryRunnerArgsFactory {
     T extends ObjectRecordFilter | undefined,
   >(
     filter: T,
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ): T {
     if (!isDefined(filter)) {
       return filter;
     }
+
+    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
 
     const overrideFilter = (filterObject: ObjectRecordFilter) => {
       return Object.entries(filterObject).reduce((acc, [key, value]) => {
@@ -42,7 +48,8 @@ export class QueryRunnerArgsFactory {
           acc[key] = this.transformFilterValueByType(
             key,
             value,
-            objectMetadataItemWithFieldMaps,
+            fieldIdByName,
+            flatFieldMetadataMaps,
           );
         }
 
@@ -57,11 +64,13 @@ export class QueryRunnerArgsFactory {
     key: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+    fieldIdByName: Record<string, string>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ) {
-    const fieldMetadataId = objectMetadataItemWithFieldMaps.fieldIdByName[key];
-    const fieldMetadata =
-      objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
+    const fieldMetadataId = fieldIdByName[key];
+    const fieldMetadata = fieldMetadataId
+      ? flatFieldMetadataMaps.byId[fieldMetadataId]
+      : undefined;
 
     if (!fieldMetadata) {
       return value;
@@ -90,18 +99,22 @@ export class QueryRunnerArgsFactory {
     key: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
-    fieldMetadataMapByName: FieldMetadataMap,
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+    fieldIdByName: Record<string, string>,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ) {
-    const fieldMetadata = fieldMetadataMapByName[key];
+    const fieldMetadata = flatFieldMetadataMaps.byId[fieldIdByName[key]];
 
     if (!fieldMetadata) {
       return value;
     }
 
-    return this.recordInputTransformerService.process({
+    const processed = await this.recordInputTransformerService.process({
       recordInput: { [key]: value },
-      objectMetadataMapItem: objectMetadataItemWithFieldMaps,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
     });
+
+    return processed[key] ?? value;
   }
 }

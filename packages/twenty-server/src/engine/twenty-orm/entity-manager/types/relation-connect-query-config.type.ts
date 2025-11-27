@@ -1,6 +1,4 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
-
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 export type UniqueFieldCondition = [field: string, value: string];
 
@@ -11,7 +9,7 @@ export type RelationConnectQueryConfig = {
   recordToConnectConditions: UniqueConstraintCondition[];
   relationFieldName: string;
   connectFieldName: string;
-  uniqueConstraintFields: FieldMetadataEntity<FieldMetadataType>[];
+  uniqueConstraintFields: FlatFieldMetadata[];
   recordToConnectConditionByEntityIndex: {
     [entityIndex: number]: UniqueConstraintCondition;
   };

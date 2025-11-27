@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared/types';
 import { type EntitySchemaRelationOptions } from 'typeorm';
 
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { determineSchemaRelationDetails } from 'src/engine/twenty-orm/utils/determine-schema-relation-details.util';
-import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 type EntitySchemaRelationMap = {
   [key: string]: EntitySchemaRelationOptions;
@@ -16,52 +17,47 @@ type EntitySchemaRelationMap = {
 export class EntitySchemaRelationFactory {
   constructor() {}
 
-  async create(
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-    objectMetadataMaps: ObjectMetadataMaps,
-  ): Promise<EntitySchemaRelationMap> {
+  create(
+    flatObjectMetadata: FlatObjectMetadata,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  ): EntitySchemaRelationMap {
     const entitySchemaRelationMap: EntitySchemaRelationMap = {};
 
-    const fieldMetadataCollection = Object.values(
-      objectMetadataItemWithFieldMaps.fieldsById,
+    const flatFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
     );
 
-    for (const fieldMetadata of fieldMetadataCollection) {
-      const isRelation =
-        isFieldMetadataEntityOfType(
-          fieldMetadata,
-          FieldMetadataType.RELATION,
-        ) ||
-        isFieldMetadataEntityOfType(
-          fieldMetadata,
-          FieldMetadataType.MORPH_RELATION,
-        );
-
-      if (!isRelation) {
+    for (const flatFieldMetadata of flatFieldMetadatas) {
+      if (!isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
         continue;
       }
 
-      if (!fieldMetadata.settings) {
+      if (!flatFieldMetadata.settings) {
         throw new Error(
-          `Field metadata settings are missing for field ${fieldMetadata.name}`,
+          `Field metadata settings are missing for field ${flatFieldMetadata.name}`,
         );
       }
 
-      const schemaRelationDetails = await determineSchemaRelationDetails(
-        fieldMetadata,
-        objectMetadataMaps,
+      const schemaRelationDetails = determineSchemaRelationDetails(
+        flatFieldMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
       );
 
       const targetObjectMetadata =
-        objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
+        flatObjectMetadataMaps.byId[
+          flatFieldMetadata.relationTargetObjectMetadataId
+        ];
 
       if (!targetObjectMetadata) {
         throw new Error(
-          `Target object metadata not found for field ${fieldMetadata.name}`,
+          `Target object metadata not found for field ${flatFieldMetadata.name}`,
         );
       }
 
-      entitySchemaRelationMap[fieldMetadata.name] = {
+      entitySchemaRelationMap[flatFieldMetadata.name] = {
         type: schemaRelationDetails.relationType,
         target: schemaRelationDetails.target,
         inverseSide: schemaRelationDetails.inverseSide,

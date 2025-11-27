@@ -1,19 +1,20 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getFieldMetadataIdToColumnNamesMap } from 'src/engine/twenty-orm/utils/get-field-metadata-id-to-column-names-map.util';
 
 describe('getFieldMetadataIdToColumnNamesMap', () => {
-  const createMockObjectMetadataItemWithFieldMaps = (
-    fieldsById: Record<string, any>,
-  ): ObjectMetadataItemWithFieldMaps =>
+  const createMockFlatObjectMetadata = (
+    fieldMetadataIds: string[],
+  ): FlatObjectMetadata =>
     ({
       id: 'test-object-id',
       nameSingular: 'test',
       namePlural: 'tests',
       labelSingular: 'Test',
       labelPlural: 'Tests',
-      description: 'Test object',
       icon: 'IconTest',
       targetTableName: 'test',
       isCustom: false,
@@ -22,53 +23,85 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
       isSystem: false,
       isAuditLogged: false,
       isSearchable: false,
-      labelIdentifierFieldMetadataId: '',
-      imageIdentifierFieldMetadataId: '',
       workspaceId: 'test-workspace-id',
-      indexMetadatas: [],
-      fieldsById,
-      fieldIdByName: {},
-      fieldIdByJoinColumnName: {},
-    }) as unknown as ObjectMetadataItemWithFieldMaps;
+      universalIdentifier: 'test-object-id',
+      indexMetadataIds: [],
+      fieldMetadataIds,
+      viewIds: [],
+      applicationId: null,
+      isLabelSyncedWithName: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      shortcut: null,
+      description: null,
+      standardOverrides: null,
+      isUIReadOnly: false,
+      standardId: null,
+      labelIdentifierFieldMetadataId: null,
+      imageIdentifierFieldMetadataId: null,
+      duplicateCriteria: null,
+    }) as FlatObjectMetadata;
 
-  const createMockFieldMetadata = (
+  const createMockFlatFieldMetadata = (
     id: string,
     name: string,
     type: FieldMetadataType,
-  ) => ({
-    id,
-    name,
-    type,
-    label: name,
-    objectMetadataId: 'test-object-id',
-    isLabelSyncedWithName: true,
-    isNullable: true,
-    isUnique: false,
-    workspaceId: 'test-workspace-id',
-    createdAt: new Date(),
-    updatedAt: new Date(),
+  ): FlatFieldMetadata =>
+    ({
+      id,
+      name,
+      type,
+      label: name,
+      objectMetadataId: 'test-object-id',
+      isLabelSyncedWithName: true,
+      isNullable: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      universalIdentifier: id,
+      viewFieldIds: [],
+      viewFilterIds: [],
+      viewGroupIds: [],
+      kanbanAggregateOperationViewIds: [],
+      calendarViewIds: [],
+      applicationId: null,
+    }) as unknown as FlatFieldMetadata;
+
+  const buildFlatFieldMetadataMaps = (
+    fields: FlatFieldMetadata[],
+  ): FlatEntityMaps<FlatFieldMetadata> => ({
+    byId: fields.reduce(
+      (acc, field) => {
+        acc[field.id] = field;
+
+        return acc;
+      },
+      {} as Record<string, FlatFieldMetadata>,
+    ),
+    idByUniversalIdentifier: fields.reduce(
+      (acc, field) => {
+        acc[field.universalIdentifier] = field.id;
+
+        return acc;
+      },
+      {} as Record<string, string>,
+    ),
+    universalIdentifiersByApplicationId: {},
   });
 
   describe('with simple field types', () => {
     it('should return a map with single column name for simple field types', () => {
-      const fieldsById = {
-        'field-1': createMockFieldMetadata(
-          'field-1',
-          'name',
-          FieldMetadataType.TEXT,
-        ),
-        'field-2': createMockFieldMetadata(
-          'field-2',
-          'age',
-          FieldMetadataType.NUMBER,
-        ),
-      };
-
-      const objectMetadataItemWithFieldMaps =
-        createMockObjectMetadataItemWithFieldMaps(fieldsById);
+      const fields = [
+        createMockFlatFieldMetadata('field-1', 'name', FieldMetadataType.TEXT),
+        createMockFlatFieldMetadata('field-2', 'age', FieldMetadataType.NUMBER),
+      ];
+      const flatObjectMetadata = createMockFlatObjectMetadata(
+        fields.map((f) => f.id),
+      );
+      const flatFieldMetadataMaps = buildFlatFieldMetadataMaps(fields);
 
       const result = getFieldMetadataIdToColumnNamesMap(
-        objectMetadataItemWithFieldMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
       );
 
       expect(result.get('field-1')).toEqual(['name']);
@@ -79,19 +112,21 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
 
   describe('with composite field types', () => {
     it('should return multiple column names for FULL_NAME composite type', () => {
-      const fieldsById = {
-        'field-1': createMockFieldMetadata(
+      const fields = [
+        createMockFlatFieldMetadata(
           'field-1',
           'fullName',
           FieldMetadataType.FULL_NAME,
         ),
-      };
-
-      const objectMetadataItemWithFieldMaps =
-        createMockObjectMetadataItemWithFieldMaps(fieldsById);
+      ];
+      const flatObjectMetadata = createMockFlatObjectMetadata(
+        fields.map((f) => f.id),
+      );
+      const flatFieldMetadataMaps = buildFlatFieldMetadataMaps(fields);
 
       const result = getFieldMetadataIdToColumnNamesMap(
-        objectMetadataItemWithFieldMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
       );
 
       expect(result.get('field-1')).toEqual([
@@ -102,19 +137,21 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     });
 
     it('should return multiple column names for CURRENCY composite type', () => {
-      const fieldsById = {
-        'field-1': createMockFieldMetadata(
+      const fields = [
+        createMockFlatFieldMetadata(
           'field-1',
           'price',
           FieldMetadataType.CURRENCY,
         ),
-      };
-
-      const objectMetadataItemWithFieldMaps =
-        createMockObjectMetadataItemWithFieldMaps(fieldsById);
+      ];
+      const flatObjectMetadata = createMockFlatObjectMetadata(
+        fields.map((f) => f.id),
+      );
+      const flatFieldMetadataMaps = buildFlatFieldMetadataMaps(fields);
 
       const result = getFieldMetadataIdToColumnNamesMap(
-        objectMetadataItemWithFieldMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
       );
 
       expect(result.get('field-1')).toEqual([
@@ -125,29 +162,27 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     });
 
     it('should handle multiple composite fields', () => {
-      const fieldsById = {
-        'field-1': createMockFieldMetadata(
+      const fields = [
+        createMockFlatFieldMetadata(
           'field-1',
           'fullName',
           FieldMetadataType.FULL_NAME,
         ),
-        'field-2': createMockFieldMetadata(
+        createMockFlatFieldMetadata(
           'field-2',
           'price',
           FieldMetadataType.CURRENCY,
         ),
-        'field-3': createMockFieldMetadata(
-          'field-3',
-          'name',
-          FieldMetadataType.TEXT,
-        ),
-      };
-
-      const objectMetadataItemWithFieldMaps =
-        createMockObjectMetadataItemWithFieldMaps(fieldsById);
+        createMockFlatFieldMetadata('field-3', 'name', FieldMetadataType.TEXT),
+      ];
+      const flatObjectMetadata = createMockFlatObjectMetadata(
+        fields.map((f) => f.id),
+      );
+      const flatFieldMetadataMaps = buildFlatFieldMetadataMaps(fields);
 
       const result = getFieldMetadataIdToColumnNamesMap(
-        objectMetadataItemWithFieldMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
       );
 
       expect(result.get('field-1')).toEqual([
@@ -165,34 +200,28 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
 
   describe('with mixed field types', () => {
     it('should handle both simple and composite field types', () => {
-      const fieldsById = {
-        'field-1': createMockFieldMetadata(
-          'field-1',
-          'name',
-          FieldMetadataType.TEXT,
-        ),
-        'field-2': createMockFieldMetadata(
+      const fields = [
+        createMockFlatFieldMetadata('field-1', 'name', FieldMetadataType.TEXT),
+        createMockFlatFieldMetadata(
           'field-2',
           'fullName',
           FieldMetadataType.FULL_NAME,
         ),
-        'field-3': createMockFieldMetadata(
-          'field-3',
-          'age',
-          FieldMetadataType.NUMBER,
-        ),
-        'field-4': createMockFieldMetadata(
+        createMockFlatFieldMetadata('field-3', 'age', FieldMetadataType.NUMBER),
+        createMockFlatFieldMetadata(
           'field-4',
           'price',
           FieldMetadataType.CURRENCY,
         ),
-      };
-
-      const objectMetadataItemWithFieldMaps =
-        createMockObjectMetadataItemWithFieldMaps(fieldsById);
+      ];
+      const flatObjectMetadata = createMockFlatObjectMetadata(
+        fields.map((f) => f.id),
+      );
+      const flatFieldMetadataMaps = buildFlatFieldMetadataMaps(fields);
 
       const result = getFieldMetadataIdToColumnNamesMap(
-        objectMetadataItemWithFieldMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
       );
 
       expect(result.get('field-1')).toEqual(['name']);

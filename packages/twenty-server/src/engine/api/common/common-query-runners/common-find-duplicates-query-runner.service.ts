@@ -25,7 +25,10 @@ import {
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
 export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -40,8 +43,9 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
   ): Promise<CommonFindDuplicatesOutputItem[]> {
     const {
       repository,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       commonQueryParser,
       authContext,
       workspaceDataSource,
@@ -49,7 +53,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
     } = queryRunnerContext;
 
     const existingRecordsQueryBuilder = repository.createQueryBuilder(
-      objectMetadataItemWithFieldMaps.nameSingular,
+      flatObjectMetadata.nameSingular,
     );
 
     let objectRecords: Partial<ObjectRecord>[] = [];
@@ -57,8 +61,9 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
     const columnsToSelect = buildColumnsToSelect({
       select: args.selectedFieldsResult.select,
       relations: args.selectedFieldsResult.relations,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     });
 
     if (isDefined(args.ids) && args.ids.length > 0) {
@@ -76,7 +81,9 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       await Promise.all(
         objectRecords.map(async (record) => {
           const duplicateConditions = buildDuplicateConditions(
-            objectMetadataItemWithFieldMaps,
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
             [record],
             record.id,
           );
@@ -93,12 +100,12 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
           }
 
           const duplicateRecordsQueryBuilder = repository.createQueryBuilder(
-            objectMetadataItemWithFieldMaps.nameSingular,
+            flatObjectMetadata.nameSingular,
           );
 
           commonQueryParser.applyFilterToBuilder(
             duplicateRecordsQueryBuilder,
-            objectMetadataItemWithFieldMaps.nameSingular,
+            flatObjectMetadata.nameSingular,
             duplicateConditions,
           );
 
@@ -132,8 +139,9 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
 
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
-        objectMetadataMaps,
-        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        parentObjectMetadataItem: flatObjectMetadata,
         parentObjectRecords: findDuplicatesOutput.flatMap(
           (item) => item.records,
         ),
@@ -157,7 +165,13 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
     args: CommonInput<FindDuplicatesQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<FindDuplicatesQueryArgs>> {
-    const { authContext, objectMetadataItemWithFieldMaps } = queryRunnerContext;
+    const { authContext, flatObjectMetadata, flatFieldMetadataMaps } =
+      queryRunnerContext;
+
+    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
 
     return {
       ...args,
@@ -166,15 +180,17 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
           this.queryRunnerArgsFactory.overrideValueByFieldMetadata(
             'id',
             id,
-            objectMetadataItemWithFieldMaps.fieldsById,
-            objectMetadataItemWithFieldMaps,
+            fieldIdByName,
+            flatObjectMetadata,
+            flatFieldMetadataMaps,
           ),
         ) ?? [],
       ),
       data: await this.dataArgProcessor.process({
         partialRecordInputs: args.data,
         authContext,
-        objectMetadataItemWithFieldMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
         shouldBackfillPositionIfUndefined: false,
       }),
     };
@@ -182,8 +198,9 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
 
   async processQueryResult(
     queryResult: CommonFindDuplicatesOutputItem[],
-    objectMetadataItemId: string,
-    objectMetadataMaps: ObjectMetadataMaps,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     authContext: WorkspaceAuthContext,
   ): Promise<CommonFindDuplicatesOutputItem[]> {
     const processedResults = await Promise.all(
@@ -192,8 +209,9 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
           ...result,
           records: await this.commonResultGettersService.processRecordArray(
             result.records,
-            objectMetadataItemId,
-            objectMetadataMaps,
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
             authContext.workspace.id,
           ),
         };

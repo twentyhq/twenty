@@ -22,14 +22,17 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
 
       const {
         authContext,
-        objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        objectIdByNameSingular,
       } = await this.buildCommonOptions(request);
 
       const selectedFields = await this.computeSelectedFields({
         depth,
-        objectMetadataMapItem: objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
         authContext,
       });
 
@@ -38,14 +41,16 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
           { data, ids, selectedFields },
           {
             authContext,
-            objectMetadataMaps,
-            objectMetadataItemWithFieldMaps,
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            objectIdByNameSingular,
           },
         );
 
       return this.formatRestResponse(
         duplicateConnections,
-        objectMetadataItemWithFieldMaps.nameSingular,
+        flatObjectMetadata.nameSingular,
       );
     } catch (error) {
       return workspaceQueryRunnerRestApiExceptionHandler(error);

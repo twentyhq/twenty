@@ -1,4 +1,7 @@
-import { type ObjectsPermissions } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type ObjectsPermissions,
+} from 'twenty-shared/types';
 import {
   type DeepPartial,
   type FindManyOptions,
@@ -12,6 +15,7 @@ import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interf
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
@@ -57,13 +61,64 @@ describe('WorkspaceRepository', () => {
       clear: jest.fn(),
     } as unknown as jest.Mocked<WorkspaceEntityManager>;
 
+    const mockFieldMetadata: FlatFieldMetadata = {
+      id: 'test-field-id',
+      name: 'id',
+      type: FieldMetadataType.UUID,
+      objectMetadataId: 'test-metadata-id',
+      isActive: true,
+      isNullable: false,
+      isUnique: true,
+      isSystem: true,
+      isCustom: false,
+      isUIReadOnly: false,
+      isLabelSyncedWithName: false,
+      label: 'ID',
+      description: 'Record ID',
+      icon: 'IconKey',
+      workspaceId: 'test-workspace-id',
+      universalIdentifier: 'id-field-universal-id',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      defaultValue: null,
+      options: null,
+      settings: null,
+      morphId: null,
+      standardId: null,
+      standardOverrides: null,
+      applicationId: null,
+      relationTargetFieldMetadataId: null,
+      relationTargetObjectMetadataId: null,
+      calendarViewIds: [],
+      viewFilterIds: [],
+      viewGroupIds: [],
+      kanbanAggregateOperationViewIds: [],
+      viewFieldIds: [],
+    };
+
     mockInternalContext = {
       workspaceId: 'test-workspace-id',
-      objectMetadataMaps: {
-        idByNameSingular: {},
+      flatObjectMetadataMaps: {
+        byId: {},
+        idByUniversalIdentifier: {},
+        universalIdentifiersByApplicationId: {},
       },
+      flatFieldMetadataMaps: {
+        byId: {
+          'test-field-id': mockFieldMetadata,
+        },
+        idByUniversalIdentifier: {},
+        universalIdentifiersByApplicationId: {},
+      },
+      flatIndexMaps: {
+        byId: {},
+        idByUniversalIdentifier: {},
+        universalIdentifiersByApplicationId: {},
+      },
+      objectIdByNameSingular: {},
       featureFlagsMap: {},
-    } as WorkspaceInternalContext;
+      eventEmitterService: {} as unknown,
+    } as unknown as WorkspaceInternalContext;
 
     mockFeatureFlagMap = Object.values(FeatureFlagKey).reduce(
       (acc, key) => ({ ...acc, [key]: false }),
@@ -97,6 +152,7 @@ describe('WorkspaceRepository', () => {
         id: 'test-metadata-id',
         nameSingular: 'test-entity',
         namePlural: 'test-entities',
+        fieldMetadataIds: ['test-field-id'],
         fieldIdByName: {
           id: 'test-field-id',
         },
