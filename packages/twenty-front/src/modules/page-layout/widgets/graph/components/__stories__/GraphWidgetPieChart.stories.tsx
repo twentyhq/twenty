@@ -268,25 +268,27 @@ export const Catalog: Story = {
           name: 'slices',
           values: [2, 3, 5],
           props: (sliceCount: number) => {
-            const dataMap: Record<number, Array<{ id: string; value: number }>> =
-              {
-                2: [
-                  { id: 'Yes', value: 65 },
-                  { id: 'No', value: 35 },
-                ],
-                3: [
-                  { id: 'Gold', value: 45 },
-                  { id: 'Silver', value: 35 },
-                  { id: 'Bronze', value: 20 },
-                ],
-                5: [
-                  { id: 'Item 1', value: 30 },
-                  { id: 'Item 2', value: 25 },
-                  { id: 'Item 3', value: 20 },
-                  { id: 'Item 4', value: 15 },
-                  { id: 'Item 5', value: 10 },
-                ],
-              };
+            const dataMap: Record<
+              number,
+              Array<{ id: string; value: number }>
+            > = {
+              2: [
+                { id: 'Yes', value: 65 },
+                { id: 'No', value: 35 },
+              ],
+              3: [
+                { id: 'Gold', value: 45 },
+                { id: 'Silver', value: 35 },
+                { id: 'Bronze', value: 20 },
+              ],
+              5: [
+                { id: 'Item 1', value: 30 },
+                { id: 'Item 2', value: 25 },
+                { id: 'Item 3', value: 20 },
+                { id: 'Item 4', value: 15 },
+                { id: 'Item 5', value: 10 },
+              ],
+            };
 
             return {
               data: dataMap[sliceCount] || dataMap[3],
