@@ -55838,7 +55838,7 @@ __metadata:
     lodash.kebabcase: "npm:^4.1.1"
     lodash.startcase: "npm:^4.4.0"
     tsx: "npm:^4.7.0"
-    typescript: "npm:5.9.2"
+    typescript: "npm:^5.9.2"
     uuid: "npm:^13.0.0"
     vite: "npm:^7.0.0"
     vite-plugin-dts: "npm:3.8.1"
