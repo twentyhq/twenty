@@ -105,10 +105,14 @@ export const GraphWidgetPieChart = ({
     const tooltipData = createTooltipData(datum);
     if (!isDefined(tooltipData)) return null;
 
+    const handleTooltipClick: (() => void) | undefined = isDefined(onSliceClick)
+      ? () => handleSliceClick(datum)
+      : undefined;
+
     return (
       <GraphWidgetTooltip
         items={[tooltipData.tooltipItem]}
-        onGraphWidgetTooltipClick={() => handleSliceClick(datum)}
+        onGraphWidgetTooltipClick={handleTooltipClick}
       />
     );
   };
