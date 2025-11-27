@@ -80,6 +80,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
         ? (chartConfiguration.primaryAxisDateGranularity ??
           GRAPH_DEFAULT_DATE_GRANULARITY)
         : undefined,
+      isNestedDateField: isFieldXNestedDate,
     }),
   );
 
@@ -104,6 +105,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
           ? (chartConfiguration.secondaryAxisGroupByDateGranularity ??
             GRAPH_DEFAULT_DATE_GRANULARITY)
           : undefined,
+        isNestedDateField: isFieldYNestedDate,
       }),
     );
   }

@@ -106,12 +106,12 @@ export const getGroupByOrderBy = ({
 
         const direction = mapOrderByToDirection(graphOrderBy);
 
-        if (isNestedFieldDate && isDefined(dateGranularity)) {
+        if (isNestedFieldDate) {
           return {
             [groupByField.name]: {
               [nestedFieldName]: {
                 orderBy: direction,
-                granularity: dateGranularity,
+                granularity: dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY,
               },
             },
           };
