@@ -46,12 +46,16 @@
     },
     "lint": {
       "options": {
-        "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
+        "lintFilePatterns": [
+          "{projectRoot}/src/**/*.{ts,json}"
+        ],
         "maxWarnings": 0
       },
       "configurations": {
         "ci": {
-          "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
+          "lintFilePatterns": [
+            "{projectRoot}/src/**/*.{ts,json}"
+          ],
           "maxWarnings": 0
         },
         "fix": {}
@@ -59,7 +63,9 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "{projectRoot}/jest.config.mjs"
       },
@@ -70,6 +76,27 @@
           "watchAll": false
         }
       }
+    },
+    "test:e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-sdk",
+        "commands": [
+          "npx wait-on http://localhost:3000/healthz --timeout 600000 --interval 1000 --log && NODE_ENV=test npx jest --config ./jest.e2e.config.ts"
+        ]
+      },
+      "parallel": false,
+      "dependsOn": [
+        "build",
+        {
+          "target": "database:reset",
+          "projects": "twenty-server"
+        },
+        {
+          "target": "start:ci-if-needed",
+          "projects": "twenty-server"
+        }
+      ]
     }
   }
 }
