@@ -111,6 +111,9 @@ describe('buildDateRangeFiltersForGranularity', () => {
         'createdAt',
       );
 
+      expect(result).toHaveLength(2);
+      expect(result[0].operand).toBe(ViewFilterOperand.IS_AFTER);
+      expect(result[1].operand).toBe(ViewFilterOperand.IS_BEFORE);
       expect(result[0].value).toMatch(/^\d{4}-\d{2}-\d{2}T/);
       expect(result[1].value).toMatch(/^\d{4}-\d{2}-\d{2}T/);
     });
