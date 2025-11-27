@@ -1,10 +1,10 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
+import { PieChartCenterMetric } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer';
 import { PIE_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartHoverBrightness';
 import { PIE_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMargins';
 import { usePieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartData';
-import { usePieChartHandlers } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartHandlers';
 import { usePieChartTooltip } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartTooltip';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
@@ -25,11 +25,10 @@ type GraphWidgetPieChartProps = {
   id: string;
   onSliceClick?: (datum: PieChartDataItem) => void;
   showDataLabels?: boolean;
+  showCenterMetric?: boolean;
 } & GraphValueFormatOptions;
 
-const emptyStateData: PieChartDataItem[] = [
-  { id: 'empty', label: '', value: 1 },
-];
+const emptyStateData: PieChartDataItem[] = [{ id: 'empty', value: 1 }];
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -41,8 +40,10 @@ const StyledContainer = styled.div`
 `;
 
 const StyledPieChartWrapper = styled.div<{ preventHover: boolean }>`
-  width: 100%;
+  container-type: size;
   height: 100%;
+  position: relative;
+  width: 100%;
 
   svg g path {
     transition: filter 0.15s ease-in-out;
@@ -65,6 +66,7 @@ export const GraphWidgetPieChart = ({
   customFormatter,
   onSliceClick,
   showDataLabels = false,
+  showCenterMetric = false,
 }: GraphWidgetPieChartProps) => {
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
@@ -77,17 +79,9 @@ export const GraphWidgetPieChart = ({
     customFormatter,
   };
 
-  const {
-    hoveredSliceId,
-    setHoveredSliceId,
-    handleSliceClick,
-    hasClickableItems,
-  } = usePieChartHandlers({ data, onSliceClick });
-
   const { enrichedData } = usePieChartData({
     data,
     colorRegistry,
-    hoveredSliceId,
   });
 
   const { createTooltipData } = usePieChartTooltip({
@@ -95,6 +89,12 @@ export const GraphWidgetPieChart = ({
     formatOptions,
     displayType,
   });
+
+  const handleSliceClick = (datum: ComputedDatum<PieChartDataItem>) => {
+    if (isDefined(onSliceClick)) {
+      onSliceClick(datum.data);
+    }
+  };
 
   const renderTooltip = ({ datum }: PieTooltipProps<PieChartDataItem>) => {
     const tooltipData = createTooltipData(datum);
@@ -121,7 +121,7 @@ export const GraphWidgetPieChart = ({
   return (
     <StyledContainer id={id}>
       <GraphWidgetChartContainer
-        $isClickable={!hasNoData && hasClickableItems}
+        $isClickable={!hasNoData && isDefined(onSliceClick)}
         $cursorSelector="svg g path"
       >
         <StyledPieChartWrapper preventHover={hasNoData}>
@@ -135,11 +135,7 @@ export const GraphWidgetPieChart = ({
             enableArcLinkLabels={showDataLabels && !hasNoData}
             enableArcLabels={false}
             tooltip={hasNoData ? () => null : renderTooltip}
-            onClick={hasNoData ? undefined : handleSliceClick}
-            onMouseEnter={
-              hasNoData ? undefined : (datum) => setHoveredSliceId(datum.id)
-            }
-            onMouseLeave={hasNoData ? undefined : () => setHoveredSliceId(null)}
+            onClick={hasNoData ? undefined : (datum) => handleSliceClick(datum)}
             layers={['arcs', 'arcLinkLabels']}
             arcLinkLabel={(datum: ComputedDatum<PieChartDataItem>) => {
               const tooltipData = createTooltipData(datum);
@@ -161,13 +157,18 @@ export const GraphWidgetPieChart = ({
               },
             }}
           />
+          <PieChartCenterMetric
+            data={data}
+            formatOptions={formatOptions}
+            show={showCenterMetric && !hasNoData}
+          />
         </StyledPieChartWrapper>
       </GraphWidgetChartContainer>
       <GraphWidgetLegend
         show={showLegend && !hasNoData}
         items={enrichedData.map((item) => ({
           id: item.id,
-          label: item.label || item.id,
+          label: item.id,
           color: item.colorScheme.solid,
         }))}
       />

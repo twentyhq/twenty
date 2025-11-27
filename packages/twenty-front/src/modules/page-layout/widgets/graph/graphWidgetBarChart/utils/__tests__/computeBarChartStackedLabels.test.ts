@@ -1,5 +1,4 @@
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
-import { type ComputedBarDatum } from '@nivo/bar';
+import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
 import { computeBarChartStackedLabels } from '../computeBarChartStackedLabels';
 
 const createMockBar = (
@@ -10,7 +9,7 @@ const createMockBar = (
   y: number,
   width: number,
   height: number,
-): ComputedBarDatum<BarChartDataItem> =>
+): ComputedBarDatum<BarDatum> =>
   ({
     id,
     key: id,
@@ -25,11 +24,11 @@ const createMockBar = (
     color: 'blue',
     label: String(indexValue),
     formattedValue: String(value),
-  }) as unknown as ComputedBarDatum<BarChartDataItem>;
+  }) as unknown as ComputedBarDatum<BarDatum>;
 
 describe('computeBarChartStackedLabels (essential cases)', () => {
   it('returns total for single index with all positive values', () => {
-    const bars: ComputedBarDatum<BarChartDataItem>[] = [
+    const bars: ComputedBarDatum<BarDatum>[] = [
       createMockBar('series1', 'Jan', 100, 50, 200, 30, 100),
       createMockBar('series2', 'Jan', 50, 50, 100, 30, 100),
       createMockBar('series3', 'Jan', 25, 50, 50, 30, 50),
@@ -48,7 +47,7 @@ describe('computeBarChartStackedLabels (essential cases)', () => {
   });
 
   it('returns total for single index with all negative values', () => {
-    const bars: ComputedBarDatum<BarChartDataItem>[] = [
+    const bars: ComputedBarDatum<BarDatum>[] = [
       createMockBar('series1', 'Jan', -100, 50, 400, 30, 100),
       createMockBar('series2', 'Jan', -50, 50, 500, 30, 100),
       createMockBar('series3', 'Jan', -25, 50, 575, 30, 50),
@@ -67,7 +66,7 @@ describe('computeBarChartStackedLabels (essential cases)', () => {
   });
 
   it('returns total for single index with mixed positive/negative (net positive)', () => {
-    const bars: ComputedBarDatum<BarChartDataItem>[] = [
+    const bars: ComputedBarDatum<BarDatum>[] = [
       createMockBar('series1', 'Jan', 100, 50, 200, 30, 100),
       createMockBar('series2', 'Jan', -30, 50, 370, 30, 70),
       createMockBar('series3', 'Jan', 20, 50, 250, 30, 50),
@@ -86,7 +85,7 @@ describe('computeBarChartStackedLabels (essential cases)', () => {
   });
 
   it('returns total for single index with mixed positive/negative (net negative)', () => {
-    const bars: ComputedBarDatum<BarChartDataItem>[] = [
+    const bars: ComputedBarDatum<BarDatum>[] = [
       createMockBar('series1', 'Jan', -100, 50, 400, 30, 100),
       createMockBar('series2', 'Jan', 30, 50, 270, 30, 70),
       createMockBar('series3', 'Jan', 20, 50, 280, 30, 50),
@@ -105,7 +104,7 @@ describe('computeBarChartStackedLabels (essential cases)', () => {
   });
 
   it('returns multiple totals for multiple indices', () => {
-    const bars: ComputedBarDatum<BarChartDataItem>[] = [
+    const bars: ComputedBarDatum<BarDatum>[] = [
       createMockBar('series1', 'Jan', 100, 50, 200, 30, 100),
       createMockBar('series2', 'Jan', 50, 50, 100, 30, 100),
       createMockBar('series1', 'Feb', 75, 150, 225, 30, 75),
@@ -139,7 +138,7 @@ describe('computeBarChartStackedLabels (essential cases)', () => {
   });
 
   it('handles single bar per index (no stacking)', () => {
-    const bars: ComputedBarDatum<BarChartDataItem>[] = [
+    const bars: ComputedBarDatum<BarDatum>[] = [
       createMockBar('series1', 'Jan', 100, 50, 200, 30, 100),
       createMockBar('series1', 'Feb', 150, 150, 150, 30, 150),
       createMockBar('series1', 'Mar', -50, 250, 400, 30, 50),
@@ -179,7 +178,7 @@ describe('computeBarChartStackedLabels (essential cases)', () => {
   });
 
   it('handles zero values correctly', () => {
-    const bars: ComputedBarDatum<BarChartDataItem>[] = [
+    const bars: ComputedBarDatum<BarDatum>[] = [
       createMockBar('series1', 'Jan', 100, 50, 200, 30, 100),
       createMockBar('series2', 'Jan', 0, 50, 300, 30, 0),
       createMockBar('series3', 'Jan', -100, 50, 400, 30, 100),
@@ -203,7 +202,7 @@ describe('computeBarChartStackedLabels (essential cases)', () => {
   });
 
   it('handles numeric index values (not just strings)', () => {
-    const bars: ComputedBarDatum<BarChartDataItem>[] = [
+    const bars: ComputedBarDatum<BarDatum>[] = [
       createMockBar('series1', 2024, 100, 50, 200, 30, 100),
       createMockBar('series2', 2024, 50, 50, 100, 30, 100),
       createMockBar('series1', 2025, 75, 150, 225, 30, 75),
@@ -221,7 +220,7 @@ describe('computeBarChartStackedLabels (essential cases)', () => {
   });
 
   it('tracks minimum Y position correctly for positive totals', () => {
-    const bars: ComputedBarDatum<BarChartDataItem>[] = [
+    const bars: ComputedBarDatum<BarDatum>[] = [
       createMockBar('series1', 'Jan', 50, 100, 250, 30, 50),
       createMockBar('series2', 'Jan', 100, 100, 150, 30, 100),
       createMockBar('series3', 'Jan', 25, 100, 325, 30, 25),
@@ -233,7 +232,7 @@ describe('computeBarChartStackedLabels (essential cases)', () => {
   });
 
   it('tracks maximum bottom Y position correctly for negative totals', () => {
-    const bars: ComputedBarDatum<BarChartDataItem>[] = [
+    const bars: ComputedBarDatum<BarDatum>[] = [
       createMockBar('series1', 'Jan', -50, 100, 350, 30, 50),
       createMockBar('series2', 'Jan', -100, 100, 400, 30, 100),
       createMockBar('series3', 'Jan', -25, 100, 325, 30, 25),
@@ -245,7 +244,7 @@ describe('computeBarChartStackedLabels (essential cases)', () => {
   });
 
   it('calculates center positions correctly', () => {
-    const bars: ComputedBarDatum<BarChartDataItem>[] = [
+    const bars: ComputedBarDatum<BarDatum>[] = [
       createMockBar('series1', 'Jan', 100, 50, 200, 40, 100),
       createMockBar('series2', 'Jan', 50, 60, 150, 20, 50),
     ];
