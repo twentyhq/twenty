@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { MemberEmailField } from '@/settings/members/components/MemberEmailField';
 import { MemberNameFields } from '@/settings/members/components/MemberNameFields';
-import { MemberPictureUploader } from '@/settings/members/components/MemberPictureUploader';
+import { WorkspaceMemberPictureUploader } from '@/settings/workspace-member/components/WorkspaceMemberPictureUploader';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { t } from '@lingui/core/macro';
 import { H2Title } from 'twenty-ui/display';
@@ -44,8 +44,8 @@ export const MemberInfosTab = ({
     <>
       <Section>
         <H2Title title={t`Picture`} />
-        <MemberPictureUploader
-          memberId={member.id}
+        <WorkspaceMemberPictureUploader
+          workspaceMemberId={member.id}
           avatarUrl={avatarUrl}
           onAvatarUpdated={setAvatarUrl}
         />
@@ -54,7 +54,7 @@ export const MemberInfosTab = ({
       <Section>
         <H2Title
           title={t`Name`}
-          description={t`Your name as it will be displayed`}
+          description={t`As it will be displayed in the workspace`}
         />
         <StyledNameRow>
           <MemberNameFields

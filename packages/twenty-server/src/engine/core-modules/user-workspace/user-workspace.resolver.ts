@@ -17,7 +17,7 @@ import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/cons
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @Resolver()
-export class WorkspaceMemberResolver {
+export class UserWorkspaceResolver {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
   @Mutation(() => SignedFileDTO)
