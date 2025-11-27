@@ -17,10 +17,6 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 export class UpdateRoleActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
   'update_role',
 ) {
-  constructor() {
-    super();
-  }
-
   optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
     allFlatEntityMaps,

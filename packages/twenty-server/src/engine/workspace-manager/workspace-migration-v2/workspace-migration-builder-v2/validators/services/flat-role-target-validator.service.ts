@@ -16,8 +16,6 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 
 @Injectable()
 export class FlatRoleTargetValidatorService {
-  constructor() {}
-
   validateFlatRoleTargetCreation({
     flatEntityToValidate: flatRoleTargetToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {

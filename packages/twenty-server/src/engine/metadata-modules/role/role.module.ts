@@ -49,7 +49,6 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     WorkspaceMigrationV2Module,
     UserWorkspaceModule,
     FileModule,
-    ApplicationModule,
   ],
   providers: [
     RoleService,

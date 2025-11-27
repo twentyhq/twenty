@@ -212,7 +212,6 @@ export class RoleService {
 
     const defaultRoleId = workspace?.defaultRoleId;
 
-    // TODO: Move to role builder validator service
     if (!isDefined(defaultRoleId)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
@@ -232,7 +231,6 @@ export class RoleService {
         },
       );
     }
-    ///
 
     await this.assignDefaultRoleToMembersWithRoleToDelete({
       roleId,

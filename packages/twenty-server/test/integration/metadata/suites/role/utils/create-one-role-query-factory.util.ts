@@ -30,8 +30,8 @@ export const createOneRoleQueryFactory = ({
         mutation CreateOneRole($createRoleInput: CreateRoleInput!) {
           createOneRole(createRoleInput: $createRoleInput) {
             ${gqlFields}
+          }
         }
-      }
       `,
   variables: {
     createRoleInput: input,

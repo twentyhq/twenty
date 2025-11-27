@@ -30,14 +30,19 @@ export class ApiKeyService {
     const { roleId, ...apiKeyFields } = apiKeyData;
     const savedApiKey = await this.apiKeyRepository.save(apiKeyFields);
 
-    await this.roleTargetService.create({
-      createRoleTargetInput: {
-        roleId,
-        targetId: savedApiKey.id,
-        targetMetadataForeignKey: 'apiKeyId',
-      },
-      workspaceId: savedApiKey.workspaceId,
-    });
+    try {
+      await this.roleTargetService.create({
+        createRoleTargetInput: {
+          roleId,
+          targetId: savedApiKey.id,
+          targetMetadataForeignKey: 'apiKeyId',
+        },
+        workspaceId: savedApiKey.workspaceId,
+      });
+    } catch (error) {
+      await this.apiKeyRepository.delete(savedApiKey.id);
+      throw error;
+    }
 
     return savedApiKey;
   }

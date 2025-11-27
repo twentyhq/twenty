@@ -1,5 +1,5 @@
-import { v4 } from 'uuid';
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
@@ -29,7 +29,7 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
   return {
     id,
     standardId: null,
-    label: label,
+    label,
     description: description ?? null,
     icon: icon ?? null,
     canUpdateAllSettings: createRoleInput.canUpdateAllSettings ?? false,
