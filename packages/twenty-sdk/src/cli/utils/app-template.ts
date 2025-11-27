@@ -15,10 +15,7 @@ export const copyBaseApplicationProject = async ({
   appDescription: string;
   appDirectory: string;
 }) => {
-  await createBasePackageJson({
-    appName,
-    appDirectory,
-  });
+  await createPackageJson({ appName, appDirectory });
 
   await createYarnLock(appDirectory);
 
@@ -86,7 +83,7 @@ const createApplicationConfig = async ({
   description?: string;
   appDirectory: string;
 }) => {
-  const content = `import { type ApplicationConfig } from 'twenty-sdk/application';
+  const content = `import { type ApplicationConfig } from 'twenty-sdk';
 
 const config: ApplicationConfig = {
   universalIdentifier: '${v4()}',
@@ -100,7 +97,7 @@ export default config;
   await fs.writeFile(join(appDirectory, 'application.config.ts'), content);
 };
 
-const createBasePackageJson = async ({
+const createPackageJson = async ({
   appName,
   appDirectory,
 }: {
