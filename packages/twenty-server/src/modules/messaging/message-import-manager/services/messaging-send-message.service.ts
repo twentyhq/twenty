@@ -3,13 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { google } from 'googleapis';
 import MailComposer from 'nodemailer/lib/mail-composer';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, CustomError, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
+import { MessageImportManagerExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/message-import-manager.exception';
 import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
 
 interface SendMessageInput {
@@ -140,6 +141,13 @@ export class MessagingSendMessageService {
         const smtpClient =
           await this.smtpClientProvider.getSmtpClient(connectedAccount);
 
+        if (!isDefined(handle)) {
+          throw new CustomError(
+            'Handle is required',
+            MessageImportManagerExceptionCode.HANDLE_REQUIRED,
+          );
+        }
+
         const mail = new MailComposer({
           from: handle,
           to: sendMessageInput.to,
@@ -178,7 +186,7 @@ export class MessagingSendMessageService {
             (messageFolder) => messageFolder.isSentFolder,
           );
 
-          if (isDefined(sentFolder)) {
+          if (isDefined(sentFolder) && isDefined(sentFolder.name)) {
             await imapClient.append(sentFolder.name, messageBuffer);
           }
 

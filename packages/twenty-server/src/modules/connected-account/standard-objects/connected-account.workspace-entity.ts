@@ -113,7 +113,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconMail',
   })
   @WorkspaceIsNullable()
-  handleAliases: string[] | null;
+  handleAliases: string | null;
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.scopes,
