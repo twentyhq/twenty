@@ -8,10 +8,13 @@ import { copyBaseApplicationProject } from '../utils/app-template';
 import kebabCase from 'lodash.kebabcase';
 import { convertToLabel } from '../utils/convert-to-label';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
+import { GenerateService } from '../services/generate.service';
 
 const execPromise = promisify(exec);
 
 export class AppInitCommand {
+  private generateService = new GenerateService();
+
   async execute(directory?: string): Promise<void> {
     try {
       const { appName, appDisplayName, appDirectory, appDescription } =
@@ -36,6 +39,8 @@ export class AppInitCommand {
         console.error(chalk.red('yarn install failed:'), error.stdout);
         process.exit(1);
       }
+
+      await this.generateService.generateClient(appDirectory);
 
       await this.logSuccess(appDirectory);
     } catch (error) {
