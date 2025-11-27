@@ -18,7 +18,7 @@ export const formatDateByGranularity = (
         day: 'numeric',
       });
     case ObjectRecordGroupByDateGranularity.WEEK: {
-      const weekStart = date;
+      const weekStart = new Date(date);
       const weekEnd = new Date(date);
       weekEnd.setDate(weekEnd.getDate() + 6);
 
