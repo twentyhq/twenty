@@ -14,12 +14,10 @@ import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/h
 import { useGetConfigToUpdateAfterGraphTypeChange } from '@/command-menu/pages/page-layout/hooks/useUpdateGraphTypeConfig';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
+import { getChartLimitMessage } from '@/command-menu/pages/page-layout/utils/getChartLimitMessage';
 import { shouldHideChartSetting } from '@/command-menu/pages/page-layout/utils/shouldHideChartSetting';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
-import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMaximumNumberOfDataPoints.constant';
-import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
 import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/graph/states/hasWidgetTooManyGroupsComponentState';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -146,6 +144,14 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
     primaryAxisField?.type === FieldMetadataType.DATE ||
     primaryAxisField?.type === FieldMetadataType.DATE_TIME;
 
+  const primaryAxisDateGranularity =
+    configuration.__typename === 'BarChartConfiguration' ||
+    configuration.__typename === 'LineChartConfiguration'
+      ? configuration.primaryAxisDateGranularity
+      : configuration.__typename === 'PieChartConfiguration'
+        ? configuration.dateGranularity
+        : null;
+
   return (
     <StyledCommandMenuContainer>
       <CommandMenuList commandGroups={[]} selectableItemIds={visibleItemIds}>
@@ -155,14 +161,11 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
         />
         {hasWidgetTooManyGroups && (
           <StyledSidePanelInformationBanner
-            message={
-              currentGraphType === GraphType.LINE
-                ? t`Undisplayed data: max ${LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart.`
-                : currentGraphType === GraphType.VERTICAL_BAR ||
-                    currentGraphType === GraphType.HORIZONTAL_BAR
-                  ? t`Undisplayed data: max ${BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart.`
-                  : t`Undisplayed data: max ${PIE_CHART_MAXIMUM_NUMBER_OF_SLICES} slices per chart.`
-            }
+            message={getChartLimitMessage({
+              graphType: currentGraphType,
+              isPrimaryAxisDate,
+              primaryAxisDateGranularity,
+            })}
             tooltipMessage={
               isPrimaryAxisDate
                 ? t`Consider adding a filter or changing the date granularity to display more data.`
