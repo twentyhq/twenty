@@ -1,4 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { buildDateFilterForDayGranularity } from '@/page-layout/widgets/graph/utils/buildDateFilterForDayGranularity';
 import { buildDateRangeFiltersForGranularity } from '@/page-layout/widgets/graph/utils/buildDateRangeFiltersForGranularity';
@@ -67,6 +69,13 @@ export const buildFilterFromChartBucket = ({
         value: '',
       },
     ];
+  }
+
+  if (
+    isFieldRelation(fieldMetadataItem) ||
+    isFieldMorphRelation(fieldMetadataItem)
+  ) {
+    return [];
   }
 
   if (isFieldMetadataDateKind(fieldMetadataItem.type)) {
