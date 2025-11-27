@@ -1,6 +1,7 @@
 import { isString } from '@sniptt/guards';
 import { type DataSource, type QueryRunner } from 'typeorm';
 
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -56,9 +57,10 @@ const buildObjectMetadataItemsFromFlatMaps = (
   return Object.values(flatObjectMetadataMaps.byId)
     .filter((flatObjectMetadata) => flatObjectMetadata !== undefined)
     .map((flatObjectMetadata) => {
-      const fields = flatObjectMetadata.fieldMetadataIds
-        .map((fieldId) => flatFieldMetadataMaps.byId[fieldId])
-        .filter((field) => field !== undefined);
+      const fields = getFlatFieldsFromFlatObjectMetadata(
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      );
 
       return {
         ...flatObjectMetadata,

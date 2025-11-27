@@ -2,6 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
@@ -34,9 +35,10 @@ export function getFieldMetadataFromGraphQLField({
   // If empty, it could be a morph relation
   if (!isDefined(sourceFieldMetadata)) {
     const morphRelationsWithTargetObjectMetadata =
-      flatObjectMetadata.fieldMetadataIds
-        .map((fieldId) => flatFieldMetadataMaps.byId[fieldId])
-        .filter(isDefined)
+      getFlatFieldsFromFlatObjectMetadata(
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      )
         .filter(
           (fieldMetadata) =>
             fieldMetadata.type === FieldMetadataType.MORPH_RELATION,

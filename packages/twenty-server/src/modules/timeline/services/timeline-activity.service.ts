@@ -4,17 +4,18 @@ import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
+import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
+import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
-import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
-import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 
 type ActivityType = 'note' | 'task';
 
@@ -289,9 +290,10 @@ export class TimelineActivityService {
         },
       );
 
-    const fields = objectMetadata.fieldMetadataIds
-      .map((fieldId) => flatFieldMetadataMaps.byId[fieldId])
-      .filter(isDefined);
+    const fields = getFlatFieldsFromFlatObjectMetadata(
+      objectMetadata,
+      flatFieldMetadataMaps,
+    );
 
     const activityObjectMetadataId = fields.find(
       (field) => field.name === activityType,

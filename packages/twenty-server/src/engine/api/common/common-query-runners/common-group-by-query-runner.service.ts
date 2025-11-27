@@ -11,7 +11,6 @@ import {
   computeRecordGqlOperationFilter,
   convertViewFilterValueToString,
   getFilterTypeFromFieldType,
-  isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 import { ObjectLiteral } from 'typeorm';
@@ -45,6 +44,7 @@ import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/gr
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
 import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -236,16 +236,16 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       };
     });
 
-    const fields = flatObjectMetadata.fieldMetadataIds
-      .map((fieldId) => flatFieldMetadataMaps.byId[fieldId])
-      .filter(isDefined)
-      .map((field) => ({
-        id: field.id,
-        name: field.name,
-        type: field.type,
-        label: field.label,
-        options: field.options as PartialFieldMetadataItemOption[],
-      }));
+    const fields = getFlatFieldsFromFlatObjectMetadata(
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    ).map((field) => ({
+      id: field.id,
+      name: field.name,
+      type: field.type,
+      label: field.label,
+      options: field.options as PartialFieldMetadataItemOption[],
+    }));
 
     const filtersFromView = computeRecordGqlOperationFilter({
       recordFilters,

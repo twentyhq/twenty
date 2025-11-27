@@ -5,6 +5,7 @@ import { getUniqueConstraintsFields, isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -199,9 +200,10 @@ const checkUniqueConstraintFullyPopulated = (
   connectObject: ConnectObject,
   connectFieldName: string,
 ) => {
-  const fields = flatObjectMetadata.fieldMetadataIds
-    .map((fieldId) => flatFieldMetadataMaps.byId[fieldId])
-    .filter(isDefined);
+  const fields = getFlatFieldsFromFlatObjectMetadata(
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+  );
 
   const indexMetadatas = flatObjectMetadata.indexMetadataIds
     .map((indexId) => flatIndexMaps.byId[indexId])

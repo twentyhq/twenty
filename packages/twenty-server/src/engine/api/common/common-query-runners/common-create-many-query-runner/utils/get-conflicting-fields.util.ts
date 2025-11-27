@@ -1,6 +1,7 @@
-import { capitalize, isDefined } from 'twenty-shared/utils';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
+import { capitalize } from 'twenty-shared/utils';
 
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -13,9 +14,10 @@ export const getConflictingFields = (
   fullPath: string;
   column: string;
 }[] => {
-  return flatObjectMetadata.fieldMetadataIds
-    .map((fieldId) => flatFieldMetadataMaps.byId[fieldId])
-    .filter(isDefined)
+  return getFlatFieldsFromFlatObjectMetadata(
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+  )
     .filter((field) => field.isUnique || field.name === 'id')
     .flatMap((field) => {
       const compositeType = compositeTypeDefinitions.get(field.type);
