@@ -72,12 +72,32 @@ const createBasePackageJson = async ({
   appName: string;
   appDirectory: string;
 }) => {
-  const base = JSON.parse(await readBaseApplicationProjectFile('package.json'));
-
-  base['universalIdentifier'] = v4();
-  base['name'] = appName;
-
-  await writeJsoncFile(join(appDirectory, 'package.json'), base);
+  const packageJson = {
+    name: appName,
+    version: '0.0.1',
+    license: 'MIT',
+    engines: {
+      node: '^24.5.0',
+      npm: 'please-use-yarn',
+      yarn: '>=4.0.2',
+    },
+    packageManager: 'yarn@4.9.2',
+    scripts: {
+      generate: 'twenty app generate',
+      sync: 'twenty app sync',
+      dev: 'twenty app dev',
+      uninstall: 'twenty app uninstall',
+      auth: 'twenty auth login',
+    },
+    dependencies: {
+      'twenty-sdk': '0.1.0',
+    },
+    devDependencies: {
+      '@types/node': '^24.7.2',
+      typescript: '^5.9.3',
+    },
+  };
+  await writeJsoncFile(join(appDirectory, 'package.json'), packageJson);
 };
 
 const createReadmeContent = async ({
@@ -89,18 +109,10 @@ const createReadmeContent = async ({
   appDescription: string;
   appDirectory: string;
 }) => {
-  let readmeContent = await readBaseApplicationProjectFile('README.md');
+  const readmeContent = `# ${displayName}
 
-  readmeContent = readmeContent.replace(/\{title}/g, displayName);
-
-  readmeContent = readmeContent.replace(/\{description}/g, appDescription);
+${appDescription}
+`;
 
   await fs.writeFile(join(appDirectory, 'README.md'), readmeContent);
-};
-
-const readBaseApplicationProjectFile = async (fileName: string) => {
-  return await fs.readFile(
-    join(BASE_APPLICATION_PROJECT_PATH, fileName),
-    'utf-8',
-  );
 };
