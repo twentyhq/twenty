@@ -1,15 +1,16 @@
 {
   "name": "twenty-cli",
-  "version": "0.2.4",
-  "description": "Command-line interface for Twenty application development",
+  "version": "0.3.0",
+  "description": "[DEPRECATED] Use twenty-sdk instead: https://www.npmjs.com/package/twenty-sdk",
   "main": "dist/cli.js",
   "bin": {
-    "twenty": "dist/cli.js"
+    "twenty": "./deprecate.js"
   },
   "files": [
     "dist/**/*",
     "!dist/**/*.e2e-spec.*",
-    "!dist/**/__tests__/**"
+    "!dist/**/__tests__/**",
+    "deprecate.js"
   ],
   "scripts": {
     "build": "echo 'use npx nx build'",
