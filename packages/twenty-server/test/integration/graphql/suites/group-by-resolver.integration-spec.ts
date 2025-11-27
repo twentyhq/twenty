@@ -417,6 +417,10 @@ describe('group-by resolver (integration)', () => {
             group.groupByDimensionValues[0] === '2024-12-30T00:00:00+01:00',
         );
 
+        // FOR DEBUGGING - TO REMOVE
+        expect(groups).toEqual(['debugging']);
+
+        expect(mondayDec30thGroup).toBeDefined();
         expect(mondayDec30thGroup.edges[0].node.id).toBe(idJan2);
         expect(mondayDec30thGroup.totalCount).toBe(1);
 
@@ -426,8 +430,9 @@ describe('group-by resolver (integration)', () => {
             group.groupByDimensionValues[0] === '2025-01-06T00:00:00+01:00',
         );
 
-        expect(mondayJan6thGroup.totalCount).toBe(1);
+        expect(mondayJan6thGroup).toBeDefined();
         expect(mondayJan6thGroup.edges[0].node.id).toBe(idJan8);
+        expect(mondayJan6thGroup.totalCount).toBe(1);
 
         // Group starting week of monday feb 24th, 2025
         const mondayFeb24thGroup = groups.find(
@@ -435,6 +440,7 @@ describe('group-by resolver (integration)', () => {
             group.groupByDimensionValues[0] === '2025-02-24T00:00:00+01:00',
         );
 
+        expect(mondayFeb24thGroup).toBeDefined();
         expect(mondayFeb24thGroup.edges.length).toBe(2);
         expect(
           mondayFeb24thGroup.edges.find(
@@ -453,6 +459,7 @@ describe('group-by resolver (integration)', () => {
             group.groupByDimensionValues[0] === '2025-03-03T00:00:00+01:00',
         );
 
+        expect(mondayMarch3rdGroup).toBeDefined();
         expect(mondayMarch3rdGroup.edges.length).toBe(2);
         expect(
           mondayMarch3rdGroup.edges.find(
