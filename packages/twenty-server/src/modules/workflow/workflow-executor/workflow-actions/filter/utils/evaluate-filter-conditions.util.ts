@@ -159,6 +159,7 @@ function evaluateTextAndArrayFilter(
   filterType: string,
   compositeFieldSubFieldName: string | undefined,
 ): boolean {
+  //TODO : nullEquivalentRightValue to remove once feature flag removed + workflow action based on common api
   const nullEquivalentRightValue = findDefaultNullEquivalentValue({
     value: filter.rightOperand,
     fieldMetadataType: filterType,
