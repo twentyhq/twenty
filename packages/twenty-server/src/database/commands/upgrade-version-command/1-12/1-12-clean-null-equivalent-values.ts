@@ -11,13 +11,12 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import {
-  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  RunOnWorkspaceArgs,
-} from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { deprecatedGenerateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/deprecated-generate-default-value';
@@ -58,8 +57,9 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
     protected readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     protected readonly workspaceMigrationService: WorkspaceMigrationService,
     protected readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
+    protected readonly dataSourceService: DataSourceService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager);
+    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
 
   override async runOnWorkspace({
@@ -68,6 +68,12 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
     dataSource,
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun || false;
+
+    if (!isDefined(dataSource)) {
+      throw new Error(
+        `Could not find data source for workspace ${workspaceId}, should never occur`,
+      );
+    }
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
