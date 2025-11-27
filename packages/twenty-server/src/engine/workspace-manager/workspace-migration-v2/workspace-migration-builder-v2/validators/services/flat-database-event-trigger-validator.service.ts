@@ -104,7 +104,7 @@ export class FlatDatabaseEventTriggerValidatorService {
     return validationResult;
   }
 
-  public async validateFlatDatabaseEventTriggerCreation({
+  public validateFlatDatabaseEventTriggerCreation({
     flatEntityToValidate: flatDatabaseEventTriggerToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatDatabaseEventTriggerMaps: optimisticFlatDatabaseEventTriggerMaps,
@@ -112,7 +112,7 @@ export class FlatDatabaseEventTriggerValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.databaseEventTrigger
-  >): Promise<FailedFlatEntityValidation<FlatDatabaseEventTrigger>> {
+  >): FailedFlatEntityValidation<FlatDatabaseEventTrigger> {
     const validationResult: FailedFlatEntityValidation<FlatDatabaseEventTrigger> =
       {
         type: 'create_database_event_trigger',

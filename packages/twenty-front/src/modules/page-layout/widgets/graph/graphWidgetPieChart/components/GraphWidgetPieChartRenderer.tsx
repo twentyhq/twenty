@@ -34,6 +34,7 @@ export const GraphWidgetPieChartRenderer = ({
     objectMetadataItem,
     showLegend,
     showDataLabels,
+    showCenterMetric,
     formattedToRawLookup,
   } = useGraphPieChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
@@ -89,6 +90,7 @@ export const GraphWidgetPieChartRenderer = ({
         displayType="shortNumber"
         onSliceClick={handleSliceClick}
         showDataLabels={showDataLabels}
+        showCenterMetric={showCenterMetric}
       />
     </Suspense>
   );

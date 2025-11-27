@@ -4,7 +4,6 @@ import { type ExtendedAggregateOperations } from '@/object-record/record-table/t
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
-import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
@@ -82,7 +81,7 @@ export const transformGroupByDataToPieChartData = ({
   const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
 
   const data: PieChartDataItem[] = limitedResults.map((result, index) => {
-    const label = formattedValues[index]?.formattedPrimaryDimensionValue ?? '';
+    const id = formattedValues[index]?.formattedPrimaryDimensionValue ?? '';
 
     const value = computeAggregateValueFromGroupByResult({
       rawResult: result,
@@ -94,10 +93,8 @@ export const transformGroupByDataToPieChartData = ({
     });
 
     return {
-      id: label,
-      value: value,
-      label: label,
-      color: (configuration.color as GraphColor | undefined) ?? undefined,
+      id,
+      value,
     };
   });
 
