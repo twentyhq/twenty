@@ -1,7 +1,7 @@
 import kebabCase from 'lodash.kebabcase';
 import { v4 } from 'uuid';
 
-export const getServerlessFunctionBaseFile = ({
+export const getFunctionBaseFile = ({
   name,
   universalIdentifier = v4(),
 }: {
@@ -10,7 +10,7 @@ export const getServerlessFunctionBaseFile = ({
 }) => {
   const kebabCaseName = kebabCase(name);
 
-  return `import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
+  return `import { type FunctionConfig } from 'twenty-sdk';
 
 export const main = async (params: {
   a: string;
@@ -25,7 +25,7 @@ export const main = async (params: {
   return { message };
 };
 
-export const config: ServerlessFunctionConfig = {
+export const config: FunctionConfig = {
   universalIdentifier: '${universalIdentifier}',
   name: '${kebabCaseName}',
   timeoutSeconds: 5,

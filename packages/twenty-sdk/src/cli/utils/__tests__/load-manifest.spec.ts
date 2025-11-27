@@ -58,7 +58,7 @@ declare module 'twenty-sdk/application' {
   type ServerlessFunctionTrigger = SyncableEntityOptions &
     (RouteTrigger | CronTrigger | DatabaseEventTrigger);
 
-  export type ServerlessFunctionConfig = SyncableEntityOptions & {
+  export type FunctionConfig = SyncableEntityOptions & {
     name?: string;
     description?: string;
     timeoutSeconds?: number;
@@ -93,13 +93,13 @@ declare module 'twenty-sdk/application' {
 `;
 
 const serverlessFunctionMock = `
-import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
+import { type FunctionConfig } from 'twenty-sdk';
 
 export const main = async (params: any): Promise<any> => {
   return {};
 }
 
-export const config: ServerlessFunctionConfig = {
+export const config: FunctionConfig = {
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'hello',
   timeoutSeconds: 2,

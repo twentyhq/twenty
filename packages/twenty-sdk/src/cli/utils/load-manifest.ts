@@ -210,7 +210,7 @@ const hasExportModifier = (st: any) =>
 /**
  * Finds (and validates) the new serverless file shape:
  * - exactly 2 exported bindings
- * - one must be `config` (typed ServerlessFunctionConfig)
+ * - one must be `config` (typed FunctionConfig)
  * - the other must be a function (exported function declaration, or const initialized with arrow/function expression)
  */
 const findHandlerAndConfig = (
@@ -290,13 +290,13 @@ const findHandlerAndConfig = (
       `"config" in ${sf.fileName} must be initialized to an object literal.`,
     );
   }
-  // (Light) type guard: ensure declared type mentions ServerlessFunctionConfig if present
+  // (Light) type guard: ensure declared type mentions FunctionConfig if present
   const maybeVarDecl = configExport.declNode as VariableDeclaration;
   if ('type' in maybeVarDecl && maybeVarDecl.type) {
     const typeText = maybeVarDecl.type.getText(sf);
-    if (!/\bServerlessFunctionConfig\b/.test(typeText)) {
+    if (!/\bFunctionConfig\b/.test(typeText)) {
       throw new Error(
-        `"config" in ${sf.fileName} must be typed as ServerlessFunctionConfig (got: ${typeText}).`,
+        `"config" in ${sf.fileName} must be typed as FunctionConfig (got: ${typeText}).`,
       );
     }
   }

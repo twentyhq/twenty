@@ -1,14 +1,13 @@
-import { getServerlessFunctionBaseFile } from '../get-serverless-function-base-file';
+import { getFunctionBaseFile } from '../get-function-base-file';
 
-describe('getServerlessFunctionBaseFile', () => {
+describe('getFunctionBaseFile', () => {
   it('should render proper file', () => {
     expect(
-      getServerlessFunctionBaseFile({
+      getFunctionBaseFile({
         name: 'serverless-function-name',
         universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4',
       }),
-    )
-      .toBe(`import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
+    ).toBe(`import { type FunctionConfig } from 'twenty-sdk';
 
 export const main = async (params: {
   a: string;
@@ -23,7 +22,7 @@ export const main = async (params: {
   return { message };
 };
 
-export const config: ServerlessFunctionConfig = {
+export const config: FunctionConfig = {
   universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4',
   name: 'serverless-function-name',
   timeoutSeconds: 5,

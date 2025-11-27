@@ -14,7 +14,7 @@ describe('getObjectDecoratedClass', () => {
         name: 'MyNewObject',
       }),
     ).toBe(
-      `import { Object } from 'twenty-sdk/application';
+      `import { Object } from 'twenty-sdk';
 
 @Object({
   universalIdentifier: '4122a047-260f-4cf1-bf4f-a268579d7ddf',

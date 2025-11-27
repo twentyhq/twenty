@@ -15,7 +15,7 @@ export const getObjectDecoratedClass = ({
 
   const className = camelCaseName[0].toUpperCase() + camelCaseName.slice(1);
 
-  return `import { Object } from 'twenty-sdk/application';
+  return `import { Object } from 'twenty-sdk';
 
 @Object({
 ${decoratorOptions}

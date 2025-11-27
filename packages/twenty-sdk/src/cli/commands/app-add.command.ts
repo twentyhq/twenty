@@ -5,13 +5,13 @@ import { join } from 'path';
 import camelcase from 'lodash.camelcase';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
 import { getObjectDecoratedClass } from '../utils/get-object-decorated-class';
-import { getServerlessFunctionBaseFile } from '../utils/get-serverless-function-base-file';
+import { getFunctionBaseFile } from 'src/cli/utils/get-function-base-file';
 import { convertToLabel } from '../utils/convert-to-label';
 
 export enum SyncableEntity {
   AGENT = 'agent',
   OBJECT = 'object',
-  SERVERLESS_FUNCTION = 'serverlessFunction',
+  FUNCTION = 'function',
 }
 
 export const isSyncableEntity = (value: string): value is SyncableEntity => {
@@ -44,12 +44,12 @@ export class AppAddCommand {
         return;
       }
 
-      if (entity === SyncableEntity.SERVERLESS_FUNCTION) {
+      if (entity === SyncableEntity.FUNCTION) {
         const entityName = await this.getEntityName(entity);
 
         const objectFileName = `${camelcase(entityName)}.ts`;
 
-        const decoratedServerlessFunction = getServerlessFunctionBaseFile({
+        const decoratedServerlessFunction = getFunctionBaseFile({
           name: entityName,
         });
 
@@ -76,7 +76,7 @@ export class AppAddCommand {
         name: 'entity',
         message: `What entity do you want to create?`,
         default: '',
-        choices: [SyncableEntity.SERVERLESS_FUNCTION, SyncableEntity.OBJECT],
+        choices: [SyncableEntity.FUNCTION, SyncableEntity.OBJECT],
       },
     ]);
 

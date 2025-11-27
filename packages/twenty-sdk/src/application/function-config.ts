@@ -17,12 +17,12 @@ type DatabaseEventTrigger = {
   eventName: string;
 };
 
-type ServerlessFunctionTrigger = SyncableEntityOptions &
+type FunctionTrigger = SyncableEntityOptions &
   (RouteTrigger | CronTrigger | DatabaseEventTrigger);
 
-export type ServerlessFunctionConfig = SyncableEntityOptions & {
+export type FunctionConfig = SyncableEntityOptions & {
   name?: string;
   description?: string;
   timeoutSeconds?: number;
-  triggers?: ServerlessFunctionTrigger[];
+  triggers?: FunctionTrigger[];
 };
