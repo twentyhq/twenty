@@ -1,12 +1,13 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
-import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphWidgetPieChart';
+import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const meta: Meta<typeof GraphWidgetPieChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetPieChart',
   component: GraphWidgetPieChart,
-  decorators: [ComponentDecorator],
+  decorators: [ComponentDecorator, I18nFrontDecorator],
   parameters: {
     layout: 'centered',
   },
@@ -32,6 +33,12 @@ const meta: Meta<typeof GraphWidgetPieChart> = {
     },
     id: {
       control: 'text',
+    },
+    showCenterMetric: {
+      control: 'boolean',
+    },
+    showDataLabels: {
+      control: 'boolean',
     },
   },
 };
@@ -70,6 +77,47 @@ export const Default: Story = {
   ),
 };
 
+export const WithCenterMetric: Story = {
+  args: {
+    data: [
+      { id: 'Qualified', value: 35 },
+      { id: 'Contacted', value: 25 },
+      { id: 'Unqualified', value: 20 },
+    ],
+    showCenterMetric: true,
+    id: 'pie-chart-with-center-metric',
+  },
+  render: (args) => (
+    <Container>
+      <GraphWidgetPieChart
+        data={args.data}
+        showCenterMetric={args.showCenterMetric}
+        id={args.id}
+      />
+    </Container>
+  ),
+};
+
+export const WithDataLabels: Story = {
+  args: {
+    data: [
+      { id: 'Qualified', value: 35 },
+      { id: 'Contacted', value: 25 },
+      { id: 'Unqualified', value: 20 },
+    ],
+    showDataLabels: true,
+    id: 'pie-chart-with-data-labels',
+  },
+  render: (args) => (
+    <Container>
+      <GraphWidgetPieChart
+        data={args.data}
+        showDataLabels={args.showDataLabels}
+        id={args.id}
+      />
+    </Container>
+  ),
+};
 export const Revenue: Story = {
   args: {
     data: [
@@ -260,7 +308,7 @@ export const Storage: Story = {
 };
 
 export const Catalog: Story = {
-  decorators: [CatalogDecorator],
+  decorators: [CatalogDecorator, I18nFrontDecorator],
   parameters: {
     catalog: {
       dimensions: [
