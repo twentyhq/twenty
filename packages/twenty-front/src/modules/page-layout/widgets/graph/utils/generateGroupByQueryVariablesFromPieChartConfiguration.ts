@@ -86,7 +86,6 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
         dateGranularity: shouldApplyDateGranularity
           ? (dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY)
           : undefined,
-        objectMetadataItems,
       }),
     );
   }

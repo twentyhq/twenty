@@ -1,5 +1,4 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
@@ -18,7 +17,6 @@ import {
   isDefined,
   isFieldMetadataDateKind,
 } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { GraphOrderBy } from '~/generated/graphql';
 
 const mapOrderByToDirection = (orderByEnum: GraphOrderBy): OrderByDirection => {
@@ -42,14 +40,12 @@ export const getGroupByOrderBy = ({
   groupBySubFieldName,
   aggregateOperation,
   dateGranularity,
-  objectMetadataItems,
 }: {
   graphOrderBy: GraphOrderBy;
   groupByField: FieldMetadataItem;
   groupBySubFieldName?: string | null;
   aggregateOperation?: string;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
-  objectMetadataItems?: ObjectMetadataItem[];
 }):
   | AggregateOrderByWithGroupByField
   | ObjectRecordOrderByForScalarField
@@ -91,31 +87,7 @@ export const getGroupByOrderBy = ({
         const nestedFieldName = parts[0];
         const nestedSubFieldName = parts[1];
 
-        const targetObjectNameSingular =
-          groupByField.relation?.targetObjectMetadata?.nameSingular;
-        const targetObjectMetadataItem = objectMetadataItems?.find(
-          (item) => item.nameSingular === targetObjectNameSingular,
-        );
-        const nestedField = targetObjectMetadataItem?.fields.find(
-          (f) => f.name === nestedFieldName,
-        );
-
-        const isNestedFieldDate =
-          nestedField?.type === FieldMetadataType.DATE ||
-          nestedField?.type === FieldMetadataType.DATE_TIME;
-
         const direction = mapOrderByToDirection(graphOrderBy);
-
-        if (isNestedFieldDate) {
-          return {
-            [groupByField.name]: {
-              [nestedFieldName]: {
-                orderBy: direction,
-                granularity: dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY,
-              },
-            },
-          };
-        }
 
         if (isDefined(nestedSubFieldName)) {
           return {
