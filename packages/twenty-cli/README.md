@@ -3,6 +3,7 @@
 This package is deprecated. Please install and use twenty-sdk instead:
 
 ```bash
+npm uninstall twenty-cli
 npm install -g twenty-sdk
 ```
 

@@ -115,9 +115,10 @@ const createPackageJson = async ({
     },
     packageManager: 'yarn@4.9.2',
     scripts: {
+      create: 'twenty app add',
+      dev: 'twenty app dev',
       generate: 'twenty app generate',
       sync: 'twenty app sync',
-      dev: 'twenty app dev',
       uninstall: 'twenty app uninstall',
       auth: 'twenty auth login',
     },
