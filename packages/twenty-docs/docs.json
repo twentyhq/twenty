@@ -197,8 +197,9 @@
               },
               {
                 "group": "How-To Tutorials",
-                "icon": "academic-cap",
+                "icon": "wrench",
                 "pages": [
+                  "user-guide/How-To Tutorials/overview",
                   {
                     "group": "End-Users",
                     "pages": [
@@ -531,8 +532,9 @@
               },
               {
                 "group": "Troubleshooting & FAQ",
-                "icon": "question-mark-circle",
+                "icon": "question-circle",
                 "pages": [
+                  "user-guide/Troubleshooting & FAQ/overview",
                   {
                     "group": "Common Problems",
                     "pages": [
