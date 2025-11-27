@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNull } from '@sniptt/guards';
 import { differenceInDays } from 'date-fns';
 import {
   CleanSuspendedWorkspaceEmail,
@@ -134,7 +134,7 @@ export class CleanerWorkspaceService {
     const i18n = this.i18nService.getI18nInstance(workspaceMember.locale);
     const subject = i18n._(workspaceDeletionMsg);
 
-    if (!isNonEmptyString(workspaceMember.userEmail)) {
+    if (isNull(workspaceMember.userEmail)) {
       throw new Error('Workspace member email is missing');
     }
 
@@ -212,7 +212,7 @@ export class CleanerWorkspaceService {
     const html = await render(emailTemplate, { pretty: true });
     const text = await render(emailTemplate, { plainText: true });
 
-    if (!isNonEmptyString(workspaceMember.userEmail)) {
+    if (isNull(workspaceMember.userEmail)) {
       throw new Error('Workspace member email is missing');
     }
 
