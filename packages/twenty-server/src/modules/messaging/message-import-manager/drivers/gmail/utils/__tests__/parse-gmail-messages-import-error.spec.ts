@@ -111,26 +111,14 @@ describe('parseGmailApiBatchError', () => {
     const error = gmailBatchApiErrorMocks.getError(404);
     const exception = parseGmailApiBatchError(error, messageExternalId);
 
-    expect(exception).toBeInstanceOf(MessageImportDriverException);
-    expect(exception?.code).toBe(
-      MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
-    );
-    expect(exception?.message).toBe(
-      `${error.errors[0].message} for message with externalId: ${messageExternalId}`,
-    );
+    expect(exception).toBeUndefined();
   });
 
   it('should handle 410 Gone', () => {
     const error = gmailBatchApiErrorMocks.getError(410);
     const exception = parseGmailApiBatchError(error, messageExternalId);
 
-    expect(exception).toBeInstanceOf(MessageImportDriverException);
-    expect(exception?.code).toBe(
-      MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
-    );
-    expect(exception?.message).toBe(
-      `${error.errors[0].message} for message with externalId: ${messageExternalId}`,
-    );
+    expect(exception).toBeUndefined();
   });
 
   it('should handle 429 Too Many Requests', () => {
