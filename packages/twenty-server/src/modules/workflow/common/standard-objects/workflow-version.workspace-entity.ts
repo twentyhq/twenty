@@ -90,8 +90,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The workflow version name`,
     icon: 'IconSettingsAutomation',
   })
-  @WorkspaceIsNullable()
-  name: string | null;
+  name: string;
 
   @WorkspaceField({
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.trigger,

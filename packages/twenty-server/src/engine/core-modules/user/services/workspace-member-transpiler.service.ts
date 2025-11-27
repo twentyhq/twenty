@@ -75,6 +75,10 @@ export class WorkspaceMemberTranspiler {
 
     const roles = fromRoleEntitiesToRoleDtos(userWorkspaceRoles);
 
+    if (!isNonEmptyString(userEmail)) {
+      throw new Error(`Workspace member ${id} has an empty userEmail`);
+    }
+
     return {
       id,
       name,
@@ -110,6 +114,10 @@ export class WorkspaceMemberTranspiler {
       name,
       userEmail,
     } = workspaceMember;
+
+    if (!isNonEmptyString(userEmail)) {
+      throw new Error(`Workspace member ${id} has an empty userEmail`);
+    }
 
     const avatarUrl = userWorkspaceId
       ? this.generateSignedAvatarUrl({
