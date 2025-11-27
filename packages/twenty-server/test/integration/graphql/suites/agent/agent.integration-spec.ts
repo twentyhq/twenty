@@ -13,9 +13,6 @@ import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/service
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 
-// Mock the agent service
-jest.mock('../../../../../src/engine/metadata-modules/ai-agent/agent.service');
-
 // Mock the guards and decorators
 jest.mock('../../../../../src/engine/guards/feature-flag.guard', () => ({
   FeatureFlagGuard: jest.fn().mockImplementation(() => ({
