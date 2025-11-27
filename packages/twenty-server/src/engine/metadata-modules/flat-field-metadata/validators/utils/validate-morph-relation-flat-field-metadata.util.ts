@@ -15,7 +15,6 @@ export const validateMorphRelationFlatFieldMetadata = (
   const {
     flatEntityToValidate: flatFieldMetadataToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: { flatFieldMetadataMaps },
-    updates,
     remainingFlatEntityMapsToValidate,
   } = args;
   const { relationTargetFieldMetadataId } = flatFieldMetadataToValidate;
