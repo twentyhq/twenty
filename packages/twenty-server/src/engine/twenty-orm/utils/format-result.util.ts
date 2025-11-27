@@ -16,7 +16,10 @@ import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/work
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import {
+  buildFieldMapsFromFlatObjectMetadata,
+  type FieldMapsForObject,
+} from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils/get-composite-field-metadata-collection';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
@@ -27,23 +30,25 @@ export function formatResult<T>(
   flatObjectMetadata: FlatObjectMetadata | undefined,
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  fieldMapsForObject?: FieldMapsForObject,
 ): T {
   if (!isDefined(data)) {
     return data;
   }
 
-  if (Array.isArray(data)) {
-    return data.map((item) =>
-      formatResult(
-        item,
-        flatObjectMetadata,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      ),
-    ) as T;
-  }
-
   if (!isPlainObject(data)) {
+    if (Array.isArray(data)) {
+      return data.map((item) =>
+        formatResult(
+          item,
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          fieldMapsForObject,
+        ),
+      ) as T;
+    }
+
     return data;
   }
 
@@ -51,10 +56,14 @@ export function formatResult<T>(
     throw new Error('Object metadata is missing');
   }
 
-  const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-    flatFieldMetadataMaps,
-    flatObjectMetadata,
-  );
+  const fieldMaps =
+    fieldMapsForObject ??
+    buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
+
+  const { fieldIdByName } = fieldMaps;
 
   const compositeFieldMetadataMap = getCompositeFieldMetadataMap(
     flatObjectMetadata,
@@ -86,6 +95,7 @@ export function formatResult<T>(
           flatObjectMetadata,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
+          fieldMaps,
         );
       } else if (fieldMetadata) {
         // @ts-expect-error legacy noImplicitAny

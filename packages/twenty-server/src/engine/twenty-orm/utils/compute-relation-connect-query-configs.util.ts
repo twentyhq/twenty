@@ -9,7 +9,10 @@ import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/work
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import {
+  buildFieldMapsFromFlatObjectMetadata,
+  type FieldMapsForObject,
+} from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ConnectObject } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
@@ -36,6 +39,11 @@ export const computeRelationConnectQueryConfigs = (
 ) => {
   const allConnectQueryConfigs: Record<string, RelationConnectQueryConfig> = {};
 
+  const fieldMaps = buildFieldMapsFromFlatObjectMetadata(
+    flatFieldMetadataMaps,
+    flatObjectMetadata,
+  );
+
   for (const [entityIndex, entity] of entities.entries()) {
     const nestedRelationConnectFields =
       relationConnectQueryFieldsByEntityIndex[entityIndex];
@@ -57,6 +65,7 @@ export const computeRelationConnectQueryConfigs = (
         flatFieldMetadataMaps,
         flatIndexMaps,
         entity,
+        fieldMaps,
       );
 
       const connectQueryConfig = allConnectQueryConfigs[connectFieldName];
@@ -132,17 +141,14 @@ const computeRecordToConnectCondition = (
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>,
   entity: Record<string, unknown>,
+  fieldMaps: FieldMapsForObject,
 ): {
   recordToConnectCondition: UniqueConstraintCondition;
   uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[];
   targetObjectNameSingular: string;
 } => {
-  const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-    flatFieldMetadataMaps,
-    flatObjectMetadata,
-  );
-
-  const field = flatFieldMetadataMaps.byId[fieldIdByName[connectFieldName]];
+  const field =
+    flatFieldMetadataMaps.byId[fieldMaps.fieldIdByName[connectFieldName]];
 
   if (
     !isDefined(field) ||

@@ -1,3 +1,4 @@
+import { CHART_SETTINGS_HEADINGS } from '@/command-menu/pages/page-layout/constants/ChartSettingsHeadings';
 import { AXIS_NAME_SETTING } from '@/command-menu/pages/page-layout/constants/settings/AxisNameSetting';
 import { CHART_DATA_SOURCE_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ChartDataSourceSetting';
 import { COLORS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ColorsSetting';
@@ -48,19 +49,19 @@ export const getBarChartSettings = (
 
   return [
     {
-      heading: 'Data',
+      heading: CHART_SETTINGS_HEADINGS.DATA,
       items: [CHART_DATA_SOURCE_SETTING, FILTER_SETTING],
     },
     {
-      heading: 'X axis',
+      heading: CHART_SETTINGS_HEADINGS.X_AXIS,
       items: xAxisItems,
     },
     {
-      heading: 'Y axis',
+      heading: CHART_SETTINGS_HEADINGS.Y_AXIS,
       items: yAxisItems,
     },
     {
-      heading: 'Style',
+      heading: CHART_SETTINGS_HEADINGS.STYLE,
       items: [
         COLORS_SETTING,
         AXIS_NAME_SETTING,

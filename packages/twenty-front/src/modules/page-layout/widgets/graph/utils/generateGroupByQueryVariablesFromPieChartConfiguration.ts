@@ -20,11 +20,13 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
   chartConfiguration,
   aggregateOperation,
   limit,
+  firstDayOfTheWeek,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   chartConfiguration: PieChartConfiguration;
   aggregateOperation?: string;
   limit?: number;
+  firstDayOfTheWeek?: number;
 }) => {
   const groupByFieldId = chartConfiguration.groupByFieldMetadataId;
   const groupBySubFieldName =
@@ -47,9 +49,11 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
     buildGroupByFieldObject({
       field: groupByField,
       subFieldName: groupBySubFieldName,
+
       dateGranularity: isFieldDate
         ? (dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY)
         : undefined,
+      firstDayOfTheWeek,
     }),
   ];
 

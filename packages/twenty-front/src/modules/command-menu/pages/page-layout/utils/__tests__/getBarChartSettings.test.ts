@@ -1,3 +1,4 @@
+import { CHART_SETTINGS_HEADINGS } from '@/command-menu/pages/page-layout/constants/ChartSettingsHeadings';
 import { AXIS_NAME_SETTING } from '@/command-menu/pages/page-layout/constants/settings/AxisNameSetting';
 import { CHART_DATA_SOURCE_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ChartDataSourceSetting';
 import { COLORS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ColorsSetting';
@@ -24,7 +25,9 @@ describe('getBarChartSettings', () => {
     it('should place primary axis items under "X axis" heading', () => {
       const result = getBarChartSettings(GraphType.VERTICAL_BAR);
 
-      const xAxisGroup = result.find((group) => group.heading === 'X axis');
+      const xAxisGroup = result.find(
+        (group) => group.heading.id === CHART_SETTINGS_HEADINGS.X_AXIS.id,
+      );
 
       expect(xAxisGroup).toBeDefined();
       expect(xAxisGroup?.items).toHaveLength(4);
@@ -39,7 +42,9 @@ describe('getBarChartSettings', () => {
     it('should place secondary axis items under "Y axis" heading', () => {
       const result = getBarChartSettings(GraphType.VERTICAL_BAR);
 
-      const yAxisGroup = result.find((group) => group.heading === 'Y axis');
+      const yAxisGroup = result.find(
+        (group) => group.heading.id === CHART_SETTINGS_HEADINGS.Y_AXIS.id,
+      );
 
       expect(yAxisGroup).toBeDefined();
       expect(yAxisGroup?.items).toHaveLength(6);
@@ -57,10 +62,10 @@ describe('getBarChartSettings', () => {
       const result = getBarChartSettings(GraphType.VERTICAL_BAR);
 
       expect(result).toHaveLength(4);
-      expect(result[0].heading).toBe('Data');
-      expect(result[1].heading).toBe('X axis');
-      expect(result[2].heading).toBe('Y axis');
-      expect(result[3].heading).toBe('Style');
+      expect(result[0].heading).toBe(CHART_SETTINGS_HEADINGS.DATA);
+      expect(result[1].heading).toBe(CHART_SETTINGS_HEADINGS.X_AXIS);
+      expect(result[2].heading).toBe(CHART_SETTINGS_HEADINGS.Y_AXIS);
+      expect(result[3].heading).toBe(CHART_SETTINGS_HEADINGS.STYLE);
     });
   });
 
@@ -68,7 +73,9 @@ describe('getBarChartSettings', () => {
     it('should place SECONDARY axis items under "X axis" heading', () => {
       const result = getBarChartSettings(GraphType.HORIZONTAL_BAR);
 
-      const xAxisGroup = result.find((group) => group.heading === 'X axis');
+      const xAxisGroup = result.find(
+        (group) => group.heading.id === CHART_SETTINGS_HEADINGS.X_AXIS.id,
+      );
 
       expect(xAxisGroup).toBeDefined();
       expect(xAxisGroup?.items).toHaveLength(6);
@@ -85,7 +92,9 @@ describe('getBarChartSettings', () => {
     it('should place PRIMARY axis items under "Y axis" heading', () => {
       const result = getBarChartSettings(GraphType.HORIZONTAL_BAR);
 
-      const yAxisGroup = result.find((group) => group.heading === 'Y axis');
+      const yAxisGroup = result.find(
+        (group) => group.heading.id === CHART_SETTINGS_HEADINGS.Y_AXIS.id,
+      );
 
       expect(yAxisGroup).toBeDefined();
       expect(yAxisGroup?.items).toHaveLength(4);
@@ -101,10 +110,10 @@ describe('getBarChartSettings', () => {
       const result = getBarChartSettings(GraphType.HORIZONTAL_BAR);
 
       expect(result).toHaveLength(4);
-      expect(result[0].heading).toBe('Data');
-      expect(result[1].heading).toBe('X axis');
-      expect(result[2].heading).toBe('Y axis');
-      expect(result[3].heading).toBe('Style');
+      expect(result[0].heading).toBe(CHART_SETTINGS_HEADINGS.DATA);
+      expect(result[1].heading).toBe(CHART_SETTINGS_HEADINGS.X_AXIS);
+      expect(result[2].heading).toBe(CHART_SETTINGS_HEADINGS.Y_AXIS);
+      expect(result[3].heading).toBe(CHART_SETTINGS_HEADINGS.STYLE);
     });
   });
 
@@ -114,10 +123,10 @@ describe('getBarChartSettings', () => {
       const horizontalResult = getBarChartSettings(GraphType.HORIZONTAL_BAR);
 
       const verticalDataGroup = verticalResult.find(
-        (group) => group.heading === 'Data',
+        (group) => group.heading.id === CHART_SETTINGS_HEADINGS.DATA.id,
       );
       const horizontalDataGroup = horizontalResult.find(
-        (group) => group.heading === 'Data',
+        (group) => group.heading.id === CHART_SETTINGS_HEADINGS.DATA.id,
       );
 
       expect(verticalDataGroup?.items).toEqual(horizontalDataGroup?.items);
@@ -132,10 +141,10 @@ describe('getBarChartSettings', () => {
       const horizontalResult = getBarChartSettings(GraphType.HORIZONTAL_BAR);
 
       const verticalStyleGroup = verticalResult.find(
-        (group) => group.heading === 'Style',
+        (group) => group.heading.id === CHART_SETTINGS_HEADINGS.STYLE.id,
       );
       const horizontalStyleGroup = horizontalResult.find(
-        (group) => group.heading === 'Style',
+        (group) => group.heading.id === CHART_SETTINGS_HEADINGS.STYLE.id,
       );
 
       expect(verticalStyleGroup?.items).toEqual(horizontalStyleGroup?.items);
