@@ -5,6 +5,7 @@ export const GET_CHAT_MESSAGES = gql`
     chatMessages(threadId: $threadId) {
       id
       threadId
+      turnId
       role
       createdAt
       parts {

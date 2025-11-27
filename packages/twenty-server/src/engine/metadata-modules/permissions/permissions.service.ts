@@ -109,6 +109,7 @@ export class PermissionsService {
         [PermissionFlagType.UPLOAD_FILE]: false,
         [PermissionFlagType.DOWNLOAD_FILE]: false,
         [PermissionFlagType.SEND_EMAIL_TOOL]: false,
+        [PermissionFlagType.HTTP_REQUEST_TOOL]: false,
         [PermissionFlagType.IMPORT_CSV]: false,
         [PermissionFlagType.EXPORT_CSV]: false,
         [PermissionFlagType.CONNECTED_ACCOUNTS]: false,

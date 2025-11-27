@@ -43,10 +43,7 @@ export const parseGmailApiBatchError = (
 
     case 404:
     case 410:
-      return new MessageImportDriverException(
-        message,
-        MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
-      );
+      return undefined;
 
     case 429:
       return new MessageImportDriverException(

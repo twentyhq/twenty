@@ -5421,6 +5421,11 @@ msgstr "Để trống nếu bạn không cần gửi email."
 msgid "Leave workspace"
 msgstr "Rời khỏi không gian làm việc"
 
+#. js-lingui-id: MP1v+1
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Legend"
+msgstr ""
+
 #. js-lingui-id: 8PPI2g
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than or equal"

@@ -33,6 +33,7 @@ export const settingsAIAgentFormSchema = z.object({
       schema: z.custom<AgentResponseSchema>().optional(),
     })
     .optional(),
+  evaluationInputs: z.array(z.string()).default([]),
 });
 
 export type SettingsAIAgentFormValues = z.infer<

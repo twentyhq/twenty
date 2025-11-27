@@ -3316,6 +3316,11 @@ msgstr "Không thể tìm thấy đối tượng bạn đang cố gắng thiết
 msgid "The opportunity name"
 msgstr "Tên cơ hội"
 
+#. js-lingui-id: lk5nUN
+#: src/engine/core-modules/graphql/hooks/use-compute-complexity.hook.ts
+msgid "The request is too complex to process. Please try reducing the amount of data requested."
+msgstr ""
+
 #. js-lingui-id: Zi9X+u
 #: src/engine/metadata-modules/role/role.service.ts
 msgid "The role you are looking for could not be found. It may have been deleted or you may not have access to it."
