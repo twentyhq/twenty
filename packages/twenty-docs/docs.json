@@ -35,162 +35,51 @@
             "groups": [
               {
                 "group": "Getting Started",
-                "icon": "rocket",
-                "pages": [
-                  "user-guide/introduction",
-                  "user-guide/getting-started/what-is-twenty",
-                  "user-guide/getting-started/create-workspace",
-                  "user-guide/getting-started/getting-around-twenty",
-                  "user-guide/getting-started/configure-your-workspace",
-                  "user-guide/getting-started/implementation-services",
-                  "user-guide/getting-started/migrating-from-other-crms",
-                  "user-guide/getting-started/import-export-data"
-                ]
-              },
-              {
-                "group": "Data Model",
-                "icon": "database",
-                "pages": [
-                  "user-guide/data-model/customize-your-data-model",
-                  "user-guide/data-model/objects",
-                  "user-guide/data-model/fields",
-                  "user-guide/data-model/creating-records",
-                  "user-guide/data-model/relation-fields",
-                  "user-guide/data-model/data-model-faq"
-                ]
-              },
-              {
-                "group": "CRM Essentials",
-                "icon": "users",
-                "pages": [
-                  "user-guide/crm-essentials/contact-and-account-management",
-                  "user-guide/crm-essentials/pipeline",
-                  "user-guide/crm-essentials/view-management",
-                  "user-guide/crm-essentials/sales-use-cases"
-                ]
-              },
-              {
-                "group": "Views",
-                "icon": "table",
-                "pages": [
-                  "user-guide/views/kanban-views",
-                  "user-guide/views/views-sort-filter"
-                ]
-              },
-              {
-                "group": "Workflows",
-                "icon": "bolt",
-                "pages": [
-                  "user-guide/workflows/getting-started-workflows",
-                  "user-guide/workflows/workflow-features",
-                  "user-guide/workflows/internal-automations",
-                  "user-guide/workflows/external-tool-integration",
-                  "user-guide/workflows/workflow-troubleshooting",
-                  "user-guide/workflows/workflow-credits",
-                  "user-guide/workflows/professional-services"
-                ]
-              },
-              {
-                "group": "Collaboration",
-                "icon": "envelope",
-                "pages": [
-                  "user-guide/collaboration/emails-and-calendars",
-                  "user-guide/collaboration/notes",
-                  "user-guide/collaboration/tasks"
-                ]
-              },
-              {
-                "group": "Integrations & API",
-                "icon": "plug",
-                "pages": [
-                  "user-guide/integrations-api/apis-overview",
-                  "user-guide/integrations-api/api-webhooks",
-                  "user-guide/integrations-api/integrations"
-                ]
-              },
-              {
-                "group": "Reporting",
-                "icon": "chart-bar",
-                "pages": [
-                  "user-guide/reporting/reporting-overview"
-                ]
-              },
-              {
-                "group": "Settings",
-                "icon": "gear",
-                "pages": [
-                  "user-guide/settings/profile-settings",
-                  "user-guide/settings/experience-settings",
-                  "user-guide/settings/email-calendar-setup",
-                  "user-guide/settings/workspace-settings",
-                  "user-guide/settings/member-management",
-                  "user-guide/settings/permissions",
-                  "user-guide/settings/domains-settings",
-                  "user-guide/settings/releases-settings",
-                  "user-guide/settings/settings-faq"
-                ]
-              },
-              {
-                "group": "Pricing",
-                "icon": "credit-card",
-                "pages": [
-                  "user-guide/pricing/billing-and-pricing-faq"
-                ]
-              },
-              {
-                "group": "Resources",
-                "icon": "book-open",
-                "pages": [
-                  "user-guide/resources/glossary",
-                  "user-guide/resources/github"
-                ]
-              },
-              {
-                "group": "Getting Started with Twenty",
                 "icon": "play",
                 "pages": [
+                  "user-guide/user-guide-overview",
                   {
                     "group": "Introduction",
                     "pages": [
-                      "user-guide/Getting Started with Twenty/introduction/what-is-twenty-crm",
-                      "user-guide/Getting Started with Twenty/introduction/key-concepts",
-                      "user-guide/Getting Started with Twenty/introduction/core-benefits-and-use-cases"
+                      "user-guide/Getting Started/introduction/what-is-twenty-crm",
+                      "user-guide/Getting Started/introduction/key-concepts",
+                      "user-guide/Getting Started/introduction/core-benefits-and-use-cases"
                     ]
                   },
                   {
                     "group": "Create Your Workspace",
                     "pages": [
-                      "user-guide/Getting Started with Twenty/create-your-workspace/create-a-workspace",
-                      "user-guide/Getting Started with Twenty/create-your-workspace/cloud-vs-self-hosted",
-                      "user-guide/Getting Started with Twenty/create-your-workspace/first-login-and-basic-setup"
+                      "user-guide/Getting Started/create-your-workspace/create-a-workspace",
+                      "user-guide/Getting Started/create-your-workspace/cloud-vs-self-hosted",
+                      "user-guide/Getting Started/create-your-workspace/first-login-and-basic-setup"
                     ]
                   },
                   {
                     "group": "Learn the Interface",
                     "pages": [
-                      "user-guide/Getting Started with Twenty/learn-the-interface/navigation-overview",
-                      "user-guide/Getting Started with Twenty/learn-the-interface/using-the-sidebar",
-                      "user-guide/Getting Started with Twenty/learn-the-interface/using-the-command-palette",
-                      "user-guide/Getting Started with Twenty/learn-the-interface/keyboard-shortcuts"
+                      "user-guide/Getting Started/learn-the-interface/navigation-overview",
+                      "user-guide/Getting Started/learn-the-interface/using-the-sidebar",
+                      "user-guide/Getting Started/learn-the-interface/using-the-command-palette",
+                      "user-guide/Getting Started/learn-the-interface/keyboard-shortcuts"
                     ]
                   },
                   {
                     "group": "First Configuration",
                     "pages": [
-                      "user-guide/Getting Started with Twenty/first-configuration/connect-your-mailbox-and-calendar",
-                      "user-guide/Getting Started with Twenty/first-configuration/adding-your-first-users",
-                      "user-guide/Getting Started with Twenty/first-configuration/setting-time-zone-currency-locale",
-                      "user-guide/Getting Started with Twenty/first-configuration/updating-workspace-appearance-logo-branding",
-                      "user-guide/Getting Started with Twenty/first-configuration/configure-your-data-model"
+                      "user-guide/Getting Started/first-configuration/connect-your-mailbox-and-calendar",
+                      "user-guide/Getting Started/first-configuration/adding-your-first-users",
+                      "user-guide/Getting Started/first-configuration/setting-time-zone-currency-locale",
+                      "user-guide/Getting Started/first-configuration/updating-workspace-appearance-logo-branding",
+                      "user-guide/Getting Started/first-configuration/configure-your-data-model"
                     ]
                   },
                   {
                     "group": "Import & Export",
                     "pages": [
-                      "user-guide/Getting Started with Twenty/import-export/import-data-from-csv",
-                      "user-guide/Getting Started with Twenty/import-export/export-all-workspace-data",
-                      "user-guide/Getting Started with Twenty/import-export/migrating-from-other-crms",
-                      "user-guide/Getting Started with Twenty/import-export/data-import-troubleshooting"
+                      "user-guide/Getting Started/import-export/import-data-from-csv",
+                      "user-guide/Getting Started/import-export/export-all-workspace-data",
+                      "user-guide/Getting Started/import-export/migrating-from-other-crms",
+                      "user-guide/Getting Started/import-export/data-import-troubleshooting"
                     ]
                   }
                 ]
@@ -587,44 +476,44 @@
                 ]
               },
               {
-                "group": "Twenty Resources",
+                "group": "Resources",
                 "icon": "book-open",
                 "pages": [
                   {
                     "group": "Glossary",
                     "pages": [
-                      "user-guide/Twenty Resources/glossary/crm-terminology",
-                      "user-guide/Twenty Resources/glossary/twenty-specific-terms"
+                      "user-guide/Resources/glossary/crm-terminology",
+                      "user-guide/Resources/glossary/twenty-specific-terms"
                     ]
                   },
                   {
                     "group": "Community",
                     "pages": [
-                      "user-guide/Twenty Resources/community/github",
-                      "user-guide/Twenty Resources/community/discord",
-                      "user-guide/Twenty Resources/community/contributing-to-twenty"
+                      "user-guide/Resources/community/github",
+                      "user-guide/Resources/community/discord",
+                      "user-guide/Resources/community/contributing-to-twenty"
                     ]
                   },
                   {
                     "group": "Release Notes / Changelog",
                     "pages": [
-                      "user-guide/Twenty Resources/release-notes-changelog/latest-updates",
-                      "user-guide/Twenty Resources/release-notes-changelog/version-history"
+                      "user-guide/Resources/release-notes-changelog/latest-updates",
+                      "user-guide/Resources/release-notes-changelog/version-history"
                     ]
                   },
                   {
                     "group": "Contact & Support",
                     "pages": [
-                      "user-guide/Twenty Resources/contact-support/getting-help",
-                      "user-guide/Twenty Resources/contact-support/reporting-bugs",
-                      "user-guide/Twenty Resources/contact-support/feature-requests"
+                      "user-guide/Resources/contact-support/getting-help",
+                      "user-guide/Resources/contact-support/reporting-bugs",
+                      "user-guide/Resources/contact-support/feature-requests"
                     ]
                   },
                   {
                     "group": "Professional Services",
                     "pages": [
-                      "user-guide/Twenty Resources/professional-services/implementation-services",
-                      "user-guide/Twenty Resources/professional-services/training-and-consulting"
+                      "user-guide/Resources/professional-services/implementation-services",
+                      "user-guide/Resources/professional-services/training-and-consulting"
                     ]
                   }
                 ]
@@ -752,120 +641,7 @@
         "tabs": [
           {
             "tab": "Guide de l'utilisateur",
-            "groups": [
-              {
-                "group": "Commencer",
-                "icon": "rocket",
-                "pages": [
-                  "l/fr/user-guide/introduction",
-                  "l/fr/user-guide/getting-started/what-is-twenty",
-                  "l/fr/user-guide/getting-started/create-workspace",
-                  "l/fr/user-guide/getting-started/getting-around-twenty",
-                  "l/fr/user-guide/getting-started/configure-your-workspace",
-                  "l/fr/user-guide/getting-started/implementation-services",
-                  "l/fr/user-guide/getting-started/migrating-from-other-crms",
-                  "l/fr/user-guide/getting-started/import-export-data"
-                ]
-              },
-              {
-                "group": "Modèle de données",
-                "icon": "database",
-                "pages": [
-                  "l/fr/user-guide/data-model/customize-your-data-model",
-                  "l/fr/user-guide/data-model/objects",
-                  "l/fr/user-guide/data-model/fields",
-                  "l/fr/user-guide/data-model/creating-records",
-                  "l/fr/user-guide/data-model/relation-fields",
-                  "l/fr/user-guide/data-model/data-model-faq"
-                ]
-              },
-              {
-                "group": "Essentiels du CRM",
-                "icon": "users",
-                "pages": [
-                  "l/fr/user-guide/crm-essentials/contact-and-account-management",
-                  "l/fr/user-guide/crm-essentials/pipeline",
-                  "l/fr/user-guide/crm-essentials/view-management",
-                  "l/fr/user-guide/crm-essentials/sales-use-cases"
-                ]
-              },
-              {
-                "group": "Vues",
-                "icon": "table",
-                "pages": [
-                  "l/fr/user-guide/views/kanban-views",
-                  "l/fr/user-guide/views/views-sort-filter"
-                ]
-              },
-              {
-                "group": "Flux de travail",
-                "icon": "bolt",
-                "pages": [
-                  "l/fr/user-guide/workflows/getting-started-workflows",
-                  "l/fr/user-guide/workflows/workflow-features",
-                  "l/fr/user-guide/workflows/internal-automations",
-                  "l/fr/user-guide/workflows/external-tool-integration",
-                  "l/fr/user-guide/workflows/workflow-troubleshooting",
-                  "l/fr/user-guide/workflows/workflow-credits",
-                  "l/fr/user-guide/workflows/professional-services"
-                ]
-              },
-              {
-                "group": "Collaboration",
-                "icon": "envelope",
-                "pages": [
-                  "l/fr/user-guide/collaboration/emails-and-calendars",
-                  "l/fr/user-guide/collaboration/notes",
-                  "l/fr/user-guide/collaboration/tasks"
-                ]
-              },
-              {
-                "group": "Intégrations & API",
-                "icon": "plug",
-                "pages": [
-                  "l/fr/user-guide/integrations-api/apis-overview",
-                  "l/fr/user-guide/integrations-api/api-webhooks",
-                  "l/fr/user-guide/integrations-api/integrations"
-                ]
-              },
-              {
-                "group": "Rapports",
-                "icon": "chart-bar",
-                "pages": [
-                  "l/fr/user-guide/reporting/reporting-overview"
-                ]
-              },
-              {
-                "group": "Paramètres",
-                "icon": "gear",
-                "pages": [
-                  "l/fr/user-guide/settings/profile-settings",
-                  "l/fr/user-guide/settings/experience-settings",
-                  "l/fr/user-guide/settings/email-calendar-setup",
-                  "l/fr/user-guide/settings/workspace-settings",
-                  "l/fr/user-guide/settings/member-management",
-                  "l/fr/user-guide/settings/permissions",
-                  "l/fr/user-guide/settings/domains-settings",
-                  "l/fr/user-guide/settings/releases-settings",
-                  "l/fr/user-guide/settings/settings-faq"
-                ]
-              },
-              {
-                "group": "Tarifs",
-                "icon": "credit-card",
-                "pages": [
-                  "l/fr/user-guide/pricing/billing-and-pricing-faq"
-                ]
-              },
-              {
-                "group": "Ressources",
-                "icon": "book-open",
-                "pages": [
-                  "l/fr/user-guide/resources/glossary",
-                  "l/fr/user-guide/resources/github"
-                ]
-              }
-            ]
+            "groups": []
           },
           {
             "tab": "Développeurs",
@@ -988,120 +764,7 @@
         "tabs": [
           {
             "tab": "دليل المستخدم",
-            "groups": [
-              {
-                "group": "البدء",
-                "icon": "rocket",
-                "pages": [
-                  "l/ar/user-guide/introduction",
-                  "l/ar/user-guide/getting-started/what-is-twenty",
-                  "l/ar/user-guide/getting-started/create-workspace",
-                  "l/ar/user-guide/getting-started/getting-around-twenty",
-                  "l/ar/user-guide/getting-started/configure-your-workspace",
-                  "l/ar/user-guide/getting-started/implementation-services",
-                  "l/ar/user-guide/getting-started/migrating-from-other-crms",
-                  "l/ar/user-guide/getting-started/import-export-data"
-                ]
-              },
-              {
-                "group": "نموذج البيانات",
-                "icon": "database",
-                "pages": [
-                  "l/ar/user-guide/data-model/customize-your-data-model",
-                  "l/ar/user-guide/data-model/objects",
-                  "l/ar/user-guide/data-model/fields",
-                  "l/ar/user-guide/data-model/creating-records",
-                  "l/ar/user-guide/data-model/relation-fields",
-                  "l/ar/user-guide/data-model/data-model-faq"
-                ]
-              },
-              {
-                "group": "أساسيات CRM",
-                "icon": "users",
-                "pages": [
-                  "l/ar/user-guide/crm-essentials/contact-and-account-management",
-                  "l/ar/user-guide/crm-essentials/pipeline",
-                  "l/ar/user-guide/crm-essentials/view-management",
-                  "l/ar/user-guide/crm-essentials/sales-use-cases"
-                ]
-              },
-              {
-                "group": "العروض",
-                "icon": "table",
-                "pages": [
-                  "l/ar/user-guide/views/kanban-views",
-                  "l/ar/user-guide/views/views-sort-filter"
-                ]
-              },
-              {
-                "group": "سير العمل",
-                "icon": "bolt",
-                "pages": [
-                  "l/ar/user-guide/workflows/getting-started-workflows",
-                  "l/ar/user-guide/workflows/workflow-features",
-                  "l/ar/user-guide/workflows/internal-automations",
-                  "l/ar/user-guide/workflows/external-tool-integration",
-                  "l/ar/user-guide/workflows/workflow-troubleshooting",
-                  "l/ar/user-guide/workflows/workflow-credits",
-                  "l/ar/user-guide/workflows/professional-services"
-                ]
-              },
-              {
-                "group": "التعاون",
-                "icon": "envelope",
-                "pages": [
-                  "l/ar/user-guide/collaboration/emails-and-calendars",
-                  "l/ar/user-guide/collaboration/notes",
-                  "l/ar/user-guide/collaboration/tasks"
-                ]
-              },
-              {
-                "group": "التكاملات & API",
-                "icon": "plug",
-                "pages": [
-                  "l/ar/user-guide/integrations-api/apis-overview",
-                  "l/ar/user-guide/integrations-api/api-webhooks",
-                  "l/ar/user-guide/integrations-api/integrations"
-                ]
-              },
-              {
-                "group": "التقارير",
-                "icon": "chart-bar",
-                "pages": [
-                  "l/ar/user-guide/reporting/reporting-overview"
-                ]
-              },
-              {
-                "group": "الإعدادات",
-                "icon": "gear",
-                "pages": [
-                  "l/ar/user-guide/settings/profile-settings",
-                  "l/ar/user-guide/settings/experience-settings",
-                  "l/ar/user-guide/settings/email-calendar-setup",
-                  "l/ar/user-guide/settings/workspace-settings",
-                  "l/ar/user-guide/settings/member-management",
-                  "l/ar/user-guide/settings/permissions",
-                  "l/ar/user-guide/settings/domains-settings",
-                  "l/ar/user-guide/settings/releases-settings",
-                  "l/ar/user-guide/settings/settings-faq"
-                ]
-              },
-              {
-                "group": "التسعير",
-                "icon": "credit-card",
-                "pages": [
-                  "l/ar/user-guide/pricing/billing-and-pricing-faq"
-                ]
-              },
-              {
-                "group": "الموارد",
-                "icon": "book-open",
-                "pages": [
-                  "l/ar/user-guide/resources/glossary",
-                  "l/ar/user-guide/resources/github"
-                ]
-              }
-            ]
+            "groups": []
           },
           {
             "tab": "المطورون",
@@ -1224,120 +887,7 @@
         "tabs": [
           {
             "tab": "Uživatelská příručka",
-            "groups": [
-              {
-                "group": "Začněme",
-                "icon": "rocket",
-                "pages": [
-                  "l/cs/user-guide/introduction",
-                  "l/cs/user-guide/getting-started/what-is-twenty",
-                  "l/cs/user-guide/getting-started/create-workspace",
-                  "l/cs/user-guide/getting-started/getting-around-twenty",
-                  "l/cs/user-guide/getting-started/configure-your-workspace",
-                  "l/cs/user-guide/getting-started/implementation-services",
-                  "l/cs/user-guide/getting-started/migrating-from-other-crms",
-                  "l/cs/user-guide/getting-started/import-export-data"
-                ]
-              },
-              {
-                "group": "Datový model",
-                "icon": "database",
-                "pages": [
-                  "l/cs/user-guide/data-model/customize-your-data-model",
-                  "l/cs/user-guide/data-model/objects",
-                  "l/cs/user-guide/data-model/fields",
-                  "l/cs/user-guide/data-model/creating-records",
-                  "l/cs/user-guide/data-model/relation-fields",
-                  "l/cs/user-guide/data-model/data-model-faq"
-                ]
-              },
-              {
-                "group": "CRM základy",
-                "icon": "users",
-                "pages": [
-                  "l/cs/user-guide/crm-essentials/contact-and-account-management",
-                  "l/cs/user-guide/crm-essentials/pipeline",
-                  "l/cs/user-guide/crm-essentials/view-management",
-                  "l/cs/user-guide/crm-essentials/sales-use-cases"
-                ]
-              },
-              {
-                "group": "Pohledy",
-                "icon": "table",
-                "pages": [
-                  "l/cs/user-guide/views/kanban-views",
-                  "l/cs/user-guide/views/views-sort-filter"
-                ]
-              },
-              {
-                "group": "Pracovní postupy",
-                "icon": "bolt",
-                "pages": [
-                  "l/cs/user-guide/workflows/getting-started-workflows",
-                  "l/cs/user-guide/workflows/workflow-features",
-                  "l/cs/user-guide/workflows/internal-automations",
-                  "l/cs/user-guide/workflows/external-tool-integration",
-                  "l/cs/user-guide/workflows/workflow-troubleshooting",
-                  "l/cs/user-guide/workflows/workflow-credits",
-                  "l/cs/user-guide/workflows/professional-services"
-                ]
-              },
-              {
-                "group": "Spolupráce",
-                "icon": "envelope",
-                "pages": [
-                  "l/cs/user-guide/collaboration/emails-and-calendars",
-                  "l/cs/user-guide/collaboration/notes",
-                  "l/cs/user-guide/collaboration/tasks"
-                ]
-              },
-              {
-                "group": "Integrace & API",
-                "icon": "plug",
-                "pages": [
-                  "l/cs/user-guide/integrations-api/apis-overview",
-                  "l/cs/user-guide/integrations-api/api-webhooks",
-                  "l/cs/user-guide/integrations-api/integrations"
-                ]
-              },
-              {
-                "group": "Reportování",
-                "icon": "chart-bar",
-                "pages": [
-                  "l/cs/user-guide/reporting/reporting-overview"
-                ]
-              },
-              {
-                "group": "Nastavení",
-                "icon": "gear",
-                "pages": [
-                  "l/cs/user-guide/settings/profile-settings",
-                  "l/cs/user-guide/settings/experience-settings",
-                  "l/cs/user-guide/settings/email-calendar-setup",
-                  "l/cs/user-guide/settings/workspace-settings",
-                  "l/cs/user-guide/settings/member-management",
-                  "l/cs/user-guide/settings/permissions",
-                  "l/cs/user-guide/settings/domains-settings",
-                  "l/cs/user-guide/settings/releases-settings",
-                  "l/cs/user-guide/settings/settings-faq"
-                ]
-              },
-              {
-                "group": "Ceny",
-                "icon": "credit-card",
-                "pages": [
-                  "l/cs/user-guide/pricing/billing-and-pricing-faq"
-                ]
-              },
-              {
-                "group": "Zdroje",
-                "icon": "book-open",
-                "pages": [
-                  "l/cs/user-guide/resources/glossary",
-                  "l/cs/user-guide/resources/github"
-                ]
-              }
-            ]
+            "groups": []
           },
           {
             "tab": "Vývojáři",
@@ -1460,120 +1010,7 @@
         "tabs": [
           {
             "tab": "Benutzerhandbuch",
-            "groups": [
-              {
-                "group": "Erste Schritte",
-                "icon": "rocket",
-                "pages": [
-                  "l/de/user-guide/introduction",
-                  "l/de/user-guide/getting-started/what-is-twenty",
-                  "l/de/user-guide/getting-started/create-workspace",
-                  "l/de/user-guide/getting-started/getting-around-twenty",
-                  "l/de/user-guide/getting-started/configure-your-workspace",
-                  "l/de/user-guide/getting-started/implementation-services",
-                  "l/de/user-guide/getting-started/migrating-from-other-crms",
-                  "l/de/user-guide/getting-started/import-export-data"
-                ]
-              },
-              {
-                "group": "Datenmodell",
-                "icon": "database",
-                "pages": [
-                  "l/de/user-guide/data-model/customize-your-data-model",
-                  "l/de/user-guide/data-model/objects",
-                  "l/de/user-guide/data-model/fields",
-                  "l/de/user-guide/data-model/creating-records",
-                  "l/de/user-guide/data-model/relation-fields",
-                  "l/de/user-guide/data-model/data-model-faq"
-                ]
-              },
-              {
-                "group": "CRM-Grundlagen",
-                "icon": "users",
-                "pages": [
-                  "l/de/user-guide/crm-essentials/contact-and-account-management",
-                  "l/de/user-guide/crm-essentials/pipeline",
-                  "l/de/user-guide/crm-essentials/view-management",
-                  "l/de/user-guide/crm-essentials/sales-use-cases"
-                ]
-              },
-              {
-                "group": "Ansichten",
-                "icon": "table",
-                "pages": [
-                  "l/de/user-guide/views/kanban-views",
-                  "l/de/user-guide/views/views-sort-filter"
-                ]
-              },
-              {
-                "group": "Workflows",
-                "icon": "bolt",
-                "pages": [
-                  "l/de/user-guide/workflows/getting-started-workflows",
-                  "l/de/user-guide/workflows/workflow-features",
-                  "l/de/user-guide/workflows/internal-automations",
-                  "l/de/user-guide/workflows/external-tool-integration",
-                  "l/de/user-guide/workflows/workflow-troubleshooting",
-                  "l/de/user-guide/workflows/workflow-credits",
-                  "l/de/user-guide/workflows/professional-services"
-                ]
-              },
-              {
-                "group": "Zusammenarbeit",
-                "icon": "envelope",
-                "pages": [
-                  "l/de/user-guide/collaboration/emails-and-calendars",
-                  "l/de/user-guide/collaboration/notes",
-                  "l/de/user-guide/collaboration/tasks"
-                ]
-              },
-              {
-                "group": "Integrationen & API",
-                "icon": "plug",
-                "pages": [
-                  "l/de/user-guide/integrations-api/apis-overview",
-                  "l/de/user-guide/integrations-api/api-webhooks",
-                  "l/de/user-guide/integrations-api/integrations"
-                ]
-              },
-              {
-                "group": "Berichterstattung",
-                "icon": "chart-bar",
-                "pages": [
-                  "l/de/user-guide/reporting/reporting-overview"
-                ]
-              },
-              {
-                "group": "Einstellungen",
-                "icon": "gear",
-                "pages": [
-                  "l/de/user-guide/settings/profile-settings",
-                  "l/de/user-guide/settings/experience-settings",
-                  "l/de/user-guide/settings/email-calendar-setup",
-                  "l/de/user-guide/settings/workspace-settings",
-                  "l/de/user-guide/settings/member-management",
-                  "l/de/user-guide/settings/permissions",
-                  "l/de/user-guide/settings/domains-settings",
-                  "l/de/user-guide/settings/releases-settings",
-                  "l/de/user-guide/settings/settings-faq"
-                ]
-              },
-              {
-                "group": "Preisgestaltung",
-                "icon": "credit-card",
-                "pages": [
-                  "l/de/user-guide/pricing/billing-and-pricing-faq"
-                ]
-              },
-              {
-                "group": "Ressourcen",
-                "icon": "book-open",
-                "pages": [
-                  "l/de/user-guide/resources/glossary",
-                  "l/de/user-guide/resources/github"
-                ]
-              }
-            ]
+            "groups": []
           },
           {
             "tab": "Entwickler",
@@ -1696,120 +1133,7 @@
         "tabs": [
           {
             "tab": "Guía de usuario",
-            "groups": [
-              {
-                "group": "Comenzando",
-                "icon": "rocket",
-                "pages": [
-                  "l/es/user-guide/introduction",
-                  "l/es/user-guide/getting-started/what-is-twenty",
-                  "l/es/user-guide/getting-started/create-workspace",
-                  "l/es/user-guide/getting-started/getting-around-twenty",
-                  "l/es/user-guide/getting-started/configure-your-workspace",
-                  "l/es/user-guide/getting-started/implementation-services",
-                  "l/es/user-guide/getting-started/migrating-from-other-crms",
-                  "l/es/user-guide/getting-started/import-export-data"
-                ]
-              },
-              {
-                "group": "Modelo de datos",
-                "icon": "database",
-                "pages": [
-                  "l/es/user-guide/data-model/customize-your-data-model",
-                  "l/es/user-guide/data-model/objects",
-                  "l/es/user-guide/data-model/fields",
-                  "l/es/user-guide/data-model/creating-records",
-                  "l/es/user-guide/data-model/relation-fields",
-                  "l/es/user-guide/data-model/data-model-faq"
-                ]
-              },
-              {
-                "group": "Esenciales de CRM",
-                "icon": "users",
-                "pages": [
-                  "l/es/user-guide/crm-essentials/contact-and-account-management",
-                  "l/es/user-guide/crm-essentials/pipeline",
-                  "l/es/user-guide/crm-essentials/view-management",
-                  "l/es/user-guide/crm-essentials/sales-use-cases"
-                ]
-              },
-              {
-                "group": "Vistas",
-                "icon": "table",
-                "pages": [
-                  "l/es/user-guide/views/kanban-views",
-                  "l/es/user-guide/views/views-sort-filter"
-                ]
-              },
-              {
-                "group": "Workflows",
-                "icon": "bolt",
-                "pages": [
-                  "l/es/user-guide/workflows/getting-started-workflows",
-                  "l/es/user-guide/workflows/workflow-features",
-                  "l/es/user-guide/workflows/internal-automations",
-                  "l/es/user-guide/workflows/external-tool-integration",
-                  "l/es/user-guide/workflows/workflow-troubleshooting",
-                  "l/es/user-guide/workflows/workflow-credits",
-                  "l/es/user-guide/workflows/professional-services"
-                ]
-              },
-              {
-                "group": "Colaboración",
-                "icon": "envelope",
-                "pages": [
-                  "l/es/user-guide/collaboration/emails-and-calendars",
-                  "l/es/user-guide/collaboration/notes",
-                  "l/es/user-guide/collaboration/tasks"
-                ]
-              },
-              {
-                "group": "Integraciones y API",
-                "icon": "plug",
-                "pages": [
-                  "l/es/user-guide/integrations-api/apis-overview",
-                  "l/es/user-guide/integrations-api/api-webhooks",
-                  "l/es/user-guide/integrations-api/integrations"
-                ]
-              },
-              {
-                "group": "Informes",
-                "icon": "chart-bar",
-                "pages": [
-                  "l/es/user-guide/reporting/reporting-overview"
-                ]
-              },
-              {
-                "group": "Configuración",
-                "icon": "gear",
-                "pages": [
-                  "l/es/user-guide/settings/profile-settings",
-                  "l/es/user-guide/settings/experience-settings",
-                  "l/es/user-guide/settings/email-calendar-setup",
-                  "l/es/user-guide/settings/workspace-settings",
-                  "l/es/user-guide/settings/member-management",
-                  "l/es/user-guide/settings/permissions",
-                  "l/es/user-guide/settings/domains-settings",
-                  "l/es/user-guide/settings/releases-settings",
-                  "l/es/user-guide/settings/settings-faq"
-                ]
-              },
-              {
-                "group": "Precios",
-                "icon": "credit-card",
-                "pages": [
-                  "l/es/user-guide/pricing/billing-and-pricing-faq"
-                ]
-              },
-              {
-                "group": "Recursos",
-                "icon": "book-open",
-                "pages": [
-                  "l/es/user-guide/resources/glossary",
-                  "l/es/user-guide/resources/github"
-                ]
-              }
-            ]
+            "groups": []
           },
           {
             "tab": "Desarrolladores",
@@ -1932,120 +1256,7 @@
         "tabs": [
           {
             "tab": "Guida Utente",
-            "groups": [
-              {
-                "group": "Per Iniziare",
-                "icon": "rocket",
-                "pages": [
-                  "l/it/user-guide/introduction",
-                  "l/it/user-guide/getting-started/what-is-twenty",
-                  "l/it/user-guide/getting-started/create-workspace",
-                  "l/it/user-guide/getting-started/getting-around-twenty",
-                  "l/it/user-guide/getting-started/configure-your-workspace",
-                  "l/it/user-guide/getting-started/implementation-services",
-                  "l/it/user-guide/getting-started/migrating-from-other-crms",
-                  "l/it/user-guide/getting-started/import-export-data"
-                ]
-              },
-              {
-                "group": "Modello dati",
-                "icon": "database",
-                "pages": [
-                  "l/it/user-guide/data-model/customize-your-data-model",
-                  "l/it/user-guide/data-model/objects",
-                  "l/it/user-guide/data-model/fields",
-                  "l/it/user-guide/data-model/creating-records",
-                  "l/it/user-guide/data-model/relation-fields",
-                  "l/it/user-guide/data-model/data-model-faq"
-                ]
-              },
-              {
-                "group": "Essentials CRM",
-                "icon": "users",
-                "pages": [
-                  "l/it/user-guide/crm-essentials/contact-and-account-management",
-                  "l/it/user-guide/crm-essentials/pipeline",
-                  "l/it/user-guide/crm-essentials/view-management",
-                  "l/it/user-guide/crm-essentials/sales-use-cases"
-                ]
-              },
-              {
-                "group": "Viste",
-                "icon": "table",
-                "pages": [
-                  "l/it/user-guide/views/kanban-views",
-                  "l/it/user-guide/views/views-sort-filter"
-                ]
-              },
-              {
-                "group": "Workflows",
-                "icon": "bolt",
-                "pages": [
-                  "l/it/user-guide/workflows/getting-started-workflows",
-                  "l/it/user-guide/workflows/workflow-features",
-                  "l/it/user-guide/workflows/internal-automations",
-                  "l/it/user-guide/workflows/external-tool-integration",
-                  "l/it/user-guide/workflows/workflow-troubleshooting",
-                  "l/it/user-guide/workflows/workflow-credits",
-                  "l/it/user-guide/workflows/professional-services"
-                ]
-              },
-              {
-                "group": "Collaborazione",
-                "icon": "envelope",
-                "pages": [
-                  "l/it/user-guide/collaboration/emails-and-calendars",
-                  "l/it/user-guide/collaboration/notes",
-                  "l/it/user-guide/collaboration/tasks"
-                ]
-              },
-              {
-                "group": "Integrazioni & API",
-                "icon": "plug",
-                "pages": [
-                  "l/it/user-guide/integrations-api/apis-overview",
-                  "l/it/user-guide/integrations-api/api-webhooks",
-                  "l/it/user-guide/integrations-api/integrations"
-                ]
-              },
-              {
-                "group": "Reportistica",
-                "icon": "chart-bar",
-                "pages": [
-                  "l/it/user-guide/reporting/reporting-overview"
-                ]
-              },
-              {
-                "group": "Impostazioni",
-                "icon": "gear",
-                "pages": [
-                  "l/it/user-guide/settings/profile-settings",
-                  "l/it/user-guide/settings/experience-settings",
-                  "l/it/user-guide/settings/email-calendar-setup",
-                  "l/it/user-guide/settings/workspace-settings",
-                  "l/it/user-guide/settings/member-management",
-                  "l/it/user-guide/settings/permissions",
-                  "l/it/user-guide/settings/domains-settings",
-                  "l/it/user-guide/settings/releases-settings",
-                  "l/it/user-guide/settings/settings-faq"
-                ]
-              },
-              {
-                "group": "Prezzi",
-                "icon": "credit-card",
-                "pages": [
-                  "l/it/user-guide/pricing/billing-and-pricing-faq"
-                ]
-              },
-              {
-                "group": "Risorse",
-                "icon": "book-open",
-                "pages": [
-                  "l/it/user-guide/resources/glossary",
-                  "l/it/user-guide/resources/github"
-                ]
-              }
-            ]
+            "groups": []
           },
           {
             "tab": "Sviluppatori",
@@ -2168,120 +1379,7 @@
         "tabs": [
           {
             "tab": "ユーザーガイド",
-            "groups": [
-              {
-                "group": "始めに",
-                "icon": "rocket",
-                "pages": [
-                  "l/ja/user-guide/introduction",
-                  "l/ja/user-guide/getting-started/what-is-twenty",
-                  "l/ja/user-guide/getting-started/create-workspace",
-                  "l/ja/user-guide/getting-started/getting-around-twenty",
-                  "l/ja/user-guide/getting-started/configure-your-workspace",
-                  "l/ja/user-guide/getting-started/implementation-services",
-                  "l/ja/user-guide/getting-started/migrating-from-other-crms",
-                  "l/ja/user-guide/getting-started/import-export-data"
-                ]
-              },
-              {
-                "group": "データモデル",
-                "icon": "database",
-                "pages": [
-                  "l/ja/user-guide/data-model/customize-your-data-model",
-                  "l/ja/user-guide/data-model/objects",
-                  "l/ja/user-guide/data-model/fields",
-                  "l/ja/user-guide/data-model/creating-records",
-                  "l/ja/user-guide/data-model/relation-fields",
-                  "l/ja/user-guide/data-model/data-model-faq"
-                ]
-              },
-              {
-                "group": "CRM の基本",
-                "icon": "users",
-                "pages": [
-                  "l/ja/user-guide/crm-essentials/contact-and-account-management",
-                  "l/ja/user-guide/crm-essentials/pipeline",
-                  "l/ja/user-guide/crm-essentials/view-management",
-                  "l/ja/user-guide/crm-essentials/sales-use-cases"
-                ]
-              },
-              {
-                "group": "ビュー",
-                "icon": "table",
-                "pages": [
-                  "l/ja/user-guide/views/kanban-views",
-                  "l/ja/user-guide/views/views-sort-filter"
-                ]
-              },
-              {
-                "group": "ワークフロー",
-                "icon": "bolt",
-                "pages": [
-                  "l/ja/user-guide/workflows/getting-started-workflows",
-                  "l/ja/user-guide/workflows/workflow-features",
-                  "l/ja/user-guide/workflows/internal-automations",
-                  "l/ja/user-guide/workflows/external-tool-integration",
-                  "l/ja/user-guide/workflows/workflow-troubleshooting",
-                  "l/ja/user-guide/workflows/workflow-credits",
-                  "l/ja/user-guide/workflows/professional-services"
-                ]
-              },
-              {
-                "group": "コラボレーション",
-                "icon": "envelope",
-                "pages": [
-                  "l/ja/user-guide/collaboration/emails-and-calendars",
-                  "l/ja/user-guide/collaboration/notes",
-                  "l/ja/user-guide/collaboration/tasks"
-                ]
-              },
-              {
-                "group": "連携とAPI",
-                "icon": "plug",
-                "pages": [
-                  "l/ja/user-guide/integrations-api/apis-overview",
-                  "l/ja/user-guide/integrations-api/api-webhooks",
-                  "l/ja/user-guide/integrations-api/integrations"
-                ]
-              },
-              {
-                "group": "レポーティング",
-                "icon": "chart-bar",
-                "pages": [
-                  "l/ja/user-guide/reporting/reporting-overview"
-                ]
-              },
-              {
-                "group": "設定",
-                "icon": "gear",
-                "pages": [
-                  "l/ja/user-guide/settings/profile-settings",
-                  "l/ja/user-guide/settings/experience-settings",
-                  "l/ja/user-guide/settings/email-calendar-setup",
-                  "l/ja/user-guide/settings/workspace-settings",
-                  "l/ja/user-guide/settings/member-management",
-                  "l/ja/user-guide/settings/permissions",
-                  "l/ja/user-guide/settings/domains-settings",
-                  "l/ja/user-guide/settings/releases-settings",
-                  "l/ja/user-guide/settings/settings-faq"
-                ]
-              },
-              {
-                "group": "料金",
-                "icon": "credit-card",
-                "pages": [
-                  "l/ja/user-guide/pricing/billing-and-pricing-faq"
-                ]
-              },
-              {
-                "group": "リソース",
-                "icon": "book-open",
-                "pages": [
-                  "l/ja/user-guide/resources/glossary",
-                  "l/ja/user-guide/resources/github"
-                ]
-              }
-            ]
+            "groups": []
           },
           {
             "tab": "開発者",
@@ -2404,120 +1502,7 @@
         "tabs": [
           {
             "tab": "User Guide",
-            "groups": [
-              {
-                "group": "시작하기",
-                "icon": "rocket",
-                "pages": [
-                  "l/ko/user-guide/introduction",
-                  "l/ko/user-guide/getting-started/what-is-twenty",
-                  "l/ko/user-guide/getting-started/create-workspace",
-                  "l/ko/user-guide/getting-started/getting-around-twenty",
-                  "l/ko/user-guide/getting-started/configure-your-workspace",
-                  "l/ko/user-guide/getting-started/implementation-services",
-                  "l/ko/user-guide/getting-started/migrating-from-other-crms",
-                  "l/ko/user-guide/getting-started/import-export-data"
-                ]
-              },
-              {
-                "group": "데이터 모델",
-                "icon": "database",
-                "pages": [
-                  "l/ko/user-guide/data-model/customize-your-data-model",
-                  "l/ko/user-guide/data-model/objects",
-                  "l/ko/user-guide/data-model/fields",
-                  "l/ko/user-guide/data-model/creating-records",
-                  "l/ko/user-guide/data-model/relation-fields",
-                  "l/ko/user-guide/data-model/data-model-faq"
-                ]
-              },
-              {
-                "group": "CRM 필수 요소",
-                "icon": "users",
-                "pages": [
-                  "l/ko/user-guide/crm-essentials/contact-and-account-management",
-                  "l/ko/user-guide/crm-essentials/pipeline",
-                  "l/ko/user-guide/crm-essentials/view-management",
-                  "l/ko/user-guide/crm-essentials/sales-use-cases"
-                ]
-              },
-              {
-                "group": "보기들",
-                "icon": "table",
-                "pages": [
-                  "l/ko/user-guide/views/kanban-views",
-                  "l/ko/user-guide/views/views-sort-filter"
-                ]
-              },
-              {
-                "group": "Workflows",
-                "icon": "bolt",
-                "pages": [
-                  "l/ko/user-guide/workflows/getting-started-workflows",
-                  "l/ko/user-guide/workflows/workflow-features",
-                  "l/ko/user-guide/workflows/internal-automations",
-                  "l/ko/user-guide/workflows/external-tool-integration",
-                  "l/ko/user-guide/workflows/workflow-troubleshooting",
-                  "l/ko/user-guide/workflows/workflow-credits",
-                  "l/ko/user-guide/workflows/professional-services"
-                ]
-              },
-              {
-                "group": "협업",
-                "icon": "envelope",
-                "pages": [
-                  "l/ko/user-guide/collaboration/emails-and-calendars",
-                  "l/ko/user-guide/collaboration/notes",
-                  "l/ko/user-guide/collaboration/tasks"
-                ]
-              },
-              {
-                "group": "Integrations & API",
-                "icon": "plug",
-                "pages": [
-                  "l/ko/user-guide/integrations-api/apis-overview",
-                  "l/ko/user-guide/integrations-api/api-webhooks",
-                  "l/ko/user-guide/integrations-api/integrations"
-                ]
-              },
-              {
-                "group": "Reporting",
-                "icon": "chart-bar",
-                "pages": [
-                  "l/ko/user-guide/reporting/reporting-overview"
-                ]
-              },
-              {
-                "group": "설정",
-                "icon": "gear",
-                "pages": [
-                  "l/ko/user-guide/settings/profile-settings",
-                  "l/ko/user-guide/settings/experience-settings",
-                  "l/ko/user-guide/settings/email-calendar-setup",
-                  "l/ko/user-guide/settings/workspace-settings",
-                  "l/ko/user-guide/settings/member-management",
-                  "l/ko/user-guide/settings/permissions",
-                  "l/ko/user-guide/settings/domains-settings",
-                  "l/ko/user-guide/settings/releases-settings",
-                  "l/ko/user-guide/settings/settings-faq"
-                ]
-              },
-              {
-                "group": "가격",
-                "icon": "credit-card",
-                "pages": [
-                  "l/ko/user-guide/pricing/billing-and-pricing-faq"
-                ]
-              },
-              {
-                "group": "자료",
-                "icon": "book-open",
-                "pages": [
-                  "l/ko/user-guide/resources/glossary",
-                  "l/ko/user-guide/resources/github"
-                ]
-              }
-            ]
+            "groups": []
           },
           {
             "tab": "개발자",
@@ -2640,120 +1625,7 @@
         "tabs": [
           {
             "tab": "Manual do Usuário",
-            "groups": [
-              {
-                "group": "Começando",
-                "icon": "rocket",
-                "pages": [
-                  "l/pt/user-guide/introduction",
-                  "l/pt/user-guide/getting-started/what-is-twenty",
-                  "l/pt/user-guide/getting-started/create-workspace",
-                  "l/pt/user-guide/getting-started/getting-around-twenty",
-                  "l/pt/user-guide/getting-started/configure-your-workspace",
-                  "l/pt/user-guide/getting-started/implementation-services",
-                  "l/pt/user-guide/getting-started/migrating-from-other-crms",
-                  "l/pt/user-guide/getting-started/import-export-data"
-                ]
-              },
-              {
-                "group": "Modelo de Dados",
-                "icon": "database",
-                "pages": [
-                  "l/pt/user-guide/data-model/customize-your-data-model",
-                  "l/pt/user-guide/data-model/objects",
-                  "l/pt/user-guide/data-model/fields",
-                  "l/pt/user-guide/data-model/creating-records",
-                  "l/pt/user-guide/data-model/relation-fields",
-                  "l/pt/user-guide/data-model/data-model-faq"
-                ]
-              },
-              {
-                "group": "Essenciais do CRM",
-                "icon": "users",
-                "pages": [
-                  "l/pt/user-guide/crm-essentials/contact-and-account-management",
-                  "l/pt/user-guide/crm-essentials/pipeline",
-                  "l/pt/user-guide/crm-essentials/view-management",
-                  "l/pt/user-guide/crm-essentials/sales-use-cases"
-                ]
-              },
-              {
-                "group": "Visualizações",
-                "icon": "table",
-                "pages": [
-                  "l/pt/user-guide/views/kanban-views",
-                  "l/pt/user-guide/views/views-sort-filter"
-                ]
-              },
-              {
-                "group": "Workflows",
-                "icon": "bolt",
-                "pages": [
-                  "l/pt/user-guide/workflows/getting-started-workflows",
-                  "l/pt/user-guide/workflows/workflow-features",
-                  "l/pt/user-guide/workflows/internal-automations",
-                  "l/pt/user-guide/workflows/external-tool-integration",
-                  "l/pt/user-guide/workflows/workflow-troubleshooting",
-                  "l/pt/user-guide/workflows/workflow-credits",
-                  "l/pt/user-guide/workflows/professional-services"
-                ]
-              },
-              {
-                "group": "Colaboração",
-                "icon": "envelope",
-                "pages": [
-                  "l/pt/user-guide/collaboration/emails-and-calendars",
-                  "l/pt/user-guide/collaboration/notes",
-                  "l/pt/user-guide/collaboration/tasks"
-                ]
-              },
-              {
-                "group": "Integrações e API",
-                "icon": "plug",
-                "pages": [
-                  "l/pt/user-guide/integrations-api/apis-overview",
-                  "l/pt/user-guide/integrations-api/api-webhooks",
-                  "l/pt/user-guide/integrations-api/integrations"
-                ]
-              },
-              {
-                "group": "Relatórios",
-                "icon": "chart-bar",
-                "pages": [
-                  "l/pt/user-guide/reporting/reporting-overview"
-                ]
-              },
-              {
-                "group": "Configurações",
-                "icon": "gear",
-                "pages": [
-                  "l/pt/user-guide/settings/profile-settings",
-                  "l/pt/user-guide/settings/experience-settings",
-                  "l/pt/user-guide/settings/email-calendar-setup",
-                  "l/pt/user-guide/settings/workspace-settings",
-                  "l/pt/user-guide/settings/member-management",
-                  "l/pt/user-guide/settings/permissions",
-                  "l/pt/user-guide/settings/domains-settings",
-                  "l/pt/user-guide/settings/releases-settings",
-                  "l/pt/user-guide/settings/settings-faq"
-                ]
-              },
-              {
-                "group": "Preços",
-                "icon": "credit-card",
-                "pages": [
-                  "l/pt/user-guide/pricing/billing-and-pricing-faq"
-                ]
-              },
-              {
-                "group": "Recursos",
-                "icon": "book-open",
-                "pages": [
-                  "l/pt/user-guide/resources/glossary",
-                  "l/pt/user-guide/resources/github"
-                ]
-              }
-            ]
+            "groups": []
           },
           {
             "tab": "Desenvolvedores",
@@ -2876,120 +1748,7 @@
         "tabs": [
           {
             "tab": "Ghid de utilizator",
-            "groups": [
-              {
-                "group": "Noțiuni de bază",
-                "icon": "rocket",
-                "pages": [
-                  "l/ro/user-guide/introduction",
-                  "l/ro/user-guide/getting-started/what-is-twenty",
-                  "l/ro/user-guide/getting-started/create-workspace",
-                  "l/ro/user-guide/getting-started/getting-around-twenty",
-                  "l/ro/user-guide/getting-started/configure-your-workspace",
-                  "l/ro/user-guide/getting-started/implementation-services",
-                  "l/ro/user-guide/getting-started/migrating-from-other-crms",
-                  "l/ro/user-guide/getting-started/import-export-data"
-                ]
-              },
-              {
-                "group": "Model de date",
-                "icon": "database",
-                "pages": [
-                  "l/ro/user-guide/data-model/customize-your-data-model",
-                  "l/ro/user-guide/data-model/objects",
-                  "l/ro/user-guide/data-model/fields",
-                  "l/ro/user-guide/data-model/creating-records",
-                  "l/ro/user-guide/data-model/relation-fields",
-                  "l/ro/user-guide/data-model/data-model-faq"
-                ]
-              },
-              {
-                "group": "Elemente esențiale CRM",
-                "icon": "users",
-                "pages": [
-                  "l/ro/user-guide/crm-essentials/contact-and-account-management",
-                  "l/ro/user-guide/crm-essentials/pipeline",
-                  "l/ro/user-guide/crm-essentials/view-management",
-                  "l/ro/user-guide/crm-essentials/sales-use-cases"
-                ]
-              },
-              {
-                "group": "Vizualizări",
-                "icon": "table",
-                "pages": [
-                  "l/ro/user-guide/views/kanban-views",
-                  "l/ro/user-guide/views/views-sort-filter"
-                ]
-              },
-              {
-                "group": "Fluxuri de lucru",
-                "icon": "bolt",
-                "pages": [
-                  "l/ro/user-guide/workflows/getting-started-workflows",
-                  "l/ro/user-guide/workflows/workflow-features",
-                  "l/ro/user-guide/workflows/internal-automations",
-                  "l/ro/user-guide/workflows/external-tool-integration",
-                  "l/ro/user-guide/workflows/workflow-troubleshooting",
-                  "l/ro/user-guide/workflows/workflow-credits",
-                  "l/ro/user-guide/workflows/professional-services"
-                ]
-              },
-              {
-                "group": "Colaborare",
-                "icon": "envelope",
-                "pages": [
-                  "l/ro/user-guide/collaboration/emails-and-calendars",
-                  "l/ro/user-guide/collaboration/notes",
-                  "l/ro/user-guide/collaboration/tasks"
-                ]
-              },
-              {
-                "group": "Integrări & API",
-                "icon": "plug",
-                "pages": [
-                  "l/ro/user-guide/integrations-api/apis-overview",
-                  "l/ro/user-guide/integrations-api/api-webhooks",
-                  "l/ro/user-guide/integrations-api/integrations"
-                ]
-              },
-              {
-                "group": "Raportare",
-                "icon": "chart-bar",
-                "pages": [
-                  "l/ro/user-guide/reporting/reporting-overview"
-                ]
-              },
-              {
-                "group": "Setări",
-                "icon": "gear",
-                "pages": [
-                  "l/ro/user-guide/settings/profile-settings",
-                  "l/ro/user-guide/settings/experience-settings",
-                  "l/ro/user-guide/settings/email-calendar-setup",
-                  "l/ro/user-guide/settings/workspace-settings",
-                  "l/ro/user-guide/settings/member-management",
-                  "l/ro/user-guide/settings/permissions",
-                  "l/ro/user-guide/settings/domains-settings",
-                  "l/ro/user-guide/settings/releases-settings",
-                  "l/ro/user-guide/settings/settings-faq"
-                ]
-              },
-              {
-                "group": "Prețuri",
-                "icon": "credit-card",
-                "pages": [
-                  "l/ro/user-guide/pricing/billing-and-pricing-faq"
-                ]
-              },
-              {
-                "group": "Resurse",
-                "icon": "book-open",
-                "pages": [
-                  "l/ro/user-guide/resources/glossary",
-                  "l/ro/user-guide/resources/github"
-                ]
-              }
-            ]
+            "groups": []
           },
           {
             "tab": "Dezvoltatori",
@@ -3112,120 +1871,7 @@
         "tabs": [
           {
             "tab": "Руководство пользователя",
-            "groups": [
-              {
-                "group": "Начало работы",
-                "icon": "rocket",
-                "pages": [
-                  "l/ru/user-guide/introduction",
-                  "l/ru/user-guide/getting-started/what-is-twenty",
-                  "l/ru/user-guide/getting-started/create-workspace",
-                  "l/ru/user-guide/getting-started/getting-around-twenty",
-                  "l/ru/user-guide/getting-started/configure-your-workspace",
-                  "l/ru/user-guide/getting-started/implementation-services",
-                  "l/ru/user-guide/getting-started/migrating-from-other-crms",
-                  "l/ru/user-guide/getting-started/import-export-data"
-                ]
-              },
-              {
-                "group": "Модель данных",
-                "icon": "database",
-                "pages": [
-                  "l/ru/user-guide/data-model/customize-your-data-model",
-                  "l/ru/user-guide/data-model/objects",
-                  "l/ru/user-guide/data-model/fields",
-                  "l/ru/user-guide/data-model/creating-records",
-                  "l/ru/user-guide/data-model/relation-fields",
-                  "l/ru/user-guide/data-model/data-model-faq"
-                ]
-              },
-              {
-                "group": "Основы CRM",
-                "icon": "users",
-                "pages": [
-                  "l/ru/user-guide/crm-essentials/contact-and-account-management",
-                  "l/ru/user-guide/crm-essentials/pipeline",
-                  "l/ru/user-guide/crm-essentials/view-management",
-                  "l/ru/user-guide/crm-essentials/sales-use-cases"
-                ]
-              },
-              {
-                "group": "Представления",
-                "icon": "table",
-                "pages": [
-                  "l/ru/user-guide/views/kanban-views",
-                  "l/ru/user-guide/views/views-sort-filter"
-                ]
-              },
-              {
-                "group": "Рабочие процессы",
-                "icon": "bolt",
-                "pages": [
-                  "l/ru/user-guide/workflows/getting-started-workflows",
-                  "l/ru/user-guide/workflows/workflow-features",
-                  "l/ru/user-guide/workflows/internal-automations",
-                  "l/ru/user-guide/workflows/external-tool-integration",
-                  "l/ru/user-guide/workflows/workflow-troubleshooting",
-                  "l/ru/user-guide/workflows/workflow-credits",
-                  "l/ru/user-guide/workflows/professional-services"
-                ]
-              },
-              {
-                "group": "Сотрудничество",
-                "icon": "envelope",
-                "pages": [
-                  "l/ru/user-guide/collaboration/emails-and-calendars",
-                  "l/ru/user-guide/collaboration/notes",
-                  "l/ru/user-guide/collaboration/tasks"
-                ]
-              },
-              {
-                "group": "Интеграции и API",
-                "icon": "plug",
-                "pages": [
-                  "l/ru/user-guide/integrations-api/apis-overview",
-                  "l/ru/user-guide/integrations-api/api-webhooks",
-                  "l/ru/user-guide/integrations-api/integrations"
-                ]
-              },
-              {
-                "group": "Отчеты",
-                "icon": "chart-bar",
-                "pages": [
-                  "l/ru/user-guide/reporting/reporting-overview"
-                ]
-              },
-              {
-                "group": "Настройки",
-                "icon": "gear",
-                "pages": [
-                  "l/ru/user-guide/settings/profile-settings",
-                  "l/ru/user-guide/settings/experience-settings",
-                  "l/ru/user-guide/settings/email-calendar-setup",
-                  "l/ru/user-guide/settings/workspace-settings",
-                  "l/ru/user-guide/settings/member-management",
-                  "l/ru/user-guide/settings/permissions",
-                  "l/ru/user-guide/settings/domains-settings",
-                  "l/ru/user-guide/settings/releases-settings",
-                  "l/ru/user-guide/settings/settings-faq"
-                ]
-              },
-              {
-                "group": "Цены",
-                "icon": "credit-card",
-                "pages": [
-                  "l/ru/user-guide/pricing/billing-and-pricing-faq"
-                ]
-              },
-              {
-                "group": "Ресурсы",
-                "icon": "book-open",
-                "pages": [
-                  "l/ru/user-guide/resources/glossary",
-                  "l/ru/user-guide/resources/github"
-                ]
-              }
-            ]
+            "groups": []
           },
           {
             "tab": "Разработчики",
@@ -3348,120 +1994,7 @@
         "tabs": [
           {
             "tab": "User Guide",
-            "groups": [
-              {
-                "group": "Getting Started",
-                "icon": "rocket",
-                "pages": [
-                  "l/tr/user-guide/introduction",
-                  "l/tr/user-guide/getting-started/what-is-twenty",
-                  "l/tr/user-guide/getting-started/create-workspace",
-                  "l/tr/user-guide/getting-started/getting-around-twenty",
-                  "l/tr/user-guide/getting-started/configure-your-workspace",
-                  "l/tr/user-guide/getting-started/implementation-services",
-                  "l/tr/user-guide/getting-started/migrating-from-other-crms",
-                  "l/tr/user-guide/getting-started/import-export-data"
-                ]
-              },
-              {
-                "group": "Veri modeli",
-                "icon": "database",
-                "pages": [
-                  "l/tr/user-guide/data-model/customize-your-data-model",
-                  "l/tr/user-guide/data-model/objects",
-                  "l/tr/user-guide/data-model/fields",
-                  "l/tr/user-guide/data-model/creating-records",
-                  "l/tr/user-guide/data-model/relation-fields",
-                  "l/tr/user-guide/data-model/data-model-faq"
-                ]
-              },
-              {
-                "group": "CRM Temelleri",
-                "icon": "users",
-                "pages": [
-                  "l/tr/user-guide/crm-essentials/contact-and-account-management",
-                  "l/tr/user-guide/crm-essentials/pipeline",
-                  "l/tr/user-guide/crm-essentials/view-management",
-                  "l/tr/user-guide/crm-essentials/sales-use-cases"
-                ]
-              },
-              {
-                "group": "Görünümler",
-                "icon": "table",
-                "pages": [
-                  "l/tr/user-guide/views/kanban-views",
-                  "l/tr/user-guide/views/views-sort-filter"
-                ]
-              },
-              {
-                "group": "İş Akışları",
-                "icon": "bolt",
-                "pages": [
-                  "l/tr/user-guide/workflows/getting-started-workflows",
-                  "l/tr/user-guide/workflows/workflow-features",
-                  "l/tr/user-guide/workflows/internal-automations",
-                  "l/tr/user-guide/workflows/external-tool-integration",
-                  "l/tr/user-guide/workflows/workflow-troubleshooting",
-                  "l/tr/user-guide/workflows/workflow-credits",
-                  "l/tr/user-guide/workflows/professional-services"
-                ]
-              },
-              {
-                "group": "İşbirliği",
-                "icon": "envelope",
-                "pages": [
-                  "l/tr/user-guide/collaboration/emails-and-calendars",
-                  "l/tr/user-guide/collaboration/notes",
-                  "l/tr/user-guide/collaboration/tasks"
-                ]
-              },
-              {
-                "group": "Integrations & API",
-                "icon": "plug",
-                "pages": [
-                  "l/tr/user-guide/integrations-api/apis-overview",
-                  "l/tr/user-guide/integrations-api/api-webhooks",
-                  "l/tr/user-guide/integrations-api/integrations"
-                ]
-              },
-              {
-                "group": "Raporlama",
-                "icon": "chart-bar",
-                "pages": [
-                  "l/tr/user-guide/reporting/reporting-overview"
-                ]
-              },
-              {
-                "group": "Ayarlar",
-                "icon": "gear",
-                "pages": [
-                  "l/tr/user-guide/settings/profile-settings",
-                  "l/tr/user-guide/settings/experience-settings",
-                  "l/tr/user-guide/settings/email-calendar-setup",
-                  "l/tr/user-guide/settings/workspace-settings",
-                  "l/tr/user-guide/settings/member-management",
-                  "l/tr/user-guide/settings/permissions",
-                  "l/tr/user-guide/settings/domains-settings",
-                  "l/tr/user-guide/settings/releases-settings",
-                  "l/tr/user-guide/settings/settings-faq"
-                ]
-              },
-              {
-                "group": "Fiyatlandırma",
-                "icon": "credit-card",
-                "pages": [
-                  "l/tr/user-guide/pricing/billing-and-pricing-faq"
-                ]
-              },
-              {
-                "group": "Kaynaklar",
-                "icon": "book-open",
-                "pages": [
-                  "l/tr/user-guide/resources/glossary",
-                  "l/tr/user-guide/resources/github"
-                ]
-              }
-            ]
+            "groups": []
           },
           {
             "tab": "Geliştiriciler",
@@ -3584,120 +2117,7 @@
         "tabs": [
           {
             "tab": "User Guide",
-            "groups": [
-              {
-                "group": "Getting Started",
-                "icon": "rocket",
-                "pages": [
-                  "l/zh/user-guide/introduction",
-                  "l/zh/user-guide/getting-started/what-is-twenty",
-                  "l/zh/user-guide/getting-started/create-workspace",
-                  "l/zh/user-guide/getting-started/getting-around-twenty",
-                  "l/zh/user-guide/getting-started/configure-your-workspace",
-                  "l/zh/user-guide/getting-started/implementation-services",
-                  "l/zh/user-guide/getting-started/migrating-from-other-crms",
-                  "l/zh/user-guide/getting-started/import-export-data"
-                ]
-              },
-              {
-                "group": "數據模型",
-                "icon": "database",
-                "pages": [
-                  "l/zh/user-guide/data-model/customize-your-data-model",
-                  "l/zh/user-guide/data-model/objects",
-                  "l/zh/user-guide/data-model/fields",
-                  "l/zh/user-guide/data-model/creating-records",
-                  "l/zh/user-guide/data-model/relation-fields",
-                  "l/zh/user-guide/data-model/data-model-faq"
-                ]
-              },
-              {
-                "group": "CRM 基礎知識",
-                "icon": "users",
-                "pages": [
-                  "l/zh/user-guide/crm-essentials/contact-and-account-management",
-                  "l/zh/user-guide/crm-essentials/pipeline",
-                  "l/zh/user-guide/crm-essentials/view-management",
-                  "l/zh/user-guide/crm-essentials/sales-use-cases"
-                ]
-              },
-              {
-                "group": "視圖",
-                "icon": "table",
-                "pages": [
-                  "l/zh/user-guide/views/kanban-views",
-                  "l/zh/user-guide/views/views-sort-filter"
-                ]
-              },
-              {
-                "group": "Workflow",
-                "icon": "bolt",
-                "pages": [
-                  "l/zh/user-guide/workflows/getting-started-workflows",
-                  "l/zh/user-guide/workflows/workflow-features",
-                  "l/zh/user-guide/workflows/internal-automations",
-                  "l/zh/user-guide/workflows/external-tool-integration",
-                  "l/zh/user-guide/workflows/workflow-troubleshooting",
-                  "l/zh/user-guide/workflows/workflow-credits",
-                  "l/zh/user-guide/workflows/professional-services"
-                ]
-              },
-              {
-                "group": "協作",
-                "icon": "envelope",
-                "pages": [
-                  "l/zh/user-guide/collaboration/emails-and-calendars",
-                  "l/zh/user-guide/collaboration/notes",
-                  "l/zh/user-guide/collaboration/tasks"
-                ]
-              },
-              {
-                "group": "Integrations & API",
-                "icon": "plug",
-                "pages": [
-                  "l/zh/user-guide/integrations-api/apis-overview",
-                  "l/zh/user-guide/integrations-api/api-webhooks",
-                  "l/zh/user-guide/integrations-api/integrations"
-                ]
-              },
-              {
-                "group": "報告",
-                "icon": "chart-bar",
-                "pages": [
-                  "l/zh/user-guide/reporting/reporting-overview"
-                ]
-              },
-              {
-                "group": "設置",
-                "icon": "gear",
-                "pages": [
-                  "l/zh/user-guide/settings/profile-settings",
-                  "l/zh/user-guide/settings/experience-settings",
-                  "l/zh/user-guide/settings/email-calendar-setup",
-                  "l/zh/user-guide/settings/workspace-settings",
-                  "l/zh/user-guide/settings/member-management",
-                  "l/zh/user-guide/settings/permissions",
-                  "l/zh/user-guide/settings/domains-settings",
-                  "l/zh/user-guide/settings/releases-settings",
-                  "l/zh/user-guide/settings/settings-faq"
-                ]
-              },
-              {
-                "group": "定價",
-                "icon": "credit-card",
-                "pages": [
-                  "l/zh/user-guide/pricing/billing-and-pricing-faq"
-                ]
-              },
-              {
-                "group": "資源",
-                "icon": "book-open",
-                "pages": [
-                  "l/zh/user-guide/resources/glossary",
-                  "l/zh/user-guide/resources/github"
-                ]
-              }
-            ]
+            "groups": []
           },
           {
             "tab": "開發人員",
