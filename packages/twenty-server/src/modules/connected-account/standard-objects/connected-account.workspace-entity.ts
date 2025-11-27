@@ -51,9 +51,9 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`provider`,
     description: msg`The account provider`,
     icon: 'IconSettings',
+    defaultValue: `'${ConnectedAccountProvider.GOOGLE}'`,
   })
-  @WorkspaceIsNullable()
-  provider: ConnectedAccountProvider | null; // field metadata should be a SELECT
+  provider: ConnectedAccountProvider; // field metadata should be a SELECT
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accessToken,

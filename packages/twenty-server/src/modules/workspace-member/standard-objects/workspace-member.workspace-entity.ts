@@ -128,8 +128,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     defaultValue: "'System'",
   })
   @WorkspaceIsSystem()
-  @WorkspaceIsNullable()
-  colorScheme: string | null;
+  colorScheme: string;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.locale,
@@ -140,8 +139,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     defaultValue: `'${SOURCE_LOCALE}'`,
   })
   @WorkspaceIsSystem()
-  @WorkspaceIsNullable()
-  locale: keyof typeof APP_LOCALES | null;
+  locale: keyof typeof APP_LOCALES;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.avatarUrl,
@@ -199,8 +197,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconTimezone',
   })
   @WorkspaceIsSystem()
-  @WorkspaceIsNullable()
-  timeZone: string | null;
+  timeZone: string;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.dateFormat,
