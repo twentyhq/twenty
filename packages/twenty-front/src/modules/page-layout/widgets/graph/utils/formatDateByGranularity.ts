@@ -7,10 +7,17 @@ export const formatDateByGranularity = (
     | ObjectRecordGroupByDateGranularity.MONTH
     | ObjectRecordGroupByDateGranularity.QUARTER
     | ObjectRecordGroupByDateGranularity.YEAR
+    | ObjectRecordGroupByDateGranularity.WEEK
     | ObjectRecordGroupByDateGranularity.NONE,
 ): string => {
   switch (granularity) {
     case ObjectRecordGroupByDateGranularity.DAY:
+      return date.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+    case ObjectRecordGroupByDateGranularity.WEEK:
       return date.toLocaleDateString(undefined, {
         year: 'numeric',
         month: 'short',
