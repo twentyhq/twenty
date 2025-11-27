@@ -41,25 +41,6 @@ describe('buildGroupByFieldObject', () => {
     });
   });
 
-  it('should return date granularity for relation date field', () => {
-    const field = {
-      name: 'company',
-      type: FieldMetadataType.RELATION,
-    } as any;
-
-    const result = buildGroupByFieldObject({
-      field,
-      subFieldName: 'createdAt',
-      dateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
-    });
-
-    expect(result).toEqual({
-      company: {
-        createdAt: { granularity: ObjectRecordGroupByDateGranularity.MONTH },
-      },
-    });
-  });
-
   it('should return nested object for composite fields with subfield', () => {
     const field = {
       name: 'name',

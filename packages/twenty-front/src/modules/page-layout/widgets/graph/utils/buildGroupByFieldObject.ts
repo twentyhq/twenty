@@ -17,12 +17,10 @@ export const buildGroupByFieldObject = ({
   field,
   subFieldName,
   dateGranularity,
-  isNestedDateField,
 }: {
   field: FieldMetadataItem;
   subFieldName?: string | null;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
-  isNestedDateField?: boolean;
 }): GroupByFieldObject => {
   const isRelation = isFieldRelation(field) || isFieldMorphRelation(field);
   const isComposite = isCompositeFieldType(field.type);
@@ -38,16 +36,6 @@ export const buildGroupByFieldObject = ({
     const parts = subFieldName.split('.');
     const nestedFieldName = parts[0];
     const nestedSubFieldName = parts[1];
-
-    if (isNestedDateField === true || isDefined(dateGranularity)) {
-      return {
-        [field.name]: {
-          [nestedFieldName]: {
-            granularity: dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY,
-          },
-        },
-      };
-    }
 
     if (isDefined(nestedSubFieldName)) {
       return {

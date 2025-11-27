@@ -1,7 +1,6 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
 import { getGroupByOrderBy } from '@/page-layout/widgets/graph/utils/getGroupByOrderBy';
-import { isNestedFieldDateType } from '@/page-layout/widgets/graph/utils/isNestedFieldDateType';
 import {
   type AggregateOrderByWithGroupByField,
   type ObjectRecordOrderByForCompositeField,
@@ -19,13 +18,11 @@ import {
 
 export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
   objectMetadataItem,
-  objectMetadataItems,
   chartConfiguration,
   aggregateOperation,
   limit,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  objectMetadataItems: ObjectMetadataItem[];
   chartConfiguration: PieChartConfiguration;
   aggregateOperation?: string;
   limit?: number;
@@ -49,22 +46,13 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
     groupByField.type === FieldMetadataType.DATE ||
     groupByField.type === FieldMetadataType.DATE_TIME;
 
-  const isNestedDate = isNestedFieldDateType(
-    groupByField,
-    groupBySubFieldName,
-    objectMetadataItems,
-  );
-
-  const shouldApplyDateGranularity = isFieldDate || isNestedDate;
-
   const groupBy: Array<GroupByFieldObject> = [
     buildGroupByFieldObject({
       field: groupByField,
       subFieldName: groupBySubFieldName,
-      dateGranularity: shouldApplyDateGranularity
+      dateGranularity: isFieldDate
         ? (dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY)
         : undefined,
-      isNestedDateField: isNestedDate,
     }),
   ];
 
@@ -83,7 +71,7 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
         groupByField,
         groupBySubFieldName,
         aggregateOperation,
-        dateGranularity: shouldApplyDateGranularity
+        dateGranularity: isFieldDate
           ? (dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY)
           : undefined,
       }),

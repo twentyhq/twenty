@@ -53,7 +53,6 @@ describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
     it('should generate variables with single groupBy field', () => {
       const result = generateGroupByQueryVariablesFromPieChartConfiguration({
         objectMetadataItem: mockObjectMetadataItem,
-        objectMetadataItems: [],
         chartConfiguration: buildPieChartConfiguration({
           groupByFieldMetadataId: 'field-1',
           groupBySubFieldName: null,
@@ -66,7 +65,6 @@ describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
     it('should generate variables with composite field', () => {
       const result = generateGroupByQueryVariablesFromPieChartConfiguration({
         objectMetadataItem: mockObjectMetadataItem,
-        objectMetadataItems: [],
         chartConfiguration: buildPieChartConfiguration({
           groupByFieldMetadataId: 'field-4',
           groupBySubFieldName: 'firstName',
@@ -79,7 +77,6 @@ describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
     it('should generate variables with date field and granularity', () => {
       const result = generateGroupByQueryVariablesFromPieChartConfiguration({
         objectMetadataItem: mockObjectMetadataItem,
-        objectMetadataItems: [],
         chartConfiguration: buildPieChartConfiguration({
           groupByFieldMetadataId: 'field-3',
           groupBySubFieldName: null,
@@ -93,7 +90,6 @@ describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
     it('should generate variables with limit', () => {
       const result = generateGroupByQueryVariablesFromPieChartConfiguration({
         objectMetadataItem: mockObjectMetadataItem,
-        objectMetadataItems: [],
         chartConfiguration: buildPieChartConfiguration({
           groupByFieldMetadataId: 'field-1',
         }),
@@ -107,7 +103,6 @@ describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
     it('should generate variables with orderBy', () => {
       const result = generateGroupByQueryVariablesFromPieChartConfiguration({
         objectMetadataItem: mockObjectMetadataItem,
-        objectMetadataItems: [],
         chartConfiguration: buildPieChartConfiguration({
           groupByFieldMetadataId: 'field-1',
           orderBy: GraphOrderBy.VALUE_ASC,
@@ -125,7 +120,6 @@ describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
       expect(() =>
         generateGroupByQueryVariablesFromPieChartConfiguration({
           objectMetadataItem: mockObjectMetadataItem,
-          objectMetadataItems: [],
           chartConfiguration: buildPieChartConfiguration({
             groupByFieldMetadataId: 'invalid-field',
           }),
