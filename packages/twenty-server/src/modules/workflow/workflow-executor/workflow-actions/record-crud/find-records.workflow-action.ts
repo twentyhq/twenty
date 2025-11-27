@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   computeRecordGqlOperationFilter,
+  isDefined,
   resolveInput,
 } from 'twenty-shared/utils';
 
@@ -24,6 +25,10 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-find-records-action.guard';
 import { type WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
+import {
+  FieldMetadataComplexOption,
+  FieldMetadataDefaultOption,
+} from 'twenty-shared/types';
 
 @Injectable()
 export class FindRecordsWorkflowAction implements WorkflowAction {
@@ -90,10 +95,15 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
           name: field.name,
           type: field.type,
           label: field.label,
-          options: field.options,
+          // Note: force cast is required until we deprecate the CreateFieldInput and UpdateFieldInput
+          // type derivation from the FieldMetadataDto
+          options: field.options as
+            | (FieldMetadataDefaultOption & { id: string })[]
+            | (FieldMetadataComplexOption & { id: string })[]
+            | null,
         };
       })
-      .filter((field): field is NonNullable<typeof field> => field != null);
+      .filter(isDefined);
 
     // Compute gqlOperationFilter from resolved recordFilters and recordFilterGroups
     // This happens after variable resolution, so filter values contain actual resolved values
