@@ -86,6 +86,10 @@ export const findDefaultNullEquivalentValue = (
           return isNullEquivalentTextFieldValue(value)
             ? DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE
             : undefined;
+        case 'secondaryLinks':
+          return isNullEquivalentArrayFieldValue(value)
+            ? DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE
+            : undefined;
 
         default:
           return undefined;
@@ -104,6 +108,10 @@ export const findDefaultNullEquivalentValue = (
         case 'primaryPhoneCallingCode':
           return isNullEquivalentTextFieldValue(value)
             ? DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE
+            : undefined;
+        case 'additionalPhones':
+          return isNullEquivalentArrayFieldValue(value)
+            ? DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE
             : undefined;
         default:
           return undefined;
