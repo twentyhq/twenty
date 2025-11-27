@@ -290,131 +290,131 @@
                 ]
               },
               {
-                "group": "Features & Configuration",
+                "group": "Features",
                 "icon": "cog",
                 "pages": [
                   {
                     "group": "Objects",
                     "pages": [
-                      "user-guide/Features & Configuration/objects/standard-objects-overview",
-                      "user-guide/Features & Configuration/objects/people-object",
-                      "user-guide/Features & Configuration/objects/companies-object",
-                      "user-guide/Features & Configuration/objects/opportunities-object",
-                      "user-guide/Features & Configuration/objects/tasks-object",
-                      "user-guide/Features & Configuration/objects/notes-object",
-                      "user-guide/Features & Configuration/objects/custom-objects",
-                      "user-guide/Features & Configuration/objects/object-permissions-and-access-control"
+                      "user-guide/Features/objects/standard-objects-overview",
+                      "user-guide/Features/objects/people-object",
+                      "user-guide/Features/objects/companies-object",
+                      "user-guide/Features/objects/opportunities-object",
+                      "user-guide/Features/objects/tasks-object",
+                      "user-guide/Features/objects/notes-object",
+                      "user-guide/Features/objects/custom-objects",
+                      "user-guide/Features/objects/object-permissions-and-access-control"
                     ]
                   },
                   {
                     "group": "Fields",
                     "pages": [
-                      "user-guide/Features & Configuration/fields/field-types-reference",
-                      "user-guide/Features & Configuration/fields/text-and-number-fields",
-                      "user-guide/Features & Configuration/fields/date-and-time-fields",
-                      "user-guide/Features & Configuration/fields/select-and-multi-select-fields",
-                      "user-guide/Features & Configuration/fields/relation-fields",
-                      "user-guide/Features & Configuration/fields/formula-fields",
-                      "user-guide/Features & Configuration/fields/lookup-and-rollup-fields",
-                      "user-guide/Features & Configuration/fields/field-validation-and-constraints"
+                      "user-guide/Features/fields/field-types-reference",
+                      "user-guide/Features/fields/text-and-number-fields",
+                      "user-guide/Features/fields/date-and-time-fields",
+                      "user-guide/Features/fields/select-and-multi-select-fields",
+                      "user-guide/Features/fields/relation-fields",
+                      "user-guide/Features/fields/formula-fields",
+                      "user-guide/Features/fields/lookup-and-rollup-fields",
+                      "user-guide/Features/fields/field-validation-and-constraints"
                     ]
                   },
                   {
                     "group": "Views",
                     "pages": [
-                      "user-guide/Features & Configuration/views/table-views",
-                      "user-guide/Features & Configuration/views/kanban-board-views",
-                      "user-guide/Features & Configuration/views/calendar-views",
-                      "user-guide/Features & Configuration/views/filtering-and-sorting",
-                      "user-guide/Features & Configuration/views/view-permissions-and-sharing"
+                      "user-guide/Features/views/table-views",
+                      "user-guide/Features/views/kanban-board-views",
+                      "user-guide/Features/views/calendar-views",
+                      "user-guide/Features/views/filtering-and-sorting",
+                      "user-guide/Features/views/view-permissions-and-sharing"
                     ]
                   },
                   {
                     "group": "Pipelines",
                     "pages": [
-                      "user-guide/Features & Configuration/pipelines/pipeline-configuration",
-                      "user-guide/Features & Configuration/pipelines/stage-management",
-                      "user-guide/Features & Configuration/pipelines/probability-and-forecasting",
-                      "user-guide/Features & Configuration/pipelines/pipeline-automation"
+                      "user-guide/Features/pipelines/pipeline-configuration",
+                      "user-guide/Features/pipelines/stage-management",
+                      "user-guide/Features/pipelines/probability-and-forecasting",
+                      "user-guide/Features/pipelines/pipeline-automation"
                     ]
                   },
                   {
                     "group": "Automations & Workflows",
                     "pages": [
-                      "user-guide/Features & Configuration/automations-workflows/workflow-triggers",
-                      "user-guide/Features & Configuration/automations-workflows/workflow-actions",
-                      "user-guide/Features & Configuration/automations-workflows/conditional-logic",
-                      "user-guide/Features & Configuration/automations-workflows/workflow-scheduling",
-                      "user-guide/Features & Configuration/automations-workflows/workflow-monitoring"
+                      "user-guide/Features/automations-workflows/workflow-triggers",
+                      "user-guide/Features/automations-workflows/workflow-actions",
+                      "user-guide/Features/automations-workflows/conditional-logic",
+                      "user-guide/Features/automations-workflows/workflow-scheduling",
+                      "user-guide/Features/automations-workflows/workflow-monitoring"
                     ]
                   },
                   {
                     "group": "Email & Calendar",
                     "pages": [
-                      "user-guide/Features & Configuration/email-calendar/email-sync-configuration",
-                      "user-guide/Features & Configuration/email-calendar/calendar-integration",
-                      "user-guide/Features & Configuration/email-calendar/email-templates",
-                      "user-guide/Features & Configuration/email-calendar/activity-tracking"
+                      "user-guide/Features/email-calendar/email-sync-configuration",
+                      "user-guide/Features/email-calendar/calendar-integration",
+                      "user-guide/Features/email-calendar/email-templates",
+                      "user-guide/Features/email-calendar/activity-tracking"
                     ]
                   },
                   {
                     "group": "Collaboration Tools",
                     "pages": [
-                      "user-guide/Features & Configuration/collaboration-tools/tasks-and-reminders",
-                      "user-guide/Features & Configuration/collaboration-tools/notes-and-comments",
-                      "user-guide/Features & Configuration/collaboration-tools/team-sharing-and-permissions",
-                      "user-guide/Features & Configuration/collaboration-tools/notifications"
+                      "user-guide/Features/collaboration-tools/tasks-and-reminders",
+                      "user-guide/Features/collaboration-tools/notes-and-comments",
+                      "user-guide/Features/collaboration-tools/team-sharing-and-permissions",
+                      "user-guide/Features/collaboration-tools/notifications"
                     ]
                   },
                   {
                     "group": "Integrations",
                     "pages": [
-                      "user-guide/Features & Configuration/integrations/available-integrations",
-                      "user-guide/Features & Configuration/integrations/api-and-webhooks",
-                      "user-guide/Features & Configuration/integrations/third-party-apps",
-                      "user-guide/Features & Configuration/integrations/custom-integrations"
+                      "user-guide/Features/integrations/available-integrations",
+                      "user-guide/Features/integrations/api-and-webhooks",
+                      "user-guide/Features/integrations/third-party-apps",
+                      "user-guide/Features/integrations/custom-integrations"
                     ]
                   },
                   {
                     "group": "Reporting",
                     "pages": [
-                      "user-guide/Features & Configuration/reporting/dashboard-overview",
-                      "user-guide/Features & Configuration/reporting/charts-and-visualizations",
-                      "user-guide/Features & Configuration/reporting/data-export-and-reporting"
+                      "user-guide/Features/reporting/dashboard-overview",
+                      "user-guide/Features/reporting/charts-and-visualizations",
+                      "user-guide/Features/reporting/data-export-and-reporting"
                     ]
                   },
                   {
                     "group": "Settings",
                     "pages": [
-                      "user-guide/Features & Configuration/settings/workspace-settings",
-                      "user-guide/Features & Configuration/settings/user-preferences",
-                      "user-guide/Features & Configuration/settings/security-settings"
+                      "user-guide/Features/settings/workspace-settings",
+                      "user-guide/Features/settings/user-preferences",
+                      "user-guide/Features/settings/security-settings"
                     ]
                   },
                   {
                     "group": "Billing",
                     "pages": [
-                      "user-guide/Features & Configuration/billing/subscription-plans",
-                      "user-guide/Features & Configuration/billing/billing-management",
-                      "user-guide/Features & Configuration/billing/usage-tracking"
+                      "user-guide/Features/billing/subscription-plans",
+                      "user-guide/Features/billing/billing-management",
+                      "user-guide/Features/billing/usage-tracking"
                     ]
                   },
                   {
                     "group": "AI Assistant",
                     "pages": [
-                      "user-guide/Features & Configuration/ai-assistant/ai-chat-overview",
-                      "user-guide/Features & Configuration/ai-assistant/ai-features-overview",
-                      "user-guide/Features & Configuration/ai-assistant/ai-agents-configuration",
-                      "user-guide/Features & Configuration/ai-assistant/ai-data-insights"
+                      "user-guide/Features/ai-assistant/ai-chat-overview",
+                      "user-guide/Features/ai-assistant/ai-features-overview",
+                      "user-guide/Features/ai-assistant/ai-agents-configuration",
+                      "user-guide/Features/ai-assistant/ai-data-insights"
                     ]
                   },
                   {
                     "group": "Advanced Features",
                     "pages": [
-                      "user-guide/Features & Configuration/advanced-features/serverless-functions",
-                      "user-guide/Features & Configuration/advanced-features/custom-page-layouts",
-                      "user-guide/Features & Configuration/advanced-features/advanced-permissions",
-                      "user-guide/Features & Configuration/advanced-features/data-governance"
+                      "user-guide/Features/advanced-features/serverless-functions",
+                      "user-guide/Features/advanced-features/custom-page-layouts",
+                      "user-guide/Features/advanced-features/advanced-permissions",
+                      "user-guide/Features/advanced-features/data-governance"
                     ]
                   }
                 ]
