@@ -69,7 +69,7 @@ export class ConfigService {
       raw.profiles = {};
     }
 
-    const currentProfile = raw.profiles[profile] || {};
+    const currentProfile = raw.profiles[profile] || { apiUrl: '' };
 
     raw.profiles[profile] = { ...currentProfile, ...config };
 

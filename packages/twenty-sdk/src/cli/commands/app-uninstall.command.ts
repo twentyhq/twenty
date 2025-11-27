@@ -31,7 +31,7 @@ export class AppUninstallCommand {
         manifest.application.universalIdentifier,
       );
 
-      if (!result.success) {
+      if (result.success === false) {
         console.error(chalk.red('❌ Uninstall failed:'), result.error);
       } else {
         console.log(chalk.green('✅ Application uninstalled successfully'));

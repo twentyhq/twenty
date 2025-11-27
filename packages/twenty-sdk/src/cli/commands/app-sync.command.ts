@@ -49,7 +49,7 @@ export class AppSyncCommand {
       });
     }
 
-    if (!serverlessSyncResult.success) {
+    if (serverlessSyncResult.success === false) {
       console.error(
         chalk.red('❌ Serverless functions Sync failed:'),
         serverlessSyncResult.error,
