@@ -72,7 +72,6 @@ export const WorkflowStepFooter = ({
       dropdownId={dropdownId}
       selectableListId={dropdownId}
       selectableItemIdArray={selectableItemIdArray}
-      buttonSize="small"
     >
       <SelectableListItem
         itemId="change-node-type"
