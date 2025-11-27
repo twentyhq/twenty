@@ -5,6 +5,10 @@ import {
   isDefined,
   resolveInput,
 } from 'twenty-shared/utils';
+import {
+  FieldMetadataComplexOption,
+  FieldMetadataDefaultOption,
+} from 'twenty-shared/types';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -25,10 +29,6 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-find-records-action.guard';
 import { type WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
-import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
-} from 'twenty-shared/types';
 
 @Injectable()
 export class FindRecordsWorkflowAction implements WorkflowAction {
