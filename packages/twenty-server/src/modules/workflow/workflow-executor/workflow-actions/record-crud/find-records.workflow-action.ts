@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { resolveInput } from 'twenty-shared/utils';
+import {
+  computeRecordGqlOperationFilter,
+  resolveInput,
+} from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -10,6 +13,7 @@ import {
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -27,6 +31,7 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     private readonly findRecordsService: FindRecordsService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
   async execute({
@@ -64,9 +69,48 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
+    // Get object metadata to compute gqlOperationFilter
+    const { flatObjectMetadata, flatFieldMetadataMaps } =
+      await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+        workflowActionInput.objectName,
+        workspaceId,
+      );
+
+    // Get fields for the object from field metadata maps and map to PartialFieldMetadataItem
+    const fields = flatObjectMetadata.fieldMetadataIds
+      .map((fieldId) => {
+        const field = flatFieldMetadataMaps.byId[fieldId];
+
+        if (!field) {
+          return null;
+        }
+
+        return {
+          id: field.id,
+          name: field.name,
+          type: field.type,
+          label: field.label,
+          options: field.options,
+        };
+      })
+      .filter((field): field is NonNullable<typeof field> => field != null);
+
+    // Compute gqlOperationFilter from resolved recordFilters and recordFilterGroups
+    // This happens after variable resolution, so filter values contain actual resolved values
+    const gqlOperationFilter =
+      workflowActionInput.filter?.recordFilters &&
+      workflowActionInput.filter?.recordFilterGroups
+        ? computeRecordGqlOperationFilter({
+            fields,
+            recordFilters: workflowActionInput.filter.recordFilters,
+            recordFilterGroups: workflowActionInput.filter.recordFilterGroups,
+            filterValueDependencies: {},
+          })
+        : {};
+
     const toolOutput = await this.findRecordsService.execute({
       objectName: workflowActionInput.objectName,
-      filter: workflowActionInput.filter?.gqlOperationFilter,
+      filter: gqlOperationFilter,
       orderBy: workflowActionInput.orderBy?.gqlOperationOrderBy,
       limit: workflowActionInput.limit,
       workspaceId,
