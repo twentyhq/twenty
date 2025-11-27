@@ -3390,16 +3390,6 @@ msgstr "حالة نسخة سير العمل"
 msgid "There was an issue with your connection settings. Please try again."
 msgstr "حدث خطأ في إعدادات الاتصال الخاصة بك. يُرجى المحاولة مرة أخرى."
 
-#. js-lingui-id: Bm40Ow
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} is already taken. Please choose a different value."
-msgstr "{fieldName} مأخوذ بالفعل. يُرجى اختيار قيمة مختلفة."
-
-#. js-lingui-id: CYyoPc
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} with value {duplicatedValues} is already taken. Please choose a different value."
-msgstr "{fieldName} بالقيمة {duplicatedValues} مأخوذ بالفعل. يُرجى اختيار قيمة مختلفة."
-
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -3409,11 +3399,6 @@ msgstr "تم إلغاء صلاحية مفتاح API هذا ولم يعد قاب�
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "انتهت صلاحية مفتاح API هذا. يُرجى إنشاء مفتاح جديد."
-
-#. js-lingui-id: r/Z8XK
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This combination of {fieldNames} already exists. Please use different values."
-msgstr "هذه المجموعة من {fieldNames} موجودة بالفعل. يُرجى استخدام قيم مختلفة."
 
 #. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts

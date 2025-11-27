@@ -20,6 +20,7 @@ export const usePieChartData = ({
     return data.map((item, index) => {
       const colorScheme = getColorScheme({
         registry: colorRegistry,
+        colorName: item.color,
         fallbackIndex: index,
         totalGroups: data.length,
       });
