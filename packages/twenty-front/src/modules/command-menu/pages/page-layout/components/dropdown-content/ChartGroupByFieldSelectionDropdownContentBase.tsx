@@ -24,10 +24,7 @@ import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-<<<<<<< HEAD
-import { BarChartGroupMode, RelationType } from '~/generated/graphql';
-=======
->>>>>>> upstream/main
+import { RelationType } from '~/generated/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type ChartGroupByFieldSelectionDropdownContentBaseProps<
@@ -176,7 +173,13 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
     }
 
     updateCurrentWidgetConfig({
-      configToUpdate: buildConfigUpdate(selectedRelationField.id, subFieldName),
+      configToUpdate: buildChartGroupByFieldConfigUpdate({
+        configuration,
+        fieldMetadataIdKey,
+        subFieldNameKey,
+        fieldId: selectedRelationField.id,
+        subFieldName,
+      }),
     });
     closeDropdown();
   };

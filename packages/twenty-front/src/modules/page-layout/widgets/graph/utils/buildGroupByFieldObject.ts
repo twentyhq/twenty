@@ -24,7 +24,7 @@ export const buildGroupByFieldObject = ({
   field: FieldMetadataItem;
   subFieldName?: string | null;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
-  firstDayOfTheWeek?: FirstDayOfTheWeek;
+  firstDayOfTheWeek?: number | null;
 }): GroupByFieldObject => {
   const isRelation = isFieldRelation(field) || isFieldMorphRelation(field);
   const isComposite = isCompositeFieldType(field.type);
