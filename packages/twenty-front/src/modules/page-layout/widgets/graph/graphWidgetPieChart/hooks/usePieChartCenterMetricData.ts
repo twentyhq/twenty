@@ -60,7 +60,7 @@ export const usePieChartCenterMetricData = ({
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
   const dateLocale = useRecoilValue(dateLocaleState);
 
-  const aggregateFieldMetadataItem = objectMetadataItem.fields.find(
+  const aggregateFieldMetadataItem = objectMetadataItem.readableFields.find(
     findById(configuration.aggregateFieldMetadataId),
   );
 
