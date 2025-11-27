@@ -126,7 +126,6 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
       }),
     });
     closeDropdown();
-    closeDropdown();
   };
 
   const handleSelectNone = () => {
