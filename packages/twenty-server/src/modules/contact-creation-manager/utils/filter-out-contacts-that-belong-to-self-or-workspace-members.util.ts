@@ -1,3 +1,5 @@
+import { isNull } from '@sniptt/guards';
+
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { type Contact } from 'src/modules/contact-creation-manager/types/contact.type';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
@@ -9,6 +11,9 @@ export function filterOutContactsThatBelongToSelfOrWorkspaceMembers(
   connectedAccount: ConnectedAccountWorkspaceEntity,
   workspaceMembers: WorkspaceMemberWorkspaceEntity[],
 ): Contact[] {
+  if (isNull(connectedAccount.handle)) {
+    throw new Error('Connected account handle is missing');
+  }
   const selfDomainName = getDomainNameFromHandle(
     connectedAccount.handle,
   ).toLowerCase();
