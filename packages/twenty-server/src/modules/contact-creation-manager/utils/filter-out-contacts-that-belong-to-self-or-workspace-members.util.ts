@@ -1,4 +1,4 @@
-import { isNull } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { type Contact } from 'src/modules/contact-creation-manager/types/contact.type';
@@ -11,7 +11,7 @@ export function filterOutContactsThatBelongToSelfOrWorkspaceMembers(
   connectedAccount: ConnectedAccountWorkspaceEntity,
   workspaceMembers: WorkspaceMemberWorkspaceEntity[],
 ): Contact[] {
-  if (isNull(connectedAccount.handle)) {
+  if (!isDefined(connectedAccount.handle)) {
     throw new Error('Connected account handle is missing');
   }
   const selfDomainName = getDomainNameFromHandle(

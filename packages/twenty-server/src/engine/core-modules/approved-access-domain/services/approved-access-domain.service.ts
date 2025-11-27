@@ -5,10 +5,9 @@ import crypto from 'crypto';
 
 import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
-import { isNonEmptyString } from '@sniptt/guards';
 import { SendApprovedAccessDomainValidation } from 'twenty-emails';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
@@ -71,7 +70,7 @@ export class ApprovedAccessDomainService {
       },
     });
 
-    if (!isNonEmptyString(sender.userEmail)) {
+    if (!isDefined(sender.userEmail)) {
       throw new Error(`Sender ${sender.id} has an empty userEmail`);
     }
 

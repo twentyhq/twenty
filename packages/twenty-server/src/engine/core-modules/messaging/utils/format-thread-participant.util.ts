@@ -1,4 +1,4 @@
-import { isNull } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type TimelineThreadParticipantDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread-participant.dto';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -6,7 +6,7 @@ import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/co
 export const formatThreadParticipant = (
   threadParticipant: MessageParticipantWorkspaceEntity,
 ): TimelineThreadParticipantDTO => {
-  if (isNull(threadParticipant.handle)) {
+  if (!isDefined(threadParticipant.handle)) {
     throw new Error(
       `Thread participant ${threadParticipant.id} has an empty handle`,
     );
