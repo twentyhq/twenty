@@ -8,6 +8,14 @@
   "bin": {
     "twenty": "dist/cli/cli.js"
   },
+  "keywords": [
+    "twenty",
+    "cli",
+    "sdk",
+    "crm",
+    "application",
+    "development"
+  ],
   "files": [
     "dist"
   ],
