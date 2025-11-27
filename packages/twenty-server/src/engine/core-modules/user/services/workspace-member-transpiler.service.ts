@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
@@ -75,7 +75,7 @@ export class WorkspaceMemberTranspiler {
 
     const roles = fromRoleEntitiesToRoleDtos(userWorkspaceRoles);
 
-    if (!isNonEmptyString(userEmail)) {
+    if (isNull(userEmail)) {
       throw new Error(`Workspace member ${id} has an empty userEmail`);
     }
 
@@ -115,7 +115,7 @@ export class WorkspaceMemberTranspiler {
       userEmail,
     } = workspaceMember;
 
-    if (!isNonEmptyString(userEmail)) {
+    if (isNull(userEmail)) {
       throw new Error(`Workspace member ${id} has an empty userEmail`);
     }
 
