@@ -1,15 +1,15 @@
 import * as fs from 'fs-extra';
 import { posix, relative, sep } from 'path';
 import {
-  Decorator,
-  Expression,
-  FunctionDeclaration,
-  Modifier,
-  Node,
-  Program,
-  SourceFile,
+  type Decorator,
+  type Expression,
+  type FunctionDeclaration,
+  type Modifier,
+  type Node,
+  type Program,
+  type SourceFile,
   SyntaxKind,
-  VariableDeclaration,
+  type VariableDeclaration,
   forEachChild,
   getDecorators,
   isArrayLiteralExpression,
@@ -34,13 +34,13 @@ import {
 } from 'typescript';
 import { GENERATED_FOLDER_NAME } from '../services/generate.service';
 import {
-  AppManifest,
-  Application,
-  FieldMetadata,
-  ObjectManifest,
-  PackageJson,
-  ServerlessFunctionManifest,
-  Sources,
+  type AppManifest,
+  type Application,
+  type FieldMetadata,
+  type ObjectManifest,
+  type PackageJson,
+  type ServerlessFunctionManifest,
+  type Sources,
 } from '../types/config.types';
 import { findPathFile } from '../utils/find-path-file';
 import { getTsProgramAndDiagnostics } from '../utils/get-ts-program-and-diagnostics';

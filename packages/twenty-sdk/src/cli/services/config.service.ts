@@ -1,7 +1,7 @@
 import * as fs from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
-import { TwentyConfig } from '../types/config.types';
+import { type TwentyConfig } from '../types/config.types';
 
 type PersistedConfig = TwentyConfig & {
   profiles?: Record<string, TwentyConfig>;

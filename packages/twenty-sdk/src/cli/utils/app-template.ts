@@ -2,7 +2,6 @@ import * as fs from 'fs-extra';
 import { BASE_APPLICATION_PROJECT_PATH } from '../constants/constants-path';
 import { writeJsoncFile } from '../utils/jsonc-parser';
 import { join } from 'path';
-import path from 'path';
 import { v4 } from 'uuid';
 
 export const copyBaseApplicationProject = async ({
@@ -63,7 +62,7 @@ const config: ApplicationConfig = {
 export default config;
 `;
 
-  await fs.writeFile(path.join(appDirectory, 'application.config.ts'), content);
+  await fs.writeFile(join(appDirectory, 'application.config.ts'), content);
 };
 
 const createBasePackageJson = async ({
@@ -96,7 +95,7 @@ const createReadmeContent = async ({
 
   readmeContent = readmeContent.replace(/\{description}/g, appDescription);
 
-  await fs.writeFile(path.join(appDirectory, 'README.md'), readmeContent);
+  await fs.writeFile(join(appDirectory, 'README.md'), readmeContent);
 };
 
 const readBaseApplicationProjectFile = async (fileName: string) => {

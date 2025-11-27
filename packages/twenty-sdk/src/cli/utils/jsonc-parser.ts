@@ -1,5 +1,5 @@
 import * as fs from 'fs-extra';
-import { ParseError, parse as parseJsonc } from 'jsonc-parser';
+import { type ParseError, parse as parseJsonc } from 'jsonc-parser';
 
 export interface JsoncParseOptions {
   allowTrailingComma?: boolean;

@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
 import { ApiService } from '../services/api.service';
-import { ApiResponse } from '../types/config.types';
+import { type ApiResponse } from '../types/config.types';
 import { loadManifest } from '../utils/load-manifest';
 
 export class AppUninstallCommand {

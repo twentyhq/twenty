@@ -1,9 +1,13 @@
-import ts, { formatDiagnosticsWithColorAndContext, sys } from 'typescript';
+import {
+  type Diagnostic,
+  formatDiagnosticsWithColorAndContext,
+  sys,
+} from 'typescript';
 
 export const formatAndWarnTsDiagnostics = ({
   diagnostics,
 }: {
-  diagnostics: ts.Diagnostic[];
+  diagnostics: Diagnostic[];
 }) => {
   if (diagnostics.length > 0) {
     const formattedDiagnostics = formatDiagnosticsWithColorAndContext(
