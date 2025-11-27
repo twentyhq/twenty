@@ -10,15 +10,6 @@ import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interf
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import {
-  WorkspaceMetadataCacheException,
-  WorkspaceMetadataCacheExceptionCode,
-} from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
-import {
-  WorkspaceMetadataVersionException,
-  WorkspaceMetadataVersionExceptionCode,
-} from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
 
 export const METADATA_VERSIONED_WORKSPACE_CACHE_KEY = {
   GraphQLTypeDefs: 'graphql:type-defs',
@@ -93,52 +84,6 @@ export class WorkspaceCacheStorageService {
     return this.cacheStorageService.get<number>(
       `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.MetadataVersion}:${workspaceId}`,
     );
-  }
-
-  setObjectMetadataMaps(
-    workspaceId: string,
-    metadataVersion: number,
-    objectMetadataMaps: ObjectMetadataMaps,
-  ) {
-    return this.cacheStorageService.set<ObjectMetadataMaps>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.MetadataObjectMetadataMaps}:${workspaceId}:${metadataVersion}`,
-      objectMetadataMaps,
-      TTL_ONE_WEEK,
-    );
-  }
-
-  getObjectMetadataMaps(
-    workspaceId: string,
-    metadataVersion: number,
-  ): Promise<ObjectMetadataMaps | undefined> {
-    return this.cacheStorageService.get<ObjectMetadataMaps>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.MetadataObjectMetadataMaps}:${workspaceId}:${metadataVersion}`,
-    );
-  }
-
-  async getObjectMetadataMapsOrThrow(workspaceId: string) {
-    const currentCacheVersion = await this.getMetadataVersion(workspaceId);
-
-    if (currentCacheVersion === undefined) {
-      throw new WorkspaceMetadataVersionException(
-        `Metadata version not found for workspace ${workspaceId}`,
-        WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
-      );
-    }
-
-    const objectMetadataMaps = await this.getObjectMetadataMaps(
-      workspaceId,
-      currentCacheVersion,
-    );
-
-    if (!objectMetadataMaps) {
-      throw new WorkspaceMetadataCacheException(
-        `Object metadata map not found for workspace ${workspaceId} and metadata version ${currentCacheVersion}`,
-        WorkspaceMetadataCacheExceptionCode.OBJECT_METADATA_MAP_NOT_FOUND,
-      );
-    }
-
-    return objectMetadataMaps;
   }
 
   setGraphQLTypeDefs(

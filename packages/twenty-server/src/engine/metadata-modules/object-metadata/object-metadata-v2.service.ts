@@ -5,6 +5,7 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -43,6 +44,7 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly applicationService: ApplicationService,
   ) {
     super(objectMetadataRepository);
   }
@@ -323,10 +325,22 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
   async createOneObject({
     createObjectInput,
     workspaceId,
+    applicationId,
   }: {
     createObjectInput: CreateObjectInput;
     workspaceId: string;
+    /**
+     * @deprecated do not use call validateBuildAndRunWorkspaceMigration contextually
+     * when interacting with another application than workspace custom one
+     * */
+    applicationId?: string;
   }): Promise<FlatObjectMetadata> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatViewMaps: existingFlatViewMaps,
@@ -354,6 +368,8 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
     } = fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
       createObjectInput,
       workspaceId,
+      workspaceCustomApplicationId:
+        applicationId ?? workspaceCustomFlatApplication.id,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
     });
 
@@ -367,13 +383,15 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
       flatEntityToUpdate: [],
     });
 
-    const flatDefaultViewToCreate = await this.createDefaultFlatView({
+    const flatDefaultViewToCreate = await this.computeFlatViewToCreate({
       objectMetadata: flatObjectMetadataToCreate,
       workspaceId,
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
 
     const flatDefaultViewFieldsToCreate =
-      await this.createDefaultFlatViewFields({
+      await this.computeFlatViewFieldsToCreate({
+        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
         objectFlatFieldMetadatas: findManyFlatEntityByIdInFlatEntityMapsOrThrow(
           {
             flatEntityMaps: flatFieldMetadataMapsFromTo.to,
@@ -456,10 +474,12 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
     return createdFlatObjectMetadata;
   }
 
-  private async createDefaultFlatView({
+  private async computeFlatViewToCreate({
     objectMetadata,
     workspaceId,
+    workspaceCustomApplicationId,
   }: {
+    workspaceCustomApplicationId: string;
     objectMetadata: FlatObjectMetadata;
     workspaceId: string;
   }) {
@@ -475,16 +495,19 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
     const flatViewFromCreateInput = fromCreateViewInputToFlatViewToCreate({
       createViewInput: defaultViewInput,
       workspaceId,
+      workspaceCustomApplicationId,
     });
 
     return flatViewFromCreateInput;
   }
 
-  private async createDefaultFlatViewFields({
+  private async computeFlatViewFieldsToCreate({
     objectFlatFieldMetadatas,
     viewId,
     workspaceId,
+    workspaceCustomApplicationId,
   }: {
+    workspaceCustomApplicationId: string;
     objectFlatFieldMetadatas: FlatFieldMetadata[];
     viewId: string;
     workspaceId: string;
@@ -500,6 +523,7 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
             size: DEFAULT_VIEW_FIELD_SIZE,
             viewId: viewId,
           },
+          workspaceCustomApplicationId,
           workspaceId: workspaceId,
         }),
       );

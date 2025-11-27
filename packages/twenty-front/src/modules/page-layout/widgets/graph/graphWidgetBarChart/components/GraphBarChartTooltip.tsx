@@ -1,21 +1,20 @@
 import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { getBarChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTooltipData';
 import { getTooltipReferenceFromBarChartElementAnchor } from '@/page-layout/widgets/graph/utils/getTooltipReferenceFromBarChartElementAnchor';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type BarDatum, type ComputedDatum } from '@nivo/bar';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphBarChartTooltipProps = {
   containerId: string;
   enrichedKeys: BarChartEnrichedKey[];
-  data: BarChartDataItem[];
-  indexBy: string;
   formatOptions: GraphValueFormatOptions;
   enableGroupTooltip?: boolean;
   layout?: 'vertical' | 'horizontal';
+  onBarClick?: (datum: ComputedDatum<BarDatum>) => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 };
@@ -23,11 +22,10 @@ type GraphBarChartTooltipProps = {
 export const GraphBarChartTooltip = ({
   containerId,
   enrichedKeys,
-  data,
-  indexBy,
   formatOptions,
   enableGroupTooltip = true,
   layout = 'vertical',
+  onBarClick,
   onMouseEnter,
   onMouseLeave,
 }: GraphBarChartTooltipProps) => {
@@ -35,13 +33,19 @@ export const GraphBarChartTooltip = ({
     graphWidgetBarTooltipComponentState,
   );
 
+  const handleTooltipClick: (() => void) | undefined = isDefined(onBarClick)
+    ? () => {
+        if (isDefined(tooltipState)) {
+          onBarClick(tooltipState.datum);
+        }
+      }
+    : undefined;
+
   const tooltipData = !isDefined(tooltipState)
     ? null
     : getBarChartTooltipData({
         datum: tooltipState.datum,
         enrichedKeys,
-        data,
-        indexBy,
         formatOptions,
         enableGroupTooltip,
         layout,
@@ -79,7 +83,7 @@ export const GraphBarChartTooltip = ({
       items={tooltipData.tooltipItems}
       indexLabel={tooltipData.indexLabel}
       highlightedKey={tooltipData.hoveredKey}
-      linkTo={tooltipData.linkTo}
+      onGraphWidgetTooltipClick={handleTooltipClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     />

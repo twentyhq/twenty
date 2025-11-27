@@ -54,7 +54,12 @@ export const ChartColorSelectionDropdownContent = () => {
 
   const configuration = widgetInEditMode.configuration as ChartConfiguration;
 
-  if (!('color' in configuration)) {
+  if (
+    configuration.__typename !== 'BarChartConfiguration' &&
+    configuration.__typename !== 'LineChartConfiguration' &&
+    configuration.__typename !== 'GaugeChartConfiguration' &&
+    configuration.__typename !== 'PieChartConfiguration'
+  ) {
     return null;
   }
 

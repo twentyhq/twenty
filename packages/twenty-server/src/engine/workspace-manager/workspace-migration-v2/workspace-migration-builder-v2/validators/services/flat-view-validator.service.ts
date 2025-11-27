@@ -96,16 +96,16 @@ export class FlatViewValidatorService {
     return validationResult;
   }
 
-  public async validateFlatViewCreation({
+  public validateFlatViewCreation({
     flatEntityToValidate: flatViewToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewMaps: optimisticFlatViewMaps,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
     },
-  }: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.view>): Promise<
-    FailedFlatEntityValidation<FlatView>
-  > {
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.view
+  >): FailedFlatEntityValidation<FlatView> {
     const validationResult: FailedFlatEntityValidation<FlatView> = {
       type: 'create_view',
       errors: [],

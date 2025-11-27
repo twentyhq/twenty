@@ -1,10 +1,12 @@
 import { GRAPH_TOOLTIP_MAX_WIDTH_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipMaxWidthPx';
 import { GRAPH_TOOLTIP_MIN_WIDTH_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipMinWidthPx';
 import { GRAPH_TOOLTIP_SCROLL_MAX_HEIGHT_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipScrollMaxHeightPx';
+import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/GraphWidgetLegendDot';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { IconArrowUpRight } from 'twenty-ui/display';
 
 const StyledTooltip = styled.div`
@@ -40,14 +42,6 @@ const StyledTooltipRowContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
   max-height: ${GRAPH_TOOLTIP_SCROLL_MAX_HEIGHT_PX}px;
   overflow-y: auto;
-`;
-
-const StyledDot = styled.div<{ color: string }>`
-  background: ${({ color }) => color};
-  border-radius: 50%;
-  height: 6px;
-  width: 6px;
-  flex-shrink: 0;
 `;
 
 const StyledTooltipLink = styled.div`
@@ -133,14 +127,14 @@ type GraphWidgetTooltipProps = {
   items: GraphWidgetTooltipItem[];
   indexLabel?: string;
   highlightedKey?: string;
-  linkTo?: string;
+  onGraphWidgetTooltipClick?: () => void;
 };
 
 export const GraphWidgetTooltip = ({
   items,
   indexLabel,
   highlightedKey,
-  linkTo,
+  onGraphWidgetTooltipClick,
 }: GraphWidgetTooltipProps) => {
   const theme = useTheme();
 
@@ -149,11 +143,14 @@ export const GraphWidgetTooltip = ({
   );
 
   const shouldHighlight = filteredItems.length > 1;
-  const hasLink = isNonEmptyString(linkTo);
+  const hasGraphWidgetTooltipClick = isDefined(onGraphWidgetTooltipClick);
 
   return (
     <StyledTooltip>
-      <StyledHorizontalSectionPadding addTop addBottom={!hasLink}>
+      <StyledHorizontalSectionPadding
+        addTop
+        addBottom={!hasGraphWidgetTooltipClick}
+      >
         <StyledTooltipContent>
           {indexLabel && (
             <StyledTooltipHeader>{indexLabel}</StyledTooltipHeader>
@@ -164,7 +161,7 @@ export const GraphWidgetTooltip = ({
                 shouldHighlight && highlightedKey === item.key;
               return (
                 <StyledTooltipRow key={item.key}>
-                  <StyledDot color={item.dotColor} />
+                  <GraphWidgetLegendDot color={item.dotColor} />
                   <StyledTooltipRowRightContent>
                     <StyledTooltipLabel isHighlighted={isHighlighted}>
                       {item.label}
@@ -179,15 +176,11 @@ export const GraphWidgetTooltip = ({
           </StyledTooltipRowContainer>
         </StyledTooltipContent>
       </StyledHorizontalSectionPadding>
-      {hasLink && (
+      {hasGraphWidgetTooltipClick && (
         <>
           <StyledTooltipSeparator />
           <StyledHorizontalSectionPadding addBottom>
-            <StyledTooltipLink
-              onClick={() => {
-                window.location.href = String(linkTo);
-              }}
-            >
+            <StyledTooltipLink onClick={onGraphWidgetTooltipClick}>
               <span>{t`Click to see data`}</span>
               <IconArrowUpRight size={theme.icon.size.sm} />
             </StyledTooltipLink>

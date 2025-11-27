@@ -17,7 +17,7 @@ const StyledCard = styled.div<{ isSingleNote: boolean }>`
   flex-direction: column;
   height: 300px;
   justify-content: space-between;
-  max-width: ${({ isSingleNote }) => (isSingleNote ? '300px' : 'unset')};
+  width: 100%;
 `;
 
 const StyledCardDetailsContainer = styled.div`

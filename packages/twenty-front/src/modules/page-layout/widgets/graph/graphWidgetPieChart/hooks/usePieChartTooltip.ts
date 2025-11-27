@@ -1,4 +1,3 @@
-import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type PieChartEnrichedData } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartEnrichedData';
 import {
   formatGraphValue,
@@ -9,14 +8,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 type UsePieChartTooltipProps = {
   enrichedData: PieChartEnrichedData[];
-  data: PieChartDataItem[];
   formatOptions: GraphValueFormatOptions;
   displayType?: string;
 };
 
 export const usePieChartTooltip = ({
   enrichedData,
-  data,
   formatOptions,
   displayType,
 }: UsePieChartTooltipProps) => {
@@ -28,10 +25,6 @@ export const usePieChartTooltip = ({
     );
     if (!isDefined(item)) return null;
 
-    const dataItem = data.find(
-      (dataItemCandidate) => dataItemCandidate.id === datum.id,
-    );
-
     const formattedValue =
       displayType === 'percentage'
         ? formatGraphValue(item.percentage / 100, formatOptions)
@@ -40,12 +33,11 @@ export const usePieChartTooltip = ({
     return {
       tooltipItem: {
         key: item.id,
-        label: item.label || item.id,
+        label: item.id,
         formattedValue,
         value: item.value,
         dotColor: item.colorScheme.solid,
       },
-      linkTo: dataItem?.to,
     };
   };
 

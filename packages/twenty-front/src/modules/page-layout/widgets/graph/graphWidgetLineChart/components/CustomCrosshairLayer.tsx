@@ -30,6 +30,7 @@ type CustomCrosshairLayerProps = {
   innerHeight: number;
   innerWidth: number;
   onSliceHover: (data: SliceHoverData) => void;
+  onSliceClick?: (data: SliceHoverData) => void;
   onRectLeave: (relatedTarget: EventTarget | null) => void;
 };
 
@@ -38,6 +39,7 @@ export const CustomCrosshairLayer = ({
   innerHeight,
   innerWidth,
   onSliceHover,
+  onSliceClick,
   onRectLeave,
 }: CustomCrosshairLayerProps) => {
   const theme = useTheme();
@@ -65,12 +67,12 @@ export const CustomCrosshairLayer = ({
       .sort((sliceA, sliceB) => sliceA.x - sliceB.x);
   }, [points]);
 
-  const handleMouseMove = useCallback(
+  const buildSliceData = useCallback(
     (event: MouseEvent<SVGRectElement>) => {
       const svgRect =
         event.currentTarget.ownerSVGElement?.getBoundingClientRect();
       if (!isDefined(svgRect)) {
-        return;
+        return null;
       }
 
       const mouseX = event.clientX - svgRect.left - LINE_CHART_MARGIN_LEFT;
@@ -82,10 +84,6 @@ export const CustomCrosshairLayer = ({
         return currentDistance < nearestDistance ? slice : nearest;
       });
 
-      if (nearestSlice.x === crosshairX) {
-        return;
-      }
-
       const closestPoint = nearestSlice.points.reduce(
         (closestPointCandidate, pointCandidate) => {
           const currentDistance = Math.abs(pointCandidate.y - mouseY);
@@ -96,15 +94,44 @@ export const CustomCrosshairLayer = ({
         },
       );
 
-      onSliceHover({
+      return {
         sliceX: nearestSlice.x,
         mouseY,
         nearestSlice,
         closestPoint,
         svgRect,
-      });
+      };
     },
-    [slices, crosshairX, onSliceHover],
+    [slices],
+  );
+
+  const handleMouseMove = (event: MouseEvent<SVGRectElement>) => {
+    const sliceData = buildSliceData(event);
+    if (!isDefined(sliceData)) {
+      return;
+    }
+
+    if (sliceData.sliceX === crosshairX) {
+      return;
+    }
+
+    onSliceHover(sliceData);
+  };
+
+  const handleClick = useCallback(
+    (event: MouseEvent<SVGRectElement>) => {
+      if (!isDefined(onSliceClick)) {
+        return;
+      }
+
+      const sliceData = buildSliceData(event);
+      if (!isDefined(sliceData)) {
+        return;
+      }
+
+      onSliceClick(sliceData);
+    },
+    [buildSliceData, onSliceClick],
   );
 
   const transition = {
@@ -143,6 +170,7 @@ export const CustomCrosshairLayer = ({
         onMouseEnter={handleMouseMove}
         onMouseMove={handleMouseMove}
         onMouseLeave={(event) => onRectLeave(event.relatedTarget)}
+        onClick={handleClick}
       />
     </g>
   );

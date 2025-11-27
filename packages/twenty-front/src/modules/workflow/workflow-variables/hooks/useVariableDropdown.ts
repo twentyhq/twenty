@@ -128,6 +128,7 @@ export const useVariableDropdown = ({
         workflowVisualizerWorkflowId,
         step.name,
         getIcon(step.icon),
+        step.id,
       );
 
       if (isDefined(linkOutputSchema.link.tab)) {

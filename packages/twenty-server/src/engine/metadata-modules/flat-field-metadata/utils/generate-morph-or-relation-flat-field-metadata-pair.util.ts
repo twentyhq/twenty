@@ -1,7 +1,7 @@
 import {
   FieldMetadataType,
-  RelationType,
   RelationOnDeleteAction,
+  RelationType,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
@@ -46,6 +46,8 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
     > & { type: MorphOrRelationFieldMetadataType };
   workspaceId: string;
   morphId?: string | null;
+  workspaceCustomApplicationId: string;
+  targetFieldName?: string;
 };
 
 export type SourceTargetMorphOrRelationFlatFieldAndFlatIndex = {
@@ -58,8 +60,10 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   sourceFlatObjectMetadata,
   targetFlatObjectMetadata,
   workspaceId,
+  workspaceCustomApplicationId,
   sourceFlatObjectMetadataJoinColumnName,
   morphId = null,
+  targetFieldName,
 }: GenerateMorphOrRelationFlatFieldMetadataPairArgs): SourceTargetMorphOrRelationFlatFieldAndFlatIndex => {
   const { relationCreationPayload } = createFieldInput;
 
@@ -78,6 +82,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
       createFieldInput,
       workspaceId,
       fieldMetadataId: sourceRelationTargetFieldMetadataId,
+      workspaceCustomApplicationId,
     }),
     morphId,
     objectMetadataId: sourceFlatObjectMetadata.id,
@@ -93,9 +98,9 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   const targetCreateFieldInput: CreateFieldInput = {
     icon: relationCreationPayload.targetFieldIcon ?? 'Icon123',
     label: relationCreationPayload.targetFieldLabel,
-    name: computeMetadataNameFromLabel(
-      relationCreationPayload.targetFieldLabel,
-    ),
+    name:
+      targetFieldName ??
+      computeMetadataNameFromLabel(relationCreationPayload.targetFieldLabel),
     objectMetadataId: targetFlatObjectMetadata.id,
     type: FieldMetadataType.RELATION,
     workspaceId,
@@ -116,6 +121,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
         createFieldInput: targetCreateFieldInput,
         workspaceId,
         fieldMetadataId: targetRelationTargetFieldMetadataId,
+        workspaceCustomApplicationId,
       }),
       type: FieldMetadataType.RELATION,
       defaultValue: null,

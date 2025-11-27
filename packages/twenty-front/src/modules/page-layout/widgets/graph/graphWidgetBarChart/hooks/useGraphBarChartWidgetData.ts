@@ -1,10 +1,11 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { getBarChartQueryLimit } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartQueryLimit';
 import { transformGroupByDataToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformGroupByDataToBarChartData';
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { type BarDatum } from '@nivo/bar';
 import { useMemo } from 'react';
 import { type BarChartConfiguration } from '~/generated/graphql';
 
@@ -14,21 +15,23 @@ type UseGraphBarChartWidgetDataProps = {
 };
 
 type UseGraphBarChartWidgetDataResult = {
-  data: BarChartDataItem[];
+  data: BarDatum[];
   indexBy: string;
   keys: string[];
   series: BarChartSeries[];
   xAxisLabel?: string;
   yAxisLabel?: string;
   showDataLabels: boolean;
+  showLegend: boolean;
   layout?: BarChartLayout;
   loading: boolean;
   error?: Error;
   hasTooManyGroups: boolean;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
+  objectMetadataItem: ReturnType<
+    typeof useObjectMetadataItemById
+  >['objectMetadataItem'];
 };
-
-// TODO: Remove this once backend returns total group count
-const EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS = 1;
 
 export const useGraphBarChartWidgetData = ({
   objectMetadataItemId,
@@ -38,6 +41,8 @@ export const useGraphBarChartWidgetData = ({
     objectId: objectMetadataItemId,
   });
 
+  const limit = getBarChartQueryLimit(configuration);
+
   const {
     data: groupByData,
     loading,
@@ -46,8 +51,7 @@ export const useGraphBarChartWidgetData = ({
   } = useGraphWidgetGroupByQuery({
     objectMetadataItemId,
     configuration,
-    limit:
-      BAR_CHART_MAXIMUM_NUMBER_OF_BARS + EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS,
+    limit,
   });
 
   const transformedData = useMemo(
@@ -63,6 +67,7 @@ export const useGraphBarChartWidgetData = ({
 
   return {
     ...transformedData,
+    objectMetadataItem,
     loading,
     error,
   };

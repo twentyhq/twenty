@@ -9,10 +9,11 @@ import { DATE_GRANULARITY_Y_SETTING } from '@/command-menu/pages/page-layout/con
 import { FILTER_SETTING } from '@/command-menu/pages/page-layout/constants/settings/FilterSetting';
 import { GROUP_BY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/GroupBySetting';
 import { OMIT_NULL_VALUES_SETTING } from '@/command-menu/pages/page-layout/constants/settings/OmitNullValuesSetting';
+import { PRIMARY_SORT_BY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/PrimarySortBySetting';
 import { RANGE_MAX_SETTING } from '@/command-menu/pages/page-layout/constants/settings/RangeMaxSetting';
 import { RANGE_MIN_SETTING } from '@/command-menu/pages/page-layout/constants/settings/RangeMinSetting';
+import { SHOW_LEGEND_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ShowLegendSetting';
 import { SORT_BY_GROUP_BY_FIELD_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByGroupByFieldSetting';
-import { SORT_BY_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByXSetting';
 import { STACKED_BARS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/StackedBarsSetting';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 import { IconAxisX, IconAxisY } from 'twenty-ui/display';
@@ -29,7 +30,7 @@ export const getBarChartSettings = (
   const primaryAxisItems = [
     { ...DATA_DISPLAY_X_SETTING, Icon: dataDisplayXIcon },
     DATE_GRANULARITY_X_SETTING,
-    SORT_BY_X_SETTING,
+    PRIMARY_SORT_BY_SETTING,
     OMIT_NULL_VALUES_SETTING,
   ];
 
@@ -65,6 +66,7 @@ export const getBarChartSettings = (
         AXIS_NAME_SETTING,
         STACKED_BARS_SETTING,
         DATA_LABELS_SETTING,
+        SHOW_LEGEND_SETTING,
       ],
     },
   ];

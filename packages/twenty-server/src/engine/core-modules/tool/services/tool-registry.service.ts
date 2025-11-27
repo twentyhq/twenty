@@ -17,7 +17,19 @@ export class ToolRegistryService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {
     this.toolFactories = new Map<ToolType, () => Tool>([
-      [ToolType.HTTP_REQUEST, () => new HttpTool(twentyConfigService)],
+      [
+        ToolType.HTTP_REQUEST,
+        () => {
+          const httpTool = new HttpTool(twentyConfigService);
+
+          return {
+            description: httpTool.description,
+            inputSchema: httpTool.inputSchema,
+            execute: (params) => httpTool.execute(params),
+            flag: PermissionFlagType.HTTP_REQUEST_TOOL,
+          };
+        },
+      ],
       [
         ToolType.SEND_EMAIL,
         () => ({

@@ -1,5 +1,7 @@
-import { Tag } from 'twenty-ui/components';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
+import { useRecoilValue } from 'recoil';
+import { Tag } from 'twenty-ui/components';
 
 type SettingsItemTypeTagProps = {
   item: {
@@ -14,7 +16,12 @@ export const SettingsItemTypeTag = ({
   className,
   item: { isCustom, isRemote, applicationId },
 }: SettingsItemTypeTagProps) => {
-  const itemTagInfo = getItemTagInfo({ isCustom, isRemote, applicationId });
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const itemTagInfo = getItemTagInfo({
+    objectMetadataItem: { isCustom, isRemote, applicationId },
+    workspaceCustomApplicationId:
+      currentWorkspace?.workspaceCustomApplication?.id,
+  });
 
   return (
     <Tag

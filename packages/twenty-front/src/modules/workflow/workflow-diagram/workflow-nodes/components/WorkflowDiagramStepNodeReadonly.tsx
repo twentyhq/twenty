@@ -1,8 +1,8 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
@@ -28,11 +28,9 @@ import { useIcons } from 'twenty-ui/display';
 
 export const WorkflowDiagramStepNodeReadonly = ({
   id,
-  selected,
   data,
 }: {
   id: string;
-  selected: boolean;
   data: WorkflowDiagramStepNodeData;
 }) => {
   const { getIcon } = useIcons();
@@ -44,9 +42,10 @@ export const WorkflowDiagramStepNodeReadonly = ({
     workflowVisualizerWorkflowVersionIdComponentState,
   );
 
-  const setWorkflowSelectedNode = useSetRecoilComponentState(
-    workflowSelectedNodeComponentState,
-  );
+  const [workflowSelectedNode, setWorkflowSelectedNode] =
+    useRecoilComponentState(workflowSelectedNodeComponentState);
+
+  const selected = workflowSelectedNode === id;
 
   const { openWorkflowViewStepInCommandMenu } = useWorkflowCommandMenu();
 
@@ -75,6 +74,7 @@ export const WorkflowDiagramStepNodeReadonly = ({
       workflowVersionId: workflowVisualizerWorkflowVersionId,
       title: data.name,
       icon: getIcon(getWorkflowNodeIconKey(data)),
+      stepId: id,
     });
   };
 
@@ -88,6 +88,7 @@ export const WorkflowDiagramStepNodeReadonly = ({
       <WorkflowNodeContainer
         data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
         onClick={handleClick}
+        selected={selected}
       >
         <WorkflowDiagramHandleTarget />
         <WorkflowNodeIconContainer>
@@ -96,10 +97,15 @@ export const WorkflowDiagramStepNodeReadonly = ({
 
         <WorkflowNodeRightPart>
           <WorkflowNodeLabelWithCounterPart>
-            <WorkflowNodeLabel>{capitalize(data.nodeType)}</WorkflowNodeLabel>
+            <WorkflowNodeLabel selected={selected}>
+              {capitalize(data.nodeType)}
+            </WorkflowNodeLabel>
           </WorkflowNodeLabelWithCounterPart>
 
-          <WorkflowNodeTitle highlight={nodeTitleHighlighted}>
+          <WorkflowNodeTitle
+            highlight={nodeTitleHighlighted}
+            selected={selected}
+          >
             {data.name}
           </WorkflowNodeTitle>
         </WorkflowNodeRightPart>

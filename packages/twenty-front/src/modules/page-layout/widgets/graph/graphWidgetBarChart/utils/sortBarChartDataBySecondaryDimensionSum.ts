@@ -1,9 +1,9 @@
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { type BarDatum } from '@nivo/bar';
 import { isDefined } from 'twenty-shared/utils';
 import { GraphOrderBy } from '~/generated/graphql';
 
 type SortBarChartDataBySecondaryDimensionSumParams = {
-  data: BarChartDataItem[];
+  data: BarDatum[];
   keys: string[];
   orderBy: GraphOrderBy;
 };
@@ -12,7 +12,7 @@ export const sortBarChartDataBySecondaryDimensionSum = ({
   data,
   keys,
   orderBy,
-}: SortBarChartDataBySecondaryDimensionSumParams): BarChartDataItem[] => {
+}: SortBarChartDataBySecondaryDimensionSumParams): BarDatum[] => {
   if (
     orderBy !== GraphOrderBy.VALUE_ASC &&
     orderBy !== GraphOrderBy.VALUE_DESC
@@ -20,16 +20,16 @@ export const sortBarChartDataBySecondaryDimensionSum = ({
     return data;
   }
 
-  const dataWithSecondaryDimensionSums = data.map((barChartDataItem) => {
+  const dataWithSecondaryDimensionSums = data.map((datum) => {
     const secondaryDimensionSum = keys.reduce((sumAccumulator, segmentKey) => {
-      const segmentValue = barChartDataItem[segmentKey];
+      const segmentValue = datum[segmentKey];
       if (isDefined(segmentValue) && typeof segmentValue === 'number') {
         return sumAccumulator + segmentValue;
       }
       return sumAccumulator;
     }, 0);
 
-    return { barChartDataItem, secondaryDimensionSum };
+    return { datum, secondaryDimensionSum };
   });
 
   dataWithSecondaryDimensionSums.sort((a, b) => {
@@ -40,7 +40,5 @@ export const sortBarChartDataBySecondaryDimensionSum = ({
     }
   });
 
-  return dataWithSecondaryDimensionSums.map(
-    ({ barChartDataItem }) => barChartDataItem,
-  );
+  return dataWithSecondaryDimensionSums.map(({ datum }) => datum);
 };

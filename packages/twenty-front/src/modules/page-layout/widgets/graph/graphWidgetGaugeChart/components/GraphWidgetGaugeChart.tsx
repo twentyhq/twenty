@@ -25,6 +25,7 @@ type GraphWidgetGaugeChartProps = {
   showValue?: boolean;
   showLegend?: boolean;
   id: string;
+  onGaugeClick?: (data: GaugeChartData) => void;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -67,6 +68,7 @@ export const GraphWidgetGaugeChart = ({
   prefix,
   suffix,
   customFormatter,
+  onGaugeClick,
 }: GraphWidgetGaugeChartProps) => {
   const theme = useTheme();
   const instanceId = useId();
@@ -81,7 +83,7 @@ export const GraphWidgetGaugeChart = ({
   };
 
   const { isHovered, setIsHovered, handleClick, hasClickableItems } =
-    useGaugeChartHandlers({ data });
+    useGaugeChartHandlers({ data, onGaugeClick });
 
   const {
     colorScheme,
@@ -104,7 +106,6 @@ export const GraphWidgetGaugeChart = ({
     label: data.label || t`Value`,
     colorScheme,
     formatOptions,
-    to: data.to,
   });
 
   const formattedValue = formatGraphValue(data.value, formatOptions);
@@ -120,12 +121,7 @@ export const GraphWidgetGaugeChart = ({
 
   const renderTooltip = () => {
     const tooltipData = createTooltipData();
-    return (
-      <GraphWidgetTooltip
-        items={[tooltipData.tooltipItem]}
-        linkTo={tooltipData.linkTo}
-      />
-    );
+    return <GraphWidgetTooltip items={[tooltipData.tooltipItem]} />;
   };
 
   return (

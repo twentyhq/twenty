@@ -27,7 +27,7 @@ export class FlatFieldMetadataValidatorService {
     private readonly flatFieldMetadataTypeValidatorService: FlatFieldMetadataTypeValidatorService,
   ) {}
 
-  async validateFlatFieldMetadataUpdate({
+  validateFlatFieldMetadataUpdate({
     flatEntityId,
     flatEntityUpdates: updates,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
@@ -38,7 +38,7 @@ export class FlatFieldMetadataValidatorService {
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
-  >): Promise<FailedFlatEntityValidation<FlatFieldMetadata>> {
+  >): FailedFlatEntityValidation<FlatFieldMetadata> {
     const validationResult: FailedFlatEntityValidation<FlatFieldMetadata> = {
       type: 'update_field',
       errors: [],
@@ -108,6 +108,7 @@ export class FlatFieldMetadataValidatorService {
       });
     }
 
+    // Should be moved in relation field validator
     if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadataToValidate)) {
       const relationNonEditableUpdatedProperties = updates.flatMap(
         ({ property }) =>
@@ -126,6 +127,7 @@ export class FlatFieldMetadataValidatorService {
         });
       }
     }
+    ///
 
     if (updates.some((update) => update.property === 'name')) {
       validationResult.errors.push(
@@ -150,7 +152,7 @@ export class FlatFieldMetadataValidatorService {
     }
 
     const fieldMetadataTypeValidationErrors =
-      await this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
+      this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
           updates,
           optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
@@ -260,7 +262,7 @@ export class FlatFieldMetadataValidatorService {
     return validationResult;
   }
 
-  async validateFlatFieldMetadataCreation({
+  validateFlatFieldMetadataCreation({
     flatEntityToValidate: flatFieldMetadataToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
@@ -269,9 +271,9 @@ export class FlatFieldMetadataValidatorService {
     workspaceId,
     buildOptions,
     remainingFlatEntityMapsToValidate,
-  }: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.fieldMetadata>): Promise<
-    FailedFlatEntityValidation<FlatFieldMetadata>
-  > {
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.fieldMetadata
+  >): FailedFlatEntityValidation<FlatFieldMetadata> {
     const validationResult: FailedFlatEntityValidation<FlatFieldMetadata> = {
       errors: [],
       flatEntityMinimalInformation: {
@@ -338,7 +340,7 @@ export class FlatFieldMetadataValidatorService {
     );
 
     validationResult.errors.push(
-      ...(await this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
+      ...this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
           optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
             flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
@@ -349,7 +351,7 @@ export class FlatFieldMetadataValidatorService {
           workspaceId,
           remainingFlatEntityMapsToValidate,
         },
-      )),
+      ),
     );
 
     return validationResult;

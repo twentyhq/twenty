@@ -1,8 +1,8 @@
 import {
-  FieldMetadataType,
-  type RestrictedFieldsPermissions,
   type FieldMetadataSettings,
+  FieldMetadataType,
   NumberDataType,
+  type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -31,7 +31,7 @@ const isFieldAvailable = (field: FieldMetadataEntity, forResponse: boolean) => {
 const getFieldZodType = (field: FieldMetadataEntity): z.ZodTypeAny => {
   switch (field.type) {
     case FieldMetadataType.UUID:
-      return z.string().uuid();
+      return z.string().uuidv4();
 
     case FieldMetadataType.TEXT:
     case FieldMetadataType.RICH_TEXT:
@@ -95,7 +95,11 @@ export const generateRecordPropertiesZodSchema = (
       isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
       field.settings?.relationType === RelationType.MANY_TO_ONE
     ) {
-      shape[`${field.name}Id`] = z.string().uuid();
+      const uuidSchema = z.uuidv4();
+
+      shape[`${field.name}Id`] = field.isNullable
+        ? uuidSchema.optional()
+        : uuidSchema;
 
       return;
     }
@@ -246,6 +250,10 @@ export const generateRecordPropertiesZodSchema = (
 
     if (field.description) {
       fieldSchema = fieldSchema.describe(field.description);
+    }
+
+    if (field.isNullable) {
+      fieldSchema = fieldSchema.optional();
     }
 
     shape[field.name] = fieldSchema;

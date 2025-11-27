@@ -10,7 +10,7 @@ import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/core-modules/application/constants/twenty-standard-applications';
 
 describe('Successful user and workspace creation', () => {
   let createdUserAccessToken: string | undefined;
@@ -192,7 +192,6 @@ describe('Successful user and workspace creation', () => {
       'serverlessFunction',
       'serverlessFunctionLayer',
       'agent',
-      'agentHandoff',
       'remoteServer',
       'remoteTable',
       'databaseEventTrigger',

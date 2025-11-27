@@ -1,12 +1,13 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { type CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
+import { COMMAND_MENU_SIDE_PANEL_WIDTH } from '@/command-menu/constants/CommandMenuSidePanelWidth';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
-import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
+import { useResetWorkflowInsertStepIds } from '@/workflow/workflow-diagram/hooks/useResetWorkflowInsertStepIds';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
 import { workflowDiagramWaitingNodesDimensionsComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramWaitingNodesDimensionsComponentState';
@@ -24,7 +25,6 @@ import { WorkflowDiagramConnection } from '@/workflow/workflow-diagram/workflow-
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramCustomMarkers';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
-import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -52,10 +52,9 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
-import { THEME_COMMON } from 'twenty-ui/theme';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -171,12 +170,10 @@ export const WorkflowDiagramCanvasBase = ({
   const setWorkflowDiagram = useSetRecoilComponentState(
     workflowDiagramComponentState,
   );
-  const setWorkflowInsertStepIds = useSetRecoilComponentState(
-    workflowInsertStepIdsComponentState,
-  );
   const setWorkflowSelectedNode = useSetRecoilComponentState(
     workflowSelectedNodeComponentState,
   );
+  const { resetWorkflowInsertStepIds } = useResetWorkflowInsertStepIds();
   const workflowDiagramWaitingNodesDimensionsState =
     useRecoilComponentCallbackState(
       workflowDiagramWaitingNodesDimensionsComponentState,
@@ -197,7 +194,7 @@ export const WorkflowDiagramCanvasBase = ({
     return { nodes: [], edges: [] };
   }, [workflowDiagram]);
 
-  const { rightDrawerState } = useRightDrawerState();
+  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const handleEdgesChange = (
@@ -218,17 +215,7 @@ export const WorkflowDiagramCanvasBase = ({
   };
 
   useListenToSidePanelClosing(() => {
-    reactflow.setNodes((nodes) =>
-      nodes.map((node) => ({ ...node, selected: false })),
-    );
-    reactflow.setEdges((edges) =>
-      edges.map((edge) => ({ ...edge, selected: false })),
-    );
-    setWorkflowInsertStepIds({
-      parentStepId: undefined,
-      nextStepId: undefined,
-      position: undefined,
-    });
+    resetWorkflowInsertStepIds();
     setWorkflowSelectedNode(undefined);
   });
 
@@ -237,17 +224,15 @@ export const WorkflowDiagramCanvasBase = ({
   const setFlowViewport = useRecoilCallback(
     () =>
       ({
-        rightDrawerState,
-        noAnimation,
         workflowDiagramFlowInitialized,
-        isInRightDrawer,
+        isCommandMenuOpened,
         workflowDiagram,
+        isInRightDrawer,
       }: {
-        rightDrawerState: CommandMenuAnimationVariant;
-        noAnimation?: boolean;
         workflowDiagramFlowInitialized: boolean;
-        isInRightDrawer: boolean;
+        isCommandMenuOpened: boolean;
         workflowDiagram: WorkflowDiagram | undefined;
+        isInRightDrawer: boolean;
       }) => {
         if (
           !isDefined(containerRef.current) ||
@@ -270,27 +255,30 @@ export const WorkflowDiagramCanvasBase = ({
 
         setWorkflowDiagramWaitingNodesDimensions(false);
 
-        let visibleRightDrawerWidth = 0;
-        if (rightDrawerState === 'normal' && !isInRightDrawer) {
-          const rightDrawerWidth = Number(
-            THEME_COMMON.rightDrawerWidth.replace('px', ''),
-          );
+        const baseContainerWidth = containerRef.current.offsetWidth;
+        const hasViewportBeenMoved = currentViewport.x !== 0;
 
-          visibleRightDrawerWidth = rightDrawerWidth;
+        let adjustedContainerWidth = baseContainerWidth;
+
+        if (!isInRightDrawer && isCommandMenuOpened) {
+          adjustedContainerWidth =
+            baseContainerWidth - COMMAND_MENU_SIDE_PANEL_WIDTH;
+        } else if (!isInRightDrawer && hasViewportBeenMoved) {
+          adjustedContainerWidth =
+            baseContainerWidth + COMMAND_MENU_SIDE_PANEL_WIDTH;
         }
 
         const flowBounds = reactflow.getNodesBounds(nodes);
-        const viewportX =
-          (containerRef.current.offsetWidth + visibleRightDrawerWidth) / 2 -
-          flowBounds.width / 2;
+        const centeredXPosition =
+          adjustedContainerWidth / 2 - flowBounds.width / 2;
 
         reactflow.setViewport(
           {
             ...currentViewport,
-            x: viewportX - visibleRightDrawerWidth,
+            x: centeredXPosition,
             zoom: defaultFitViewOptions.maxZoom,
           },
-          { duration: noAnimation ? 0 : 300 },
+          { duration: hasViewportBeenMoved ? 300 : 0 },
         );
       },
     [reactflow, setWorkflowDiagramWaitingNodesDimensions],
@@ -299,17 +287,17 @@ export const WorkflowDiagramCanvasBase = ({
   const handleSetFlowViewportOnChange = useRecoilCallback(
     ({ snapshot }) =>
       ({
-        rightDrawerState,
         workflowDiagramFlowInitialized,
+        isCommandMenuOpened,
         isInRightDrawer,
       }: {
-        rightDrawerState: CommandMenuAnimationVariant;
         workflowDiagramFlowInitialized: boolean;
+        isCommandMenuOpened: boolean;
         isInRightDrawer: boolean;
       }) => {
         setFlowViewport({
-          rightDrawerState,
           isInRightDrawer,
+          isCommandMenuOpened,
           workflowDiagramFlowInitialized,
           workflowDiagram: getSnapshotValue(snapshot, workflowDiagramState),
         });
@@ -319,15 +307,15 @@ export const WorkflowDiagramCanvasBase = ({
 
   useEffect(() => {
     handleSetFlowViewportOnChange({
-      rightDrawerState,
       workflowDiagramFlowInitialized,
+      isCommandMenuOpened,
       isInRightDrawer,
     });
   }, [
     handleSetFlowViewportOnChange,
-    isInRightDrawer,
-    rightDrawerState,
+    isCommandMenuOpened,
     workflowDiagramFlowInitialized,
+    isInRightDrawer,
   ]);
 
   const handleNodesChanges = useRecoilCallback(
@@ -356,50 +344,31 @@ export const WorkflowDiagramCanvasBase = ({
         }
 
         setFlowViewport({
-          rightDrawerState,
-          noAnimation: true,
-          isInRightDrawer,
+          isCommandMenuOpened,
           workflowDiagramFlowInitialized,
           workflowDiagram: updatedWorkflowDiagram,
+          isInRightDrawer,
         });
       },
     [
-      isInRightDrawer,
-      rightDrawerState,
+      isCommandMenuOpened,
       setFlowViewport,
       workflowDiagramFlowInitialized,
       workflowDiagramState,
       workflowDiagramWaitingNodesDimensionsState,
-    ],
-  );
-
-  const handleInit = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        if (!isDefined(containerRef.current)) {
-          return;
-        }
-
-        setFlowViewport({
-          rightDrawerState,
-          noAnimation: true,
-          isInRightDrawer,
-          workflowDiagramFlowInitialized: true,
-          workflowDiagram: getSnapshotValue(snapshot, workflowDiagramState),
-        });
-
-        setWorkflowDiagramFlowInitialized(true);
-
-        onInit?.();
-      },
-    [
       isInRightDrawer,
-      onInit,
-      rightDrawerState,
-      setFlowViewport,
-      workflowDiagramState,
     ],
   );
+
+  const handleInit = () => {
+    if (!isDefined(containerRef.current)) {
+      return;
+    }
+
+    setWorkflowDiagramFlowInitialized(true);
+
+    onInit?.();
+  };
 
   const onBeforeDelete: OnBeforeDelete<
     WorkflowDiagramNode,

@@ -1,7 +1,7 @@
+import { type STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { type STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -16,15 +16,9 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-from-field.util';
 import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
-import {
-  CUSTOM_OBJECT_STANDARD_FIELD_IDS,
-  STANDARD_OBJECT_FIELD_IDS,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
-import {
-  createDeterministicUuid,
-  createRelationDeterministicUuid,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
+import { createRelationDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
 const generateSourceFlatFieldMetadata = ({
   workspaceId,
@@ -49,17 +43,6 @@ const generateSourceFlatFieldMetadata = ({
     STANDARD_OBJECT_ICONS[
       targetFlatObjectMetadata.nameSingular as keyof typeof STANDARD_OBJECT_ICONS
     ] || 'IconBuildingSkyscraper';
-  const standardId =
-    CUSTOM_OBJECT_STANDARD_FIELD_IDS[
-      targetFlatObjectMetadata.namePlural as keyof typeof CUSTOM_OBJECT_STANDARD_FIELD_IDS
-    ];
-
-  if (!isDefined(standardId)) {
-    throw new ObjectMetadataException(
-      `Standard field ID not found for target object ${targetFlatObjectMetadata.namePlural}`,
-      ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-    );
-  }
 
   return {
     calendarViewIds: [],
@@ -89,16 +72,13 @@ const generateSourceFlatFieldMetadata = ({
     settings: {
       relationType: RelationType.ONE_TO_MANY,
     },
-    standardId,
+    standardId: null,
     standardOverrides: null,
     type: FieldMetadataType.RELATION,
-    universalIdentifier: createDeterministicUuid([
-      sourceFlatObjectMetadata.id,
-      standardId,
-    ]),
+    universalIdentifier: sourceFieldMetadataId,
     workspaceId,
     morphId: null,
-    applicationId: sourceFlatObjectMetadata.applicationId ?? null,
+    applicationId: sourceFlatObjectMetadata.applicationId,
   };
 };
 
@@ -165,11 +145,8 @@ const generateTargetFlatFieldMetadata = ({
     relationTargetFieldMetadataId: sourceFlatFieldMetadata.id,
     relationTargetObjectMetadataId: sourceFlatObjectMetadata.id,
     standardOverrides: null,
-    universalIdentifier: createDeterministicUuid([
-      targetFlatObjectMetadata.id,
-      standardId,
-    ]),
-    applicationId: sourceFlatObjectMetadata.applicationId ?? null,
+    universalIdentifier: sourceFlatFieldMetadata.relationTargetFieldMetadataId,
+    applicationId: sourceFlatObjectMetadata.applicationId,
   };
 };
 

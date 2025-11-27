@@ -5,7 +5,6 @@ import { createGradientDef } from '@/page-layout/widgets/graph/utils/createGradi
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { type LineSeries } from '@nivo/line';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { type ThemeType } from 'twenty-ui/theme';
 
 type UseLineChartDataProps = {
@@ -25,7 +24,6 @@ export const useLineChartData = ({
   enableArea,
   theme,
 }: UseLineChartDataProps) => {
-  const dataMap = Object.fromEntries(data.map((series) => [series.id, series]));
   const enrichedSeries = useMemo((): LineChartEnrichedSeries[] => {
     return data.map((series, index) => {
       const colorScheme = getColorScheme({
@@ -84,18 +82,12 @@ export const useLineChartData = ({
     };
   });
 
-  const hasClickableItems = data.some((series) =>
-    series.data.some((point) => isDefined(point.to)),
-  );
-
   return {
-    dataMap,
     enrichedSeries,
     nivoData,
     defs,
     fill,
     colors,
     legendItems,
-    hasClickableItems,
   };
 };

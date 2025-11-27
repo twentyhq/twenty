@@ -42,6 +42,8 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
           'should create morph relation field metadata with valid input on rocket object to pet object',
         context: {
           input: {
+            workspaceCustomApplicationId:
+              '20202020-81ee-42da-a281-668632f32fe7',
             createFieldInput: {
               name: 'newField',
               label: 'newFieldLabel',
@@ -100,6 +102,8 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
         title: 'should fail when morphRelationsCreationPayload is missing',
         context: {
           input: {
+            workspaceCustomApplicationId:
+              '20202020-81ee-42da-a281-668632f32fe7',
             createFieldInput: {
               name: 'newField',
               label: 'newFieldLabel',
@@ -118,6 +122,8 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
         title: 'should fail when morphRelationsCreationPayload is empty array',
         context: {
           input: {
+            workspaceCustomApplicationId:
+              '20202020-81ee-42da-a281-668632f32fe7',
             createFieldInput: {
               name: 'newField',
               label: 'newFieldLabel',
@@ -137,6 +143,8 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
           'should fail when morphRelationsCreationPayload has different relation types',
         context: {
           input: {
+            workspaceCustomApplicationId:
+              '20202020-81ee-42da-a281-668632f32fe7',
             createFieldInput: {
               name: 'newField',
               label: 'newFieldLabel',
@@ -169,6 +177,8 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
           'should fail when morphRelationsCreationPayload has several references to same object metadata',
         context: {
           input: {
+            workspaceCustomApplicationId:
+              '20202020-81ee-42da-a281-668632f32fe7',
             createFieldInput: {
               name: 'newField',
               label: 'newFieldLabel',
@@ -201,6 +211,8 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
           'should fail when morphRelationsCreationPayload has invalid relation payload',
         context: {
           input: {
+            workspaceCustomApplicationId:
+              '20202020-81ee-42da-a281-668632f32fe7',
             createFieldInput: {
               name: 'newField',
               label: 'newFieldLabel',
@@ -225,6 +237,8 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
         title: 'should fail when target object metadata is not found',
         context: {
           input: {
+            workspaceCustomApplicationId:
+              '20202020-81ee-42da-a281-668632f32fe7',
             createFieldInput: {
               name: 'newField',
               label: 'newFieldLabel',

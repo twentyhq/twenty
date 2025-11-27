@@ -71,6 +71,7 @@ export class BillingUsageService {
         eventName: billingEvents[0].eventName,
         value: billingEvents[0].value,
         stripeCustomerId: workspaceStripeCustomer.stripeCustomerId,
+        dimensions: billingEvents[0].dimensions,
       });
     } catch (error) {
       throw new BillingException(

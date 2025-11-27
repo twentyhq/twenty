@@ -1,4 +1,3 @@
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
 import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
@@ -7,6 +6,7 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
+import { type BarDatum } from '@nivo/bar';
 
 const LEFT_AXIS_LEGEND_OFFSET_PADDING = 5;
 const TICK_PADDING = 5;
@@ -22,7 +22,7 @@ const COMMON_AXIS_CONFIG = {
 type GetBarChartAxisConfigsProps = {
   width: number;
   height: number;
-  data: BarChartDataItem[];
+  data: BarDatum[];
   layout: BarChartLayout;
   indexBy: string;
   xAxisLabel?: string;

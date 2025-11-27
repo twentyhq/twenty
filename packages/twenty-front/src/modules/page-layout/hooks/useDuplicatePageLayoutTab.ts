@@ -16,6 +16,8 @@ import { pageLayoutCurrentLayoutsComponentState } from '../states/pageLayoutCurr
 import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '../states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutTab } from '../types/PageLayoutTab';
+import { generateDuplicatedTimestamps } from '../utils/generateDuplicatedTimestamps';
+import { getDuplicatedTitle } from '../utils/getDuplicatedTitle';
 
 export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -76,8 +78,7 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
             ...widget,
             id: newWidgetId,
             pageLayoutTabId: newTabId,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            ...generateDuplicatedTimestamps(),
           };
         });
 
@@ -93,13 +94,10 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         const newTab: PageLayoutTab = {
           ...sourceTab,
           id: newTabId,
-          title: sourceTab.title.endsWith('(Copy)')
-            ? sourceTab.title
-            : `${sourceTab.title} (Copy)`,
+          title: getDuplicatedTitle(sourceTab.title),
           position: newTabPosition,
           widgets: clonedWidgets,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+          ...generateDuplicatedTimestamps(),
         };
 
         const sourceLayouts = allTabLayouts[tabId] ?? {

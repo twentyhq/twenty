@@ -1,9 +1,9 @@
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { type BarDatum } from '@nivo/bar';
 import { calculateValueRangeFromBarChartKeys } from '../calculateValueRangeFromBarChartKeys';
 
 describe('calculateValueRangeFromBarChartKeys (essential cases)', () => {
   it('returns minimum=0 and maximum=highest value for all positive values', () => {
-    const data: BarChartDataItem[] = [
+    const data: BarDatum[] = [
       { category: 'A', v1: 10, v2: 20 },
       { category: 'B', v1: 30, v2: 15 },
       { category: 'C', v1: 25, v2: 40 },
@@ -17,7 +17,7 @@ describe('calculateValueRangeFromBarChartKeys (essential cases)', () => {
   });
 
   it('returns minimum=lowest and maximum=0 for all negative values', () => {
-    const data: BarChartDataItem[] = [
+    const data: BarDatum[] = [
       { category: 'A', v1: -10, v2: -20 },
       { category: 'B', v1: -30, v2: -15 },
       { category: 'C', v1: -25, v2: -40 },
@@ -31,7 +31,7 @@ describe('calculateValueRangeFromBarChartKeys (essential cases)', () => {
   });
 
   it('includes zero and spans minimum/maximum when values cross zero', () => {
-    const data: BarChartDataItem[] = [
+    const data: BarDatum[] = [
       { category: 'A', v1: -20, v2: 30 },
       { category: 'B', v1: 15, v2: -10 },
       { category: 'C', v1: -5, v2: 25 },
@@ -58,7 +58,7 @@ describe('calculateValueRangeFromBarChartKeys (essential cases)', () => {
   });
 
   it('ignores NaN/missing values', () => {
-    const data: BarChartDataItem[] = [
+    const data: BarDatum[] = [
       { category: 'A', v1: 10, v2: NaN },
       { category: 'B', v1: 20, v2: 30 },
       { category: 'C', v1: undefined as unknown as number },

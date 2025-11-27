@@ -10,6 +10,7 @@ import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode'
 import { type RecordGqlGroupByConnection } from '@/object-record/graphql/types/RecordGqlOperationGroupByResult';
 import { type RecordGqlOperationGroupByVariables } from '@/object-record/graphql/types/RecordGqlOperationGroupByVariables';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
+import { isArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
@@ -56,12 +57,15 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
           (groupConnection) => {
             const groupByDimensionValues =
               readField('groupByDimensionValues', groupConnection) || [];
+
             const cachedEdges =
               readField<RecordGqlRefEdge[]>('edges', groupConnection) || [];
+
             const cachedTotalCount = readField<number | undefined>(
               'totalCount',
               groupConnection,
             );
+
             const cachedPageInfo = readField<{
               startCursor?: string;
               endCursor?: string;
@@ -129,6 +133,11 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
             }
 
             if (!isDefined(groupByConfig) || groupByConfig.length === 0) {
+              continue;
+            }
+
+            // TODO: see if we need to handle the case where it's not an array like for aggregate header
+            if (!isArray(groupByConfig)) {
               continue;
             }
 
