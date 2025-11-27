@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { CalDAVClient } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/caldav.client';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
@@ -13,7 +15,8 @@ export class CalDavClientProvider {
   ): Promise<CalDAVClient> {
     if (
       !connectedAccount.connectionParameters?.CALDAV?.password ||
-      !connectedAccount.connectionParameters?.CALDAV?.host
+      !connectedAccount.connectionParameters?.CALDAV?.host ||
+      !isNonEmptyString(connectedAccount.handle)
     ) {
       throw new Error('Missing required CalDAV connection parameters');
     }
