@@ -122,15 +122,6 @@ export const WorkflowAiAgentPermissionsTab = ({
   });
 
   const {
-    filteredPermissions: filteredSettingsPermissions,
-    filteredEnabledPermissions: filteredEnabledSettingsPermissions,
-  } = getFilteredPermissions({
-    permissions: settingsPermissionsConfig,
-    permissionFlagKeys,
-    searchQuery,
-  });
-
-  const {
     filteredPermissions: filteredActionPermissions,
     filteredEnabledPermissions: filteredEnabledActionPermissions,
   } = getFilteredPermissions({
