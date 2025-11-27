@@ -60,7 +60,7 @@ export const ActivityRichTextEditor = ({
   activityObjectNameSingular,
 }: ActivityRichTextEditorProps) => {
   const [activityInStore] = useRecoilState(recordStoreFamilyState(activityId));
-    const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
+  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
 
   const cache = useApolloCoreClient().cache;
   const activity = activityInStore as Task | Note | null;
