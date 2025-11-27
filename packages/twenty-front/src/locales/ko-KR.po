@@ -8315,6 +8315,11 @@ msgstr "숨겨진 그룹 표시"
 msgid "Show only rows with errors"
 msgstr "오류가 있는 행만 표시"
 
+#. js-lingui-id: TJ4tz9
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Show value in center"
+msgstr ""
+
 #. js-lingui-id: uVg8dY
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -9189,6 +9194,11 @@ msgstr "모든 설정 권한 전환"
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "내일"
+
+#. js-lingui-id: 72c5Qo
+#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer.tsx
+msgid "Total"
+msgstr ""
 
 #. js-lingui-id: YT/cKI
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
