@@ -13,13 +13,9 @@ import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUs
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
+import { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from 'twenty-shared/constants';
 
-import {
-  isDefined,
-  type RelativeDateFilter,
-  type RelativeDateFilterDirection,
-  type RelativeDateFilterUnit,
-} from 'twenty-shared/utils';
+import { isDefined, type RelativeDateFilter } from 'twenty-shared/utils';
 
 export const useApplyObjectFilterDropdownOperand = () => {
   const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValue(
@@ -108,9 +104,7 @@ export const useApplyObjectFilterDropdownOperand = () => {
         recordFilterToUpsert.displayValue = displayValue;
       } else if (newOperand === RecordFilterOperand.IS_RELATIVE) {
         const defaultRelativeDate: RelativeDateFilter = {
-          direction: 'THIS' as RelativeDateFilterDirection,
-          amount: 1,
-          unit: 'DAY' as RelativeDateFilterUnit,
+          ...DEFAULT_RELATIVE_DATE_FILTER_VALUE,
           timezone: userTimezone,
         };
 

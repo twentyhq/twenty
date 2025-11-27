@@ -1,6 +1,7 @@
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
 
 import { isNonEmptyString, isString } from '@sniptt/guards';
+import { useId } from 'react';
 import { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from 'twenty-shared/constants';
 
 import {
@@ -21,6 +22,8 @@ export const FormRelativeDatePicker = ({
   onChange,
   readonly,
 }: FormRelativeDatePickerProps) => {
+  const instanceId = useId();
+
   const value =
     isString(defaultValue) && isNonEmptyString(defaultValue)
       ? safeParseRelativeDateFilterJSONStringified(defaultValue)
@@ -32,6 +35,7 @@ export const FormRelativeDatePicker = ({
 
   return (
     <RelativeDatePickerHeader
+      instanceId={instanceId}
       onChange={handleValueChange}
       direction={value?.direction ?? 'THIS'}
       unit={value?.unit ?? 'DAY'}

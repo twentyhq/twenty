@@ -16,6 +16,7 @@ import {
   type ComputedDatum,
   type PieTooltipProps,
 } from '@nivo/pie';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphWidgetPieChartProps = {
@@ -26,6 +27,10 @@ type GraphWidgetPieChartProps = {
   showDataLabels?: boolean;
 } & GraphValueFormatOptions;
 
+const emptyStateData: PieChartDataItem[] = [
+  { id: 'empty', label: '', value: 1 },
+];
+
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
@@ -35,7 +40,7 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledPieChartWrapper = styled.div`
+const StyledPieChartWrapper = styled.div<{ preventHover: boolean }>`
   width: 100%;
   height: 100%;
 
@@ -43,7 +48,8 @@ const StyledPieChartWrapper = styled.div`
     transition: filter 0.15s ease-in-out;
 
     &:hover {
-      filter: brightness(${PIE_CHART_HOVER_BRIGHTNESS});
+      filter: ${({ preventHover }) =>
+        preventHover ? 'none' : `brightness(${PIE_CHART_HOVER_BRIGHTNESS})`};
     }
   }
 `;
@@ -102,26 +108,38 @@ export const GraphWidgetPieChart = ({
     );
   };
 
+  const hasNoData = useMemo(
+    () => data.length === 0 || data.every((item) => item.value === 0),
+    [data],
+  );
+
+  const chartData = hasNoData ? emptyStateData : data;
+  const chartColors = hasNoData
+    ? [theme.background.tertiary]
+    : enrichedData.map((item) => item.colorScheme.solid);
+
   return (
     <StyledContainer id={id}>
       <GraphWidgetChartContainer
-        $isClickable={hasClickableItems}
+        $isClickable={!hasNoData && hasClickableItems}
         $cursorSelector="svg g path"
       >
-        <StyledPieChartWrapper>
+        <StyledPieChartWrapper preventHover={hasNoData}>
           <ResponsivePie
-            data={data}
-            margin={showDataLabels ? PIE_CHART_MARGINS : {}}
+            data={chartData}
+            margin={showDataLabels && !hasNoData ? PIE_CHART_MARGINS : {}}
             innerRadius={0.8}
-            padAngle={1}
-            colors={enrichedData.map((item) => item.colorScheme.solid)}
+            padAngle={hasNoData ? 0 : 1}
+            colors={chartColors}
             borderWidth={0}
-            enableArcLinkLabels={showDataLabels}
+            enableArcLinkLabels={showDataLabels && !hasNoData}
             enableArcLabels={false}
-            tooltip={renderTooltip}
-            onClick={handleSliceClick}
-            onMouseEnter={(datum) => setHoveredSliceId(datum.id)}
-            onMouseLeave={() => setHoveredSliceId(null)}
+            tooltip={hasNoData ? () => null : renderTooltip}
+            onClick={hasNoData ? undefined : handleSliceClick}
+            onMouseEnter={
+              hasNoData ? undefined : (datum) => setHoveredSliceId(datum.id)
+            }
+            onMouseLeave={hasNoData ? undefined : () => setHoveredSliceId(null)}
             layers={['arcs', 'arcLinkLabels']}
             arcLinkLabel={(datum: ComputedDatum<PieChartDataItem>) => {
               const tooltipData = createTooltipData(datum);
@@ -134,11 +152,19 @@ export const GraphWidgetPieChart = ({
             arcLinkLabelsStraightLength={10}
             arcLinkLabelsTextColor={theme.font.color.light}
             arcLinkLabelsColor={theme.font.color.extraLight}
+            theme={{
+              labels: {
+                text: {
+                  fontSize: theme.font.size.sm,
+                  fontWeight: theme.font.weight.medium,
+                },
+              },
+            }}
           />
         </StyledPieChartWrapper>
       </GraphWidgetChartContainer>
       <GraphWidgetLegend
-        show={showLegend}
+        show={showLegend && !hasNoData}
         items={enrichedData.map((item) => ({
           id: item.id,
           label: item.label || item.id,

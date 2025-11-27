@@ -44,6 +44,13 @@ export const useChartSettingsValues = ({
     configuration.__typename === 'BarChartConfiguration' ||
     configuration.__typename === 'LineChartConfiguration';
 
+  const hasColorProperty =
+    isBarOrLineChart ||
+    configuration.__typename === 'GaugeChartConfiguration' ||
+    configuration.__typename === 'PieChartConfiguration';
+
+  const isPieChart = configuration.__typename === 'PieChartConfiguration';
+
   let groupByFieldXId: string | undefined;
   let groupByFieldYId: string | undefined;
   let groupBySubFieldNameX: CompositeFieldSubFieldName | undefined;
@@ -147,7 +154,7 @@ export const useChartSettingsValues = ({
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_X:
         return groupBySubFieldNameXLabel ?? groupByFieldX?.label;
       case CHART_CONFIGURATION_SETTING_IDS.COLORS:
-        return 'color' in configuration && isDefined(configuration.color)
+        return hasColorProperty && isDefined(configuration.color)
           ? capitalize(configuration.color)
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_Y:
@@ -183,8 +190,7 @@ export const useChartSettingsValues = ({
       case CHART_CONFIGURATION_SETTING_IDS.GROUP_BY:
         return groupByFieldY?.label;
       case CHART_CONFIGURATION_SETTING_IDS.AXIS_NAME:
-        return 'axisNameDisplay' in configuration &&
-          isDefined(configuration.axisNameDisplay)
+        return isBarOrLineChart && isDefined(configuration.axisNameDisplay)
           ? getChartAxisNameDisplayOptions(configuration.axisNameDisplay)
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.PRIMARY_SORT_BY:
@@ -202,34 +208,35 @@ export const useChartSettingsValues = ({
           ? configuration.isStacked !== false
           : true;
       case CHART_CONFIGURATION_SETTING_IDS.OMIT_NULL_VALUES:
-        return 'omitNullValues' in configuration
+        return isBarOrLineChart
           ? (configuration.omitNullValues ?? false)
           : false;
       case CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE:
-        return 'rangeMin' in configuration
+        return isBarOrLineChart
           ? (configuration.rangeMin?.toString() ?? '')
           : '';
       case CHART_CONFIGURATION_SETTING_IDS.MAX_RANGE:
-        return 'rangeMax' in configuration
+        return isBarOrLineChart
           ? (configuration.rangeMax?.toString() ?? '')
           : '';
       case CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY_X:
-        return 'primaryAxisDateGranularity' in configuration &&
+        return isBarOrLineChart &&
           isDefined(configuration.primaryAxisDateGranularity)
           ? getDateGranularityLabel(configuration.primaryAxisDateGranularity)
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY_Y:
-        return 'secondaryAxisGroupByDateGranularity' in configuration &&
+        return isBarOrLineChart &&
           isDefined(configuration.secondaryAxisGroupByDateGranularity)
           ? getDateGranularityLabel(
               configuration.secondaryAxisGroupByDateGranularity,
             )
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY:
-        return 'dateGranularity' in configuration &&
-          isDefined(configuration.dateGranularity)
+        return isPieChart && isDefined(configuration.dateGranularity)
           ? getDateGranularityLabel(configuration.dateGranularity)
           : undefined;
+      case CHART_CONFIGURATION_SETTING_IDS.SHOW_LEGEND:
+        return isPieChart ? (configuration.displayLegend ?? true) : true;
       default:
         return '';
     }

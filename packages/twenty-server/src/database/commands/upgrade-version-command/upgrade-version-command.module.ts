@@ -9,6 +9,7 @@ import { V1_7_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-
 import { V1_8_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-8/1-8-upgrade-version-command.module';
 import { UpgradeCommand } from 'src/database/commands/upgrade-version-command/upgrade.command';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
 
 @Module({
@@ -20,6 +21,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     V1_10_UpgradeVersionCommandModule,
     V1_11_UpgradeVersionCommandModule,
     V1_12_UpgradeVersionCommandModule,
+    DataSourceModule,
     WorkspaceSyncMetadataModule,
   ],
   providers: [UpgradeCommand],

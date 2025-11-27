@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { AiAgentModule } from 'src/engine/metadata-modules/ai-agent/ai-agent.module';
-import { AiChatModule } from 'src/engine/metadata-modules/ai-chat/ai-chat.module';
+import { AiAgentMonitorModule } from 'src/engine/metadata-modules/ai/ai-agent-monitor/ai-agent-monitor.module';
+import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
+import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
 import { CronTriggerModule } from 'src/engine/metadata-modules/cron-trigger/cron-trigger.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { DatabaseEventTriggerModule } from 'src/engine/metadata-modules/database-event-trigger/database-event-trigger.module';
@@ -27,6 +28,7 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
     ServerlessFunctionModule,
     ServerlessFunctionLayerModule,
     AiAgentModule,
+    AiAgentMonitorModule,
     AiChatModule,
     ViewModule,
     WorkspaceMetadataVersionModule,
