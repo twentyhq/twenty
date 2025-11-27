@@ -1,10 +1,10 @@
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
   ActorMetadata,
   FieldMetadataType,
   RelationOnDeleteAction,
 } from 'twenty-shared/types';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -49,7 +49,8 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Attachment name`,
     icon: 'IconFileUpload',
   })
-  name: string;
+  @WorkspaceIsNullable()
+  name: string | null;
 
   @WorkspaceField({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.fullPath,
@@ -58,7 +59,8 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Attachment full path`,
     icon: 'IconLink',
   })
-  fullPath: string;
+  @WorkspaceIsNullable()
+  fullPath: string | null;
 
   // Deprecated: Use fileCategory instead
   @WorkspaceField({
@@ -69,7 +71,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconList',
   })
   @WorkspaceIsNullable()
-  type: string;
+  type: string | null;
 
   @WorkspaceField({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.fileCategory,

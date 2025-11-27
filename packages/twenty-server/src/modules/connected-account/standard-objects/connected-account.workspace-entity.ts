@@ -1,10 +1,10 @@
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
   ConnectedAccountProvider,
   FieldMetadataType,
   RelationOnDeleteAction,
 } from 'twenty-shared/types';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -42,7 +42,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The account handle (email, username, phone number, etc.)`,
     icon: 'IconMail',
   })
-  handle: string;
+  @WorkspaceIsNullable()
+  handle: string | null;
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.provider,
@@ -51,7 +52,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The account provider`,
     icon: 'IconSettings',
   })
-  provider: ConnectedAccountProvider; // field metadata should be a SELECT
+  @WorkspaceIsNullable()
+  provider: ConnectedAccountProvider | null; // field metadata should be a SELECT
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accessToken,
@@ -60,7 +62,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Messaging provider access token`,
     icon: 'IconKey',
   })
-  accessToken: string;
+  @WorkspaceIsNullable()
+  accessToken: string | null;
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.refreshToken,
@@ -69,7 +72,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Messaging provider refresh token`,
     icon: 'IconKey',
   })
-  refreshToken: string;
+  @WorkspaceIsNullable()
+  refreshToken: string | null;
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastCredentialsRefreshedAt,
@@ -88,7 +92,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Last sync history ID`,
     icon: 'IconHistory',
   })
-  lastSyncHistoryId: string;
+  @WorkspaceIsNullable()
+  lastSyncHistoryId: string | null;
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.authFailedAt,
@@ -107,7 +112,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Handle Aliases`,
     icon: 'IconMail',
   })
-  handleAliases: string;
+  @WorkspaceIsNullable()
+  handleAliases: string[] | null;
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.scopes,

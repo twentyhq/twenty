@@ -1,20 +1,20 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
   FieldMetadataType,
+  FullNameMetadata,
   NumberDataType,
   RelationOnDeleteAction,
-  FullNameMetadata,
 } from 'twenty-shared/types';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
@@ -128,7 +128,8 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     defaultValue: "'System'",
   })
   @WorkspaceIsSystem()
-  colorScheme: string;
+  @WorkspaceIsNullable()
+  colorScheme: string | null;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.locale,
@@ -139,7 +140,8 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     defaultValue: `'${SOURCE_LOCALE}'`,
   })
   @WorkspaceIsSystem()
-  locale: keyof typeof APP_LOCALES;
+  @WorkspaceIsNullable()
+  locale: keyof typeof APP_LOCALES | null;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.avatarUrl,
@@ -148,8 +150,9 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Workspace member avatar`,
     icon: 'IconFileUpload',
   })
+  @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  avatarUrl: string;
+  avatarUrl: string | null;
 
   @WorkspaceIsUnique()
   @WorkspaceField({
@@ -159,8 +162,9 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Related user email address`,
     icon: 'IconMail',
   })
+  @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  userEmail: string;
+  userEmail: string | null;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.calendarStartDay,
@@ -183,7 +187,8 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCircleUsers',
   })
   @WorkspaceIsSystem()
-  userId: string;
+  @WorkspaceIsNullable()
+  userId: string | null;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeZone,
@@ -194,7 +199,8 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconTimezone',
   })
   @WorkspaceIsSystem()
-  timeZone: string;
+  @WorkspaceIsNullable()
+  timeZone: string | null;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.dateFormat,

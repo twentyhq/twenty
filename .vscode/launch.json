@@ -35,8 +35,9 @@
         "nx",
         "run",
         "twenty-server:command",
-        "my-command",
-        "--my-parameter value"
+        "workspace:sync-metadata",
+        "-w",
+        "20202020-1c25-4d02-bf25-6aeccf7ea419"
       ],
       "outputCapture": "std",
       "internalConsoleOptions": "openOnSessionStart",
