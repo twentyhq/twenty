@@ -19,13 +19,11 @@ export class WorkspaceMigrationV2RoleTargetActionsBuilderService extends Workspa
     super(ALL_METADATA_NAME.roleTarget);
   }
 
-  protected async validateFlatEntityCreation(
+  protected validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.roleTarget>,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      typeof ALL_METADATA_NAME.roleTarget,
-      'created'
-    >
+  ): FlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.roleTarget,
+    'created'
   > {
     const validationResult =
       this.flatRoleTargetValidatorService.validateFlatRoleTargetCreation(args);
@@ -48,13 +46,11 @@ export class WorkspaceMigrationV2RoleTargetActionsBuilderService extends Workspa
     };
   }
 
-  protected async validateFlatEntityDeletion(
+  protected validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.roleTarget>,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      typeof ALL_METADATA_NAME.roleTarget,
-      'deleted'
-    >
+  ): FlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.roleTarget,
+    'deleted'
   > {
     const validationResult =
       this.flatRoleTargetValidatorService.validateFlatRoleTargetDeletion(args);
@@ -77,13 +73,11 @@ export class WorkspaceMigrationV2RoleTargetActionsBuilderService extends Workspa
     };
   }
 
-  protected async validateFlatEntityUpdate(
+  protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.roleTarget>,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      typeof ALL_METADATA_NAME.roleTarget,
-      'updated'
-    >
+  ): FlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.roleTarget,
+    'updated'
   > {
     const validationResult =
       this.flatRoleTargetValidatorService.validateFlatRoleTargetUpdate(args);

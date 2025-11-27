@@ -523,15 +523,13 @@ export class WorkspaceMigrationBuildOrchestratorService {
       const { from: fromFlatRoleMaps, to: toFlatRoleMaps } = flatRoleMaps;
 
       const roleResult =
-        await this.workspaceMigrationV2RoleActionsBuilderService.validateAndBuild(
-          {
-            from: fromFlatRoleMaps,
-            to: toFlatRoleMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: undefined,
-            workspaceId,
-          },
-        );
+        this.workspaceMigrationV2RoleActionsBuilderService.validateAndBuild({
+          from: fromFlatRoleMaps,
+          to: toFlatRoleMaps,
+          buildOptions,
+          dependencyOptimisticFlatEntityMaps: undefined,
+          workspaceId,
+        });
 
       this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
         {
@@ -553,7 +551,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         flatRoleTargetMaps;
 
       const roleTargetResult =
-        await this.workspaceMigrationV2RoleTargetActionsBuilderService.validateAndBuild(
+        this.workspaceMigrationV2RoleTargetActionsBuilderService.validateAndBuild(
           {
             from: fromFlatRoleTargetMaps,
             to: toFlatRoleTargetMaps,

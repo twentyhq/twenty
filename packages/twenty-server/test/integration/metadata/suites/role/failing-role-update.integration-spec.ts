@@ -7,7 +7,6 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type UpdateRolePayload } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
 
