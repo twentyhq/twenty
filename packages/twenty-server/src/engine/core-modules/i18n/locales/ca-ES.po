@@ -3390,16 +3390,6 @@ msgstr "L'estat de la versió del flux de treball"
 msgid "There was an issue with your connection settings. Please try again."
 msgstr "Hi ha hagut un problema amb la configuració de la teva connexió. Si us plau, torna-ho a intentar."
 
-#. js-lingui-id: Bm40Ow
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} is already taken. Please choose a different value."
-msgstr "Aquest {fieldName} ja està agafat. Si us plau, tria un valor diferent."
-
-#. js-lingui-id: CYyoPc
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} with value {duplicatedValues} is already taken. Please choose a different value."
-msgstr "Aquest {fieldName} amb valor {duplicatedValues} ja està agafat. Si us plau, tria un valor diferent."
-
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -3409,11 +3399,6 @@ msgstr "Aquesta clau API ha estat revocada i ja no es pot utilitzar."
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "Aquesta clau API ha expirat. Si us plau, crea una nova."
-
-#. js-lingui-id: r/Z8XK
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This combination of {fieldNames} already exists. Please use different values."
-msgstr "Aquesta combinació de {fieldNames} ja existeix. Si us plau, utilitza valors diferents."
 
 #. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
