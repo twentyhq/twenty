@@ -247,11 +247,11 @@ describe('group-by resolver (integration)', () => {
     const testPerson2Id = randomUUID();
     const testPerson3Id = randomUUID();
 
-    beforeAll(async () => {
-      const idJan2 = testPersonId;
-      const idJan8 = testPerson2Id;
-      const idMar3 = testPerson3Id;
+    const idJan2 = testPersonId;
+    const idJan8 = testPerson2Id;
+    const idMar3 = testPerson3Id;
 
+    beforeAll(async () => {
       await makeGraphqlAPIRequest(
         createOneOperationFactory({
           objectMetadataSingularName: 'person',
@@ -333,6 +333,299 @@ describe('group-by resolver (integration)', () => {
 
       expect(groupWith2Records.totalCount).toBe(2);
       expect(groupWith1Record.totalCount).toBe(1);
+    });
+
+    describe('group by week', () => {
+      const idMarch1st = randomUUID();
+      const idMarch2nd = randomUUID();
+      const idMarch3rd = randomUUID();
+
+      beforeAll(async () => {
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: PERSON_GQL_FIELDS,
+            data: { id: idMarch3rd, createdAt: '2025-03-03T09:30:00.000Z' }, // monday, march, Q1, 2025
+          }),
+        );
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: PERSON_GQL_FIELDS,
+            data: { id: idMarch2nd, createdAt: '2025-03-02T09:30:00.000Z' }, // sunday, march, Q1, 2025
+          }),
+        );
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: PERSON_GQL_FIELDS,
+            data: { id: idMarch1st, createdAt: '2025-03-01T09:30:00.000Z' }, // saturday, march, Q1, 2025
+          }),
+        );
+      });
+
+      afterAll(async () => {
+        await makeGraphqlAPIRequest(
+          destroyOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: 'id',
+            recordId: idMarch1st,
+          }),
+        );
+        await makeGraphqlAPIRequest(
+          destroyOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: 'id',
+            recordId: idMarch2nd,
+          }),
+        );
+        await makeGraphqlAPIRequest(
+          destroyOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: 'id',
+            recordId: idMarch3rd,
+          }),
+        );
+      });
+
+      it('datetime field - groups by createdAt WEEK with default (MONDAY)', async () => {
+        const response = await makeGraphqlAPIRequest(
+          groupByOperationFactory({
+            objectMetadataSingularName: 'person',
+            objectMetadataPluralName: 'people',
+            groupBy: [{ createdAt: { granularity: 'WEEK' } }],
+            gqlFields: `
+              edges {
+                node {
+                  id
+                }
+              }
+            `,
+            filter: filter2025,
+          }),
+        );
+
+        const groups = response.body.data.peopleGroupBy;
+
+        expect(groups).toBeDefined();
+        expect(groups.length).toBe(4);
+
+        // Group starting week of monday dec 30th, 2024
+        const mondayDec30thGroup = groups.find((group: any) =>
+          group.groupByDimensionValues[0].startsWith('2024-12-30T00:00:00'),
+        );
+
+        expect(mondayDec30thGroup).toBeDefined();
+        expect(mondayDec30thGroup.edges[0].node.id).toBe(idJan2);
+        expect(mondayDec30thGroup.totalCount).toBe(1);
+
+        // Group starting week of monday jan 6th, 2025
+        const mondayJan6thGroup = groups.find((group: any) =>
+          group.groupByDimensionValues[0].startsWith('2025-01-06T00:00:00'),
+        );
+
+        expect(mondayJan6thGroup).toBeDefined();
+        expect(mondayJan6thGroup.edges[0].node.id).toBe(idJan8);
+        expect(mondayJan6thGroup.totalCount).toBe(1);
+
+        // Group starting week of monday feb 24th, 2025
+        const mondayFeb24thGroup = groups.find((group: any) =>
+          group.groupByDimensionValues[0].startsWith('2025-02-24T00:00:00'),
+        );
+
+        expect(mondayFeb24thGroup).toBeDefined();
+        expect(mondayFeb24thGroup.edges.length).toBe(2);
+        expect(
+          mondayFeb24thGroup.edges.find(
+            (edge: any) => edge.node.id === idMarch2nd,
+          ),
+        ).toBeDefined;
+        expect(
+          mondayFeb24thGroup.edges.find(
+            (edge: any) => edge.node.id === idMarch1st,
+          ),
+        ).toBeDefined;
+
+        // Group starting week of monday march 3rd, 2025
+        const mondayMarch3rdGroup = groups.find((group: any) =>
+          group.groupByDimensionValues[0].startsWith('2025-03-03T00:00:00'),
+        );
+
+        expect(mondayMarch3rdGroup).toBeDefined();
+        expect(mondayMarch3rdGroup.edges.length).toBe(2);
+        expect(
+          mondayMarch3rdGroup.edges.find(
+            (edge: any) => edge.node.id === idMarch3rd,
+          ),
+        ).toBeDefined;
+        expect(
+          mondayMarch3rdGroup.edges.find(
+            (edge: any) => edge.node.id === idMar3,
+          ),
+        ).toBeDefined;
+      });
+
+      it('datetime field - groups by createdAt WEEK with weekStartDay SUNDAY', async () => {
+        const response = await makeGraphqlAPIRequest(
+          groupByOperationFactory({
+            objectMetadataSingularName: 'person',
+            objectMetadataPluralName: 'people',
+            groupBy: [
+              { createdAt: { granularity: 'WEEK', weekStartDay: 'SUNDAY' } },
+            ],
+            gqlFields: `
+              edges {
+                node {
+                  id
+                }
+              }
+            `,
+            filter: filter2025,
+          }),
+        );
+
+        const groups = response.body.data.peopleGroupBy;
+
+        expect(groups).toBeDefined();
+        expect(groups.length).toBe(4);
+
+        // Group starting week of sunday dec 29th, 2024
+        const sundayDec29thGroup = groups.find((group: any) =>
+          group.groupByDimensionValues[0].startsWith('2024-12-29T00:00:00'),
+        );
+
+        expect(sundayDec29thGroup).toBeDefined();
+        expect(sundayDec29thGroup.totalCount).toBe(1);
+        expect(
+          sundayDec29thGroup.edges.find((edge: any) => edge.node.id === idJan2),
+        ).toBeDefined();
+
+        // Group starting week of sunday jan 5th, 2025
+        const sundayJan5thGroup = groups.find((group: any) =>
+          group.groupByDimensionValues[0].startsWith('2025-01-05T00:00:00'),
+        );
+
+        expect(sundayJan5thGroup).toBeDefined();
+        expect(sundayJan5thGroup.totalCount).toBe(1);
+        expect(
+          sundayJan5thGroup.edges.find((edge: any) => edge.node.id === idJan8),
+        ).toBeDefined();
+
+        // Group starting week of sunday feb 23rd, 2025
+        const sundayFeb23rdGroup = groups.find((group: any) =>
+          group.groupByDimensionValues[0].startsWith('2025-02-23T00:00:00'),
+        );
+
+        expect(sundayFeb23rdGroup).toBeDefined();
+        expect(sundayFeb23rdGroup.totalCount).toBe(1);
+        expect(
+          sundayFeb23rdGroup.edges.find(
+            (edge: any) => edge.node.id === idMarch1st,
+          ),
+        ).toBeDefined();
+
+        // Group starting week of sunday march 2nd, 2025
+        const sundayMarch2ndGroup = groups.find((group: any) =>
+          group.groupByDimensionValues[0].startsWith('2025-03-02T00:00:00'),
+        );
+
+        expect(sundayMarch2ndGroup).toBeDefined();
+        expect(sundayMarch2ndGroup.totalCount).toBe(3);
+        expect(
+          sundayMarch2ndGroup.edges.find(
+            (edge: any) => edge.node.id === idMarch2nd,
+          ),
+        ).toBeDefined();
+        expect(
+          sundayMarch2ndGroup.edges.find(
+            (edge: any) => edge.node.id === idMarch3rd,
+          ),
+        ).toBeDefined();
+        expect(
+          sundayMarch2ndGroup.edges.find(
+            (edge: any) => edge.node.id === idMar3,
+          ),
+        ).toBeDefined();
+      });
+
+      it('datetime field - groups by createdAt WEEK with weekStartDay SATURDAY', async () => {
+        const response = await makeGraphqlAPIRequest(
+          groupByOperationFactory({
+            objectMetadataSingularName: 'person',
+            objectMetadataPluralName: 'people',
+            groupBy: [
+              { createdAt: { granularity: 'WEEK', weekStartDay: 'SATURDAY' } },
+            ],
+            gqlFields: `
+              edges {
+                node {
+                  id
+                }
+              }
+            `,
+            filter: filter2025,
+          }),
+        );
+
+        const groups = response.body.data.peopleGroupBy;
+
+        expect(groups).toBeDefined();
+        expect(groups.length).toBe(3);
+
+        // Group starting week of saturday dec 28th, 2024
+        const saturdayDec28thGroup = groups.find((group: any) =>
+          group.groupByDimensionValues[0].startsWith('2024-12-28T00:00:00'),
+        );
+
+        expect(saturdayDec28thGroup).toBeDefined();
+        expect(saturdayDec28thGroup.totalCount).toBe(1);
+        expect(
+          saturdayDec28thGroup.edges.find(
+            (edge: any) => edge.node.id === idJan2,
+          ),
+        ).toBeDefined();
+
+        // Group starting week of saturday jan 4th, 2025
+        const saturdayJan4thGroup = groups.find((group: any) =>
+          group.groupByDimensionValues[0].startsWith('2025-01-04T00:00:00'),
+        );
+
+        expect(saturdayJan4thGroup).toBeDefined();
+        expect(saturdayJan4thGroup.totalCount).toBe(1);
+        expect(
+          saturdayJan4thGroup.edges.find(
+            (edge: any) => edge.node.id === idJan8,
+          ),
+        ).toBeDefined();
+
+        // Group starting week of saturday march 1st, 2025
+        const saturdayMarch1stGroup = groups.find((group: any) =>
+          group.groupByDimensionValues[0].startsWith('2025-03-01T00:00:00'),
+        );
+
+        expect(saturdayMarch1stGroup).toBeDefined();
+        expect(saturdayMarch1stGroup.totalCount).toBe(4);
+        expect(
+          saturdayMarch1stGroup.edges.find(
+            (edge: any) => edge.node.id === idMarch1st,
+          ),
+        ).toBeDefined();
+        expect(
+          saturdayMarch1stGroup.edges.find(
+            (edge: any) => edge.node.id === idMarch2nd,
+          ),
+        ).toBeDefined();
+        expect(
+          saturdayMarch1stGroup.edges.find(
+            (edge: any) => edge.node.id === idMarch3rd,
+          ),
+        ).toBeDefined();
+        expect(
+          saturdayMarch1stGroup.edges.find(
+            (edge: any) => edge.node.id === idMar3,
+          ),
+        ).toBeDefined();
+      });
     });
 
     describe('cyclic date', () => {
@@ -835,6 +1128,39 @@ describe('group-by resolver (integration)', () => {
 
         expect(thursdayGroup.totalCount).toBe(2);
         expect(wednesdayGroup.totalCount).toBe(1);
+      });
+
+      it('groups by one relation field - company createdAt with WEEK granularity and weekStartDay SUNDAY', async () => {
+        const response = await makeGraphqlAPIRequest(
+          groupByOperationFactory({
+            objectMetadataSingularName: 'person',
+            objectMetadataPluralName: 'people',
+            groupBy: [
+              {
+                company: {
+                  createdAt: {
+                    granularity: 'WEEK',
+                    weekStartDay: 'SUNDAY',
+                  },
+                },
+              },
+            ],
+            filter: filter2025,
+          }),
+        );
+
+        const groups = response.body.data.peopleGroupBy;
+
+        expect(groups).toBeDefined();
+        expect(Array.isArray(groups)).toBe(true);
+
+        // Verify that all records are grouped
+        const totalCount = groups.reduce(
+          (sum: number, group: any) => sum + group.totalCount,
+          0,
+        );
+
+        expect(totalCount).toBe(3);
       });
 
       it('groups by two relation fields from the same joined table', async () => {
