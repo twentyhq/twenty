@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type ImapFlow } from 'imapflow';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
@@ -12,6 +13,7 @@ import {
   ImapSyncCursor,
   parseSyncCursor,
 } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-sync-cursor.util';
+import { MessageImportManagerExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/message-import-manager.exception';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
   type GetMessageListsResponse,
@@ -102,6 +104,13 @@ export class ImapGetMessageListService {
     folder: string,
     messageFolder: Pick<MessageFolderWorkspaceEntity, 'syncCursor'>,
   ): Promise<GetOneMessageListResponse> {
+    if (!isDefined(messageFolder.syncCursor)) {
+      throw new CustomError(
+        'Message folder sync cursor is required',
+        MessageImportManagerExceptionCode.SYNC_CURSOR_REQUIRED,
+      );
+    }
+
     const { messages, messageExternalUidsToDelete, syncCursor } =
       await this.getMessagesFromFolder(
         client,
