@@ -2,10 +2,9 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
-export const recordGroupFieldMetadataComponentState = createComponentState<
-  FieldMetadataItem | undefined
->({
-  key: 'recordGroupFieldMetadataComponentState',
-  defaultValue: undefined,
-  componentInstanceContext: ViewComponentInstanceContext,
-});
+export const recordIndexGroupFieldMetadataItemComponentState =
+  createComponentState<FieldMetadataItem | undefined>({
+    key: 'recordIndexGroupFieldMetadataItemComponentState',
+    defaultValue: undefined,
+    componentInstanceContext: ViewComponentInstanceContext,
+  });
