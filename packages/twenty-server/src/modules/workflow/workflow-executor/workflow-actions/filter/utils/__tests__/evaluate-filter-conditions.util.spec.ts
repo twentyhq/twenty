@@ -501,8 +501,24 @@ describe('evaluateFilterConditions', () => {
           'TEXT',
         );
 
+        const filter3 = createFilter(
+          ViewFilterOperand.CONTAINS,
+          null,
+          '',
+          'TEXT',
+        );
+
+        const filter4 = createFilter(
+          ViewFilterOperand.CONTAINS,
+          '',
+          null,
+          'TEXT',
+        );
+
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(true);
       });
 
       it('should handle DoesNotContain operand with strings', () => {
@@ -519,8 +535,16 @@ describe('evaluateFilterConditions', () => {
           'TEXT',
         );
 
+        const filter3 = createFilter(
+          ViewFilterOperand.DOES_NOT_CONTAIN,
+          null,
+          '',
+          'TEXT',
+        );
+
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(false);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
       });
 
       it('should handle Contains operand with arrays', () => {
@@ -537,8 +561,32 @@ describe('evaluateFilterConditions', () => {
           'ARRAY',
         );
 
+        const filter3 = createFilter(
+          ViewFilterOperand.CONTAINS,
+          null,
+          [],
+          'ARRAY',
+        );
+
+        const filter4 = createFilter(
+          ViewFilterOperand.CONTAINS,
+          [],
+          null,
+          'ARRAY',
+        );
+
+        const filter5 = createFilter(
+          ViewFilterOperand.CONTAINS,
+          null,
+          ['apple'],
+          'ARRAY',
+        );
+
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter4] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter5] })).toBe(false);
       });
 
       it('should handle DoesNotContain operand with arrays', () => {
@@ -555,8 +603,16 @@ describe('evaluateFilterConditions', () => {
           'ARRAY',
         );
 
+        const filter3 = createFilter(
+          ViewFilterOperand.DOES_NOT_CONTAIN,
+          null,
+          ['apple'],
+          'ARRAY',
+        );
+
         expect(evaluateFilterConditions({ filters: [filter1] })).toBe(false);
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
       });
     });
 
