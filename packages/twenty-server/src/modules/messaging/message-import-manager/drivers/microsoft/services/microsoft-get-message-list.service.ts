@@ -6,6 +6,7 @@ import {
   type PageIteratorCallback,
 } from '@microsoft/microsoft-graph-client';
 import { isNonEmptyString } from '@sniptt/guards';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -15,6 +16,7 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MicrosoftMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-message-list-fetch-error-handler.service';
+import { MessageImportManagerExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/message-import-manager.exception';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
   type GetMessageListsResponse,
@@ -114,6 +116,13 @@ export class MicrosoftGetMessageListService {
     await pageIterator.iterate().catch((error) => {
       this.microsoftMessageListFetchErrorHandler.handleError(error);
     });
+
+    if (!isDefined(messageFolder.syncCursor)) {
+      throw new CustomError(
+        'Message folder sync cursor is required',
+        MessageImportManagerExceptionCode.SYNC_CURSOR_REQUIRED,
+      );
+    }
 
     return {
       messageExternalIds,
