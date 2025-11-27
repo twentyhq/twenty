@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { CustomError, isDefined } from 'twenty-shared/utils';
+
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -15,6 +17,7 @@ import {
   type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
+import { MessageImportManagerExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/message-import-manager.exception';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import {
@@ -114,11 +117,27 @@ export class MessagingMessagesImportService {
         workspaceId,
       );
 
+      if (!isDefined(messageChannel.handle)) {
+        throw new CustomError(
+          'Message channel handle is required',
+          MessageImportManagerExceptionCode.HANDLE_REQUIRED,
+        );
+      }
+
+      if (!isDefined(connectedAccountWithFreshTokens.handleAliases)) {
+        throw new CustomError(
+          'Message channel handle is required',
+          MessageImportManagerExceptionCode.HANDLE_REQUIRED,
+        );
+      }
+
       const messagesToSave = filterEmails(
         messageChannel.handle,
         [...connectedAccountWithFreshTokens.handleAliases.split(',')],
         allMessages,
-        blocklist.map((blocklistItem) => blocklistItem.handle),
+        blocklist
+          .map((blocklistItem) => blocklistItem.handle)
+          .filter(isDefined),
         messageChannel.excludeGroupEmails,
       );
 
