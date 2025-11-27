@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
@@ -19,7 +18,6 @@ export class GlobalWorkspaceDataSourceService
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly entitySchemaFactory: EntitySchemaFactory,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 

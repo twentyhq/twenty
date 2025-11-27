@@ -30,7 +30,6 @@ import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-module
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-or-throw.utils';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 export class RelationCreationPayloadValidation {
   @IsUUID()
@@ -58,9 +57,7 @@ type ValidateFieldMetadataArgs<T extends UpdateFieldInput | CreateFieldInput> =
 
 @Injectable()
 export class FieldMetadataRelationService {
-  constructor(
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-  ) {}
+  constructor() {}
 
   async createRelationFieldMetadataItems({
     fieldMetadataInput,

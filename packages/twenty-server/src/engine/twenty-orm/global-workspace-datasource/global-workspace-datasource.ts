@@ -4,7 +4,6 @@ import {
   DataSource,
   type DataSourceOptions,
   type EntityMetadata,
-  type EntitySchema,
   type EntityTarget,
   type ObjectLiteral,
   type QueryRunner,
@@ -12,9 +11,7 @@ import {
   type SelectQueryBuilder,
 } from 'typeorm';
 import { EntityManagerFactory } from 'typeorm/entity-manager/EntityManagerFactory';
-import { EntitySchemaTransformer } from 'typeorm/entity-schema/EntitySchemaTransformer';
 import { EntityMetadataNotFoundError } from 'typeorm/error/EntityMetadataNotFoundError';
-import { EntityMetadataBuilder } from 'typeorm/metadata-builder/EntityMetadataBuilder';
 
 import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
@@ -26,7 +23,7 @@ import {
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { type WorkspaceQueryRunner } from 'src/engine/twenty-orm/query-runner/workspace-query-runner';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/workspace-context.storage';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
@@ -83,11 +80,9 @@ export class GlobalWorkspaceDataSource extends DataSource {
     target: EntityTarget<ObjectLiteral>,
   ): EntityMetadata | undefined {
     const context = getWorkspaceContext();
-    const { entitySchemas } = context;
+    const { entityMetadatas } = context;
 
-    const entityMetadata = this.buildMetadatasFromSchemas(entitySchemas);
-
-    return entityMetadata.find((metadata) => metadata.target === target);
+    return entityMetadatas.find((metadata) => metadata.target === target);
   }
 
   override getMetadata(target: EntityTarget<ObjectLiteral>): EntityMetadata {
@@ -263,21 +258,5 @@ export class GlobalWorkspaceDataSource extends DataSource {
     }
 
     return super.query(query, parameters, queryRunner);
-  }
-
-  private buildMetadatasFromSchemas(
-    entitySchemas: EntitySchema[],
-  ): EntityMetadata[] {
-    const transformer = new EntitySchemaTransformer();
-    const metadataArgsStorage = transformer.transform(entitySchemas);
-
-    const entityMetadataBuilder = new EntityMetadataBuilder(
-      this,
-      metadataArgsStorage,
-    );
-
-    const entityMetadatas = entityMetadataBuilder.build();
-
-    return entityMetadatas;
   }
 }
