@@ -140,12 +140,10 @@ export class MatchParticipantService<
       );
 
       const partipantsToBeUpdated = participants
-        .filter(
-          (
-            participant,
-          ): participant is typeof participant & { handle: string } =>
-            isDefined(participant.handle),
-        )
+        .map((participant) => ({
+          ...participant,
+          handle: participant.handle ?? '',
+        }))
         .map((participant) => {
           const person = findPersonByPrimaryOrAdditionalEmail({
             people,
