@@ -110,7 +110,9 @@ export const WorkflowAiAgentPermissionsTab = ({
   const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig({
     assignmentCapabilities: { canBeAssignedToAgents: true },
   });
-  const actionPermissionsConfig = useActionRolePermissionFlagConfig();
+  const actionPermissionsConfig = useActionRolePermissionFlagConfig({
+    assignmentCapabilities: { canBeAssignedToAgents: true },
+  });
 
   type ObjectMetadataListItem = (typeof objectMetadataItems)[number];
   const filteredObjects = filterBySearchQuery<ObjectMetadataListItem>({
