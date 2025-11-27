@@ -168,13 +168,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         user.email,
       );
 
-      await this.onboardingService.setOnboardingCreateProfilePending(
-        {
-          userId: user.id,
-          workspaceId: workspace.id,
-          value: true,
-        },
-      );
+      await this.onboardingService.setOnboardingCreateProfilePending({
+        userId: user.id,
+        workspaceId: workspace.id,
+        value: true,
+      });
     }
   }
 

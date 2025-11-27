@@ -290,7 +290,6 @@ export class WorkspacePermissionsCacheService {
           canDestroyObjectRecords: canDestroy,
           restrictedFields,
         };
-
       }
 
       permissionsByRoleId[role.id] = objectRecordsPermissions;

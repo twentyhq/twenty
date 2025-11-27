@@ -3,5 +3,5 @@ import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-targe
 
 export const FLAT_ROLE_TARGET_EDITABLE_PROPERTIES = [
   'roleId',
-  ...ROLE_TARGET_FOREIGN_KEY_PROPERTIES
+  ...ROLE_TARGET_FOREIGN_KEY_PROPERTIES,
 ] as const satisfies (keyof FlatRoleTarget)[];
