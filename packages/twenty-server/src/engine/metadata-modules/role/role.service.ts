@@ -266,6 +266,9 @@ export class RoleService {
           },
           dependencyAllFlatEntityMaps: {},
           buildOptions: {
+            inferDeletionFromMissingEntities: {
+              role: true,
+            },
             isSystemBuild: false,
           },
           workspaceId,
