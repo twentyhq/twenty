@@ -174,7 +174,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
           workspaceId: workspace.id,
           value: true,
         },
-        queryRunner,
       );
     }
   }

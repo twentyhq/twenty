@@ -1,20 +1,19 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyResolver } from 'src/engine/core-modules/api-key/api-key.resolver';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/api-key.service';
+import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetV2Module } from 'src/engine/metadata-modules/role-target/role-target-v2.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
-import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 
 import { ApiKeyController } from './controllers/api-key.controller';
 
@@ -32,7 +31,7 @@ import { ApiKeyController } from './controllers/api-key.controller';
     FeatureFlagModule,
     RoleTargetV2Module,
     TokenModule,
-    forwardRef(() => PermissionsModule),
+    // forwardRef(() => PermissionsModule),
   ],
   providers: [ApiKeyService, ApiKeyResolver, ApiKeyRoleService],
   controllers: [ApiKeyController],

@@ -5,7 +5,6 @@ import { msg } from '@lingui/core/macro';
 import { IsNull, Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
   ApiKeyException,
@@ -22,7 +21,6 @@ export class ApiKeyService {
     @InjectRepository(ApiKeyEntity)
     private readonly apiKeyRepository: Repository<ApiKeyEntity>,
     private readonly jwtWrapperService: JwtWrapperService,
-    private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly roleTargetService: RoleTargetServiceV2,
   ) {}
 

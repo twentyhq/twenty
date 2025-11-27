@@ -206,7 +206,6 @@ export class FlatRoleValidatorService {
       }
     }
 
-    // Validate label uniqueness
     if (isDefined(input.label)) {
       let rolesForLabelComparison = existingRoles;
 
@@ -225,7 +224,6 @@ export class FlatRoleValidatorService {
       }
     }
 
-    // Validate read/write permission consistency
     this.validateRoleReadAndWritePermissionsConsistency({
       input,
       existingRole,
