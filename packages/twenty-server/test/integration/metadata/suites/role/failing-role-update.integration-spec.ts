@@ -1,0 +1,207 @@
+import { faker } from '@faker-js/faker';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
+import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
+import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
+import { updateOneRole } from 'test/integration/metadata/suites/role/utils/update-one-role.util';
+import {
+  eachTestingContextFilter,
+  type EachTestingContext,
+} from 'twenty-shared/testing';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type UpdateRolePayload } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
+
+type TestContext = {
+  input: (testSetup: TestSetup) => {
+    idToUpdate: string;
+    updatePayload: UpdateRolePayload;
+  };
+};
+
+type TestSetup = {
+  testRoleId: string;
+  existingRoleLabelForDuplicate: string;
+};
+
+type GlobalTestContext = {
+  existingRoleLabelForDuplicate: string;
+};
+
+const globalTestContext: GlobalTestContext = {
+  existingRoleLabelForDuplicate: 'Existing Role For Duplicate Test',
+};
+
+type UpdateOneRoleTestingContext = EachTestingContext<TestContext>[];
+
+describe('Role update should fail', () => {
+  let testRoleId: string;
+  let existingRoleIdForDuplicate: string;
+
+  beforeAll(async () => {
+    // Create a role that will be used to test duplicate label validation
+    const { data: duplicateData } = await createOneRole({
+      expectToFail: false,
+      input: {
+        label: globalTestContext.existingRoleLabelForDuplicate,
+        canUpdateAllSettings: false,
+        canAccessAllTools: false,
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: false,
+        canSoftDeleteAllObjectRecords: false,
+        canDestroyAllObjectRecords: false,
+      },
+    });
+
+    existingRoleIdForDuplicate = duplicateData.createOneRole.id;
+  });
+
+  beforeEach(async () => {
+    // Create a role for each test
+    const { data } = await createOneRole({
+      expectToFail: false,
+      input: {
+        label: 'Test Role To Update',
+        description: 'Original description',
+        icon: 'IconSettings',
+        canUpdateAllSettings: false,
+        canAccessAllTools: false,
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: false,
+        canSoftDeleteAllObjectRecords: false,
+        canDestroyAllObjectRecords: false,
+        canBeAssignedToUsers: true,
+        canBeAssignedToAgents: false,
+        canBeAssignedToApiKeys: false,
+      },
+    });
+
+    testRoleId = data.createOneRole.id;
+  });
+
+  afterEach(async () => {
+    await deleteOneRole({
+      expectToFail: false,
+      input: { idToDelete: testRoleId },
+    });
+  });
+
+  afterAll(async () => {
+    await deleteOneRole({
+      expectToFail: false,
+      input: { idToDelete: existingRoleIdForDuplicate },
+    });
+  });
+
+  const failingRoleUpdateTestCases: UpdateOneRoleTestingContext = [
+    // Label uniqueness test
+    {
+      title: 'when updating label to one that already exists',
+      context: {
+        input: (testSetup) => ({
+          idToUpdate: testSetup.testRoleId,
+          updatePayload: {
+            label: testSetup.existingRoleLabelForDuplicate,
+          },
+        }),
+      },
+    },
+    // Read/Write permissions consistency tests
+    {
+      title:
+        'when updating canReadAllObjectRecords to false while canUpdateAllObjectRecords is true',
+      context: {
+        input: (testSetup) => ({
+          idToUpdate: testSetup.testRoleId,
+          updatePayload: {
+            canReadAllObjectRecords: false,
+            canUpdateAllObjectRecords: true,
+          },
+        }),
+      },
+    },
+    {
+      title:
+        'when updating canReadAllObjectRecords to false while canSoftDeleteAllObjectRecords is true',
+      context: {
+        input: (testSetup) => ({
+          idToUpdate: testSetup.testRoleId,
+          updatePayload: {
+            canReadAllObjectRecords: false,
+            canSoftDeleteAllObjectRecords: true,
+          },
+        }),
+      },
+    },
+    {
+      title:
+        'when updating canReadAllObjectRecords to false while canDestroyAllObjectRecords is true',
+      context: {
+        input: (testSetup) => ({
+          idToUpdate: testSetup.testRoleId,
+          updatePayload: {
+            canReadAllObjectRecords: false,
+            canDestroyAllObjectRecords: true,
+          },
+        }),
+      },
+    },
+    {
+      title:
+        'when updating to enable write permissions without read permission',
+      context: {
+        input: (testSetup) => ({
+          idToUpdate: testSetup.testRoleId,
+          updatePayload: {
+            canReadAllObjectRecords: false,
+            canUpdateAllObjectRecords: true,
+            canSoftDeleteAllObjectRecords: true,
+          },
+        }),
+      },
+    },
+  ];
+
+  it.each(eachTestingContextFilter(failingRoleUpdateTestCases))(
+    '$title',
+    async ({ context }) => {
+      const testSetup: TestSetup = {
+        testRoleId,
+        existingRoleLabelForDuplicate:
+          globalTestContext.existingRoleLabelForDuplicate,
+      };
+
+      const { idToUpdate, updatePayload } = context.input(testSetup);
+
+      const { errors } = await updateOneRole({
+        expectToFail: true,
+        input: {
+          idToUpdate,
+          updatePayload,
+        },
+      });
+
+      expectOneNotInternalServerErrorSnapshot({
+        errors,
+      });
+    },
+  );
+
+  it('should fail when updating a non-existent role', async () => {
+    const nonExistentRoleId = faker.string.uuid();
+
+    const { errors } = await updateOneRole({
+      expectToFail: true,
+      input: {
+        idToUpdate: nonExistentRoleId,
+        updatePayload: {
+          label: 'Updated Label',
+        },
+      },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({
+      errors,
+    });
+  });
+});
+

@@ -27,7 +27,6 @@ describe('Role creation should fail', () => {
   let existingRoleId: string | undefined;
 
   beforeAll(async () => {
-    // Create a role that will be used to test duplicate label validation
     const { data } = await createOneRole({
       expectToFail: false,
       input: {

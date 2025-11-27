@@ -1,18 +1,14 @@
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
-import { isDefined } from 'twenty-shared/utils';
 
 describe('Role creation should succeed', () => {
-  let createdRoleId: string | undefined;
+  let createdRoleId: string;
 
   afterEach(async () => {
-    if (isDefined(createdRoleId)) {
-      await deleteOneRole({
-        expectToFail: false,
-        input: { idToDelete: createdRoleId },
-      });
-      createdRoleId = undefined;
-    }
+    await deleteOneRole({
+      expectToFail: false,
+      input: { idToDelete: createdRoleId },
+    });
   });
 
   it('should create a basic custom role with minimal input', async () => {
