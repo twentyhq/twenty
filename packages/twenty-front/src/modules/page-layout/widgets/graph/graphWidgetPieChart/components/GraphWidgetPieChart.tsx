@@ -26,6 +26,8 @@ type GraphWidgetPieChartProps = {
   onSliceClick?: (datum: PieChartDataItem) => void;
   showDataLabels?: boolean;
   showCenterMetric?: boolean;
+  centerMetricValue?: string | number;
+  centerMetricLabel?: string;
 } & GraphValueFormatOptions;
 
 const emptyStateData: PieChartDataItem[] = [{ id: 'empty', value: 1 }];
@@ -67,6 +69,8 @@ export const GraphWidgetPieChart = ({
   onSliceClick,
   showDataLabels = false,
   showCenterMetric = false,
+  centerMetricValue,
+  centerMetricLabel = '',
 }: GraphWidgetPieChartProps) => {
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
@@ -158,8 +162,8 @@ export const GraphWidgetPieChart = ({
             }}
           />
           <PieChartCenterMetric
-            data={data}
-            formatOptions={formatOptions}
+            value={centerMetricValue}
+            label={centerMetricLabel}
             show={showCenterMetric && !hasNoData}
           />
         </StyledPieChartWrapper>

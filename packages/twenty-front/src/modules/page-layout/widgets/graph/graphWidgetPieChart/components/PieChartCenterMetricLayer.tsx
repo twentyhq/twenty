@@ -1,14 +1,8 @@
-import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
-import {
-  formatGraphValue,
-  type GraphValueFormatOptions,
-} from '@/page-layout/widgets/graph/utils/graphFormatters';
 import styled from '@emotion/styled';
-import { Trans } from '@lingui/react/macro';
 
 type PieChartCenterMetricProps = {
-  data: PieChartDataItem[];
-  formatOptions: GraphValueFormatOptions;
+  value: string | number | undefined;
+  label: string;
   show: boolean;
 };
 
@@ -39,18 +33,14 @@ const StyledLabel = styled.span`
 `;
 
 export const PieChartCenterMetric = ({
-  data,
-  formatOptions,
+  value,
+  label,
   show,
 }: PieChartCenterMetricProps) => {
-  const total = data.reduce((sum, datum) => sum + datum.value, 0);
-
   return (
     <StyledCenterMetricContainer show={show}>
-      <StyledValue>{formatGraphValue(total, formatOptions)}</StyledValue>
-      <StyledLabel>
-        <Trans>Total</Trans>
-      </StyledLabel>
+      <StyledValue>{value}</StyledValue>
+      <StyledLabel>{label}</StyledLabel>
     </StyledCenterMetricContainer>
   );
 };
