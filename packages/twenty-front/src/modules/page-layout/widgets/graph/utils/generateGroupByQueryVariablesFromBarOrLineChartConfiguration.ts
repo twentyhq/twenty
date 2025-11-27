@@ -18,11 +18,13 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
   chartConfiguration,
   aggregateOperation,
   limit,
+  firstDayOfTheWeek,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   chartConfiguration: BarChartConfiguration | LineChartConfiguration;
   aggregateOperation?: string;
   limit?: number;
+  firstDayOfTheWeek?: number;
 }) => {
   const groupByFieldXId = chartConfiguration.primaryAxisGroupByFieldMetadataId;
 
@@ -59,6 +61,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
       subFieldName: groupBySubFieldNameX,
       dateGranularity:
         chartConfiguration.primaryAxisDateGranularity ?? undefined,
+      firstDayOfTheWeek,
     }),
   );
 
@@ -69,6 +72,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
         subFieldName: groupBySubFieldNameY,
         dateGranularity:
           chartConfiguration.secondaryAxisGroupByDateGranularity ?? undefined,
+        firstDayOfTheWeek,
       }),
     );
   }

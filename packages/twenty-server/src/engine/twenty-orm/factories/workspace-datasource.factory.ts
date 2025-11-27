@@ -12,8 +12,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { buildObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-metadata-item-with-field-maps.util';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache-storage.service';
 import {
@@ -144,26 +142,8 @@ export class WorkspaceDatasourceFactory {
               },
             );
 
-          const { idByNameSingular } = buildObjectIdByNameMaps(
-            flatObjectMetadataMaps,
-          );
-          const cachedObjectMetadataMaps: ObjectMetadataMaps = {
-            byId: {},
-            idByNameSingular,
-          };
-
-          for (const [id, flatObj] of Object.entries(
-            flatObjectMetadataMaps.byId,
-          )) {
-            if (isDefined(flatObj)) {
-              cachedObjectMetadataMaps.byId[id] =
-                buildObjectMetadataItemWithFieldMaps(
-                  flatObj,
-                  flatFieldMetadataMaps,
-                  flatIndexMaps,
-                );
-            }
-          }
+          const { idByNameSingular: objectIdByNameSingular } =
+            buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
           const metadataVersionForFinalUpToDateCheck =
             await this.workspaceCacheStorageService.getMetadataVersion(
@@ -184,17 +164,16 @@ export class WorkspaceDatasourceFactory {
               (option) => new EntitySchema(option),
             );
           } else {
-            const entitySchemas = await Promise.all(
-              Object.values(cachedObjectMetadataMaps.byId)
-                .filter(isDefined)
-                .map((objectMetadata) =>
-                  this.entitySchemaFactory.create(
-                    workspaceId,
-                    objectMetadata,
-                    cachedObjectMetadataMaps,
-                  ),
+            const entitySchemas = Object.values(flatObjectMetadataMaps.byId)
+              .filter(isDefined)
+              .map((flatObjectMetadata) =>
+                this.entitySchemaFactory.create(
+                  workspaceId,
+                  flatObjectMetadata,
+                  flatObjectMetadataMaps,
+                  flatFieldMetadataMaps,
                 ),
-            );
+              );
 
             await this.workspaceCacheStorageService.setORMEntitySchema(
               workspaceId,
@@ -208,7 +187,10 @@ export class WorkspaceDatasourceFactory {
           const workspaceDataSource = new WorkspaceDataSource(
             {
               workspaceId,
-              objectMetadataMaps: cachedObjectMetadataMaps,
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
+              flatIndexMaps,
+              objectIdByNameSingular,
               featureFlagsMap: cachedFeatureFlagMap,
               eventEmitterService: this.workspaceEventEmitter,
             },

@@ -3,7 +3,5 @@ import { type GraphColorScheme } from '@/page-layout/widgets/graph/types/GraphCo
 
 export type PieChartEnrichedData = PieChartDataItem & {
   colorScheme: GraphColorScheme;
-  isHovered: boolean;
   percentage: number;
-  middleAngle: number;
 };

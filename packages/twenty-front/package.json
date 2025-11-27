@@ -55,6 +55,7 @@
     "@react-email/components": "^0.5.3",
     "@react-pdf/renderer": "^4.1.6",
     "@scalar/api-reference-react": "^0.4.36",
+    "@sentry/react": "^10.27.0",
     "@tiptap/core": "^3.4.2",
     "@tiptap/extension-bold": "^3.4.2",
     "@tiptap/extension-document": "^3.4.2",

@@ -13,10 +13,10 @@ import { MCPMetadataToolsService } from 'src/engine/api/mcp/services/tools/mcp-m
 import { UpdateToolsService } from 'src/engine/api/mcp/services/tools/update.tools.service';
 import { MetadataQueryBuilderModule } from 'src/engine/api/rest/metadata/query-builder/metadata-query-builder.module';
 import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
-import { AiToolsModule } from 'src/engine/metadata-modules/ai-tools/ai-tools.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { AiToolsModule } from 'src/engine/metadata-modules/ai/ai-tools/ai-tools.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';

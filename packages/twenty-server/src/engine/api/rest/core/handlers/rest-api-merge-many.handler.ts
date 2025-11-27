@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { ObjectRecord } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
-import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
 import { CommonMergeManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-merge-many-query-runner.service';
+import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
 import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
@@ -22,14 +22,17 @@ export class RestApiMergeManyHandler extends RestApiBaseHandler {
       const { depth, ...restArgs } = await this.parseRequestArgs(request);
       const {
         authContext,
-        objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        objectIdByNameSingular,
       } = await this.buildCommonOptions(request);
 
       const selectedFields = await this.computeSelectedFields({
         depth,
-        objectMetadataMapItem: objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
         authContext,
       });
 
@@ -37,15 +40,14 @@ export class RestApiMergeManyHandler extends RestApiBaseHandler {
         { ...restArgs, selectedFields },
         {
           authContext,
-          objectMetadataMaps,
-          objectMetadataItemWithFieldMaps,
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          objectIdByNameSingular,
         },
       );
 
-      return this.formatRestResponse(
-        record,
-        objectMetadataItemWithFieldMaps.nameSingular,
-      );
+      return this.formatRestResponse(record, flatObjectMetadata.nameSingular);
     } catch (error) {
       return workspaceQueryRunnerRestApiExceptionHandler(error);
     }

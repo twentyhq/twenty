@@ -1,9 +1,9 @@
 import { BAR_CHART_MINIMUM_WIDTH_PER_TICK } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumWidthPerTick';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { computeMinHeightPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeMinHeightPerTick';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
 import { computeChartCategoryTickValues } from '@/page-layout/widgets/graph/utils/computeChartCategoryTickValues';
+import { type BarDatum } from '@nivo/bar';
 
 export const computeBarChartCategoryTickValues = ({
   axisSize,
@@ -16,7 +16,7 @@ export const computeBarChartCategoryTickValues = ({
 }: {
   axisSize: number;
   axisFontSize: number;
-  data: BarChartDataItem[];
+  data: BarDatum[];
   indexBy: string;
   layout: BarChartLayout;
   xAxisLabel?: string;

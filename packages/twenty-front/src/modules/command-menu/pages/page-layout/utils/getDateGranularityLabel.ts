@@ -7,6 +7,8 @@ export const getDateGranularityLabel = (
   switch (granularity) {
     case ObjectRecordGroupByDateGranularity.DAY:
       return t`Day`;
+    case ObjectRecordGroupByDateGranularity.WEEK:
+      return t`Week`;
     case ObjectRecordGroupByDateGranularity.MONTH:
       return t`Month`;
     case ObjectRecordGroupByDateGranularity.QUARTER:

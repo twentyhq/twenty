@@ -12,13 +12,12 @@ import {
   TypeOptions,
 } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
+import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
 import { computeFieldInputTypeOptions } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-field-input-type-options.util';
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
-import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 
 @Injectable()
 export class ObjectMetadataOrderByBaseGenerator {
@@ -29,35 +28,38 @@ export class ObjectMetadataOrderByBaseGenerator {
   ) {}
 
   public generateFields({
-    objectMetadata,
+    fields,
     logger,
     orderByDateGranularity,
-    objectMetadataMaps,
+    context,
   }: {
-    objectMetadata: ObjectMetadataEntity;
+    fields: FlatFieldMetadata[];
     logger: Logger;
     orderByDateGranularity?: boolean;
-    objectMetadataMaps?: ObjectMetadataMaps;
+    context?: SchemaGenerationContext;
   }): GraphQLInputFieldConfigMap {
     const allGeneratedFields: GraphQLInputFieldConfigMap = {};
 
-    for (const fieldMetadata of objectMetadata.fields) {
-      fieldMetadata.isNullable = true;
+    for (const fieldMetadata of fields) {
+      const modifiedFieldMetadata = {
+        ...fieldMetadata,
+        isNullable: true,
+      };
 
       const typeOptions = computeFieldInputTypeOptions(
-        fieldMetadata,
+        modifiedFieldMetadata,
         GqlInputTypeDefinitionKind.OrderBy,
       );
 
       let generatedFields;
 
-      if (isFieldMetadataRelationOrMorphRelation(fieldMetadata)) {
+      if (isMorphOrRelationFlatFieldMetadata(fieldMetadata)) {
         generatedFields =
           this.relationFieldMetadataGqlInputTypeGenerator.generateSimpleRelationFieldOrderByInputType(
             {
               fieldMetadata,
               typeOptions,
-              objectMetadataMaps,
+              context,
             },
           );
       } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {
@@ -82,7 +84,7 @@ export class ObjectMetadataOrderByBaseGenerator {
   }
 
   private generateCompositeFieldOrderByInputType(
-    fieldMetadata: FieldMetadataEntity,
+    fieldMetadata: FlatFieldMetadata,
     typeOptions: TypeOptions,
     logger: Logger,
   ) {
@@ -117,7 +119,7 @@ export class ObjectMetadataOrderByBaseGenerator {
     logger,
     orderByDateGranularity,
   }: {
-    fieldMetadata: FieldMetadataEntity;
+    fieldMetadata: FlatFieldMetadata;
     typeOptions: TypeOptions;
     logger: Logger;
     orderByDateGranularity?: boolean;

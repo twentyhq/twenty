@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
@@ -14,14 +15,17 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-to-update-and-related-flat-field-to-update.util';
+import { computeFlatFieldToUpdateFromMorphRelationUpdatePayload } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-to-update-from-morph-relation-update-payload.util';
 import {
   FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS,
   type FlatFieldMetadataUpdateSideEffects,
   handleFlatFieldMetadataUpdateSideEffect,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-flat-field-metadata-update-side-effect.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 
 type FromUpdateFieldInputToFlatFieldMetadataArgs = {
   updateFieldInput: UpdateFieldInput;
+  workspaceCustomApplicationId: string;
 } & Pick<
   AllFlatEntityMaps,
   | 'flatObjectMetadataMaps'
@@ -35,8 +39,10 @@ type FromUpdateFieldInputToFlatFieldMetadataArgs = {
 
 type FlatFieldMetadataAndIndexToUpdate = {
   flatFieldMetadatasToUpdate: FlatFieldMetadata[];
+  flatFieldMetadatasToCreate: FlatFieldMetadata[];
 } & FlatFieldMetadataUpdateSideEffects;
 export const fromUpdateFieldInputToFlatFieldMetadata = ({
+  workspaceCustomApplicationId,
   flatIndexMaps,
   flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
   flatFieldMetadataMaps,
@@ -87,9 +93,30 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       fromFlatFieldMetadata: existingFlatFieldMetadataToUpdate,
       rawUpdateFieldInput,
     });
+
+  const { flatFieldMetadatasToCreate, flatIndexMetadatasToCreate } =
+    isFlatFieldMetadataOfType(
+      flatFieldMetadataFromTo.toFlatFieldMetadata,
+      FieldMetadataType.MORPH_RELATION,
+    )
+      ? computeFlatFieldToUpdateFromMorphRelationUpdatePayload({
+          workspaceCustomApplicationId,
+          morphRelationsUpdatePayload:
+            rawUpdateFieldInput?.morphRelationsUpdatePayload,
+          flatFieldMetadataMaps: flatFieldMetadataMaps,
+          fieldMetadataToUpdate: flatFieldMetadataFromTo.toFlatFieldMetadata,
+          flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        })
+      : {
+          flatFieldMetadatasToCreate: [],
+          flatIndexMetadatasToCreate: [],
+        };
+
   const initialAccumulator: FlatFieldMetadataAndIndexToUpdate = {
     ...structuredClone(FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS),
     flatFieldMetadatasToUpdate: [],
+    flatFieldMetadatasToCreate: flatFieldMetadatasToCreate,
+    flatIndexMetadatasToCreate: flatIndexMetadatasToCreate,
   };
 
   const optimisticiallyUpdatedFlatFieldMetadatas = [
@@ -130,6 +157,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
           ...accumulator.flatIndexMetadatasToUpdate,
           ...flatIndexMetadatasToUpdate,
         ],
+        flatFieldMetadatasToCreate: [...accumulator.flatFieldMetadatasToCreate],
         flatViewFiltersToDelete: [
           ...accumulator.flatViewFiltersToDelete,
           ...flatViewFiltersToDelete,

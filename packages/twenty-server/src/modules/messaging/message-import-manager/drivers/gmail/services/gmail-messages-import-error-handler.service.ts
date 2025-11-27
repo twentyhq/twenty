@@ -1,32 +1,42 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { GmailNetworkErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-network-error-handler.service';
-import { parseGmailMessagesImportError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-messages-import-error.util';
+import { isDefined } from 'twenty-shared/utils';
+
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { isGmailApiBatchError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-api-batch-error.util';
+import { isGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-network-error.util';
+import { parseGmailApiBatchError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-api-batch-error.util';
+import { parseGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-network-error.util';
 
 @Injectable()
 export class GmailMessagesImportErrorHandler {
   private readonly logger = new Logger(GmailMessagesImportErrorHandler.name);
 
-  constructor(
-    private readonly gmailNetworkErrorHandler: GmailNetworkErrorHandler,
-  ) {}
+  constructor() {}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public handleError(error: any, messageExternalId: string): void {
-    this.logger.log(`Error fetching messages`, error);
+  public handleError(error: unknown, messageExternalId: string): void {
+    this.logger.error(`Gmail: Error importing messages: ${error}`);
 
-    const networkError = this.gmailNetworkErrorHandler.handleError(error);
-
-    if (networkError) {
-      throw networkError;
+    if (isGmailNetworkError(error)) {
+      throw parseGmailNetworkError(error);
     }
 
-    const gmailError = parseGmailMessagesImportError(error, messageExternalId, {
-      cause: error,
-    });
+    if (isGmailApiBatchError(error)) {
+      const exception = parseGmailApiBatchError(error, messageExternalId);
 
-    if (gmailError) {
-      throw gmailError;
+      if (!isDefined(exception)) {
+        return;
+      }
+
+      throw exception;
     }
+
+    throw new MessageImportDriverException(
+      'Unknown error',
+      MessageImportDriverExceptionCode.UNKNOWN,
+    );
   }
 }

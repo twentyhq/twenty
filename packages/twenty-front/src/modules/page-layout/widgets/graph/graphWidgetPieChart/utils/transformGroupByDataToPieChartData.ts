@@ -2,12 +2,15 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
+import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
-import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
+import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { isDefined } from 'twenty-shared/utils';
 import { type PieChartConfiguration } from '~/generated/graphql';
 
@@ -20,12 +23,16 @@ type TransformGroupByDataToPieChartDataParams = {
 
 type TransformGroupByDataToPieChartDataResult = {
   data: PieChartDataItem[];
+  showLegend: boolean;
   hasTooManyGroups: boolean;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
 const EMPTY_PIE_CHART_RESULT: TransformGroupByDataToPieChartDataResult = {
   data: [],
+  showLegend: true,
   hasTooManyGroups: false,
+  formattedToRawLookup: new Map(),
 };
 
 export const transformGroupByDataToPieChartData = ({
@@ -65,17 +72,18 @@ export const transformGroupByDataToPieChartData = ({
     PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
   );
 
-  const data: PieChartDataItem[] = limitedResults.map((result) => {
-    const dimensionValues = result.groupByDimensionValues;
+  const formattedValues = formatPrimaryDimensionValues({
+    groupByRawResults: limitedResults,
+    primaryAxisGroupByField: groupByField,
+    primaryAxisDateGranularity: configuration.dateGranularity ?? undefined,
+    primaryAxisGroupBySubFieldName:
+      configuration.groupBySubFieldName ?? undefined,
+  });
 
-    const label = isDefined(dimensionValues?.[0])
-      ? formatDimensionValue({
-          value: dimensionValues[0],
-          fieldMetadata: groupByField,
-          dateGranularity: configuration.dateGranularity ?? undefined,
-          subFieldName: configuration.groupBySubFieldName ?? undefined,
-        })
-      : '';
+  const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
+
+  const data: PieChartDataItem[] = limitedResults.map((result, index) => {
+    const id = formattedValues[index]?.formattedPrimaryDimensionValue ?? '';
 
     const value = computeAggregateValueFromGroupByResult({
       rawResult: result,
@@ -87,15 +95,18 @@ export const transformGroupByDataToPieChartData = ({
     });
 
     return {
-      id: label,
-      value: value,
-      label: label,
-      color: (configuration.color as GraphColor | undefined) ?? undefined,
+      id,
+      value,
+      color: (configuration.color ?? GRAPH_DEFAULT_COLOR) as GraphColor,
     };
   });
 
+  const showLegend = configuration.displayLegend ?? true;
+
   return {
     data,
+    showLegend,
     hasTooManyGroups: rawResults.length > PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
+    formattedToRawLookup,
   };
 };

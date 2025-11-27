@@ -19,16 +19,14 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     super(ALL_METADATA_NAME.routeTrigger);
   }
 
-  protected async validateFlatEntityCreation(
+  protected validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      typeof ALL_METADATA_NAME.routeTrigger,
-      'created'
-    >
+  ): FlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.routeTrigger,
+    'created'
   > {
     const validationResult =
-      await this.flatRouteTriggerValidatorService.validateFlatRouteTriggerCreation(
+      this.flatRouteTriggerValidatorService.validateFlatRouteTriggerCreation(
         args,
       );
 
@@ -50,13 +48,11 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     };
   }
 
-  protected async validateFlatEntityDeletion(
+  protected validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      typeof ALL_METADATA_NAME.routeTrigger,
-      'deleted'
-    >
+  ): FlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.routeTrigger,
+    'deleted'
   > {
     const validationResult =
       this.flatRouteTriggerValidatorService.validateFlatRouteTriggerDeletion(
@@ -81,13 +77,11 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     };
   }
 
-  protected async validateFlatEntityUpdate(
+  protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      typeof ALL_METADATA_NAME.routeTrigger,
-      'updated'
-    >
+  ): FlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.routeTrigger,
+    'updated'
   > {
     const validationResult =
       this.flatRouteTriggerValidatorService.validateFlatRouteTriggerUpdate(

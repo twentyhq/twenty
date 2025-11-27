@@ -2,14 +2,14 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import {
-  ModelId,
-  ModelProvider,
-} from 'src/engine/metadata-modules/ai-models/constants/ai-models.const';
 import { BillingTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
+import {
+  ModelId,
+  ModelProvider,
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 
 registerEnumType(FeatureFlagKey, {
   name: 'FeatureFlagKey',

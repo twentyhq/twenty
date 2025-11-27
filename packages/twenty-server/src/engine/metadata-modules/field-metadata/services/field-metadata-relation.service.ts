@@ -7,9 +7,9 @@ import {
   FieldMetadataType,
   RelationOnDeleteAction,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 import { v4 } from 'uuid';
-import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -23,8 +23,9 @@ import {
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
 import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload-or-throw.util';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-or-throw.utils';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
@@ -49,9 +50,10 @@ type ValidateFieldMetadataArgs<T extends UpdateFieldInput | CreateFieldInput> =
   {
     fieldMetadataType: FieldMetadataType;
     fieldMetadataInput: T;
-    objectMetadata: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     existingFieldMetadata?: FieldMetadataEntity;
-    objectMetadataMaps: ObjectMetadataMaps;
   };
 
 @Injectable()
@@ -62,11 +64,11 @@ export class FieldMetadataRelationService {
 
   async createRelationFieldMetadataItems({
     fieldMetadataInput,
-    objectMetadata,
+    flatObjectMetadata,
     fieldMetadataRepository,
   }: {
     fieldMetadataInput: CreateFieldInput;
-    objectMetadata: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadata: FlatObjectMetadata;
     fieldMetadataRepository: Repository<FieldMetadataEntity>;
   }): Promise<FieldMetadataEntity[]> {
     const createdFieldMetadataItem =
@@ -98,7 +100,7 @@ export class FieldMetadataRelationService {
       this.computeCustomRelationFieldMetadataForCreation({
         fieldMetadataInput: targetFieldMetadataToCreate,
         relationCreationPayload: {
-          targetObjectMetadataId: objectMetadata.id,
+          targetObjectMetadataId: flatObjectMetadata.id,
           targetFieldLabel: fieldMetadataInput.label,
           targetFieldIcon: fieldMetadataInput.icon ?? 'Icon123',
           type:
@@ -135,14 +137,16 @@ export class FieldMetadataRelationService {
   >({
     fieldMetadataInput,
     fieldMetadataType,
-    objectMetadataMaps,
-    objectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    flatObjectMetadata,
   }: Pick<
     ValidateFieldMetadataArgs<T>,
     | 'fieldMetadataInput'
     | 'fieldMetadataType'
-    | 'objectMetadataMaps'
-    | 'objectMetadata'
+    | 'flatObjectMetadataMaps'
+    | 'flatFieldMetadataMaps'
+    | 'flatObjectMetadata'
   >): Promise<T> {
     // TODO: clean typings, we should try to validate both update and create inputs in the same function
     const isRelation =
@@ -158,7 +162,8 @@ export class FieldMetadataRelationService {
     ) {
       validateFieldNameAvailabilityOrThrow({
         name: `${fieldMetadataInput.name}Id`,
-        fieldMetadataMapById: objectMetadata.fieldsById,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
       });
 
       const relationCreationPayload = (
@@ -173,12 +178,12 @@ export class FieldMetadataRelationService {
 
         validateMetadataNameOrThrow(computedMetadataNameFromLabel);
 
-        const objectMetadataTarget =
-          objectMetadataMaps.byId[
+        const targetFlatObjectMetadata =
+          flatObjectMetadataMaps.byId[
             relationCreationPayload.targetObjectMetadataId
           ];
 
-        if (!isDefined(objectMetadataTarget)) {
+        if (!isDefined(targetFlatObjectMetadata)) {
           throw new FieldMetadataException(
             `Object metadata relation target not found for relation creation payload`,
             FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
@@ -187,17 +192,19 @@ export class FieldMetadataRelationService {
 
         validateFieldNameAvailabilityOrThrow({
           name: computedMetadataNameFromLabel,
-          fieldMetadataMapById: objectMetadataTarget.fieldsById,
+          flatObjectMetadata: targetFlatObjectMetadata,
+          flatFieldMetadataMaps,
         });
 
         validateFieldNameAvailabilityOrThrow({
           name: `${computedMetadataNameFromLabel}Id`,
-          fieldMetadataMapById: objectMetadataTarget.fieldsById,
+          flatObjectMetadata: targetFlatObjectMetadata,
+          flatFieldMetadataMaps,
         });
 
         if (
           computedMetadataNameFromLabel === fieldMetadataInput.name &&
-          objectMetadata.id === objectMetadataTarget.id
+          flatObjectMetadata.id === targetFlatObjectMetadata.id
         ) {
           throw new FieldMetadataException(
             `Name "${computedMetadataNameFromLabel}" cannot be the same on both side of the relation`,

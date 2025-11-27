@@ -222,6 +222,7 @@ msgstr "Zagregowane / filtrowane zdarzenie do wyświetlenia na osi czasu"
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/timeline-activities-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
@@ -1722,6 +1723,7 @@ msgid "Invalid relation creation payload"
 msgstr "Nieprawidłowe dane wejściowe tworzenia powiązania"
 
 #. js-lingui-id: iWv3nK
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid relation field target"
 msgstr ""
@@ -2973,6 +2975,11 @@ msgstr "Niektóre z podanych informacji są nieprawidłowe. Sprawdź swoje dane 
 msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
 msgstr "Niektóre z wybranych przez Ciebie uprawnień są nieprawidłowe. Spróbuj ponownie z poprawnymi ustawieniami uprawnień."
 
+#. js-lingui-id: OmgwCE
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
+msgid "Source object cannot be the target object"
+msgstr ""
+
 #. js-lingui-id: 3PRxO3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Stage"
@@ -3315,6 +3322,11 @@ msgstr "Obiekt, dla którego próbujesz ustawić uprawnienia, nie może zostać 
 msgid "The opportunity name"
 msgstr "Nazwa szansy"
 
+#. js-lingui-id: lk5nUN
+#: src/engine/core-modules/graphql/hooks/use-compute-complexity.hook.ts
+msgid "The request is too complex to process. Please try reducing the amount of data requested."
+msgstr ""
+
 #. js-lingui-id: Zi9X+u
 #: src/engine/metadata-modules/role/role.service.ts
 msgid "The role you are looking for could not be found. It may have been deleted or you may not have access to it."
@@ -3378,16 +3390,6 @@ msgstr "Status wersji procesu"
 msgid "There was an issue with your connection settings. Please try again."
 msgstr "Wystąpił problem z ustawieniami połączenia. Spróbuj ponownie."
 
-#. js-lingui-id: Bm40Ow
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} is already taken. Please choose a different value."
-msgstr "Ten {fieldName} jest już zajęty. Wybierz inną wartość."
-
-#. js-lingui-id: CYyoPc
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} with value {duplicatedValues} is already taken. Please choose a different value."
-msgstr "Ten {fieldName} z wartością {duplicatedValues} jest już zajęty. Wybierz inną wartość."
-
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -3397,11 +3399,6 @@ msgstr "Ten klucz API został odwołany i nie może być dłużej używany."
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "Ten klucz API wygasł. Utwórz nowy."
-
-#. js-lingui-id: r/Z8XK
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This combination of {fieldNames} already exists. Please use different values."
-msgstr "Ta kombinacja {fieldNames} już istnieje. Użyj innych wartości."
 
 #. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts

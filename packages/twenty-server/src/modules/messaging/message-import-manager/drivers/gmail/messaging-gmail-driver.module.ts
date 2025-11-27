@@ -17,7 +17,6 @@ import { GmailGetMessageListService } from 'src/modules/messaging/message-import
 import { GmailGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-messages.service';
 import { GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-message-list-fetch-error-handler.service';
 import { GmailMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-messages-import-error-handler.service';
-import { GmailNetworkErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-network-error-handler.service';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
 
 @Module({
@@ -40,14 +39,12 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     GmailFetchByBatchService,
     GmailGetMessagesService,
     GmailGetMessageListService,
-    GmailNetworkErrorHandler,
     GmailMessageListFetchErrorHandler,
     GmailMessagesImportErrorHandler,
   ],
   exports: [
     GmailGetMessagesService,
     GmailGetMessageListService,
-    GmailNetworkErrorHandler,
     GmailMessageListFetchErrorHandler,
     GmailMessagesImportErrorHandler,
   ],

@@ -1,12 +1,13 @@
 import { GRAPH_TOOLTIP_MAX_WIDTH_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipMaxWidthPx';
 import { GRAPH_TOOLTIP_MIN_WIDTH_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipMinWidthPx';
 import { GRAPH_TOOLTIP_SCROLL_MAX_HEIGHT_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipScrollMaxHeightPx';
+import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/GraphWidgetLegendDot';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { IconArrowUpRight } from 'twenty-ui/display';
 import { isDefined } from 'twenty-shared/utils';
+import { IconArrowUpRight } from 'twenty-ui/display';
 
 const StyledTooltip = styled.div`
   background: ${({ theme }) => theme.background.primary};
@@ -41,14 +42,6 @@ const StyledTooltipRowContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
   max-height: ${GRAPH_TOOLTIP_SCROLL_MAX_HEIGHT_PX}px;
   overflow-y: auto;
-`;
-
-const StyledDot = styled.div<{ color: string }>`
-  background: ${({ color }) => color};
-  border-radius: 50%;
-  height: 6px;
-  width: 6px;
-  flex-shrink: 0;
 `;
 
 const StyledTooltipLink = styled.div`
@@ -168,7 +161,7 @@ export const GraphWidgetTooltip = ({
                 shouldHighlight && highlightedKey === item.key;
               return (
                 <StyledTooltipRow key={item.key}>
-                  <StyledDot color={item.dotColor} />
+                  <GraphWidgetLegendDot color={item.dotColor} />
                   <StyledTooltipRowRightContent>
                     <StyledTooltipLabel isHighlighted={isHighlighted}>
                       {item.label}

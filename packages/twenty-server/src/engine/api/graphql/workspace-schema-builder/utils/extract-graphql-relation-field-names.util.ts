@@ -1,13 +1,14 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 export const extractGraphQLRelationFieldNames = (
-  fieldMetadata: FieldMetadataEntity<
+  fieldMetadata: FlatFieldMetadata<
     FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
   >,
 ) => {
-  const joinColumnName = fieldMetadata.settings?.joinColumnName;
+  const settings = fieldMetadata.settings;
+  const joinColumnName = settings?.joinColumnName;
 
   if (!joinColumnName) {
     throw new Error('Join column name is not defined');

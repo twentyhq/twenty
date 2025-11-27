@@ -3,7 +3,11 @@ import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/uti
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
-import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
+import { CalendarStartDay } from 'twenty-shared';
+import {
+  type FirstDayOfTheWeek,
+  ObjectRecordGroupByDateGranularity,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -12,10 +16,12 @@ export const buildGroupByFieldObject = ({
   field,
   subFieldName,
   dateGranularity,
+  firstDayOfTheWeek,
 }: {
   field: FieldMetadataItem;
   subFieldName?: string | null;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
+  firstDayOfTheWeek?: number | null;
 }): Record<string, boolean | Record<string, boolean | string>> => {
   const isRelation = isFieldRelation(field) || isFieldMorphRelation(field);
   const isComposite = isCompositeFieldType(field.type);
@@ -41,11 +47,22 @@ export const buildGroupByFieldObject = ({
   }
 
   if (isDateField) {
-    return {
-      [field.name]: {
-        granularity: dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY,
-      },
-    };
+    const granularity = dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY;
+    const result: Record<string, string> = { granularity };
+
+    if (
+      granularity === ObjectRecordGroupByDateGranularity.WEEK &&
+      isDefined(firstDayOfTheWeek) &&
+      firstDayOfTheWeek !== CalendarStartDay.SYSTEM
+    ) {
+      const weekStartDay = CalendarStartDay[
+        firstDayOfTheWeek
+      ] as FirstDayOfTheWeek;
+
+      result.weekStartDay = weekStartDay;
+    }
+
+    return { [field.name]: result };
   }
 
   return { [field.name]: true };

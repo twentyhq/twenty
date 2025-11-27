@@ -6,7 +6,7 @@ import { GqlTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builde
 import { OrphanedTypesGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/orphaned-types.generator';
 import { MutationTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/mutation-type.generator';
 import { QueryTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/query-type.generator';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
 
 @Injectable()
 export class WorkspaceGraphQLSchemaGenerator {
@@ -18,9 +18,9 @@ export class WorkspaceGraphQLSchemaGenerator {
   ) {}
 
   async generateSchema(
-    objectMetadataCollection: ObjectMetadataEntity[],
+    context: SchemaGenerationContext,
   ): Promise<GraphQLSchema> {
-    await this.gqlTypeGenerator.buildAndStore(objectMetadataCollection);
+    await this.gqlTypeGenerator.buildAndStore(context);
 
     // Assemble schema
     const schema = new GraphQLSchema({

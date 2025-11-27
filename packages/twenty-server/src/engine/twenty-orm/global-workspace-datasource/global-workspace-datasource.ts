@@ -112,7 +112,10 @@ export class GlobalWorkspaceDataSource extends DataSource {
     return new WorkspaceEntityManager(
       {
         workspaceId: context.authContext.workspace.id,
-        objectMetadataMaps: context.objectMetadataMaps,
+        flatObjectMetadataMaps: context.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: context.flatFieldMetadataMaps,
+        flatIndexMaps: context.flatIndexMaps,
+        objectIdByNameSingular: context.objectIdByNameSingular,
         featureFlagsMap: context.featureFlagsMap,
         eventEmitterService: this.eventEmitterService,
       },

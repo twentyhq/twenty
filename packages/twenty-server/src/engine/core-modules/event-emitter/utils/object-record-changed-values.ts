@@ -2,10 +2,13 @@ import deepEqual from 'deep-equal';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 const isWorkflowVersionStepsOrTrigger = (
-  objectMetadataItem: ObjectMetadataItemWithFieldMaps,
+  objectMetadataItem: FlatObjectMetadata,
   key: string,
 ) => {
   return (
@@ -15,7 +18,7 @@ const isWorkflowVersionStepsOrTrigger = (
 };
 
 const isWorkflowAutomatedTriggerSettings = (
-  objectMetadataItem: Pick<ObjectMetadataItemWithFieldMaps, 'standardId'>,
+  objectMetadataItem: Pick<FlatObjectMetadata, 'standardId'>,
   key: string,
 ) => {
   return (
@@ -27,12 +30,18 @@ const isWorkflowAutomatedTriggerSettings = (
 export const objectRecordChangedValues = (
   oldRecord: Partial<ObjectRecord>,
   newRecord: Partial<ObjectRecord>,
-  objectMetadataItem: ObjectMetadataItemWithFieldMaps,
+  objectMetadataItem: FlatObjectMetadata,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
 ) => {
+  const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+    flatFieldMetadataMaps,
+    objectMetadataItem,
+  );
+
   return Object.keys(newRecord).reduce(
     (acc, key) => {
-      const field =
-        objectMetadataItem.fieldsById[objectMetadataItem.fieldIdByName[key]];
+      const fieldId = fieldIdByName[key];
+      const field = fieldId ? flatFieldMetadataMaps.byId[fieldId] : undefined;
 
       const oldRecordValue = oldRecord[key];
       const newRecordValue = newRecord[key];
