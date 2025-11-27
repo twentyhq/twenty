@@ -245,13 +245,6 @@ export const WorkflowAiAgentPermissionsTab = ({
             readonly={readonly}
           />
           <WorkflowAiAgentPermissionsFlagList
-            title={t`Settings`}
-            permissions={filteredSettingsPermissions}
-            enabledPermissionFlagKeys={permissionFlagKeys}
-            readonly={readonly}
-            onAddPermissionFlag={handleAddPermissionFlag}
-          />
-          <WorkflowAiAgentPermissionsFlagList
             title={t`Actions`}
             permissions={filteredActionPermissions}
             enabledPermissionFlagKeys={permissionFlagKeys}
@@ -268,14 +261,6 @@ export const WorkflowAiAgentPermissionsTab = ({
             objectPermissions={objectPermissions}
             onDeletePermission={handleDeletePermission}
             searchQuery={searchQuery}
-          />
-          <WorkflowAiAgentPermissionsFlagList
-            title={t`Settings`}
-            permissions={filteredEnabledSettingsPermissions}
-            enabledPermissionFlagKeys={permissionFlagKeys}
-            readonly={readonly}
-            showDeleteButton={!readonly}
-            onDeletePermissionFlag={handleDeletePermissionFlag}
           />
           <WorkflowAiAgentPermissionsFlagList
             title={t`Actions`}
