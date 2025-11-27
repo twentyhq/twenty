@@ -1,8 +1,10 @@
+import { usePieChartCenterMetricData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData';
 import styled from '@emotion/styled';
+import { type PieChartConfiguration } from '~/generated/graphql';
 
 type PieChartCenterMetricProps = {
-  value: string | number | undefined;
-  label: string;
+  objectMetadataItemId: string;
+  configuration: PieChartConfiguration;
   show: boolean;
 };
 
@@ -33,14 +35,20 @@ const StyledLabel = styled.span`
 `;
 
 export const PieChartCenterMetric = ({
-  value,
-  label,
+  objectMetadataItemId,
+  configuration,
   show,
 }: PieChartCenterMetricProps) => {
+  const { centerMetricValue, centerMetricLabel } = usePieChartCenterMetricData({
+    objectMetadataItemId,
+    configuration,
+    skip: !show,
+  });
+
   return (
     <StyledCenterMetricContainer show={show}>
-      <StyledValue>{value}</StyledValue>
-      <StyledLabel>{label}</StyledLabel>
+      <StyledValue>{centerMetricValue}</StyledValue>
+      <StyledLabel>{centerMetricLabel}</StyledLabel>
     </StyledCenterMetricContainer>
   );
 };
