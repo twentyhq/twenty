@@ -8,6 +8,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -33,9 +34,9 @@ export class BlocklistWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Handle`,
     description: msg`Handle`,
     icon: 'IconAt',
-    defaultValue: 'defaultHandle',
   })
-  handle: string;
+  @WorkspaceIsNullable()
+  handle: string | null;
 
   @WorkspaceRelation({
     standardId: BLOCKLIST_STANDARD_FIELD_IDS.workspaceMember,
