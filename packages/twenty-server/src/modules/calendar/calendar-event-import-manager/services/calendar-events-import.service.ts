@@ -111,7 +111,7 @@ export class CalendarEventsImportService {
             ...connectedAccount.handleAliases.split(','),
           ],
           calendarEvents,
-          blocklist.map((blocklist) => blocklist.handle),
+          blocklist.map((blocklist) => blocklist.handle ?? ''),
         );
 
       const cancelledEventExternalIds = cancelledEvents.map(

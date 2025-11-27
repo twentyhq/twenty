@@ -45,10 +45,10 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
     description: msg`Folder name`,
-    defaultValue: 'defaultFolderName',
     icon: 'IconFolder',
   })
-  name: string;
+  @WorkspaceIsNullable()
+  name: string | null;
 
   @WorkspaceRelation({
     standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.messageChannel,

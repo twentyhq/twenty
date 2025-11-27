@@ -1,5 +1,6 @@
 import { Scope } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { And, Any, ILike, In, Not, Or } from 'typeorm';
 
 import { type ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
@@ -52,6 +53,10 @@ export class BlocklistItemDeleteCalendarEventsJob {
 
         if (!acc.has(workspaceMemberId)) {
           acc.set(workspaceMemberId, []);
+        }
+
+        if (!isDefined(handle)) {
+          return acc;
         }
 
         acc.get(workspaceMemberId)?.push(handle);
