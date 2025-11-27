@@ -1,6 +1,5 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig';
-import { useSettingsRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { useWorkflowAiAgentPermissionActions } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions';
@@ -107,9 +106,6 @@ export const WorkflowAiAgentPermissionsTab = ({
   const hasRoleWithPermissions =
     isDefined(workflowAiAgentActionAgent?.roleId) &&
     (objectPermissions.length > 0 || permissionFlagKeys.length > 0);
-  const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig({
-    assignmentCapabilities: { canBeAssignedToAgents: true },
-  });
   const actionPermissionsConfig = useActionRolePermissionFlagConfig({
     assignmentCapabilities: { canBeAssignedToAgents: true },
   });
