@@ -45,7 +45,7 @@ export const generateDateGroupsInRange = ({
         break;
 
       case ObjectRecordGroupByDateGranularity.WEEK:
-        currentDateCursor.setDate(currentDateCursor.getDate() + 1);
+        currentDateCursor.setDate(currentDateCursor.getDate() + 7);
         break;
 
       case ObjectRecordGroupByDateGranularity.MONTH:

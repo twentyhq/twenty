@@ -1,4 +1,5 @@
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
+import { CalendarStartDay } from 'twenty-shared';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -100,5 +101,83 @@ describe('buildGroupByFieldObject', () => {
     const result = buildGroupByFieldObject({ field });
 
     expect(result).toEqual({ status: true });
+  });
+
+  it('should include weekStartDay for WEEK granularity with MONDAY', () => {
+    const field = {
+      name: 'createdAt',
+      type: FieldMetadataType.DATE,
+    } as any;
+
+    const result = buildGroupByFieldObject({
+      field,
+      dateGranularity: ObjectRecordGroupByDateGranularity.WEEK,
+      firstDayOfTheWeek: CalendarStartDay.MONDAY,
+    });
+
+    expect(result).toEqual({
+      createdAt: {
+        granularity: ObjectRecordGroupByDateGranularity.WEEK,
+        weekStartDay: 'MONDAY',
+      },
+    });
+  });
+
+  it('should include weekStartDay for WEEK granularity with SUNDAY', () => {
+    const field = {
+      name: 'createdAt',
+      type: FieldMetadataType.DATE,
+    } as any;
+
+    const result = buildGroupByFieldObject({
+      field,
+      dateGranularity: ObjectRecordGroupByDateGranularity.WEEK,
+      firstDayOfTheWeek: CalendarStartDay.SUNDAY,
+    });
+
+    expect(result).toEqual({
+      createdAt: {
+        granularity: ObjectRecordGroupByDateGranularity.WEEK,
+        weekStartDay: 'SUNDAY',
+      },
+    });
+  });
+
+  it('should not include weekStartDay for WEEK granularity with SYSTEM', () => {
+    const field = {
+      name: 'createdAt',
+      type: FieldMetadataType.DATE,
+    } as any;
+
+    const result = buildGroupByFieldObject({
+      field,
+      dateGranularity: ObjectRecordGroupByDateGranularity.WEEK,
+      firstDayOfTheWeek: CalendarStartDay.SYSTEM,
+    });
+
+    expect(result).toEqual({
+      createdAt: {
+        granularity: ObjectRecordGroupByDateGranularity.WEEK,
+      },
+    });
+  });
+
+  it('should not include weekStartDay for non-WEEK granularity', () => {
+    const field = {
+      name: 'createdAt',
+      type: FieldMetadataType.DATE,
+    } as any;
+
+    const result = buildGroupByFieldObject({
+      field,
+      dateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
+      firstDayOfTheWeek: CalendarStartDay.MONDAY,
+    });
+
+    expect(result).toEqual({
+      createdAt: {
+        granularity: ObjectRecordGroupByDateGranularity.MONTH,
+      },
+    });
   });
 });
