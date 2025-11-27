@@ -40,8 +40,12 @@ export const useWorkflowAiAgentPermissionActions = ({
     useRecoilState(workflowAiAgentActionAgentState);
   const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
     useFilteredObjectMetadataItems();
-  const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig();
-  const actionPermissionsConfig = useActionRolePermissionFlagConfig();
+  const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig({
+    assignmentCapabilities: { canBeAssignedToAgents: true },
+  });
+  const actionPermissionsConfig = useActionRolePermissionFlagConfig({
+    assignmentCapabilities: { canBeAssignedToAgents: true },
+  });
 
   const [, setWorkflowAiAgentPermissionsSelectedObjectId] = useRecoilState(
     workflowAiAgentPermissionsSelectedObjectIdState,
