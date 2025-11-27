@@ -107,7 +107,9 @@ export const WorkflowAiAgentPermissionsTab = ({
   const hasRoleWithPermissions =
     isDefined(workflowAiAgentActionAgent?.roleId) &&
     (objectPermissions.length > 0 || permissionFlagKeys.length > 0);
-  const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig();
+  const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig({
+    assignmentCapabilities: { canBeAssignedToAgents: true },
+  });
   const actionPermissionsConfig = useActionRolePermissionFlagConfig();
 
   type ObjectMetadataListItem = (typeof objectMetadataItems)[number];

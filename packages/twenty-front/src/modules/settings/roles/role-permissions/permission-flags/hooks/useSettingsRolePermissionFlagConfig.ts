@@ -22,109 +22,193 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
-export const useSettingsRolePermissionFlagConfig =
-  (): SettingsRolePermissionsSettingPermission[] => {
-    const isAIEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
-    const isApplicationEnabled = useIsFeatureEnabled(
-      FeatureFlagKey.IS_APPLICATION_ENABLED,
-    );
-
-    return useMemo(
-      () =>
-        [
-          {
-            key: PermissionFlagType.API_KEYS_AND_WEBHOOKS,
-            name: t`API Keys & Webhooks`,
-            description: t`Manage API keys and webhooks`,
-            Icon: IconCode,
-          },
-          {
-            key: PermissionFlagType.WORKSPACE,
-            name: t`Workspace`,
-            description: t`Set global workspace preferences`,
-            Icon: IconSettings,
-          },
-          {
-            key: PermissionFlagType.WORKSPACE_MEMBERS,
-            name: t`Users`,
-            description: t`Add or remove users`,
-            Icon: IconUsers,
-          },
-          {
-            key: PermissionFlagType.ROLES,
-            name: t`Roles`,
-            description: t`Define user roles and access levels`,
-            Icon: IconLockOpen,
-          },
-          {
-            key: PermissionFlagType.DATA_MODEL,
-            name: t`Data Model`,
-            description: t`Edit data structure and fields`,
-            Icon: IconHierarchy,
-          },
-          {
-            key: PermissionFlagType.SECURITY,
-            name: t`Security`,
-            description: t`Manage security policies`,
-            Icon: IconKey,
-          },
-          {
-            key: PermissionFlagType.WORKFLOWS,
-            name: t`Workflows`,
-            description: t`Manage workflows`,
-            Icon: IconSettingsAutomation,
-          },
-          {
-            key: PermissionFlagType.SSO_BYPASS,
-            name: t`SSO Bypass`,
-            description: t`Enable bypass options`,
-            Icon: IconShield,
-          },
-          {
-            key: PermissionFlagType.IMPERSONATE,
-            name: t`Impersonate`,
-            description: t`Impersonate workspace users`,
-            Icon: IconSpy,
-          },
-          {
-            key: PermissionFlagType.APPLICATIONS,
-            name: t`Applications`,
-            description: t`Install and manage applications`,
-            Icon: IconApps,
-          },
-          {
-            key: PermissionFlagType.LAYOUTS,
-            name: t`Layouts`,
-            description: t`Customize page layouts and UI structure`,
-            Icon: IconLayoutSidebarRightCollapse,
-          },
-          {
-            key: PermissionFlagType.BILLING,
-            name: t`Billing`,
-            description: t`Manage billing and subscriptions`,
-            Icon: IconCreditCard,
-          },
-          {
-            key: PermissionFlagType.AI_SETTINGS,
-            name: t`AI`,
-            description: t`Create and configure AI agents`,
-            Icon: IconSparkles,
-          },
-        ].filter((permission) => {
-          if (
-            permission.key === PermissionFlagType.AI_SETTINGS &&
-            !isAIEnabled
-          ) {
-            return false;
-          }
-          if (
-            permission.key === PermissionFlagType.APPLICATIONS &&
-            !isApplicationEnabled
-          ) {
-            return false;
-          }
-          return true;
-        }),
-      [isAIEnabled, isApplicationEnabled],
-    );
+type UseSettingsRolePermissionFlagConfigParams = {
+  assignmentCapabilities?: {
+    canBeAssignedToAgents?: boolean;
+    canBeAssignedToUsers?: boolean;
+    canBeAssignedToApiKeys?: boolean;
   };
+};
+
+export const useSettingsRolePermissionFlagConfig = ({
+  assignmentCapabilities,
+}: UseSettingsRolePermissionFlagConfigParams = {}): SettingsRolePermissionsSettingPermission[] => {
+  const isAIEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+  const isApplicationEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APPLICATION_ENABLED,
+  );
+
+  const {
+    canBeAssignedToAgents = false,
+    canBeAssignedToUsers = false,
+    canBeAssignedToApiKeys = false,
+  } = assignmentCapabilities ?? {};
+
+  const hasAssignmentCapabilities = assignmentCapabilities !== undefined;
+
+  return useMemo(() => {
+    const allPermissions: SettingsRolePermissionsSettingPermission[] = [
+      {
+        key: PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+        name: t`API Keys & Webhooks`,
+        description: t`Manage API keys and webhooks`,
+        Icon: IconCode,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
+      },
+      {
+        key: PermissionFlagType.WORKSPACE,
+        name: t`Workspace`,
+        description: t`Set global workspace preferences`,
+        Icon: IconSettings,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
+      },
+      {
+        key: PermissionFlagType.WORKSPACE_MEMBERS,
+        name: t`Users`,
+        description: t`Add or remove users`,
+        Icon: IconUsers,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
+      },
+      {
+        key: PermissionFlagType.ROLES,
+        name: t`Roles`,
+        description: t`Define user roles and access levels`,
+        Icon: IconLockOpen,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
+      },
+      {
+        key: PermissionFlagType.DATA_MODEL,
+        name: t`Data Model`,
+        description: t`Edit data structure and fields`,
+        Icon: IconHierarchy,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
+      },
+      {
+        key: PermissionFlagType.SECURITY,
+        name: t`Security`,
+        description: t`Manage security policies`,
+        Icon: IconKey,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
+      },
+      {
+        key: PermissionFlagType.WORKFLOWS,
+        name: t`Workflows`,
+        description: t`Manage workflows`,
+        Icon: IconSettingsAutomation,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
+      },
+      {
+        key: PermissionFlagType.SSO_BYPASS,
+        name: t`SSO Bypass`,
+        description: t`Enable bypass options`,
+        Icon: IconShield,
+        isRelevantForAgents: false,
+        isRelevantForApiKeys: false,
+        isRelevantForUsers: true,
+      },
+      {
+        key: PermissionFlagType.IMPERSONATE,
+        name: t`Impersonate`,
+        description: t`Impersonate workspace users`,
+        Icon: IconSpy,
+        isRelevantForAgents: false,
+        isRelevantForApiKeys: false,
+        isRelevantForUsers: true,
+      },
+      {
+        key: PermissionFlagType.APPLICATIONS,
+        name: t`Applications`,
+        description: t`Install and manage applications`,
+        Icon: IconApps,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
+      },
+      {
+        key: PermissionFlagType.LAYOUTS,
+        name: t`Layouts`,
+        description: t`Customize page layouts and UI structure`,
+        Icon: IconLayoutSidebarRightCollapse,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
+      },
+      {
+        key: PermissionFlagType.BILLING,
+        name: t`Billing`,
+        description: t`Manage billing and subscriptions`,
+        Icon: IconCreditCard,
+        isRelevantForAgents: false,
+        isRelevantForApiKeys: false,
+        isRelevantForUsers: true,
+      },
+      {
+        key: PermissionFlagType.AI_SETTINGS,
+        name: t`AI`,
+        description: t`Create and configure AI agents`,
+        Icon: IconSparkles,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: true,
+        isRelevantForUsers: true,
+      },
+    ];
+
+    const canBeAssignedOnlyToAgents =
+      canBeAssignedToAgents && !canBeAssignedToUsers && !canBeAssignedToApiKeys;
+
+    const canBeAssignedOnlyToApiKeys =
+      canBeAssignedToApiKeys && !canBeAssignedToUsers && !canBeAssignedToAgents;
+
+    const canBeAssignedOnlyToUsers =
+      canBeAssignedToUsers && !canBeAssignedToAgents && !canBeAssignedToApiKeys;
+
+    return allPermissions.filter((permission) => {
+      if (permission.key === PermissionFlagType.AI_SETTINGS && !isAIEnabled) {
+        return false;
+      }
+      if (
+        permission.key === PermissionFlagType.APPLICATIONS &&
+        !isApplicationEnabled
+      ) {
+        return false;
+      }
+
+      if (hasAssignmentCapabilities) {
+        if (canBeAssignedOnlyToAgents && !permission.isRelevantForAgents) {
+          return false;
+        }
+
+        if (canBeAssignedOnlyToApiKeys && !permission.isRelevantForApiKeys) {
+          return false;
+        }
+
+        if (canBeAssignedOnlyToUsers && !permission.isRelevantForUsers) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [
+    hasAssignmentCapabilities,
+    canBeAssignedToAgents,
+    canBeAssignedToUsers,
+    canBeAssignedToApiKeys,
+    isAIEnabled,
+    isApplicationEnabled,
+  ]);
+};
