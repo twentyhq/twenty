@@ -194,4 +194,3 @@ describe('Role update should succeed', () => {
     });
   });
 });
-

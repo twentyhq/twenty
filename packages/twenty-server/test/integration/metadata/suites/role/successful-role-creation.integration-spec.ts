@@ -29,6 +29,7 @@ describe('Role creation should succeed', () => {
         canBeAssignedToApiKeys: false,
       },
     });
+
     createdRoleId = data?.createOneRole?.id;
 
     expect(errors).toBeUndefined();
