@@ -1,8 +1,9 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { type RelationType } from 'typeorm/metadata/types/RelationTypes';
 
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   RelationException,
   RelationExceptionCode,
@@ -16,12 +17,13 @@ interface RelationDetails {
   joinColumn: { name: string } | undefined;
 }
 
-export async function determineSchemaRelationDetails(
-  fieldMetadata: FieldMetadataEntity<
+export function determineSchemaRelationDetails(
+  fieldMetadata: FlatFieldMetadata<
     FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
   >,
-  objectMetadataMaps: ObjectMetadataMaps,
-): Promise<RelationDetails> {
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+): RelationDetails {
   if (!fieldMetadata.settings) {
     throw new Error('Field metadata settings are missing');
   }
@@ -38,9 +40,9 @@ export async function determineSchemaRelationDetails(
   }
 
   const sourceObjectMetadata =
-    objectMetadataMaps.byId[fieldMetadata.objectMetadataId];
+    flatObjectMetadataMaps.byId[fieldMetadata.objectMetadataId];
   const targetObjectMetadata =
-    objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
+    flatObjectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
 
   if (!sourceObjectMetadata || !targetObjectMetadata) {
     throw new RelationException(
@@ -57,9 +59,7 @@ export async function determineSchemaRelationDetails(
   }
 
   const targetFieldMetadata =
-    targetObjectMetadata.fieldsById[
-      fieldMetadata.relationTargetFieldMetadataId
-    ];
+    flatFieldMetadataMaps.byId[fieldMetadata.relationTargetFieldMetadataId];
 
   if (!targetFieldMetadata) {
     throw new Error('Target field metadata not found');

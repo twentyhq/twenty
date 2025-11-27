@@ -3,6 +3,7 @@ import { msg } from '@lingui/core/macro';
 export const CHART_CONFIGURATION_SETTING_LABELS = {
   SOURCE: msg`Source`,
   DATA_LABELS: msg`Data labels`,
+  CENTER_METRIC: msg`Show value in center`,
   COLORS: msg`Colors`,
   FILTER: msg`Filter`,
   GROUP_BY: msg`Group by`,

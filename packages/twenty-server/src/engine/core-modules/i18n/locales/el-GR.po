@@ -1723,6 +1723,7 @@ msgid "Invalid relation creation payload"
 msgstr "Μη έγκυρο περιεχόμενο δημιουργίας σχέσης"
 
 #. js-lingui-id: iWv3nK
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid relation field target"
 msgstr ""
@@ -2974,6 +2975,11 @@ msgstr "Μερικές από τις πληροφορίες που παρέχο�
 msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
 msgstr "Μερικές από τις άδειες που επιλέξατε δεν είναι έγκυρες. Παρακαλώ δοκιμάστε ξανά με έγκυρες ρυθμίσεις άδειας."
 
+#. js-lingui-id: OmgwCE
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
+msgid "Source object cannot be the target object"
+msgstr ""
+
 #. js-lingui-id: 3PRxO3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Stage"
@@ -3384,16 +3390,6 @@ msgstr "Η κατάσταση της έκδοσης της εργασίας"
 msgid "There was an issue with your connection settings. Please try again."
 msgstr "Υπήρχε ένα πρόβλημα με τις ρυθμίσεις της σύνδεσής σας. Παρακαλώ δοκιμάστε ξανά."
 
-#. js-lingui-id: Bm40Ow
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} is already taken. Please choose a different value."
-msgstr "Αυτό το {fieldName} είναι ήδη καταχωρημένο. Παρακαλώ επιλέξτε μια άλλη τιμή."
-
-#. js-lingui-id: CYyoPc
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} with value {duplicatedValues} is already taken. Please choose a different value."
-msgstr "Αυτό το {fieldName} με την τιμή {duplicatedValues} είναι ήδη καταχωρημένο. Παρακαλώ επιλέξτε μια άλλη τιμή."
-
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -3403,11 +3399,6 @@ msgstr "Αυτό το κλειδί API έχει ανακληθεί και δεν
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "Το κλειδί API έχει λήξει. Παρακαλώ δημιουργήστε ένα νέο."
-
-#. js-lingui-id: r/Z8XK
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This combination of {fieldNames} already exists. Please use different values."
-msgstr "Αυτός ο συνδυασμός {fieldNames} υπάρχει ήδη. Παρακαλώ χρησιμοποιήστε διαφορετικές τιμές."
 
 #. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts

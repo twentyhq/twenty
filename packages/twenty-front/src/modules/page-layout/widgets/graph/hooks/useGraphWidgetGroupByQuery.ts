@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
 import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
@@ -24,6 +25,8 @@ export const useGraphWidgetGroupByQuery = ({
   configuration: GroupByChartConfiguration;
   limit?: number;
 }) => {
+  const { calendarStartDay } = useDateTimeFormat();
+
   const { objectMetadataItem, aggregateField, gqlOperationFilter } =
     useGraphWidgetQueryCommon({
       objectMetadataItemId,
@@ -63,6 +66,7 @@ export const useGraphWidgetGroupByQuery = ({
         chartConfiguration: configuration,
         aggregateOperation: aggregateOperation,
         limit,
+        firstDayOfTheWeek: calendarStartDay,
       })
     : generateGroupByQueryVariablesFromBarOrLineChartConfiguration({
         objectMetadataItem,
@@ -71,6 +75,7 @@ export const useGraphWidgetGroupByQuery = ({
           | LineChartConfiguration,
         aggregateOperation: aggregateOperation,
         limit,
+        firstDayOfTheWeek: calendarStartDay,
       });
 
   const variables = {

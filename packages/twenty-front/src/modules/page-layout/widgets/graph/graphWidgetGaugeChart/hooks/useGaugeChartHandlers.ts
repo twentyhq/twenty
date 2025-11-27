@@ -4,18 +4,20 @@ import { isDefined } from 'twenty-shared/utils';
 
 type UseGaugeChartHandlersProps = {
   data: GaugeChartData;
+  onGaugeClick?: (data: GaugeChartData) => void;
 };
 
-export const useGaugeChartHandlers = ({ data }: UseGaugeChartHandlersProps) => {
+export const useGaugeChartHandlers = ({
+  data,
+  onGaugeClick,
+}: UseGaugeChartHandlersProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleClick = () => {
-    if (isDefined(data.to)) {
-      window.location.href = data.to;
-    }
+    onGaugeClick?.(data);
   };
 
-  const hasClickableItems = isDefined(data.to);
+  const hasClickableItems = isDefined(onGaugeClick);
 
   return {
     isHovered,

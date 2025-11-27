@@ -6,11 +6,11 @@ import { capitalize } from 'twenty-shared/utils';
 
 import { type OrderByCondition } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 
 export const parseCompositeFieldForOrder = (
-  fieldMetadata: FieldMetadataEntity,
+  fieldMetadata: FlatFieldMetadata,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
   objectNameSingular: string,

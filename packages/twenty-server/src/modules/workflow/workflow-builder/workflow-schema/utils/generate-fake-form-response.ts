@@ -1,7 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   type Leaf,
   type Node,
@@ -12,12 +13,16 @@ import { type FormFieldMetadata } from 'src/modules/workflow/workflow-executor/w
 
 type GenerateFakeFormResponseArgs = {
   formFieldMetadataItems: FormFieldMetadata[];
-  objectMetadataMaps: ObjectMetadataMaps;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  objectIdByNameSingular: Record<string, string>;
 };
 
 export const generateFakeFormResponse = ({
   formFieldMetadataItems,
-  objectMetadataMaps,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
+  objectIdByNameSingular,
 }: GenerateFakeFormResponseArgs): Record<string, Leaf | Node> => {
   const result = formFieldMetadataItems.map((formFieldMetadata) => {
     if (formFieldMetadata.type === 'RECORD') {
@@ -25,13 +30,18 @@ export const generateFakeFormResponse = ({
         return undefined;
       }
 
-      const objectMetadataItemWithFieldsMaps =
-        getObjectMetadataMapItemByNameSingular(
-          objectMetadataMaps,
-          formFieldMetadata?.settings?.objectName,
-        );
+      const objectId =
+        objectIdByNameSingular[formFieldMetadata?.settings?.objectName];
 
-      if (!isDefined(objectMetadataItemWithFieldsMaps)) {
+      if (!isDefined(objectId)) {
+        throw new Error(
+          `Object metadata not found for object name ${formFieldMetadata?.settings?.objectName}`,
+        );
+      }
+
+      const flatObjectMetadata = flatObjectMetadataMaps.byId[objectId];
+
+      if (!isDefined(flatObjectMetadata)) {
         throw new Error(
           `Object metadata not found for object name ${formFieldMetadata?.settings?.objectName}`,
         );
@@ -43,8 +53,9 @@ export const generateFakeFormResponse = ({
           label: formFieldMetadata.label,
           value: generateFakeObjectRecord({
             objectMetadataInfo: {
-              objectMetadataItemWithFieldsMaps,
-              objectMetadataMaps,
+              flatObjectMetadata,
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
             },
           }),
         },

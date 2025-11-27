@@ -1723,6 +1723,7 @@ msgid "Invalid relation creation payload"
 msgstr "Geçersiz ilişki oluşturma yükü"
 
 #. js-lingui-id: iWv3nK
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid relation field target"
 msgstr ""
@@ -2974,6 +2975,11 @@ msgstr "Sağlanan bilgilerin bir kısmı geçersiz. Lütfen girdinizi kontrol ed
 msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
 msgstr "Seçilen izinlerin bir kısmı geçerli değil. Lütfen geçerli izin ayarlarıyla tekrar deneyin."
 
+#. js-lingui-id: OmgwCE
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
+msgid "Source object cannot be the target object"
+msgstr ""
+
 #. js-lingui-id: 3PRxO3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Stage"
@@ -3384,16 +3390,6 @@ msgstr "İş akışı sürüm durumu"
 msgid "There was an issue with your connection settings. Please try again."
 msgstr "Bağlantı ayarlarınızda bir sorun vardı. Lütfen tekrar deneyin."
 
-#. js-lingui-id: Bm40Ow
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} is already taken. Please choose a different value."
-msgstr "Bu {fieldName} zaten alınmış. Lütfen farklı bir değer seçin."
-
-#. js-lingui-id: CYyoPc
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} with value {duplicatedValues} is already taken. Please choose a different value."
-msgstr "Değeri {duplicatedValues} olan bu {fieldName} zaten alınmış. Lütfen farklı bir değer seçin."
-
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -3403,11 +3399,6 @@ msgstr "Bu API Anahtarı iptal edilmiştir ve artık kullanılamaz."
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "Bu API Anahtarı süresi dolmuştur. Yeni bir tane oluşturun."
-
-#. js-lingui-id: r/Z8XK
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This combination of {fieldNames} already exists. Please use different values."
-msgstr "Bu {fieldNames} kombinasyonu zaten mevcut. Lütfen farklı değerler kullanın."
 
 #. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts

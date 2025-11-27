@@ -1,11 +1,11 @@
 import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
 import { z } from 'zod';
 
+import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
 import { generateRecordPropertiesZodSchema } from 'src/engine/core-modules/record-crud/zod-schemas/record-properties.zod-schema';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 export const generateUpdateRecordInputSchema = (
-  objectMetadata: ObjectMetadataEntity,
+  objectMetadata: ObjectMetadataForToolSchema,
   restrictedFields?: RestrictedFieldsPermissions,
 ) => {
   const recordPropertiesSchema = generateRecordPropertiesZodSchema(

@@ -21,11 +21,11 @@ import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/worksp
 import { computeEnumFieldGqlTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-enum-field-gql-type-key.util';
 import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
 import { createGqlEnumFilterType } from 'src/engine/api/graphql/workspace-schema-builder/utils/create-gql-enum-filter-type.util';
-import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
@@ -39,15 +39,19 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
     private readonly typeMapperService: TypeMapperService,
   ) {}
 
-  public buildAndStore(objectMetadata: ObjectMetadataEntity) {
+  public buildAndStore(
+    flatObjectMetadata: FlatObjectMetadata,
+    fields: FlatFieldMetadata[],
+  ) {
     const inputType = new GraphQLInputObjectType({
-      name: `${pascalCase(objectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.Filter.toString()}Input`,
-      description: objectMetadata.description,
-      fields: () => this.generateFields(objectMetadata, inputType),
+      name: `${pascalCase(flatObjectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.Filter.toString()}Input`,
+      description: flatObjectMetadata.description,
+      fields: () =>
+        this.generateFields(flatObjectMetadata.nameSingular, fields, inputType),
     }) as GraphQLInputObjectType;
 
     const key = computeObjectMetadataInputTypeKey(
-      objectMetadata.nameSingular,
+      flatObjectMetadata.nameSingular,
       GqlInputTypeDefinitionKind.Filter,
     );
 
@@ -55,7 +59,8 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
   }
 
   private generateFields(
-    objectMetadata: ObjectMetadataEntity,
+    objectNameSingular: string,
+    fields: FlatFieldMetadata[],
     inputType: GraphQLInputObjectType,
   ): GraphQLInputFieldConfigMap {
     const andOrType = this.typeMapperService.applyTypeOptions(inputType, {
@@ -65,17 +70,20 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
     });
     const allGeneratedFields: GraphQLInputFieldConfigMap = {};
 
-    for (const fieldMetadata of objectMetadata.fields) {
-      fieldMetadata.isNullable = true;
+    for (const fieldMetadata of fields) {
+      const modifiedFieldMetadata = {
+        ...fieldMetadata,
+        isNullable: true,
+      };
 
       const typeOptions = computeFieldInputTypeOptions(
-        fieldMetadata,
+        modifiedFieldMetadata,
         GqlInputTypeDefinitionKind.Filter,
       );
 
       let generatedFields;
 
-      if (isFieldMetadataRelationOrMorphRelation(fieldMetadata)) {
+      if (isMorphOrRelationFlatFieldMetadata(fieldMetadata)) {
         generatedFields =
           this.relationFieldMetadataGqlInputTypeGenerator.generateSimpleRelationFieldFilterInputType(
             {
@@ -85,7 +93,7 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
           );
       } else if (isEnumFieldMetadataType(fieldMetadata.type)) {
         generatedFields = this.generateEnumFieldFilterInputType(
-          objectMetadata,
+          objectNameSingular,
           fieldMetadata,
           typeOptions,
         );
@@ -120,12 +128,12 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
   }
 
   private generateEnumFieldFilterInputType(
-    objectMetadata: ObjectMetadataEntity,
-    fieldMetadata: FieldMetadataEntity,
+    objectNameSingular: string,
+    fieldMetadata: FlatFieldMetadata,
     typeOptions: TypeOptions,
   ) {
     const key = computeEnumFieldGqlTypeKey(
-      objectMetadata.nameSingular,
+      objectNameSingular,
       fieldMetadata.name,
     );
 
@@ -152,7 +160,7 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
   }
 
   private generateCompositeFieldFilterInputType(
-    fieldMetadata: FieldMetadataEntity,
+    fieldMetadata: FlatFieldMetadata,
     typeOptions: TypeOptions,
   ) {
     const key = computeCompositeFieldInputTypeKey(
@@ -181,7 +189,7 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
   }
 
   private generateAtomicFieldFilterInputType(
-    fieldMetadata: FieldMetadataEntity,
+    fieldMetadata: FlatFieldMetadata,
     typeOptions: TypeOptions,
   ) {
     const type = this.typeMapperService.mapToFilterType(

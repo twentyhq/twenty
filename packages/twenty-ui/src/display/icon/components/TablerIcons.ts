@@ -252,6 +252,7 @@ export {
   IconNoteOff,
   IconNotes,
   IconNumber,
+  IconNumber123,
   IconNumber9,
   IconNumbers,
   IconPaperclip,
