@@ -141,11 +141,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_1110: VersionCommands = {
-      beforeSyncMetadata: [
-        this.createTwentyStandardApplicationCommand,
-        this.seedStandardApplicationsCommand,
-        this.cleanNullEquivalentValuesCommand,
-      ],
+      beforeSyncMetadata: [this.createTwentyStandardApplicationCommand],
       afterSyncMetadata: [
         this.cleanOrphanedUserWorkspacesCommand,
         this.cleanOrphanedRoleTargetsCommand,
@@ -158,6 +154,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.workspaceCustomApplicationIdNonNullableCommand,
         this.addMessagesImportScheduledSyncStageCommand,
         this.addCalendarEventsImportScheduledSyncStageCommand,
+        this.cleanNullEquivalentValuesCommand,
       ],
       afterSyncMetadata: [this.setStandardApplicationNotUninstallableCommand],
     };

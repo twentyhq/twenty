@@ -15,9 +15,7 @@ import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
-import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 
 @Module({
   imports: [
@@ -35,8 +33,6 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     DataSourceModule,
     WorkspaceSchemaManagerModule,
     ApplicationModule,
-    WorkspaceMigrationModule,
-    WorkspaceMigrationRunnerModule,
   ],
   providers: [
     CleanOrphanedUserWorkspacesCommand,

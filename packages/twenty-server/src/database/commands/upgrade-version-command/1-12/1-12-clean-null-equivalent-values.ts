@@ -21,6 +21,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { deprecatedGenerateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/deprecated-generate-default-value';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
@@ -58,6 +59,7 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
     protected readonly workspaceMigrationService: WorkspaceMigrationService,
     protected readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     protected readonly dataSourceService: DataSourceService,
+    protected readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
@@ -115,144 +117,163 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
         );
 
         if (
-          isDefined(field.defaultValue) &&
-          ((typeof field.defaultValue === 'string' &&
-            field.defaultValue === fieldDefaultDefaultValue) ||
-            this.objectEquals(field.defaultValue, fieldDefaultDefaultValue)) &&
-          field.type !== FieldMetadataType.ACTOR
-        ) {
-          this.logger.log(
-            `Processing field ${field.name} on object ${objectMetadataItem.nameSingular} (Table: ${tableName})`,
-          );
-          if (!isDryRun) {
-            if (isCompositeFieldMetadataType(field.type)) {
-              const compositeType = compositeTypeDefinitions.get(field.type);
+          !(
+            isDefined(field.defaultValue) &&
+            ((typeof field.defaultValue === 'string' &&
+              field.defaultValue === fieldDefaultDefaultValue) ||
+              this.objectEquals(
+                field.defaultValue,
+                fieldDefaultDefaultValue,
+              )) &&
+            field.type !== FieldMetadataType.ACTOR
+          )
+        )
+          continue;
 
-              if (isDefined(compositeType)) {
-                for (const property of compositeType.properties) {
-                  const columnName = computeCompositeColumnName(
-                    field.name,
-                    property,
-                  );
+        this.logger.log(
+          `Processing field ${field.name} on object ${objectMetadataItem.nameSingular} (Table: ${tableName})`,
+        );
+        if (!isDryRun) {
+          if (isCompositeFieldMetadataType(field.type)) {
+            const compositeType = compositeTypeDefinitions.get(field.type);
 
-                  await dataSource.query(
-                    `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${columnName}" DROP NOT NULL, ALTER COLUMN "${columnName}" DROP DEFAULT`,
-                    [],
-                    undefined,
-                    { shouldBypassPermissionChecks: true },
-                  );
+            if (isDefined(compositeType)) {
+              for (const property of compositeType.properties) {
+                const columnName = computeCompositeColumnName(
+                  field.name,
+                  property,
+                );
 
-                  await dataSource.query(
-                    `UPDATE "${schemaName}"."${tableName}" SET "${columnName}" = NULL WHERE "${columnName}" = ${field.defaultValue[property.name as keyof typeof field.defaultValue]}`,
-                    [],
-                    undefined,
-                    { shouldBypassPermissionChecks: true },
-                  );
-                }
+                await dataSource.query(
+                  `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${columnName}" DROP NOT NULL, ALTER COLUMN "${columnName}" DROP DEFAULT`,
+                  [],
+                  undefined,
+                  { shouldBypassPermissionChecks: true },
+                );
+
+                await dataSource.query(
+                  `UPDATE "${schemaName}"."${tableName}" SET "${columnName}" = NULL WHERE "${columnName}" = ${field.defaultValue[property.name as keyof typeof field.defaultValue]}`,
+                  [],
+                  undefined,
+                  { shouldBypassPermissionChecks: true },
+                );
               }
-            } else {
-              await dataSource.query(
-                `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${field.name}" DROP NOT NULL, ALTER COLUMN "${field.name}" DROP DEFAULT`,
-                [],
-                undefined,
-                { shouldBypassPermissionChecks: true },
-              );
-
-              await dataSource.query(
-                `UPDATE "${schemaName}"."${tableName}" SET "${field.name}" = NULL WHERE "${field.name}" = ${field.defaultValue}`,
-                [],
-                undefined,
-                { shouldBypassPermissionChecks: true },
-              );
             }
+          } else {
+            await dataSource.query(
+              `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${field.name}" DROP NOT NULL, ALTER COLUMN "${field.name}" DROP DEFAULT`,
+              [],
+              undefined,
+              { shouldBypassPermissionChecks: true },
+            );
 
-            await this.fieldMetadataRepository.update(field.id, {
-              isNullable: true,
-              defaultValue: null,
-            });
+            await dataSource.query(
+              `UPDATE "${schemaName}"."${tableName}" SET "${field.name}" = NULL WHERE "${field.name}" = ${field.defaultValue}`,
+              [],
+              undefined,
+              { shouldBypassPermissionChecks: true },
+            );
           }
 
-          const relevantIndexes = objectMetadataItem.indexMetadatas.filter(
-            (index) =>
-              index.isUnique &&
-              index.indexFieldMetadatas.some(
-                (ifm) => ifm.fieldMetadataId === field.id,
-              ),
+          await this.fieldMetadataRepository.update(field.id, {
+            isNullable: true,
+            defaultValue: null,
+          });
+
+          await this.workspaceManyOrAllFlatEntityMapsCacheService.invalidateFlatEntityMaps(
+            {
+              workspaceId,
+              flatMapsKeys: ['flatFieldMetadataMaps'],
+            },
           );
+        }
 
-          for (const index of relevantIndexes) {
-            if (!isDryRun) {
-              this.logger.log(
-                `Removing where clause from index ${index.name} on ${tableName}`,
-              );
+        const relevantIndexes = objectMetadataItem.indexMetadatas.filter(
+          (index) =>
+            index.isUnique &&
+            index.indexFieldMetadatas.some(
+              (ifm) => ifm.fieldMetadataId === field.id,
+            ),
+        );
 
-              await this.indexMetadataRepository.update(index.id, {
-                indexWhereClause: null,
-              });
+        for (const index of relevantIndexes) {
+          if (!isDryRun) {
+            this.logger.log(
+              `Removing where clause from index ${index.name} on ${tableName}`,
+            );
 
-              const columnNames = index.indexFieldMetadatas.flatMap(
-                (indexFieldMetadata) => {
-                  const fieldMetadata = objectMetadataItem.fields.find(
-                    (f) => f.id === indexFieldMetadata.fieldMetadataId,
+            await this.indexMetadataRepository.update(index.id, {
+              indexWhereClause: null,
+            });
+
+            await this.workspaceManyOrAllFlatEntityMapsCacheService.invalidateFlatEntityMaps(
+              {
+                workspaceId,
+                flatMapsKeys: ['flatIndexMaps'],
+              },
+            );
+
+            const columnNames = index.indexFieldMetadatas.flatMap(
+              (indexFieldMetadata) => {
+                const fieldMetadata = objectMetadataItem.fields.find(
+                  (f) => f.id === indexFieldMetadata.fieldMetadataId,
+                );
+
+                if (!isDefined(fieldMetadata)) {
+                  throw new Error(
+                    `Field metadata not found for index field metadata ${indexFieldMetadata.id}`,
                   );
+                }
 
-                  if (!isDefined(fieldMetadata)) {
-                    throw new Error(
-                      `Field metadata not found for index field metadata ${indexFieldMetadata.id}`,
+                if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+                  const compositeType = compositeTypeDefinitions.get(
+                    fieldMetadata.type,
+                  ) as CompositeType;
+
+                  const uniqueCompositeProperties =
+                    compositeType.properties.filter(
+                      (property) => property.isIncludedInUniqueConstraint,
                     );
-                  }
 
-                  if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-                    const compositeType = compositeTypeDefinitions.get(
-                      fieldMetadata.type,
-                    ) as CompositeType;
+                  return uniqueCompositeProperties.map((subField) =>
+                    computeCompositeColumnName(fieldMetadata.name, subField),
+                  );
+                }
 
-                    const uniqueCompositeProperties =
-                      compositeType.properties.filter(
-                        (property) => property.isIncludedInUniqueConstraint,
-                      );
+                return [fieldMetadata.name];
+              },
+            );
 
-                    return uniqueCompositeProperties.map((subField) =>
-                      computeCompositeColumnName(fieldMetadata.name, subField),
-                    );
-                  }
+            const dropIndexAction: WorkspaceMigrationIndexAction = {
+              action: WorkspaceMigrationIndexActionType.DROP,
+              name: index.name,
+              columns: [],
+              isUnique: true,
+            };
 
-                  return [fieldMetadata.name];
-                },
-              );
+            const createIndexAction: WorkspaceMigrationIndexAction = {
+              action: WorkspaceMigrationIndexActionType.CREATE,
+              name: index.name,
+              columns: columnNames,
+              isUnique: true,
+              where: null,
+            };
 
-              const dropIndexAction: WorkspaceMigrationIndexAction = {
-                action: WorkspaceMigrationIndexActionType.DROP,
-                name: index.name,
-                columns: [],
-                isUnique: true,
-              };
+            const migration: WorkspaceMigrationTableAction = {
+              name: tableName,
+              action: WorkspaceMigrationTableActionType.ALTER_INDEXES,
+              indexes: [dropIndexAction, createIndexAction],
+            };
 
-              const createIndexAction: WorkspaceMigrationIndexAction = {
-                action: WorkspaceMigrationIndexActionType.CREATE,
-                name: index.name,
-                columns: columnNames,
-                isUnique: true,
-              };
+            await this.workspaceMigrationService.createCustomMigration(
+              generateMigrationName(`update-index-${index.name}-remove-where`),
+              workspaceId,
+              [migration],
+            );
 
-              const migration: WorkspaceMigrationTableAction = {
-                name: tableName,
-                action: WorkspaceMigrationTableActionType.ALTER_INDEXES,
-                indexes: [dropIndexAction, createIndexAction],
-              };
-
-              await this.workspaceMigrationService.createCustomMigration(
-                generateMigrationName(
-                  `update-index-${index.name}-remove-where`,
-                ),
-                workspaceId,
-                [migration],
-              );
-
-              await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-                workspaceId,
-              );
-            }
+            await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+              workspaceId,
+            );
           }
         }
       }
