@@ -1,9 +1,6 @@
 import { UserInputError } from 'apollo-server-core';
 import { isDefined } from 'class-validator';
-import {
-  FieldMetadataType,
-  type ObjectRecordGroupByDateGranularity,
-} from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   GraphqlQueryRunnerException,
@@ -153,14 +150,14 @@ export const parseGroupByRelationField = ({
       nestedFieldMetadata.type === FieldMetadataType.DATE_TIME) &&
     isGroupByDateFieldDefinition(nestedFieldGroupByDefinition)
   ) {
+    const dateFieldDefinition =
+      nestedFieldGroupByDefinition as DateFieldGroupByDefinition;
+
     groupByFields.push({
       fieldMetadata,
       nestedFieldMetadata,
-      dateGranularity: (
-        nestedFieldGroupByDefinition as {
-          granularity: ObjectRecordGroupByDateGranularity;
-        }
-      ).granularity,
+      dateGranularity: dateFieldDefinition.granularity,
+      weekStartDay: dateFieldDefinition.weekStartDay,
     });
 
     return;

@@ -109,6 +109,7 @@ export type {
   FilterableAndTSVectorFieldType,
 } from './FilterableFieldType';
 export { FILTERABLE_FIELD_TYPES } from './FilterableFieldType';
+export { FirstDayOfTheWeek } from './FirstDayOfTheWeek';
 export type { FromTo } from './FromToType';
 export type { IsEmptyRecord } from './IsEmptyRecord.type';
 export type { IsExactly } from './IsExactly';
