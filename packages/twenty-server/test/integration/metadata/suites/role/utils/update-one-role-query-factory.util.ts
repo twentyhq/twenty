@@ -8,8 +8,25 @@ export type UpdateOneRoleFactoryInput = {
   updatePayload: UpdateRolePayload;
 };
 
+const DEFAULT_ROLE_GQL_FIELDS = `
+  id
+  label
+  description
+  icon
+  isEditable
+  canUpdateAllSettings
+  canAccessAllTools
+  canReadAllObjectRecords
+  canUpdateAllObjectRecords
+  canSoftDeleteAllObjectRecords
+  canDestroyAllObjectRecords
+  canBeAssignedToUsers
+  canBeAssignedToAgents
+  canBeAssignedToApiKeys
+`;
+
 export const updateOneRoleQueryFactory = ({
-  gqlFields = 'id',
+  gqlFields = DEFAULT_ROLE_GQL_FIELDS,
   input,
 }: PerformMetadataQueryParams<UpdateOneRoleFactoryInput>) => ({
   query: gql`
