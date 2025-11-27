@@ -26,13 +26,10 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { SidePanelInformationBanner } from 'twenty-ui/display';
 
-import {
-  FieldMetadataType,
-  GraphType,
-  type PageLayoutWidget,
-} from '~/generated/graphql';
+import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
 
 const StyledCommandMenuContainer = styled.div`
   display: flex;
@@ -142,9 +139,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
     (field) => field.id === primaryAxisFieldMetadataId,
   );
 
-  const isPrimaryAxisDate =
-    primaryAxisField?.type === FieldMetadataType.DATE ||
-    primaryAxisField?.type === FieldMetadataType.DATE_TIME;
+  const isPrimaryAxisDate = isFieldMetadataDateKind(primaryAxisField?.type);
 
   return (
     <StyledCommandMenuContainer>

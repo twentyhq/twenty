@@ -8,8 +8,7 @@ import {
   type ObjectRecordOrderByForScalarField,
   type ObjectRecordOrderByWithGroupByDateField,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import {
   type BarChartConfiguration,
   type LineChartConfiguration,
@@ -55,9 +54,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
     );
   }
 
-  const isFieldXDate =
-    groupByFieldX.type === FieldMetadataType.DATE ||
-    groupByFieldX.type === FieldMetadataType.DATE_TIME;
+  const isFieldXDate = isFieldMetadataDateKind(groupByFieldX.type);
 
   const groupBy: Array<GroupByFieldObject> = [];
 
@@ -73,9 +70,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
   );
 
   if (isDefined(groupByFieldY)) {
-    const isFieldYDate =
-      groupByFieldY.type === FieldMetadataType.DATE ||
-      groupByFieldY.type === FieldMetadataType.DATE_TIME;
+    const isFieldYDate = isFieldMetadataDateKind(groupByFieldY.type);
 
     groupBy.push(
       buildGroupByFieldObject({
@@ -115,9 +110,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
     isDefined(groupByFieldY) &&
     isDefined(chartConfiguration.secondaryAxisOrderBy)
   ) {
-    const isFieldYDateForOrderBy =
-      groupByFieldY.type === FieldMetadataType.DATE ||
-      groupByFieldY.type === FieldMetadataType.DATE_TIME;
+    const isFieldYDateForOrderBy = isFieldMetadataDateKind(groupByFieldY.type);
 
     orderBy.push(
       getGroupByOrderBy({

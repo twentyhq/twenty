@@ -4,9 +4,7 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
 import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
 export type GroupByFieldObject = Record<
   string,
@@ -24,9 +22,7 @@ export const buildGroupByFieldObject = ({
 }): GroupByFieldObject => {
   const isRelation = isFieldRelation(field) || isFieldMorphRelation(field);
   const isComposite = isCompositeFieldType(field.type);
-  const isDateField =
-    field.type === FieldMetadataType.DATE ||
-    field.type === FieldMetadataType.DATE_TIME;
+  const isDateField = isFieldMetadataDateKind(field.type);
 
   if (isRelation) {
     if (!isDefined(subFieldName)) {

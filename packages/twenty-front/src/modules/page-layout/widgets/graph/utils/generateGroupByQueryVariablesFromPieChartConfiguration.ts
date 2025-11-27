@@ -8,9 +8,8 @@ import {
   type ObjectRecordOrderByForScalarField,
   type ObjectRecordOrderByWithGroupByDateField,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { type PieChartConfiguration } from '~/generated/graphql';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
   buildGroupByFieldObject,
   type GroupByFieldObject,
@@ -42,9 +41,7 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
     );
   }
 
-  const isFieldDate =
-    groupByField.type === FieldMetadataType.DATE ||
-    groupByField.type === FieldMetadataType.DATE_TIME;
+  const isFieldDate = isFieldMetadataDateKind(groupByField.type);
 
   const groupBy: Array<GroupByFieldObject> = [
     buildGroupByFieldObject({
