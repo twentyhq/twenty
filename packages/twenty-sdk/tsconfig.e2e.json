@@ -9,12 +9,9 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "declaration": false,
     "declarationMap": false,
-    "sourceMap": true,
     "types": ["jest", "node"]
   },
   "include": [

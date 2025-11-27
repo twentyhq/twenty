@@ -5,16 +5,15 @@
     "rootDir": "./src/cli",
     "module": "commonjs",
     "target": "ES2022",
-    "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
+    "paths": {
+      "@/cli/*": ["./cli/*"]
+    }
   },
   "include": ["src/cli/**/*.ts"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts", "**/*.e2e-spec.ts", "**/__tests__/**"]

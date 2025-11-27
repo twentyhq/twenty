@@ -23,7 +23,7 @@ export { Field } from './field-metadata/field.decorator';
 export { OnDeleteAction } from './field-metadata/on-delete-action';
 export { RelationType } from './field-metadata/relation-type';
 export { Relation } from './field-metadata/relation.decorator';
+export type { FunctionConfig } from './function-config';
 export { Object } from './object-metadata/object.decorator';
 export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './object-metadata/standard-object-ids';
-export type { FunctionConfig } from 'src/application/function-config';
 export type { SyncableEntityOptions } from './syncable-entity-options.type';

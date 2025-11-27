@@ -1,25 +1,14 @@
 {
-  "compileOnSave": false,
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "sourceMap": true,
     "declaration": true,
     "outDir": "./dist",
     "rootDir": "src",
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
     "allowUnreachableCode": false,
     "strictNullChecks": true,
     "alwaysStrict": true,
     "noImplicitAny": true,
     "strictBindCallApply": false,
-    "target": "es2018",
-    "module": "esnext",
-    "lib": ["es2020", "dom"],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "resolveJsonModule": true,
     "paths": {
       "@/*": ["./src/*"]
     }

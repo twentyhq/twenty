@@ -5,7 +5,7 @@ import { join } from 'path';
 import camelcase from 'lodash.camelcase';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
 import { getObjectDecoratedClass } from '../utils/get-object-decorated-class';
-import { getFunctionBaseFile } from 'src/cli/utils/get-function-base-file';
+import { getFunctionBaseFile } from '../utils/get-function-base-file';
 import { convertToLabel } from '../utils/convert-to-label';
 
 export enum SyncableEntity {
