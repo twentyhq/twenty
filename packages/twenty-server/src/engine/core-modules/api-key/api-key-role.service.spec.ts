@@ -79,12 +79,6 @@ describe('ApiKeyRoleService', () => {
     apiKey: mockApiKey,
   } as RoleTargetsEntity;
 
-  const mockNewRoleTarget = {
-    ...mockRoleTarget,
-    id: 'role-target-456',
-    roleId: mockNewRoleId,
-  } as RoleTargetsEntity;
-
   beforeEach(async () => {
     mockRoleTargetsRepository = {
       save: jest.fn(),
