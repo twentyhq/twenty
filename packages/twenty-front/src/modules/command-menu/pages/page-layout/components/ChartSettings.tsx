@@ -181,7 +181,6 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                   graphType={currentGraphType}
                   isPrimaryAxisDate={isPrimaryAxisDate}
                   primaryAxisDateGranularity={primaryAxisDateGranularity}
-                  primaryAxisFieldLabel={primaryAxisField?.label}
                 />
               )}
               {visibleItems.map((item) => {
