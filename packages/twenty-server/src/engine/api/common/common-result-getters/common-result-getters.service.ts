@@ -18,7 +18,10 @@ import { FileService } from 'src/engine/core-modules/file/services/file.service'
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import {
+  buildFieldMapsFromFlatObjectMetadata,
+  type FieldMapsForObject,
+} from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -54,6 +57,11 @@ export class CommonResultGettersService {
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     workspaceId: string,
   ) {
+    const fieldMaps = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
+
     return await Promise.all(
       recordArray.map(
         async (record: ObjectRecord) =>
@@ -63,6 +71,7 @@ export class CommonResultGettersService {
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
             workspaceId,
+            fieldMaps,
           ),
       ),
     );
@@ -74,13 +83,18 @@ export class CommonResultGettersService {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     workspaceId: string,
+    fieldMapsForObject?: FieldMapsForObject,
   ): Promise<ObjectRecord> {
     const handler = this.getHandler(flatObjectMetadata.nameSingular);
 
-    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
-    );
+    const fieldMaps =
+      fieldMapsForObject ??
+      buildFieldMapsFromFlatObjectMetadata(
+        flatFieldMetadataMaps,
+        flatObjectMetadata,
+      );
+
+    const { fieldIdByName } = fieldMaps;
 
     const relationFields = Object.keys(record)
       .map(

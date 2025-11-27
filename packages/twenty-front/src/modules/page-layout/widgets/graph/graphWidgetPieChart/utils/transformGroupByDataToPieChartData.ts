@@ -2,8 +2,10 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
+import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
@@ -95,6 +97,7 @@ export const transformGroupByDataToPieChartData = ({
     return {
       id,
       value,
+      color: (configuration.color ?? GRAPH_DEFAULT_COLOR) as GraphColor,
     };
   });
 

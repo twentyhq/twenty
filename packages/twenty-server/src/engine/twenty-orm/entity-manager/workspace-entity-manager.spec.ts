@@ -13,6 +13,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
+import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 
 import { WorkspaceEntityManager } from './workspace-entity-manager';
 
@@ -23,7 +24,7 @@ jest.mock('src/engine/twenty-orm/repository/permissions.utils', () => ({
 jest.mock(
   'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util',
   () => ({
-    getObjectMetadataFromEntityTarget: jest.fn().mockReturnValue({}),
+    getObjectMetadataFromEntityTarget: jest.fn(),
   }),
 );
 
@@ -116,6 +117,10 @@ describe('WorkspaceEntityManager', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
+
+    (getObjectMetadataFromEntityTarget as jest.Mock).mockReturnValue(
+      mockFlatObjectMetadata,
+    );
 
     const mockFlatFieldMetadata: FlatFieldMetadata = {
       id: 'field-id',
