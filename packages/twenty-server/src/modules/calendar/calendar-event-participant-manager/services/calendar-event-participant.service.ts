@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'class-validator';
 import chunk from 'lodash.chunk';
 import differenceWith from 'lodash.differencewith';
-import { Any } from 'typeorm';
 import { FieldActorSource } from 'twenty-shared/types';
+import { Any } from 'typeorm';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -152,13 +152,22 @@ export class CalendarEventParticipantService {
       savedParticipants.push(...savedParticipantsChunk.raw);
     }
 
+    const savedParticipantsWithoutNulls = savedParticipants.filter(
+      (
+        participant,
+      ): participant is typeof participant & {
+        handle: string;
+        displayName: string;
+      } => isDefined(participant.handle) && isDefined(participant.displayName),
+    );
+
     if (calendarChannel.isContactAutoCreationEnabled) {
       await this.messageQueueService.add<CreateCompanyAndContactJobData>(
         CreateCompanyAndContactJob.name,
         {
           workspaceId,
           connectedAccount,
-          contactsToCreate: savedParticipants,
+          contactsToCreate: savedParticipantsWithoutNulls,
           source: FieldActorSource.CALENDAR,
         },
       );

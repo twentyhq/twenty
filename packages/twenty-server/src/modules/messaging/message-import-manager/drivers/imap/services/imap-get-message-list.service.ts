@@ -88,7 +88,7 @@ export class ImapGetMessageListService {
       return messageFolders.map((folder) => ({
         messageExternalIds: [],
         nextSyncCursor: folder.syncCursor || '',
-        previousSyncCursor: folder.syncCursor,
+        previousSyncCursor: folder.syncCursor || '',
         messageExternalIdsToDelete: [],
         folderId: folder.id,
       }));
