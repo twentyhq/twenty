@@ -143,14 +143,18 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
   const handleSelectField = (fieldMetadataItem: FieldMetadataItem) => {
     if (isFieldRelation(fieldMetadataItem)) {
       setSelectedRelationField(fieldMetadataItem);
-    } else if (isCompositeFieldType(fieldMetadataItem.type)) {
-      setSelectedCompositeField(fieldMetadataItem);
-    } else {
-      updateCurrentWidgetConfig({
-        configToUpdate: buildConfigUpdate(fieldMetadataItem.id, null),
-      });
-      closeDropdown();
+      return;
     }
+
+    if (isCompositeFieldType(fieldMetadataItem.type)) {
+      setSelectedCompositeField(fieldMetadataItem);
+      return;
+    }
+
+    updateCurrentWidgetConfig({
+      configToUpdate: buildConfigUpdate(fieldMetadataItem.id, null),
+    });
+    closeDropdown();
   };
 
   const handleSelectNone = () => {
