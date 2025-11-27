@@ -76,14 +76,14 @@ export class FlatServerlessFunctionValidatorService {
     return validationResult;
   }
 
-  public async validateFlatServerlessFunctionCreation({
+  public validateFlatServerlessFunctionCreation({
     flatEntityToValidate: flatServerlessFunctionToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatServerlessFunctionMaps: optimisticFlatServerlessFunctionMaps,
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.serverlessFunction
-  >): Promise<FailedFlatEntityValidation<FlatServerlessFunction>> {
+  >): FailedFlatEntityValidation<FlatServerlessFunction> {
     const validationResult: FailedFlatEntityValidation<FlatServerlessFunction> =
       {
         type: 'create_serverless_function',

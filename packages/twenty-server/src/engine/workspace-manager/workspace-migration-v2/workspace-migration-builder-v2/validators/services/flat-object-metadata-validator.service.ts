@@ -156,7 +156,7 @@ export class FlatObjectMetadataValidatorService {
     return validationResult;
   }
 
-  public async validateFlatObjectMetadataCreation({
+  public validateFlatObjectMetadataCreation({
     flatEntityToValidate: flatObjectMetadataToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
@@ -164,7 +164,7 @@ export class FlatObjectMetadataValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
-  >): Promise<FailedFlatEntityValidation<FlatObjectMetadata>> {
+  >): FailedFlatEntityValidation<FlatObjectMetadata> {
     const objectValidationResult: FailedFlatEntityValidation<FlatObjectMetadata> =
       {
         type: 'create_object',
