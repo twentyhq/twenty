@@ -129,4 +129,52 @@ describe('resolveInput', () => {
       }),
     ).toBe('{ "a": "str" }');
   });
+
+  it('should preserve multiple objects in array with same field but different values', () => {
+    const recordFilters = [
+      {
+        id: 'filter-1',
+        fieldMetadataId: 'name-field-id',
+        value: 'Google',
+        type: 'TEXT',
+        operand: 'CONTAINS',
+        recordFilterGroupId: 'group-1',
+      },
+      {
+        id: 'filter-2',
+        fieldMetadataId: 'name-field-id',
+        value: '{{result.name}}',
+        type: 'TEXT',
+        operand: 'CONTAINS',
+        recordFilterGroupId: 'group-1',
+      },
+    ];
+
+    const context = {
+      result: {
+        name: 'Amdocs',
+      },
+    };
+
+    const resolved = resolveInput(recordFilters, context);
+
+    expect(resolved).toEqual([
+      {
+        id: 'filter-1',
+        fieldMetadataId: 'name-field-id',
+        value: 'Google',
+        type: 'TEXT',
+        operand: 'CONTAINS',
+        recordFilterGroupId: 'group-1',
+      },
+      {
+        id: 'filter-2',
+        fieldMetadataId: 'name-field-id',
+        value: 'Amdocs',
+        type: 'TEXT',
+        operand: 'CONTAINS',
+        recordFilterGroupId: 'group-1',
+      },
+    ]);
+  });
 });
