@@ -100,6 +100,52 @@ describe('Role update should fail', () => {
     });
   });
 
+  describe('updating role with existing write permissions', () => {
+    let roleWithWritePermissionsId: string;
+
+    beforeEach(async () => {
+      // Create a role with read=true and write=true
+      const { data } = await createOneRole({
+        expectToFail: false,
+        input: {
+          label: 'Role With Write Permissions',
+          description: 'Role with write permissions for update tests',
+          canUpdateAllSettings: false,
+          canAccessAllTools: false,
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: true,
+          canSoftDeleteAllObjectRecords: true,
+          canDestroyAllObjectRecords: true,
+        },
+      });
+
+      roleWithWritePermissionsId = data.createOneRole.id;
+    });
+
+    afterEach(async () => {
+      await deleteOneRole({
+        expectToFail: false,
+        input: { idToDelete: roleWithWritePermissionsId },
+      });
+    });
+
+    it('should fail when updating only canReadAllObjectRecords to false while role has existing write permissions', async () => {
+      const { errors } = await updateOneRole({
+        expectToFail: true,
+        input: {
+          idToUpdate: roleWithWritePermissionsId,
+          updatePayload: {
+            canReadAllObjectRecords: false,
+          },
+        },
+      });
+
+      expectOneNotInternalServerErrorSnapshot({
+        errors,
+      });
+    });
+  });
+
   const failingRoleUpdateTestCases: UpdateOneRoleTestingContext = [
     {
       title: 'when updating label to one that already exists',
@@ -113,7 +159,6 @@ describe('Role update should fail', () => {
       },
     },
     {
-      only: true,
       title: 'when updating a non-editable system role',
       context: {
         input: (testSetup) => ({

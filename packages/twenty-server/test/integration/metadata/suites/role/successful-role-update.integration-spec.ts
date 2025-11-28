@@ -193,4 +193,69 @@ describe('Role update should succeed', () => {
       canBeAssignedToAgents: true,
     });
   });
+
+  it('should update role to read=false when explicitly setting all write permissions to false', async () => {
+    // First update the role to have write permissions
+    await updateOneRole({
+      expectToFail: false,
+      input: {
+        idToUpdate: testRoleId,
+        updatePayload: {
+          canUpdateAllObjectRecords: true,
+          canSoftDeleteAllObjectRecords: true,
+          canDestroyAllObjectRecords: true,
+        },
+      },
+    });
+
+    // Now update to read=false with all write permissions explicitly set to false
+    const { data, errors } = await updateOneRole({
+      expectToFail: false,
+      input: {
+        idToUpdate: testRoleId,
+        updatePayload: {
+          canReadAllObjectRecords: false,
+          canUpdateAllObjectRecords: false,
+          canSoftDeleteAllObjectRecords: false,
+          canDestroyAllObjectRecords: false,
+        },
+      },
+    });
+
+    expect(errors).toBeUndefined();
+    expect(data).toBeDefined();
+    expect(data.updateOneRole).toMatchObject({
+      id: testRoleId,
+      canReadAllObjectRecords: false,
+      canUpdateAllObjectRecords: false,
+      canSoftDeleteAllObjectRecords: false,
+      canDestroyAllObjectRecords: false,
+    });
+  });
+
+  it('should update role from read=true to read=false with all write=false', async () => {
+    // Start with read=true, write=false (default from beforeEach)
+    const { data, errors } = await updateOneRole({
+      expectToFail: false,
+      input: {
+        idToUpdate: testRoleId,
+        updatePayload: {
+          canReadAllObjectRecords: false,
+          canUpdateAllObjectRecords: false,
+          canSoftDeleteAllObjectRecords: false,
+          canDestroyAllObjectRecords: false,
+        },
+      },
+    });
+
+    expect(errors).toBeUndefined();
+    expect(data).toBeDefined();
+    expect(data.updateOneRole).toMatchObject({
+      id: testRoleId,
+      canReadAllObjectRecords: false,
+      canUpdateAllObjectRecords: false,
+      canSoftDeleteAllObjectRecords: false,
+      canDestroyAllObjectRecords: false,
+    });
+  });
 });

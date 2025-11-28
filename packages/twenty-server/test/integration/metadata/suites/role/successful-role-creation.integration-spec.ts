@@ -51,4 +51,62 @@ describe('Role creation should succeed', () => {
       canBeAssignedToApiKeys: false,
     });
   });
+
+  it('should create role with read and write permissions', async () => {
+    const { data, errors } = await createOneRole({
+      expectToFail: false,
+      input: {
+        label: 'Role With All Permissions',
+        description: 'Role with read and write permissions',
+        canUpdateAllSettings: true,
+        canAccessAllTools: true,
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: true,
+        canSoftDeleteAllObjectRecords: true,
+        canDestroyAllObjectRecords: true,
+      },
+    });
+
+    createdRoleId = data?.createOneRole?.id;
+
+    expect(errors).toBeUndefined();
+    expect(data).toBeDefined();
+    expect(data.createOneRole).toMatchObject({
+      id: expect.any(String),
+      label: 'Role With All Permissions',
+      canReadAllObjectRecords: true,
+      canUpdateAllObjectRecords: true,
+      canSoftDeleteAllObjectRecords: true,
+      canDestroyAllObjectRecords: true,
+    });
+  });
+
+  it('should create role with read=false and all write permissions=false', async () => {
+    const { data, errors } = await createOneRole({
+      expectToFail: false,
+      input: {
+        label: 'Read-Only False Role',
+        description: 'Role with no read or write permissions',
+        canUpdateAllSettings: false,
+        canAccessAllTools: false,
+        canReadAllObjectRecords: false,
+        canUpdateAllObjectRecords: false,
+        canSoftDeleteAllObjectRecords: false,
+        canDestroyAllObjectRecords: false,
+      },
+    });
+
+    createdRoleId = data?.createOneRole?.id;
+
+    expect(errors).toBeUndefined();
+    expect(data).toBeDefined();
+    expect(data.createOneRole).toMatchObject({
+      id: expect.any(String),
+      label: 'Read-Only False Role',
+      canReadAllObjectRecords: false,
+      canUpdateAllObjectRecords: false,
+      canSoftDeleteAllObjectRecords: false,
+      canDestroyAllObjectRecords: false,
+    });
+  });
 });

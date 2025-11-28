@@ -9,7 +9,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { fromCreateRoleInputToFlatRoleToCreate } from 'src/engine/metadata-modules/flat-role/utils/from-create-role-input-to-flat-role-to-create.util';
 import { fromDeleteRoleInputToFlatRoleOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-delete-role-input-to-flat-role-or-throw.util';
 import { fromUpdateRoleInputToFlatRoleToUpdateOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util';
@@ -22,6 +21,7 @@ import {
 import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
@@ -34,40 +34,41 @@ export class RoleService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(RoleEntity)
+    private readonly roleRepository: Repository<RoleEntity>,
     private readonly userRoleService: UserRoleService,
   ) {}
 
-  public async getWorkspaceRoles(workspaceId: string): Promise<RoleDTO[]> {
-    const { flatRoleMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRoleMaps'],
-        },
-      );
-
-    return Object.values(flatRoleMaps.byId)
-      .filter(isDefined)
-      .map(fromFlatRoleToRoleDto);
+  public async getWorkspaceRoles(workspaceId: string): Promise<RoleEntity[]> {
+    return this.roleRepository.find({
+      where: {
+        workspaceId,
+      },
+      relations: {
+        roleTargets: true,
+        permissionFlags: true,
+        objectPermissions: true,
+        fieldPermissions: true,
+      },
+    });
   }
 
   public async getRoleById(
     id: string,
     workspaceId: string,
-  ): Promise<RoleDTO | null> {
-    const { flatRoleMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRoleMaps'],
-        },
-      );
-    const flatRole = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: id,
-      flatEntityMaps: flatRoleMaps,
+  ): Promise<RoleEntity | null> {
+    return this.roleRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+      },
+      relations: {
+        roleTargets: true,
+        permissionFlags: true,
+        objectPermissions: true,
+        fieldPermissions: true,
+      },
     });
-
-    return isDefined(flatRole) ? fromFlatRoleToRoleDto(flatRole) : null;
   }
 
   public async createRole({
