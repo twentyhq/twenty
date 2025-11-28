@@ -230,8 +230,6 @@ export class WorkspaceInvitationService {
     workspace: WorkspaceEntity,
     sender: WorkspaceMemberWorkspaceEntity,
   ) {
-    await this.throttleInvitationSending(workspace.id);
-
     const appToken = await this.appTokenRepository.findOne({
       where: {
         id: appTokenId,
@@ -246,6 +244,11 @@ export class WorkspaceInvitationService {
         WorkspaceInvitationExceptionCode.INVALID_INVITATION,
       );
     }
+
+    await this.throttleInvitationResending(
+      workspace.id,
+      appToken.context.email,
+    );
 
     await this.appTokenRepository.delete(appToken.id);
 
@@ -426,17 +429,37 @@ export class WorkspaceInvitationService {
     return this.appTokenRepository.save(invitationToken);
   }
 
-  private async throttleInvitationSending(workspaceId: string) {
+  private async throttleInvitationResending(
+    workspaceId: string,
+    email: string,
+  ) {
     try {
+      //limit invitation resending for a specific invite in a workspace
       await this.throttlerService.tokenBucketThrottleOrThrow(
-        `workspace-invitation:throttler:${workspaceId}`,
+        `invitation-resending-workspace:throttler:${workspaceId}-${email}`,
         1,
-        this.twentyConfigService.get('WORKSPACE_INVITATION_THROTTLE_LIMIT'),
-        this.twentyConfigService.get('WORKSPACE_INVITATION_THROTTLE_TTL_IN_MS'),
+        this.twentyConfigService.get(
+          'INVITATION_RESENDING_WORKSPACE_INVITE_THROTTLE_LIMIT',
+        ),
+        this.twentyConfigService.get(
+          'INVITATION_RESENDING_WORKSPACE_INVITE_THROTTLE_TTL_IN_MS',
+        ),
+      );
+
+      //limit invitation resending for a workspace
+      await this.throttlerService.tokenBucketThrottleOrThrow(
+        `invitation-resending-workspace:throttler:${workspaceId}`,
+        1,
+        this.twentyConfigService.get(
+          'INVITATION_RESENDING_WORKSPACE_THROTTLE_LIMIT',
+        ),
+        this.twentyConfigService.get(
+          'INVITATION_RESENDING_WORKSPACE_THROTTLE_TTL_IN_MS',
+        ),
       );
     } catch {
       throw new WorkspaceInvitationException(
-        'Workspace invitation sending rate limit exceeded.',
+        'Workspace invitation resending rate limit exceeded.',
         WorkspaceInvitationExceptionCode.INVALID_INVITATION,
         {
           userFriendlyMessage: msg`Too many workspace invitations sent. Please try again later.`,
