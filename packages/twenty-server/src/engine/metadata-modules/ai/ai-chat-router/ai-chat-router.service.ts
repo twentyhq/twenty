@@ -7,7 +7,7 @@ import { IsNull, type Repository } from 'typeorm';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-workflow-related-object.util';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
-import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { HELPER_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/helper-agent';
 
 import { AiChatRouterPlanGeneratorService } from './services/ai-chat-router-plan-generator.service';
