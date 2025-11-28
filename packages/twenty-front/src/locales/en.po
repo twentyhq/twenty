@@ -8536,11 +8536,6 @@ msgstr "Some"
 msgid "Some folders"
 msgstr "Some folders"
 
-#. js-lingui-id: yHwG3y
-#: src/modules/command-menu/pages/page-layout/components/ChartTypeSelectionSection.tsx
-msgid "Soon"
-msgstr "Soon"
-
 #. js-lingui-id: wTrpxV
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Sorry, something went wrong"
