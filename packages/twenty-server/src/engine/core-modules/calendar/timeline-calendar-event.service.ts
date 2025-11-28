@@ -112,7 +112,7 @@ export class TimelineCalendarEventService {
             participant.person?.avatarUrl ||
             participant.workspaceMember?.avatarUrl ||
             '',
-          handle: participant.handle,
+          handle: participant.handle ?? '',
         }),
       );
 
@@ -139,15 +139,17 @@ export class TimelineCalendarEventService {
         title:
           visibility === CalendarChannelVisibility.METADATA
             ? FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
-            : event.title,
+            : (event.title ?? ''),
         description:
           visibility === CalendarChannelVisibility.METADATA
             ? FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
-            : event.description,
+            : (event.description ?? ''),
         startsAt: event.startsAt as unknown as Date,
         endsAt: event.endsAt as unknown as Date,
         participants,
         visibility,
+        location: event.location ?? '',
+        conferenceSolution: event.conferenceSolution ?? '',
       };
     });
 

@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -39,7 +39,8 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Message id from the message header`,
     icon: 'IconHash',
   })
-  headerMessageId: string;
+  @WorkspaceIsNullable()
+  headerMessageId: string | null;
 
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.subject,
@@ -48,7 +49,8 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Subject`,
     icon: 'IconMessage',
   })
-  subject: string;
+  @WorkspaceIsNullable()
+  subject: string | null;
 
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.text,
@@ -57,7 +59,8 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Text`,
     icon: 'IconMessage',
   })
-  text: string;
+  @WorkspaceIsNullable()
+  text: string | null;
 
   @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.receivedAt,

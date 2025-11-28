@@ -218,7 +218,7 @@ export class SyncMessageFoldersService {
       if (isDefined(existingFolder.externalId)) {
         existingFolderMap.set(existingFolder.externalId, existingFolder);
       }
-      existingFolderMap.set(existingFolder.name, existingFolder);
+      existingFolderMap.set(existingFolder.name ?? '', existingFolder);
     }
 
     return existingFolderMap;
@@ -250,6 +250,6 @@ export class SyncMessageFoldersService {
       return MessageFolderName.SENT_ITEMS;
     }
 
-    return folder.name;
+    return folder.name ?? '';
   }
 }
