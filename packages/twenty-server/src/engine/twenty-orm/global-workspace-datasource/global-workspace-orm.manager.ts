@@ -22,7 +22,7 @@ import {
   withWorkspaceContext,
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 
 @Injectable()
@@ -30,10 +30,10 @@ export class GlobalWorkspaceOrmManager {
   constructor(
     private readonly globalWorkspaceDataSourceService: GlobalWorkspaceDataSourceService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly entitySchemaFactory: EntitySchemaFactory,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async getRepository<T extends ObjectLiteral>(
@@ -91,16 +91,11 @@ export class GlobalWorkspaceOrmManager {
     const workspaceId = authContext.workspace.id;
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: [
-            'flatObjectMetadataMaps',
-            'flatFieldMetadataMaps',
-            'flatIndexMaps',
-          ],
-        },
-      );
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+        'flatIndexMaps',
+      ]);
 
     const { idByNameSingular: objectIdByNameSingular } =
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
