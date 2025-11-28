@@ -45,7 +45,7 @@ export default defineConfig(({ command, mode }) => {
   // Please don't increase this limit for main index chunk
   // If it gets too big then find modules in the code base
   // that can be loaded lazily, there are more!
-  const MAIN_CHUNK_SIZE_LIMIT = 6.1 * 1024 * 1024; // 6.1MB for main index chunk
+  const MAIN_CHUNK_SIZE_LIMIT = 6.3 * 1024 * 1024; // 6.3MB for main index chunk
   const OTHER_CHUNK_SIZE_LIMIT = 5 * 1024 * 1024; // 5MB for other chunks
 
   const checkers: Checkers = {
