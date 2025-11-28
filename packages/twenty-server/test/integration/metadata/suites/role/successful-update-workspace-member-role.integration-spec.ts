@@ -55,6 +55,7 @@ describe('Workspace member role update should succeed', () => {
           }
         `,
     });
+
     shouldRestorePhilRole = true;
 
     expect(updateAdminData.updateWorkspaceMemberRole).toMatchObject({
