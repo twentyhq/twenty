@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -61,9 +61,9 @@ export class CalendarFetchEventsService {
       };
 
       if (!isDefined(calendarChannel.syncCursor)) {
-        throw new CustomError(
+        throw new CalendarEventImportDriverException(
           'Sync cursor is required',
-          CalendarEventImportDriverExceptionCode.SYNC_CURSOR_REQUIRED,
+          CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR,
         );
       }
 

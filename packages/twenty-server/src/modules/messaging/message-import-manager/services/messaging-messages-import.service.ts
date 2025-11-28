@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -16,8 +16,11 @@ import {
   MessageChannelSyncStage,
   type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
-import { MessageImportManagerExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/message-import-manager.exception';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import {
@@ -118,16 +121,16 @@ export class MessagingMessagesImportService {
       );
 
       if (!isDefined(messageChannel.handle)) {
-        throw new CustomError(
+        throw new MessageImportDriverException(
           'Message channel handle is required',
-          MessageImportManagerExceptionCode.HANDLE_REQUIRED,
+          MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
         );
       }
 
       if (!isDefined(connectedAccountWithFreshTokens.handleAliases)) {
-        throw new CustomError(
+        throw new MessageImportDriverException(
           'Message channel handle is required',
-          MessageImportManagerExceptionCode.HANDLE_REQUIRED,
+          MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
         );
       }
 

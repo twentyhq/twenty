@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Any } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -12,7 +12,10 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
 import { CALENDAR_EVENT_IMPORT_BATCH_SIZE } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-event-import-batch-size';
-import { CalendarEventImportDriverExceptionCode } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
+import {
+  CalendarEventImportDriverException,
+  CalendarEventImportDriverExceptionCode,
+} from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 import { MicrosoftCalendarImportEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/services/microsoft-calendar-import-events.service';
 import {
   CalendarEventImportErrorHandlerService,
@@ -98,9 +101,9 @@ export class CalendarEventsImportService {
         !isDefined(connectedAccount.handleAliases) ||
         !isDefined(calendarChannel.handle)
       ) {
-        throw new CustomError(
+        throw new CalendarEventImportDriverException(
           'Calendar channel handle or Handle aliases are required',
-          CalendarEventImportDriverExceptionCode.HANDLE_ALIASES_REQUIRED,
+          CalendarEventImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
         );
       }
 

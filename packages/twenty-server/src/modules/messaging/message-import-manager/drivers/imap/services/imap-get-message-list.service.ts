@@ -1,9 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type ImapFlow } from 'imapflow';
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapIncrementalSyncService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-incremental-sync.service';
 import { ImapMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-list-fetch-error-handler.service';
@@ -13,7 +17,6 @@ import {
   ImapSyncCursor,
   parseSyncCursor,
 } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-sync-cursor.util';
-import { MessageImportManagerExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/message-import-manager.exception';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
   type GetMessageListsResponse,
@@ -105,9 +108,9 @@ export class ImapGetMessageListService {
     messageFolder: Pick<MessageFolderWorkspaceEntity, 'syncCursor'>,
   ): Promise<GetOneMessageListResponse> {
     if (!isDefined(messageFolder.syncCursor)) {
-      throw new CustomError(
+      throw new MessageImportDriverException(
         'Message folder sync cursor is required',
-        MessageImportManagerExceptionCode.SYNC_CURSOR_REQUIRED,
+        MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
       );
     }
 
