@@ -10,7 +10,7 @@ import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dto
 import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
@@ -30,7 +30,7 @@ import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-
 @Injectable()
 export class DevSeederMetadataService {
   constructor(
-    private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
+    private readonly objectMetadataServiceV2: ObjectMetadataService,
     private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     @InjectDataSource()

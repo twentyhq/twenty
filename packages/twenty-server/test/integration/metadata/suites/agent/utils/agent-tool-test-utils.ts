@@ -20,7 +20,7 @@ import { ToolAdapterService } from 'src/engine/metadata-modules/ai/ai-tools/serv
 import { ToolService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
@@ -34,7 +34,7 @@ export interface AgentToolTestContext {
   module: TestingModule;
   agentToolService: AgentToolGeneratorService;
   agentService: AgentService;
-  objectMetadataService: ObjectMetadataServiceV2;
+  objectMetadataService: ObjectMetadataService;
   roleRepository: Repository<RoleEntity>;
   workspacePermissionsCacheService: WorkspacePermissionsCacheService;
   twentyORMGlobalManager: TwentyORMGlobalManager;
@@ -76,7 +76,7 @@ export const createAgentToolTestModule =
           },
         },
         {
-          provide: ObjectMetadataServiceV2,
+          provide: ObjectMetadataService,
           useValue: {
             findManyWithinWorkspace: jest.fn(),
             findOneWithinWorkspace: jest.fn(),
@@ -199,8 +199,8 @@ export const createAgentToolTestModule =
       AgentToolGeneratorService,
     );
     const agentService = module.get<AgentService>(AgentService);
-    const objectMetadataService = module.get<ObjectMetadataServiceV2>(
-      ObjectMetadataServiceV2,
+    const objectMetadataService = module.get<ObjectMetadataService>(
+      ObjectMetadataService,
     );
     const roleRepository = module.get<Repository<RoleEntity>>(
       getRepositoryToken(RoleEntity),

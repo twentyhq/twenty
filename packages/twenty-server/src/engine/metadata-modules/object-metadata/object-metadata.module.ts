@@ -24,7 +24,7 @@ import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata
 import { ObjectMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/object-metadata/interceptors/object-metadata-graphql-api-exception.interceptor';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metadata/object-metadata.resolver';
-import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.module';
@@ -68,7 +68,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
         WorkspaceManyOrAllFlatEntityMapsCacheModule,
       ],
       services: [
-        ObjectMetadataServiceV2,
+        ObjectMetadataService,
         FlatFieldMetadataValidatorService,
         FlatFieldMetadataTypeValidatorService,
       ],
@@ -78,7 +78,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
           DTOClass: ObjectMetadataDTO,
           CreateDTOClass: CreateObjectInput,
           UpdateDTOClass: UpdateObjectPayload,
-          ServiceClass: ObjectMetadataServiceV2,
+          ServiceClass: ObjectMetadataService,
           pagingStrategy: PagingStrategies.CURSOR,
           read: {
             defaultSort: [{ field: 'id', direction: SortDirection.DESC }],
@@ -95,7 +95,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
       ],
     }),
   ],
-  providers: [ObjectMetadataServiceV2, ObjectMetadataResolver],
-  exports: [ObjectMetadataServiceV2],
+  providers: [ObjectMetadataService, ObjectMetadataResolver],
+  exports: [ObjectMetadataService],
 })
 export class ObjectMetadataModule {}

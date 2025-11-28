@@ -13,7 +13,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -34,7 +34,7 @@ describe('WorkspaceManagerService', () => {
   let roleTargetsRepository: Repository<RoleTargetsEntity>;
   let roleRepository: Repository<RoleEntity>;
   let mockDataSource: jest.Mocked<DataSource>;
-  let objectMetadataServiceV2: ObjectMetadataServiceV2;
+  let objectMetadataServiceV2: ObjectMetadataService;
 
   beforeEach(async () => {
     mockDataSource = {
@@ -125,7 +125,7 @@ describe('WorkspaceManagerService', () => {
           useValue: {},
         },
         {
-          provide: ObjectMetadataServiceV2,
+          provide: ObjectMetadataService,
           useValue: {
             deleteWorkspaceAllObjectMetadata: jest.fn(),
           },
@@ -171,8 +171,8 @@ describe('WorkspaceManagerService', () => {
     roleRepository = module.get<Repository<RoleEntity>>(
       getRepositoryToken(RoleEntity),
     );
-    objectMetadataServiceV2 = module.get<ObjectMetadataServiceV2>(
-      ObjectMetadataServiceV2,
+    objectMetadataServiceV2 = module.get<ObjectMetadataService>(
+      ObjectMetadataService,
     );
   });
 
