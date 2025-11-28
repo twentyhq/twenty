@@ -119,7 +119,7 @@ export class WorkspaceMigrationRunnerV2Service {
       shouldInvalidateRoleMapCache
     ) {
       asyncOperations.push(
-        this.workspaceCacheService.invalidate(workspaceId, [
+        this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
           'rolesPermissions',
           'userWorkspaceRoleMap',
           'apiKeyRoleMap',

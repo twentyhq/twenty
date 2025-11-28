@@ -7,8 +7,8 @@ import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
-  ApplicationException,
-  ApplicationExceptionCode,
+    ApplicationException,
+    ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/core-modules/application/constants/twenty-standard-applications';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -167,7 +167,7 @@ export class ApplicationService {
     );
 
     if (!skipCacheInvalidation) {
-      await this.workspaceCacheService.invalidate(workspaceId, [
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatApplicationMaps',
       ]);
     }
@@ -219,7 +219,7 @@ export class ApplicationService {
 
     const savedApplication = await this.applicationRepository.save(application);
 
-    await this.workspaceCacheService.invalidate(data.workspaceId, [
+    await this.workspaceCacheService.invalidateAndRecompute(data.workspaceId, [
       'flatApplicationMaps',
     ]);
 
@@ -232,7 +232,7 @@ export class ApplicationService {
   ): Promise<ApplicationEntity> {
     await this.applicationRepository.update({ id }, data);
 
-    await this.workspaceCacheService.invalidate(data.workspaceId as string, [
+    await this.workspaceCacheService.invalidateAndRecompute(data.workspaceId as string, [
       'flatApplicationMaps',
     ]);
 
@@ -260,11 +260,11 @@ export class ApplicationService {
       workspaceId,
     });
 
-    await this.workspaceCacheService.invalidate(workspaceId, [
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatApplicationMaps',
     ]);
 
-    await this.workspaceCacheService.invalidate(
+    await this.workspaceCacheService.invalidateAndRecompute(
       workspaceId,
       ALL_FLAT_ENTITY_MAPS_PROPERTIES,
     );

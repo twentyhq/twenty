@@ -32,7 +32,7 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
     workspaceId: string;
     flatMapsKeys?: T;
   }): Promise<void> {
-    await this.workspaceCacheService.invalidate(
+    await this.workspaceCacheService.invalidateAndRecompute(
       workspaceId,
       flatMapsKeys ?? ALL_FLAT_ENTITY_MAPS_PROPERTIES,
     );

@@ -117,10 +117,12 @@ export class WorkspaceCacheService implements OnModuleInit {
     return result as WorkspaceCacheResult<K>;
   }
 
-  async invalidate(
+  async invalidateAndRecompute(
     workspaceId: string,
     workspaceCacheKeys: WorkspaceCacheKeyName[],
   ): Promise<void> {
+    await this.memoizer.clearKeys(`${workspaceId}-`);
+
     await this.flush(workspaceId, workspaceCacheKeys);
     await this.recomputeCache(workspaceId, workspaceCacheKeys);
   }

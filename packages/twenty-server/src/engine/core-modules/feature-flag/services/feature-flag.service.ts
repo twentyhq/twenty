@@ -71,7 +71,7 @@ export class FeatureFlagService {
         },
       );
 
-      await this.workspaceCacheService.invalidate(workspaceId, [
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'featureFlagsMap',
       ]);
     }
@@ -126,7 +126,7 @@ export class FeatureFlagService {
 
     const result = await this.featureFlagRepository.save(featureFlagToSave);
 
-    await this.workspaceCacheService.invalidate(workspaceId, [
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'featureFlagsMap',
     ]);
 

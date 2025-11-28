@@ -107,7 +107,7 @@ export class ObjectPermissionService {
         throw new Error('Failed to upsert object permission');
       }
 
-      await this.workspaceCacheService.invalidate(workspaceId, [
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'rolesPermissions',
       ]);
 

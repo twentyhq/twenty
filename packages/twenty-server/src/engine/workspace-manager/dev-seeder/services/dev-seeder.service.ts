@@ -61,7 +61,7 @@ export class DevSeederService {
         workspaceId,
       );
 
-    await this.workspaceCacheService.invalidate(workspaceId, [
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatApplicationMaps',
     ]);
 

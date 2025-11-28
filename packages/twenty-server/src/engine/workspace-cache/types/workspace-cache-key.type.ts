@@ -22,6 +22,8 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   userWorkspaceRoleMap: 'metadata:permissions:user-workspace-role-map',
   apiKeyRoleMap: 'metadata:permissions:api-key-role-map',
   flatApplicationMaps: 'flat-maps:flatApplicationMaps',
+  flatRoleMaps: 'flat-maps:role',
+  flatRoleTargetMaps: 'flat-maps:role-target',
 } as const satisfies Record<WorkspaceCacheKeyName, string>;
 
 type AdditionalCacheDataMap = {
