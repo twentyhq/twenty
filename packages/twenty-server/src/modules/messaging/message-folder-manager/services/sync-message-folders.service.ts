@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import deepEqual from 'deep-equal';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -125,14 +126,18 @@ export class SyncMessageFoldersService {
           name: folder.name,
           externalId: folder.externalId,
           isSentFolder: folder.isSentFolder,
-          parentFolderId: folder.parentFolderId,
+          parentFolderId: isNonEmptyString(folder.parentFolderId)
+            ? folder.parentFolderId
+            : null,
         };
 
         const existingFolderData = {
           name: existingFolder.name,
           externalId: existingFolder.externalId,
           isSentFolder: existingFolder.isSentFolder,
-          parentFolderId: existingFolder.parentFolderId,
+          parentFolderId: isNonEmptyString(existingFolder.parentFolderId)
+            ? existingFolder.parentFolderId
+            : null,
         };
 
         if (!deepEqual(folderSyncData, existingFolderData)) {
