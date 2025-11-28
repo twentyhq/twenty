@@ -15,7 +15,7 @@ import {
   useCreateManyCoreViewGroupsMutation,
   useDeleteCoreViewGroupMutation,
   useDestroyCoreViewGroupMutation,
-  useUpdateCoreViewGroupMutation
+  useUpdateCoreViewGroupMutation,
 } from '~/generated/graphql';
 
 export const usePersistViewGroupRecords = () => {
