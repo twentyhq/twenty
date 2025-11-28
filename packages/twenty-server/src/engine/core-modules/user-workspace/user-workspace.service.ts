@@ -133,7 +133,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
   async addUserToWorkspaceIfUserNotInWorkspace(
     user: UserEntity,
     workspace: WorkspaceEntity,
-    queryRunner?: QueryRunner,
   ) {
     let userWorkspace = await this.checkUserWorkspaceExists(
       user.id,
@@ -141,14 +140,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     );
 
     if (!userWorkspace) {
-      userWorkspace = await this.create(
-        {
-          userId: user.id,
-          workspaceId: workspace.id,
-          isExistingUser: true,
-        },
-        queryRunner,
-      );
+      userWorkspace = await this.create({
+        userId: user.id,
+        workspaceId: workspace.id,
+        isExistingUser: true,
+      });
 
       await this.createWorkspaceMember(workspace.id, user);
 
@@ -161,29 +157,22 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         );
       }
 
-      await this.userRoleService.assignRoleToUserWorkspace(
-        {
-          workspaceId: workspace.id,
-          userWorkspaceId: userWorkspace.id,
-          roleId: defaultRoleId,
-        },
-        queryRunner,
-      );
+      await this.userRoleService.assignRoleToUserWorkspace({
+        workspaceId: workspace.id,
+        userWorkspaceId: userWorkspace.id,
+        roleId: defaultRoleId,
+      });
 
       await this.workspaceInvitationService.invalidateWorkspaceInvitation(
         workspace.id,
         user.email,
-        queryRunner,
       );
 
-      await this.onboardingService.setOnboardingCreateProfilePending(
-        {
-          userId: user.id,
-          workspaceId: workspace.id,
-          value: true,
-        },
-        queryRunner,
-      );
+      await this.onboardingService.setOnboardingCreateProfilePending({
+        userId: user.id,
+        workspaceId: workspace.id,
+        value: true,
+      });
     }
   }
 
