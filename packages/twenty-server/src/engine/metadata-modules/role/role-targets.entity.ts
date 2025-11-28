@@ -18,9 +18,9 @@ import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
 @Entity('roleTargets')
-@Unique('IDX_ROLE_TARGETS_UNIQUE', [
+@Unique('IDX_ROLE_TARGETS_UNIQUE_V2', [
   'userWorkspaceId',
-  'roleId',
+  'workspaceId',
   'agentId',
   'apiKeyId',
 ])
