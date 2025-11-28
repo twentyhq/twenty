@@ -27,7 +27,7 @@ import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manag
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
-export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEntity> {
+export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
   constructor(
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,

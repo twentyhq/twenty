@@ -25,7 +25,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/database-event-trigger/services/database-event-trigger-v2.service';
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { getFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-application-id.util';
@@ -49,7 +49,7 @@ export class ApplicationSyncService {
     private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
     private readonly objectMetadataServiceV2: ObjectMetadataService,
-    private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
+    private readonly fieldMetadataServiceV2: FieldMetadataService,
     private readonly serverlessFunctionV2Service: ServerlessFunctionV2Service,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly dataSourceService: DataSourceService,

@@ -6,7 +6,7 @@ import { plural } from 'pluralize';
 import { DataSource, Repository } from 'typeorm';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import {
@@ -56,7 +56,7 @@ export class RemoteTableService {
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly dataSourceService: DataSourceService,
     private readonly objectMetadataService: ObjectMetadataService,
-    private readonly fieldMetadataService: FieldMetadataServiceV2,
+    private readonly fieldMetadataService: FieldMetadataService,
     private readonly distantTableService: DistantTableService,
     private readonly foreignTableService: ForeignTableService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
