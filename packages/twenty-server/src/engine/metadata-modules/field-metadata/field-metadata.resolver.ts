@@ -52,11 +52,10 @@ export class FieldMetadataResolver {
     @Context() context: I18nContext,
   ) {
     try {
-      const flatFieldMetadata =
-        await this.fieldMetadataService.createOneField({
-          createFieldInput: input.field,
-          workspaceId,
-        });
+      const flatFieldMetadata = await this.fieldMetadataService.createOneField({
+        createFieldInput: input.field,
+        workspaceId,
+      });
 
       return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
     } catch (error) {
@@ -75,11 +74,10 @@ export class FieldMetadataResolver {
     @Context() context: I18nContext,
   ) {
     try {
-      const flatFieldMetadata =
-        await this.fieldMetadataService.updateOneField({
-          updateFieldInput: { ...input.update, id: input.id },
-          workspaceId,
-        });
+      const flatFieldMetadata = await this.fieldMetadataService.updateOneField({
+        updateFieldInput: { ...input.update, id: input.id },
+        workspaceId,
+      });
 
       return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
     } catch (error) {
@@ -102,11 +100,10 @@ export class FieldMetadataResolver {
     }
 
     try {
-      const flatFieldMetadata =
-        await this.fieldMetadataService.deleteOneField({
-          deleteOneFieldInput,
-          workspaceId,
-        });
+      const flatFieldMetadata = await this.fieldMetadataService.deleteOneField({
+        deleteOneFieldInput,
+        workspaceId,
+      });
 
       return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
     } catch (error) {
