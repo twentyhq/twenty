@@ -1,6 +1,7 @@
 import camelCase from 'lodash.camelcase';
 import { slugify } from 'transliteration';
-import { isDefined } from 'twenty-shared/utils';
+import { RESERVED_METADATA_NAME_KEYWORDS } from 'twenty-shared/metadata';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import {
   InvalidMetadataException,
@@ -22,6 +23,14 @@ export const validateNameAndLabelAreSyncOrThrow = ({
       InvalidMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL,
     );
   }
+};
+
+const sanitizeReservedKeyword = (name: string): string => {
+  if (!name) return name;
+
+  return RESERVED_METADATA_NAME_KEYWORDS.includes(name)
+    ? `${name}${capitalize('custom')}`
+    : name;
 };
 
 export const computeMetadataNameFromLabel = (label: string): string => {
@@ -51,5 +60,7 @@ export const computeMetadataNameFromLabel = (label: string): string => {
     );
   }
 
-  return camelCase(formattedString);
+  const computedName = camelCase(formattedString);
+
+  return sanitizeReservedKeyword(computedName);
 };

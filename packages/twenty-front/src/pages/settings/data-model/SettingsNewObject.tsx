@@ -15,7 +15,6 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
-import { RESERVED_METADATA_NAME_KEYWORDS } from 'twenty-shared/metadata';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
@@ -41,23 +40,16 @@ export const SettingsNewObject = () => {
   const nameSingular = formConfig.watch('nameSingular');
   const namePlural = formConfig.watch('namePlural');
 
-  const isReservedName =
-    (nameSingular && RESERVED_METADATA_NAME_KEYWORDS.includes(nameSingular)) ||
-    (namePlural && RESERVED_METADATA_NAME_KEYWORDS.includes(namePlural));
-
-  const conflictingObjectMetadataItem = !isReservedName
-    ? getConflictingObjectMetadataItem({
-        objectMetadataItems,
-        nameSingular,
-        namePlural,
-      })
-    : undefined;
+  const conflictingObjectMetadataItem = getConflictingObjectMetadataItem({
+    objectMetadataItems,
+    nameSingular,
+    namePlural,
+  });
 
   const hasNameConflict = isDefined(conflictingObjectMetadataItem);
 
   const { isValid, isSubmitting } = formConfig.formState;
-  const canSave =
-    isValid && !isSubmitting && !hasNameConflict && !isReservedName;
+  const canSave = isValid && !isSubmitting && !hasNameConflict;
 
   const handleSave = async (
     formValues: SettingsDataModelObjectAboutFormValues,
