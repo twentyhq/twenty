@@ -10,6 +10,7 @@ import {
 } from 'src/engine/core-modules/api-key/api-key.exception';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 
 import { ApiKeyEntity } from './api-key.entity';
@@ -21,6 +22,7 @@ describe('ApiKeyService', () => {
   let mockRoleTargetsRepository: any;
   let mockJwtWrapperService: any;
   let mockApiKeyRoleService: any;
+  let mockRoleTargetService: any;
   let mockDataSource: any;
 
   const mockWorkspaceId = 'workspace-123';
@@ -75,6 +77,10 @@ describe('ApiKeyService', () => {
       assignRoleToApiKeyWithManager: jest.fn(),
     };
 
+    mockRoleTargetService = {
+      create: jest.fn(),
+    };
+
     mockDataSource = {
       transaction: jest.fn(),
     };
@@ -89,6 +95,10 @@ describe('ApiKeyService', () => {
         {
           provide: JwtWrapperService,
           useValue: mockJwtWrapperService,
+        },
+        {
+          provide: RoleTargetService,
+          useValue: mockRoleTargetService,
         },
         {
           provide: getRepositoryToken(RoleTargetsEntity),
@@ -117,7 +127,7 @@ describe('ApiKeyService', () => {
   });
 
   describe('create', () => {
-    it('should create and save an API key using transaction', async () => {
+    it('should create and save an API key and assign role', async () => {
       const apiKeyData = {
         name: 'New API Key',
         expiresAt: new Date('2025-12-31'),
@@ -131,50 +141,26 @@ describe('ApiKeyService', () => {
         workspaceId: mockWorkspaceId,
       };
 
-      mockApiKeyRoleService.assignRoleToApiKeyWithManager.mockResolvedValue(
-        undefined,
-      );
-      mockApiKeyRoleService.recomputeCache.mockResolvedValue(undefined);
-
-      const mockManagerCreate = jest.fn().mockReturnValue(mockApiKey);
-      const mockManagerSave = jest.fn().mockResolvedValue(mockApiKey);
-
-      mockDataSource.transaction.mockImplementation(
-        async (callback: (manager: any) => Promise<any>) => {
-          const mockManager = {
-            create: mockManagerCreate,
-            save: mockManagerSave,
-          };
-
-          return await callback(mockManager);
-        },
-      );
+      mockApiKeyRepository.save.mockResolvedValue(mockApiKey);
+      mockRoleTargetService.create.mockResolvedValue(undefined);
 
       const result = await service.create(apiKeyData);
 
-      expect(mockDataSource.transaction).toHaveBeenCalled();
-      expect(mockManagerCreate).toHaveBeenCalledWith(
-        ApiKeyEntity,
+      expect(mockApiKeyRepository.save).toHaveBeenCalledWith(
         expectedApiKeyFields,
       );
-      expect(mockManagerSave).toHaveBeenCalledWith(mockApiKey);
-      expect(
-        mockApiKeyRoleService.assignRoleToApiKeyWithManager,
-      ).toHaveBeenCalledWith(
-        expect.any(Object), // manager
-        {
-          apiKeyId: mockApiKey.id,
+      expect(mockRoleTargetService.create).toHaveBeenCalledWith({
+        createRoleTargetInput: {
           roleId: 'mock-role-id',
-          workspaceId: mockWorkspaceId,
+          targetId: mockApiKey.id,
+          targetMetadataForeignKey: 'apiKeyId',
         },
-      );
-      expect(mockApiKeyRoleService.recomputeCache).toHaveBeenCalledWith(
-        mockWorkspaceId,
-      );
+        workspaceId: mockWorkspaceId,
+      });
       expect(result).toEqual(mockApiKey);
     });
 
-    it('should handle role assignment failures within transaction', async () => {
+    it('should delete API key if role assignment fails', async () => {
       const apiKeyData = {
         name: 'New API Key',
         expiresAt: new Date('2025-12-31'),
@@ -182,38 +168,22 @@ describe('ApiKeyService', () => {
         roleId: 'mock-role-id',
       };
 
-      const mockManagerCreate = jest.fn().mockReturnValue(mockApiKey);
-      const mockManagerSave = jest.fn().mockResolvedValue(mockApiKey);
-
-      mockApiKeyRoleService.assignRoleToApiKeyWithManager.mockRejectedValue(
+      mockApiKeyRepository.save.mockResolvedValue(mockApiKey);
+      mockApiKeyRepository.delete = jest.fn().mockResolvedValue(undefined);
+      mockRoleTargetService.create.mockRejectedValue(
         new Error('Role assignment failed'),
-      );
-
-      mockDataSource.transaction.mockImplementation(
-        async (callback: (manager: any) => Promise<any>) => {
-          const mockManager = {
-            create: mockManagerCreate,
-            save: mockManagerSave,
-          };
-
-          return await callback(mockManager);
-        },
       );
 
       await expect(service.create(apiKeyData)).rejects.toThrow(
         'Role assignment failed',
       );
 
-      expect(mockDataSource.transaction).toHaveBeenCalled();
-      expect(mockManagerCreate).toHaveBeenCalled();
-      expect(mockManagerSave).toHaveBeenCalled();
-      expect(
-        mockApiKeyRoleService.assignRoleToApiKeyWithManager,
-      ).toHaveBeenCalled();
-      expect(mockApiKeyRoleService.recomputeCache).not.toHaveBeenCalled();
+      expect(mockApiKeyRepository.save).toHaveBeenCalled();
+      expect(mockRoleTargetService.create).toHaveBeenCalled();
+      expect(mockApiKeyRepository.delete).toHaveBeenCalledWith(mockApiKey.id);
     });
 
-    it('should handle transaction failures gracefully', async () => {
+    it('should handle save failures gracefully', async () => {
       const apiKeyData = {
         name: 'New API Key',
         expiresAt: new Date('2025-12-31'),
@@ -221,19 +191,12 @@ describe('ApiKeyService', () => {
         roleId: 'mock-role-id',
       };
 
-      mockDataSource.transaction.mockRejectedValue(
-        new Error('Transaction failed'),
-      );
+      mockApiKeyRepository.save.mockRejectedValue(new Error('Save failed'));
 
-      await expect(service.create(apiKeyData)).rejects.toThrow(
-        'Transaction failed',
-      );
+      await expect(service.create(apiKeyData)).rejects.toThrow('Save failed');
 
-      expect(mockDataSource.transaction).toHaveBeenCalled();
-      expect(
-        mockApiKeyRoleService.assignRoleToApiKeyWithManager,
-      ).not.toHaveBeenCalled();
-      expect(mockApiKeyRoleService.recomputeCache).not.toHaveBeenCalled();
+      expect(mockApiKeyRepository.save).toHaveBeenCalled();
+      expect(mockRoleTargetService.create).not.toHaveBeenCalled();
     });
   });
 

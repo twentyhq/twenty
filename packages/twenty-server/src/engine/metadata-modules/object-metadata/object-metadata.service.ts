@@ -36,7 +36,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 
 @Injectable()
-export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataEntity> {
+export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEntity> {
   constructor(
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,

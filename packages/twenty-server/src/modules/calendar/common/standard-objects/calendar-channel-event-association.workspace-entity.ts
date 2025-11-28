@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -9,6 +9,7 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -42,7 +43,8 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
     description: msg`Event external ID`,
     icon: 'IconCalendar',
   })
-  eventExternalId: string;
+  @WorkspaceIsNullable()
+  eventExternalId: string | null;
 
   @WorkspaceField({
     standardId:
@@ -52,7 +54,8 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
     description: msg`Recurring Event ID`,
     icon: 'IconHistory',
   })
-  recurringEventExternalId: string;
+  @WorkspaceIsNullable()
+  recurringEventExternalId: string | null;
 
   @WorkspaceRelation({
     standardId:

@@ -16,8 +16,8 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import {
-    TwentyORMException,
-    TwentyORMExceptionCode,
+  TwentyORMException,
+  TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
@@ -328,6 +328,11 @@ export class WorkspaceDatasourceFactory {
         TwentyORMExceptionCode.WORKSPACE_NOT_FOUND,
       );
     }
+
+    await this.workspaceCacheStorageService.setMetadataVersion(
+      workspaceId,
+      workspace.metadataVersion,
+    );
 
     return workspace.metadataVersion;
   }

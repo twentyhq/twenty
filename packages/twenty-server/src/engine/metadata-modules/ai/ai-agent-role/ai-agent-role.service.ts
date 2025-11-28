@@ -9,6 +9,7 @@ import {
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
@@ -21,6 +22,7 @@ export class AiAgentRoleService {
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
+    private readonly roleTargetService: RoleTargetService,
   ) {}
 
   public async assignRoleToAgent({
@@ -42,16 +44,13 @@ export class AiAgentRoleService {
       return;
     }
 
-    const newRoleTarget = await this.roleTargetsRepository.save({
-      roleId,
-      agentId,
+    await this.roleTargetService.create({
+      createRoleTargetInput: {
+        roleId,
+        targetId: agentId,
+        targetMetadataForeignKey: 'agentId',
+      },
       workspaceId,
-    });
-
-    await this.roleTargetsRepository.delete({
-      agentId,
-      workspaceId,
-      id: Not(newRoleTarget.id),
     });
   }
 
@@ -68,7 +67,7 @@ export class AiAgentRoleService {
       where: { standardId: standardRoleId, workspaceId },
     });
 
-    if (!role) {
+    if (!isDefined(role)) {
       throw new AgentException(
         `Standard role with standard ID ${standardRoleId} not found in workspace`,
         AgentExceptionCode.ROLE_NOT_FOUND,
@@ -89,8 +88,22 @@ export class AiAgentRoleService {
     workspaceId: string;
     agentId: string;
   }): Promise<void> {
-    await this.roleTargetsRepository.delete({
-      agentId,
+    const existingRoleTarget = await this.roleTargetsRepository.findOne({
+      where: {
+        agentId,
+        workspaceId,
+      },
+    });
+
+    if (!isDefined(existingRoleTarget)) {
+      throw new AgentException(
+        `Role target not found for agent ${agentId}`,
+        AgentExceptionCode.ROLE_NOT_FOUND,
+      );
+    }
+
+    await this.roleTargetService.delete({
+      id: existingRoleTarget.id,
       workspaceId,
     });
   }

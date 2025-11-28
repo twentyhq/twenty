@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
+import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
-import { type ActorMetadata } from 'twenty-shared/types';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -109,7 +109,7 @@ export class WorkflowRunWorkspaceService {
       order: { createdAt: 'desc' },
     });
 
-    const workflowRunCountMatch = lastWorkflowRun?.name.match(/#(\d+)/);
+    const workflowRunCountMatch = lastWorkflowRun?.name?.match(/#(\d+)/);
 
     const workflowRunCount = workflowRunCountMatch
       ? parseInt(workflowRunCountMatch[1], 10)

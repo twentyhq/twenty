@@ -10,6 +10,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-target.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
@@ -27,12 +28,13 @@ import { ApiKeyController } from './controllers/api-key.controller';
       WorkspaceEntity,
     ]),
     JwtModule,
-    TokenModule,
     WorkspacePermissionsCacheModule,
     WorkspaceCacheModule,
     WorkspaceCacheStorageModule,
-    PermissionsModule,
     FeatureFlagModule,
+    RoleTargetModule,
+    TokenModule,
+    PermissionsModule,
   ],
   providers: [ApiKeyService, ApiKeyResolver, ApiKeyRoleService],
   controllers: [ApiKeyController],

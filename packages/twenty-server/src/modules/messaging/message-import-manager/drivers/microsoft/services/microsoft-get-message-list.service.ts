@@ -6,6 +6,7 @@ import {
   type PageIteratorCallback,
 } from '@microsoft/microsoft-graph-client';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -114,6 +115,13 @@ export class MicrosoftGetMessageListService {
     await pageIterator.iterate().catch((error) => {
       this.microsoftMessageListFetchErrorHandler.handleError(error);
     });
+
+    if (!isDefined(messageFolder.syncCursor)) {
+      throw new MessageImportDriverException(
+        'Message folder sync cursor is required',
+        MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+      );
+    }
 
     return {
       messageExternalIds,

@@ -430,40 +430,31 @@ describe('UserWorkspaceService', () => {
         workspace.id,
       );
       expect(service.create).toHaveBeenCalled();
-      expect(service.create).toHaveBeenCalledWith(
-        {
-          workspaceId: workspace.id,
-          userId: user.id,
-          isExistingUser: true,
-        },
-        undefined,
-      );
+      expect(service.create).toHaveBeenCalledWith({
+        workspaceId: workspace.id,
+        userId: user.id,
+        isExistingUser: true,
+      });
       expect(service.createWorkspaceMember).toHaveBeenCalledWith(
         workspace.id,
         user,
       );
-      expect(userRoleService.assignRoleToUserWorkspace).toHaveBeenCalledWith(
-        {
-          workspaceId: workspace.id,
-          userWorkspaceId: userWorkspace.id,
-          roleId: workspace.defaultRoleId,
-        },
-        undefined,
-      );
+      expect(userRoleService.assignRoleToUserWorkspace).toHaveBeenCalledWith({
+        workspaceId: workspace.id,
+        userWorkspaceId: userWorkspace.id,
+        roleId: workspace.defaultRoleId,
+      });
       expect(
         workspaceInvitationService.invalidateWorkspaceInvitation,
-      ).toHaveBeenCalledWith(workspace.id, user.email, undefined);
+      ).toHaveBeenCalledWith(workspace.id, user.email);
 
       expect(
         onboardingService.setOnboardingCreateProfilePending,
-      ).toHaveBeenCalledWith(
-        {
-          userId: user.id,
-          workspaceId: workspace.id,
-          value: true,
-        },
-        undefined,
-      );
+      ).toHaveBeenCalledWith({
+        userId: user.id,
+        workspaceId: workspace.id,
+        value: true,
+      });
     });
 
     it('should not add user to workspace if already in workspace', async () => {

@@ -392,34 +392,6 @@ describe('roles permissions', () => {
         await assertPermissionDeniedForMemberWithMemberRole({ query });
       });
 
-      it('should throw an error when role is not editable', async () => {
-        const query = {
-          query: `
-          mutation UpdateOneRole {
-              updateOneRole(updateRoleInput: {id: "${adminRoleId}", update: {label: "new role label (2)"}}) {
-                  id
-              }
-          }
-        `,
-        };
-
-        await client
-          .post('/graphql')
-          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-          .send(query)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
-      });
-
       it('should update a role when user has permission to update a role (admin role)', async () => {
         const query = {
           query: `

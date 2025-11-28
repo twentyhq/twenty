@@ -12,16 +12,18 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
+
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
 @Entity('roleTargets')
-@Unique('IDX_ROLE_TARGETS_UNIQUE', [
+@Unique('IDX_ROLE_TARGETS_UNIQUE_USER_WORKSPACE', [
+  'workspaceId',
   'userWorkspaceId',
-  'roleId',
-  'agentId',
-  'apiKeyId',
 ])
+@Unique('IDX_ROLE_TARGETS_UNIQUE_AGENT', ['workspaceId', 'agentId'])
+@Unique('IDX_ROLE_TARGETS_UNIQUE_API_KEY', ['workspaceId', 'apiKeyId'])
 @Index('IDX_ROLE_TARGETS_WORKSPACE_ID', ['userWorkspaceId', 'workspaceId'])
 @Index('IDX_ROLE_TARGETS_AGENT_ID', ['agentId'])
 @Index('IDX_ROLE_TARGETS_API_KEY_ID', ['apiKeyId'])
@@ -29,7 +31,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
   'CHK_role_targets_single_entity',
   '("agentId" IS NOT NULL AND "userWorkspaceId" IS NULL AND "apiKeyId" IS NULL) OR ("agentId" IS NULL AND "userWorkspaceId" IS NOT NULL AND "apiKeyId" IS NULL) OR ("agentId" IS NULL AND "userWorkspaceId" IS NULL AND "apiKeyId" IS NOT NULL)',
 )
-export class RoleTargetsEntity {
+export class RoleTargetsEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -46,13 +48,13 @@ export class RoleTargetsEntity {
   role: Relation<RoleEntity>;
 
   @Column({ nullable: true, type: 'uuid' })
-  userWorkspaceId: string;
+  userWorkspaceId: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
-  agentId: string;
+  agentId: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
-  apiKeyId: string;
+  apiKeyId: string | null;
 
   @ManyToOne(() => ApiKeyEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'apiKeyId' })

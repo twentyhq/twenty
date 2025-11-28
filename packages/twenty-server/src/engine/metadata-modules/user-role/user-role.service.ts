@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { type QueryRunner, In, Not, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import {
@@ -10,8 +10,10 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
@@ -19,28 +21,25 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 export class UserRoleService {
   constructor(
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly roleTargetService: RoleTargetService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  public async assignRoleToUserWorkspace(
-    {
-      workspaceId,
-      userWorkspaceId,
-      roleId,
-    }: {
-      workspaceId: string;
-      userWorkspaceId: string;
-      roleId: string;
-    },
-    queryRunner?: QueryRunner,
-  ): Promise<void> {
+  public async assignRoleToUserWorkspace({
+    workspaceId,
+    userWorkspaceId,
+    roleId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    roleId: string;
+  }): Promise<void> {
     const validationResult = await this.validateAssignRoleInput({
       userWorkspaceId,
       workspaceId,
@@ -51,25 +50,14 @@ export class UserRoleService {
       return;
     }
 
-    const roleTargetsRepo = queryRunner
-      ? queryRunner.manager.getRepository(RoleTargetsEntity)
-      : this.roleTargetsRepository;
-
-    const newRoleTarget = await roleTargetsRepo.save({
-      roleId,
-      userWorkspaceId,
+    await this.roleTargetService.create({
+      createRoleTargetInput: {
+        roleId,
+        targetId: userWorkspaceId,
+        targetMetadataForeignKey: 'userWorkspaceId',
+      },
       workspaceId,
     });
-
-    await roleTargetsRepo.delete({
-      userWorkspaceId,
-      workspaceId,
-      id: Not(newRoleTarget.id),
-    });
-
-    await this.workspaceCacheService.invalidate(workspaceId, [
-      'userWorkspaceRoleMap',
-    ]);
   }
 
   public async getRoleIdForUserWorkspace({
@@ -238,32 +226,6 @@ export class UserRoleService {
         PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND,
         {
           userFriendlyMessage: msg`Your workspace membership could not be found. You may no longer have access to this workspace.`,
-        },
-      );
-    }
-
-    const role = await this.roleRepository.findOne({
-      where: {
-        id: roleId,
-      },
-    });
-
-    if (!isDefined(role)) {
-      throw new PermissionsException(
-        'Role not found',
-        PermissionsExceptionCode.ROLE_NOT_FOUND,
-        {
-          userFriendlyMessage: msg`The role you are trying to assign could not be found. It may have been deleted.`,
-        },
-      );
-    }
-
-    if (!role.canBeAssignedToUsers) {
-      throw new PermissionsException(
-        `Role "${role.label}" cannot be assigned to users`,
-        PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
-        {
-          userFriendlyMessage: msg`This role cannot be assigned to users. Please select a different role.`,
         },
       );
     }

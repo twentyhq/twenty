@@ -67,6 +67,7 @@ export class CalendarEventImportErrorHandlerService {
       case CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR:
         await this.handleSyncCursorErrorException(calendarChannel, workspaceId);
         break;
+      case CalendarEventImportDriverExceptionCode.CHANNEL_MISCONFIGURED:
       case CalendarEventImportDriverExceptionCode.UNKNOWN:
       case CalendarEventImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
       default:
