@@ -12,45 +12,59 @@
 
 </div>
 
-This CLI tool enables you to quickly start building a new Twenty application, with everything set up for you. To get started, use the following command:
+Create Twenty App is the official scaffolding CLI for building apps on top of [Twenty CRM](https://twenty.com). It sets up a ready‑to‑run project that works seamlessly with the [twenty-sdk](https://www.npmjs.com/package/twenty-sdk).
 
-## Basic Usage
+- Zero‑config project bootstrap
+- Preconfigured scripts for auth, generate, dev sync, one‑off sync, uninstall
+- Strong TypeScript support and typed client generation
 
+## Prerequisites
+- Node.js 18+ (recommended) and Yarn 4
+- A Twenty workspace and an API key (create one at https://app.twenty.com/settings/api-webhooks)
+
+## Quick start
 ```bash
-npx create-twenty-app@latest [project-name]
+npx create-twenty-app@latest my-twenty-app
+cd my-twenty-app
 
-cd [project-name]
-
-# Add a new entity to your application
-yarn create-entity
-
-# Authenticate using a Twenty Api Key
+# Authenticate using your API key (you'll be prompted)
 yarn auth
 
-# Load twenty client and workspace types
+# Add a new entity to your application (guided)
+yarn create-entity
+
+# Generate a typed Twenty client and workspace entity types
 yarn generate
 
-# Start dev mode: automatically syncs changes to your Twenty workspace, so you can test new functions/objects instantly.
+# Start dev mode: automatically syncs local changes to your workspace
 yarn dev
 
-# Or use one time sync
+# Or run a one‑time sync
 yarn sync
 
-# Uninstall application from workspace
+# Uninstall the application from the current workspace
 yarn uninstall
 ```
 
-## Twenty-sdk
-See [twenty-sdk](https://www.npmjs.com/package/twenty-sdk) tool for detailed documentation
+## What gets scaffolded
+- A minimal app structure ready for Twenty
+- TypeScript configuration
+- Prewired scripts that wrap the `twenty` CLI from twenty-sdk
+- Example placeholders to help you add entities, actions, and sync logic
+
+## Next steps
+- Explore the generated project and add your first entity with `yarn create-entity`.
+- Keep your types up‑to‑date using `yarn generate`.
+- Use `yarn dev` while you iterate to see changes instantly in your workspace.
+
 
 ## Publish your application
+Applications are currently stored in `twenty/packages/twenty-apps`.
 
-Applications are currently stored in twenty/packages/twenty-apps.
-
-You can share your application with all twenty users.
+You can share your application with all Twenty users:
 
 ```bash
-# pull twenty project
+# pull the Twenty project
 git clone https://github.com/twentyhq/twenty.git
 cd twenty
 
@@ -58,8 +72,8 @@ cd twenty
 git checkout -b feature/my-awesome-app
 ```
 
-- copy your app folder into twenty/packages/twenty-apps
-- commit your changes and open a pull request on https://github.com/twentyhq/twenty
+- Copy your app folder into `twenty/packages/twenty-apps`.
+- Commit your changes and open a pull request on https://github.com/twentyhq/twenty
 
 ```bash
 git commit -m "Add new application"
@@ -68,7 +82,10 @@ git push
 
 Our team reviews contributions for quality, security, and reusability before merging.
 
-## Contributing
+## Troubleshooting
+- Auth prompts not appearing: run `yarn auth` again and verify the API key permissions.
+- Types not generated: ensure `yarn generate` runs without errors, then re‑start `yarn dev`.
 
-- see our [Github](https://github.com/twentyhq/twenty)
-- our [Discord](https://discord.gg/cx5n4Jzs57)
+## Contributing
+- See our [GitHub](https://github.com/twentyhq/twenty)
+- Join our [Discord](https://discord.gg/cx5n4Jzs57)

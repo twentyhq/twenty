@@ -4,7 +4,7 @@
       <img alt="Twenty logo" src="https://raw.githubusercontent.com/twentyhq/twenty/2f25922f4cd5bd61e1427c57c4f8ea224e1d552c/packages/twenty-website/public/images/core/logo.svg" height="128">
     </picture>
   </a>
-  <h1>Twenty sdk</h1>
+  <h1>Twenty SDK</h1>
 
 <a href="https://www.npmjs.com/package/twenty-sdk"><img alt="NPM version" src="https://img.shields.io/npm/v/twenty-sdk.svg?style=for-the-badge&labelColor=000000"></a>
 <a href="https://github.com/twentyhq/twenty/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/npm/l/next.svg?style=for-the-badge&labelColor=000000"></a>
@@ -12,9 +12,17 @@
 
 </div>
 
-A Cli and an SDK to develop, build, and publish applications that extend [Twenty CRM](https://twenty.com).
+A CLI and SDK to develop, build, and publish applications that extend [Twenty CRM](https://twenty.com).
 
-## Basic Usage
+- Type‑safe client and workspace entity typings
+- Built‑in CLI for auth, generate, dev sync, one‑off sync, and uninstall
+- Works great with the scaffolder: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app)
+
+## Prerequisites
+- Node.js 18+ (recommended) and Yarn 4
+- A Twenty workspace and an API key. Generate one at https://app.twenty.com/settings/api-webhooks
+
+## Installation
 
 ```bash
 npm install twenty-sdk
@@ -22,45 +30,50 @@ npm install twenty-sdk
 yarn add twenty-sdk
 ```
 
-## Requirements
-An `apiKey`. Go to [https://app.twenty.com/settings/api-webhooks](https://app.twenty.com/settings/api-webhooks) to generate one
+## Getting started
+You can either scaffold a new app or add the SDK to an existing one.
 
-## Quick example project
+- Start new (recommended):
+  ```bash
+  npx create-twenty-app@latest my-twenty-app
+  cd my-twenty-app
+  ```
+- Existing project: install the SDK as shown above, then use the CLI below.
 
+## CLI quickstart
 ```bash
-# Authenticate using your apiKey (CLI will prompt for your <apiKey>)
+# Authenticate using your API key (CLI will prompt for it)
 twenty auth login
 
-# Add a new entity to your application
+# Add a new entity to your application (guided prompts)
 twenty app add
 
-# Generates a Twenty client and TypeScript definitions for your workspace entities
+# Generate a typed Twenty client and TypeScript definitions for your workspace entities
 twenty app generate
 
-# Start dev mode: automatically syncs changes to your Twenty workspace, so you can test new functions/objects instantly.
+# Start dev mode: automatically syncs changes to your workspace for instant testing
 twenty app dev
 
-# Or use one time sync
+# One‑time sync of local changes
 twenty app sync
 
-# Uninstall application from workspace
-twenty app  uninstall
+# Uninstall the application from the current workspace
+twenty app uninstall
 ```
 
-## Usage
-
+## Usage (SDK)
 ```typescript
+// Example: import what you need from the SDK
 import { /* your exports */ } from 'twenty-sdk';
 ```
 
 ## Publish your application
+Applications are currently stored in [`twenty/packages/twenty-apps`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps).
 
-Applications are currently stored in twenty/packages/twenty-apps.
-
-You can share your application with all twenty users.
+You can share your application with all Twenty users:
 
 ```bash
-# pull twenty project
+# pull the Twenty project
 git clone https://github.com/twentyhq/twenty.git
 cd twenty
 
@@ -68,17 +81,21 @@ cd twenty
 git checkout -b feature/my-awesome-app
 ```
 
-- copy your app folder into twenty/packages/twenty-apps
-- commit your changes and open a pull request on https://github.com/twentyhq/twenty
+- Copy your app folder into `twenty/packages/twenty-apps`.
+- Commit your changes and open a pull request on https://github.com/twentyhq/twenty
 
 ```bash
 git commit -m "Add new application"
 git push
 ```
 
-Our team reviews contributions for quality, security, and reusability before merging.
+Our team reviews contributions for quality, security, and reusability.
+
+## Troubleshooting
+- Auth errors: run `twenty auth login` again and ensure the API key has the required permissions.
+- Typings out of date: run `twenty app generate` to refresh the client and types.
+- Not seeing changes in dev: make sure dev mode is running (`twenty app dev`).
 
 ## Contributing
-
-- see our [Github](https://github.com/twentyhq/twenty)
-- our [Discord](https://discord.gg/cx5n4Jzs57)
+- See our [GitHub](https://github.com/twentyhq/twenty)
+- Join our [Discord](https://discord.gg/cx5n4Jzs57)
