@@ -24,7 +24,6 @@ describe('Workspace member role update should succeed', () => {
   afterEach(async () => {
     if (shouldRestorePhilRole) {
       await updateWorkspaceMemberRole({
-        expectToFail: false,
         input: {
           workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
           roleId: guestRoleId,
@@ -56,7 +55,6 @@ describe('Workspace member role update should succeed', () => {
           }
         `,
     });
-
     shouldRestorePhilRole = true;
 
     expect(updateAdminData.updateWorkspaceMemberRole).toMatchObject({
@@ -93,8 +91,6 @@ describe('Workspace member role update should succeed', () => {
           }
         `,
     });
-
-    shouldRestorePhilRole = false;
 
     expect(data.updateWorkspaceMemberRole).toMatchObject({
       id: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
