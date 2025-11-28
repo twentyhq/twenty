@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import deepEqual from 'deep-equal';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -120,15 +121,23 @@ export class SyncMessageFoldersService {
       );
 
       if (existingFolder) {
-        updates.push([
-          existingFolder.id,
-          {
-            name: folder.name,
-            externalId: folder.externalId,
-            isSentFolder: folder.isSentFolder,
-            parentFolderId: folder.parentFolderId,
-          },
-        ]);
+        const folderSyncData = {
+          name: folder.name,
+          externalId: folder.externalId,
+          isSentFolder: folder.isSentFolder,
+          parentFolderId: folder.parentFolderId,
+        };
+
+        const existingFolderData = {
+          name: existingFolder.name,
+          externalId: existingFolder.externalId,
+          isSentFolder: existingFolder.isSentFolder,
+          parentFolderId: existingFolder.parentFolderId,
+        };
+
+        if (!deepEqual(folderSyncData, existingFolderData)) {
+          updates.push([existingFolder.id, folderSyncData]);
+        }
         continue;
       }
 
