@@ -1,12 +1,12 @@
 import request from 'supertest';
 import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/delete-one-role-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
-import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { findRoles } from 'test/integration/metadata/suites/role/utils/find-roles.util';
+import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -78,31 +78,23 @@ describe('Granular settings permissions', () => {
 
     // Assign the custom role to JONY (who uses APPLE_JONY_MEMBER_ACCESS_TOKEN)
     await updateWorkspaceMemberRole({
-      client,
-      roleId: customRoleId,
-      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      input: {
+        roleId: customRoleId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      },
+      expectToFail: false,
     });
   });
 
   afterAll(async () => {
     // Restore JONY's original Member role
-    const restoreMemberRoleQuery = {
-      query: `
-        mutation UpdateWorkspaceMemberRole {
-          updateWorkspaceMemberRole(
-            workspaceMemberId: "${WORKSPACE_MEMBER_DATA_SEED_IDS.JONY}"
-            roleId: "${originalMemberRoleId}"
-          ) {
-            id
-          }
-        }
-      `,
-    };
-
-    await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send(restoreMemberRoleQuery);
+    await updateWorkspaceMemberRole({
+      input: {
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        roleId: originalMemberRoleId,
+      },
+      expectToFail: false,
+    });
 
     // Delete the custom role
     const deleteRoleQuery = deleteOneRoleOperationFactory(customRoleId);
