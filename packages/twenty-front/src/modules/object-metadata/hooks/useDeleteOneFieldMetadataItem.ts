@@ -69,8 +69,8 @@ export const useDeleteOneFieldMetadataItem = () => {
       // TODO: see if we can remove this lin altogether
       await resetRecordIndexKanbanAggregateOperation(idToDelete);
 
-      void refreshObjectMetadataItems().catch(() => {});
-      void refreshCoreViewsByObjectMetadataId(objectMetadataId).catch(() => {});
+      await refreshObjectMetadataItems();
+      await refreshCoreViewsByObjectMetadataId(objectMetadataId);
 
       return {
         status: 'successful',

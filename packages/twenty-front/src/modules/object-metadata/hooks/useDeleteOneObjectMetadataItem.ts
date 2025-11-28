@@ -34,8 +34,8 @@ export const useDeleteOneObjectMetadataItem = () => {
         },
       });
 
-      void refreshObjectMetadataItems().catch(() => {});
-      void refreshAllCoreViews().catch(() => {});
+      await refreshObjectMetadataItems();
+      await refreshAllCoreViews();
 
       return {
         status: 'successful',
