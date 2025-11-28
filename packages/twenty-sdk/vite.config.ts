@@ -1,9 +1,7 @@
-// @ts-ignore
 import path from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import tsconfigPaths from 'vite-tsconfig-paths';
-// @ts-ignore
 import packageJson from './package.json';
 
 const moduleEntries = Object.keys((packageJson as any).exports || {})
@@ -44,7 +42,11 @@ export default defineConfig(() => {
       tsconfigPaths({
         root: __dirname,
       }),
-      dts({ entryRoot: './src', tsconfigPath: tsConfigPath }),
+      dts({
+        entryRoot: './src',
+        tsconfigPath: tsConfigPath,
+        exclude: ['vite.config.ts'],
+      }),
     ],
     build: {
       outDir: 'dist',

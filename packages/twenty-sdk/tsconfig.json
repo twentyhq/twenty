@@ -1,10 +1,13 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "declaration": true,
     "outDir": "./dist",
     "rootDir": "src",
+    "module": "esnext",
+    "target": "es2022",
+    "esModuleInterop": true,
     "allowUnreachableCode": false,
+    "declaration": true,
     "strictNullChecks": true,
     "alwaysStrict": true,
     "noImplicitAny": true,
@@ -13,6 +16,15 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*.ts"],
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.cli.json"
+    },
+    {
+      "path": "./tsconfig.e2e.json"
+    },
+  ],
+  "include": ["src/**/*.ts", "vite.config.ts"],
   "exclude": ["src/cli/**"]
 }
