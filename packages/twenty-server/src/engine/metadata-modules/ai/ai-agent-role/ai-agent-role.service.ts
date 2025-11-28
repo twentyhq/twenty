@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
 
 import {
   AgentException,
