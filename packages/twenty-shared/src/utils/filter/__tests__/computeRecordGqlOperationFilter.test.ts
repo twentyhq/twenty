@@ -166,6 +166,77 @@ describe('computeRecordGqlOperationFilter', () => {
     });
   });
 
+  it('should skip filter when variable resolves to undefined', () => {
+    const companyNameField: PartialFieldMetadataItem = {
+      id: 'company-name-field',
+      name: 'name',
+      label: 'Name',
+      type: FieldMetadataType.TEXT,
+    };
+
+    // Simulate the workflow input before resolveInput
+    const inputBeforeResolve = {
+      filter: {
+        recordFilters: [
+          {
+            id: 'filter-1',
+            fieldMetadataId: companyNameField.id,
+            value: 'Google',
+            type: 'TEXT',
+            operand: ViewFilterOperand.CONTAINS,
+            recordFilterGroupId: 'group-1',
+          },
+          {
+            id: 'filter-2',
+            fieldMetadataId: companyNameField.id,
+            value: '{{nonExistentPath.name}}', // Variable that won't resolve
+            type: 'TEXT',
+            operand: ViewFilterOperand.CONTAINS,
+            recordFilterGroupId: 'group-1',
+          },
+        ],
+        recordFilterGroups: [
+          {
+            id: 'group-1',
+            parentRecordFilterGroupId: null,
+            logicalOperator: RecordFilterGroupLogicalOperator.AND,
+          },
+        ],
+      },
+    };
+
+    const context = {
+      result: {
+        name: 'Amdocs',
+      },
+    };
+
+    // Apply resolveInput like the workflow executor does
+    const resolvedInput = resolveInput(inputBeforeResolve, context) as {
+      filter: {
+        recordFilters: RecordFilter[];
+        recordFilterGroups: RecordFilterGroup[];
+      };
+    };
+
+    // The second filter's value should be undefined after resolution
+    expect(resolvedInput.filter.recordFilters[1].value).toBeUndefined();
+
+    // Compute the filter - only the first filter should be applied
+    // because the second filter's value is undefined
+    const filter = computeRecordGqlOperationFilter({
+      fields: [companyNameField],
+      recordFilters: resolvedInput.filter.recordFilters,
+      recordFilterGroups: resolvedInput.filter.recordFilterGroups,
+      filterValueDependencies: {},
+    });
+
+    // Only the first filter should be present since the second one has undefined value
+    expect(filter).toEqual({
+      and: [{ name: { ilike: '%Google%' } }],
+    });
+  });
+
   it('should handle same property referenced twice as regular filters (no filter group)', () => {
     const companyNameField: PartialFieldMetadataItem = {
       id: 'company-name-field',
