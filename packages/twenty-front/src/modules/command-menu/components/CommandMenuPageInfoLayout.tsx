@@ -19,7 +19,7 @@ export const StyledPageInfoIcon = styled.div<{ iconColor?: string }>`
 `;
 
 export const StyledPageInfoTextContainer = styled.div`
-  align-items: baseline;
+  align-items: center;
   display: flex;
   flex: 1;
   gap: ${({ theme }) => theme.spacing(0.5)};
