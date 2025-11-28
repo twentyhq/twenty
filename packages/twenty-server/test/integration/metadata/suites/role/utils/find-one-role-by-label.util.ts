@@ -31,4 +31,3 @@ export const findOneRoleByLabel = async ({
 
   return role;
 };
-

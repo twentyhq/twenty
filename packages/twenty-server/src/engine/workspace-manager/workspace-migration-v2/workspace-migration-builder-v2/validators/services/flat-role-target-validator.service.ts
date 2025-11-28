@@ -163,6 +163,7 @@ export class FlatRoleTargetValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
+
       return validationResult;
     }
 
