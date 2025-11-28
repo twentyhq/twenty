@@ -438,10 +438,10 @@ export class WorkspaceInvitationService {
             `invitation-resending-workspace:throttler:${email}`,
             1,
             this.twentyConfigService.get(
-              'INVITATION_SENDING_INVITE_THROTTLE_LIMIT',
+              'INVITATION_SENDING_BY_EMAIL_THROTTLE_LIMIT',
             ),
             this.twentyConfigService.get(
-              'INVITATION_SENDING_INVITE_THROTTLE_TTL_IN_MS',
+              'INVITATION_SENDING_BY_EMAIL_THROTTLE_TTL_IN_MS',
             ),
           );
         }),
@@ -452,10 +452,10 @@ export class WorkspaceInvitationService {
         `invitation-resending-workspace:throttler:${workspaceId}`,
         emails.length,
         this.twentyConfigService.get(
-          'INVITATION_SENDING_WORKSPACE_THROTTLE_LIMIT',
+          'INVITATION_SENDING_BY_WORKSPACE_THROTTLE_LIMIT',
         ),
         this.twentyConfigService.get(
-          'INVITATION_SENDING_WORKSPACE_THROTTLE_TTL_IN_MS',
+          'INVITATION_SENDING_BY_WORKSPACE_THROTTLE_TTL_IN_MS',
         ),
       );
     } catch {
