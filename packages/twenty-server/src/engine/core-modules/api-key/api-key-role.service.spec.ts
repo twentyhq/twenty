@@ -9,7 +9,7 @@ import {
   ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { RoleTargetServiceV2 } from 'src/engine/metadata-modules/role-target/services/role-target-v2.service';
+import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
@@ -141,7 +141,7 @@ describe('ApiKeyRoleService', () => {
           useValue: mockWorkspacePermissionsCacheService,
         },
         {
-          provide: RoleTargetServiceV2,
+          provide: RoleTargetService,
           useValue: mockRoleTargetService,
         },
       ],

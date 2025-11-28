@@ -23,7 +23,7 @@ export type FindRoleTargetInput = {
 };
 
 @Injectable()
-export class RoleTargetServiceV2 {
+export class RoleTargetService {
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,

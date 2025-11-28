@@ -10,7 +10,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { RoleTargetV2Module } from 'src/engine/metadata-modules/role-target/role-target-v2.module';
+import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-target.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
@@ -30,7 +30,7 @@ import { ApiKeyController } from './controllers/api-key.controller';
     WorkspacePermissionsCacheModule,
     WorkspaceCacheStorageModule,
     FeatureFlagModule,
-    RoleTargetV2Module,
+    RoleTargetModule,
     TokenModule,
     PermissionsModule,
   ],

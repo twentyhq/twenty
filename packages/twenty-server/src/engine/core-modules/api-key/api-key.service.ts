@@ -13,7 +13,7 @@ import {
 import { type ApiKeyToken } from 'src/engine/core-modules/auth/dto/api-key-token.dto';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { RoleTargetServiceV2 } from 'src/engine/metadata-modules/role-target/services/role-target-v2.service';
+import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 
 @Injectable()
 export class ApiKeyService {
@@ -21,7 +21,7 @@ export class ApiKeyService {
     @InjectRepository(ApiKeyEntity)
     private readonly apiKeyRepository: Repository<ApiKeyEntity>,
     private readonly jwtWrapperService: JwtWrapperService,
-    private readonly roleTargetService: RoleTargetServiceV2,
+    private readonly roleTargetService: RoleTargetService,
   ) {}
 
   async create(

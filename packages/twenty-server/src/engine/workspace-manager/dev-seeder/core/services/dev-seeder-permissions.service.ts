@@ -9,7 +9,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
-import { RoleTargetServiceV2 } from 'src/engine/metadata-modules/role-target/services/role-target-v2.service';
+import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -39,7 +39,7 @@ export class DevSeederPermissionsService {
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly fieldPermissionService: FieldPermissionService,
-    private readonly roleTargetService: RoleTargetServiceV2,
+    private readonly roleTargetService: RoleTargetService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {}

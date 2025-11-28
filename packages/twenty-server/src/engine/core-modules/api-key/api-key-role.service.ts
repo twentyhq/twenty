@@ -8,7 +8,7 @@ import {
   ApiKeyException,
   ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
-import { RoleTargetServiceV2 } from 'src/engine/metadata-modules/role-target/services/role-target-v2.service';
+import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -26,7 +26,7 @@ export class ApiKeyRoleService {
     @InjectRepository(ApiKeyEntity)
     private readonly apiKeyRepository: Repository<ApiKeyEntity>,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
-    private readonly roleTargetService: RoleTargetServiceV2,
+    private readonly roleTargetService: RoleTargetService,
   ) {}
 
   public async assignRoleToApiKey({
