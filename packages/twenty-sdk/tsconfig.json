@@ -15,10 +15,7 @@
     "resolveJsonModule": true,
     "declaration": true,
     "declarationMap": true,
-    "rootDir": "src",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "rootDir": "src"
   },
   "files": [],
   "references": [
