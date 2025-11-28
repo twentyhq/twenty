@@ -105,7 +105,9 @@ export const SettingsNewObject = () => {
             />
             <SettingsDataModelObjectAboutForm
               onNewDirtyField={() => formConfig.trigger()}
-              conflictingObjectMetadataItem={conflictingObjectMetadataItem}
+              conflictingObjectMetadataItem={
+                !isLoading ? conflictingObjectMetadataItem : undefined
+              }
             />
           </Section>
         </SettingsPageContainer>
