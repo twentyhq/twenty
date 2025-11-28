@@ -97,6 +97,10 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
     propertiesToCompare: [...FLAT_ROLE_TARGET_EDITABLE_PROPERTIES],
     propertiesToStringify: [],
   },
+  agent: {
+    propertiesToCompare: [],
+    propertiesToStringify: [],
+  },
 } as const satisfies {
   [P in AllMetadataName]: OneFlatEntityConfiguration<P>;
 };

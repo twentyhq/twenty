@@ -12,4 +12,5 @@ export const ALL_METADATA_NAME = {
   viewFilter: 'viewFilter',
   role: 'role',
   roleTarget: 'roleTarget',
+  agent: 'agent',
 } as const;
