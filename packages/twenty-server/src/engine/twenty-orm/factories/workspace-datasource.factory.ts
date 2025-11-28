@@ -362,6 +362,11 @@ export class WorkspaceDatasourceFactory {
       );
     }
 
+    await this.workspaceCacheStorageService.setMetadataVersion(
+      workspaceId,
+      workspace.metadataVersion,
+    );
+
     return workspace.metadataVersion;
   }
 
