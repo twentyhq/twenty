@@ -13,7 +13,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 import { WORKSPACE_CACHE_KEY } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import {
-  WORKSPACE_CACHE_KEYS,
+  WORKSPACE_CACHE_KEYS_V2,
   type WorkspaceCacheDataMap,
   type WorkspaceCacheKeyName,
   type WorkspaceCacheResult,
@@ -416,7 +416,7 @@ export class WorkspaceCacheService implements OnModuleInit {
     workspaceId: string,
     workspaceCacheKeyName: WorkspaceCacheKeyName,
   ): string {
-    return `${WORKSPACE_CACHE_KEYS[workspaceCacheKeyName]}:${workspaceId}`;
+    return `${WORKSPACE_CACHE_KEYS_V2[workspaceCacheKeyName]}:${workspaceId}`;
   }
 
   private generateHash(data: unknown): string {
