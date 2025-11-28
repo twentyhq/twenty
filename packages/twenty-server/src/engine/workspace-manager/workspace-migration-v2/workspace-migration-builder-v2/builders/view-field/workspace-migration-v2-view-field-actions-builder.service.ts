@@ -19,13 +19,11 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
     super(ALL_METADATA_NAME.viewField);
   }
 
-  protected async validateFlatEntityCreation(
+  protected validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewField>,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      typeof ALL_METADATA_NAME.viewField,
-      'created'
-    >
+  ): FlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.viewField,
+    'created'
   > {
     const validationResult =
       this.flatViewFieldValidatorService.validateFlatViewFieldCreation(args);
@@ -46,13 +44,11 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
     };
   }
 
-  protected async validateFlatEntityDeletion(
+  protected validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewField>,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      typeof ALL_METADATA_NAME.viewField,
-      'deleted'
-    >
+  ): FlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.viewField,
+    'deleted'
   > {
     const validationResult =
       this.flatViewFieldValidatorService.validateFlatViewFieldDeletion(args);
@@ -75,13 +71,11 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
     };
   }
 
-  protected async validateFlatEntityUpdate(
+  protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.viewField>,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      typeof ALL_METADATA_NAME.viewField,
-      'updated'
-    >
+  ): FlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.viewField,
+    'updated'
   > {
     const validationResult =
       this.flatViewFieldValidatorService.validateFlatViewFieldUpdate(args);

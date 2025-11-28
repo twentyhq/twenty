@@ -203,6 +203,10 @@ export const PageLayoutTabList = ({
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
   );
+  const tabSettingsOpenTabId = useRecoilComponentValue(
+    pageLayoutTabSettingsOpenTabIdComponentState,
+    pageLayoutId,
+  );
   const setTabSettingsOpenTabId = useSetRecoilComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
@@ -220,15 +224,26 @@ export const PageLayoutTabList = ({
     [setTabSettingsOpenTabId, navigatePageLayoutCommandMenu],
   );
 
+  const isTabSettingsOpen = isDefined(tabSettingsOpenTabId);
+
   const handleSelectTab = useCallback(
     (tabId: string) => {
       if (isPageLayoutInEditMode && activeTabId === tabId) {
         openTabSettings(tabId);
         return;
       }
+      if (isPageLayoutInEditMode && isTabSettingsOpen) {
+        openTabSettings(tabId);
+      }
       selectTab(tabId);
     },
-    [isPageLayoutInEditMode, activeTabId, openTabSettings, selectTab],
+    [
+      isPageLayoutInEditMode,
+      activeTabId,
+      isTabSettingsOpen,
+      openTabSettings,
+      selectTab,
+    ],
   );
 
   const handleSelectTabFromDropdown = useCallback(
@@ -238,11 +253,15 @@ export const PageLayoutTabList = ({
         closeOverflowDropdown();
         return;
       }
+      if (isPageLayoutInEditMode && isTabSettingsOpen) {
+        openTabSettings(tabId);
+      }
       selectTabFromDropdown(tabId);
     },
     [
       isPageLayoutInEditMode,
       activeTabId,
+      isTabSettingsOpen,
       openTabSettings,
       closeOverflowDropdown,
       selectTabFromDropdown,

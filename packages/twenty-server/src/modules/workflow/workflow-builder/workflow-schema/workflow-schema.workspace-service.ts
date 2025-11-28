@@ -16,7 +16,7 @@ import { Repository } from 'typeorm';
 
 import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { DEFAULT_ITERATOR_CURRENT_ITEM } from 'src/modules/workflow/workflow-builder/workflow-schema/constants/default-iterator-current-item.const';
@@ -216,7 +216,7 @@ export class WorkflowSchemaWorkspaceService {
     }
 
     const objectMetadataInfo =
-      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+      await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
         nameSingular,
         workspaceId,
       );
@@ -241,14 +241,14 @@ export class WorkflowSchemaWorkspaceService {
     });
 
     const objectMetadataInfo =
-      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+      await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
         objectType,
         workspaceId,
       );
 
     const first: Node = {
       isLeaf: false,
-      label: `First ${objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelSingular ?? 'Record'}`,
+      label: `First ${objectMetadataInfo.flatObjectMetadata.labelSingular ?? 'Record'}`,
       icon: 'IconAlpha',
       type: 'object',
       value: recordOutputSchema,
@@ -256,7 +256,7 @@ export class WorkflowSchemaWorkspaceService {
 
     const all: Leaf = {
       isLeaf: true,
-      label: `All ${objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelPlural ?? 'Records'}`,
+      label: `All ${objectMetadataInfo.flatObjectMetadata.labelPlural ?? 'Records'}`,
       type: 'array',
       icon: 'IconListDetails',
       value: 'Returns an array of records',
@@ -283,7 +283,7 @@ export class WorkflowSchemaWorkspaceService {
     maxDepth?: number;
   }): Promise<OutputSchema> {
     const objectMetadataInfo =
-      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+      await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
         objectType,
         workspaceId,
       );
@@ -302,14 +302,18 @@ export class WorkflowSchemaWorkspaceService {
     formFieldMetadataItems: FormFieldMetadata[];
     workspaceId: string;
   }): Promise<OutputSchema> {
-    const objectMetadataMaps =
-      await this.workflowCommonWorkspaceService.getObjectMetadataMaps(
-        workspaceId,
-      );
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
+    } =
+      await this.workflowCommonWorkspaceService.getFlatEntityMaps(workspaceId);
 
     return generateFakeFormResponse({
       formFieldMetadataItems,
-      objectMetadataMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
     });
   }
 
@@ -337,20 +341,18 @@ export class WorkflowSchemaWorkspaceService {
 
     if (availability.type === 'BULK_RECORDS') {
       const objectMetadataInfo =
-        await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+        await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
           availability.objectNameSingular,
           workspaceId,
         );
 
       return {
-        [objectMetadataInfo.objectMetadataItemWithFieldsMaps.namePlural]: {
-          label:
-            objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelPlural,
+        [objectMetadataInfo.flatObjectMetadata.namePlural]: {
+          label: objectMetadataInfo.flatObjectMetadata.labelPlural,
           isLeaf: true,
           type: 'array',
           value:
-            'Array of ' +
-            objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelPlural,
+            'Array of ' + objectMetadataInfo.flatObjectMetadata.labelPlural,
         },
       };
     }
@@ -417,7 +419,7 @@ export class WorkflowSchemaWorkspaceService {
         case WorkflowTriggerType.MANUAL: {
           if (trigger.settings.availability?.type === 'BULK_RECORDS') {
             const objectMetadataInfo =
-              await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+              await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
                 trigger.settings.availability.objectNameSingular,
                 workspaceId,
               );
@@ -425,8 +427,7 @@ export class WorkflowSchemaWorkspaceService {
             return {
               label:
                 'Current Item (' +
-                objectMetadataInfo.objectMetadataItemWithFieldsMaps
-                  .labelSingular +
+                objectMetadataInfo.flatObjectMetadata.labelSingular +
                 ')',
               isLeaf: false,
               type: 'object',
@@ -468,7 +469,7 @@ export class WorkflowSchemaWorkspaceService {
     switch (step.type) {
       case WorkflowActionType.FIND_RECORDS: {
         const objectMetadataInfo =
-          await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+          await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
             step.settings.input.objectName,
             workspaceId,
           );
@@ -476,7 +477,7 @@ export class WorkflowSchemaWorkspaceService {
         return {
           label:
             'Current Item (' +
-            objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelSingular +
+            objectMetadataInfo.flatObjectMetadata.labelSingular +
             ')',
           isLeaf: false,
           type: 'object',

@@ -10,8 +10,9 @@ import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interf
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache-storage.service';
 import {
   ROLES_PERMISSIONS,
@@ -45,7 +46,7 @@ export class WorkspaceDatasourceFactory {
     private readonly dataSourceService: DataSourceService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly entitySchemaFactory: EntitySchemaFactory,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
@@ -126,13 +127,27 @@ export class WorkspaceDatasourceFactory {
           let cachedEntitySchemas: EntitySchema[];
 
           const {
-            objectMetadataMaps: cachedObjectMetadataMaps,
-            metadataVersion: metadataVersionForFinalUpToDateCheck,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            flatIndexMaps,
           } =
-            await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+            await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
               {
                 workspaceId,
+                flatMapsKeys: [
+                  'flatObjectMetadataMaps',
+                  'flatFieldMetadataMaps',
+                  'flatIndexMaps',
+                ],
               },
+            );
+
+          const { idByNameSingular: objectIdByNameSingular } =
+            buildObjectIdByNameMaps(flatObjectMetadataMaps);
+
+          const metadataVersionForFinalUpToDateCheck =
+            await this.workspaceCacheStorageService.getMetadataVersion(
+              workspaceId,
             );
 
           if (
@@ -149,17 +164,16 @@ export class WorkspaceDatasourceFactory {
               (option) => new EntitySchema(option),
             );
           } else {
-            const entitySchemas = await Promise.all(
-              Object.values(cachedObjectMetadataMaps.byId)
-                .filter(isDefined)
-                .map((objectMetadata) =>
-                  this.entitySchemaFactory.create(
-                    workspaceId,
-                    objectMetadata,
-                    cachedObjectMetadataMaps,
-                  ),
+            const entitySchemas = Object.values(flatObjectMetadataMaps.byId)
+              .filter(isDefined)
+              .map((flatObjectMetadata) =>
+                this.entitySchemaFactory.create(
+                  workspaceId,
+                  flatObjectMetadata,
+                  flatObjectMetadataMaps,
+                  flatFieldMetadataMaps,
                 ),
-            );
+              );
 
             await this.workspaceCacheStorageService.setORMEntitySchema(
               workspaceId,
@@ -173,7 +187,10 @@ export class WorkspaceDatasourceFactory {
           const workspaceDataSource = new WorkspaceDataSource(
             {
               workspaceId,
-              objectMetadataMaps: cachedObjectMetadataMaps,
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
+              flatIndexMaps,
+              objectIdByNameSingular,
               featureFlagsMap: cachedFeatureFlagMap,
               eventEmitterService: this.workspaceEventEmitter,
             },

@@ -45,23 +45,12 @@ const StyledTabList = styled(TabList)`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledContentContainer = styled.div<{
-  isInRightDrawer: boolean;
-}>`
-  background: ${({ theme, isInRightDrawer }) =>
-    isInRightDrawer ? theme.background.secondary : theme.background.primary};
-  border: ${({ theme, isInRightDrawer }) =>
-    isInRightDrawer ? `1px solid ${theme.border.color.light}` : 'none'};
-  border-radius: ${({ theme, isInRightDrawer }) =>
-    isInRightDrawer ? theme.border.radius.md : '0'};
+const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
   flex: 1;
-  margin: ${({ theme, isInRightDrawer }) =>
-    isInRightDrawer ? theme.spacing(3) : '0'};
   overflow-y: auto;
-
-  .scroll-wrapper-y-enabled {
-    height: auto;
-  }
+  background: ${({ theme }) => theme.background.primary};
+  padding-bottom: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? theme.spacing(16) : 0};
 `;
 
 type ShowPageSubContainerProps = {

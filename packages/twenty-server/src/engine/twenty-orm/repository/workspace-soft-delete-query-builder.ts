@@ -72,7 +72,9 @@ export class WorkspaceSoftDeleteQueryBuilder<
       validateQueryIsPermittedOrThrow({
         expressionMap: this.expressionMap,
         objectsPermissions: this.objectRecordsPermissions,
-        objectMetadataMaps: this.internalContext.objectMetadataMaps,
+        flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+        objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
         shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
       });
 
@@ -110,19 +112,22 @@ export class WorkspaceSoftDeleteQueryBuilder<
       const formattedAfter = formatResult<T[]>(
         after.raw,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       const formattedBefore = formatResult<T[]>(
         before,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
         formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.DELETED,
           objectMetadataItem: objectMetadata,
+          flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
           entities: formattedBefore,
           authContext: this.authContext,

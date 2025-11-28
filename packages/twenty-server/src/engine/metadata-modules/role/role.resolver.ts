@@ -24,8 +24,8 @@ import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
-import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
+import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
+import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
 import { FieldPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/field-permission.dto';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
@@ -69,7 +69,7 @@ export class RoleResolver {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly settingPermissionService: PermissionFlagService,
-    private readonly agentRoleService: AgentRoleService,
+    private readonly agentRoleService: AiAgentRoleService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly fieldPermissionService: FieldPermissionService,
   ) {}

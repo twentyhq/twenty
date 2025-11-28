@@ -39,6 +39,7 @@ export const useGraphXSortOptionLabels = ({
     const fieldLabel = getFieldLabelWithSubField({
       field: groupByField,
       subFieldName: groupBySubFieldNameX,
+      objectMetadataItems,
     });
 
     const aggregateField = objectMetadataItem?.fields.find(

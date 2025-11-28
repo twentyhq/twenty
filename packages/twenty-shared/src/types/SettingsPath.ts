@@ -30,6 +30,7 @@ export enum SettingsPath {
   AI = 'ai',
   AINewAgent = 'ai/new-agent',
   AIAgentDetail = 'ai/agents/:agentId',
+  AIAgentTurnDetail = 'ai/agents/:agentId/turns/:turnId',
   Applications = 'applications',
   ApplicationDetail = 'applications/:applicationId',
   ApplicationServerlessFunctionDetail = 'applications/:applicationId/:serverlessFunctionId',

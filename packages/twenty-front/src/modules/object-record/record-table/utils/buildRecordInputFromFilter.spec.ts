@@ -135,6 +135,11 @@ describe('buildValueFromFilter', () => {
   describe('NUMBER field type', () => {
     const testCases = [
       {
+        operand: ViewFilterOperand.IS,
+        value: '5',
+        expected: 5,
+      },
+      {
         operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
         value: '5',
         expected: 6,

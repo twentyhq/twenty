@@ -3,13 +3,16 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
 import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
+import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
+import { type BarDatum } from '@nivo/bar';
 import { isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
 
@@ -24,11 +27,12 @@ type TransformOneDimensionalGroupByToBarChartDataParams = {
 };
 
 type TransformOneDimensionalGroupByToBarChartDataResult = {
-  data: BarChartDataItem[];
+  data: BarDatum[];
   indexBy: string;
   keys: string[];
   series: BarChartSeries[];
   hasTooManyGroups: boolean;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
 export const transformOneDimensionalGroupByToBarChartData = ({
@@ -53,7 +57,17 @@ export const transformOneDimensionalGroupByToBarChartData = ({
   // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
   const limitedResults = rawResults.slice(0, BAR_CHART_MAXIMUM_NUMBER_OF_BARS);
 
-  const data: BarChartDataItem[] = limitedResults.map((result) => {
+  const formattedValues = formatPrimaryDimensionValues({
+    groupByRawResults: limitedResults,
+    primaryAxisGroupByField: groupByFieldX,
+    primaryAxisDateGranularity:
+      configuration.primaryAxisDateGranularity ?? undefined,
+    primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
+  });
+
+  const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
+
+  const data: BarDatum[] = limitedResults.map((result) => {
     const dimensionValues = result.groupByDimensionValues;
 
     const xValue = isDefined(dimensionValues?.[0])
@@ -96,5 +110,6 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     keys: [aggregateValueKey],
     series,
     hasTooManyGroups: rawResults.length > BAR_CHART_MAXIMUM_NUMBER_OF_BARS,
+    formattedToRawLookup,
   };
 };

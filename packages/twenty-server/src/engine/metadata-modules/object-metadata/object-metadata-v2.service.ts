@@ -599,13 +599,8 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
   public async findManyWithinWorkspace(
     workspaceId: string,
     options?: FindManyOptions<ObjectMetadataEntity>,
-  ) {
-    return this.objectMetadataRepository.find({
-      relations: [
-        'fields.object',
-        'fields',
-        'fields.relationTargetObjectMetadata',
-      ],
+  ): Promise<FlatObjectMetadata[]> {
+    const objectMetadataEntities = await this.objectMetadataRepository.find({
       ...options,
       where: {
         ...options?.where,
@@ -614,6 +609,27 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
       order: {
         ...options?.order,
       },
+      select: { id: true },
     });
+
+    const objectMetadataIds = objectMetadataEntities.map(
+      (objectMetadata) => objectMetadata.id,
+    );
+
+    const { flatObjectMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
+
+    const filteredOutAndSortedFlatObjectMetadataMaps =
+      findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityMaps: flatObjectMetadataMaps,
+        flatEntityIds: objectMetadataIds,
+      });
+
+    return filteredOutAndSortedFlatObjectMetadataMaps;
   }
 }

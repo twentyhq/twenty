@@ -222,6 +222,7 @@ msgstr "타임라인에 표시할 집계/필터링된 이벤트"
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/timeline-activities-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
@@ -1453,8 +1454,23 @@ msgstr "생성할 관련 객체 필드를 찾을 수 없습니다"
 msgid "Field to update not found"
 msgstr "업데이트할 필드를 찾을 수 없습니다"
 
+#. js-lingui-id: stY5BO
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
+msgid "Field type NUMERIC is not supported. Use Number instead."
+msgstr ""
+
+#. js-lingui-id: q2XPsD
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
+msgid "Field type POSITION is a system type and cannot be created manually."
+msgstr ""
+
+#. js-lingui-id: FDPb27
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
+msgid "Field type TS_VECTOR is a system type and cannot be created manually."
+msgstr ""
+
 #. js-lingui-id: J4hC2m
-#: src/engine/metadata-modules/constants/search-vector-field.constants.ts
+#: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
 msgid "Field used for full-text search"
 msgstr "전체 텍스트 검색에 사용되는 필드"
 
@@ -1707,6 +1723,7 @@ msgid "Invalid relation creation payload"
 msgstr "잘못된 관계 생성 페이로드"
 
 #. js-lingui-id: iWv3nK
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid relation field target"
 msgstr ""
@@ -2899,7 +2916,7 @@ msgid "Scopes"
 msgstr "범위"
 
 #. js-lingui-id: PdVIJC
-#: src/engine/metadata-modules/constants/search-vector-field.constants.ts
+#: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
 msgid "Search vector"
 msgstr "검색 벡터"
 
@@ -2957,6 +2974,11 @@ msgstr "제공된 정보 중 일부가 유효하지 않습니다. 입력을 확�
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
 msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
 msgstr "선택한 권한 중 일부가 유효하지 않습니다. 유효한 권한 설정으로 다시 시도하십시오."
+
+#. js-lingui-id: OmgwCE
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
+msgid "Source object cannot be the target object"
+msgstr ""
 
 #. js-lingui-id: 3PRxO3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -3300,6 +3322,11 @@ msgstr "권한을 설정하려는 객체를 찾을 수 없습니다. 삭제되�
 msgid "The opportunity name"
 msgstr "기회 이름"
 
+#. js-lingui-id: lk5nUN
+#: src/engine/core-modules/graphql/hooks/use-compute-complexity.hook.ts
+msgid "The request is too complex to process. Please try reducing the amount of data requested."
+msgstr ""
+
 #. js-lingui-id: Zi9X+u
 #: src/engine/metadata-modules/role/role.service.ts
 msgid "The role you are looking for could not be found. It may have been deleted or you may not have access to it."
@@ -3363,16 +3390,6 @@ msgstr "워크플로 버전 상태"
 msgid "There was an issue with your connection settings. Please try again."
 msgstr "연결 설정에 문제가 있습니다. 다시 시도하십시오."
 
-#. js-lingui-id: Bm40Ow
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} is already taken. Please choose a different value."
-msgstr "이 {fieldName}은 이미 사용 중입니다. 다른 값을 선택하십시오."
-
-#. js-lingui-id: CYyoPc
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} with value {duplicatedValues} is already taken. Please choose a different value."
-msgstr "값 {duplicatedValues}가 있는 이 {fieldName}은 이미 사용 중입니다. 다른 값을 선택하십시오."
-
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -3382,11 +3399,6 @@ msgstr "이 API 키는 철회되어 더 이상 사용할 수 없습니다."
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "이 API 키의 기한이 만료되었습니다. 새 키를 만드십시오."
-
-#. js-lingui-id: r/Z8XK
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This combination of {fieldNames} already exists. Please use different values."
-msgstr "이 {fieldNames} 조합이 이미 존재합니다. 다른 값을 사용하십시오."
 
 #. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts

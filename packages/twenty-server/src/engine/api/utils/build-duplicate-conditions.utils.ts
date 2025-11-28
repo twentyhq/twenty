@@ -4,12 +4,16 @@ import { type ObjectRecord } from 'twenty-shared/types';
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { settings } from 'src/engine/constants/settings';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { getCompositeFieldMetadataMap } from 'src/engine/twenty-orm/utils/format-result.util';
 
 export const buildDuplicateConditions = (
-  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+  flatObjectMetadata: FlatObjectMetadata,
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   records?: Partial<ObjectRecord>[] | undefined,
   filteringByExistingRecordId?: string,
 ): Partial<ObjectRecordFilter> => {
@@ -17,13 +21,17 @@ export const buildDuplicateConditions = (
     return {};
   }
 
-  const criteriaCollection =
-    objectMetadataItemWithFieldMaps.duplicateCriteria || [];
+  const criteriaCollection = flatObjectMetadata.duplicateCriteria || [];
 
-  const formattedRecords = formatData(records, objectMetadataItemWithFieldMaps);
+  const formattedRecords = formatData(
+    records,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+  );
 
   const compositeFieldMetadataMap = getCompositeFieldMetadataMap(
-    objectMetadataItemWithFieldMaps,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
   );
 
   const conditions = formattedRecords.flatMap((record) => {

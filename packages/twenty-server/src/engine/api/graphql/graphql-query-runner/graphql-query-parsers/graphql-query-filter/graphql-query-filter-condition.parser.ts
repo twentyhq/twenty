@@ -2,19 +2,25 @@ import { Brackets, NotBrackets, type WhereExpressionBuilder } from 'typeorm';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 
 import { GraphqlQueryFilterFieldParser } from './graphql-query-filter-field.parser';
 
 export class GraphqlQueryFilterConditionParser {
-  private objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+  private flatObjectMetadata: FlatObjectMetadata;
   private queryFilterFieldParser: GraphqlQueryFilterFieldParser;
 
-  constructor(objectMetadataMapItem: ObjectMetadataItemWithFieldMaps) {
-    this.objectMetadataMapItem = objectMetadataMapItem;
+  constructor(
+    flatObjectMetadata: FlatObjectMetadata,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  ) {
+    this.flatObjectMetadata = flatObjectMetadata;
     this.queryFilterFieldParser = new GraphqlQueryFilterFieldParser(
-      this.objectMetadataMapItem,
+      this.flatObjectMetadata,
+      flatFieldMetadataMaps,
     );
   }
 

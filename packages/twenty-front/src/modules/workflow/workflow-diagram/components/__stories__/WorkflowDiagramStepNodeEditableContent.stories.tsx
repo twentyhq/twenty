@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import '@xyflow/react/dist/style.css';
 import { RecoilRoot } from 'recoil';
@@ -149,8 +150,19 @@ export const Catalog: CatalogStory<
   decorators: [
     (Story, { args }) => {
       return (
-        <div className={`selectable ${args.selected ? 'selected' : ''}`}>
-          <RecoilRoot>
+        <div>
+          <RecoilRoot
+            initializeState={({ set }) => {
+              if (args.selected) {
+                set(
+                  workflowSelectedNodeComponentState.atomFamily({
+                    instanceId: 'workflow-visualizer-instance-id',
+                  }),
+                  args.id,
+                );
+              }
+            }}
+          >
             <WorkflowVisualizerComponentInstanceContext.Provider
               value={{ instanceId: 'workflow-visualizer-instance-id' }}
             >

@@ -1,3 +1,5 @@
+import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
+
 import {
   type AgentToolTestContext,
   createAgentToolTestModule,
@@ -45,7 +47,11 @@ describe('AgentToolGeneratorService Integration', () => {
         });
       jest
         .spyOn(context.objectMetadataService, 'findManyWithinWorkspace')
-        .mockResolvedValue([context.testObjectMetadata]);
+        .mockResolvedValue([
+          fromObjectMetadataEntityToFlatObjectMetadata(
+            context.testObjectMetadata,
+          ),
+        ]);
 
       const tools = await context.agentToolService.generateToolsForAgent(
         context.testAgentId,
@@ -55,14 +61,13 @@ describe('AgentToolGeneratorService Integration', () => {
       );
 
       expect(tools).toBeDefined();
-      expect(Object.keys(tools)).toHaveLength(7);
+      expect(Object.keys(tools)).toHaveLength(6);
       expect(Object.keys(tools)).toContain('create_testObject');
       expect(Object.keys(tools)).toContain('update_testObject');
       expect(Object.keys(tools)).toContain('find_testObject');
       expect(Object.keys(tools)).toContain('find_one_testObject');
       expect(Object.keys(tools)).toContain('soft_delete_testObject');
       expect(Object.keys(tools)).toContain('soft_delete_many_testObject');
-      expect(Object.keys(tools)).toContain('http_request');
     });
 
     it('should generate read-only tools for agent with read permissions only', async () => {
@@ -90,7 +95,11 @@ describe('AgentToolGeneratorService Integration', () => {
         });
       jest
         .spyOn(context.objectMetadataService, 'findManyWithinWorkspace')
-        .mockResolvedValue([context.testObjectMetadata]);
+        .mockResolvedValue([
+          fromObjectMetadataEntityToFlatObjectMetadata(
+            context.testObjectMetadata,
+          ),
+        ]);
 
       const tools = await context.agentToolService.generateToolsForAgent(
         context.testAgentId,
@@ -100,22 +109,20 @@ describe('AgentToolGeneratorService Integration', () => {
       );
 
       expect(tools).toBeDefined();
-      expect(Object.keys(tools)).toHaveLength(3);
+      expect(Object.keys(tools)).toHaveLength(2);
       expect(Object.keys(tools)).toContain('find_testObject');
       expect(Object.keys(tools)).toContain('find_one_testObject');
-      expect(Object.keys(tools)).toContain('http_request');
       expect(Object.keys(tools)).not.toContain('create_testObject');
       expect(Object.keys(tools)).not.toContain('update_testObject');
     });
 
-    it('should return only http request tool for agent without role', async () => {
+    it('should return no tool for agent without role', async () => {
       const tools = await context.agentToolService.generateToolsForAgent(
         context.testAgentId,
         context.testWorkspaceId,
       );
 
-      expect(Object.keys(tools)).toHaveLength(1);
-      expect(Object.keys(tools)).toContain('http_request');
+      expect(Object.keys(tools)).toHaveLength(0);
     });
 
     it('should filter out workflow-run objects', async () => {
@@ -149,7 +156,9 @@ describe('AgentToolGeneratorService Integration', () => {
         });
       jest
         .spyOn(context.objectMetadataService, 'findManyWithinWorkspace')
-        .mockResolvedValue([workflowObject]);
+        .mockResolvedValue([
+          fromObjectMetadataEntityToFlatObjectMetadata(workflowObject),
+        ]);
 
       const tools = await context.agentToolService.generateToolsForAgent(
         context.testAgentId,
@@ -158,7 +167,7 @@ describe('AgentToolGeneratorService Integration', () => {
         [context.testRoleId],
       );
 
-      expect(Object.keys(tools)).toHaveLength(7);
+      expect(Object.keys(tools)).toHaveLength(6);
     });
   });
 });

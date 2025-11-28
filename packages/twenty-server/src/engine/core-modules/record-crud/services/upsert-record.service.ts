@@ -14,19 +14,18 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { computeUniqueIndexWhereClause } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-index-where-clause.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class UpsertRecordService {
   private readonly logger = new Logger(UpsertRecordService.name);
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly recordInputTransformerService: RecordInputTransformerService,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
   async execute(params: UpsertRecordParams): Promise<ToolOutput> {
@@ -53,16 +52,30 @@ export class UpsertRecordService {
         isDefined(objectRecord[field]),
       );
 
-      const { objectMetadataItemWithFieldsMaps } =
-        await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-          objectName,
-          workspaceId,
+      const {
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        objectIdByNameSingular,
+      } = repository.internalContext;
+
+      const objectId = objectIdByNameSingular[objectName];
+
+      if (!isDefined(objectId)) {
+        throw new RecordCrudException(
+          `Object ${objectName} not found`,
+          RecordCrudExceptionCode.INVALID_REQUEST,
         );
+      }
+
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityMaps: flatObjectMetadataMaps,
+        flatEntityId: objectId,
+      });
 
       if (
         !canObjectBeManagedByWorkflow({
-          nameSingular: objectMetadataItemWithFieldsMaps.nameSingular,
-          isSystem: objectMetadataItemWithFieldsMaps.isSystem,
+          nameSingular: flatObjectMetadata.nameSingular,
+          isSystem: flatObjectMetadata.isSystem,
         })
       ) {
         throw new RecordCrudException(
@@ -88,17 +101,24 @@ export class UpsertRecordService {
       const transformedObjectRecord =
         await this.recordInputTransformerService.process({
           recordInput: objectRecordWithFilteredFields,
-          objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
         });
+
+      const { fieldIdByName, fieldIdByJoinColumnName } =
+        buildFieldMapsFromFlatObjectMetadata(
+          flatFieldMetadataMaps,
+          flatObjectMetadata,
+        );
 
       const uniqueFieldsToUpdate = fieldsToUpdateArray
         .map(
-          (field) =>
-            objectMetadataItemWithFieldsMaps.fieldIdByName[field] ||
-            objectMetadataItemWithFieldsMaps.fieldIdByJoinColumnName[field],
+          (fieldName) =>
+            fieldIdByName[fieldName] || fieldIdByJoinColumnName[fieldName],
         )
-        .map((fieldId) => objectMetadataItemWithFieldsMaps.fieldsById[fieldId])
-        .filter((field) => field && (field.isUnique || field.name === 'id'));
+        .map((fieldId) => flatFieldMetadataMaps.byId[fieldId])
+        .filter(isDefined)
+        .filter((field) => field.isUnique || field.name === 'id');
 
       const conflictPathsUniqueFieldsToUpdate = uniqueFieldsToUpdate.flatMap(
         (field) => {
@@ -128,23 +148,25 @@ export class UpsertRecordService {
           ? conflictPathsUniqueFieldsToUpdate
           : ['id'];
 
+      //TODO : To delete once IS_NULL_EQUIVALENCE_ENABLED feature flag removed
       const indexPredicate = uniqueFieldsToUpdate
         .map((field) =>
           computeUniqueIndexWhereClause({
             type: field.type,
             name: field.name,
+            defaultValue: field.defaultValue,
           }),
         )
         .filter(isDefined);
 
       const restrictedFields =
-        repository.objectRecordsPermissions?.[
-          objectMetadataItemWithFieldsMaps.id
-        ]?.restrictedFields;
+        repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+          ?.restrictedFields;
 
       const selectedColumns = getSelectedColumnsFromRestrictedFields(
         restrictedFields,
-        objectMetadataItemWithFieldsMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
       );
 
       const upsertResult = await repository.upsert(

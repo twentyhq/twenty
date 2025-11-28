@@ -1,13 +1,16 @@
 import { Injectable, type Type } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { EntitySchema, type ObjectLiteral } from 'typeorm';
+import { EntitySchema, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
@@ -24,10 +27,10 @@ import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manag
 export class GlobalWorkspaceOrmManager {
   constructor(
     private readonly globalWorkspaceDataSourceService: GlobalWorkspaceDataSourceService,
-    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly entitySchemaFactory: EntitySchemaFactory,
   ) {}
 
@@ -84,12 +87,30 @@ export class GlobalWorkspaceOrmManager {
     authContext: WorkspaceAuthContext,
   ): Promise<WorkspaceContext> {
     const workspaceId = authContext.workspace.id;
-    const { objectMetadataMaps, metadataVersion } =
-      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
+          flatMapsKeys: [
+            'flatObjectMetadataMaps',
+            'flatFieldMetadataMaps',
+            'flatIndexMaps',
+          ],
         },
       );
+
+    const { idByNameSingular: objectIdByNameSingular } =
+      buildObjectIdByNameMaps(flatObjectMetadataMaps);
+
+    const metadataVersion =
+      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
+
+    if (!isDefined(metadataVersion)) {
+      throw new Error(
+        `Metadata version not found for workspace ${workspaceId}`,
+      );
+    }
 
     const { data: featureFlagsMap } =
       await this.workspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMapAndVersion(
@@ -104,12 +125,16 @@ export class GlobalWorkspaceOrmManager {
     const entitySchemas = await this.buildEntitySchemas(
       workspaceId,
       metadataVersion,
-      objectMetadataMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     );
 
     return {
       authContext,
-      objectMetadataMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatIndexMaps,
+      objectIdByNameSingular,
       metadataVersion,
       featureFlagsMap,
       permissionsPerRoleId,
@@ -120,7 +145,8 @@ export class GlobalWorkspaceOrmManager {
   private async buildEntitySchemas(
     workspaceId: string,
     dataSourceMetadataVersion: number,
-    objectMetadataMaps: ObjectMetadataMaps,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ) {
     const cachedEntitySchemaOptions =
       await this.workspaceCacheStorageService.getORMEntitySchema(
@@ -135,17 +161,16 @@ export class GlobalWorkspaceOrmManager {
         (option) => new EntitySchema(option),
       );
     } else {
-      const entitySchemas = await Promise.all(
-        Object.values(objectMetadataMaps.byId)
-          .filter(isDefined)
-          .map((objectMetadata) =>
-            this.entitySchemaFactory.create(
-              workspaceId,
-              objectMetadata,
-              objectMetadataMaps,
-            ),
+      const entitySchemas = Object.values(flatObjectMetadataMaps.byId)
+        .filter(isDefined)
+        .map((flatObjectMetadata) =>
+          this.entitySchemaFactory.create(
+            workspaceId,
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
           ),
-      );
+        );
 
       await this.workspaceCacheStorageService.setORMEntitySchema(
         workspaceId,

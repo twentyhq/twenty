@@ -16,4 +16,6 @@ exports[`formatDateByGranularity should format date for NONE granularity 1`] = `
 
 exports[`formatDateByGranularity should format date for QUARTER granularity 1`] = `"Q1 2024"`;
 
+exports[`formatDateByGranularity should format date for WEEK granularity 1`] = `"Mar 20, 2024 20 - 26, 2024"`;
+
 exports[`formatDateByGranularity should format date for YEAR granularity 1`] = `"2024"`;

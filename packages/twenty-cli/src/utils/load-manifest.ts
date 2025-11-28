@@ -20,6 +20,7 @@ import {
   isExportAssignment,
   isFunctionExpression,
   isIdentifier,
+  isImportDeclaration,
   isNoSubstitutionTemplateLiteral,
   isNumericLiteral,
   isObjectLiteralExpression,
@@ -30,8 +31,8 @@ import {
   isStringLiteralLike,
   isTemplateExpression,
   isVariableStatement,
-  isImportDeclaration,
 } from 'typescript';
+import { GENERATED_FOLDER_NAME } from '../services/generate.service';
 import {
   AppManifest,
   Application,
@@ -42,10 +43,9 @@ import {
   Sources,
 } from '../types/config.types';
 import { findPathFile } from '../utils/find-path-file';
+import { getTsProgramAndDiagnostics } from '../utils/get-ts-program-and-diagnostics';
 import { parseJsoncFile, parseTextFile } from '../utils/jsonc-parser';
 import { formatAndWarnTsDiagnostics } from './format-and-warn-ts-diagnostics';
-import { getTsProgramAndDiagnostics } from '../utils/get-ts-program-and-diagnostics';
-import { GENERATED_FOLDER_NAME } from '../services/generate.service';
 
 type JSONValue =
   | string

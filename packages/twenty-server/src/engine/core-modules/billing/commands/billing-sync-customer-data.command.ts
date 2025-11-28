@@ -6,13 +6,12 @@ import chalk from 'chalk';
 import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 
-import {
-  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  type RunOnWorkspaceArgs,
-} from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
@@ -27,8 +26,9 @@ export class BillingSyncCustomerDataCommand extends ActiveOrSuspendedWorkspacesM
     @InjectRepository(BillingCustomerEntity)
     protected readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly dataSourceService: DataSourceService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager);
+    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
 
   override async runOnWorkspace({

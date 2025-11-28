@@ -146,9 +146,11 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
   async updateOneField({
     updateFieldInput,
     workspaceId,
+    isSystemBuild = false,
   }: {
     updateFieldInput: Omit<UpdateFieldInput, 'workspaceId'>;
     workspaceId: string;
+    isSystemBuild?: boolean;
   }): Promise<FlatFieldMetadata> {
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
@@ -173,6 +175,13 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
       },
     );
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const inputTranspilationResult = fromUpdateFieldInputToFlatFieldMetadata({
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatIndexMaps: existingFlatIndexMaps,
@@ -182,6 +191,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
       flatViewGroupMaps: existingFlatViewGroupMaps,
       flatViewMaps: existingFlatViewMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
 
     if (inputTranspilationResult.status === 'fail') {
@@ -197,6 +207,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
 
     const {
       flatFieldMetadatasToUpdate,
+      flatFieldMetadatasToCreate,
       flatIndexMetadatasToUpdate,
       flatIndexMetadatasToDelete,
       flatIndexMetadatasToCreate,
@@ -220,7 +231,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
           fromToAllFlatEntityMaps: {
             flatFieldMetadataMaps: computeFlatEntityMapsFromTo({
               flatEntityMaps: existingFlatFieldMetadataMaps,
-              flatEntityToCreate: [],
+              flatEntityToCreate: flatFieldMetadatasToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: flatFieldMetadatasToUpdate,
             }),
@@ -256,7 +267,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
             }),
           },
           buildOptions: {
-            isSystemBuild: false,
+            isSystemBuild,
             inferDeletionFromMissingEntities: {
               index: true,
               viewGroup: true,

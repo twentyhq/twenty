@@ -19,7 +19,6 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { ViewResolver } from 'src/engine/metadata-modules/view/resolvers/view.resolver';
 import { ViewV2Service } from 'src/engine/metadata-modules/view/services/view-v2.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
@@ -37,7 +36,6 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     FeatureFlagModule,
     PermissionsModule,
     UserRoleModule,
-    WorkspaceMetadataCacheModule,
     WorkspaceCacheStorageModule,
     WorkspaceMigrationV2Module,
     FlatViewModule,

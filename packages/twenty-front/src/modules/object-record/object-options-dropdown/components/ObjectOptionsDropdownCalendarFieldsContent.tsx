@@ -13,9 +13,9 @@ import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useG
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
+import { isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownCalendarFieldsContent = () => {
   const { t } = useLingui();
@@ -32,10 +32,8 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
   const setRecordIndexCalendarFieldMetadataId = useSetRecoilState(
     recordIndexCalendarFieldMetadataIdState,
   );
-  const availableFieldsForCalendar = objectMetadataItem.fields.filter(
-    (field) =>
-      field.type === FieldMetadataType.DATE ||
-      field.type === FieldMetadataType.DATE_TIME,
+  const availableFieldsForCalendar = objectMetadataItem.fields.filter((field) =>
+    isFieldMetadataDateKind(field.type),
   );
 
   const calendarFieldMetadata = currentView?.calendarFieldMetadataId

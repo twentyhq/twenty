@@ -1,14 +1,14 @@
 import { type Note } from '../../generated';
 
 import {
+  type AddressField,
   Field,
-  Object,
   FieldType,
   type FullNameField,
-  type AddressField,
+  Object,
+  OnDeleteAction,
   Relation,
   RelationType,
-  OnDeleteAction,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/application';
 

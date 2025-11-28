@@ -16,12 +16,13 @@ import { GROUP_BY_DATE_GRANULARITY_INPUT_KEY } from 'src/engine/api/graphql/work
 import { RelationFieldMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/relation-field-metadata-gql-type.generator';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
+import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
 import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
-import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
@@ -29,21 +30,26 @@ export class ObjectMetadataGroupByGqlInputTypeGenerator {
   private readonly logger = new Logger(
     ObjectMetadataGroupByGqlInputTypeGenerator.name,
   );
+
   constructor(
     private readonly gqlTypesStorage: GqlTypesStorage,
     private readonly relationFieldMetadataGqlInputTypeGenerator: RelationFieldMetadataGqlInputTypeGenerator,
     private readonly typeMapperService: TypeMapperService,
   ) {}
 
-  public buildAndStore(objectMetadata: ObjectMetadataEntity) {
+  public buildAndStore(
+    flatObjectMetadata: FlatObjectMetadata,
+    fields: FlatFieldMetadata[],
+    context: SchemaGenerationContext,
+  ) {
     const inputType = new GraphQLInputObjectType({
-      name: `${pascalCase(objectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.GroupBy.toString()}Input`,
-      description: objectMetadata.description,
-      fields: () => this.generateFields(objectMetadata),
+      name: `${pascalCase(flatObjectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.GroupBy.toString()}Input`,
+      description: flatObjectMetadata.description,
+      fields: () => this.generateFields(fields, context),
     }) as GraphQLInputObjectType;
 
     const key = computeObjectMetadataInputTypeKey(
-      objectMetadata.nameSingular,
+      flatObjectMetadata.nameSingular,
       GqlInputTypeDefinitionKind.GroupBy,
     );
 
@@ -51,16 +57,16 @@ export class ObjectMetadataGroupByGqlInputTypeGenerator {
   }
 
   private generateFields(
-    objectMetadata: ObjectMetadataEntity,
+    fields: FlatFieldMetadata[],
+    context: SchemaGenerationContext,
   ): GraphQLInputFieldConfigMap {
     const allGeneratedFields: GraphQLInputFieldConfigMap = {};
 
-    for (const fieldMetadata of objectMetadata.fields) {
-      const generatedField = isFieldMetadataRelationOrMorphRelation(
-        fieldMetadata,
-      )
+    for (const fieldMetadata of fields) {
+      const generatedField = isMorphOrRelationFlatFieldMetadata(fieldMetadata)
         ? this.relationFieldMetadataGqlInputTypeGenerator.generateSimpleRelationFieldGroupByInputType(
             fieldMetadata,
+            context,
           )
         : this.generateField(fieldMetadata);
 
@@ -70,7 +76,7 @@ export class ObjectMetadataGroupByGqlInputTypeGenerator {
     return allGeneratedFields;
   }
 
-  private generateField(fieldMetadata: FieldMetadataEntity) {
+  private generateField(fieldMetadata: FlatFieldMetadata) {
     if (isCompositeFieldMetadataType(fieldMetadata.type))
       return this.generateCompositeFieldGroupByInputType(fieldMetadata);
 
@@ -108,7 +114,7 @@ export class ObjectMetadataGroupByGqlInputTypeGenerator {
   }
 
   private generateCompositeFieldGroupByInputType(
-    fieldMetadata: FieldMetadataEntity,
+    fieldMetadata: FlatFieldMetadata,
   ) {
     const key = computeCompositeFieldInputTypeKey(
       fieldMetadata.type,
