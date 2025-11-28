@@ -136,6 +136,9 @@ export const SettingsObjectFieldEdit = () => {
     return null;
   }
 
+  const fieldLabel = fieldMetadataItem.label;
+  const objectLabel = objectMetadataItem.labelPlural;
+
   const isLabelIdentifier = isLabelIdentifierField({
     fieldMetadataItem: fieldMetadataItem,
     objectMetadataItem: objectMetadataItem,
@@ -414,11 +417,11 @@ export const SettingsObjectFieldEdit = () => {
       {fieldMetadataItem?.isCustom && (
         <ConfirmationModal
           modalId={DELETE_FIELD_MODAL_ID}
-          title={t`Delete field`}
-          subtitle={t`Are you sure you want to delete this field and all the data it contains?`}
+          title={t`Delete ${fieldLabel} field?`}
+          subtitle={t`This will permanently delete the field and all its data from ${objectLabel}. Type "yes" to confirm.`}
           confirmButtonText={t`Delete`}
-          confirmationValue={fieldMetadataItem.label}
-          confirmationPlaceholder={fieldMetadataItem.label}
+          confirmationValue="yes"
+          confirmationPlaceholder="yes"
           onConfirmClick={confirmDelete}
           onClose={() => closeModal(DELETE_FIELD_MODAL_ID)}
           loading={isDeleting}
