@@ -48,7 +48,7 @@ export class ApplicationSyncService {
     private readonly applicationService: ApplicationService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
-    private readonly objectMetadataServiceV2: ObjectMetadataService,
+    private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataServiceV2: FieldMetadataService,
     private readonly serverlessFunctionV2Service: ServerlessFunctionV2Service,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -342,7 +342,7 @@ export class ApplicationSyncService {
     );
 
     for (const objectToDelete of objectsToDelete) {
-      await this.objectMetadataServiceV2.deleteOneObject({
+      await this.objectMetadataService.deleteOneObject({
         deleteObjectInput: { id: objectToDelete.id },
         workspaceId,
         isSystemBuild: true,
@@ -373,7 +373,7 @@ export class ApplicationSyncService {
         },
       };
 
-      await this.objectMetadataServiceV2.updateOneObject({
+      await this.objectMetadataService.updateOneObject({
         updateObjectInput,
         workspaceId,
       });
@@ -405,7 +405,7 @@ export class ApplicationSyncService {
         applicationId,
       };
 
-      const createdObject = await this.objectMetadataServiceV2.createOneObject({
+      const createdObject = await this.objectMetadataService.createOneObject({
         createObjectInput,
         applicationId,
         workspaceId,

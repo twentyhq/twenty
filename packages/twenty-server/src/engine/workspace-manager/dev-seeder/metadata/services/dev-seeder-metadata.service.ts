@@ -30,7 +30,7 @@ import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-
 @Injectable()
 export class DevSeederMetadataService {
   constructor(
-    private readonly objectMetadataServiceV2: ObjectMetadataService,
+    private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataServiceV2: FieldMetadataService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     @InjectDataSource()
@@ -143,7 +143,7 @@ export class DevSeederMetadataService {
     workspaceId: string;
     objectMetadataSeed: ObjectMetadataSeed;
   }): Promise<void> {
-    await this.objectMetadataServiceV2.createOneObject({
+    await this.objectMetadataService.createOneObject({
       createObjectInput: {
         ...objectMetadataSeed,
         dataSourceId,
@@ -162,7 +162,7 @@ export class DevSeederMetadataService {
     fieldMetadataSeeds: FieldMetadataSeed[];
   }): Promise<void> {
     const objectMetadata =
-      await this.objectMetadataServiceV2.findOneWithinWorkspace(workspaceId, {
+      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
         where: { nameSingular: objectMetadataNameSingular },
       });
 

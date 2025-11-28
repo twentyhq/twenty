@@ -39,7 +39,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 )
 export class ObjectMetadataResolver {
   constructor(
-    private readonly objectMetadataServiceV2: ObjectMetadataService,
+    private readonly objectMetadataService: ObjectMetadataService,
     private readonly i18nService: I18nService,
   ) {}
 
@@ -113,7 +113,7 @@ export class ObjectMetadataResolver {
   ) {
     try {
       const flatobjectMetadata =
-        await this.objectMetadataServiceV2.createOneObject({
+        await this.objectMetadataService.createOneObject({
           createObjectInput: input.object,
           workspaceId,
         });
@@ -136,7 +136,7 @@ export class ObjectMetadataResolver {
   ) {
     try {
       const flatobjectMetadata =
-        await this.objectMetadataServiceV2.deleteOneObject({
+        await this.objectMetadataService.deleteOneObject({
           deleteObjectInput,
           workspaceId,
         });
@@ -159,7 +159,7 @@ export class ObjectMetadataResolver {
   ) {
     try {
       const flatobjectMetadata =
-        await this.objectMetadataServiceV2.updateOneObject({
+        await this.objectMetadataService.updateOneObject({
           updateObjectInput,
           workspaceId,
         });

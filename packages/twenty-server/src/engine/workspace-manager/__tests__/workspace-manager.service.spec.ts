@@ -34,7 +34,7 @@ describe('WorkspaceManagerService', () => {
   let roleTargetsRepository: Repository<RoleTargetsEntity>;
   let roleRepository: Repository<RoleEntity>;
   let mockDataSource: jest.Mocked<DataSource>;
-  let objectMetadataServiceV2: ObjectMetadataService;
+  let objectMetadataService: ObjectMetadataService;
 
   beforeEach(async () => {
     mockDataSource = {
@@ -171,7 +171,7 @@ describe('WorkspaceManagerService', () => {
     roleRepository = module.get<Repository<RoleEntity>>(
       getRepositoryToken(RoleEntity),
     );
-    objectMetadataServiceV2 = module.get<ObjectMetadataService>(
+    objectMetadataService = module.get<ObjectMetadataService>(
       ObjectMetadataService,
     );
   });
@@ -184,7 +184,7 @@ describe('WorkspaceManagerService', () => {
     it('should delete all the workspace metadata tables and workspace schema', async () => {
       await service.delete('workspace-id');
       expect(
-        objectMetadataServiceV2.deleteWorkspaceAllObjectMetadata,
+        objectMetadataService.deleteWorkspaceAllObjectMetadata,
       ).toHaveBeenCalled();
       expect(workspaceMigrationRepository.delete).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',

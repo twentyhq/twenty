@@ -24,7 +24,7 @@ export class MakeSureDashboardNamingAvailableCommand extends ActiveOrSuspendedWo
     protected readonly dataSourceService: DataSourceService,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly objectMetadataServiceV2: ObjectMetadataService,
+    private readonly objectMetadataService: ObjectMetadataService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
@@ -62,7 +62,7 @@ export class MakeSureDashboardNamingAvailableCommand extends ActiveOrSuspendedWo
       `Updating the dashboard object metadata for workspace ${workspaceId}...`,
     );
 
-    await this.objectMetadataServiceV2.updateOneObject({
+    await this.objectMetadataService.updateOneObject({
       workspaceId,
       updateObjectInput: {
         id: potentialCustomDashboardObjectMetadata.id,

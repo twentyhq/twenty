@@ -33,7 +33,7 @@ export class WorkspaceManagerService {
     private readonly coreDataSource: DataSource,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
-    private readonly objectMetadataServiceV2: ObjectMetadataService,
+    private readonly objectMetadataService: ObjectMetadataService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
     @InjectRepository(UserWorkspaceEntity)
@@ -171,7 +171,7 @@ export class WorkspaceManagerService {
       workspaceId,
     });
 
-    await this.objectMetadataServiceV2.deleteWorkspaceAllObjectMetadata({
+    await this.objectMetadataService.deleteWorkspaceAllObjectMetadata({
       workspaceId,
     });
 
