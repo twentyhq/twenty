@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
@@ -83,9 +83,9 @@ describe('Role deletion should fail', () => {
         },
       });
 
-      expectOneNotInternalServerErrorSnapshot({
-        errors,
-      });
+      expect(errors).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny(errors),
+      );
     },
   );
 });
