@@ -1,1 +1,0 @@
-export const BAR_CHART_MINIMUM_INNER_PADDING = 4;
