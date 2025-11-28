@@ -51,6 +51,7 @@ export const getFieldOrderBy = (
       groupByField,
       groupBySubFieldName,
       direction,
+      dateGranularity,
     );
   }
 

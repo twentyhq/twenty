@@ -16,7 +16,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
@@ -70,11 +70,7 @@ export const ChartGroupByFieldSelectionRelationFieldView = ({
 
     return filterBySearchQuery({
       items: targetObjectMetadataItem.fields.filter(
-        (field) =>
-          !field.isSystem &&
-          !isFieldRelation(field) &&
-          // TODO: Backend doesn't fully support date fields for relation fields yet so we hide them for now. https://github.com/twentyhq/core-team-issues/issues/1935
-          !isFieldMetadataDateKind(field.type),
+        (field) => !field.isSystem && !isFieldRelation(field),
       ),
       searchQuery,
       getSearchableValues: (field) => [field.label, field.name],

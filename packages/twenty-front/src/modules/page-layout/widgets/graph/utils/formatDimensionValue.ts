@@ -88,6 +88,27 @@ export const formatDimensionValue = ({
       return formatDateByGranularity(new Date(String(value)), dateGranularity);
     }
 
+    case FieldMetadataType.RELATION: {
+      // For relation fields with dateGranularity, the nested field is a date field
+      if (isDefined(dateGranularity)) {
+        if (
+          dateGranularity ===
+            ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK ||
+          dateGranularity ===
+            ObjectRecordGroupByDateGranularity.MONTH_OF_THE_YEAR ||
+          dateGranularity ===
+            ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR
+        ) {
+          return String(value);
+        }
+        return formatDateByGranularity(
+          new Date(String(value)),
+          dateGranularity,
+        );
+      }
+      return String(value);
+    }
+
     case FieldMetadataType.NUMBER:
     case FieldMetadataType.CURRENCY: {
       if (

@@ -1,6 +1,7 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
 import { getGroupByOrderBy } from '@/page-layout/widgets/graph/utils/getGroupByOrderBy';
+import { isNestedFieldDateType } from '@/page-layout/widgets/graph/utils/isNestedFieldDateType';
 import {
   type AggregateOrderByWithGroupByField,
   type ObjectRecordOrderByForCompositeField,
@@ -17,12 +18,14 @@ import {
 
 export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
   objectMetadataItem,
+  objectMetadataItems,
   chartConfiguration,
   aggregateOperation,
   limit,
   firstDayOfTheWeek,
 }: {
   objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItems: ObjectMetadataItem[];
   chartConfiguration: PieChartConfiguration;
   aggregateOperation?: string;
   limit?: number;
@@ -45,15 +48,23 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
 
   const isFieldDate = isFieldMetadataDateKind(groupByField.type);
 
+  const isNestedDate = isNestedFieldDateType(
+    groupByField,
+    groupBySubFieldName,
+    objectMetadataItems,
+  );
+
+  const shouldApplyDateGranularity = isFieldDate || isNestedDate;
+
   const groupBy: Array<GroupByFieldObject> = [
     buildGroupByFieldObject({
       field: groupByField,
       subFieldName: groupBySubFieldName,
-
-      dateGranularity: isFieldDate
+      dateGranularity: shouldApplyDateGranularity
         ? (dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY)
         : undefined,
       firstDayOfTheWeek,
+      isNestedDateField: isNestedDate,
     }),
   ];
 
@@ -72,7 +83,7 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
         groupByField,
         groupBySubFieldName,
         aggregateOperation,
-        dateGranularity: isFieldDate
+        dateGranularity: shouldApplyDateGranularity
           ? (dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY)
           : undefined,
       }),
