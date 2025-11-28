@@ -91,7 +91,7 @@ export const SettingsObjectDetailPage = () => {
   );
 
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar } = useSnackBar();
 
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -126,9 +126,6 @@ export const SettingsObjectDetailPage = () => {
     }
 
     setIsDeleting(false);
-    enqueueErrorSnackBar({
-      message: t`Unable to delete object.`,
-    });
   };
 
   const tabs = [

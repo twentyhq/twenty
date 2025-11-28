@@ -63,7 +63,7 @@ export const SettingsObjectFieldEdit = () => {
   const { t } = useLingui();
 
   const { openModal, closeModal } = useModal();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar } = useSnackBar();
 
   const navigate = useNavigate();
 
@@ -284,9 +284,6 @@ export const SettingsObjectFieldEdit = () => {
     }
 
     setIsDeleting(false);
-    enqueueErrorSnackBar({
-      message: t`Unable to delete field.`,
-    });
   };
 
   return (
