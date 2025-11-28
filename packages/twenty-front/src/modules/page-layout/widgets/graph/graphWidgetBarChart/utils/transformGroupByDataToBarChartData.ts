@@ -14,11 +14,10 @@ import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDim
 import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGroupByResults';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { type BarDatum } from '@nivo/bar';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { GraphType } from '~/generated-metadata/graphql';
 import {
   AxisNameDisplay,
-  FieldMetadataType,
   type BarChartConfiguration,
 } from '~/generated/graphql';
 
@@ -150,9 +149,7 @@ export const transformGroupByDataToBarChartData = ({
   const showDataLabels = configuration.displayDataLabel ?? false;
   const showLegend = configuration.displayLegend ?? true;
 
-  const isDateField =
-    groupByFieldX.type === FieldMetadataType.DATE ||
-    groupByFieldX.type === FieldMetadataType.DATE_TIME;
+  const isDateField = isFieldMetadataDateKind(groupByFieldX.type);
 
   const omitNullValues = configuration.omitNullValues ?? false;
 

@@ -11,13 +11,9 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { ManageMembersDropdownMenu } from '@/settings/members/ManageMembersDropdownMenu';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -36,6 +32,7 @@ import {
   AppTooltip,
   Avatar,
   H2Title,
+  IconChevronRight,
   IconMail,
   IconReload,
   IconSearch,
@@ -45,21 +42,15 @@ import {
 } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import {
-  useDeleteUserWorkspaceMutation,
-  useGetWorkspaceInvitationsQuery,
-  useImpersonateMutation,
-} from '~/generated-metadata/graphql';
+import { useGetWorkspaceInvitationsQuery } from '~/generated-metadata/graphql';
 
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
-import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
-import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
-import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
-import { useResendWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useResendWorkspaceInvitation';
-import { workspaceInvitationsState } from '../../modules/workspace-invitation/states/workspaceInvitationsStates';
-
-export const WORKSPACE_MEMBER_DELETION_MODAL_ID =
-  'workspace-member-deletion-modal';
+import { TableCell } from '../../../modules/ui/layout/table/components/TableCell';
+import { TableRow } from '../../../modules/ui/layout/table/components/TableRow';
+import { useDeleteWorkspaceInvitation } from '../../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
+import { useResendWorkspaceInvitation } from '../../../modules/workspace-invitation/hooks/useResendWorkspaceInvitation';
+import { workspaceInvitationsState } from '../../../modules/workspace-invitation/states/workspaceInvitationsStates';
 
 const StyledButtonContainer = styled.div`
   align-items: center;
@@ -101,6 +92,18 @@ const StyledTableRows = styled.div`
   padding-top: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledClickableTableRow = styled(TableRow)`
+  cursor: pointer;
+`;
+
+const StyledChevronWrapper = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.secondary};
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+`;
+
 const StyledNoMembers = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
@@ -109,13 +112,10 @@ export const SettingsWorkspaceMembers = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
   const theme = useTheme();
-  const [workspaceMemberToDelete, setWorkspaceMemberToDelete] = useState<
-    string | undefined
-  >();
+  const navigateSettings = useNavigateSettings();
   const [isFetchingMore, setIsFetchingMore] = useState(false);
-  const [impersonate] = useImpersonateMutation();
-  const { executeImpersonationAuth } = useImpersonationAuth();
   const [searchFilter, setSearchFilter] = useState('');
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const [debouncedSearchFilter] = useDebounce(searchFilter, 300);
 
@@ -142,7 +142,6 @@ export const SettingsWorkspaceMembers = () => {
     fetchMoreRecords,
     hasNextPage,
     loading,
-    refetch: refetchWorkspaceMembers,
   } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
     filter: searchServerFilter,
@@ -150,48 +149,8 @@ export const SettingsWorkspaceMembers = () => {
 
   const { resendInvitation } = useResendWorkspaceInvitation();
   const { deleteWorkspaceInvitation } = useDeleteWorkspaceInvitation();
-  const [deleteUserFromWorkspace] = useDeleteUserWorkspaceMutation();
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-
-  const handleRemoveWorkspaceMember = async (workspaceMemberId: string) => {
-    await deleteUserFromWorkspace?.({
-      variables: {
-        workspaceMemberIdToDelete: workspaceMemberId,
-      },
-    });
-    setWorkspaceMemberToDelete(undefined);
-    refetchWorkspaceMembers();
-  };
-
-  const handleImpersonate = async (targetWorkspaceMember: WorkspaceMember) => {
-    if (!targetWorkspaceMember.userId || !currentWorkspace?.id) {
-      enqueueErrorSnackBar({
-        message: t`Cannot impersonate selected user`,
-        options: { duration: 2000 },
-      });
-      return;
-    }
-
-    await impersonate({
-      variables: {
-        userId: targetWorkspaceMember.userId,
-        workspaceId: currentWorkspace.id,
-      },
-      onCompleted: async (data) => {
-        const { loginToken } = data.impersonate;
-        await executeImpersonationAuth(loginToken.token);
-        return;
-      },
-      onError: () => {
-        enqueueErrorSnackBar({
-          message: t`Cannot impersonate selected user`,
-          options: { duration: 2000 },
-        });
-      },
-    });
-  };
 
   const workspaceInvitations = useRecoilValue(workspaceInvitationsState);
   const setWorkspaceInvitations = useSetRecoilState(workspaceInvitationsState);
@@ -278,8 +237,6 @@ export const SettingsWorkspaceMembers = () => {
       );
     });
   }, [workspaceMembers, searchFilter]);
-
-  const { openModal } = useModal();
 
   return (
     <SubMenuTopBarContainer
@@ -397,8 +354,8 @@ export const SettingsWorkspaceMembers = () => {
           </StyledSearchContainer>
           <StyledTable hasMoreRows={hasNextPage}>
             <TableRow
-              gridAutoColumns="150px 1fr 1fr"
-              mobileGridAutoColumns="100px 1fr 1fr"
+              gridAutoColumns="150px 1fr 40px"
+              mobileGridAutoColumns="100px 1fr 32px"
             >
               <TableHeader>
                 <Trans>Name</Trans>
@@ -411,10 +368,18 @@ export const SettingsWorkspaceMembers = () => {
             <StyledTableRows>
               {optimizedWorkspaceMembers.length > 0 ? (
                 optimizedWorkspaceMembers.map((workspaceMember) => (
-                  <TableRow
-                    gridAutoColumns="150px 1fr 1fr"
-                    mobileGridAutoColumns="100px 1fr 1fr"
+                  <StyledClickableTableRow
+                    gridAutoColumns="150px 1fr 40px"
+                    mobileGridAutoColumns="100px 1fr 32px"
                     key={workspaceMember.id}
+                    onClick={() => {
+                      if (currentWorkspaceMember?.id === workspaceMember.id) {
+                        return;
+                      }
+                      navigateSettings(SettingsPath.WorkspaceMemberPage, {
+                        workspaceMemberId: workspaceMember.id,
+                      });
+                    }}
                   >
                     <TableCell>
                       <StyledIconWrapper>
@@ -448,21 +413,13 @@ export const SettingsWorkspaceMembers = () => {
                       </StyledTextContainerWithEllipsis>
                     </TableCell>
                     <TableCell align="right">
-                      {currentWorkspaceMember?.id !== workspaceMember.id && (
-                        <StyledButtonContainer>
-                          <ManageMembersDropdownMenu
-                            dropdownId={`workspace-member-actions-${workspaceMember.id}`}
-                            workspaceMember={workspaceMember}
-                            onImpersonate={handleImpersonate}
-                            onDelete={(id) => {
-                              setWorkspaceMemberToDelete(id);
-                              openModal(WORKSPACE_MEMBER_DELETION_MODAL_ID);
-                            }}
-                          />
-                        </StyledButtonContainer>
-                      )}
+                      <StyledChevronWrapper>
+                        {currentWorkspaceMember?.id !== workspaceMember.id && (
+                          <IconChevronRight size={theme.icon.size.sm} />
+                        )}
+                      </StyledChevronWrapper>
                     </TableCell>
-                  </TableRow>
+                  </StyledClickableTableRow>
                 ))
               ) : (
                 <StyledNoMembers>
@@ -487,22 +444,6 @@ export const SettingsWorkspaceMembers = () => {
           </StyledTable>
         </Section>
       </SettingsPageContainer>
-      <ConfirmationModal
-        modalId={WORKSPACE_MEMBER_DELETION_MODAL_ID}
-        title={t`Remove member from workspace`}
-        subtitle={
-          <Trans>
-            This action cannot be undone. This will permanently remove this
-            member from this workspace and remove them from all their
-            assignments.
-          </Trans>
-        }
-        onConfirmClick={() =>
-          workspaceMemberToDelete &&
-          handleRemoveWorkspaceMember(workspaceMemberToDelete)
-        }
-        confirmButtonText={t`Remove member`}
-      />
     </SubMenuTopBarContainer>
   );
 };

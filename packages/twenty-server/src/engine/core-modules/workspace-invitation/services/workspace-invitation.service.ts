@@ -306,6 +306,13 @@ export class WorkspaceInvitationService {
             : {},
         });
 
+        if (!isDefined(sender.userEmail)) {
+          throw new WorkspaceInvitationException(
+            'Sender email is missing',
+            WorkspaceInvitationExceptionCode.EMAIL_MISSING,
+          );
+        }
+
         const emailData = {
           link: link.toString(),
           workspace: {

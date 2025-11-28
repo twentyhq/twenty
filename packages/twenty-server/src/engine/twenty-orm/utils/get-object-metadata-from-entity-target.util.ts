@@ -1,8 +1,4 @@
-import {
-  type EntitySchema,
-  type EntityTarget,
-  type ObjectLiteral,
-} from 'typeorm';
+import { type EntityTarget, type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
@@ -11,26 +7,19 @@ import {
   TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 
 export const getObjectMetadataFromEntityTarget = <T extends ObjectLiteral>(
   entityTarget: EntityTarget<T>,
   internalContext: WorkspaceInternalContext,
 ): FlatObjectMetadata => {
-  const objectMetadataName =
-    typeof entityTarget === 'string'
-      ? entityTarget
-      : WorkspaceEntitiesStorage.getObjectMetadataName(
-          internalContext.workspaceId,
-          entityTarget as EntitySchema,
-        );
-
-  if (!objectMetadataName) {
+  if (typeof entityTarget !== 'string') {
     throw new TwentyORMException(
-      'Object metadata name is missing',
+      'Entity target must be a string',
       TwentyORMExceptionCode.MALFORMED_METADATA,
     );
   }
+
+  const objectMetadataName = entityTarget;
 
   const objectMetadataId =
     internalContext.objectIdByNameSingular[objectMetadataName];

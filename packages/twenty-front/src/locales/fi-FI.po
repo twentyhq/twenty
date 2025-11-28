@@ -223,6 +223,16 @@ msgstr "{jobCount, plural, one {Tämä yrittää valittua työtä uudelleen. Se 
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
 msgstr "{num, selectordinal, one {{num}.} other {{num}.}}"
 
+#. js-lingui-id: FaQB54
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
+msgid "{permissionLabel} permission removed"
+msgstr ""
+
+#. js-lingui-id: VsXMnq
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
+msgid "{permissionLabel} Permission removed"
+msgstr ""
+
 #. js-lingui-id: 5d0hY6
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -487,6 +497,8 @@ msgid "Action"
 msgstr "Toiminto"
 
 #. js-lingui-id: 7L01XJ
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
@@ -649,7 +661,7 @@ msgid "Add option"
 msgstr "Lisää vaihtoehto"
 
 #. js-lingui-id: M067Bn
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Add or remove users"
 msgstr "Lisää tai poista käyttäjiä"
 
@@ -657,6 +669,12 @@ msgstr "Lisää tai poista käyttäjiä"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Add Output Field"
 msgstr "Lisää tuloskenttä"
+
+#. js-lingui-id: aYtHO6
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
+msgid "Add permission"
+msgstr ""
 
 #. js-lingui-id: wTsnV9
 #: src/modules/settings/domains/components/SettingsPublicDomainsListCard.tsx
@@ -767,6 +785,11 @@ msgstr "Osoite 2"
 msgid "Adjust the role-related settings"
 msgstr "Säädä rooliin liittyviä asetuksia"
 
+#. js-lingui-id: U3pytU
+#: src/modules/settings/members/components/MemberInfosTab.tsx
+msgid "Admin"
+msgstr ""
+
 #. js-lingui-id: g1in8j
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
@@ -825,6 +848,7 @@ msgstr "Tietyn ajan kuluttua"
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
 msgid "Agent"
 msgstr "Agentti"
 
@@ -874,7 +898,7 @@ msgstr ""
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
@@ -884,7 +908,7 @@ msgstr "AI"
 #. js-lingui-id: kNfr85
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 msgid "AI Model"
 msgstr "AI-malli"
 
@@ -970,7 +994,7 @@ msgid "All your custom objects"
 msgstr "Kaikki omat objektisi"
 
 #. js-lingui-id: 2M5OF+
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow downloading files and attachments"
 msgstr "Salli tiedostojen ja liitteiden lataaminen"
 
@@ -980,7 +1004,7 @@ msgid "Allow email & password login for SSO bypass users."
 msgstr "Salli sähköposti- ja salasana kirjautumisen SSO:n ohittaville käyttäjille."
 
 #. js-lingui-id: +XmkDf
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow exporting data to CSV files"
 msgstr "Salli tietojen vienti CSV-tiedostoihin"
 
@@ -990,7 +1014,7 @@ msgid "Allow Google-based login for users with SSO bypass permissions."
 msgstr "Salli Google-pohjaisen kirjautumisen käyttäjille, joilla on SSO ohitus oikeudet."
 
 #. js-lingui-id: gCnKdT
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow importing data from CSV files"
 msgstr "Salli tietojen tuonti CSV-tiedostoista"
 
@@ -1020,7 +1044,7 @@ msgid "Allow the invitation of new users by sharing an invite link."
 msgstr "Salli uusien käyttäjien kutsuminen jakamalla kutsulinkki."
 
 #. js-lingui-id: JBjv4v
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow uploading files and attachments"
 msgstr "Salli tiedostojen ja liitteiden lataaminen"
 
@@ -1045,12 +1069,10 @@ msgstr "Virhe viestin käsittelyssä"
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
-#: src/modules/views/hooks/internal/usePersistViewField.ts
 #: src/modules/views/hooks/internal/usePersistViewField.ts
 #: src/modules/views/hooks/internal/usePersistViewField.ts
 #: src/modules/views/hooks/internal/usePersistViewField.ts
@@ -1148,7 +1170,7 @@ msgid "API Keys - Settings"
 msgstr "API-avaimet - Asetukset"
 
 #. js-lingui-id: vByqA1
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "API Keys & Webhooks"
 msgstr "API-avaimet & Webhooks"
 
@@ -1235,7 +1257,7 @@ msgstr ""
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Applications"
 msgstr "Sovellukset"
@@ -1285,6 +1307,11 @@ msgstr "Oletko varma, että haluat palauttaa tämän tietueen?"
 msgid "Are you sure? Your current information will not be saved."
 msgstr "Oletko varma? Tietojasi ei tallenneta."
 
+#. js-lingui-id: cybVUo
+#: src/modules/settings/members/components/MemberInfosTab.tsx
+msgid "As it will be displayed in the workspace"
+msgstr ""
+
 #. js-lingui-id: nYD/Cq
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -1296,7 +1323,7 @@ msgid "Ascending"
 msgstr "Nouseva"
 
 #. js-lingui-id: xWEvuo
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
 #: src/modules/command-menu/hooks/useOpenAskAIPageInCommandMenu.ts
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -1470,6 +1497,11 @@ msgstr "Valtuutettu URL kopioitu leikepöydälle"
 msgid "Auto-creation"
 msgstr "Automaattinen luonti"
 
+#. js-lingui-id: HX/jD4
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
+msgid "Auto-generated role for {agentDisplayName}"
+msgstr ""
+
 #. js-lingui-id: YRT7ZW
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Automatically create contacts for people you've participated in an event with."
@@ -1541,7 +1573,7 @@ msgstr "kuukauden {startOrdinal} ja {endOrdinal} päivän välillä"
 #. js-lingui-id: R+w/Va
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/SettingsBilling.tsx
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Billing"
 msgstr "Laskutus"
@@ -1762,8 +1794,8 @@ msgid "Cannot display message"
 msgstr ""
 
 #. js-lingui-id: W3MumH
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Cannot impersonate selected user"
 msgstr "Ei voida käyttäytyä valitun käyttäjänä"
 
@@ -1848,7 +1880,7 @@ msgid "Chat"
 msgstr "Keskustelu"
 
 #. js-lingui-id: UxeiNP
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Chat with AI agents and use AI features"
 msgstr "Keskustele AI-agenttien kanssa ja käytä AI-ominaisuuksia"
 
@@ -2226,12 +2258,12 @@ msgid "Connection successfully updated"
 msgstr "Yhteys päivitettiin onnistuneesti"
 
 #. js-lingui-id: JdGr7p
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+#: src/modules/command-menu/pages/page-layout/components/ChartLimitInfoBanner.tsx
 msgid "Consider adding a filter or changing the date granularity to display more data."
 msgstr ""
 
 #. js-lingui-id: G++HwN
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+#: src/modules/command-menu/pages/page-layout/components/ChartLimitInfoBanner.tsx
 msgid "Consider adding a filter to display more data."
 msgstr ""
 
@@ -2438,7 +2470,7 @@ msgid "Create a workspace"
 msgstr "Luo työtila"
 
 #. js-lingui-id: 8ZjIgO
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Create and configure AI agents"
 msgstr "Luo ja konfiguroi AI-agentit"
 
@@ -2538,7 +2570,7 @@ msgid "Create your workspace"
 msgstr "Luo työtilasi"
 
 #. js-lingui-id: OHF273
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Create, edit, and delete workspace views"
 msgstr "Luo, muokkaa ja poista työtilan näkymiä"
 
@@ -2590,6 +2622,12 @@ msgstr "cron-laukaisin"
 #. js-lingui-id: zovbHa
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Cron will be triggered at UTC time"
+msgstr ""
+
+#. js-lingui-id: 174gCJ
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsCrudList.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionList.tsx
+msgid "CRUD"
 msgstr ""
 
 #. js-lingui-id: R3PLzn
@@ -2666,7 +2704,7 @@ msgid "Customize fields"
 msgstr "Mukauta kenttiä"
 
 #. js-lingui-id: NSv0tC
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Customize page layouts and UI structure"
 msgstr "Mukauta sivun asetteluja ja käyttöliittymän rakennetta"
 
@@ -2711,6 +2749,7 @@ msgstr "Koontinäytöt"
 
 #. js-lingui-id: HKH+W+
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
+#: src/modules/command-menu/pages/page-layout/constants/ChartSettingsHeadings.ts
 msgid "Data"
 msgstr "Data"
 
@@ -2738,7 +2777,7 @@ msgid "Data model"
 msgstr "Tietomalli"
 
 #. js-lingui-id: 4BuYDo
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Data Model"
 msgstr "Tietomalli"
 
@@ -2843,6 +2882,8 @@ msgstr "Viikonpäivä"
 
 #. js-lingui-id: J/Upwb
 #: src/utils/date-utils.ts
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "days"
 msgstr "päivää"
 
@@ -2939,7 +2980,7 @@ msgid "Define the name and description of your object"
 msgstr "Määritä objektisi nimi ja kuvaus"
 
 #. js-lingui-id: Ntu10D
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Define user roles and access levels"
 msgstr "Määritä käyttäjäroolit ja käyttöoikeudet"
 
@@ -2976,7 +3017,6 @@ msgstr "poista"
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
-#: src/modules/settings/members/ManageMembersDropdownMenu.tsx
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -3001,6 +3041,7 @@ msgstr "Poista {objectLabelPlural}"
 #. js-lingui-id: ZDGm40
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Delete account"
 msgstr "Poista tili"
@@ -3144,7 +3185,7 @@ msgid "Descending"
 msgstr "Laskeva"
 
 #. js-lingui-id: g+5exC
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 msgid "Describe what you want the AI to do..."
 msgstr "Kuvaile mitä haluat, että tekoäly tekee..."
 
@@ -3310,7 +3351,7 @@ msgid "Download file"
 msgstr "Lataa tiedosto"
 
 #. js-lingui-id: IDPv1P
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Download Files"
 msgstr "Lataa tiedostoja"
 
@@ -3410,7 +3451,7 @@ msgid "Edit Dashboard"
 msgstr "Muokkaa hallintapaneelia"
 
 #. js-lingui-id: DMIYL8
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Edit data structure and fields"
 msgstr "Muokkaa tietorakennetta ja kenttiä"
 
@@ -3436,7 +3477,7 @@ msgid "Edit iFrame"
 msgstr "Muokkaa iFrame"
 
 #. js-lingui-id: IaSCqp
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Edit own profile information"
 msgstr ""
 
@@ -3446,7 +3487,7 @@ msgid "Edit payment method, see your invoices and more"
 msgstr "Muokkaa maksutapaa, n\\u00e4e laskusi ja paljon muuta"
 
 #. js-lingui-id: QJQd1J
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Edit Profile"
 msgstr ""
 
@@ -3471,13 +3512,14 @@ msgid "Eighth"
 msgstr "Kahdeksas"
 
 #. js-lingui-id: O3oNi5
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+#: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr "S\\u00e4hk\\u00f6posti"
@@ -3632,7 +3674,7 @@ msgid "Empty Object"
 msgstr "Tyhjä objekti"
 
 #. js-lingui-id: q11Dk2
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Enable bypass options"
 msgstr "Ota ohitusvaihtoehdot käyttöön"
 
@@ -3793,7 +3835,7 @@ msgid "Error deleting api key."
 msgstr "Virhe API-avaimen poistamisessa."
 
 #. js-lingui-id: QnVLjD
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Error deleting invitation"
 msgstr "Virhe kutsun poistamisessa"
 
@@ -3823,7 +3865,7 @@ msgid "Error regenerating api key."
 msgstr "Virhe API-avaimen uudelleengeneroinnissa."
 
 #. js-lingui-id: clfpgU
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Error resending invitation"
 msgstr "Virhe kutsun uudelleenkäynnistämisessä"
 
@@ -3861,6 +3903,11 @@ msgstr "Virhe suunnitelman peruutuksessa."
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Error while ending trial period. Please contact Twenty team."
 msgstr "Virhe kokeilujakson päättämisessä. Ota yhteyttä Twenty -tiimiin."
+
+#. js-lingui-id: 5g78zo
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
+msgid "Error while saving the name"
+msgstr ""
 
 #. js-lingui-id: QEee5f
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -4069,7 +4116,7 @@ msgid "Expiration Date"
 msgstr "Vanhenemispäivä"
 
 #. js-lingui-id: M1RnFv
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Expired"
 msgstr "Vanhentunut"
@@ -4080,7 +4127,7 @@ msgid "Expires"
 msgstr "Vanhentuu"
 
 #. js-lingui-id: i9qiyR
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Expires in"
 msgstr "Vanhenee"
 
@@ -4104,7 +4151,7 @@ msgid "Export"
 msgstr "Vie"
 
 #. js-lingui-id: 2KAI4N
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Export CSV"
 msgstr "Vie CSV"
 
@@ -4445,6 +4492,7 @@ msgstr "Ensimmäiset 5 riviä"
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
+#: src/modules/settings/members/components/MemberNameFields.tsx
 msgid "First Name"
 msgstr "Etunimi"
 
@@ -4804,7 +4852,7 @@ msgid "Http"
 msgstr "Http"
 
 #. js-lingui-id: DvpBQM
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "HTTP Request"
 msgstr ""
 
@@ -4922,14 +4970,14 @@ msgid "imap.example.com"
 msgstr "imap.example.com"
 
 #. js-lingui-id: tSVr6t
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
-#: src/modules/settings/members/ManageMembersDropdownMenu.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
+#: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Impersonate"
 msgstr "Teeskentele"
 
 #. js-lingui-id: n3ohBy
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Impersonate workspace users"
 msgstr "Esitä työtilan käyttäjiä"
 
@@ -4950,7 +4998,7 @@ msgid "Import all emails"
 msgstr "Tuo kaikki sähköpostit"
 
 #. js-lingui-id: 2CeOI3
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Import CSV"
 msgstr "Tuo CSV"
 
@@ -5030,7 +5078,7 @@ msgid "Insert a JSON input, then press \"Run\" to test your function."
 msgstr "Lisää JSON-syöte ja paina sitten \"Suorita\" testataksesi toimintoasi."
 
 #. js-lingui-id: 4ZM8/a
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Install and manage applications"
 msgstr "Asenna ja hallinnoi sovelluksia"
 
@@ -5040,7 +5088,7 @@ msgid "Instances"
 msgstr "Instanssit"
 
 #. js-lingui-id: g+29+d
-#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 msgid "Instructions for AI"
 msgstr "Ohjeet tekoälylle"
 
@@ -5162,12 +5210,12 @@ msgid "Invite"
 msgstr "Kutsu"
 
 #. js-lingui-id: 0M8+El
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Invite by email"
 msgstr "Kutsu sähköpostitse"
 
 #. js-lingui-id: PWIq/W
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Invite by link"
 msgstr "Kutsu linkillä"
 
@@ -5306,6 +5354,11 @@ msgstr "Myöntäjän URI"
 msgid "Italian"
 msgstr "Italia"
 
+#. js-lingui-id: hgr8eo
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+msgid "items"
+msgstr ""
+
 #. js-lingui-id: +qz/bj
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
 msgid "Items to iterate over"
@@ -5429,6 +5482,11 @@ msgstr "Viimeiset 7 päivää (vanhin → uusin)"
 msgid "Last message {lastMessageSentAtFormatted}"
 msgstr "Viimeinen viesti {lastMessageSentAtFormatted}"
 
+#. js-lingui-id: 1ZaQUH
+#: src/modules/settings/members/components/MemberNameFields.tsx
+msgid "Last name"
+msgstr ""
+
 #. js-lingui-id: UXBCwc
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
@@ -5474,7 +5532,7 @@ msgid "Layout"
 msgstr "Ulkoasu"
 
 #. js-lingui-id: yU0QVO
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Layouts"
 msgstr "Ulkoasut"
 
@@ -5647,17 +5705,17 @@ msgid "Mail Account"
 msgstr "Sähköpostitili"
 
 #. js-lingui-id: MOLprz
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Make HTTP requests to external APIs"
 msgstr ""
 
 #. js-lingui-id: n0FHLv
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Manage API keys and webhooks"
 msgstr "Hallinnoi API-avaimia ja webhooks"
 
 #. js-lingui-id: IT5nsa
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Manage billing and subscriptions"
 msgstr "Hallinnoi laskutusta ja tilauksia"
 
@@ -5678,7 +5736,7 @@ msgid "Manage in settings"
 msgstr ""
 
 #. js-lingui-id: T6YjCk
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Manage Members"
 msgstr "Hallitse jäseniä"
 
@@ -5688,7 +5746,7 @@ msgid "Manage members in settings"
 msgstr ""
 
 #. js-lingui-id: eGGH1l
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Manage security policies"
 msgstr "Hallinnoi tietoturvakäytäntöjä"
 
@@ -5698,17 +5756,17 @@ msgid "Manage support access settings"
 msgstr "Hallitse tuki käyttöoikeuden asetuksia"
 
 #. js-lingui-id: N7fMy9
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Manage the members of your workspace here"
 msgstr "Hallinnoi työtilasi jäseniä täällä"
 
 #. js-lingui-id: /berfj
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Manage Views"
 msgstr "Hallitse näkymiä"
 
 #. js-lingui-id: fEqDWx
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Manage workflows"
 msgstr "Hallitse työnkulkuja"
 
@@ -5789,9 +5847,15 @@ msgstr ""
 msgid "Member of"
 msgstr "Jäsen"
 
+#. js-lingui-id: cNIHA/
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
+msgid "Member removed from workspace"
+msgstr ""
+
 #. js-lingui-id: wlQNTg
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -5933,6 +5997,12 @@ msgstr "Vuoden kuukausi"
 msgid "monthly"
 msgstr "kuukausittain"
 
+#. js-lingui-id: 6jefe3
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+msgid "months"
+msgstr ""
+
 #. js-lingui-id: 2FYpfJ
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
 msgid "More"
@@ -5987,9 +6057,9 @@ msgstr "Omat listaamattomat näkymät"
 
 #. js-lingui-id: 6YtxFj
 #: src/testing/mock-data/tableData.ts
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -6011,6 +6081,7 @@ msgstr "Omat listaamattomat näkymät"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
+#: src/modules/settings/members/components/MemberInfosTab.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -6351,6 +6422,11 @@ msgstr ""
 msgid "No evaluations yet for this turn"
 msgstr ""
 
+#. js-lingui-id: /hvarH
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionRelationFieldView.tsx
+msgid "No fields available"
+msgstr ""
+
 #. js-lingui-id: RM6uKY
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 msgid "No fields selected"
@@ -6408,7 +6484,7 @@ msgid "No logs yet"
 msgstr ""
 
 #. js-lingui-id: UwvrGq
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "No members"
 msgstr "Ei jäseniä"
 
@@ -6418,7 +6494,7 @@ msgid "No members assigned"
 msgstr "Ei jäseniä osoitettuna"
 
 #. js-lingui-id: /nLvVj
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "No members match your search"
 msgstr "Yksikään jäsen ei vastaa hakua"
 
@@ -6995,8 +7071,14 @@ msgstr "Prosenttia ei tyhjä"
 
 #. js-lingui-id: /roQKz
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
+#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData.ts
 msgid "Percentage"
 msgstr "Prosenttiosuus"
+
+#. js-lingui-id: /YAKmj
+#: src/modules/settings/members/components/MemberInfosTab.tsx
+msgid "Perform administrative actions or permanently delete this user"
+msgstr ""
 
 #. js-lingui-id: wSpwGR
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -7040,6 +7122,7 @@ msgid "Permanently destroy workflows"
 msgstr "Tuhotaan työnkulut pysyvästi"
 
 #. js-lingui-id: 9cDpsw
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
 msgstr "Oikeudet"
@@ -7065,6 +7148,7 @@ msgstr "Valitse {objectLabel} tietue"
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/onboarding/CreateProfile.tsx
+#: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "Picture"
 msgstr "Kuva"
 
@@ -7252,6 +7336,11 @@ msgstr "Profiili - Asetukset"
 msgid "Profile Picture"
 msgstr ""
 
+#. js-lingui-id: W9uQXX
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "Prompt"
+msgstr ""
+
 #. js-lingui-id: GVxbU6
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Provide your OIDC provider details"
@@ -7303,6 +7392,12 @@ msgstr "Vuosineljännes"
 #: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Quarter of the year"
 msgstr "Vuoden neljännes"
+
+#. js-lingui-id: kyP980
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+msgid "quarters"
+msgstr ""
 
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus.tsx
@@ -7467,12 +7562,12 @@ msgid "Remove from favorites"
 msgstr "Poista suosikeista"
 
 #. js-lingui-id: 99VIgC
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Remove member"
 msgstr "Poista jäsen"
 
 #. js-lingui-id: FzY1pn
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Remove member from workspace"
 msgstr "Poista jäsen työtilasta"
 
@@ -7669,7 +7764,7 @@ msgstr "Rooli päivitetty onnistuneesti"
 
 #. js-lingui-id: 5dJK4M
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
@@ -7787,7 +7882,7 @@ msgid "Search a role..."
 msgstr "Etsi roolia..."
 
 #. js-lingui-id: xdl79x
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Search a team member..."
 msgstr "Etsi tiimin jäsentä..."
 
@@ -7862,6 +7957,7 @@ msgstr "Etsi valuutta"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionRelationFieldView.tsx
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 msgid "Search fields"
@@ -7942,7 +8038,7 @@ msgstr "Salaisuus (vapaaehtoinen)"
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Security"
 msgstr "Turvallisuus"
@@ -8132,18 +8228,18 @@ msgid "Send"
 msgstr "Lähetä"
 
 #. js-lingui-id: mjK8F3
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Send an invite email to your team"
 msgstr "Lähetä kutsusähköposti tiimillesi"
 
 #. js-lingui-id: i/TzEU
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Send Email"
 msgstr "Lähetä sähköposti"
 
 #. js-lingui-id: CqsED8
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Send emails via connected accounts"
 msgstr "Lähetä sähköposteja yhdistettyjen tilien kautta"
 
@@ -8199,7 +8295,7 @@ msgid "Set email visibility, manage your blocklist and more."
 msgstr "Aseta sähköpostin näkyvyys, hallinnoi estolistaa ja muuta."
 
 #. js-lingui-id: 6KA8xy
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Set global workspace preferences"
 msgstr "Aseta globaalit työtilan asetukset"
 
@@ -8286,7 +8382,7 @@ msgid "Share"
 msgstr "Jaa"
 
 #. js-lingui-id: Vy9kmk
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Share this link to invite users to join your workspace"
 msgstr "Jaa tätä linkkiä kutsuaksesi käyttäjiä liittymään työtilaasi"
 
@@ -8443,11 +8539,6 @@ msgstr "Jotkut"
 msgid "Some folders"
 msgstr "Jotkin kansiot"
 
-#. js-lingui-id: yHwG3y
-#: src/modules/command-menu/pages/page-layout/components/ChartTypeSelectionSection.tsx
-msgid "Soon"
-msgstr "Pian"
-
 #. js-lingui-id: wTrpxV
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Sorry, something went wrong"
@@ -8501,7 +8592,7 @@ msgstr "SSO (SAML / OIDC)"
 
 #. js-lingui-id: qBpBSc
 #: src/pages/settings/security/SettingsSecurity.tsx
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "SSO Bypass"
 msgstr "SSO-ohitus"
 
@@ -8583,6 +8674,11 @@ msgstr "Tallennettu tietokantaan"
 #. js-lingui-id: UJNV7l
 #: src/pages/settings/ai/components/SettingsAgentResponseFormat.tsx
 msgid "String"
+msgstr ""
+
+#. js-lingui-id: 1CalO6
+#: src/modules/command-menu/pages/page-layout/constants/ChartSettingsHeadings.ts
+msgid "Style"
 msgstr ""
 
 #. js-lingui-id: WIUeUf
@@ -8732,12 +8828,12 @@ msgid "Switch to Yearly"
 msgstr "Vaihda vuosittaiseen"
 
 #. js-lingui-id: avDJC3
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Sync Account"
 msgstr "Synkronoi tili"
 
 #. js-lingui-id: MsxItJ
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Sync email and calendar accounts"
 msgstr "Synkronoi sähköposti- ja kalenteritilit"
 
@@ -8921,6 +9017,11 @@ msgstr "Tämän kentän kuvaus"
 msgid "The domain name you want to use for emailing"
 msgstr "Toimialuenimi, jota haluat käyttää sähköpostille"
 
+#. js-lingui-id: xJSPh6
+#: src/modules/settings/members/components/MemberInfosTab.tsx
+msgid "The email associated to this account"
+msgstr ""
+
 #. js-lingui-id: VGZYbZ
 #: src/pages/settings/SettingsProfile.tsx
 msgid "The email associated to your account"
@@ -9055,7 +9156,7 @@ msgid "This action cannot be undone. This will permanently delete your entire wo
 msgstr "Tätä toimintoa ei voi peruuttaa. Tämä poistaa pysyvästi koko työtilan. <0/> Vahvista antamalla sähköpostisi."
 
 #. js-lingui-id: fTuKde
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "This action cannot be undone. This will permanently remove this member from this workspace and remove them from all their assignments."
 msgstr "Tätä toimintoa ei voi peruuttaa. Tämä poistaa jäsenen pysyvästi tästä työtilasta ja kaikista heidän tehtävistään."
 
@@ -9196,7 +9297,7 @@ msgid "Tomorrow"
 msgstr "Huomenna"
 
 #. js-lingui-id: 72c5Qo
-#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer.tsx
+#: src/modules/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData.ts
 msgid "Total"
 msgstr ""
 
@@ -9352,6 +9453,7 @@ msgid "Type"
 msgstr "Tyyppi"
 
 #. js-lingui-id: qzD6hf
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
 msgid "Type anything..."
 msgstr "Kirjoita jotain..."
@@ -9366,24 +9468,34 @@ msgstr "Ukraina"
 msgid "ul"
 msgstr ""
 
+#. js-lingui-id: N/XI5S
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
+msgid "Unable to delete member right now"
+msgstr ""
+
 #. js-lingui-id: l+ALBd
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
 msgstr "Takaosaan ei saa yhteyttä"
 
-#. js-lingui-id: ZjTKHy
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "Undisplayed data: max {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart."
+#. js-lingui-id: o23uCL
+#: src/modules/command-menu/pages/page-layout/utils/getChartLimitMessage.ts
+msgid "Undisplayed data: max {maxItems} {granularityLabel} per chart."
 msgstr ""
 
-#. js-lingui-id: 29HVk/
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "Undisplayed data: max {LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart."
+#. js-lingui-id: LshHRh
+#: src/modules/command-menu/pages/page-layout/utils/getChartLimitMessage.ts
+msgid "Undisplayed data: max {maxItems} bars per chart."
 msgstr ""
 
-#. js-lingui-id: xliRoG
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "Undisplayed data: max {PIE_CHART_MAXIMUM_NUMBER_OF_SLICES} slices per chart."
+#. js-lingui-id: 8MwfeU
+#: src/modules/command-menu/pages/page-layout/utils/getChartLimitMessage.ts
+msgid "Undisplayed data: max {maxItems} data points per chart."
+msgstr ""
+
+#. js-lingui-id: 0LZhoy
+#: src/modules/command-menu/pages/page-layout/utils/getChartLimitMessage.ts
+msgid "Undisplayed data: max {maxItems} slices per chart."
 msgstr ""
 
 #. js-lingui-id: fo0VXg
@@ -9521,7 +9633,7 @@ msgid "Upload File"
 msgstr "Lataa tiedosto"
 
 #. js-lingui-id: HAKBY9
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Upload Files"
 msgstr "Lataa tiedostoja"
 
@@ -9596,7 +9708,7 @@ msgid "User is not logged in"
 msgstr "Käyttäjä ei ole kirjautunut sisään"
 
 #. js-lingui-id: Sxm8rQ
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Users"
 msgstr "Käyttäjät"
 
@@ -9704,6 +9816,11 @@ msgstr "näkymä"
 msgid "View"
 msgstr "Näkymä"
 
+#. js-lingui-id: 8qPdO7
+#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+msgid "View Agent"
+msgstr ""
+
 #. js-lingui-id: nK72s8
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 msgid "View all evaluations"
@@ -9740,6 +9857,16 @@ msgstr "Näytä työt"
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "View Previous AI Chats"
 msgstr "Näytä edelliset AI Keskustelut"
+
+#. js-lingui-id: hAAsm/
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
+msgid "View role"
+msgstr ""
+
+#. js-lingui-id: mzftV9
+#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+msgid "View Role"
+msgstr ""
 
 #. js-lingui-id: bJAIqT
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -9881,6 +10008,11 @@ msgstr "Webhookit"
 msgid "Week"
 msgstr "Viikko"
 
+#. js-lingui-id: IAUiSh
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
+msgid "weeks"
+msgstr ""
+
 #. js-lingui-id: ke0EDP
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to {workspaceName}"
@@ -9923,12 +10055,11 @@ msgid "Workflow duplicated successfully"
 msgstr ""
 
 #. js-lingui-id: woYYQq
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Workflows"
 msgstr "Työnkulut"
 
 #. js-lingui-id: pmUArF
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -9936,6 +10067,8 @@ msgstr "Työnkulut"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
@@ -9962,7 +10095,7 @@ msgstr "Työnkulut"
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
-#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
@@ -10046,6 +10179,7 @@ msgstr "Kirjoita funktiosi (typescript) alle"
 
 #. js-lingui-id: SHqkdn
 #: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
+#: src/modules/command-menu/pages/page-layout/constants/ChartSettingsHeadings.ts
 msgid "X axis"
 msgstr "X-akseli"
 
@@ -10057,6 +10191,7 @@ msgstr "X-akselin tiedot"
 
 #. js-lingui-id: fplGg6
 #: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
+#: src/modules/command-menu/pages/page-layout/constants/ChartSettingsHeadings.ts
 msgid "Y axis"
 msgstr "Y-akseli"
 
@@ -10078,6 +10213,7 @@ msgstr "vuosittain"
 
 #. js-lingui-id: +BGee5
 #: src/utils/date-utils.ts
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "years"
 msgstr "vuotta"
 

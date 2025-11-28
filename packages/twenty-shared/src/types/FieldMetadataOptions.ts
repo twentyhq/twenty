@@ -15,13 +15,13 @@ export type TagColor =
 
 export class FieldMetadataDefaultOption {
   id?: string;
-  position!: number;
-  label!: string;
-  value!: string;
+  position: number;
+  label: string;
+  value: string;
 }
 
 export class FieldMetadataComplexOption extends FieldMetadataDefaultOption {
-  color!: TagColor;
+  color: TagColor;
 }
 
 type FieldMetadataOptionsMapping = {

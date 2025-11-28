@@ -13,8 +13,6 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -30,7 +28,6 @@ import {
   ViewGroupExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { ViewGroupRestApiExceptionFilter } from 'src/engine/metadata-modules/view-group/filters/view-group-rest-api-exception.filter';
-import { ViewGroupV2Service } from 'src/engine/metadata-modules/view-group/services/view-group-v2.service';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
 import { CreateViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-group-permission.guard';
 import { DeleteViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-group-permission.guard';
@@ -40,11 +37,7 @@ import { UpdateViewGroupPermissionGuard } from 'src/engine/metadata-modules/view
 @UseGuards(WorkspaceAuthGuard)
 @UseFilters(ViewGroupRestApiExceptionFilter)
 export class ViewGroupController {
-  constructor(
-    private readonly viewGroupService: ViewGroupService,
-    private readonly viewGroupV2Service: ViewGroupV2Service,
-    private readonly featureFlagService: FeatureFlagService,
-  ) {}
+  constructor(private readonly viewGroupService: ViewGroupService) {}
 
   @Get()
   @UseGuards(NoPermissionGuard)
@@ -91,21 +84,8 @@ export class ViewGroupController {
     @Body() input: CreateViewGroupInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewGroupDTO> {
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspace.id,
-      );
-
-    if (isWorkspaceMigrationV2Enabled) {
-      return await this.viewGroupV2Service.createOne({
-        createViewGroupInput: input,
-        workspaceId: workspace.id,
-      });
-    }
-
-    return this.viewGroupService.create({
-      ...input,
+    return await this.viewGroupService.createOne({
+      createViewGroupInput: input,
       workspaceId: workspace.id,
     });
   }
@@ -117,31 +97,15 @@ export class ViewGroupController {
     @Body() input: UpdateViewGroupInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewGroupDTO> {
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspace.id,
-      );
-
-    if (isWorkspaceMigrationV2Enabled) {
-      const updateInput = {
-        id,
-        update: input.update ?? input,
-      };
-
-      return await this.viewGroupV2Service.updateOne({
-        updateViewGroupInput: updateInput,
-        workspaceId: workspace.id,
-      });
-    }
-
-    const updatedViewGroup = await this.viewGroupService.update(
+    const updateInput = {
       id,
-      workspace.id,
-      input,
-    );
+      update: input.update ?? input,
+    };
 
-    return updatedViewGroup;
+    return await this.viewGroupService.updateOne({
+      updateViewGroupInput: updateInput,
+      workspaceId: workspace.id,
+    });
   }
 
   @Delete(':id')
@@ -150,25 +114,10 @@ export class ViewGroupController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<{ success: boolean }> {
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspace.id,
-      );
-
-    if (isWorkspaceMigrationV2Enabled) {
-      const deletedViewGroup = await this.viewGroupV2Service.deleteOne({
-        deleteViewGroupInput: { id },
-        workspaceId: workspace.id,
-      });
-
-      return { success: isDefined(deletedViewGroup) };
-    }
-
-    const deletedViewGroup = await this.viewGroupService.delete(
-      id,
-      workspace.id,
-    );
+    const deletedViewGroup = await this.viewGroupService.deleteOne({
+      deleteViewGroupInput: { id },
+      workspaceId: workspace.id,
+    });
 
     return { success: isDefined(deletedViewGroup) };
   }

@@ -1,14 +1,16 @@
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SetOrChangePassword } from '@/settings/profile/components/SetOrChangePassword';
 import { DeleteAccount } from '@/settings/profile/components/DeleteAccount';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
-import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
+import { WorkspaceMemberPictureUploader } from '@/settings/workspace-member/components/WorkspaceMemberPictureUploader';
 import { useCanChangePassword } from '@/settings/profile/hooks/useCanChangePassword';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconShield, Status } from 'twenty-ui/display';
@@ -17,6 +19,7 @@ import { UndecoratedLink } from 'twenty-ui/navigation';
 
 export const SettingsProfile = () => {
   const { t } = useLingui();
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { currentUserWorkspaceTwoFactorAuthenticationMethods } =
     useCurrentUserWorkspaceTwoFactorAuthentication();
@@ -26,6 +29,10 @@ export const SettingsProfile = () => {
     'VERIFIED';
 
   const { canChangePassword } = useCanChangePassword();
+
+  if (!currentWorkspaceMember?.id) {
+    return null;
+  }
 
   return (
     <SubMenuTopBarContainer
@@ -41,7 +48,9 @@ export const SettingsProfile = () => {
       <SettingsPageContainer>
         <Section>
           <H2Title title={t`Picture`} />
-          <ProfilePictureUploader />
+          <WorkspaceMemberPictureUploader
+            workspaceMemberId={currentWorkspaceMember.id}
+          />
         </Section>
         <Section>
           <H2Title

@@ -84,6 +84,7 @@ export const useChartSettingsValues = ({
       ? getFieldLabelWithSubField({
           field: groupByFieldX,
           subFieldName: groupBySubFieldNameX,
+          objectMetadataItems,
         })
       : undefined;
 
@@ -181,6 +182,7 @@ export const useChartSettingsValues = ({
             ? getFieldLabelWithSubField({
                 field: pieChartGroupByField,
                 subFieldName: finalGroupBySubFieldNameY,
+                objectMetadataItems,
               })
             : undefined;
 

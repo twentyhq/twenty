@@ -1,5 +1,9 @@
+import React from 'react';
+
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { renderHook } from '@testing-library/react';
+import { RecoilRoot } from 'recoil';
+import { WorkflowVisualizerComponentInstanceContext } from '../../../workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
 const mockDeleteWorkflowVersionStep = jest.fn();
 const mockGetUpdatableWorkflowVersion = jest.fn();
@@ -33,6 +37,36 @@ jest.mock('@/command-menu/hooks/useCommandMenu', () => ({
   }),
 }));
 
+jest.mock('@/workflow/hooks/useWorkflowWithCurrentVersion', () => ({
+  useWorkflowWithCurrentVersion: () => undefined,
+}));
+
+jest.mock(
+  '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose',
+  () => ({
+    useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose: () => ({
+      resetPermissionState: jest.fn(),
+    }),
+  }),
+);
+
+const wrapper = ({ children }: { children: React.ReactNode }) => {
+  const workflowVisualizerComponentInstanceId =
+    'workflow-visualizer-instance-id';
+
+  return (
+    <RecoilRoot>
+      <WorkflowVisualizerComponentInstanceContext.Provider
+        value={{
+          instanceId: workflowVisualizerComponentInstanceId,
+        }}
+      >
+        {children}
+      </WorkflowVisualizerComponentInstanceContext.Provider>
+    </RecoilRoot>
+  );
+};
+
 describe('useDeleteStep', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -55,7 +89,9 @@ describe('useDeleteStep', () => {
       },
     });
 
-    const { result } = renderHook(() => useDeleteStep());
+    const { result } = renderHook(() => useDeleteStep(), {
+      wrapper,
+    });
     await result.current.deleteStep(mockStepId);
 
     expect(mockGetUpdatableWorkflowVersion).toHaveBeenCalled();

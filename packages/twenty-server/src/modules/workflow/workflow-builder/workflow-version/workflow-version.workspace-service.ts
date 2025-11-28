@@ -126,6 +126,7 @@ export class WorkflowVersionWorkspaceService {
 
     return {
       ...draftWorkflowVersion,
+      name: draftWorkflowVersion.name ?? '',
       steps: newWorkflowVersionSteps,
       trigger: newWorkflowVersionTrigger,
     };
@@ -289,6 +290,7 @@ export class WorkflowVersionWorkspaceService {
 
     return {
       ...newDraftVersion,
+      name: newDraftVersion.name ?? '',
       steps: remappedSteps,
       trigger: remappedTrigger ?? null,
     };

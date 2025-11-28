@@ -58,7 +58,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Event name`,
     icon: 'IconAbc',
   })
-  name: string;
+  @WorkspaceIsNullable()
+  name: string | null;
 
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.properties,
@@ -78,7 +79,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Cached record name`,
     icon: 'IconAbc',
   })
-  linkedRecordCachedName: string;
+  @WorkspaceIsNullable()
+  linkedRecordCachedName: string | null;
 
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedRecordId,

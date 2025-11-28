@@ -35,7 +35,7 @@ export class FileWorkspaceMemberListener {
 
       this.messageQueueService.add<FileDeletionJobData>(FileDeletionJob.name, {
         workspaceId: payload.workspaceId,
-        fullPath: event.properties.before.avatarUrl,
+        fullPath: event.properties.before.avatarUrl ?? '',
       });
     }
   }

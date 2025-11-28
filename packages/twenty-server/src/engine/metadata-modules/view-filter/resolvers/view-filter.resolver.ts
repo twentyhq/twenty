@@ -1,8 +1,6 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -12,7 +10,6 @@ import { DeleteViewFilterInput } from 'src/engine/metadata-modules/view-filter/d
 import { DestroyViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/destroy-view-filter.input';
 import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/update-view-filter.input';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
-import { ViewFilterV2Service } from 'src/engine/metadata-modules/view-filter/services/view-filter-v2.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { CreateViewFilterPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-filter-permission.guard';
 import { DeleteViewFilterPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-filter-permission.guard';
@@ -24,11 +21,7 @@ import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/
 @UseFilters(ViewGraphqlApiExceptionFilter)
 @UseGuards(WorkspaceAuthGuard)
 export class ViewFilterResolver {
-  constructor(
-    private readonly viewFilterService: ViewFilterService,
-    private readonly featureFlagService: FeatureFlagService,
-    private readonly viewFilterV2Service: ViewFilterV2Service,
-  ) {}
+  constructor(private readonly viewFilterService: ViewFilterService) {}
 
   @Query(() => [ViewFilterDTO])
   @UseGuards(NoPermissionGuard)
@@ -59,21 +52,8 @@ export class ViewFilterResolver {
     @Args('input') createViewFilterInput: CreateViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFilterDTO> {
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspaceId,
-      );
-
-    if (isWorkspaceMigrationV2Enabled) {
-      return await this.viewFilterV2Service.createOne({
-        createViewFilterInput,
-        workspaceId,
-      });
-    }
-
-    return this.viewFilterService.create({
-      ...createViewFilterInput,
+    return await this.viewFilterService.createOne({
+      createViewFilterInput,
       workspaceId,
     });
   }
@@ -84,24 +64,10 @@ export class ViewFilterResolver {
     @Args('input') updateViewFilterInput: UpdateViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFilterDTO> {
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspaceId,
-      );
-
-    if (isWorkspaceMigrationV2Enabled) {
-      return await this.viewFilterV2Service.updateOne({
-        updateViewFilterInput,
-        workspaceId,
-      });
-    }
-
-    return this.viewFilterService.update(
-      updateViewFilterInput.id,
+    return this.viewFilterService.updateOne({
+      updateViewFilterInput,
       workspaceId,
-      updateViewFilterInput.update,
-    );
+    });
   }
 
   @Mutation(() => ViewFilterDTO)
@@ -110,20 +76,10 @@ export class ViewFilterResolver {
     @Args('input') deleteViewFilterInput: DeleteViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFilterDTO> {
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspaceId,
-      );
-
-    if (isWorkspaceMigrationV2Enabled) {
-      return await this.viewFilterV2Service.deleteOne({
-        deleteViewFilterInput,
-        workspaceId,
-      });
-    }
-
-    return this.viewFilterService.delete(deleteViewFilterInput.id, workspaceId);
+    return this.viewFilterService.deleteOne({
+      deleteViewFilterInput,
+      workspaceId,
+    });
   }
 
   @Mutation(() => ViewFilterDTO)
@@ -132,22 +88,9 @@ export class ViewFilterResolver {
     @Args('input') destroyViewFilterInput: DestroyViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFilterDTO> {
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspaceId,
-      );
-
-    if (isWorkspaceMigrationV2Enabled) {
-      return await this.viewFilterV2Service.destroyOne({
-        destroyViewFilterInput,
-        workspaceId,
-      });
-    }
-
-    return this.viewFilterService.destroy(
-      destroyViewFilterInput.id,
+    return this.viewFilterService.destroyOne({
+      destroyViewFilterInput,
       workspaceId,
-    );
+    });
   }
 }

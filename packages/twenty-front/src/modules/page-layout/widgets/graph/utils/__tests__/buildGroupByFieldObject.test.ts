@@ -4,7 +4,7 @@ import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 describe('buildGroupByFieldObject', () => {
-  it('should return field with Id suffix for relation fields', () => {
+  it('should return field with Id suffix for relation fields without subFieldName', () => {
     const field = {
       name: 'company',
       type: FieldMetadataType.RELATION,
@@ -13,6 +13,33 @@ describe('buildGroupByFieldObject', () => {
     const result = buildGroupByFieldObject({ field });
 
     expect(result).toEqual({ companyId: true });
+  });
+
+  it('should return nested object for relation field with subFieldName', () => {
+    const field = {
+      name: 'company',
+      type: FieldMetadataType.RELATION,
+    } as any;
+
+    const result = buildGroupByFieldObject({ field, subFieldName: 'name' });
+
+    expect(result).toEqual({ company: { name: true } });
+  });
+
+  it('should return deeply nested object for relation with composite subfield', () => {
+    const field = {
+      name: 'company',
+      type: FieldMetadataType.RELATION,
+    } as any;
+
+    const result = buildGroupByFieldObject({
+      field,
+      subFieldName: 'address.addressCity',
+    });
+
+    expect(result).toEqual({
+      company: { address: { addressCity: true } },
+    });
   });
 
   it('should return nested object for composite fields with subfield', () => {

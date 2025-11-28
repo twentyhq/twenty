@@ -49,7 +49,7 @@ export class WorkspaceSyncRoleService {
 
     const roleComparatorResults = this.workspaceRoleComparator.compare({
       fromFlatRoles: existingStandardRoleEntities.map(fromRoleEntityToFlatRole),
-      toFlatRoles: targetStandardRoles,
+      toFlatRoles: targetStandardRoles.map(fromRoleEntityToFlatRole),
     });
 
     for (const roleComparatorResult of roleComparatorResults) {
