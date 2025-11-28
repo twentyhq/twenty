@@ -136,7 +136,7 @@ export class ObjectMetadataOrderByBaseGenerator {
         );
 
       if (!isDefined(orderByDateGranularityInputType)) {
-        throw new Error('isForGroupByInputType not found');
+        throw new Error('OrderByDateGranularityInputType not found');
       }
 
       return {
