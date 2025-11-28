@@ -11,7 +11,7 @@ import {
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 import { ApiKeyRoleService } from './api-key-role.service';
 
@@ -22,7 +22,7 @@ describe('ApiKeyRoleService', () => {
   let mockWorkspaceRepository: any;
   let mockApiKeyRepository: any;
   let mockDataSource: any;
-  let mockWorkspacePermissionsCacheService: any;
+  let mockWorkspaceCacheService: any;
 
   const mockWorkspaceId = 'workspace-123';
   const mockApiKeyId = 'api-key-456';
@@ -107,9 +107,9 @@ describe('ApiKeyRoleService', () => {
       transaction: jest.fn(),
     };
 
-    mockWorkspacePermissionsCacheService = {
-      recomputeApiKeyRoleMapCache: jest.fn(),
-      getApiKeyRoleMapFromCache: jest.fn(),
+    mockWorkspaceCacheService = {
+      invalidate: jest.fn(),
+      getOrRecompute: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -136,8 +136,8 @@ describe('ApiKeyRoleService', () => {
           useValue: mockDataSource,
         },
         {
-          provide: WorkspacePermissionsCacheService,
-          useValue: mockWorkspacePermissionsCacheService,
+          provide: WorkspaceCacheService,
+          useValue: mockWorkspaceCacheService,
         },
       ],
     }).compile();
@@ -249,11 +249,10 @@ describe('ApiKeyRoleService', () => {
         workspaceId: mockWorkspaceId,
       });
       expect(mockManagerSave).toHaveBeenCalledWith(mockNewRoleTarget);
-      expect(
-        mockWorkspacePermissionsCacheService.recomputeApiKeyRoleMapCache,
-      ).toHaveBeenCalledWith({
-        workspaceId: mockWorkspaceId,
-      });
+      expect(mockWorkspaceCacheService.invalidate).toHaveBeenCalledWith(
+        mockWorkspaceId,
+        ['apiKeyRoleMap'],
+      );
     });
 
     it('should skip assignment if role is already assigned', async () => {
@@ -268,9 +267,7 @@ describe('ApiKeyRoleService', () => {
       });
 
       expect(mockDataSource.transaction).not.toHaveBeenCalled();
-      expect(
-        mockWorkspacePermissionsCacheService.recomputeApiKeyRoleMapCache,
-      ).not.toHaveBeenCalled();
+      expect(mockWorkspaceCacheService.invalidate).not.toHaveBeenCalled();
     });
 
     it('should throw exception if API key not found', async () => {
@@ -327,31 +324,26 @@ describe('ApiKeyRoleService', () => {
         },
       };
 
-      mockWorkspacePermissionsCacheService.getApiKeyRoleMapFromCache.mockResolvedValue(
-        mockCacheData,
-      );
+      mockWorkspaceCacheService.getOrRecompute.mockResolvedValue({
+        apiKeyRoleMap: mockCacheData,
+      });
 
       const result = await service.getRoleIdForApiKey(
         mockApiKeyId,
         mockWorkspaceId,
       );
 
-      expect(
-        mockWorkspacePermissionsCacheService.getApiKeyRoleMapFromCache,
-      ).toHaveBeenCalledWith({
-        workspaceId: mockWorkspaceId,
-      });
+      expect(mockWorkspaceCacheService.getOrRecompute).toHaveBeenCalledWith(
+        mockWorkspaceId,
+        ['apiKeyRoleMap'],
+      );
       expect(result).toBe(mockRoleId);
     });
 
     it('should throw exception if API key has no role in cache', async () => {
-      const mockCacheData = {
-        data: {},
-      };
-
-      mockWorkspacePermissionsCacheService.getApiKeyRoleMapFromCache.mockResolvedValue(
-        mockCacheData,
-      );
+      mockWorkspaceCacheService.getOrRecompute.mockResolvedValue({
+        apiKeyRoleMap: {},
+      });
 
       await expect(
         service.getRoleIdForApiKey(mockApiKeyId, mockWorkspaceId),
@@ -369,11 +361,10 @@ describe('ApiKeyRoleService', () => {
     it('should trigger cache recomputation', async () => {
       await service.recomputeCache(mockWorkspaceId);
 
-      expect(
-        mockWorkspacePermissionsCacheService.recomputeApiKeyRoleMapCache,
-      ).toHaveBeenCalledWith({
-        workspaceId: mockWorkspaceId,
-      });
+      expect(mockWorkspaceCacheService.invalidate).toHaveBeenCalledWith(
+        mockWorkspaceId,
+        ['apiKeyRoleMap'],
+      );
     });
   });
 
@@ -515,9 +506,7 @@ describe('ApiKeyRoleService', () => {
         }),
       ).rejects.toThrow('Transaction failed');
 
-      expect(
-        mockWorkspacePermissionsCacheService.recomputeApiKeyRoleMapCache,
-      ).not.toHaveBeenCalled();
+      expect(mockWorkspaceCacheService.invalidate).not.toHaveBeenCalled();
     });
 
     it('should handle cache service failures gracefully', async () => {
@@ -537,7 +526,7 @@ describe('ApiKeyRoleService', () => {
         },
       );
 
-      mockWorkspacePermissionsCacheService.recomputeApiKeyRoleMapCache.mockRejectedValue(
+      mockWorkspaceCacheService.invalidate.mockRejectedValue(
         new Error('Cache update failed'),
       );
 

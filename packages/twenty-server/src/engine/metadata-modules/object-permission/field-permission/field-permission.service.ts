@@ -26,7 +26,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class FieldPermissionService {
@@ -37,7 +37,7 @@ export class FieldPermissionService {
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(FieldPermissionEntity)
     private readonly fieldPermissionsRepository: Repository<FieldPermissionEntity>,
-    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -53,10 +53,10 @@ export class FieldPermissionService {
       workspaceId,
     });
 
-    const { data: rolesPermissions } =
-      await this.workspacePermissionsCacheService.getRolesPermissionsFromCache({
-        workspaceId,
-      });
+    const { rolesPermissions } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'rolesPermissions',
+      ]);
 
     await this.validateRoleIsEditableOrThrow({
       role,
@@ -161,10 +161,9 @@ export class FieldPermissionService {
       });
     }
 
-    await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
-      workspaceId,
-      roleIds: [input.roleId],
-    });
+    await this.workspaceCacheService.invalidate(workspaceId, [
+      'rolesPermissions',
+    ]);
 
     return this.fieldPermissionsRepository.find({
       where: {

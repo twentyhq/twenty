@@ -21,7 +21,7 @@ import {
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { isArgDefinedIfProvidedOrThrow } from 'src/engine/metadata-modules/utils/is-arg-defined-if-provided-or-throw.util';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export class RoleService {
   constructor(
@@ -30,7 +30,7 @@ export class RoleService {
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly userRoleService: UserRoleService,
-    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
   ) {}
 
@@ -103,10 +103,9 @@ export class RoleService {
       universalIdentifier: id,
     });
 
-    await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
-      workspaceId,
-      roleIds: [role.id],
-    });
+    await this.workspaceCacheService.invalidate(workspaceId, [
+      'rolesPermissions',
+    ]);
 
     return role;
   }
@@ -151,10 +150,9 @@ export class RoleService {
       ...input.update,
     });
 
-    await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
-      workspaceId,
-      roleIds: [input.id],
-    });
+    await this.workspaceCacheService.invalidate(workspaceId, [
+      'rolesPermissions',
+    ]);
 
     return { ...existingRole, ...updatedRole };
   }
@@ -202,9 +200,9 @@ export class RoleService {
       workspaceId,
     });
 
-    await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
-      workspaceId,
-    });
+    await this.workspaceCacheService.invalidate(workspaceId, [
+      'rolesPermissions',
+    ]);
 
     return roleId;
   }

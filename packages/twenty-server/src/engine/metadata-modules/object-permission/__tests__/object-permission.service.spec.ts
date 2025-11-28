@@ -14,7 +14,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 describe('ObjectPermissionService', () => {
   let service: ObjectPermissionService;
@@ -22,7 +22,7 @@ describe('ObjectPermissionService', () => {
     Repository<ObjectPermissionEntity>
   >;
   let roleRepository: jest.Mocked<Repository<RoleEntity>>;
-  let workspacePermissionsCacheService: jest.Mocked<WorkspacePermissionsCacheService>;
+  let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
   let workspaceManyOrAllFlatEntityMapsCacheService: jest.Mocked<WorkspaceManyOrAllFlatEntityMapsCacheService>;
 
   beforeEach(async () => {
@@ -49,9 +49,9 @@ describe('ObjectPermissionService', () => {
           },
         },
         {
-          provide: WorkspacePermissionsCacheService,
+          provide: WorkspaceCacheService,
           useValue: {
-            recomputeRolesPermissionsCache: jest.fn(),
+            invalidate: jest.fn(),
           },
         },
         {
@@ -68,9 +68,7 @@ describe('ObjectPermissionService', () => {
       getRepositoryToken(ObjectPermissionEntity),
     );
     roleRepository = module.get(getRepositoryToken(RoleEntity));
-    workspacePermissionsCacheService = module.get(
-      WorkspacePermissionsCacheService,
-    );
+    workspaceCacheService = module.get(WorkspaceCacheService);
     workspaceManyOrAllFlatEntityMapsCacheService = module.get(
       WorkspaceManyOrAllFlatEntityMapsCacheService,
     );
@@ -144,9 +142,7 @@ describe('ObjectPermissionService', () => {
 
       // Verify that upsert was never called
       expect(objectPermissionRepository.upsert).not.toHaveBeenCalled();
-      expect(
-        workspacePermissionsCacheService.recomputeRolesPermissionsCache,
-      ).not.toHaveBeenCalled();
+      expect(workspaceCacheService.invalidate).not.toHaveBeenCalled();
     });
 
     it('should successfully create object permission for custom (non-system) object', async () => {
@@ -230,12 +226,10 @@ describe('ObjectPermissionService', () => {
           conflictPaths: ['objectMetadataId', 'roleId'],
         },
       );
-      expect(
-        workspacePermissionsCacheService.recomputeRolesPermissionsCache,
-      ).toHaveBeenCalledWith({
+      expect(workspaceCacheService.invalidate).toHaveBeenCalledWith(
         workspaceId,
-        roleIds: [roleId],
-      });
+        ['rolesPermissions'],
+      );
     });
 
     it('should throw PermissionsException when object metadata is not found', async () => {

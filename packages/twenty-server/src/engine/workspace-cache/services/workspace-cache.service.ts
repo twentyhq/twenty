@@ -20,7 +20,7 @@ import {
 } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
 
-const LOCAL_STALENESS_TTL_MS = 30_000;
+const LOCAL_STALENESS_TTL_MS = 100;
 const MEMOIZER_TTL_MS = 10_000;
 
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];

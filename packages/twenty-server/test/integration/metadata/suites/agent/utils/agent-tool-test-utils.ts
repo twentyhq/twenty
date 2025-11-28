@@ -23,8 +23,8 @@ import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-meta
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 import { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
@@ -36,7 +36,7 @@ export interface AgentToolTestContext {
   agentService: AgentService;
   objectMetadataService: ObjectMetadataServiceV2;
   roleRepository: Repository<RoleEntity>;
-  workspacePermissionsCacheService: WorkspacePermissionsCacheService;
+  workspaceCacheService: WorkspaceCacheService;
   twentyORMGlobalManager: TwentyORMGlobalManager;
   testAgent: AgentEntity & { roleId: string | null };
   testRole: RoleEntity;
@@ -89,9 +89,9 @@ export const createAgentToolTestModule =
           },
         },
         {
-          provide: WorkspacePermissionsCacheService,
+          provide: WorkspaceCacheService,
           useValue: {
-            getRolesPermissionsFromCache: jest.fn(),
+            getOrRecompute: jest.fn(),
           },
         },
         {
@@ -205,10 +205,6 @@ export const createAgentToolTestModule =
     const roleRepository = module.get<Repository<RoleEntity>>(
       getRepositoryToken(RoleEntity),
     );
-    const workspacePermissionsCacheService =
-      module.get<WorkspacePermissionsCacheService>(
-        WorkspacePermissionsCacheService,
-      );
     const twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
       TwentyORMGlobalManager,
     );
@@ -314,13 +310,16 @@ export const createAgentToolTestModule =
       },
     } as any);
 
+    const workspaceCacheService =
+      module.get<WorkspaceCacheService>(WorkspaceCacheService);
+
     return {
       module,
       agentToolService,
       agentService,
       objectMetadataService,
       roleRepository,
-      workspacePermissionsCacheService,
+      workspaceCacheService,
       twentyORMGlobalManager,
       testAgent,
       testRole,

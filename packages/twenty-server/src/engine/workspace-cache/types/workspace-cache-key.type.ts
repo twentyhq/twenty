@@ -20,6 +20,7 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   featureFlagsMap: 'feature-flag:feature-flags-map',
   rolesPermissions: 'metadata:permissions:roles-permissions',
   userWorkspaceRoleMap: 'metadata:permissions:user-workspace-role-map',
+  apiKeyRoleMap: 'metadata:permissions:api-key-role-map',
   flatApplicationMaps: 'flat-maps:flatApplicationMaps',
 } as const satisfies Record<WorkspaceCacheKeyName, string>;
 
@@ -27,6 +28,7 @@ type AdditionalCacheDataMap = {
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
   rolesPermissions: ObjectsPermissionsByRoleId;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
+  apiKeyRoleMap: Record<string, string>;
   flatApplicationMaps: FlatApplicationCacheMaps;
 };
 

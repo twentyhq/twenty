@@ -14,6 +14,7 @@ import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 import { ApiKeyController } from './controllers/api-key.controller';
 
@@ -28,6 +29,7 @@ import { ApiKeyController } from './controllers/api-key.controller';
     JwtModule,
     TokenModule,
     WorkspacePermissionsCacheModule,
+    WorkspaceCacheModule,
     WorkspaceCacheStorageModule,
     PermissionsModule,
     FeatureFlagModule,
