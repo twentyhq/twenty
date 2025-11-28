@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateOneRole } from 'test/integration/metadata/suites/role/utils/update-one-role.util';
 import {
   eachTestingContextFilter,
@@ -20,14 +21,17 @@ type TestContext = {
 type TestSetup = {
   testRoleId: string;
   existingRoleLabelForDuplicate: string;
+  nonEditableRoleId: string;
 };
 
 type GlobalTestContext = {
   existingRoleLabelForDuplicate: string;
+  nonEditableRoleId: string;
 };
 
 const globalTestContext: GlobalTestContext = {
   existingRoleLabelForDuplicate: 'Existing Role For Duplicate Test',
+  nonEditableRoleId: '',
 };
 
 type UpdateOneRoleTestingContext = EachTestingContext<TestContext>[];
@@ -37,6 +41,11 @@ describe('Role update should fail', () => {
   let existingRoleIdForDuplicate: string;
 
   beforeAll(async () => {
+    // Get a non-editable system role (Admin) for testing
+    const adminRole = await findOneRoleByLabel({ label: 'Admin' });
+
+    globalTestContext.nonEditableRoleId = adminRole.id;
+
     // Create a role that will be used to test duplicate label validation
     const { data: duplicateData } = await createOneRole({
       expectToFail: false,
@@ -92,7 +101,6 @@ describe('Role update should fail', () => {
   });
 
   const failingRoleUpdateTestCases: UpdateOneRoleTestingContext = [
-    // Label uniqueness test
     {
       title: 'when updating label to one that already exists',
       context: {
@@ -100,6 +108,18 @@ describe('Role update should fail', () => {
           idToUpdate: testSetup.testRoleId,
           updatePayload: {
             label: testSetup.existingRoleLabelForDuplicate,
+          },
+        }),
+      },
+    },
+    {
+      only: true,
+      title: 'when updating a non-editable system role',
+      context: {
+        input: (testSetup) => ({
+          idToUpdate: testSetup.nonEditableRoleId,
+          updatePayload: {
+            label: 'new role label',
           },
         }),
       },
@@ -167,6 +187,7 @@ describe('Role update should fail', () => {
         testRoleId,
         existingRoleLabelForDuplicate:
           globalTestContext.existingRoleLabelForDuplicate,
+        nonEditableRoleId: globalTestContext.nonEditableRoleId,
       };
 
       const { idToUpdate, updatePayload } = context.input(testSetup);

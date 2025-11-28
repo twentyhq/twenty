@@ -163,14 +163,15 @@ export class FlatRoleTargetValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
-    } else {
-      validationResult.errors.push(
-        ...validateFlatRoleTargetAssignationAvailability({
-          flatRole: referencedRole,
-          flatRoleTarget: updatedFlatRoleTarget,
-        }),
-      );
+      return validationResult;
     }
+
+    validationResult.errors.push(
+      ...validateFlatRoleTargetAssignationAvailability({
+        flatRole: referencedRole,
+        flatRoleTarget: updatedFlatRoleTarget,
+      }),
+    );
 
     return validationResult;
   }
