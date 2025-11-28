@@ -4,17 +4,15 @@ import inquirer from 'inquirer';
 import * as path from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { copyBaseApplicationProject } from '../utils/app-template';
+import { copyBaseApplicationProject } from './utils/app-template';
 import kebabCase from 'lodash.kebabcase';
-import { convertToLabel } from '../utils/convert-to-label';
-import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
-import { GenerateService } from '../services/generate.service';
+import { convertToLabel } from './utils/convert-to-label';
+
+const CURRENT_EXECUTION_DIRECTORY = process.env.INIT_CWD || process.cwd();
 
 const execPromise = promisify(exec);
 
-export class AppInitCommand {
-  private generateService = new GenerateService();
-
+export class CreateAppCommand {
   async execute(directory?: string): Promise<void> {
     try {
       const { appName, appDisplayName, appDirectory, appDescription } =
@@ -39,8 +37,6 @@ export class AppInitCommand {
         console.error(chalk.red('yarn install failed:'), error.stdout);
         process.exit(1);
       }
-
-      await this.generateService.generateClient(appDirectory);
 
       await this.logSuccess(appDirectory);
     } catch (error) {

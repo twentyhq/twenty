@@ -4,54 +4,44 @@
       <img alt="Twenty logo" src="https://raw.githubusercontent.com/twentyhq/twenty/2f25922f4cd5bd61e1427c57c4f8ea224e1d552c/packages/twenty-website/public/images/core/logo.svg" height="128">
     </picture>
   </a>
-  <h1>Twenty sdk</h1>
+  <h1>Create Twenty App</h1>
 
-<a href="https://www.npmjs.com/package/twenty-sdk"><img alt="NPM version" src="https://img.shields.io/npm/v/twenty-sdk.svg?style=for-the-badge&labelColor=000000"></a>
+<a href="https://www.npmjs.com/package/create-twenty-app"><img alt="NPM version" src="https://img.shields.io/npm/v/create-twenty-app.svg?style=for-the-badge&labelColor=000000"></a>
 <a href="https://github.com/twentyhq/twenty/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/npm/l/next.svg?style=for-the-badge&labelColor=000000"></a>
 <a href="https://discord.gg/cx5n4Jzs57"><img alt="Join the community on Discord" src="https://img.shields.io/badge/Join%20the%20community-blueviolet.svg?style=for-the-badge&logo=Twenty&labelColor=000000&logoWidth=20"></a>
 
 </div>
 
-A Cli and an SDK to develop, build, and publish applications that extend [Twenty CRM](https://twenty.com).
+This CLI tool enables you to quickly start building a new Twenty application, with everything set up for you. To get started, use the following command:
 
 ## Basic Usage
 
 ```bash
-npm install twenty-sdk
-# or
-yarn add twenty-sdk
-```
+npx create-twenty-app@latest [project-name]
 
-## Requirements
-An `apiKey`. Go to [https://app.twenty.com/settings/api-webhooks](https://app.twenty.com/settings/api-webhooks) to generate one
-
-## Quick example project
-
-```bash
-# Authenticate using your apiKey (CLI will prompt for your <apiKey>)
-twenty auth login
+cd [project-name]
 
 # Add a new entity to your application
-twenty app add
+yarn create-entity
 
-# Generates a Twenty client and TypeScript definitions for your workspace entities
-twenty app generate
+# Authenticate using a Twenty Api Key
+yarn auth
+
+# Load twenty client and workspace types
+yarn generate
 
 # Start dev mode: automatically syncs changes to your Twenty workspace, so you can test new functions/objects instantly.
-twenty app dev
+yarn dev
 
 # Or use one time sync
-twenty app sync
+yarn sync
 
 # Uninstall application from workspace
-twenty app  uninstall
+yarn uninstall
 ```
 
-## Usage
-
-```typescript
-import { /* your exports */ } from 'twenty-sdk';
-```
+## Twenty-sdk
+See [twenty-sdk](https://www.npmjs.com/package/twenty-sdk) tool for detailed documentation
 
 ## Publish your application
 

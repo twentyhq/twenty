@@ -231,6 +231,7 @@
       "packages/twenty-sdk",
       "packages/twenty-apps",
       "packages/twenty-cli",
+      "packages/create-twenty-app",
       "tools/eslint-rules"
     ]
   }

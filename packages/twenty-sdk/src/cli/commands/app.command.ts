@@ -7,7 +7,6 @@ import {
 } from './app-add.command';
 import { AppUninstallCommand } from './app-uninstall.command';
 import { AppDevCommand } from './app-dev.command';
-import { AppInitCommand } from './app-init.command';
 import { AppSyncCommand } from './app-sync.command';
 import { formatPath } from '../utils/format-path';
 import { AppGenerateCommand } from './app-generate.command';
@@ -16,7 +15,6 @@ export class AppCommand {
   private devCommand = new AppDevCommand();
   private syncCommand = new AppSyncCommand();
   private uninstallCommand = new AppUninstallCommand();
-  private initCommand = new AppInitCommand();
   private addCommand = new AppAddCommand();
   private generateCommand = new AppGenerateCommand();
 
@@ -82,21 +80,6 @@ export class AppCommand {
         } catch {
           process.exit(1);
         }
-      });
-
-    appCommand
-      .command('init [directory]')
-      .description('Initialize a new Twenty application')
-      .action(async (directory?: string) => {
-        if (directory && !/^[a-z0-9-]+$/.test(directory)) {
-          console.error(
-            chalk.red(
-              `Invalid directory "${directory}". Must contain only lowercase letters, numbers, and hyphens`,
-            ),
-          );
-          process.exit(1);
-        }
-        await this.initCommand.execute(directory);
       });
 
     appCommand

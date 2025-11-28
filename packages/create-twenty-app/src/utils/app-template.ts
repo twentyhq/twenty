@@ -1,8 +1,6 @@
 import * as fs from 'fs-extra';
-import { writeJsoncFile } from '../utils/jsonc-parser';
 import { join } from 'path';
 import { v4 } from 'uuid';
-import sdkPackageJson from '../../../package.json';
 
 export const copyBaseApplicationProject = async ({
   appName,
@@ -71,7 +69,11 @@ const createTsConfig = async (appDirectory: string) => {
     exclude: ['node_modules', 'dist', '**/*.test.ts', '**/*.spec.ts'],
   };
 
-  await writeJsoncFile(join(appDirectory, 'tsconfig.json'), tsConfigJson);
+  await fs.writeFile(
+    join(appDirectory, 'tsconfig.json'),
+    JSON.stringify(tsConfigJson, null, 2),
+    'utf8',
+  );
 };
 
 const createApplicationConfig = async ({
@@ -115,7 +117,7 @@ const createPackageJson = async ({
     },
     packageManager: 'yarn@4.9.2',
     scripts: {
-      create: 'twenty app add',
+      'create-entity': 'twenty app add',
       dev: 'twenty app dev',
       generate: 'twenty app generate',
       sync: 'twenty app sync',
@@ -123,14 +125,19 @@ const createPackageJson = async ({
       auth: 'twenty auth login',
     },
     dependencies: {
-      'twenty-sdk': sdkPackageJson.version,
+      'twenty-sdk': '0.1.0',
     },
     devDependencies: {
       '@types/node': '^24.7.2',
       typescript: '^5.9.3',
     },
   };
-  await writeJsoncFile(join(appDirectory, 'package.json'), packageJson);
+
+  await fs.writeFile(
+    join(appDirectory, 'package.json'),
+    JSON.stringify(packageJson, null, 2),
+    'utf8',
+  );
 };
 
 const createReadmeContent = async ({
