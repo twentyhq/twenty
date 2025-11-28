@@ -40,7 +40,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 )
 export class FieldMetadataResolver {
   constructor(
-    private readonly fieldMetadataServiceV2: FieldMetadataService,
+    private readonly fieldMetadataService: FieldMetadataService,
     private readonly i18nService: I18nService,
   ) {}
 
@@ -53,7 +53,7 @@ export class FieldMetadataResolver {
   ) {
     try {
       const flatFieldMetadata =
-        await this.fieldMetadataServiceV2.createOneField({
+        await this.fieldMetadataService.createOneField({
           createFieldInput: input.field,
           workspaceId,
         });
@@ -76,7 +76,7 @@ export class FieldMetadataResolver {
   ) {
     try {
       const flatFieldMetadata =
-        await this.fieldMetadataServiceV2.updateOneField({
+        await this.fieldMetadataService.updateOneField({
           updateFieldInput: { ...input.update, id: input.id },
           workspaceId,
         });
@@ -103,7 +103,7 @@ export class FieldMetadataResolver {
 
     try {
       const flatFieldMetadata =
-        await this.fieldMetadataServiceV2.deleteOneField({
+        await this.fieldMetadataService.deleteOneField({
           deleteOneFieldInput,
           workspaceId,
         });

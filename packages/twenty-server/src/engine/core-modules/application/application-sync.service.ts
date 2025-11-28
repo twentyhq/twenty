@@ -49,7 +49,7 @@ export class ApplicationSyncService {
     private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
     private readonly objectMetadataService: ObjectMetadataService,
-    private readonly fieldMetadataServiceV2: FieldMetadataService,
+    private readonly fieldMetadataService: FieldMetadataService,
     private readonly serverlessFunctionV2Service: ServerlessFunctionV2Service,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly dataSourceService: DataSourceService,
@@ -219,14 +219,14 @@ export class ApplicationSyncService {
     );
 
     for (const fieldToDelete of fieldsToDelete) {
-      await this.fieldMetadataServiceV2.updateOneField({
+      await this.fieldMetadataService.updateOneField({
         updateFieldInput: {
           id: fieldToDelete.id,
           isActive: false,
         },
         workspaceId,
       });
-      await this.fieldMetadataServiceV2.deleteOneField({
+      await this.fieldMetadataService.deleteOneField({
         deleteOneFieldInput: { id: fieldToDelete.id },
         workspaceId,
       });
@@ -256,7 +256,7 @@ export class ApplicationSyncService {
         isNullable: fieldToSync.isNullable ?? true,
       };
 
-      await this.fieldMetadataServiceV2.updateOneField({
+      await this.fieldMetadataService.updateOneField({
         updateFieldInput,
         workspaceId,
       });
@@ -281,7 +281,7 @@ export class ApplicationSyncService {
         workspaceId,
       };
 
-      await this.fieldMetadataServiceV2.createOneField({
+      await this.fieldMetadataService.createOneField({
         createFieldInput,
         workspaceId,
         applicationId,

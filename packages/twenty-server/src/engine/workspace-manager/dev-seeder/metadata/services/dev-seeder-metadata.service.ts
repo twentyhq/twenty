@@ -31,7 +31,7 @@ import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-
 export class DevSeederMetadataService {
   constructor(
     private readonly objectMetadataService: ObjectMetadataService,
-    private readonly fieldMetadataServiceV2: FieldMetadataService,
+    private readonly fieldMetadataService: FieldMetadataService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
@@ -176,7 +176,7 @@ export class DevSeederMetadataService {
       objectMetadataId: objectMetadata.id,
     }));
 
-    await this.fieldMetadataServiceV2.createManyFields({
+    await this.fieldMetadataService.createManyFields({
       createFieldInputs,
       workspaceId,
     });
@@ -259,7 +259,7 @@ export class DevSeederMetadataService {
       objectIdByNameSingular,
     });
 
-    await this.fieldMetadataServiceV2.createManyFields({
+    await this.fieldMetadataService.createManyFields({
       createFieldInputs,
       workspaceId,
     });
