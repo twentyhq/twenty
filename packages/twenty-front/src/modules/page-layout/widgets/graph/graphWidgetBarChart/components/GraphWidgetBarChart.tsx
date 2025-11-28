@@ -3,7 +3,7 @@ import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphW
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
 import { GraphBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphBarChartTooltip';
-import { BAR_CHART_MINIMUM_INNER_PADDING } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumInnerPadding';
+import { BAR_CHART_OUTER_PADDING_RATIO } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartOuterPaddingRatio';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
@@ -12,6 +12,7 @@ import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/
 import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateValueRangeFromBarChartKeys';
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
+import { getBarChartInnerPadding } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartInnerPadding';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
@@ -233,7 +234,7 @@ export const GraphWidgetBarChart = ({
           keys={keys}
           indexBy={indexBy}
           margin={margins}
-          padding={0.3}
+          padding={BAR_CHART_OUTER_PADDING_RATIO}
           groupMode={groupMode}
           layout={layout}
           valueScale={{
@@ -256,9 +257,15 @@ export const GraphWidgetBarChart = ({
           gridYValues={layout === BarChartLayout.VERTICAL ? 5 : undefined}
           enableLabel={false}
           labelSkipWidth={12}
-          innerPadding={
-            groupMode === 'grouped' ? BAR_CHART_MINIMUM_INNER_PADDING : 0
-          }
+          innerPadding={getBarChartInnerPadding({
+            chartWidth,
+            chartHeight,
+            dataLength: data.length,
+            keysLength: keys.length,
+            layout,
+            margins,
+            groupMode,
+          })}
           labelSkipHeight={12}
           valueFormat={(value) =>
             formatGraphValue(Number(value), formatOptions)
