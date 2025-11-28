@@ -123,10 +123,10 @@ export const SettingsObjectFieldEdit = () => {
   });
 
   useEffect(() => {
-    if (!objectMetadataItem || !fieldMetadataItem) {
+    if (!isDeleting && (!objectMetadataItem || !fieldMetadataItem)) {
       navigateApp(AppPath.NotFound);
     }
-  }, [navigateApp, objectMetadataItem, fieldMetadataItem]);
+  }, [navigateApp, objectMetadataItem, fieldMetadataItem, isDeleting]);
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
 
@@ -273,8 +273,6 @@ export const SettingsObjectFieldEdit = () => {
       objectMetadataId: objectMetadataItem.id,
     });
 
-    setIsDeleting(false);
-
     if (deleteResult.status === 'successful') {
       enqueueSuccessSnackBar({
         message: t`Field deleted`,
@@ -285,6 +283,7 @@ export const SettingsObjectFieldEdit = () => {
       return;
     }
 
+    setIsDeleting(false);
     enqueueErrorSnackBar({
       message: t`Unable to delete field.`,
     });

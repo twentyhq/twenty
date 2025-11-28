@@ -1,11 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ObjectFields } from '@/settings/data-model/object-details/components/tabs/ObjectFields';
 import { ObjectIndexes } from '@/settings/data-model/object-details/components/tabs/ObjectIndexes';
 import { ObjectSettings } from '@/settings/data-model/object-details/components/tabs/ObjectSettings';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
@@ -34,6 +36,7 @@ import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
 
@@ -55,7 +58,9 @@ const StyledTitleContainer = styled.div`
 
 export const SettingsObjectDetailPage = () => {
   const navigateApp = useNavigateApp();
+  const navigateSettings = useNavigateSettings();
   const { t } = useLingui();
+  const theme = useTheme();
 
   const { objectNamePlural = '' } = useParams();
   const { findObjectMetadataItemByNamePlural } =
@@ -85,21 +90,46 @@ export const SettingsObjectDetailPage = () => {
     FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED,
   );
 
+  const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+
+  const [isDeleting, setIsDeleting] = useState(false);
+
   useEffect(() => {
     if (objectNamePlural === updatedObjectNamePlural)
       setUpdatedObjectNamePlural('');
-    if (!isDefined(objectMetadataItem)) navigateApp(AppPath.NotFound);
+    if (!isDeleting && !isDefined(objectMetadataItem))
+      navigateApp(AppPath.NotFound);
   }, [
     objectMetadataItem,
     navigateApp,
     objectNamePlural,
     updatedObjectNamePlural,
     setUpdatedObjectNamePlural,
+    isDeleting,
   ]);
 
-  const theme = useTheme();
+  if (!isDefined(objectMetadataItem)) {
+    return null;
+  }
 
-  if (!isDefined(objectMetadataItem)) return <></>;
+  const handleDeleteObject = async () => {
+    setIsDeleting(true);
+    const result = await deleteOneObjectMetadataItem(objectMetadataItem.id);
+
+    if (result.status === 'successful') {
+      enqueueSuccessSnackBar({
+        message: t`Object deleted`,
+      });
+      navigateSettings(SettingsPath.Objects);
+      return;
+    }
+
+    setIsDeleting(false);
+    enqueueErrorSnackBar({
+      message: t`Unable to delete object.`,
+    });
+  };
 
   const tabs = [
     {
@@ -134,7 +164,12 @@ export const SettingsObjectDetailPage = () => {
       case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS:
         return <ObjectFields objectMetadataItem={objectMetadataItem} />;
       case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.SETTINGS:
-        return <ObjectSettings objectMetadataItem={objectMetadataItem} />;
+        return (
+          <ObjectSettings
+            objectMetadataItem={objectMetadataItem}
+            onDelete={handleDeleteObject}
+          />
+        );
       case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.INDEXES:
         return <ObjectIndexes objectMetadataItem={objectMetadataItem} />;
       default:

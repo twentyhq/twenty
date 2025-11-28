@@ -1,17 +1,14 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { H2Title, IconArchive, IconTrash } from 'twenty-ui/display';
@@ -21,6 +18,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type ObjectSettingsProps = {
   objectMetadataItem: ObjectMetadataItem;
+  onDelete: () => Promise<void>;
 };
 
 const StyledContentContainer = styled.div`
@@ -40,7 +38,10 @@ const StyledDangerButtonsContainer = styled.div`
 
 const DELETE_OBJECT_MODAL_ID = 'delete-object-confirmation-modal';
 
-export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
+export const ObjectSettings = ({
+  objectMetadataItem,
+  onDelete,
+}: ObjectSettingsProps) => {
   const { t } = useLingui();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const readonly = isObjectMetadataSettingsReadOnly({
@@ -50,10 +51,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
   });
   const navigate = useNavigateSettings();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
-  const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
   const { openModal, closeModal } = useModal();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDisable = async () => {
     const result = await updateOneObjectMetadataItem({
@@ -71,21 +69,8 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
   };
 
   const confirmDelete = async () => {
-    setIsDeleting(true);
-    const result = await deleteOneObjectMetadataItem(objectMetadataItem.id);
-    setIsDeleting(false);
-
-    if (result.status === 'successful') {
-      enqueueSuccessSnackBar({
-        message: t`Object deleted`,
-      });
-      navigate(SettingsPath.Objects);
-      return;
-    }
-
-    enqueueErrorSnackBar({
-      message: t`Unable to delete object.`,
-    });
+    await onDelete();
+    closeModal(DELETE_OBJECT_MODAL_ID);
   };
 
   const objectLabel = objectMetadataItem.labelPlural;
@@ -149,7 +134,6 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
         onClose={() => closeModal(DELETE_OBJECT_MODAL_ID)}
         confirmationValue="yes"
         confirmationPlaceholder="yes"
-        loading={isDeleting}
       />
     </StyledContentContainer>
   );
