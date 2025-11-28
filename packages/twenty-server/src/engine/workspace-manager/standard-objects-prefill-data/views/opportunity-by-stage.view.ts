@@ -29,6 +29,11 @@ export const opportunitiesByStageView = ({
   const viewUniversalIdentifier =
     STANDARD_OBJECTS.opportunity.views.byStage.universalIdentifier;
 
+  const stageFieldMetadata =
+    opportunityObjectMetadata.fields.find(
+      (field) => field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.stage,
+    )?.id ?? '';
+
   return {
     id: v4(),
     universalIdentifier: viewUniversalIdentifier,
@@ -49,6 +54,7 @@ export const opportunitiesByStageView = ({
         (field) => field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.amount,
       )?.id ?? '',
     filters: [],
+    mainGroupByFieldMetadataId: stageFieldMetadata,
     fields: [
       {
         fieldMetadataId:

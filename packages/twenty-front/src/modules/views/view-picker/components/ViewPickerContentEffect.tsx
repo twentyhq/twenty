@@ -14,7 +14,7 @@ import { viewPickerCalendarFieldMetadataIdComponentState } from '@/views/view-pi
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
-import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
+import { viewPickerMainGroupByFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerMainGroupByFieldMetadataIdComponentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
@@ -36,8 +36,12 @@ export const ViewPickerContentEffect = () => {
   );
   const { viewPickerMode } = useViewPickerMode();
 
-  const [viewPickerKanbanFieldMetadataId, setViewPickerKanbanFieldMetadataId] =
-    useRecoilComponentState(viewPickerKanbanFieldMetadataIdComponentState);
+  const [
+    viewPickerMainGroupByFieldMetadataId,
+    setViewPickerMainGroupByFieldMetadataId,
+  ] = useRecoilComponentState(
+    viewPickerMainGroupByFieldMetadataIdComponentState,
+  );
 
   const [
     viewPickerCalendarFieldMetadataId,
@@ -112,12 +116,12 @@ export const ViewPickerContentEffect = () => {
     if (
       isDefined(referenceView) &&
       availableFieldsForKanban.length > 0 &&
-      viewPickerKanbanFieldMetadataId === ''
+      viewPickerMainGroupByFieldMetadataId === ''
     ) {
-      setViewPickerKanbanFieldMetadataId(
-        // TODO: replace with viewGroups.fieldMetadataId
-        referenceView.kanbanFieldMetadataId !== ''
-          ? referenceView.kanbanFieldMetadataId
+      setViewPickerMainGroupByFieldMetadataId(
+        isDefined(referenceView.mainGroupByFieldMetadataId) &&
+          referenceView.mainGroupByFieldMetadataId !== ''
+          ? referenceView.mainGroupByFieldMetadataId
           : availableFieldsForKanban[0].id,
       );
     }
@@ -136,8 +140,8 @@ export const ViewPickerContentEffect = () => {
   }, [
     referenceView,
     availableFieldsForKanban,
-    viewPickerKanbanFieldMetadataId,
-    setViewPickerKanbanFieldMetadataId,
+    viewPickerMainGroupByFieldMetadataId,
+    setViewPickerMainGroupByFieldMetadataId,
     availableFieldsForCalendar,
     viewPickerCalendarFieldMetadataId,
     setViewPickerCalendarFieldMetadataId,

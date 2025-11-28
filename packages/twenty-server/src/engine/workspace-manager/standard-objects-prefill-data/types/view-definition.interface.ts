@@ -19,6 +19,7 @@ export interface ViewDefinition {
   kanbanFieldMetadataId?: string;
   kanbanAggregateOperation?: AggregateOperations;
   kanbanAggregateOperationFieldMetadataId?: string;
+  mainGroupByFieldMetadataId?: string;
   calendarFieldMetadataId?: string;
   calendarLayout?: string;
   fields?: {

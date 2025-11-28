@@ -22,12 +22,9 @@ export type View = {
   viewFilters: ViewFilter[];
   viewFilterGroups?: ViewFilterGroup[];
   viewSorts: CoreViewSortEssential[];
-  /**
-   * @deprecated Use `viewGroups.fieldMetadataId` instead.
-   */
-  kanbanFieldMetadataId: string;
   kanbanAggregateOperation: AggregateOperations | null;
   kanbanAggregateOperationFieldMetadataId: string | null;
+  mainGroupByFieldMetadataId?: string | null;
   calendarFieldMetadataId?: string | null;
   calendarLayout?: ViewCalendarLayout | null;
   position: number;
