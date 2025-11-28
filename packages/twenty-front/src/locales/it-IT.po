@@ -7732,6 +7732,11 @@ msgstr "Valore di ritorno"
 msgid "Revoked for this object"
 msgstr "Revocato per questo oggetto"
 
+#. js-lingui-id: E1BXUR
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "role"
+msgstr ""
+
 #. js-lingui-id: GDvlUT
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -7756,6 +7761,11 @@ msgstr "Nome del ruolo"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Role name cannot be empty"
 msgstr "Il nome del ruolo non può essere vuoto"
+
+#. js-lingui-id: jLNGne
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "role target"
+msgstr ""
 
 #. js-lingui-id: M9SCiK
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
