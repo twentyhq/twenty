@@ -23,9 +23,9 @@ export const fromRoleEntityToFlatRole = (role: RoleEntity): FlatRole => {
     updatedAt: role.updatedAt,
     universalIdentifier: role.universalIdentifier ?? role.standardId ?? role.id,
     applicationId: role.applicationId ?? null,
-    roleTargetIds: role.roleTargets?.map((rt) => rt.id) ?? [],
-    objectPermissionIds: role.objectPermissions?.map((op) => op.id) ?? [],
-    permissionFlagIds: role.permissionFlags?.map((pf) => pf.id) ?? [],
-    fieldPermissionIds: role.fieldPermissions?.map((fp) => fp.id) ?? [],
+    roleTargetIds: role.roleTargets.map((rt) => rt.id),
+    objectPermissionIds: role.objectPermissions.map((op) => op.id),
+    permissionFlagIds: role.permissionFlags.map((pf) => pf.id),
+    fieldPermissionIds: role.fieldPermissions.map((fp) => fp.id),
   };
 };

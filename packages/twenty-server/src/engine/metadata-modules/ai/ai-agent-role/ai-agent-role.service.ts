@@ -12,6 +12,7 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import { RoleTargetServiceV2 } from 'src/engine/metadata-modules/role-target/services/role-target-v2.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class AiAgentRoleService {
@@ -67,7 +68,7 @@ export class AiAgentRoleService {
       where: { standardId: standardRoleId, workspaceId },
     });
 
-    if (!role) {
+    if (!isDefined(role)) {
       throw new AgentException(
         `Standard role with standard ID ${standardRoleId} not found in workspace`,
         AgentExceptionCode.ROLE_NOT_FOUND,
@@ -95,12 +96,17 @@ export class AiAgentRoleService {
       },
     });
 
-    if (existingRoleTarget) {
-      await this.roleTargetService.delete({
-        id: existingRoleTarget.id,
-        workspaceId,
-      });
+    if (!isDefined(existingRoleTarget)) {
+      throw new AgentException(
+        `Role target not found for agent ${agentId}`,
+        AgentExceptionCode.ROLE_NOT_FOUND,
+      );
     }
+
+    await this.roleTargetService.delete({
+      id: existingRoleTarget.id,
+      workspaceId,
+    });
   }
 
   public async getAgentsAssignedToRole(

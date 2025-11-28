@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
@@ -32,7 +32,7 @@ import { ApiKeyController } from './controllers/api-key.controller';
     FeatureFlagModule,
     RoleTargetV2Module,
     TokenModule,
-    forwardRef(() => PermissionsModule),
+    PermissionsModule,
   ],
   providers: [ApiKeyService, ApiKeyResolver, ApiKeyRoleService],
   controllers: [ApiKeyController],
