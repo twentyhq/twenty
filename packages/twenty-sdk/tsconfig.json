@@ -1,17 +1,21 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "src",
-    "module": "esnext",
     "target": "es2022",
+    "module": "esNext",
+    "moduleResolution": "bundler",
+    "lib": ["es2020"],
+    "strict": true,
+    "noEmit": true,
+    "isolatedModules": true,
     "esModuleInterop": true,
-    "allowUnreachableCode": false,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
     "declaration": true,
-    "strictNullChecks": true,
-    "alwaysStrict": true,
-    "noImplicitAny": true,
-    "strictBindCallApply": false,
+    "declarationMap": true,
+    "rootDir": "src",
     "paths": {
       "@/*": ["./src/*"]
     }
@@ -23,8 +27,8 @@
     },
     {
       "path": "./tsconfig.e2e.json"
-    },
+    }
   ],
   "include": ["src/**/*.ts", "vite.config.ts"],
-  "exclude": ["src/cli/**"]
+  "exclude": ["src/cli/**", "dist", "node_modules"]
 }

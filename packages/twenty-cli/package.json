@@ -2,16 +2,6 @@
   "name": "twenty-cli",
   "version": "0.3.0",
   "description": "[DEPRECATED] Use twenty-sdk instead: https://www.npmjs.com/package/twenty-sdk",
-  "main": "dist/cli.js",
-  "bin": {
-    "twenty": "./deprecate.js"
-  },
-  "files": [
-    "dist/**/*",
-    "!dist/**/*.e2e-spec.*",
-    "!dist/**/__tests__/**",
-    "deprecate.js"
-  ],
   "scripts": {
     "build": "echo 'use npx nx build'",
     "start": "echo 'deprecated'"

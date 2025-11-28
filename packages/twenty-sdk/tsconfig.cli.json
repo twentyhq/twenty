@@ -3,16 +3,25 @@
   "compilerOptions": {
     "outDir": "./dist/cli",
     "rootDir": "./src/cli",
-    "module": "esnext",
     "target": "es2022",
-    "esModuleInterop": true,
-    "allowUnreachableCode": false,
-    "declaration": true,
-    "declarationMap": true,
-    "allowSyntheticDefaultImports": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
     "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "declaration": false,
+    "sourceMap": true
   },
   "include": ["src/cli/**/*.ts"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts", "**/*.e2e-spec.ts", "**/__tests__/**"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.e2e-spec.ts",
+    "**/__tests__/**"
+  ]
 }
