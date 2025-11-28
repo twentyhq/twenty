@@ -14,14 +14,14 @@ import {
 } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
-import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class FeatureFlagService {
   constructor(
     @InjectRepository(FeatureFlagEntity)
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
-    private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   public async isFeatureEnabled(
@@ -36,10 +36,10 @@ export class FeatureFlagService {
   public async getWorkspaceFeatureFlags(
     workspaceId: string,
   ): Promise<FeatureFlagDTO[]> {
-    const workspaceFeatureFlagsMap =
-      await this.workspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap(
-        { workspaceId },
-      );
+    const { featureFlagsMap: workspaceFeatureFlagsMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'featureFlagsMap',
+      ]);
 
     return Object.entries(workspaceFeatureFlagsMap).map(([key, value]) => ({
       key: key as FeatureFlagKey,
@@ -50,10 +50,10 @@ export class FeatureFlagService {
   public async getWorkspaceFeatureFlagsMap(
     workspaceId: string,
   ): Promise<FeatureFlagMap> {
-    const workspaceFeatureFlagsMap =
-      await this.workspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap(
-        { workspaceId },
-      );
+    const { featureFlagsMap: workspaceFeatureFlagsMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'featureFlagsMap',
+      ]);
 
     return workspaceFeatureFlagsMap;
   }
@@ -71,9 +71,9 @@ export class FeatureFlagService {
         },
       );
 
-      await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
-        { workspaceId },
-      );
+      await this.workspaceCacheService.invalidate(workspaceId, [
+        'featureFlagsMap',
+      ]);
     }
   }
 
@@ -126,9 +126,9 @@ export class FeatureFlagService {
 
     const result = await this.featureFlagRepository.save(featureFlagToSave);
 
-    await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
-      { workspaceId },
-    );
+    await this.workspaceCacheService.invalidate(workspaceId, [
+      'featureFlagsMap',
+    ]);
 
     return result;
   }
