@@ -3,6 +3,7 @@ import {
   type DeleteOneRoleFactoryInput,
   deleteOneRoleQueryFactory,
 } from 'test/integration/metadata/suites/role/utils/delete-one-role-query-factory.util';
+import { CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
@@ -10,7 +11,9 @@ import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/
 export const deleteOneRole = async ({
   input,
   expectToFail = false,
-}: PerformMetadataQueryParams<DeleteOneRoleFactoryInput>) => {
+}: PerformMetadataQueryParams<DeleteOneRoleFactoryInput>): CommonResponseBody<{
+  deleteOneRole: string;
+}> => {
   const graphqlOperation = deleteOneRoleQueryFactory({
     input,
   });
