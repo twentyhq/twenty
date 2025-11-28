@@ -79,6 +79,9 @@ export class RoleTargetServiceV2 {
           },
           buildOptions: {
             isSystemBuild: false,
+            inferDeletionFromMissingEntities: {
+              roleTarget: true,
+            },
           },
           workspaceId,
         },
