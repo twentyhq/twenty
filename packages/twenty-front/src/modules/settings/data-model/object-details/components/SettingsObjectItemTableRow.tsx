@@ -32,9 +32,14 @@ const StyledNameLabel = styled.div`
 `;
 
 const StyledInactiveLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${({ theme }) => theme.font.color.extraLight};
   font-size: ${({ theme }) => theme.font.size.sm};
   margin-left: ${({ theme }) => theme.spacing(1)};
+
+  &::before {
+    content: '·';
+    margin-right: ${({ theme }) => theme.spacing(1)};
+  }
 `;
 
 const StyledActionTableCell = styled(TableCell)`
