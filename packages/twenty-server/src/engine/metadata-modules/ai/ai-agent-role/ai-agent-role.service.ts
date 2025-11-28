@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   AgentException,
@@ -12,7 +13,6 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import { RoleTargetServiceV2 } from 'src/engine/metadata-modules/role-target/services/role-target-v2.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class AiAgentRoleService {
