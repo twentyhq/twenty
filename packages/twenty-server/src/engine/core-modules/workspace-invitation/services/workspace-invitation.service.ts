@@ -245,11 +245,6 @@ export class WorkspaceInvitationService {
       );
     }
 
-    await this.throttleInvitationResending(
-      workspace.id,
-      appToken.context.email,
-    );
-
     await this.appTokenRepository.delete(appToken.id);
 
     return this.sendInvitations([appToken.context.email], workspace, sender);
@@ -268,6 +263,8 @@ export class WorkspaceInvitationService {
         result: [],
       };
     }
+
+    await this.throttleInvitationSending(workspace.id, emails);
 
     const invitationsPr = await Promise.allSettled(
       emails.map(async (email) => {
@@ -429,37 +426,41 @@ export class WorkspaceInvitationService {
     return this.appTokenRepository.save(invitationToken);
   }
 
-  private async throttleInvitationResending(
+  private async throttleInvitationSending(
     workspaceId: string,
-    email: string,
+    emails: string[],
   ) {
     try {
-      //limit invitation resending for a specific invite in a workspace
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        `invitation-resending-workspace:throttler:${workspaceId}-${email}`,
-        1,
-        this.twentyConfigService.get(
-          'INVITATION_RESENDING_WORKSPACE_INVITE_THROTTLE_LIMIT',
-        ),
-        this.twentyConfigService.get(
-          'INVITATION_RESENDING_WORKSPACE_INVITE_THROTTLE_TTL_IN_MS',
-        ),
+      //limit invitation sending for specific invite emails
+      await Promise.all(
+        emails.map(async (email) => {
+          await this.throttlerService.tokenBucketThrottleOrThrow(
+            `invitation-resending-workspace:throttler:${email}`,
+            1,
+            this.twentyConfigService.get(
+              'INVITATION_SENDING_INVITE_THROTTLE_LIMIT',
+            ),
+            this.twentyConfigService.get(
+              'INVITATION_SENDING_INVITE_THROTTLE_TTL_IN_MS',
+            ),
+          );
+        }),
       );
 
-      //limit invitation resending for a workspace
+      //limit invitation sending for a specific workspace
       await this.throttlerService.tokenBucketThrottleOrThrow(
         `invitation-resending-workspace:throttler:${workspaceId}`,
-        1,
+        emails.length,
         this.twentyConfigService.get(
-          'INVITATION_RESENDING_WORKSPACE_THROTTLE_LIMIT',
+          'INVITATION_SENDING_WORKSPACE_THROTTLE_LIMIT',
         ),
         this.twentyConfigService.get(
-          'INVITATION_RESENDING_WORKSPACE_THROTTLE_TTL_IN_MS',
+          'INVITATION_SENDING_WORKSPACE_THROTTLE_TTL_IN_MS',
         ),
       );
     } catch {
       throw new WorkspaceInvitationException(
-        'Workspace invitation resending rate limit exceeded.',
+        'Workspace invitation sending rate limit exceeded.',
         WorkspaceInvitationExceptionCode.INVALID_INVITATION,
         {
           userFriendlyMessage: msg`Too many workspace invitations sent. Please try again later.`,

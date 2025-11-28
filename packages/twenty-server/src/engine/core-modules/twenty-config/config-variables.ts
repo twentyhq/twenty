@@ -1001,7 +1001,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  INVITATION_RESENDING_WORKSPACE_THROTTLE_TTL_IN_MS = 3_600_000;
+  INVITATION_SENDING_WORKSPACE_THROTTLE_TTL_IN_MS = 604_800_000; // 7 days
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
@@ -1010,25 +1010,25 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  INVITATION_RESENDING_WORKSPACE_THROTTLE_LIMIT = 100;
+  INVITATION_SENDING_WORKSPACE_THROTTLE_LIMIT = 500;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
     description:
-      'Time-to-live for workspace-invite-level invitations resending rate limiting in milliseconds',
+      'Time-to-live for invite-level invitations sending rate limiting in milliseconds',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  INVITATION_RESENDING_WORKSPACE_INVITE_THROTTLE_TTL_IN_MS = 3_600_000;
+  INVITATION_SENDING_INVITE_THROTTLE_TTL_IN_MS = 604_800_000; // 7 days
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
     description:
-      'Maximum number of workspace-invite-level invitations resending allowed in the rate limiting window',
+      'Maximum number of invite-level invitations sending allowed in the rate limiting window',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  INVITATION_RESENDING_WORKSPACE_INVITE_THROTTLE_LIMIT = 5;
+  INVITATION_SENDING_INVITE_THROTTLE_LIMIT = 10;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SSL,
