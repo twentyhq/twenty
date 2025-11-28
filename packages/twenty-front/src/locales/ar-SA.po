@@ -7732,6 +7732,11 @@ msgstr "قيمة الإرجاع"
 msgid "Revoked for this object"
 msgstr "ملغى لهذا الكائن"
 
+#. js-lingui-id: E1BXUR
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "role"
+msgstr ""
+
 #. js-lingui-id: GDvlUT
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -7756,6 +7761,11 @@ msgstr "اسم الدور"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Role name cannot be empty"
 msgstr "لا يمكن أن يكون اسم الدور فارغًا"
+
+#. js-lingui-id: jLNGne
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "role target"
+msgstr ""
 
 #. js-lingui-id: M9SCiK
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
