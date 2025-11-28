@@ -41,4 +41,3 @@ export const updateWorkspaceMemberRoleQueryFactory = ({
     roleId: input.roleId,
   },
 });
-

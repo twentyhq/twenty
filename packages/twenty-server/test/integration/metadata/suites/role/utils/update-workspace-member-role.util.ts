@@ -32,7 +32,8 @@ export const updateWorkspaceMemberRole = async ({
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
-      errorMessage: 'Workspace member role update should have failed but did not',
+      errorMessage:
+        'Workspace member role update should have failed but did not',
     });
   }
 
@@ -45,4 +46,3 @@ export const updateWorkspaceMemberRole = async ({
 
   return { data: response.body.data, errors: response.body.errors };
 };
-
