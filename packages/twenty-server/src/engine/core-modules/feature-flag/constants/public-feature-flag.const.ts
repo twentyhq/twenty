@@ -31,14 +31,6 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
         'https://twenty.com/images/lab/is-message-folder-control-enabled.png',
     },
   },
-  {
-    key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
-    metadata: {
-      label: 'Dashboards',
-      description: 'Enable dashboards',
-      imagePath: 'https://twenty.com/images/lab/is-dashboards-enabled.png',
-    },
-  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {

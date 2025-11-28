@@ -10,7 +10,6 @@ import {
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.utils';
 import {
@@ -264,12 +263,6 @@ export class OpenApiService {
       return schema;
     }
 
-    const workspaceFeatureFlagsMap =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspace.id);
-
-    const isPageLayoutEnabled =
-      workspaceFeatureFlagsMap[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED];
-
     const metadata = [
       {
         nameSingular: 'object',
@@ -311,22 +304,18 @@ export class OpenApiService {
         nameSingular: 'viewFilterGroup',
         namePlural: 'viewFilterGroups',
       },
-      ...(isPageLayoutEnabled
-        ? [
-            {
-              nameSingular: 'pageLayout',
-              namePlural: 'pageLayouts',
-            },
-            {
-              nameSingular: 'pageLayoutTab',
-              namePlural: 'pageLayoutTabs',
-            },
-            {
-              nameSingular: 'pageLayoutWidget',
-              namePlural: 'pageLayoutWidgets',
-            },
-          ]
-        : []),
+      {
+        nameSingular: 'pageLayout',
+        namePlural: 'pageLayouts',
+      },
+      {
+        nameSingular: 'pageLayoutTab',
+        namePlural: 'pageLayoutTabs',
+      },
+      {
+        nameSingular: 'pageLayoutWidget',
+        namePlural: 'pageLayoutWidgets',
+      },
     ];
 
     schema.paths = metadata.reduce((path, item) => {

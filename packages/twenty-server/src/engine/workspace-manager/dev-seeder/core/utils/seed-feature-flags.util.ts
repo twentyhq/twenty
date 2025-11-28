@@ -63,11 +63,6 @@ export const seedFeatureFlags = async ({
         value: workspaceId === SEED_APPLE_WORKSPACE_ID,
       },
       {
-        key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
         workspaceId: workspaceId,
         value: false,
