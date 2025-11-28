@@ -25,6 +25,14 @@ const StyledNameTableCell = styled(TableCell)`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledNameContainer = styled.div`
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
 const StyledNameLabel = styled.div`
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -34,7 +42,11 @@ const StyledNameLabel = styled.div`
 const StyledInactiveLabel = styled.span`
   color: ${({ theme }) => theme.font.color.extraLight};
   font-size: ${({ theme }) => theme.font.size.sm};
-  margin-left: ${({ theme }) => theme.spacing(1)};
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  flex: 0 999 auto;
+  min-width: 48px;
 
   &::before {
     content: '·';
@@ -69,12 +81,14 @@ export const SettingsObjectMetadataItemTableRow = ({
             stroke={theme.icon.stroke.sm}
           />
         )}
-        <StyledNameLabel title={objectMetadataItem.labelPlural}>
-          {objectMetadataItem.labelPlural}
+        <StyledNameContainer>
+          <StyledNameLabel title={objectMetadataItem.labelPlural}>
+            {objectMetadataItem.labelPlural}
+          </StyledNameLabel>
           {!objectMetadataItem.isActive && (
             <StyledInactiveLabel>{t`Deactivated`}</StyledInactiveLabel>
           )}
-        </StyledNameLabel>
+        </StyledNameContainer>
       </StyledNameTableCell>
       <TableCell>
         <SettingsItemTypeTag item={objectMetadataItem} />
