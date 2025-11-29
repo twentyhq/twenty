@@ -1,10 +1,12 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import styled from '@emotion/styled';
@@ -18,7 +20,8 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type ObjectSettingsProps = {
   objectMetadataItem: ObjectMetadataItem;
-  onDelete: () => Promise<void>;
+  isDeleting: boolean;
+  setIsDeleting: (isDeleting: boolean) => void;
 };
 
 const StyledContentContainer = styled.div`
@@ -40,7 +43,8 @@ const DELETE_OBJECT_MODAL_ID = 'delete-object-confirmation-modal';
 
 export const ObjectSettings = ({
   objectMetadataItem,
-  onDelete,
+  isDeleting,
+  setIsDeleting,
 }: ObjectSettingsProps) => {
   const { t } = useLingui();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -51,6 +55,8 @@ export const ObjectSettings = ({
   });
   const navigate = useNavigateSettings();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
+  const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
+  const { enqueueSuccessSnackBar } = useSnackBar();
   const { openModal, closeModal } = useModal();
 
   const handleDisable = async () => {
@@ -69,7 +75,19 @@ export const ObjectSettings = ({
   };
 
   const confirmDelete = async () => {
-    await onDelete();
+    setIsDeleting(true);
+    const result = await deleteOneObjectMetadataItem(objectMetadataItem.id);
+
+    if (result.status === 'successful') {
+      enqueueSuccessSnackBar({
+        message: t`Object deleted`,
+      });
+      closeModal(DELETE_OBJECT_MODAL_ID);
+      navigate(SettingsPath.Objects);
+      return;
+    }
+
+    setIsDeleting(false);
     closeModal(DELETE_OBJECT_MODAL_ID);
   };
 
@@ -134,6 +152,7 @@ export const ObjectSettings = ({
         onClose={() => closeModal(DELETE_OBJECT_MODAL_ID)}
         confirmationValue="yes"
         confirmationPlaceholder="yes"
+        loading={isDeleting}
       />
     </StyledContentContainer>
   );
