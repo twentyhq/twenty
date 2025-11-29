@@ -10,7 +10,7 @@ import ms from 'ms';
 import { SendInviteLinkEmail } from 'twenty-emails';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { type QueryRunner, IsNull, Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -25,6 +25,7 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type SendInvitationsOutput } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.output';
@@ -49,6 +50,7 @@ export class WorkspaceInvitationService {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly i18nService: I18nService,
     private readonly fileService: FileService,
+    private readonly throttlerService: ThrottlerService,
   ) {}
 
   async validatePersonalInvitation({
@@ -203,24 +205,14 @@ export class WorkspaceInvitationService {
     return 'success';
   }
 
-  async invalidateWorkspaceInvitation(
-    workspaceId: string,
-    email: string,
-    queryRunner?: QueryRunner,
-  ) {
+  async invalidateWorkspaceInvitation(workspaceId: string, email: string) {
     const appToken = await this.getOneWorkspaceInvitation(workspaceId, email);
 
     if (!isDefined(appToken)) {
       return;
     }
 
-    if (queryRunner) {
-      await queryRunner.manager
-        .getRepository(AppTokenEntity)
-        .delete(appToken.id);
-    } else {
-      await this.appTokenRepository.delete(appToken.id);
-    }
+    await this.appTokenRepository.delete(appToken.id);
   }
 
   async resendWorkspaceInvitation(
@@ -261,6 +253,8 @@ export class WorkspaceInvitationService {
         result: [],
       };
     }
+
+    await this.throttleInvitationSending(workspace.id, emails);
 
     const invitationsPr = await Promise.allSettled(
       emails.map(async (email) => {
@@ -420,5 +414,48 @@ export class WorkspaceInvitationService {
     });
 
     return this.appTokenRepository.save(invitationToken);
+  }
+
+  private async throttleInvitationSending(
+    workspaceId: string,
+    emails: string[],
+  ) {
+    try {
+      //limit invitation sending for specific invite emails
+      await Promise.all(
+        emails.map(async (email) => {
+          await this.throttlerService.tokenBucketThrottleOrThrow(
+            `invitation-resending-workspace:throttler:${email}`,
+            1,
+            this.twentyConfigService.get(
+              'INVITATION_SENDING_BY_EMAIL_THROTTLE_LIMIT',
+            ),
+            this.twentyConfigService.get(
+              'INVITATION_SENDING_BY_EMAIL_THROTTLE_TTL_IN_MS',
+            ),
+          );
+        }),
+      );
+
+      //limit invitation sending for a specific workspace
+      await this.throttlerService.tokenBucketThrottleOrThrow(
+        `invitation-resending-workspace:throttler:${workspaceId}`,
+        emails.length,
+        this.twentyConfigService.get(
+          'INVITATION_SENDING_BY_WORKSPACE_THROTTLE_LIMIT',
+        ),
+        this.twentyConfigService.get(
+          'INVITATION_SENDING_BY_WORKSPACE_THROTTLE_TTL_IN_MS',
+        ),
+      );
+    } catch {
+      throw new WorkspaceInvitationException(
+        'Workspace invitation sending rate limit exceeded.',
+        WorkspaceInvitationExceptionCode.INVALID_INVITATION,
+        {
+          userFriendlyMessage: msg`Too many workspace invitations sent. Please try again later.`,
+        },
+      );
+    }
   }
 }

@@ -24,7 +24,7 @@ import { CreateOneObjectInput } from 'src/engine/metadata-modules/object-metadat
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
-import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -39,7 +39,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 )
 export class ObjectMetadataResolver {
   constructor(
-    private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
+    private readonly objectMetadataService: ObjectMetadataService,
     private readonly i18nService: I18nService,
   ) {}
 
@@ -113,7 +113,7 @@ export class ObjectMetadataResolver {
   ) {
     try {
       const flatobjectMetadata =
-        await this.objectMetadataServiceV2.createOneObject({
+        await this.objectMetadataService.createOneObject({
           createObjectInput: input.object,
           workspaceId,
         });
@@ -136,7 +136,7 @@ export class ObjectMetadataResolver {
   ) {
     try {
       const flatobjectMetadata =
-        await this.objectMetadataServiceV2.deleteOneObject({
+        await this.objectMetadataService.deleteOneObject({
           deleteObjectInput,
           workspaceId,
         });
@@ -159,7 +159,7 @@ export class ObjectMetadataResolver {
   ) {
     try {
       const flatobjectMetadata =
-        await this.objectMetadataServiceV2.updateOneObject({
+        await this.objectMetadataService.updateOneObject({
           updateObjectInput,
           workspaceId,
         });
