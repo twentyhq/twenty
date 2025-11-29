@@ -11,6 +11,7 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilCallback } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useOpenRecordFromIndexView = () => {
@@ -20,6 +21,8 @@ export const useOpenRecordFromIndexView = () => {
 
   const navigate = useNavigateApp();
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+
+  const isMobile = useIsMobile();
 
   const currentRecordFilters = useRecoilComponentCallbackState(
     currentRecordFiltersComponentState,
@@ -69,6 +72,7 @@ export const useOpenRecordFromIndexView = () => {
         );
 
         if (
+          !isMobile &&
           recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
           canOpenObjectInSidePanel(objectNameSingular)
         ) {
@@ -92,6 +96,7 @@ export const useOpenRecordFromIndexView = () => {
       objectNameSingular,
       navigate,
       openRecordInCommandMenu,
+      isMobile,
     ],
   );
 
