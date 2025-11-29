@@ -32,6 +32,10 @@ export class CreateAppCommand {
       });
 
       try {
+        const result = await execPromise('yarn --version', {
+          cwd: appDirectory,
+        });
+        console.log('Installing dependencies using yarn', result.stdout);
         await execPromise('yarn', { cwd: appDirectory });
       } catch (error: any) {
         console.error(chalk.red('yarn install failed:'), error.stdout);

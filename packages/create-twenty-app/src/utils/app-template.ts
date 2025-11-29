@@ -17,6 +17,10 @@ export const copyBaseApplicationProject = async ({
 
   await createYarnLock(appDirectory);
 
+  await createYarnRc(appDirectory);
+
+  await createNvmRc(appDirectory);
+
   await createTsConfig(appDirectory);
 
   await createApplicationConfig({
@@ -38,6 +42,20 @@ const createYarnLock = async (appDirectory: string) => {
 `;
 
   await fs.writeFile(join(appDirectory, 'yarn.lock'), yarnLockContent);
+};
+
+const createYarnRc = async (appDirectory: string) => {
+  const yarnRcContent = `nodeLinker: node-modules
+`;
+
+  await fs.writeFile(join(appDirectory, '.yarnrc.yml'), yarnRcContent);
+};
+
+const createNvmRc = async (appDirectory: string) => {
+  const nvmRcContent = `24.5.0
+`;
+
+  await fs.writeFile(join(appDirectory, '.nvmrc'), nvmRcContent);
 };
 
 const createTsConfig = async (appDirectory: string) => {
