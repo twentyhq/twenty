@@ -76,6 +76,15 @@ export class ConfigVariables {
   HTTP_TOOL_SAFE_MODE_ENABLED = true;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OTHER,
+    description:
+      'Enable or disable mirror table/view creation for mirror fields',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_MIRROR_TABLE_ENABLED = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Duration for which the email verification token is valid',
     type: ConfigVariableType.STRING,

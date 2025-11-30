@@ -30,6 +30,7 @@ export interface WorkspaceFieldOptions<
   isActive?: boolean;
   generatedType?: 'STORED' | 'VIRTUAL';
   asExpression?: string;
+  isMirrorField?: boolean;
 }
 
 export function WorkspaceField<T extends FieldMetadataType>(
@@ -78,6 +79,8 @@ export function WorkspaceField<T extends FieldMetadataType>(
         propertyKey.toString(),
       ) ?? false;
 
+    const isMirrorField = options.isMirrorField ?? false;
+
     const defaultValue = (options.defaultValue ??
       generateDefaultValue(options.type)) as FieldMetadataDefaultValue | null;
     const name = propertyKey.toString();
@@ -100,6 +103,7 @@ export function WorkspaceField<T extends FieldMetadataType>(
       isNullable,
       isSystem,
       isUIReadOnly,
+      isMirrorField,
       gate,
       isDeprecated,
       isUnique,
