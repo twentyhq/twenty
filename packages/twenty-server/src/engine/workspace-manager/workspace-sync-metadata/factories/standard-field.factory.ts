@@ -154,6 +154,7 @@ export class StandardFieldFactory {
         isSystem: workspaceFieldMetadataArgs.isSystem ?? false,
         isActive: workspaceFieldMetadataArgs.isActive ?? true,
         isUIReadOnly: workspaceFieldMetadataArgs.isUIReadOnly ?? false,
+        isMirrorField: workspaceFieldMetadataArgs.isMirrorField ?? false,
         asExpression: workspaceFieldMetadataArgs.asExpression,
         generatedType: workspaceFieldMetadataArgs.generatedType,
         isLabelSyncedWithName: workspaceFieldMetadataArgs.isLabelSyncedWithName,

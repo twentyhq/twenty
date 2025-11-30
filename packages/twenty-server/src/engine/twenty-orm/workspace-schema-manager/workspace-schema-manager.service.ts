@@ -5,6 +5,7 @@ import { WorkspaceSchemaEnumManagerService } from 'src/engine/twenty-orm/workspa
 import { WorkspaceSchemaForeignKeyManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-foreign-key-manager.service';
 import { WorkspaceSchemaIndexManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-index-manager.service';
 import { WorkspaceSchemaTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-table-manager.service';
+import { WorkspaceSchemaMirrorTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-mirror-table-manager.service';
 
 @Injectable()
 export class WorkspaceSchemaManagerService {
@@ -13,6 +14,7 @@ export class WorkspaceSchemaManagerService {
   public readonly indexManager: WorkspaceSchemaIndexManagerService;
   public readonly enumManager: WorkspaceSchemaEnumManagerService;
   public readonly foreignKeyManager: WorkspaceSchemaForeignKeyManagerService;
+  public readonly mirrorTableManager: WorkspaceSchemaMirrorTableManagerService;
 
   constructor(
     workspaceSchemaTableManager: WorkspaceSchemaTableManagerService,
@@ -20,11 +22,13 @@ export class WorkspaceSchemaManagerService {
     workspaceSchemaIndexManager: WorkspaceSchemaIndexManagerService,
     workspaceSchemaEnumManager: WorkspaceSchemaEnumManagerService,
     workspaceSchemaForeignKeyManager: WorkspaceSchemaForeignKeyManagerService,
+    workspaceschemaMirrorTableManager: WorkspaceSchemaMirrorTableManagerService,
   ) {
     this.tableManager = workspaceSchemaTableManager;
     this.columnManager = workspaceSchemaColumnManager;
     this.indexManager = workspaceSchemaIndexManager;
     this.enumManager = workspaceSchemaEnumManager;
     this.foreignKeyManager = workspaceSchemaForeignKeyManager;
+    this.mirrorTableManager = workspaceschemaMirrorTableManager;
   }
 }

@@ -37,6 +37,7 @@ export type PartialFieldMetadata<
   isSystem?: boolean;
   workspaceId: string;
   objectMetadataId?: string;
+  isMirrorField?: boolean;
   isActive?: boolean;
   asExpression?: string; // not accurate
   generatedType?: 'STORED' | 'VIRTUAL'; // not accurate

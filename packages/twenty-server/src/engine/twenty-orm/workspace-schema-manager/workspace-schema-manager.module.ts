@@ -5,6 +5,7 @@ import { WorkspaceSchemaEnumManagerService } from 'src/engine/twenty-orm/workspa
 import { WorkspaceSchemaForeignKeyManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-foreign-key-manager.service';
 import { WorkspaceSchemaIndexManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-index-manager.service';
 import { WorkspaceSchemaTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-table-manager.service';
+import { WorkspaceSchemaMirrorTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-mirror-table-manager.service';
 
 import { WorkspaceSchemaManagerService } from './workspace-schema-manager.service';
 
@@ -16,6 +17,7 @@ import { WorkspaceSchemaManagerService } from './workspace-schema-manager.servic
     WorkspaceSchemaIndexManagerService,
     WorkspaceSchemaEnumManagerService,
     WorkspaceSchemaForeignKeyManagerService,
+    WorkspaceSchemaMirrorTableManagerService,
   ],
   exports: [WorkspaceSchemaManagerService],
 })

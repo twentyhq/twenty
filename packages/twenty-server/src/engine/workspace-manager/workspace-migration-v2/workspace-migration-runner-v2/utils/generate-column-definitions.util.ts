@@ -187,6 +187,10 @@ export const generateColumnDefinitions = ({
     );
   }
 
+  if (flatFieldMetadata.isMirrorField) {
+    return [];
+  }
+
   if (
     isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.TS_VECTOR)
   ) {

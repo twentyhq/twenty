@@ -69,6 +69,11 @@ export interface WorkspaceFieldMetadataArgs {
   readonly isPrimary: boolean;
 
   /**
+   * Is Mirror Field
+   */
+  readonly isMirrorField: boolean;
+
+  /**
    * Is system field.
    */
   readonly isSystem: boolean;
