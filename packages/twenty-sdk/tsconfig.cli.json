@@ -3,17 +3,16 @@
   "compilerOptions": {
     "outDir": "./dist/cli",
     "rootDir": "./src/cli",
-    "target": "es2022",
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "strict": true,
+    "noEmit": false,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "declaration": false,
-    "sourceMap": true
+    "declarationMap": false,
+    "isolatedModules": false
   },
   "include": ["src/cli/**/*.ts"],
   "exclude": [
