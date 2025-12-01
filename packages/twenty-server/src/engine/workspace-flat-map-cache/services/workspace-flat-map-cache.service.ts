@@ -90,6 +90,10 @@ export abstract class WorkspaceFlatMapCacheService<T> {
     return freshFlatMap;
   }
 
+  public async afterCacheInvalidation?(_args: {
+    workspaceId: string;
+  }): Promise<void> {}
+
   async invalidateCache({
     workspaceId,
   }: {
@@ -99,6 +103,7 @@ export abstract class WorkspaceFlatMapCacheService<T> {
       workspaceId,
     });
     await this.recomputeAndStoreInCache({ workspaceId });
+    await this.afterCacheInvalidation?.({ workspaceId });
   }
 
   private getFlatMapCacheKey(): string {

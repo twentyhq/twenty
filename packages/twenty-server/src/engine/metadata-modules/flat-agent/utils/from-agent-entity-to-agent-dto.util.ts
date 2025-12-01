@@ -3,10 +3,10 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 
 export const fromAgentEntityToFlatAgentDto = ({
   agentEntity,
-  roleId
+  roleId,
 }: {
   agentEntity: AgentEntity;
-  roleId: string;
+  roleId: string | null;
 }): AgentDTO => {
   const {
     applicationId,
@@ -44,6 +44,6 @@ export const fromAgentEntityToFlatAgentDto = ({
     workspaceId,
     applicationId: applicationId ?? undefined,
     icon: icon ?? undefined,
-    roleId,
+    roleId: roleId ?? undefined,
   };
 };

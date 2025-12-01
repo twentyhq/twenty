@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
+import { WorkspaceFlatRoleTargetByAgentIdService } from 'src/engine/metadata-modules/flat-agent/services/workspace-flat-role-target-by-agent-id.service';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatRoleTargetMaps } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target-maps.type';
 import { fromRoleTargetsEntityToFlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/utils/from-role-target-entity-to-flat-role-target.util';
@@ -18,8 +19,21 @@ export class WorkspaceFlatRoleTargetMapCacheService extends WorkspaceCacheProvid
   constructor(
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
+    private readonly workspaceFlatRoleTargetByAgentIdService: WorkspaceFlatRoleTargetByAgentIdService,
   ) {
     super();
+  }
+
+  public async afterCacheInvalidation({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }) {
+    await Promise.all([
+      this.workspaceFlatRoleTargetByAgentIdService.invalidateCache({
+        workspaceId,
+      }),
+    ]);
   }
 
   async computeForCache(workspaceId: string): Promise<FlatRoleTargetMaps> {
