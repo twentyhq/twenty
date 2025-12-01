@@ -143,20 +143,12 @@ export class FlatObjectMetadataValidatorService {
           userFriendlyMessage: msg`Standard objects cannot be deleted`,
         });
       }
-
-      if (!buildOptions.isSystemBuild && flatObjectMetadataToDelete.isActive) {
-        validationResult.errors.push({
-          code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-          message: t`Active objects cannot be deleted`,
-          userFriendlyMessage: msg`Active objects cannot be deleted`,
-        });
-      }
     }
 
     return validationResult;
   }
 
-  public async validateFlatObjectMetadataCreation({
+  public validateFlatObjectMetadataCreation({
     flatEntityToValidate: flatObjectMetadataToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
@@ -164,7 +156,7 @@ export class FlatObjectMetadataValidatorService {
     },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
-  >): Promise<FailedFlatEntityValidation<FlatObjectMetadata>> {
+  >): FailedFlatEntityValidation<FlatObjectMetadata> {
     const objectValidationResult: FailedFlatEntityValidation<FlatObjectMetadata> =
       {
         type: 'create_object',

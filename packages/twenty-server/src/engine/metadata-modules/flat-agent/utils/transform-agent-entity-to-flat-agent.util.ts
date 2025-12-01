@@ -1,4 +1,4 @@
-import { type AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 
 export const transformAgentEntityToFlatAgent = (
@@ -19,5 +19,6 @@ export const transformAgentEntityToFlatAgent = (
     universalIdentifier: agentEntity.standardId || agentEntity.id,
     applicationId: agentEntity.applicationId,
     modelConfiguration: agentEntity.modelConfiguration,
+    evaluationInputs: agentEntity.evaluationInputs,
   };
 };

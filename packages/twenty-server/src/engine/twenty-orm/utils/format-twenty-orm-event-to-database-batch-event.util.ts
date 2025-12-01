@@ -12,7 +12,9 @@ import type { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/typ
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { ObjectRecordUpsertEvent } from 'src/engine/core-modules/event-emitter/types/object-record-upsert.event';
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
-import type { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import type { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
@@ -24,13 +26,15 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
 >({
   action,
   objectMetadataItem,
+  flatFieldMetadataMaps,
   workspaceId,
   authContext,
   entities,
   beforeEntities,
 }: {
   action: DatabaseEventAction;
-  objectMetadataItem: ObjectMetadataItemWithFieldMaps;
+  objectMetadataItem: FlatObjectMetadata;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   workspaceId: string;
   authContext?: AuthContext;
   entities: T | T[];
@@ -41,7 +45,6 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
   }
 
   const objectMetadataNameSingular = objectMetadataItem.nameSingular;
-  const fields = Object.values(objectMetadataItem.fieldsById ?? {});
   const entityArray = isDefined(entities)
     ? Array.isArray(entities)
       ? entities
@@ -89,6 +92,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
             before,
             after,
             objectMetadataItem,
+            flatFieldMetadataMaps,
           ) as Partial<ObjectRecordDiff<T>>;
 
           const updatedFields = Object.keys(diff);
@@ -158,6 +162,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
           before ?? {},
           after,
           objectMetadataItem,
+          flatFieldMetadataMaps,
         ) as Partial<ObjectRecordDiff<T>>;
         updatedFields = Object.keys(diff);
 
@@ -183,7 +188,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
     objectMetadataNameSingular,
     action,
     events,
-    objectMetadata: { ...objectMetadataItem, fields },
+    objectMetadata: objectMetadataItem,
     workspaceId,
   };
 };

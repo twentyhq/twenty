@@ -22,18 +22,19 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { buildObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-metadata-item-with-field-maps.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
@@ -57,7 +58,7 @@ export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly twentyORMManager: TwentyORMManager;
   @Inject()
-  protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService;
+  protected readonly workspaceCacheService: WorkspaceCacheService;
   @Inject()
   protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
   @Inject()
@@ -114,35 +115,36 @@ export abstract class RestApiBaseHandler {
       roleId = userWorkspaceRoleId;
     }
 
-    const objectMetadataPermissions =
-      await this.workspacePermissionsCacheService.getObjectRecordPermissionsForRoles(
-        {
-          workspaceId: authContext.workspace.id,
-          roleIds: [roleId],
-        },
+    const { rolesPermissions } =
+      await this.workspaceCacheService.getOrRecompute(
+        authContext.workspace.id,
+        ['rolesPermissions'],
       );
 
-    return { objectsPermissions: objectMetadataPermissions[roleId] };
+    return { objectsPermissions: rolesPermissions[roleId] };
   };
 
   async computeSelectedFields({
     authContext,
     depth,
-    objectMetadataMapItem,
-    objectMetadataMaps,
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
   }: {
     authContext: WorkspaceAuthContext;
     depth?: Depth | undefined;
-    objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
-    objectMetadataMaps: ObjectMetadataMaps;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }): Promise<CommonSelectedFields> {
     const { objectsPermissions } =
       await this.getObjectsPermissions(authContext);
 
     return this.restToCommonSelectedFieldsHandler.computeFromDepth({
       objectsPermissions,
-      objectMetadataMaps,
-      objectMetadataMapItem,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
       depth,
     });
   }
@@ -150,15 +152,21 @@ export abstract class RestApiBaseHandler {
   async buildCommonOptions(request: AuthenticatedRequest) {
     const { object: parsedObject } = parseCorePath(request);
 
-    const { objectMetadataMaps, objectMetadataMapItem } =
-      await this.getObjectMetadata(request, parsedObject);
+    const {
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
+    } = await this.getObjectMetadata(request, parsedObject);
 
     const authContext = this.getAuthContextFromRequest(request);
 
     return {
       authContext,
-      objectMetadataItemWithFieldMaps: objectMetadataMapItem,
-      objectMetadataMaps: objectMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
     };
   }
 
@@ -166,8 +174,11 @@ export abstract class RestApiBaseHandler {
     request: AuthenticatedRequest,
     parsedObject: string,
   ): Promise<{
-    objectMetadataMaps: ObjectMetadataMaps;
-    objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
+    objectIdByNameSingular: Record<string, string>;
   }> {
     const { workspace } =
       await this.accessTokenService.validateTokenByRequest(request);
@@ -242,16 +253,10 @@ export abstract class RestApiBaseHandler {
     const workspaceFeatureFlagsMap =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspace.id);
 
-    const objectMetadataItem = buildObjectMetadataItemWithFieldMaps(
-      flatObjectMetadataItem,
-      flatFieldMetadataMaps,
-      flatIndexMaps,
-    );
-
     // Check if this entity is workspace-gated and should be blocked from workspace API
     if (
       shouldExcludeFromWorkspaceApi(
-        objectMetadataItem,
+        flatObjectMetadataItem,
         standardObjectMetadataDefinitions,
         workspaceFeatureFlagsMap,
       )
@@ -261,24 +266,12 @@ export abstract class RestApiBaseHandler {
       );
     }
 
-    const objectMetadataMaps: ObjectMetadataMaps = {
-      byId: {},
-      idByNameSingular,
-    };
-
-    for (const [id, flatObj] of Object.entries(flatObjectMetadataMaps.byId)) {
-      if (isDefined(flatObj)) {
-        objectMetadataMaps.byId[id] = buildObjectMetadataItemWithFieldMaps(
-          flatObj,
-          flatFieldMetadataMaps,
-          flatIndexMaps,
-        );
-      }
-    }
-
     return {
-      objectMetadataMaps,
-      objectMetadataMapItem: objectMetadataItem,
+      flatObjectMetadata: flatObjectMetadataItem,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatIndexMaps,
+      objectIdByNameSingular: idByNameSingular,
     };
   }
 }

@@ -1,4 +1,5 @@
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
+import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import { type RelativeDateFilter } from 'twenty-shared/utils';
 import { stringifyRelativeDateFilter } from '../stringifyRelativeDateFilter';
 
@@ -213,7 +214,7 @@ describe('stringifyRelativeDateFilter', () => {
         amount: 5,
         unit: 'DAY',
         timezone: 'America/New_York',
-        firstDayOfTheWeek: 'SUNDAY',
+        firstDayOfTheWeek: FirstDayOfTheWeek.SUNDAY,
       };
 
       expect(stringifyRelativeDateFilter(filter)).toBe(
@@ -259,7 +260,7 @@ describe('stringifyRelativeDateFilter', () => {
         direction: 'PAST',
         amount: 5,
         unit: 'DAY',
-        firstDayOfTheWeek: 'SUNDAY',
+        firstDayOfTheWeek: FirstDayOfTheWeek.SUNDAY,
       };
 
       expect(stringifyRelativeDateFilter(filter)).toBe('PAST_5_DAY');
@@ -289,7 +290,7 @@ describe('stringifyRelativeDateFilter', () => {
         amount: 10,
         unit: 'MONTH',
         timezone: 'Europe/London',
-        firstDayOfTheWeek: 'MONDAY',
+        firstDayOfTheWeek: FirstDayOfTheWeek.MONDAY,
       };
 
       expect(stringifyRelativeDateFilter(filter)).toBe(
@@ -303,7 +304,7 @@ describe('stringifyRelativeDateFilter', () => {
         amount: 7,
         unit: 'WEEK',
         timezone: 'Asia/Tokyo',
-        firstDayOfTheWeek: 'SUNDAY',
+        firstDayOfTheWeek: FirstDayOfTheWeek.SUNDAY,
       };
 
       expect(stringifyRelativeDateFilter(filter)).toBe(

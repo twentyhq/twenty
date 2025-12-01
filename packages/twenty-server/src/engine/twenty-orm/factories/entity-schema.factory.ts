@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { EntitySchema } from 'typeorm';
 
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entity-schema-column.factory';
 import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
-import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -17,36 +17,35 @@ export class EntitySchemaFactory {
     private readonly entitySchemaRelationFactory: EntitySchemaRelationFactory,
   ) {}
 
-  async create(
+  create(
     workspaceId: string,
-    objectMetadata: ObjectMetadataItemWithFieldMaps,
-    objectMetadataMaps: ObjectMetadataMaps,
-  ): Promise<EntitySchema> {
-    const columns = this.entitySchemaColumnFactory.create(objectMetadata);
+    flatObjectMetadata: FlatObjectMetadata,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  ): EntitySchema {
+    const columns = this.entitySchemaColumnFactory.create(
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    );
 
-    const relations = await this.entitySchemaRelationFactory.create(
-      objectMetadata,
-      objectMetadataMaps,
+    const relations = this.entitySchemaRelationFactory.create(
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     );
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
     const entitySchema = new EntitySchema({
-      name: objectMetadata.nameSingular,
+      name: flatObjectMetadata.nameSingular,
       tableName: computeTableName(
-        objectMetadata.nameSingular,
-        objectMetadata.isCustom,
+        flatObjectMetadata.nameSingular,
+        flatObjectMetadata.isCustom,
       ),
       columns,
       relations,
       schema: schemaName,
     });
-
-    WorkspaceEntitiesStorage.setEntitySchema(
-      workspaceId,
-      objectMetadata.nameSingular,
-      entitySchema,
-    );
 
     return entitySchema;
   }

@@ -24,9 +24,13 @@ const getCurrentDateGranularity = ({
   axis,
 }: {
   configuration: ChartConfiguration;
-  axis: 'primary' | 'secondary';
+  axis?: 'primary' | 'secondary';
 }) => {
   const defaultGranularity = ObjectRecordGroupByDateGranularity.DAY;
+
+  if (configuration?.__typename === 'PieChartConfiguration') {
+    return configuration.dateGranularity || defaultGranularity;
+  }
 
   const isBarOrLineChart =
     configuration?.__typename === 'BarChartConfiguration' ||
@@ -82,6 +86,7 @@ export const ChartDateGranularitySelectionDropdownContent = ({
 
   const dateGranularityOptions: ObjectRecordGroupByDateGranularity[] = [
     ObjectRecordGroupByDateGranularity.DAY,
+    ObjectRecordGroupByDateGranularity.WEEK,
     ObjectRecordGroupByDateGranularity.MONTH,
     ObjectRecordGroupByDateGranularity.QUARTER,
     ObjectRecordGroupByDateGranularity.YEAR,

@@ -38,7 +38,12 @@ export class WorkspaceSyncRoleService {
         workspaceId: context.workspaceId,
         standardId: Not(IsNull()),
       },
-      relations: ['permissionFlags'],
+      relations: [
+        'permissionFlags',
+        'roleTargets',
+        'objectPermissions',
+        'fieldPermissions',
+      ],
     });
 
     const targetStandardRoles = this.standardRoleFactory.create(

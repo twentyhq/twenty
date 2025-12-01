@@ -36,6 +36,9 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
@@ -43,11 +46,9 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -75,7 +76,7 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly apiKeyRoleService: ApiKeyRoleService;
   @Inject()
-  protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService;
+  protected readonly workspaceCacheService: WorkspaceCacheService;
   @Inject()
   protected readonly commonResultGettersService: CommonResultGettersService;
   @Inject()
@@ -93,8 +94,12 @@ export abstract class CommonBaseQueryRunnerService<
     args: CommonInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<Output> {
-    const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
-      queryRunnerContext;
+    const {
+      authContext,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = queryRunnerContext;
 
     if (!isWorkspaceAuthContext(authContext)) {
       throw new CommonQueryRunnerException(
@@ -107,7 +112,7 @@ export abstract class CommonBaseQueryRunnerService<
 
     await this.validate(args, queryRunnerContext);
 
-    if (objectMetadataItemWithFieldMaps.isSystem === true) {
+    if (flatObjectMetadata.isSystem === true) {
       await this.validateSettingsPermissionsOnObjectOrThrow(
         authContext,
         queryRunnerContext,
@@ -115,8 +120,9 @@ export abstract class CommonBaseQueryRunnerService<
     }
 
     const commonQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     );
 
     const processedArgs = await this.processArgs(
@@ -172,8 +178,9 @@ export abstract class CommonBaseQueryRunnerService<
 
   protected abstract processQueryResult(
     queryResult: Output,
-    objectMetadataItemId: string,
-    objectMetadataMaps: ObjectMetadataMaps,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     authContext: WorkspaceAuthContext,
   ): Promise<Output>;
 
@@ -187,14 +194,14 @@ export abstract class CommonBaseQueryRunnerService<
       args.selectedFields,
     );
 
-    const { authContext, objectMetadataItemWithFieldMaps } = queryRunnerContext;
+    const { authContext, flatObjectMetadata } = queryRunnerContext;
 
     const computedArgs = await this.computeArgs(args, queryRunnerContext);
 
     const hookedArgs =
       (await this.workspaceQueryHookService.executePreQueryHooks(
         authContext,
-        objectMetadataItemWithFieldMaps.nameSingular,
+        flatObjectMetadata.nameSingular,
         operationName,
         computedArgs as WorkspacePreQueryHookPayload<CommonQueryNames>,
       )) as CommonInput<Args>;
@@ -231,9 +238,9 @@ export abstract class CommonBaseQueryRunnerService<
       results,
       operationName: this.operationName,
       authContext,
-      objectMetadataItemWithFieldMaps:
-        queryRunnerContext.objectMetadataItemWithFieldMaps,
-      objectMetadataMaps: queryRunnerContext.objectMetadataMaps,
+      flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
+      flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
     });
   }
 
@@ -241,25 +248,28 @@ export abstract class CommonBaseQueryRunnerService<
     results,
     operationName,
     authContext,
-    objectMetadataItemWithFieldMaps,
-    objectMetadataMaps,
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
   }: {
     results: Output;
     operationName: CommonQueryNames;
     authContext: WorkspaceAuthContext;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-    objectMetadataMaps: ObjectMetadataMaps;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }): Promise<Output> {
     const resultWithGetters = await this.processQueryResult(
       results,
-      objectMetadataItemWithFieldMaps.id,
-      objectMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       authContext,
     );
 
     await this.workspaceQueryHookService.executePostQueryHooks(
       authContext,
-      objectMetadataItemWithFieldMaps.nameSingular,
+      flatObjectMetadata.nameSingular,
       operationName,
       resultWithGetters as QueryResultFieldValue,
     );
@@ -271,18 +281,18 @@ export abstract class CommonBaseQueryRunnerService<
     authContext: WorkspaceAuthContext,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ) {
-    const { objectMetadataItemWithFieldMaps } = queryRunnerContext;
+    const { flatObjectMetadata } = queryRunnerContext;
 
     const workspace = authContext.workspace;
 
     if (
       Object.keys(OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS).includes(
-        objectMetadataItemWithFieldMaps.nameSingular,
+        flatObjectMetadata.nameSingular,
       )
     ) {
       const permissionRequired: PermissionFlagType =
         OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS[
-          objectMetadataItemWithFieldMaps.nameSingular as keyof typeof OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS
+          flatObjectMetadata.nameSingular as keyof typeof OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS
         ];
 
       const userHasPermission =
@@ -340,15 +350,12 @@ export abstract class CommonBaseQueryRunnerService<
       roleId = userWorkspaceRoleId;
     }
 
-    const objectMetadataPermissions =
-      await this.workspacePermissionsCacheService.getObjectRecordPermissionsForRoles(
-        {
-          workspaceId: workspaceId,
-          roleIds: [roleId],
-        },
-      );
+    const { rolesPermissions } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'rolesPermissions',
+      ]);
 
-    return { roleId, objectsPermissions: objectMetadataPermissions[roleId] };
+    return { roleId, objectsPermissions: rolesPermissions[roleId] };
   }
 
   private async prepareExtendedQueryRunnerContext(
@@ -368,7 +375,7 @@ export abstract class CommonBaseQueryRunnerService<
     const rolePermissionConfig = { unionOf: [roleId] };
 
     const repository = workspaceDataSource.getRepository(
-      queryRunnerContext.objectMetadataItemWithFieldMaps.nameSingular,
+      queryRunnerContext.flatObjectMetadata.nameSingular,
       rolePermissionConfig,
       authContext,
     );
@@ -397,7 +404,7 @@ export abstract class CommonBaseQueryRunnerService<
 
     const repository = await this.globalWorkspaceOrmManager.getRepository(
       workspaceId,
-      queryRunnerContext.objectMetadataItemWithFieldMaps.nameSingular,
+      queryRunnerContext.flatObjectMetadata.nameSingular,
       rolePermissionConfig,
     );
 

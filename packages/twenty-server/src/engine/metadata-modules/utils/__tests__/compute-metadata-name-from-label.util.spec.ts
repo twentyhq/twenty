@@ -1,6 +1,6 @@
 import { type EachTestingContext } from 'twenty-shared/testing';
 
-import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label.util';
+import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import {
   InvalidMetadataException,
   InvalidMetadataExceptionCode,
@@ -63,6 +63,34 @@ describe('computeMetadataNameFromLabel', () => {
       context: {
         input: 'MiXeD cAsE',
         expected: 'mixedCase',
+      },
+    },
+    {
+      title: 'should add "Custom" suffix to reserved keywords',
+      context: {
+        input: 'Plan',
+        expected: 'planCustom',
+      },
+    },
+    {
+      title: 'should add "Custom" suffix to plural reserved keywords',
+      context: {
+        input: 'Events',
+        expected: 'eventsCustom',
+      },
+    },
+    {
+      title: 'should add "Custom" suffix to core object names',
+      context: {
+        input: 'User',
+        expected: 'userCustom',
+      },
+    },
+    {
+      title: 'should not modify non-reserved keywords',
+      context: {
+        input: 'Customer',
+        expected: 'customer',
       },
     },
   ];

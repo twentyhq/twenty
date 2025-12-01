@@ -18,11 +18,16 @@ export const StyledPageInfoIcon = styled.div<{ iconColor?: string }>`
   padding: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const StyledPageInfoTitleContainer = styled.div`
+export const StyledPageInfoTextContainer = styled.div`
   align-items: center;
   display: flex;
   flex: 1;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  gap: ${({ theme }) => theme.spacing(0.5)};
+  min-width: 0;
+`;
+
+export const StyledPageInfoTitleContainer = styled.div`
+  font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   min-width: 0;
   max-width: 150px;
@@ -53,8 +58,10 @@ export const CommandMenuPageInfoLayout = ({
       {icon && (
         <StyledPageInfoIcon iconColor={iconColor}>{icon}</StyledPageInfoIcon>
       )}
-      <StyledPageInfoTitleContainer>{title}</StyledPageInfoTitleContainer>
-      {label && <StyledPageInfoLabel>{label}</StyledPageInfoLabel>}
+      <StyledPageInfoTextContainer>
+        <StyledPageInfoTitleContainer>{title}</StyledPageInfoTitleContainer>
+        {label && <StyledPageInfoLabel>{label}</StyledPageInfoLabel>}
+      </StyledPageInfoTextContainer>
     </StyledPageInfoContainer>
   );
 };

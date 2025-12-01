@@ -5,6 +5,7 @@ import { type ExtendedAggregateOperations } from '@/object-record/record-table/t
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGroupByResults';
 import { transformOneDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/utils/transformOneDimensionalGroupByToLineChartData';
 import { transformTwoDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/utils/transformTwoDimensionalGroupByToLineChartData';
@@ -26,7 +27,9 @@ type TransformGroupByDataToLineChartDataResult = {
   xAxisLabel?: string;
   yAxisLabel?: string;
   showDataLabels: boolean;
+  showLegend: boolean;
   hasTooManyGroups: boolean;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
 const EMPTY_LINE_CHART_RESULT: TransformGroupByDataToLineChartDataResult = {
@@ -34,7 +37,9 @@ const EMPTY_LINE_CHART_RESULT: TransformGroupByDataToLineChartDataResult = {
   xAxisLabel: undefined,
   yAxisLabel: undefined,
   showDataLabels: false,
+  showLegend: true,
   hasTooManyGroups: false,
+  formattedToRawLookup: new Map(),
 };
 
 export const transformGroupByDataToLineChartData = ({
@@ -110,6 +115,7 @@ export const transformGroupByDataToLineChartData = ({
     : undefined;
 
   const showDataLabels = configuration.displayDataLabel ?? false;
+  const showLegend = configuration.displayLegend ?? true;
 
   const baseResult = isDefined(groupByFieldY)
     ? transformTwoDimensionalGroupByToLineChartData({
@@ -137,5 +143,7 @@ export const transformGroupByDataToLineChartData = ({
     xAxisLabel,
     yAxisLabel,
     showDataLabels,
+    showLegend,
+    formattedToRawLookup: baseResult.formattedToRawLookup,
   };
 };

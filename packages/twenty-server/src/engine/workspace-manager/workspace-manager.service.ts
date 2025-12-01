@@ -10,7 +10,8 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
@@ -32,7 +33,7 @@ export class WorkspaceManagerService {
     private readonly coreDataSource: DataSource,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
-    private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
+    private readonly objectMetadataService: ObjectMetadataService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
     @InjectRepository(UserWorkspaceEntity)
@@ -48,6 +49,7 @@ export class WorkspaceManagerService {
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly applicationService: ApplicationService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   public async init({
@@ -133,20 +135,27 @@ export class WorkspaceManagerService {
     featureFlags: Record<string, boolean>,
     twentyStandardFlatApplication: FlatApplication,
   ) {
-    const createdObjectMetadata =
-      await this.objectMetadataServiceV2.findManyWithinWorkspace(workspaceId);
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
+      );
 
     await standardObjectsPrefillData(
       this.coreDataSource,
       dataSourceMetadata.schema,
-      createdObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     );
 
     await prefillCoreViews({
       twentyStandardFlatApplication,
       coreDataSource: this.coreDataSource,
       workspaceId,
-      objectMetadataItems: createdObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       workspaceSchemaName: dataSourceMetadata.schema,
       featureFlags,
     });
@@ -162,7 +171,7 @@ export class WorkspaceManagerService {
       workspaceId,
     });
 
-    await this.objectMetadataServiceV2.deleteWorkspaceAllObjectMetadata({
+    await this.objectMetadataService.deleteWorkspaceAllObjectMetadata({
       workspaceId,
     });
 

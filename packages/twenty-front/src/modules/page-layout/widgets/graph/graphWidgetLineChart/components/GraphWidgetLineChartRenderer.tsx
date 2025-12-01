@@ -1,8 +1,12 @@
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { LINE_CHART_IS_STACKED_DEFAULT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartIsStackedDefault';
 import { useGraphLineChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useGraphLineChartWidgetData';
+import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartDataPoint';
+import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { type LineSeries, type Point } from '@nivo/line';
 import { lazy, Suspense } from 'react';
@@ -33,8 +37,10 @@ export const GraphWidgetLineChartRenderer = ({
     xAxisLabel,
     yAxisLabel,
     showDataLabels,
+    showLegend,
     hasTooManyGroups,
     loading,
+    formattedToRawLookup,
     objectMetadataItem,
   } = useGraphLineChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
@@ -43,6 +49,9 @@ export const GraphWidgetLineChartRenderer = ({
 
   const navigate = useNavigate();
   const configuration = widget.configuration as LineChartConfiguration;
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+  );
 
   const hasGroupByOnSecondaryAxis = isDefined(
     configuration.secondaryAxisGroupByFieldMetadataId,
@@ -66,14 +75,27 @@ export const GraphWidgetLineChartRenderer = ({
     }),
   );
 
-  const handlePointClick = (_point: Point<LineSeries>) => {
-    return navigate(
-      getAppPath(
-        AppPath.RecordIndexPage,
-        { objectNamePlural: objectMetadataItem.namePlural },
-        isDefined(indexViewId) ? { viewId: indexViewId } : undefined,
-      ),
+  const handlePointClick = (point: Point<LineSeries>) => {
+    const xValue = (point.data as LineChartDataPoint).x;
+    const rawValue = formattedToRawLookup.get(xValue as string) ?? null;
+
+    const queryParams = buildChartDrilldownQueryParams({
+      objectMetadataItem,
+      configuration,
+      clickedData: {
+        primaryBucketRawValue: rawValue,
+      },
+      viewId: indexViewId,
+      timezone: configuration.timezone ?? undefined,
+    });
+
+    const url = getAppPath(
+      AppPath.RecordIndexPage,
+      { objectNamePlural: objectMetadataItem.namePlural },
+      Object.fromEntries(queryParams),
     );
+
+    navigate(url);
   };
 
   if (loading) {
@@ -92,12 +114,13 @@ export const GraphWidgetLineChartRenderer = ({
         xAxisLabel={xAxisLabel}
         yAxisLabel={yAxisLabel}
         enablePointLabel={showDataLabels}
+        showLegend={showLegend}
         rangeMin={configuration.rangeMin ?? undefined}
         rangeMax={configuration.rangeMax ?? undefined}
         omitNullValues={configuration.omitNullValues ?? false}
         groupMode={groupMode}
         displayType="shortNumber"
-        onSliceClick={handlePointClick}
+        onSliceClick={isPageLayoutInEditMode ? undefined : handlePointClick}
       />
     </Suspense>
   );

@@ -63,4 +63,4 @@ git push origin your-branch-name
 
 ## Reporting Issues
 
-If you face any issues or have suggestions, please feel free to (create an issue on Twenty's GitHub repository)[https://github.com/twentyhq/twenty/issues/new]. Please provide as much detail as possible.
+If you face any issues or have suggestions, please feel free to [create an issue on Twenty's GitHub repository](https://github.com/twentyhq/twenty/issues/new). Please provide as much detail as possible.

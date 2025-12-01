@@ -30,8 +30,10 @@
     "class-validator": "^0.14.0",
     "handlebars": "^4.7.8",
     "libphonenumber-js": "^1.10.26",
+    "lodash.camelcase": "^4.3.0",
     "qs": "^6.11.2",
     "react-router-dom": "^6.4.4",
+    "transliteration": "^2.3.5",
     "zod": "^4.1.11"
   },
   "exports": {

@@ -8,7 +8,7 @@ import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/acto
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { buildFieldMapsForObject } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-for-object.util';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -55,8 +55,10 @@ export class CreatedByFromAuthContextService {
       : undefined;
 
     const fieldIdByName = objectMetadata
-      ? buildFieldMapsForObject(flatFieldMetadataMaps, objectMetadata.id)
-          .fieldIdByName
+      ? buildFieldMapsFromFlatObjectMetadata(
+          flatFieldMetadataMaps,
+          objectMetadata,
+        ).fieldIdByName
       : {};
 
     this.logger.log(
@@ -102,24 +104,11 @@ export class CreatedByFromAuthContextService {
   private async buildCreatedBy(
     authContext: AuthContext,
   ): Promise<ActorMetadata> {
-    const { workspace, workspaceMemberId, user, apiKey } = authContext;
+    const { workspace, user, apiKey } = authContext;
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    // TODO: remove that code once we have the workspace member id in all tokens
-    if (isDefined(workspaceMemberId) && isDefined(user)) {
-      return buildCreatedByFromFullNameMetadata({
-        fullNameMetadata: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-        },
-        workspaceMemberId,
-      });
-    }
-
     if (isDefined(user)) {
-      this.logger.warn("User doesn't have a workspace member id in the token");
-
       const workspaceMemberRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
           workspace.id,

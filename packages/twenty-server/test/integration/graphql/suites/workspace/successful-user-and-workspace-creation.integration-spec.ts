@@ -1,3 +1,5 @@
+import { randomUUID } from 'crypto';
+
 import { activateWorkspace } from 'test/integration/graphql/utils/activate-workspace.util';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
@@ -27,9 +29,11 @@ describe('Successful user and workspace creation', () => {
   });
 
   it('should sign up a new user and create a new workspace successfully', async () => {
+    const uniqueEmail = `test-${randomUUID()}@example.com`;
+
     const { data } = await signUp({
       input: {
-        email: `test-1234@example.com`,
+        email: uniqueEmail,
         password: 'Test123!@#',
       },
 
@@ -38,6 +42,12 @@ describe('Successful user and workspace creation', () => {
 
     createdUserAccessToken =
       data.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
+
+    // Mark email as verified to bypass email verification requirement
+    await testDataSource.query(
+      'UPDATE core."user" SET "isEmailVerified" = true WHERE email = $1',
+      [uniqueEmail],
+    );
 
     const {
       data: { signUpInNewWorkspace: signUpInNewWorkspaceData },
@@ -121,9 +131,11 @@ describe('Successful user and workspace creation', () => {
   });
 
   it('should delete workspace and related metadata entities when last user is deleted', async () => {
+    const uniqueEmail = `test-delete-${randomUUID()}@example.com`;
+
     const { data } = await signUp({
       input: {
-        email: `test-delete-5678@example.com`,
+        email: uniqueEmail,
         password: 'Test123!@#',
       },
       expectToFail: false,
@@ -131,6 +143,12 @@ describe('Successful user and workspace creation', () => {
 
     createdUserAccessToken =
       data.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
+
+    // Mark email as verified to bypass email verification requirement
+    await testDataSource.query(
+      'UPDATE core."user" SET "isEmailVerified" = true WHERE email = $1',
+      [uniqueEmail],
+    );
 
     const {
       data: { signUpInNewWorkspace: signUpInNewWorkspaceData },
@@ -192,7 +210,6 @@ describe('Successful user and workspace creation', () => {
       'serverlessFunction',
       'serverlessFunctionLayer',
       'agent',
-      'agentHandoff',
       'remoteServer',
       'remoteTable',
       'databaseEventTrigger',

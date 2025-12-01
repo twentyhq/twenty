@@ -30,7 +30,9 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataEnumValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-or-throw.utils';
@@ -38,7 +40,8 @@ import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/v
 type ValidateFieldMetadataArgs = {
   fieldMetadataType: FieldMetadataType;
   fieldMetadataInput: CreateFieldInput | UpdateFieldInput;
-  objectMetadata: ObjectMetadataItemWithFieldMaps;
+  flatObjectMetadata: FlatObjectMetadata;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   existingFieldMetadata?: FieldMetadataEntity;
 };
 
@@ -164,7 +167,8 @@ export class FieldMetadataValidationService {
   async validateFieldMetadata({
     fieldMetadataInput,
     fieldMetadataType,
-    objectMetadata,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
     existingFieldMetadata,
   }: ValidateFieldMetadataArgs): Promise<void> {
     if (fieldMetadataInput.name) {
@@ -187,7 +191,8 @@ export class FieldMetadataValidationService {
       try {
         validateFieldNameAvailabilityOrThrow({
           name: fieldMetadataInput.name,
-          fieldMetadataMapById: objectMetadata.fieldsById,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
         });
       } catch (error) {
         if (error instanceof InvalidMetadataException) {

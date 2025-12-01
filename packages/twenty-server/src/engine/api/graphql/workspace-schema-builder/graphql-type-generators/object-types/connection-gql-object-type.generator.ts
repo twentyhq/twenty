@@ -10,7 +10,8 @@ import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-build
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { GraphQLOutputTypeFieldConfigMap } from 'src/engine/api/graphql/workspace-schema-builder/types/graphql-field-config-map.types';
 import { computeObjectMetadataObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-object-type-key.util';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
@@ -23,51 +24,52 @@ export class ConnectionGqlObjectTypeGenerator {
     private readonly gqlTypesStorage: GqlTypesStorage,
   ) {}
 
-  public buildAndStore(objectMetadata: ObjectMetadataEntity) {
+  public buildAndStore(
+    flatObjectMetadata: FlatObjectMetadata,
+    flatFields: FlatFieldMetadata[],
+  ) {
     const kind = ObjectTypeDefinitionKind.Connection;
 
     const key = computeObjectMetadataObjectTypeKey(
-      objectMetadata.nameSingular,
+      flatObjectMetadata.nameSingular,
       kind,
     );
 
     this.gqlTypesStorage.addGqlType(
       key,
       new GraphQLObjectType({
-        name: `${pascalCase(objectMetadata.nameSingular)}${kind.toString()}`,
-        description: objectMetadata.description,
-        fields: () => this.generateFields(objectMetadata),
+        name: `${pascalCase(flatObjectMetadata.nameSingular)}${kind.toString()}`,
+        description: flatObjectMetadata.description,
+        fields: () => this.generateFields(flatObjectMetadata, flatFields),
       }),
     );
   }
 
   private generateFields(
-    objectMetadata: ObjectMetadataEntity,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatFields: FlatFieldMetadata[],
   ): GraphQLOutputTypeFieldConfigMap {
     const fields: GraphQLOutputTypeFieldConfigMap = {};
 
     const aggregatedFields =
-      this.aggregationObjectTypeGenerator.generate(objectMetadata);
+      this.aggregationObjectTypeGenerator.generate(flatFields);
 
     Object.assign(fields, aggregatedFields);
 
     const edgeType = this.gqlTypesStorage.getGqlTypeByKey(
       computeObjectMetadataObjectTypeKey(
-        objectMetadata.nameSingular,
+        flatObjectMetadata.nameSingular,
         ObjectTypeDefinitionKind.Edge,
       ),
     );
 
     if (!isDefined(edgeType) || isInputObjectType(edgeType)) {
       this.logger.error(
-        `Edge type for ${objectMetadata.nameSingular} was not found. Please, check if you have defined it.`,
-        {
-          objectMetadata,
-        },
+        `Edge type for ${flatObjectMetadata.nameSingular} was not found. Please, check if you have defined it.`,
       );
 
       throw new Error(
-        `Edge type for ${objectMetadata.nameSingular} was not found. Please, check if you have defined it.`,
+        `Edge type for ${flatObjectMetadata.nameSingular} was not found. Please, check if you have defined it.`,
       );
     }
 

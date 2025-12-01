@@ -74,6 +74,7 @@ import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/cons
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { getRequest } from 'src/utils/extract-request';
@@ -149,6 +150,13 @@ export class WorkspaceResolver {
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
     }
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async routerModel(
+    @Parent() _workspace: WorkspaceEntity,
+  ): Promise<string | null> {
+    return 'auto';
   }
 
   @Mutation(() => SignedFileDTO)
@@ -231,17 +239,28 @@ export class WorkspaceResolver {
       return null;
     }
 
-    return await this.roleService.getRoleById(
+    const defaultRoleEntity = await this.roleService.getRoleById(
       workspace.defaultRoleId,
       workspace.id,
     );
+
+    return isDefined(defaultRoleEntity)
+      ? fromRoleEntityToRoleDto(defaultRoleEntity)
+      : null;
   }
 
   @ResolveField(() => String, { nullable: true })
-  async routerModel(
+  async fastModel(
     @Parent() workspace: WorkspaceEntity,
   ): Promise<string | null> {
-    return workspace.routerModel;
+    return workspace.fastModel;
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async smartModel(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<string | null> {
+    return workspace.smartModel;
   }
 
   @ResolveField(() => ApplicationDTO, { nullable: true })

@@ -1,8 +1,8 @@
 import { Scope } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
 import isEmpty from 'lodash.isempty';
 import { FieldActorSource } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';

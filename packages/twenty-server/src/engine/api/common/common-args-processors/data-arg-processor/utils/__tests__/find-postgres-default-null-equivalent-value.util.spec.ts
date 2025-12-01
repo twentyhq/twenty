@@ -2,7 +2,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   POSTGRES_DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE,
-  POSTGRES_DEFAULT_RAW_JSON_FIELD_NULL_EQUIVALENT_VALUE,
   POSTGRES_DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE,
 } from 'src/engine/api/common/common-args-processors/data-arg-processor/constants/null-equivalent-values.constant';
 import { findPostgresDefaultNullEquivalentValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/find-postgres-default-null-equivalent-value.util';
@@ -38,35 +37,6 @@ describe('findPostgresDefaultNullEquivalentValue', () => {
             FieldMetadataType.TEXT,
           ),
         ).toBeUndefined();
-      });
-    });
-
-    describe('RAW_JSON', () => {
-      it('should return POSTGRES_DEFAULT_RAW_JSON_FIELD_NULL_EQUIVALENT_VALUE for null', () => {
-        expect(
-          findPostgresDefaultNullEquivalentValue(
-            null,
-            FieldMetadataType.RAW_JSON,
-          ),
-        ).toBe(POSTGRES_DEFAULT_RAW_JSON_FIELD_NULL_EQUIVALENT_VALUE);
-      });
-
-      it('should return POSTGRES_DEFAULT_RAW_JSON_FIELD_NULL_EQUIVALENT_VALUE for empty object', () => {
-        expect(
-          findPostgresDefaultNullEquivalentValue(
-            {},
-            FieldMetadataType.RAW_JSON,
-          ),
-        ).toBe(POSTGRES_DEFAULT_RAW_JSON_FIELD_NULL_EQUIVALENT_VALUE);
-      });
-
-      it("should return POSTGRES_DEFAULT_RAW_JSON_FIELD_NULL_EQUIVALENT_VALUE for 'NULL'", () => {
-        expect(
-          findPostgresDefaultNullEquivalentValue(
-            'NULL',
-            FieldMetadataType.RAW_JSON,
-          ),
-        ).toBe(POSTGRES_DEFAULT_RAW_JSON_FIELD_NULL_EQUIVALENT_VALUE);
       });
     });
 
@@ -112,7 +82,7 @@ describe('findPostgresDefaultNullEquivalentValue', () => {
           FieldMetadataType.ACTOR,
           'context',
         ),
-      ).toBe(POSTGRES_DEFAULT_RAW_JSON_FIELD_NULL_EQUIVALENT_VALUE);
+      ).toBe(undefined);
     });
   });
 
@@ -209,7 +179,7 @@ describe('findPostgresDefaultNullEquivalentValue', () => {
           FieldMetadataType.RICH_TEXT_V2,
           'blocknote',
         ),
-      ).toBe(POSTGRES_DEFAULT_RAW_JSON_FIELD_NULL_EQUIVALENT_VALUE);
+      ).toBe(undefined);
     });
 
     it('should return text default for markdown', () => {

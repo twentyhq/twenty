@@ -4,6 +4,8 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
+import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import {
   SubscriptionInterval,
   SubscriptionStatus,
@@ -58,7 +60,8 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
       ],
       isTwoFactorAuthenticationEnforced: false,
       trashRetentionDays: 14,
-      routerModel: 'auto',
+      fastModel: DEFAULT_FAST_MODEL,
+      smartModel: DEFAULT_SMART_MODEL,
     });
   },
 });

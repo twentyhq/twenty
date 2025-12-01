@@ -1,0 +1,24 @@
+import { Field, Int, ObjectType } from '@nestjs/graphql';
+
+import { IsDateString } from 'class-validator';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
+@ObjectType('AgentTurnEvaluation')
+export class AgentTurnEvaluationDTO {
+  @Field(() => UUIDScalarType)
+  id: string;
+
+  @Field(() => UUIDScalarType)
+  turnId: string;
+
+  @Field(() => Int)
+  score: number;
+
+  @Field({ nullable: true })
+  comment?: string;
+
+  @IsDateString()
+  @Field()
+  createdAt: Date;
+}

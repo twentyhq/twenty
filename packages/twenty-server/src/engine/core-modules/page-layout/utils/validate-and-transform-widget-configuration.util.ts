@@ -38,9 +38,7 @@ const validateGraphConfiguration = ({
     return null;
   }
 
-  const v2ChartTypes = [GraphType.PIE, GraphType.LINE, GraphType.GAUGE];
-
-  if (v2ChartTypes.includes(graphType) && !isDashboardV2Enabled) {
+  if (graphType === GraphType.GAUGE && !isDashboardV2Enabled) {
     throw new Error(
       `Chart type ${graphType} requires IS_DASHBOARD_V2_ENABLED feature flag`,
     );

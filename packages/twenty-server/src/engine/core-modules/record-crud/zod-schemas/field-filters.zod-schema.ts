@@ -1,15 +1,16 @@
-import { z } from 'zod';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { z } from 'zod';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 const NullCheckEnum = z.enum(['NULL', 'NOT_NULL']);
 
 export const generateFieldFilterZodSchema = (
-  field: FieldMetadataEntity,
+  field: FieldMetadataEntity | FlatFieldMetadata,
 ): z.ZodTypeAny | null => {
   switch (field.type) {
     case FieldMetadataType.UUID:

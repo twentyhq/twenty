@@ -31,6 +31,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         omitNullValues
         axisNameDisplay
         displayDataLabel
+        displayLegend
         rangeMin
         rangeMax
         color
@@ -55,6 +56,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         omitNullValues
         axisNameDisplay
         displayDataLabel
+        displayLegend
         rangeMin
         rangeMax
         color
@@ -73,6 +75,8 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         dateGranularity
         orderBy
         displayDataLabel
+        showCenterMetric
+        displayLegend
         color
         description
         filter
