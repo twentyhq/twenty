@@ -55638,8 +55638,6 @@ __metadata:
 "twenty-cli@workspace:packages/twenty-cli":
   version: 0.0.0-use.local
   resolution: "twenty-cli@workspace:packages/twenty-cli"
-  bin:
-    twenty: ./deprecate.js
   languageName: unknown
   linkType: soft
 
