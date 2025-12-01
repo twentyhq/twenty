@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { ImapFlow } from 'imapflow';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 
 type ConnectedAccountIdentifier = Pick<
   ConnectedAccountWorkspaceEntity,
@@ -83,13 +83,19 @@ export class ImapClientProvider {
     let client: ImapFlow | null = null;
     let timeoutId: NodeJS.Timeout | null = null;
 
+    if (!isDefined(connectedAccount.handle)) {
+      throw new CustomError(
+        'Handle is required',
+        MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
+      );
+    }
     try {
       client = new ImapFlow({
         host: connectionParameters.IMAP?.host || '',
         port: connectionParameters.IMAP?.port || 993,
         secure: connectionParameters.IMAP?.secure,
         auth: {
-          user: isNonEmptyString(connectionParameters.IMAP?.username)
+          user: isDefined(connectionParameters.IMAP?.username)
             ? connectionParameters.IMAP?.username
             : connectedAccount.handle,
           pass: connectionParameters.IMAP?.password || '',

@@ -142,7 +142,7 @@ export class ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator {
     return this.objectMetadataOrderByBaseGenerator.generateFields({
       fields,
       logger: this.logger,
-      orderByDateGranularity: true,
+      isForGroupBy: true,
       context,
     });
   }

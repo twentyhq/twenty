@@ -42,7 +42,11 @@ export default defineConfig(() => {
       tsconfigPaths({
         root: __dirname,
       }),
-      dts({ entryRoot: './src', tsconfigPath: tsConfigPath }),
+      dts({
+        entryRoot: './src',
+        tsconfigPath: tsConfigPath,
+        exclude: ['vite.config.ts'],
+      }),
     ],
     build: {
       outDir: 'dist',

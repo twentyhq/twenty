@@ -87,6 +87,8 @@ export class MessageImportExceptionHandlerService {
             workspaceId,
           );
           break;
+        case MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED:
+        case MessageImportDriverExceptionCode.ACCESS_TOKEN_MISSING:
         case MessageImportDriverExceptionCode.UNKNOWN:
         case MessageImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
         default:

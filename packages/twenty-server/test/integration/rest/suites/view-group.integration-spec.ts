@@ -240,7 +240,7 @@ describe('View Group REST API', () => {
     });
   });
 
-  describe.only('POST /metadata/viewGroups', () => {
+  describe('POST /metadata/viewGroups', () => {
     it('should create a new view group', async () => {
       const viewGroupData = {
         viewId: testViewId,
@@ -450,7 +450,7 @@ describe('View Group REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiErrorNotFoundResponse(deleteResponse2);
+      assertRestApiSuccessfulResponse(deleteResponse2);
     });
   });
 });

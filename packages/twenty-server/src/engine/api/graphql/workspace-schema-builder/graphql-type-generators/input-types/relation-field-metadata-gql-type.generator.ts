@@ -118,12 +118,14 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
   public generateSimpleRelationFieldOrderByInputType({
     fieldMetadata,
     typeOptions,
+    isForGroupBy,
     context,
   }: {
     fieldMetadata: FlatFieldMetadata<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >;
     typeOptions: TypeOptions;
+    isForGroupBy?: boolean;
     context?: SchemaGenerationContext;
   }) {
     if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
@@ -168,7 +170,9 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
       if (isDefined(targetObjectMetadata)) {
         const targetOrderByInputTypeKey = computeObjectMetadataInputTypeKey(
           targetObjectMetadata.nameSingular,
-          GqlInputTypeDefinitionKind.OrderBy,
+          isForGroupBy
+            ? GqlInputTypeDefinitionKind.OrderByWithGroupBy
+            : GqlInputTypeDefinitionKind.OrderBy,
         );
 
         const targetOrderByInputType = this.gqlTypesStorage.getGqlTypeByKey(

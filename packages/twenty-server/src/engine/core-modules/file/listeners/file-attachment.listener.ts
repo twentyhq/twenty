@@ -31,7 +31,7 @@ export class FileAttachmentListener {
         FileDeletionJob.name,
         {
           workspaceId: payload.workspaceId,
-          fullPath: event.properties.before.fullPath,
+          fullPath: event.properties.before.fullPath ?? '',
         },
       );
     }

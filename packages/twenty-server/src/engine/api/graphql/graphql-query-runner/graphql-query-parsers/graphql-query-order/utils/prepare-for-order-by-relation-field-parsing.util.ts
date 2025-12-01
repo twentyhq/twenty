@@ -1,4 +1,3 @@
-import { UserInputError } from 'apollo-server-core';
 import { isObject } from 'class-validator';
 import { type ObjectRecordOrderByForRelationField } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -8,6 +7,7 @@ import {
   type GroupByRelationField,
 } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
 import { isGroupByRelationField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-relation-field.util';
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';

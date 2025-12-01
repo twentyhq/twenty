@@ -8,13 +8,23 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { useDuplicateStep } from '@/workflow/workflow-steps/hooks/useDuplicateStep';
+import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
+import { useRecoilValue } from 'recoil';
+import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { IconCopyPlus, IconPencil, IconTrash } from 'twenty-ui/display';
+import {
+  IconCopyPlus,
+  IconPencil,
+  IconRobot,
+  IconTrash,
+  IconUsers,
+} from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const WorkflowStepFooter = ({
   stepId,
@@ -33,12 +43,22 @@ export const WorkflowStepFooter = ({
     openWorkflowTriggerTypeInCommandMenu,
   } = useWorkflowCommandMenu();
   const { deleteStep } = useDeleteStep();
+  const navigateSettings = useNavigateSettings();
+  const workflowAiAgentActionAgent = useRecoilValue(
+    workflowAiAgentActionAgentState,
+  );
   const shouldPinDeleteButton =
     !isDefined(additionalActions) || additionalActions.length === 0;
+
+  const agentId = workflowAiAgentActionAgent?.id;
+  const hasViewAgentOption = isDefined(agentId);
+  const hasViewRoleOption = isDefined(workflowAiAgentActionAgent?.roleId);
 
   const selectableItemIdArray = [
     'change-node-type',
     ...(stepId !== TRIGGER_STEP_ID ? ['duplicate'] : []),
+    ...(hasViewAgentOption ? ['view-agent'] : []),
+    ...(hasViewRoleOption ? ['view-role'] : []),
     ...(!shouldPinDeleteButton ? ['delete'] : []),
   ];
 
@@ -60,6 +80,22 @@ export const WorkflowStepFooter = ({
   const handleDeleteNode = () => {
     closeDropdown(dropdownId);
     deleteStep(stepId);
+  };
+
+  const handleViewAgent = () => {
+    closeDropdown(dropdownId);
+    if (isDefined(agentId)) {
+      navigateSettings(SettingsPath.AIAgentDetail, { agentId });
+    }
+  };
+
+  const handleViewRole = () => {
+    closeDropdown(dropdownId);
+    if (isDefined(workflowAiAgentActionAgent?.roleId)) {
+      navigateSettings(SettingsPath.RoleDetail, {
+        roleId: workflowAiAgentActionAgent.roleId,
+      });
+    }
   };
 
   const selectedItemId = useRecoilComponentValue(
@@ -91,6 +127,26 @@ export const WorkflowStepFooter = ({
             onClick={handleDuplicateNode}
             text={t`Duplicate node`}
             LeftIcon={IconCopyPlus}
+          />
+        </SelectableListItem>
+      )}
+      {hasViewAgentOption && (
+        <SelectableListItem itemId="view-agent" onEnter={handleViewAgent}>
+          <MenuItem
+            focused={selectedItemId === 'view-agent'}
+            onClick={handleViewAgent}
+            text={t`View Agent`}
+            LeftIcon={IconRobot}
+          />
+        </SelectableListItem>
+      )}
+      {hasViewRoleOption && (
+        <SelectableListItem itemId="view-role" onEnter={handleViewRole}>
+          <MenuItem
+            focused={selectedItemId === 'view-role'}
+            onClick={handleViewRole}
+            text={t`View Role`}
+            LeftIcon={IconUsers}
           />
         </SelectableListItem>
       )}

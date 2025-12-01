@@ -32,6 +32,7 @@ export const useGraphGroupBySortOptionLabels = ({
     const fieldLabel = getFieldLabelWithSubField({
       field,
       subFieldName: groupBySubFieldName,
+      objectMetadataItems,
     });
 
     switch (graphOrderBy) {

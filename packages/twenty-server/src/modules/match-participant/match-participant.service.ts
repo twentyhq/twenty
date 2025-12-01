@@ -119,7 +119,7 @@ export class MatchParticipantService<
     for (const participants of chunkedParticipants) {
       const uniqueParticipantsHandles = [
         ...new Set(participants.map((participant) => participant.handle)),
-      ];
+      ].filter(isDefined);
 
       const queryBuilder = addPersonEmailFiltersToQueryBuilder({
         queryBuilder: personRepository.createQueryBuilder('person'),
@@ -140,6 +140,10 @@ export class MatchParticipantService<
       );
 
       const partipantsToBeUpdated = participants
+        .map((participant) => ({
+          ...participant,
+          handle: participant.handle ?? '',
+        }))
         .map((participant) => {
           const person = findPersonByPrimaryOrAdditionalEmail({
             people,

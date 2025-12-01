@@ -8,6 +8,10 @@ import { z } from 'zod';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
@@ -140,6 +144,13 @@ export class MessagingSendMessageService {
         const smtpClient =
           await this.smtpClientProvider.getSmtpClient(connectedAccount);
 
+        if (!isDefined(handle)) {
+          throw new MessageImportDriverException(
+            'Handle is required',
+            MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
+          );
+        }
+
         const mail = new MailComposer({
           from: handle,
           to: sendMessageInput.to,
@@ -178,7 +189,7 @@ export class MessagingSendMessageService {
             (messageFolder) => messageFolder.isSentFolder,
           );
 
-          if (isDefined(sentFolder)) {
+          if (isDefined(sentFolder) && isDefined(sentFolder.name)) {
             await imapClient.append(sentFolder.name, messageBuffer);
           }
 

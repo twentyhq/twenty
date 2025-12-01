@@ -7,7 +7,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entity-schema-column.factory';
 import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
-import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -47,12 +46,6 @@ export class EntitySchemaFactory {
       relations,
       schema: schemaName,
     });
-
-    WorkspaceEntitiesStorage.setEntitySchema(
-      workspaceId,
-      flatObjectMetadata.nameSingular,
-      entitySchema,
-    );
 
     return entitySchema;
   }

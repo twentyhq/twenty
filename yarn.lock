@@ -26690,7 +26690,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:8.17.1, ajv@npm:^8.0.0, ajv@npm:^8.12.0, ajv@npm:^8.17.1, ajv@npm:^8.9.0":
+"ajv@npm:8.17.1, ajv@npm:^8.0.0, ajv@npm:^8.17.1, ajv@npm:^8.9.0":
   version: 8.17.1
   resolution: "ajv@npm:8.17.1"
   dependencies:
@@ -30855,6 +30855,30 @@ __metadata:
   checksum: 10c0/157cbc59b2430ae9a90034a5f3a1b398b6738bf510f713edc4d4e45e169bc514d3d99dd34d8d01ca7ae7830b5b8b537e46ae8f3c8f932371b0875c0151d7ec91
   languageName: node
   linkType: hard
+
+"create-twenty-app@workspace:packages/create-twenty-app":
+  version: 0.0.0-use.local
+  resolution: "create-twenty-app@workspace:packages/create-twenty-app"
+  dependencies:
+    "@genql/cli": "npm:^3.0.3"
+    "@types/fs-extra": "npm:^11.0.0"
+    "@types/inquirer": "npm:^9.0.0"
+    "@types/lodash.camelcase": "npm:^4.3.7"
+    "@types/lodash.kebabcase": "npm:^4.1.7"
+    "@types/lodash.startcase": "npm:^4"
+    "@types/node": "npm:^20.0.0"
+    chalk: "npm:^5.3.0"
+    commander: "npm:^12.0.0"
+    fs-extra: "npm:^11.2.0"
+    inquirer: "npm:^10.0.0"
+    lodash.camelcase: "npm:^4.3.0"
+    lodash.kebabcase: "npm:^4.1.1"
+    lodash.startcase: "npm:^4.4.0"
+    uuid: "npm:^13.0.0"
+  bin:
+    create-twenty-app: dist/cli.js
+  languageName: unknown
+  linkType: soft
 
 "crelt@npm:^1.0.0, crelt@npm:^1.0.5":
   version: 1.0.6
@@ -55508,38 +55532,6 @@ __metadata:
 "twenty-cli@workspace:packages/twenty-cli":
   version: 0.0.0-use.local
   resolution: "twenty-cli@workspace:packages/twenty-cli"
-  dependencies:
-    "@genql/cli": "npm:^3.0.3"
-    "@types/fs-extra": "npm:^11.0.0"
-    "@types/inquirer": "npm:^9.0.0"
-    "@types/jest": "npm:^29.5.0"
-    "@types/lodash.camelcase": "npm:^4.3.7"
-    "@types/lodash.capitalize": "npm:^4"
-    "@types/lodash.kebabcase": "npm:^4.1.7"
-    "@types/lodash.startcase": "npm:^4"
-    "@types/node": "npm:^20.0.0"
-    ajv: "npm:^8.12.0"
-    ajv-formats: "npm:^2.1.1"
-    axios: "npm:^1.6.0"
-    chalk: "npm:^5.3.0"
-    chokidar: "npm:^4.0.0"
-    commander: "npm:^12.0.0"
-    dotenv: "npm:^16.4.0"
-    fs-extra: "npm:^11.2.0"
-    graphql: "npm:^16.8.1"
-    inquirer: "npm:^10.0.0"
-    jest: "npm:^29.5.0"
-    jsonc-parser: "npm:^3.2.0"
-    lodash.camelcase: "npm:^4.3.0"
-    lodash.capitalize: "npm:^4.2.1"
-    lodash.kebabcase: "npm:^4.1.1"
-    lodash.startcase: "npm:^4.4.0"
-    tsx: "npm:^4.7.0"
-    typescript: "npm:^5.9.2"
-    uuid: "npm:^13.0.0"
-    wait-on: "npm:^7.2.0"
-  bin:
-    twenty: dist/cli.js
   languageName: unknown
   linkType: soft
 
@@ -55711,11 +55703,38 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-sdk@workspace:packages/twenty-sdk"
   dependencies:
+    "@genql/cli": "npm:^3.0.3"
+    "@types/fs-extra": "npm:^11.0.0"
+    "@types/inquirer": "npm:^9.0.0"
+    "@types/jest": "npm:^29.5.0"
+    "@types/lodash.camelcase": "npm:^4.3.7"
+    "@types/lodash.capitalize": "npm:^4"
+    "@types/lodash.kebabcase": "npm:^4.1.7"
+    "@types/lodash.startcase": "npm:^4"
     "@types/node": "npm:^24.0.0"
-    typescript: "npm:5.9.2"
+    axios: "npm:^1.6.0"
+    chalk: "npm:^5.3.0"
+    chokidar: "npm:^4.0.0"
+    commander: "npm:^12.0.0"
+    dotenv: "npm:^16.4.0"
+    fs-extra: "npm:^11.2.0"
+    graphql: "npm:^16.8.1"
+    inquirer: "npm:^10.0.0"
+    jest: "npm:^29.5.0"
+    jsonc-parser: "npm:^3.2.0"
+    lodash.camelcase: "npm:^4.3.0"
+    lodash.capitalize: "npm:^4.2.1"
+    lodash.kebabcase: "npm:^4.1.1"
+    lodash.startcase: "npm:^4.4.0"
+    tsx: "npm:^4.7.0"
+    typescript: "npm:^5.9.2"
+    uuid: "npm:^13.0.0"
     vite: "npm:^7.0.0"
     vite-plugin-dts: "npm:3.8.1"
     vite-tsconfig-paths: "npm:^4.2.1"
+    wait-on: "npm:^7.2.0"
+  bin:
+    twenty: dist/cli/cli.js
   languageName: unknown
   linkType: soft
 
