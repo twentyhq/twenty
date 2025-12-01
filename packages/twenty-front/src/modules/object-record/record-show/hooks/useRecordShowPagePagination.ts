@@ -215,12 +215,13 @@ export const useRecordShowPagePagination = (
   const { records: allRecords } = useFindManyRecords({
     filter,
     orderBy,
+    limit: 100000000,
     objectNameSingular,
     recordGqlFields: { id: true },
   });
 
   const rankInView = allRecords.findIndex((record) => record.id === objectRecordId);
-  const rankFoundInView = !loading && (totalCountBefore >= 0 || totalCountAfter >= 0);
+  const rankFoundInView = !loading && rankInView > -1;
 
   const objectLabelPlural = objectMetadataItem.labelPlural;
 
