@@ -17,13 +17,13 @@ import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cl
 
 type MessagingResetChannelCommandOptions = {
   workspaceId: string;
-  messageChannelId: string;
+  messageChannelId?: string;
 };
 
 @Command({
   name: 'messaging:reset-channel',
   description:
-    'Reset a message channel for full resync - clears sync cursor, sets sync stage to pending, and deletes all messages for the channel',
+    'Reset message channel(s) for full resync - clears sync cursor, sets sync stage to pending, and deletes all messages. If no channel ID provided, resets all channels in the workspace.',
 })
 export class MessagingResetChannelCommand extends CommandRunner {
   private readonly logger = new Logger(MessagingResetChannelCommand.name);
@@ -43,6 +43,61 @@ export class MessagingResetChannelCommand extends CommandRunner {
   ): Promise<void> {
     const { workspaceId, messageChannelId } = options;
 
+    const messageChannelRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
+        'messageChannel',
+      );
+
+    if (messageChannelId) {
+      const messageChannel = await messageChannelRepository.findOne({
+        where: { id: messageChannelId },
+      });
+
+      if (!messageChannel) {
+        this.logger.error(
+          `Message channel ${messageChannelId} not found in workspace ${workspaceId}`,
+        );
+
+        return;
+      }
+
+      await this.resetMessageChannel(workspaceId, messageChannel);
+    } else {
+      this.logger.log(
+        `No message channel ID provided, resetting all message channels in workspace ${workspaceId}`,
+      );
+
+      const messageChannels = await messageChannelRepository.find();
+
+      if (messageChannels.length === 0) {
+        this.logger.log(
+          `No message channels found in workspace ${workspaceId}`,
+        );
+
+        return;
+      }
+
+      this.logger.log(
+        `Found ${messageChannels.length} message channels to reset`,
+      );
+
+      for (const messageChannel of messageChannels) {
+        await this.resetMessageChannel(workspaceId, messageChannel);
+      }
+
+      this.logger.log(
+        `Successfully reset all ${messageChannels.length} message channels in workspace ${workspaceId}`,
+      );
+    }
+  }
+
+  private async resetMessageChannel(
+    workspaceId: string,
+    messageChannel: MessageChannelWorkspaceEntity,
+  ): Promise<void> {
+    const messageChannelId = messageChannel.id;
+
     this.logger.log(
       `Starting reset for message channel ${messageChannelId} in workspace ${workspaceId}`,
     );
@@ -52,18 +107,6 @@ export class MessagingResetChannelCommand extends CommandRunner {
         workspaceId,
         'messageChannel',
       );
-
-    const messageChannel = await messageChannelRepository.findOne({
-      where: { id: messageChannelId },
-    });
-
-    if (!messageChannel) {
-      this.logger.error(
-        `Message channel ${messageChannelId} not found in workspace ${workspaceId}`,
-      );
-
-      return;
-    }
 
     const messageChannelMessageAssociationRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelMessageAssociationWorkspaceEntity>(
@@ -145,9 +188,10 @@ export class MessagingResetChannelCommand extends CommandRunner {
   }
 
   @Option({
-    flags: '-c, --message-channel-id <message_channel_id>',
-    description: 'Message Channel ID',
-    required: true,
+    flags: '-c, --message-channel-id [message_channel_id]',
+    description:
+      'Message Channel ID (optional - if not provided, all channels will be reset)',
+    required: false,
   })
   parseMessageChannelId(value: string): string {
     return value;
