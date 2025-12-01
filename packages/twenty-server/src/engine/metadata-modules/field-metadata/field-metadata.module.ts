@@ -34,6 +34,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
+import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
 import { CreateFieldInput } from './dtos/create-field.input';
 import { UpdateFieldInput } from './dtos/update-field.input';
 
@@ -87,7 +88,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
           },
           delete: { disabled: true },
           guards: [WorkspaceAuthGuard],
-          interceptors: [],
+          interceptors: [FieldMetadataGraphqlApiExceptionInterceptor],
         },
       ],
     }),
