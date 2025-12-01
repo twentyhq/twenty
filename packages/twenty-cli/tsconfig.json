@@ -1,8 +1,0 @@
-{
-  "extends": "./tsconfig.lib.json",
-  "compilerOptions": {
-    "composite": true
-  },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts", "**/*.e2e-spec.ts", "**/__tests__/**"]
-}
