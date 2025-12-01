@@ -1,6 +1,7 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
 import { getGroupByOrderBy } from '@/page-layout/widgets/graph/utils/getGroupByOrderBy';
+import { isNestedFieldDateType } from '@/page-layout/widgets/graph/utils/isNestedFieldDateType';
 import {
   type AggregateOrderByWithGroupByField,
   type ObjectRecordOrderByForCompositeField,
@@ -20,12 +21,14 @@ import {
 
 export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
   objectMetadataItem,
+  objectMetadataItems,
   chartConfiguration,
   aggregateOperation,
   limit,
   firstDayOfTheWeek,
 }: {
   objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItems: ObjectMetadataItem[];
   chartConfiguration: BarChartConfiguration | LineChartConfiguration;
   aggregateOperation?: string;
   limit?: number;
@@ -58,33 +61,50 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
 
   const isFieldXDate = isFieldMetadataDateKind(groupByFieldX.type);
 
+  const isFieldXNestedDate = isNestedFieldDateType(
+    groupByFieldX,
+    groupBySubFieldNameX,
+    objectMetadataItems,
+  );
+
+  const shouldApplyDateGranularityX = isFieldXDate || isFieldXNestedDate;
+
   const groupBy: Array<GroupByFieldObject> = [];
 
   groupBy.push(
     buildGroupByFieldObject({
       field: groupByFieldX,
       subFieldName: groupBySubFieldNameX,
-      dateGranularity: isFieldXDate
+      dateGranularity: shouldApplyDateGranularityX
         ? (chartConfiguration.primaryAxisDateGranularity ??
           GRAPH_DEFAULT_DATE_GRANULARITY)
         : undefined,
-
       firstDayOfTheWeek,
+      isNestedDateField: isFieldXNestedDate,
     }),
   );
 
   if (isDefined(groupByFieldY)) {
     const isFieldYDate = isFieldMetadataDateKind(groupByFieldY.type);
 
+    const isFieldYNestedDate = isNestedFieldDateType(
+      groupByFieldY,
+      groupBySubFieldNameY,
+      objectMetadataItems,
+    );
+
+    const shouldApplyDateGranularityY = isFieldYDate || isFieldYNestedDate;
+
     groupBy.push(
       buildGroupByFieldObject({
         field: groupByFieldY,
         subFieldName: groupBySubFieldNameY,
-        dateGranularity: isFieldYDate
+        dateGranularity: shouldApplyDateGranularityY
           ? (chartConfiguration.secondaryAxisGroupByDateGranularity ??
             GRAPH_DEFAULT_DATE_GRANULARITY)
           : undefined,
         firstDayOfTheWeek,
+        isNestedDateField: isFieldYNestedDate,
       }),
     );
   }
@@ -104,7 +124,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
         groupByField: groupByFieldX,
         groupBySubFieldName: chartConfiguration.primaryAxisGroupBySubFieldName,
         aggregateOperation,
-        dateGranularity: isFieldXDate
+        dateGranularity: shouldApplyDateGranularityX
           ? (chartConfiguration.primaryAxisDateGranularity ??
             GRAPH_DEFAULT_DATE_GRANULARITY)
           : undefined,
@@ -117,6 +137,15 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
   ) {
     const isFieldYDateForOrderBy = isFieldMetadataDateKind(groupByFieldY.type);
 
+    const isFieldYNestedDateForOrderBy = isNestedFieldDateType(
+      groupByFieldY,
+      groupBySubFieldNameY,
+      objectMetadataItems,
+    );
+
+    const shouldApplyDateGranularityYForOrderBy =
+      isFieldYDateForOrderBy || isFieldYNestedDateForOrderBy;
+
     orderBy.push(
       getGroupByOrderBy({
         graphOrderBy: chartConfiguration.secondaryAxisOrderBy,
@@ -124,7 +153,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
         groupBySubFieldName:
           chartConfiguration.secondaryAxisGroupBySubFieldName,
         aggregateOperation,
-        dateGranularity: isFieldYDateForOrderBy
+        dateGranularity: shouldApplyDateGranularityYForOrderBy
           ? (chartConfiguration.secondaryAxisGroupByDateGranularity ??
             GRAPH_DEFAULT_DATE_GRANULARITY)
           : undefined,

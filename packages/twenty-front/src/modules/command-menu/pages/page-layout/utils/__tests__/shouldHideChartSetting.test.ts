@@ -385,6 +385,28 @@ describe('shouldHideChartSetting', () => {
     });
 
     describe('DATE_GRANULARITY (Pie Chart)', () => {
+      const relationField: any = {
+        id: 'relation-field-id',
+        name: 'company',
+        label: 'Company',
+        type: FieldMetadataType.RELATION,
+        relation: { targetObjectMetadata: { nameSingular: 'company' } },
+      };
+
+      const targetObjectMetadata: any = {
+        id: 'company-id',
+        nameSingular: 'company',
+        namePlural: 'companies',
+        fields: [
+          {
+            id: 'company-created-at',
+            name: 'createdAt',
+            label: 'Created At',
+            type: FieldMetadataType.DATE,
+          },
+        ],
+      };
+
       it('should show when group by field is a date field', () => {
         const pieChartConfig: ChartConfiguration = {
           __typename: 'PieChartConfiguration',
@@ -434,6 +456,30 @@ describe('shouldHideChartSetting', () => {
         );
 
         expect(result).toBe(true);
+      });
+
+      it('should show when group by field is a relation date subfield', () => {
+        const objectMetadataItemWithRelation: ObjectMetadataItem = {
+          ...mockObjectMetadataItem,
+          fields: [...mockObjectMetadataItem.fields, relationField],
+        } as any;
+
+        const pieChartConfig: ChartConfiguration = {
+          __typename: 'PieChartConfiguration',
+          groupByFieldMetadataId: relationField.id,
+          groupBySubFieldName: 'createdAt',
+        } as any;
+
+        const result = shouldHideChartSetting(
+          mockDateGranularityItem,
+          'object-id',
+          true,
+          pieChartConfig,
+          objectMetadataItemWithRelation,
+          [objectMetadataItemWithRelation, targetObjectMetadata] as any,
+        );
+
+        expect(result).toBe(false);
       });
     });
   });

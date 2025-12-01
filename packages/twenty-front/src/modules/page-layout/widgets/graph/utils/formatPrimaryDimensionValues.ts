@@ -2,7 +2,6 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
-import { isDefined } from 'twenty-shared/utils';
 import { type ObjectRecordGroupByDateGranularity } from '~/generated/graphql';
 
 type FormatPrimaryDimensionValuesParameters = {
@@ -27,12 +26,8 @@ export const formatPrimaryDimensionValues = ({
     (accumulator, rawResult) => {
       const groupByDimensionValues = rawResult.groupByDimensionValues;
 
-      if (!isDefined(groupByDimensionValues?.[0])) {
-        return accumulator;
-      }
-
-      const rawPrimaryDimensionValue =
-        groupByDimensionValues[0] as RawDimensionValue;
+      const rawPrimaryDimensionValue = (groupByDimensionValues?.[0] ??
+        null) as RawDimensionValue;
 
       const formattedPrimaryDimensionValue = formatDimensionValue({
         value: rawPrimaryDimensionValue,
