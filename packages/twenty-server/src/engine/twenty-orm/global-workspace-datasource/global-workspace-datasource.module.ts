@@ -14,6 +14,7 @@ import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-sche
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 
 @Global()
@@ -28,6 +29,7 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
     FeatureFlagModule,
     TwentyConfigModule,
     WorkspaceEventEmitterModule,
+    WorkspaceCacheModule,
   ],
   providers: [
     GlobalWorkspaceDataSourceService,

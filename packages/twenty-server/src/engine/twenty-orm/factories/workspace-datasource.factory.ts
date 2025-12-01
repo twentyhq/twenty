@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import crypto from 'crypto';
+
 import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { EntitySchema, Repository } from 'typeorm';
@@ -12,12 +14,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
-import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache-storage.service';
-import {
-  ROLES_PERMISSIONS,
-  WorkspacePermissionsCacheService,
-} from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import {
   TwentyORMException,
@@ -26,14 +22,9 @@ import {
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 import { type CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
-import { GetDataFromCacheWithRecomputeService } from 'src/engine/workspace-cache-storage/services/get-data-from-cache-with-recompute.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-
-type CacheResult<T, U> = {
-  version: T;
-  data: U;
-};
 
 const TWENTY_MINUTES_IN_MS = 120_000;
 
@@ -48,16 +39,10 @@ export class WorkspaceDatasourceFactory {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly entitySchemaFactory: EntitySchemaFactory,
-    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
-    private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
-    private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    private readonly getFromCacheWithRecomputeService: GetDataFromCacheWithRecomputeService<
-      string,
-      ObjectsPermissionsByRoleId
-    >,
   ) {}
 
   private async safelyDestroyDataSource(
@@ -88,17 +73,23 @@ export class WorkspaceDatasourceFactory {
     const dataSourceMetadataVersion =
       await this.getWorkspaceMetadataVersionFromCacheOrFromDB(workspaceId);
 
-    const { data: cachedFeatureFlagMap, version: cachedFeatureFlagMapVersion } =
-      await this.workspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMapAndVersion(
-        { workspaceId },
-      );
-
     const {
-      data: cachedRolesPermissions,
-      version: cachedRolesPermissionsVersion,
-    } = await this.getRolesPermissionsFromCache({
-      workspaceId,
-    });
+      featureFlagsMap: cachedFeatureFlagMap,
+      rolesPermissions: cachedRolesPermissions,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'featureFlagsMap',
+      'rolesPermissions',
+    ]);
+
+    const cachedFeatureFlagMapVersion = crypto
+      .createHash('sha256')
+      .update(JSON.stringify(cachedFeatureFlagMap))
+      .digest('hex');
+
+    const cachedRolesPermissionsVersion = crypto
+      .createHash('sha256')
+      .update(JSON.stringify(cachedRolesPermissions))
+      .digest('hex');
 
     const cacheKey: CacheKey = `${workspaceId}-${dataSourceMetadataVersion}`;
 
@@ -249,30 +240,6 @@ export class WorkspaceDatasourceFactory {
     });
 
     return workspaceDataSource;
-  }
-
-  private async getRolesPermissionsFromCache({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<CacheResult<string, ObjectsPermissionsByRoleId>> {
-    return this.getFromCacheWithRecomputeService.getFromCacheWithRecompute({
-      workspaceId,
-      getCacheData: () =>
-        this.workspacePermissionsCacheStorageService.getRolesPermissions(
-          workspaceId,
-        ),
-      getCacheVersion: () =>
-        this.workspacePermissionsCacheStorageService.getRolesPermissionsVersion(
-          workspaceId,
-        ),
-      recomputeCache: () =>
-        this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
-          workspaceId,
-        }),
-      cachedEntityName: ROLES_PERMISSIONS,
-      exceptionCode: TwentyORMExceptionCode.ROLES_PERMISSIONS_VERSION_NOT_FOUND,
-    });
   }
 
   private updateWorkspaceDataSourceIfNeeded<T>({

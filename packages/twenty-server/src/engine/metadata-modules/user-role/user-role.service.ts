@@ -15,6 +15,7 @@ import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -27,6 +28,7 @@ export class UserRoleService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly roleTargetService: RoleTargetService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   public async assignRoleToUserWorkspace({
@@ -69,14 +71,12 @@ export class UserRoleService {
       return;
     }
 
-    const userWorkspaceRoleMap =
-      await this.workspacePermissionsCacheService.getUserWorkspaceRoleMapFromCache(
-        {
-          workspaceId,
-        },
-      );
+    const { userWorkspaceRoleMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'userWorkspaceRoleMap',
+      ]);
 
-    return userWorkspaceRoleMap.data[userWorkspaceId];
+    return userWorkspaceRoleMap[userWorkspaceId];
   }
 
   public async getRolesByUserWorkspaces({
@@ -160,14 +160,12 @@ export class UserRoleService {
     roleId: string,
     workspaceId: string,
   ): Promise<string[]> {
-    const userWorkspaceRoleMap =
-      await this.workspacePermissionsCacheService.getUserWorkspaceRoleMapFromCache(
-        {
-          workspaceId,
-        },
-      );
+    const { userWorkspaceRoleMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'userWorkspaceRoleMap',
+      ]);
 
-    return Object.entries(userWorkspaceRoleMap.data)
+    return Object.entries(userWorkspaceRoleMap)
       .filter(([_, roleIdFromMap]) => roleIdFromMap === roleId)
       .map(([userWorkspaceId]) => userWorkspaceId);
   }

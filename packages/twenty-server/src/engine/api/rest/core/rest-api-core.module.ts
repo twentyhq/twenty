@@ -32,6 +32,7 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceFlatMapCacheModule } from 'src/engine/workspace-flat-map-cache/workspace-flat-map-cache.module';
 
 const restApiCoreResolvers = [
@@ -69,6 +70,7 @@ const restApiCoreResolvers = [
     FeatureFlagModule,
     CoreCommonApiModule,
     WorkspaceDomainsModule,
+    WorkspaceCacheModule,
   ],
   controllers: [RestApiCoreController],
   providers: [

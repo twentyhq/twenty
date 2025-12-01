@@ -24,7 +24,8 @@
     "@tiptap/core": "^3.4.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "react-email": "4.0.6"
+    "react-email": "4.0.6",
+    "vite-plugin-dts": "3.8.1"
   },
   "exports": {
     ".": {
