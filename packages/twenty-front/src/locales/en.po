@@ -3371,10 +3371,10 @@ msgstr "Download file"
 msgid "Download Files"
 msgstr "Download Files"
 
-#. js-lingui-id: wrT4hq
+#. js-lingui-id: BU+6gf
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
-msgid "Download sample file."
-msgstr "Download sample file."
+msgid "Download sample"
+msgstr "Download sample"
 
 #. js-lingui-id: 6D/BnN
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx

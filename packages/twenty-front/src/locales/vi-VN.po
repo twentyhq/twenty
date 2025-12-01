@@ -3376,10 +3376,10 @@ msgstr "Tải tập tin về"
 msgid "Download Files"
 msgstr "Tải về tệp"
 
-#. js-lingui-id: wrT4hq
+#. js-lingui-id: BU+6gf
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
-msgid "Download sample file."
-msgstr "Tải tệp mẫu."
+msgid "Download sample"
+msgstr ""
 
 #. js-lingui-id: 6D/BnN
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
