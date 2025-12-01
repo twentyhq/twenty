@@ -19,10 +19,12 @@ import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
+import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
+import { useRecoilState } from 'recoil';
 import { Button } from 'twenty-ui/input';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
@@ -63,8 +65,11 @@ const StyledButtonsContainer = styled.div`
 export const AIChatTab = () => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
-  const { isLoading, input, handleInputChange, messages, isStreaming, error } =
+  const { isLoading, messages, isStreaming, error } =
     useAgentChatContextOrThrow();
+
+  const [agentChatInput, setAgentChatInput] =
+    useRecoilState(agentChatInputState);
 
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -115,8 +120,8 @@ export const AIChatTab = () => {
             <TextArea
               textAreaId={AI_CHAT_INPUT_ID}
               placeholder={t`Enter a question...`}
-              value={input}
-              onChange={handleInputChange}
+              value={agentChatInput}
+              onChange={(value) => setAgentChatInput(value)}
               minRows={1}
               maxRows={20}
             />
