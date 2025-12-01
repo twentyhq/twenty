@@ -129,7 +129,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
         </FieldContext.Provider>
       </StyledTitle>
       <StyledPaginationInformation>
-        {`(${rankInView + 1}/${totalCount})`}
+        {`(${rankInView}/${totalCount})`}
       </StyledPaginationInformation>
     </StyledEditableTitleContainer>
   );
