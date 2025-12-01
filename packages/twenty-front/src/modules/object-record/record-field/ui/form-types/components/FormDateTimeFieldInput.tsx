@@ -336,6 +336,7 @@ export const FormDateTimeFieldInput = ({
                   <StyledDateInputAbsoluteContainer>
                     <OverlayContainer>
                       <DateTimePicker
+                        instanceId={instanceId}
                         date={pickerDate ?? new Date()}
                         onChange={handlePickerChange}
                         onClose={handlePickerMouseSelect}

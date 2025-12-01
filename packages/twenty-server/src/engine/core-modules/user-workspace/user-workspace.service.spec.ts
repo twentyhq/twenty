@@ -16,6 +16,7 @@ import {
   type SignedFilesResult,
 } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -38,6 +39,7 @@ describe('UserWorkspaceService', () => {
   let userRoleService: UserRoleService;
   let fileService: FileService;
   let fileUploadService: FileUploadService;
+  let onboardingService: OnboardingService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -133,6 +135,12 @@ describe('UserWorkspaceService', () => {
             copyFileFromWorkspaceToWorkspace: jest.fn(),
           },
         },
+        {
+          provide: OnboardingService,
+          useValue: {
+            setOnboardingCreateProfilePending: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -153,6 +161,7 @@ describe('UserWorkspaceService', () => {
     );
     userRoleService = module.get<UserRoleService>(UserRoleService);
     fileUploadService = module.get<FileUploadService>(FileUploadService);
+    onboardingService = module.get<OnboardingService>(OnboardingService);
   });
 
   it('should be defined', () => {
@@ -421,29 +430,31 @@ describe('UserWorkspaceService', () => {
         workspace.id,
       );
       expect(service.create).toHaveBeenCalled();
-      expect(service.create).toHaveBeenCalledWith(
-        {
-          workspaceId: workspace.id,
-          userId: user.id,
-          isExistingUser: true,
-        },
-        undefined,
-      );
+      expect(service.create).toHaveBeenCalledWith({
+        workspaceId: workspace.id,
+        userId: user.id,
+        isExistingUser: true,
+      });
       expect(service.createWorkspaceMember).toHaveBeenCalledWith(
         workspace.id,
         user,
       );
-      expect(userRoleService.assignRoleToUserWorkspace).toHaveBeenCalledWith(
-        {
-          workspaceId: workspace.id,
-          userWorkspaceId: userWorkspace.id,
-          roleId: workspace.defaultRoleId,
-        },
-        undefined,
-      );
+      expect(userRoleService.assignRoleToUserWorkspace).toHaveBeenCalledWith({
+        workspaceId: workspace.id,
+        userWorkspaceId: userWorkspace.id,
+        roleId: workspace.defaultRoleId,
+      });
       expect(
         workspaceInvitationService.invalidateWorkspaceInvitation,
-      ).toHaveBeenCalledWith(workspace.id, user.email, undefined);
+      ).toHaveBeenCalledWith(workspace.id, user.email);
+
+      expect(
+        onboardingService.setOnboardingCreateProfilePending,
+      ).toHaveBeenCalledWith({
+        userId: user.id,
+        workspaceId: workspace.id,
+        value: true,
+      });
     });
 
     it('should not add user to workspace if already in workspace', async () => {

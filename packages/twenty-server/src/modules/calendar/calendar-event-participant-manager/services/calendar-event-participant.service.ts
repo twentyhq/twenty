@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'class-validator';
 import chunk from 'lodash.chunk';
 import differenceWith from 'lodash.differencewith';
-import { Any } from 'typeorm';
 import { FieldActorSource } from 'twenty-shared/types';
+import { Any } from 'typeorm';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -158,7 +158,10 @@ export class CalendarEventParticipantService {
         {
           workspaceId,
           connectedAccount,
-          contactsToCreate: savedParticipants,
+          contactsToCreate: savedParticipants.map((participant) => ({
+            handle: participant.handle ?? '',
+            displayName: participant.displayName ?? participant.handle ?? '',
+          })),
           source: FieldActorSource.CALENDAR,
         },
       );

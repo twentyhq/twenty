@@ -4,7 +4,7 @@ import { type ComponentType } from 'react';
 import { type IconComponent } from 'twenty-ui/display';
 
 export type ChartSettingsGroup = {
-  heading: string;
+  heading: MessageDescriptor;
   items: ChartSettingsItem[];
 };
 

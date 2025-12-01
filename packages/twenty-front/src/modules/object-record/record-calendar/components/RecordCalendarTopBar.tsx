@@ -121,6 +121,7 @@ export const RecordCalendarTopBar = () => {
           dropdownComponents={
             <DropdownContent widthInPixels={280}>
               <DateTimePicker
+                instanceId={recordCalendarId}
                 date={recordCalendarSelectedDate}
                 onChange={handleDateChange}
                 onClose={handleDateChange}

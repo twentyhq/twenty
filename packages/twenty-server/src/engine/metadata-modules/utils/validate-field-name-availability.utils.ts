@@ -6,18 +6,27 @@ import {
 
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { type FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   InvalidMetadataException,
   InvalidMetadataExceptionCode,
 } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 
 const getReservedCompositeFieldNames = (
-  fieldMetadataMapById: FieldMetadataMap,
+  flatObjectMetadata: FlatObjectMetadata,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
 ) => {
   const reservedCompositeFieldsNames: string[] = [];
 
-  for (const field of Object.values(fieldMetadataMapById)) {
+  for (const fieldId of flatObjectMetadata.fieldMetadataIds) {
+    const field = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityId: fieldId,
+    });
+
     if (isCompositeFieldMetadataType(field.type)) {
       const base = field.name;
       const compositeType = compositeTypeDefinitions.get(field.type);
@@ -35,30 +44,37 @@ const getReservedCompositeFieldNames = (
 
 type ValidateFieldNameAvailabilityOrThrowArgs = {
   name: string;
-  fieldMetadataMapById: FieldMetadataMap;
+  flatObjectMetadata: FlatObjectMetadata;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 };
 export const validateFieldNameAvailabilityOrThrow = ({
   name,
-  fieldMetadataMapById,
+  flatObjectMetadata,
+  flatFieldMetadataMaps,
 }: ValidateFieldNameAvailabilityOrThrowArgs) => {
-  const reservedCompositeFieldsNames =
-    getReservedCompositeFieldNames(fieldMetadataMapById);
+  const reservedCompositeFieldsNames = getReservedCompositeFieldNames(
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+  );
 
-  if (
-    Object.values(fieldMetadataMapById).some(
-      (field) =>
-        field.name === name ||
-        (field.type === FieldMetadataType.RELATION &&
-          `${field.name}Id` === name),
-    )
-  ) {
-    throw new InvalidMetadataException(
-      `Name "${name}" is not available as it is already used by another field`,
-      InvalidMetadataExceptionCode.NOT_AVAILABLE,
-      {
-        userFriendlyMessage: msg`This name is not available as it is already used by another field.`,
-      },
-    );
+  for (const fieldId of flatObjectMetadata.fieldMetadataIds) {
+    const field = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityId: fieldId,
+    });
+
+    if (
+      field.name === name ||
+      (field.type === FieldMetadataType.RELATION && `${field.name}Id` === name)
+    ) {
+      throw new InvalidMetadataException(
+        `Name "${name}" is not available as it is already used by another field`,
+        InvalidMetadataExceptionCode.NOT_AVAILABLE,
+        {
+          userFriendlyMessage: msg`This name is not available as it is already used by another field.`,
+        },
+      );
+    }
   }
 
   if (reservedCompositeFieldsNames.includes(name)) {

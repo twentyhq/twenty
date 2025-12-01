@@ -20,7 +20,7 @@ import { FieldMetadataEnumValidationService } from 'src/engine/metadata-modules/
 import { FieldMetadataMorphRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-morph-relation.service';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
 import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service';
-import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -33,7 +33,6 @@ import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-fie
 import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
 import { ViewGroupModule } from 'src/engine/metadata-modules/view-group/view-group.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
-import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -68,7 +67,6 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         ViewFilterModule,
         ViewGroupModule,
         PermissionsModule,
-        WorkspaceMetadataCacheModule,
         WorkspaceMigrationV2Module,
         FlatFieldMetadataModule,
         IndexMetadataModule,
@@ -76,7 +74,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
       ],
       services: [
         IsFieldMetadataDefaultValue,
-        FieldMetadataServiceV2,
+        FieldMetadataService,
         FieldMetadataMorphRelationService,
         FieldMetadataRelationService,
         FieldMetadataValidationService,
@@ -88,7 +86,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
           DTOClass: FieldMetadataDTO,
           CreateDTOClass: CreateFieldInput,
           UpdateDTOClass: UpdateFieldInput,
-          ServiceClass: FieldMetadataServiceV2,
+          ServiceClass: FieldMetadataService,
           pagingStrategy: PagingStrategies.CURSOR,
           read: {
             defaultSort: [{ field: 'id', direction: SortDirection.DESC }],
@@ -109,7 +107,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
   providers: [
     IsFieldMetadataDefaultValue,
     IsFieldMetadataOptions,
-    FieldMetadataServiceV2,
+    FieldMetadataService,
     FieldMetadataRelationService,
     FieldMetadataMorphRelationService,
     FieldMetadataValidationService,
@@ -117,7 +115,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
     FieldMetadataResolver,
   ],
   exports: [
-    FieldMetadataServiceV2,
+    FieldMetadataService,
     FieldMetadataRelationService,
     FieldMetadataMorphRelationService,
     FieldMetadataEnumValidationService,

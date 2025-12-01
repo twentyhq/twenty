@@ -14,6 +14,10 @@ import {
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isFieldMetadataTypeRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import {
@@ -22,9 +26,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class FieldPermissionService {
@@ -36,7 +38,7 @@ export class FieldPermissionService {
     @InjectRepository(FieldPermissionEntity)
     private readonly fieldPermissionsRepository: Repository<FieldPermissionEntity>,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   public async upsertFieldPermissions({
@@ -60,9 +62,12 @@ export class FieldPermissionService {
       role,
     });
 
-    const { byId: objectMetadataMapsById } =
-      await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
-        workspaceId,
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
       );
 
     const existingFieldPermissions = await this.fieldPermissionsRepository.find(
@@ -80,7 +85,8 @@ export class FieldPermissionService {
       this.validateFieldPermission({
         allFieldPermissions: input.fieldPermissions,
         fieldPermission,
-        objectMetadataMapsById,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
         rolesPermissions,
         role,
       });
@@ -176,13 +182,15 @@ export class FieldPermissionService {
   private validateFieldPermission({
     allFieldPermissions,
     fieldPermission,
-    objectMetadataMapsById,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
     rolesPermissions,
     role,
   }: {
     allFieldPermissions: UpsertFieldPermissionsInput['fieldPermissions'];
     fieldPermission: UpsertFieldPermissionsInput['fieldPermissions'][0];
-    objectMetadataMapsById: ObjectMetadataMaps['byId'];
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     rolesPermissions: ObjectsPermissionsByRoleId;
     role: RoleEntity;
   }) {
@@ -213,10 +221,10 @@ export class FieldPermissionService {
       );
     }
 
-    const objectMetadataForFieldPermission =
-      objectMetadataMapsById[fieldPermission.objectMetadataId];
+    const flatObjectMetadata =
+      flatObjectMetadataMaps.byId[fieldPermission.objectMetadataId];
 
-    if (!isDefined(objectMetadataForFieldPermission)) {
+    if (!isDefined(flatObjectMetadata)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.OBJECT_METADATA_NOT_FOUND,
         PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
@@ -226,7 +234,7 @@ export class FieldPermissionService {
       );
     }
 
-    if (objectMetadataForFieldPermission.isSystem === true) {
+    if (flatObjectMetadata.isSystem === true) {
       throw new PermissionsException(
         PermissionsExceptionMessage.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT,
         PermissionsExceptionCode.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT,
@@ -236,12 +244,10 @@ export class FieldPermissionService {
       );
     }
 
-    const fieldMetadataForFieldPermission =
-      objectMetadataForFieldPermission.fieldsById[
-        fieldPermission.fieldMetadataId
-      ];
+    const flatFieldMetadata =
+      flatFieldMetadataMaps.byId[fieldPermission.fieldMetadataId];
 
-    if (!isDefined(fieldMetadataForFieldPermission)) {
+    if (!isDefined(flatFieldMetadata)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.FIELD_METADATA_NOT_FOUND,
         PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND,

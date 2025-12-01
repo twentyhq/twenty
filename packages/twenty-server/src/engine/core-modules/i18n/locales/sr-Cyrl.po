@@ -105,7 +105,7 @@ msgid "A person"
 msgstr "Особа"
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-label-uniqueness.util.ts
 msgid "A role with this label already exists."
 msgstr "Улога са овом ознаком већ постоји."
 
@@ -181,17 +181,6 @@ msgstr "Неопходна акција да се ресетује лозинк�
 msgid "Action Needed to Set Password"
 msgstr "Неопходна акција да се постави лозинка"
 
-#. js-lingui-id: 52fA3U
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
-msgid "Active fields cannot be deleted"
-msgstr "Активна поља не могу бити избрисана"
-
-#. js-lingui-id: 0N5kF6
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
-msgid "Active objects cannot be deleted"
-msgstr "Активни објекти не могу бити избрисани"
-
 #. js-lingui-id: Du6bPw
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
@@ -222,6 +211,7 @@ msgstr "Агрегирани / филтрирани догађај који се
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/timeline-activities-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
@@ -1453,8 +1443,23 @@ msgstr "Поље за креирање релевантног објекта н�
 msgid "Field to update not found"
 msgstr "Поље за ажурирање није пронађено"
 
+#. js-lingui-id: stY5BO
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
+msgid "Field type NUMERIC is not supported. Use Number instead."
+msgstr ""
+
+#. js-lingui-id: q2XPsD
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
+msgid "Field type POSITION is a system type and cannot be created manually."
+msgstr ""
+
+#. js-lingui-id: FDPb27
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
+msgid "Field type TS_VECTOR is a system type and cannot be created manually."
+msgstr ""
+
 #. js-lingui-id: J4hC2m
-#: src/engine/metadata-modules/constants/search-vector-field.constants.ts
+#: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
 msgid "Field used for full-text search"
 msgstr "Поље коришћено за текстуалну претрагу"
 
@@ -1674,11 +1679,6 @@ msgstr "Неважећа вредност сата. Требало би да б�
 msgid "Invalid hour value. Should be integer greater than 1"
 msgstr "Неважећа вредност сата. Требало би да буде цео број већи од 1"
 
-#. js-lingui-id: FSunWx
-#: src/engine/metadata-modules/utils/compute-metadata-name-from-label.util.ts
-msgid "Invalid label: \"{label}\""
-msgstr "Неважећа етикета: \"{label}\""
-
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1707,6 +1707,7 @@ msgid "Invalid relation creation payload"
 msgstr "Неважећи payload за креирање релације"
 
 #. js-lingui-id: iWv3nK
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid relation field target"
 msgstr ""
@@ -1846,11 +1847,6 @@ msgstr "Поле приказа идентификатора етикете мо
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 msgid "Label identifier view field has to be visible"
 msgstr "Поле приказа идентификатора етикете мора бити видљиво"
-
-#. js-lingui-id: w8Rv8T
-#: src/engine/metadata-modules/utils/compute-metadata-name-from-label.util.ts
-msgid "Label is required"
-msgstr "Етикета је обавезна"
 
 #. js-lingui-id: 4EGmy6
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2750,6 +2746,11 @@ msgstr "Предпочетни језик"
 msgid "Probability"
 msgstr "Вероватноћа"
 
+#. js-lingui-id: OTJNm9
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
+msgid "Property {property} is required for role"
+msgstr ""
+
 #. js-lingui-id: dtGxRz
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Provided and inferred calling code are conflicting"
@@ -2853,6 +2854,56 @@ msgstr "Статус одговора"
 msgid "Role"
 msgstr "Улога"
 
+#. js-lingui-id: QbW1ho
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to agents"
+msgstr ""
+
+#. js-lingui-id: u1Fm8i
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to API keys"
+msgstr ""
+
+#. js-lingui-id: 9ZQkou
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to users"
+msgstr ""
+
+#. js-lingui-id: MvTCyk
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+msgid "Role not found"
+msgstr ""
+
+#. js-lingui-id: oCyyzG
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
+msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId"
+msgstr ""
+
+#. js-lingui-id: oNYUjk
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+msgid "Role target not found"
+msgstr ""
+
+#. js-lingui-id: alYNOd
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+msgid "Role target with this id already exists"
+msgstr ""
+
 #. js-lingui-id: MFW30/
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 msgid "Route already exists"
@@ -2899,7 +2950,7 @@ msgid "Scopes"
 msgstr "Опсег"
 
 #. js-lingui-id: PdVIJC
-#: src/engine/metadata-modules/constants/search-vector-field.constants.ts
+#: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
 msgid "Search vector"
 msgstr "Вектор претраживања"
 
@@ -2949,7 +3000,7 @@ msgid "Settings"
 msgstr "Подешавања"
 
 #. js-lingui-id: RyE+Of
-#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
 msgid "Some of the information provided is invalid. Please check your input and try again."
 msgstr "Неке од наведене информације су неважеће. Молимо проверите ваш унос и покушајте поново."
 
@@ -2957,6 +3008,11 @@ msgstr "Неке од наведене информације су неваже�
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
 msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
 msgstr "Неке од одабраних дозвола нису валидне. Молимо покушајте поново са важећим поставкама дозвола."
+
+#. js-lingui-id: OmgwCE
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
+msgid "Source object cannot be the target object"
+msgstr ""
 
 #. js-lingui-id: 3PRxO3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -3284,11 +3340,6 @@ msgstr "Фасцикла којој омиљени припада"
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Почетна верзија тока рада не може се избрисати"
 
-#. js-lingui-id: YTftFF
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
-msgid "The name is not available"
-msgstr "Ово име није доступно"
-
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -3300,15 +3351,16 @@ msgstr "Објекат за који покушавате да подесите 
 msgid "The opportunity name"
 msgstr "Назив прилике"
 
+#. js-lingui-id: lk5nUN
+#: src/engine/core-modules/graphql/hooks/use-compute-complexity.hook.ts
+msgid "The request is too complex to process. Please try reducing the amount of data requested."
+msgstr ""
+
 #. js-lingui-id: Zi9X+u
-#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util.ts
+#: src/engine/metadata-modules/flat-role/utils/from-delete-role-input-to-flat-role-or-throw.util.ts
 msgid "The role you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "Улога коју тражите није пронађена. Могуће је да је избрисана или можда немате приступ истој."
-
-#. js-lingui-id: 5h4Nxe
-#: src/engine/metadata-modules/user-role/user-role.service.ts
-msgid "The role you are trying to assign could not be found. It may have been deleted."
-msgstr "Улога коју покушавате да доделите није пронађена. Могуће је да је избрисана."
 
 #. js-lingui-id: HRcugS
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
@@ -3363,16 +3415,6 @@ msgstr "Статус верзије тока рада"
 msgid "There was an issue with your connection settings. Please try again."
 msgstr "Дошло је до проблема са вашим подешавањима везе. Молимо покушајте поново."
 
-#. js-lingui-id: Bm40Ow
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} is already taken. Please choose a different value."
-msgstr "Ова {fieldName} је већ заузета. Молимо одаберите другу вредност."
-
-#. js-lingui-id: CYyoPc
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} with value {duplicatedValues} is already taken. Please choose a different value."
-msgstr "Ова {fieldName} са вредношћу {duplicatedValues} је већ заузета. Молимо одаберите другу вредност."
-
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -3382,11 +3424,6 @@ msgstr "Овај API кључ је опозван и више се не може
 #: src/engine/core-modules/api-key/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "Овај API кључ је истекао. Молимо направите нови."
-
-#. js-lingui-id: r/Z8XK
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This combination of {fieldNames} already exists. Please use different values."
-msgstr "Ова комбинација {fieldNames} већ постоји. Молимо користите друге вредности."
 
 #. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
@@ -3399,6 +3436,11 @@ msgstr "Ово име није доступно јер га већ корист�
 msgid "This name is not available."
 msgstr "Ово име није доступно."
 
+#. js-lingui-id: gPBck6
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "This name is reserved. Use a different name or the system will add \"Custom\" suffix."
+msgstr ""
+
 #. js-lingui-id: eitC3W
 #: src/engine/workspace-datasource/workspace-datasource.service.ts
 msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
@@ -3409,13 +3451,8 @@ msgstr "Операција није дозвољена. Молимо покуш�
 msgid "This record already exists. Please check your data and try again."
 msgstr "Овај запис већ постоји. Молимо проверите ваше податке и покушајте поново."
 
-#. js-lingui-id: +L9yxk
-#: src/engine/metadata-modules/user-role/user-role.service.ts
-msgid "This role cannot be assigned to users. Please select a different role."
-msgstr "Ова улога не може бити додељена корисницима. Молимо одаберите другу улогу."
-
 #. js-lingui-id: KoDdqN
-#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-is-editable.util.ts
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -3527,6 +3564,11 @@ msgstr "Активност на временској линији"
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Title"
 msgstr "Наслов"
+
+#. js-lingui-id: mfqtz7
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Too many workspace invitations sent. Please try again later."
+msgstr ""
 
 #. js-lingui-id: G3myU+
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -4200,7 +4242,7 @@ msgid "You cannot change your own role. Please ask another administrator to upda
 msgstr "Не можете променити сопствену улогу. Молимо тражите од другог администратора да ажурира вашу улогу."
 
 #. js-lingui-id: y5haJ4
-#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-read-write-permissions-consistency.util.ts
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "You cannot grant edit permissions without also granting read permissions. Please enable read access first."
 msgstr "Не можете дати дозволе за измене без да прво дате дозволе за читање. Молимо најпре омогућите приступ читању."

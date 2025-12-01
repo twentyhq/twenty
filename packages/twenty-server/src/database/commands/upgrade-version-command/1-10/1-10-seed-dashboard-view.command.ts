@@ -1,17 +1,16 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, Repository } from 'typeorm';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
-import {
-  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  type RunOnWorkspaceArgs,
-} from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
@@ -32,6 +31,7 @@ export class SeedDashboardViewCommand extends ActiveOrSuspendedWorkspacesMigrati
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly dataSourceService: DataSourceService,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(DataSourceEntity)
@@ -40,7 +40,7 @@ export class SeedDashboardViewCommand extends ActiveOrSuspendedWorkspacesMigrati
     private readonly viewRepository: Repository<ViewEntity>,
     private readonly applicationService: ApplicationService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager);
+    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
 
   override async runOnWorkspace({

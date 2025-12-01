@@ -9,6 +9,7 @@ import {
   ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
@@ -23,6 +24,7 @@ describe('ApiKeyRoleService', () => {
   let mockApiKeyRepository: any;
   let mockDataSource: any;
   let mockWorkspacePermissionsCacheService: any;
+  let mockRoleTargetService: any;
 
   const mockWorkspaceId = 'workspace-123';
   const mockApiKeyId = 'api-key-456';
@@ -77,12 +79,6 @@ describe('ApiKeyRoleService', () => {
     apiKey: mockApiKey,
   } as RoleTargetsEntity;
 
-  const mockNewRoleTarget = {
-    ...mockRoleTarget,
-    id: 'role-target-456',
-    roleId: mockNewRoleId,
-  } as RoleTargetsEntity;
-
   beforeEach(async () => {
     mockRoleTargetsRepository = {
       save: jest.fn(),
@@ -112,6 +108,11 @@ describe('ApiKeyRoleService', () => {
       getApiKeyRoleMapFromCache: jest.fn(),
     };
 
+    mockRoleTargetService = {
+      create: jest.fn(),
+      delete: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApiKeyRoleService,
@@ -139,6 +140,10 @@ describe('ApiKeyRoleService', () => {
           provide: WorkspacePermissionsCacheService,
           useValue: mockWorkspacePermissionsCacheService,
         },
+        {
+          provide: RoleTargetService,
+          useValue: mockRoleTargetService,
+        },
       ],
     }).compile();
 
@@ -153,84 +158,12 @@ describe('ApiKeyRoleService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('assignRoleToApiKeyWithManager', () => {
-    it('should assign role using provided transaction manager', async () => {
-      const mockManagerDelete = jest.fn().mockResolvedValue({ affected: 1 });
-      const mockManagerCreate = jest.fn().mockReturnValue(mockNewRoleTarget);
-      const mockManagerSave = jest.fn().mockResolvedValue(mockNewRoleTarget);
-
-      const mockManager = {
-        delete: mockManagerDelete,
-        create: mockManagerCreate,
-        save: mockManagerSave,
-      };
-
-      await service.assignRoleToApiKeyWithManager(mockManager as any, {
-        apiKeyId: mockApiKeyId,
-        roleId: mockNewRoleId,
-        workspaceId: mockWorkspaceId,
-      });
-
-      expect(mockManagerDelete).toHaveBeenCalledWith(RoleTargetsEntity, {
-        apiKeyId: mockApiKeyId,
-        workspaceId: mockWorkspaceId,
-      });
-      expect(mockManagerCreate).toHaveBeenCalledWith(RoleTargetsEntity, {
-        apiKeyId: mockApiKeyId,
-        roleId: mockNewRoleId,
-        workspaceId: mockWorkspaceId,
-      });
-      expect(mockManagerSave).toHaveBeenCalledWith(mockNewRoleTarget);
-    });
-
-    it('should handle manager operation failures', async () => {
-      const mockManagerDelete = jest
-        .fn()
-        .mockRejectedValue(new Error('Delete failed'));
-      const mockManagerCreate = jest.fn();
-      const mockManagerSave = jest.fn();
-
-      const mockManager = {
-        delete: mockManagerDelete,
-        create: mockManagerCreate,
-        save: mockManagerSave,
-      };
-
-      await expect(
-        service.assignRoleToApiKeyWithManager(mockManager as any, {
-          apiKeyId: mockApiKeyId,
-          roleId: mockNewRoleId,
-          workspaceId: mockWorkspaceId,
-        }),
-      ).rejects.toThrow('Delete failed');
-
-      expect(mockManagerDelete).toHaveBeenCalled();
-      expect(mockManagerCreate).not.toHaveBeenCalled();
-      expect(mockManagerSave).not.toHaveBeenCalled();
-    });
-  });
-
   describe('assignRoleToApiKey', () => {
-    it('should assign a new role to API key using transaction', async () => {
+    it('should assign a new role to API key using roleTargetService', async () => {
       mockApiKeyRepository.findOne.mockResolvedValue(mockApiKey);
       mockRoleRepository.findOne.mockResolvedValue(mockNewRole);
       mockRoleTargetsRepository.findOne.mockResolvedValue(null);
-
-      const mockManagerDelete = jest.fn().mockResolvedValue({ affected: 1 });
-      const mockManagerCreate = jest.fn().mockReturnValue(mockNewRoleTarget);
-      const mockManagerSave = jest.fn().mockResolvedValue(mockNewRoleTarget);
-
-      mockDataSource.transaction.mockImplementation(
-        async (callback: (manager: any) => Promise<any>) => {
-          const mockManager = {
-            delete: mockManagerDelete,
-            create: mockManagerCreate,
-            save: mockManagerSave,
-          };
-
-          return await callback(mockManager);
-        },
-      );
+      mockRoleTargetService.create.mockResolvedValue(undefined);
 
       await service.assignRoleToApiKey({
         apiKeyId: mockApiKeyId,
@@ -238,20 +171,12 @@ describe('ApiKeyRoleService', () => {
         workspaceId: mockWorkspaceId,
       });
 
-      expect(mockDataSource.transaction).toHaveBeenCalled();
-      expect(mockManagerDelete).toHaveBeenCalledWith(RoleTargetsEntity, {
-        apiKeyId: mockApiKeyId,
-        workspaceId: mockWorkspaceId,
-      });
-      expect(mockManagerCreate).toHaveBeenCalledWith(RoleTargetsEntity, {
-        apiKeyId: mockApiKeyId,
-        roleId: mockNewRoleId,
-        workspaceId: mockWorkspaceId,
-      });
-      expect(mockManagerSave).toHaveBeenCalledWith(mockNewRoleTarget);
-      expect(
-        mockWorkspacePermissionsCacheService.recomputeApiKeyRoleMapCache,
-      ).toHaveBeenCalledWith({
+      expect(mockRoleTargetService.create).toHaveBeenCalledWith({
+        createRoleTargetInput: {
+          roleId: mockNewRoleId,
+          targetId: mockApiKeyId,
+          targetMetadataForeignKey: 'apiKeyId',
+        },
         workspaceId: mockWorkspaceId,
       });
     });
@@ -267,10 +192,7 @@ describe('ApiKeyRoleService', () => {
         workspaceId: mockWorkspaceId,
       });
 
-      expect(mockDataSource.transaction).not.toHaveBeenCalled();
-      expect(
-        mockWorkspacePermissionsCacheService.recomputeApiKeyRoleMapCache,
-      ).not.toHaveBeenCalled();
+      expect(mockRoleTargetService.create).not.toHaveBeenCalled();
     });
 
     it('should throw exception if API key not found', async () => {
@@ -361,18 +283,6 @@ describe('ApiKeyRoleService', () => {
         service.getRoleIdForApiKey(mockApiKeyId, mockWorkspaceId),
       ).rejects.toMatchObject({
         code: ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED,
-      });
-    });
-  });
-
-  describe('recomputeCache', () => {
-    it('should trigger cache recomputation', async () => {
-      await service.recomputeCache(mockWorkspaceId);
-
-      expect(
-        mockWorkspacePermissionsCacheService.recomputeApiKeyRoleMapCache,
-      ).toHaveBeenCalledWith({
-        workspaceId: mockWorkspaceId,
       });
     });
   });
@@ -498,13 +408,13 @@ describe('ApiKeyRoleService', () => {
   });
 
   describe('error handling', () => {
-    it('should handle transaction failures gracefully', async () => {
+    it('should handle roleTargetService failures gracefully', async () => {
       mockApiKeyRepository.findOne.mockResolvedValue(mockApiKey);
       mockRoleRepository.findOne.mockResolvedValue(mockNewRole);
       mockRoleTargetsRepository.findOne.mockResolvedValue(null);
 
-      mockDataSource.transaction.mockRejectedValue(
-        new Error('Transaction failed'),
+      mockRoleTargetService.create.mockRejectedValue(
+        new Error('Role target creation failed'),
       );
 
       await expect(
@@ -513,33 +423,18 @@ describe('ApiKeyRoleService', () => {
           roleId: mockNewRoleId,
           workspaceId: mockWorkspaceId,
         }),
-      ).rejects.toThrow('Transaction failed');
-
-      expect(
-        mockWorkspacePermissionsCacheService.recomputeApiKeyRoleMapCache,
-      ).not.toHaveBeenCalled();
+      ).rejects.toThrow('Role target creation failed');
     });
 
-    it('should handle cache service failures gracefully', async () => {
+    it('should throw exception if role cannot be assigned to API keys', async () => {
+      const roleNotForApiKeys = {
+        ...mockNewRole,
+        canBeAssignedToApiKeys: false,
+      };
+
       mockApiKeyRepository.findOne.mockResolvedValue(mockApiKey);
-      mockRoleRepository.findOne.mockResolvedValue(mockNewRole);
+      mockRoleRepository.findOne.mockResolvedValue(roleNotForApiKeys);
       mockRoleTargetsRepository.findOne.mockResolvedValue(null);
-
-      mockDataSource.transaction.mockImplementation(
-        async (callback: (manager: any) => Promise<any>) => {
-          const mockManager = {
-            delete: jest.fn().mockResolvedValue({ affected: 1 }),
-            create: jest.fn().mockReturnValue(mockNewRoleTarget),
-            save: jest.fn().mockResolvedValue(mockNewRoleTarget),
-          };
-
-          return await callback(mockManager);
-        },
-      );
-
-      mockWorkspacePermissionsCacheService.recomputeApiKeyRoleMapCache.mockRejectedValue(
-        new Error('Cache update failed'),
-      );
 
       await expect(
         service.assignRoleToApiKey({
@@ -547,7 +442,17 @@ describe('ApiKeyRoleService', () => {
           roleId: mockNewRoleId,
           workspaceId: mockWorkspaceId,
         }),
-      ).rejects.toThrow('Cache update failed');
+      ).rejects.toThrow(ApiKeyException);
+
+      await expect(
+        service.assignRoleToApiKey({
+          apiKeyId: mockApiKeyId,
+          roleId: mockNewRoleId,
+          workspaceId: mockWorkspaceId,
+        }),
+      ).rejects.toMatchObject({
+        code: ApiKeyExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS,
+      });
     });
   });
 });

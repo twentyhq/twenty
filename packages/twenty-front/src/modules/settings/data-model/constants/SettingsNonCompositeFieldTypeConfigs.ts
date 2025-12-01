@@ -69,12 +69,6 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
       ],
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldTextValue>,
-    [FieldMetadataType.NUMERIC]: {
-      label: 'Numeric',
-      Icon: IllustrationIconNumbers,
-      exampleValues: [2000, 3000, 4000],
-      category: 'Basic',
-    } as const satisfies SettingsFieldTypeConfig<FieldNumberValue>,
     [FieldMetadataType.NUMBER]: {
       label: 'Number',
       Icon: IllustrationIconNumbers,

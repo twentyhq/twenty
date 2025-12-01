@@ -15,7 +15,6 @@ export const useAgentChatScrollToBottom = () => {
 
     scrollWrapperElement.scrollTo({
       top: scrollWrapperElement.scrollHeight,
-      behavior: 'smooth',
     });
   };
 

@@ -3,10 +3,11 @@ import { msg } from '@lingui/core/macro';
 export const CHART_CONFIGURATION_SETTING_LABELS = {
   SOURCE: msg`Source`,
   DATA_LABELS: msg`Data labels`,
+  CENTER_METRIC: msg`Show value in center`,
   COLORS: msg`Colors`,
   FILTER: msg`Filter`,
   GROUP_BY: msg`Group by`,
-  SORT_BY_X: msg`Sort by`,
+  PRIMARY_SORT_BY: msg`Sort by`,
   SORT_BY_GROUP_BY_FIELD: msg`Sort by`,
   DATA_ON_DISPLAY_X: msg`Data on display`,
   DATA_ON_DISPLAY_Y: msg`Data on display`,
@@ -22,4 +23,5 @@ export const CHART_CONFIGURATION_SETTING_LABELS = {
   DATE_GRANULARITY_X: msg`Date granularity`,
   DATE_GRANULARITY_Y: msg`Date granularity`,
   DATE_GRANULARITY: msg`Date granularity`,
+  SHOW_LEGEND: msg`Legend`,
 };

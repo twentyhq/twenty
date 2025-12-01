@@ -9,7 +9,6 @@ import { AdvancedFilterDropdownButton } from '@/views/components/AdvancedFilterD
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarDetailsAddFilterButton } from '@/views/components/ViewBarDetailsAddFilterButton';
-import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -26,6 +25,7 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { AnyFieldSearchDropdownButton } from '@/views/components/AnyFieldSearchDropdownButton';
 import { ANY_FIELD_SEARCH_DROPDOWN_ID } from '@/views/constants/AnyFieldSearchDropdownId';
+import { useHasFiltersInQueryParams } from '@/views/hooks/internal/useHasFiltersInQueryParams';
 import { useApplyCurrentViewAnyFieldFilterToAnyFieldFilter } from '@/views/hooks/useApplyCurrentViewAnyFieldFilterToAnyFieldFilter';
 import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
 import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/hooks/useAreViewFilterGroupsDifferentFromRecordFilterGroups';
@@ -109,7 +109,7 @@ export const ViewBarDetails = ({
     isViewBarExpandedComponentState,
   );
 
-  const { hasFiltersQueryParams } = useViewFromQueryParams();
+  const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
 
   const currentRecordFilterGroups = useRecoilComponentValue(
     currentRecordFilterGroupsComponentState,

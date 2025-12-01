@@ -32,7 +32,8 @@ export type CurrentWorkspace = Pick<
   | 'metadataVersion'
   | 'isTwoFactorAuthenticationEnforced'
   | 'trashRetentionDays'
-  | 'routerModel'
+  | 'fastModel'
+  | 'smartModel'
   | 'editableProfileFields'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;

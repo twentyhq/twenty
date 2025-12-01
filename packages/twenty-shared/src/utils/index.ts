@@ -130,6 +130,7 @@ export { lowercaseUrlOriginAndRemoveTrailingSlash } from './url/lowercaseUrlOrig
 export { uuidToBase36 } from './uuidToBase36';
 export { assertIsDefinedOrThrow } from './validation/assertIsDefinedOrThrow';
 export { isDefined } from './validation/isDefined';
+export { isEmptyObject } from './validation/isEmptyObject';
 export { isLabelIdentifierFieldMetadataTypes } from './validation/isLabelIdentifierFieldMetadataTypes';
 export { isValidLocale } from './validation/isValidLocale';
 export { isValidUuid } from './validation/isValidUuid';

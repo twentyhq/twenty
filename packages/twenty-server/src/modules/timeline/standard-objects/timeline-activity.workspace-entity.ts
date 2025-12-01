@@ -37,6 +37,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   labelPlural: msg`Timeline Activities`,
   description: msg`Aggregated / filtered event to be displayed on the timeline`,
   icon: STANDARD_OBJECT_ICONS.timelineActivity,
+  labelIdentifierStandardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
@@ -58,7 +59,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Event name`,
     icon: 'IconAbc',
   })
-  name: string;
+  @WorkspaceIsNullable()
+  name: string | null;
 
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.properties,
@@ -78,7 +80,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Cached record name`,
     icon: 'IconAbc',
   })
-  linkedRecordCachedName: string;
+  @WorkspaceIsNullable()
+  linkedRecordCachedName: string | null;
 
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedRecordId,

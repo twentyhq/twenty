@@ -2,15 +2,18 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { sortBarChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/sortBarChartDataBySecondaryDimensionSum';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
+import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { getSortedKeys } from '@/page-layout/widgets/graph/utils/getSortedKeys';
+import { type BarDatum } from '@nivo/bar';
 import { isDefined } from 'twenty-shared/utils';
 import {
   BarChartGroupMode,
@@ -29,11 +32,12 @@ type TransformTwoDimensionalGroupByToBarChartDataParams = {
 };
 
 type TransformTwoDimensionalGroupByToBarChartDataResult = {
-  data: BarChartDataItem[];
+  data: BarDatum[];
   indexBy: string;
   keys: string[];
   series: BarChartSeries[];
   hasTooManyGroups: boolean;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
 export const transformTwoDimensionalGroupByToBarChartData = ({
@@ -51,9 +55,17 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     subFieldName: primaryAxisSubFieldName ?? undefined,
   });
 
-  const dataMap = new Map<string, BarChartDataItem>();
+  const dataMap = new Map<string, BarDatum>();
   const xValues = new Set<string>();
   const yValues = new Set<string>();
+  const formattedValues = formatPrimaryDimensionValues({
+    groupByRawResults: rawResults,
+    primaryAxisGroupByField: groupByFieldX,
+    primaryAxisDateGranularity:
+      configuration.primaryAxisDateGranularity ?? undefined,
+    primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
+  });
+  const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
 
   let hasTooManyGroups = false;
 
@@ -74,6 +86,10 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
         configuration.secondaryAxisGroupByDateGranularity ?? undefined,
       subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
     });
+
+    if (isDefined(dimensionValues[0])) {
+      formattedToRawLookup.set(xValue, dimensionValues[0] as RawDimensionValue);
+    }
 
     // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)
     const isNewX = !xValues.has(xValue);
@@ -151,5 +167,6 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     keys,
     series,
     hasTooManyGroups,
+    formattedToRawLookup,
   };
 };

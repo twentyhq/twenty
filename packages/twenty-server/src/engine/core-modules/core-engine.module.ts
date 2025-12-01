@@ -5,11 +5,10 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
-import { AiModule } from 'src/engine/core-modules/ai/ai.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationSyncModule } from 'src/engine/core-modules/application/application-sync.module';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingWebhookModule } from 'src/engine/core-modules/billing-webhook/billing-webhook.module';
@@ -55,6 +54,9 @@ import { WebhookModule } from 'src/engine/core-modules/webhook/webhook.module';
 import { WorkflowApiModule } from 'src/engine/core-modules/workflow/workflow-api.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
+import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
+import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
+import { AiToolsModule } from 'src/engine/metadata-modules/ai/ai-tools/ai-tools.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { TrashCleanupModule } from 'src/engine/trash-cleanup/trash-cleanup.module';
@@ -127,7 +129,9 @@ import { FileModule } from './file/file.module';
       wildcard: true,
     }),
     CacheStorageModule,
-    AiModule,
+    AiModelsModule,
+    AiToolsModule,
+    AiBillingModule,
     ServerlessModule.forRootAsync({
       useFactory: serverlessModuleFactory,
       inject: [TwentyConfigService, FileStorageService],

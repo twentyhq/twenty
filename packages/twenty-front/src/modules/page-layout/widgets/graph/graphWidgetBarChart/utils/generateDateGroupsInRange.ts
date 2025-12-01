@@ -7,6 +7,7 @@ type GenerateDateRangeParams = {
   endDate: Date;
   granularity:
     | ObjectRecordGroupByDateGranularity.DAY
+    | ObjectRecordGroupByDateGranularity.WEEK
     | ObjectRecordGroupByDateGranularity.MONTH
     | ObjectRecordGroupByDateGranularity.QUARTER
     | ObjectRecordGroupByDateGranularity.YEAR;
@@ -41,6 +42,10 @@ export const generateDateGroupsInRange = ({
     switch (granularity) {
       case ObjectRecordGroupByDateGranularity.DAY:
         currentDateCursor.setDate(currentDateCursor.getDate() + 1);
+        break;
+
+      case ObjectRecordGroupByDateGranularity.WEEK:
+        currentDateCursor.setDate(currentDateCursor.getDate() + 7);
         break;
 
       case ObjectRecordGroupByDateGranularity.MONTH:

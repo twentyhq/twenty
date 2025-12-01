@@ -24,6 +24,7 @@ import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decor
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
 import { DeleteViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-permission.guard';
@@ -41,7 +42,6 @@ import {
 import { ViewRestApiExceptionFilter } from 'src/engine/metadata-modules/view/filters/view-rest-api-exception.filter';
 import { ViewV2Service } from 'src/engine/metadata-modules/view/services/view-v2.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 
 @Controller('rest/metadata/views')
 @UseGuards(WorkspaceAuthGuard)
@@ -51,7 +51,7 @@ export class ViewController {
     private readonly viewService: ViewService,
     private readonly viewV2Service: ViewV2Service,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly i18nService: I18nService,
   ) {}
 
@@ -226,16 +226,20 @@ export class ViewController {
       return views;
     }
 
-    const { objectMetadataMaps } =
-      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-        { workspaceId },
+    const { flatObjectMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
       );
 
     return views.map((view) => {
       let processedName = view.name;
 
       if (view.name.includes('{objectLabelPlural}')) {
-        const objectMetadata = objectMetadataMaps.byId[view.objectMetadataId];
+        const objectMetadata =
+          flatObjectMetadataMaps.byId[view.objectMetadataId];
 
         if (objectMetadata) {
           const i18n = this.i18nService.getI18nInstance(locale ?? 'en');

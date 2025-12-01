@@ -2,6 +2,7 @@ import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type ChartSettingsItem } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
@@ -18,6 +19,10 @@ const shouldHideDateGranularityBasedOnFieldType = (
   );
 
   if (!isDefined(field)) {
+    return true;
+  }
+
+  if (isFieldRelation(field)) {
     return true;
   }
 
@@ -72,6 +77,12 @@ export const shouldHideChartSetting = (
           configuration.groupByFieldMetadataId,
           objectMetadataItem,
         );
+      }
+    }
+
+    if (item.id === CHART_CONFIGURATION_SETTING_IDS.SHOW_LEGEND) {
+      if (configuration.__typename === 'PieChartConfiguration') {
+        return false;
       }
     }
   }

@@ -1,11 +1,13 @@
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
+import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
-import { type ComputedDatum } from '@nivo/bar';
+import { type BarDatum, type ComputedDatum } from '@nivo/bar';
 import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
@@ -37,9 +39,11 @@ export const GraphWidgetBarChartRenderer = ({
     xAxisLabel,
     yAxisLabel,
     showDataLabels,
+    showLegend,
     layout,
     loading,
     hasTooManyGroups,
+    formattedToRawLookup,
     objectMetadataItem,
   } = useGraphBarChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
@@ -48,6 +52,9 @@ export const GraphWidgetBarChartRenderer = ({
 
   const navigate = useNavigate();
   const configuration = widget.configuration as BarChartConfiguration;
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+  );
 
   const hasGroupByOnSecondaryAxis = isDefined(
     configuration.secondaryAxisGroupByFieldMetadataId,
@@ -68,16 +75,27 @@ export const GraphWidgetBarChartRenderer = ({
     }),
   );
 
-  const handleBarClick = (_datum: ComputedDatum<BarChartDataItem>) => {
-    return navigate(
-      getAppPath(
-        AppPath.RecordIndexPage,
-        {
-          objectNamePlural: objectMetadataItem.namePlural,
-        },
-        isDefined(indexViewId) ? { viewId: indexViewId } : undefined,
-      ),
+  const handleBarClick = (datum: ComputedDatum<BarDatum>) => {
+    const displayValue = datum.data[indexBy];
+    const rawValue = formattedToRawLookup.get(displayValue as string) ?? null;
+
+    const queryParams = buildChartDrilldownQueryParams({
+      objectMetadataItem,
+      configuration,
+      clickedData: {
+        primaryBucketRawValue: rawValue,
+      },
+      viewId: indexViewId,
+      timezone: configuration.timezone ?? undefined,
+    });
+
+    const url = getAppPath(
+      AppPath.RecordIndexPage,
+      { objectNamePlural: objectMetadataItem.namePlural },
+      Object.fromEntries(queryParams),
     );
+
+    navigate(url);
   };
 
   if (loading) {
@@ -98,6 +116,7 @@ export const GraphWidgetBarChartRenderer = ({
         xAxisLabel={xAxisLabel}
         yAxisLabel={yAxisLabel}
         showValues={showDataLabels}
+        showLegend={showLegend}
         layout={layout}
         groupMode={groupMode}
         id={widget.id}
@@ -105,7 +124,7 @@ export const GraphWidgetBarChartRenderer = ({
         rangeMin={configuration.rangeMin ?? undefined}
         rangeMax={configuration.rangeMax ?? undefined}
         omitNullValues={configuration.omitNullValues ?? false}
-        onBarClick={handleBarClick}
+        onBarClick={isPageLayoutInEditMode ? undefined : handleBarClick}
       />
     </Suspense>
   );

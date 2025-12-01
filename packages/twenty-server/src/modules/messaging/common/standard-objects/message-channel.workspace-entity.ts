@@ -1,8 +1,8 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -146,7 +146,8 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Handle`,
     icon: 'IconAt',
   })
-  handle: string;
+  @WorkspaceIsNullable()
+  handle: string | null;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.type,
@@ -304,7 +305,8 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Last sync cursor`,
     icon: 'IconHistory',
   })
-  syncCursor: string;
+  @WorkspaceIsNullable()
+  syncCursor: string | null;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncedAt,

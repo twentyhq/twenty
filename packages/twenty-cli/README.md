@@ -1,12 +1,15 @@
-# Why Twenty CLI?
+# Deprecated: twenty-cli
 
-A command-line interface to easily scaffold, develop, and publish applications that extend Twenty CRM
-
-## Installation
+This package is deprecated. Please install and use twenty-sdk instead:
 
 ```bash
-npm install -g twenty-cli
+npm uninstall twenty-cli
+npm install -g twenty-sdk
 ```
+
+The command name remains the same: twenty.
+
+A command-line interface to easily scaffold, develop, and publish applications that extend Twenty CRM (now provided by twenty-sdk).
 
 ## Requirements
 - yarn >= 4.9.2

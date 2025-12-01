@@ -15,6 +15,12 @@ import { DeleteIndexActionHandlerService } from 'src/engine/workspace-manager/wo
 import { CreateObjectActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/object/services/create-object-action-handler.service';
 import { DeleteObjectActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/object/services/delete-object-action-handler.service';
 import { UpdateObjectActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/object/services/update-object-action-handler.service';
+import { CreateRoleTargetActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/role-target/services/create-role-target-action-handler.service';
+import { DeleteRoleTargetActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/role-target/services/delete-role-target-action-handler.service';
+import { UpdateRoleTargetActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/role-target/services/update-role-target-action-handler.service';
+import { CreateRoleActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/role/services/create-role-action-handler.service';
+import { DeleteRoleActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/role/services/delete-role-action-handler.service';
+import { UpdateRoleActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/role/services/update-role-action-handler.service';
 import { CreateRouteTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/route-trigger/services/create-route-trigger-action-handler.service';
 import { DeleteRouteTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/route-trigger/services/delete-route-trigger-action-handler.service';
 import { UpdateRouteTriggerActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/route-trigger/services/update-route-trigger-action-handler.service';
@@ -79,6 +85,14 @@ import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/wor
     CreateRouteTriggerActionHandlerService,
     DeleteRouteTriggerActionHandlerService,
     UpdateRouteTriggerActionHandlerService,
+
+    CreateRoleActionHandlerService,
+    UpdateRoleActionHandlerService,
+    DeleteRoleActionHandlerService,
+
+    CreateRoleTargetActionHandlerService,
+    DeleteRoleTargetActionHandlerService,
+    UpdateRoleTargetActionHandlerService,
   ],
 })
 export class WorkspaceSchemaMigrationRunnerActionHandlersModule {}

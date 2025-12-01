@@ -95,7 +95,9 @@ export class WorkspaceUpdateQueryBuilder<
       validateQueryIsPermittedOrThrow({
         expressionMap: this.expressionMap,
         objectsPermissions: this.objectRecordsPermissions,
-        objectMetadataMaps: this.internalContext.objectMetadataMaps,
+        flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+        objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
         shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
       });
 
@@ -164,7 +166,8 @@ export class WorkspaceUpdateQueryBuilder<
       const formattedBefore = formatResult<T[]>(
         before,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       const result = await super.execute();
@@ -174,13 +177,15 @@ export class WorkspaceUpdateQueryBuilder<
       const formattedAfter = formatResult<T[]>(
         after,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
         formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.UPDATED,
           objectMetadataItem: objectMetadata,
+          flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
           entities: formattedAfter,
           beforeEntities: formattedBefore,
@@ -192,6 +197,7 @@ export class WorkspaceUpdateQueryBuilder<
         formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.UPSERTED,
           objectMetadataItem: objectMetadata,
+          flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
           entities: formattedAfter,
           beforeEntities: formattedBefore,
@@ -202,7 +208,8 @@ export class WorkspaceUpdateQueryBuilder<
       const formattedResult = formatResult<T[]>(
         result.raw,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       return {
@@ -235,7 +242,9 @@ export class WorkspaceUpdateQueryBuilder<
         validateQueryIsPermittedOrThrow({
           expressionMap: fakeExpressionMapToValidatePermissions,
           objectsPermissions: this.objectRecordsPermissions,
-          objectMetadataMaps: this.internalContext.objectMetadataMaps,
+          flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
+          flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+          objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
           shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
         });
       }
@@ -265,7 +274,8 @@ export class WorkspaceUpdateQueryBuilder<
       const formattedBefore = formatResult<T[]>(
         beforeRecords,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       const results: UpdateResult[] = [];
@@ -317,13 +327,15 @@ export class WorkspaceUpdateQueryBuilder<
       const formattedAfter = formatResult<T[]>(
         afterRecords,
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
         formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.UPDATED,
           objectMetadataItem: objectMetadata,
+          flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
           entities: formattedAfter,
           beforeEntities: formattedBefore,
@@ -335,6 +347,7 @@ export class WorkspaceUpdateQueryBuilder<
         formatTwentyOrmEventToDatabaseBatchEvent({
           action: DatabaseEventAction.UPSERTED,
           objectMetadataItem: objectMetadata,
+          flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
           entities: formattedAfter,
           beforeEntities: formattedBefore,
@@ -345,7 +358,8 @@ export class WorkspaceUpdateQueryBuilder<
       const formattedResults = formatResult<T[]>(
         results.flatMap((result) => result.raw),
         objectMetadata,
-        this.internalContext.objectMetadataMaps,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
       );
 
       return {
@@ -395,7 +409,11 @@ export class WorkspaceUpdateQueryBuilder<
         mainAliasTarget,
       );
 
-    const formattedUpdateSet = formatData(_values, objectMetadata);
+    const formattedUpdateSet = formatData(
+      _values,
+      objectMetadata,
+      this.internalContext.flatFieldMetadataMaps,
+    );
 
     return super.set(formattedUpdateSet as QueryDeepPartialEntity<T>);
   }
@@ -456,7 +474,11 @@ export class WorkspaceUpdateQueryBuilder<
 
     this.manyInputs = inputs.map((input) => ({
       criteria: input.criteria,
-      partialEntity: formatData(input.partialEntity, objectMetadata),
+      partialEntity: formatData(
+        input.partialEntity,
+        objectMetadata,
+        this.internalContext.flatFieldMetadataMaps,
+      ),
     }));
 
     return this;

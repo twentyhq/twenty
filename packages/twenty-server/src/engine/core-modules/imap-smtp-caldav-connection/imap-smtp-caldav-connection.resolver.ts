@@ -8,6 +8,7 @@ import {
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
@@ -59,7 +60,7 @@ export class ImapSmtpCaldavResolver {
       where: { id, provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV },
     });
 
-    if (!connectedAccount) {
+    if (!isDefined(connectedAccount) || !isDefined(connectedAccount?.handle)) {
       throw new UserInputError(
         `Connected mail account with ID ${id} not found`,
       );

@@ -82,7 +82,7 @@ export const ObjectFilterDropdownFilterInput = ({
       <>
         <ObjectFilterDropdownInnerSelectOperandDropdown />
         <DropdownMenuSeparator />
-        <ObjectFilterDropdownDateInput />
+        <ObjectFilterDropdownDateInput instanceId={filterDropdownId} />
       </>
     );
   } else if (filterType === 'DATE_TIME') {
@@ -90,7 +90,7 @@ export const ObjectFilterDropdownFilterInput = ({
       <>
         <ObjectFilterDropdownInnerSelectOperandDropdown />
         <DropdownMenuSeparator />
-        <ObjectFilterDropdownDateTimeInput />
+        <ObjectFilterDropdownDateTimeInput instanceId={filterDropdownId} />
       </>
     );
   } else {
