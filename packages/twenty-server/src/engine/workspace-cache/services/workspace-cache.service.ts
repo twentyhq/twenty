@@ -150,18 +150,13 @@ export class WorkspaceCacheService implements OnModuleInit {
     workspaceId: string,
     workspaceCacheKeys: WorkspaceCacheKeyName[],
   ): Promise<void> {
-    const deletePromises = workspaceCacheKeys.flatMap(
-      (workspaceCacheKeyName) => {
-        const baseKey = this.buildCacheKey(workspaceId, workspaceCacheKeyName);
+    const keysToDelete = workspaceCacheKeys.flatMap((workspaceCacheKeyName) => {
+      const baseKey = this.buildCacheKey(workspaceId, workspaceCacheKeyName);
 
-        return [
-          this.cacheStorage.del(`${baseKey}:data`),
-          this.cacheStorage.del(`${baseKey}:hash`),
-        ];
-      },
-    );
+      return [`${baseKey}:data`, `${baseKey}:hash`];
+    });
 
-    await Promise.all(deletePromises);
+    await this.cacheStorage.mdel(keysToDelete);
   }
 
   private async recomputeCache(
