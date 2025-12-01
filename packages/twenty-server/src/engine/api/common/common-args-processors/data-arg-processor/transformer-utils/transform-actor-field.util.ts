@@ -11,7 +11,6 @@ export const transformActorField = (
     name?: string | null;
     workspaceMemberId?: string | null;
   } | null,
-  isNullEquivalenceEnabled: boolean = false,
 ): {
   source?: FieldActorSource | null;
   context?: object | string | null;
@@ -24,10 +23,8 @@ export const transformActorField = (
     source: value.source,
     context: isUndefined(value.context)
       ? undefined
-      : transformRawJsonField(value.context, isNullEquivalenceEnabled),
-    name: isUndefined(value.name)
-      ? undefined
-      : transformTextField(value.name, isNullEquivalenceEnabled),
+      : transformRawJsonField(value.context),
+    name: isUndefined(value.name) ? undefined : transformTextField(value.name),
     workspaceMemberId: isUndefined(value.workspaceMemberId)
       ? undefined
       : value.workspaceMemberId,

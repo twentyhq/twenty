@@ -7,7 +7,6 @@ export const transformFullNameField = (
     firstName?: string | null;
     lastName?: string | null;
   } | null,
-  isNullEquivalenceEnabled: boolean = false,
 ): {
   firstName?: string | null;
   lastName?: string | null;
@@ -17,9 +16,9 @@ export const transformFullNameField = (
   return {
     firstName: isUndefined(value.firstName)
       ? undefined
-      : transformTextField(value.firstName, isNullEquivalenceEnabled),
+      : transformTextField(value.firstName),
     lastName: isUndefined(value.lastName)
       ? undefined
-      : transformTextField(value.lastName, isNullEquivalenceEnabled),
+      : transformTextField(value.lastName),
   };
 };

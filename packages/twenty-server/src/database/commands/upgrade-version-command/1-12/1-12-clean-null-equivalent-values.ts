@@ -13,7 +13,6 @@ import { Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -81,22 +80,6 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
 
     if (isDryRun) {
       this.logger.log('Dry run mode: No changes will be applied');
-    }
-
-    const featureFlag = await this.featureFlagRepository.findOne({
-      where: {
-        key: FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED,
-        value: true,
-        workspaceId,
-      },
-    });
-
-    if (isDefined(featureFlag)) {
-      this.logger.log(
-        `Feature flag ${FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED} already enabled for workspace ${workspaceId}`,
-      );
-
-      return;
     }
 
     const objectMetadataItems = await this.objectMetadataRepository.find({
@@ -277,20 +260,6 @@ export class CleanNullEquivalentValuesCommand extends ActiveOrSuspendedWorkspace
           }
         }
       }
-    }
-    if (!isDryRun) {
-      await this.featureFlagRepository.upsert(
-        {
-          key: FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED,
-          value: true,
-          workspaceId,
-        },
-        ['key', 'workspaceId'],
-      );
-
-      this.logger.log(
-        `Switched on feature flag ${FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED} for workspace ${workspaceId}`,
-      );
     }
   }
 
