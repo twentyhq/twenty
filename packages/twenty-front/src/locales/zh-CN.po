@@ -8541,11 +8541,6 @@ msgstr "一些"
 msgid "Some folders"
 msgstr "某些文件夹"
 
-#. js-lingui-id: yHwG3y
-#: src/modules/command-menu/pages/page-layout/components/ChartTypeSelectionSection.tsx
-msgid "Soon"
-msgstr "即将推出"
-
 #. js-lingui-id: wTrpxV
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Sorry, something went wrong"
