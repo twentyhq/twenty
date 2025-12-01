@@ -93,11 +93,6 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_MESSAGE_FOLDER_CONTROL_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_NULL_EQUIVALENCE_ENABLED,
         workspaceId: workspaceId,
         value: true,
