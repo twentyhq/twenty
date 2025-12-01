@@ -3,52 +3,97 @@ import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuIt
 import { CommandMenuItemNumberInput } from '@/command-menu/components/CommandMenuItemNumberInput';
 import { CommandMenuItemTextInput } from '@/command-menu/components/CommandMenuItemTextInput';
 import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
+import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
+import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/useChartSettingsValues';
+import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { useUpdateChartSettingInput } from '@/command-menu/pages/page-layout/hooks/useUpdateChartSettingInput';
+import { useUpdateChartSettingTextInput } from '@/command-menu/pages/page-layout/hooks/useUpdateChartSettingTextInput';
+import { useUpdateChartSettingToggle } from '@/command-menu/pages/page-layout/hooks/useUpdateChartSettingToggle';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type ChartSettingsItem } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 import { isMinMaxRangeValid } from '@/command-menu/pages/page-layout/utils/isMinMaxRangeValid';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { t } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 type ChartSettingItemProps = {
   item: ChartSettingsItem;
+  objectMetadataId: string;
   configuration: ChartConfiguration;
-  getChartSettingsValues: (
-    itemId: CHART_CONFIGURATION_SETTING_IDS,
-  ) => boolean | string | undefined;
-  onToggleChange: () => void;
-  onInputChange: (value: number | null) => void;
-  onTextInputChange: (value: string) => void;
-  onDropdownOpen: () => void;
-  onFilterClick: () => void;
 };
 
 export const ChartSettingItem = ({
   item,
+  objectMetadataId,
   configuration,
-  getChartSettingsValues,
-  onToggleChange,
-  onInputChange,
-  onTextInputChange,
-  onDropdownOpen,
-  onFilterClick,
 }: ChartSettingItemProps) => {
+  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
+  const { openDropdown } = useOpenDropdown();
+  const { setSelectedItemId } = useSelectableList(
+    COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
+  );
+  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
+
+  const { getChartSettingsValues } = useChartSettingsValues({
+    objectMetadataId,
+    configuration,
+  });
+
+  const { updateChartSettingToggle } = useUpdateChartSettingToggle({
+    pageLayoutId,
+    objectMetadataId,
+    configuration,
+  });
+
+  const { updateChartSettingInput } = useUpdateChartSettingInput(pageLayoutId);
+
+  const { updateChartSettingTextInput } =
+    useUpdateChartSettingTextInput(pageLayoutId);
+
+  const handleToggleChange = () => {
+    setSelectedItemId(item.id);
+    updateChartSettingToggle(item.id);
+  };
+
+  const handleInputChange = (value: number | null) => {
+    updateChartSettingInput(item.id, value);
+  };
+
+  const handleTextInputChange = (value: string) => {
+    updateChartSettingTextInput(item.id, value);
+  };
+
+  const handleDropdownOpen = () => {
+    openDropdown({
+      dropdownComponentInstanceIdFromProps: item.id,
+    });
+  };
+
+  const handleFilterClick = () => {
+    navigatePageLayoutCommandMenu({
+      commandMenuPage: CommandMenuPages.PageLayoutGraphFilter,
+    });
+  };
   if (item.id === CHART_CONFIGURATION_SETTING_IDS.FILTER) {
     return (
       <SelectableListItem
         key={item.id}
         itemId={item.id}
-        onEnter={onFilterClick}
+        onEnter={handleFilterClick}
       >
         <CommandMenuItem
           id={item.id}
           label={t(item.label)}
           Icon={item.Icon}
           hasSubMenu
-          onClick={onFilterClick}
+          onClick={handleFilterClick}
         />
       </SelectableListItem>
     );
@@ -67,7 +112,7 @@ export const ChartSettingItem = ({
           RightComponent={
             <CommandMenuItemNumberInput
               value={stringValue}
-              onChange={onInputChange}
+              onChange={handleInputChange}
               onValidate={(value) =>
                 !isDefined(value) ||
                 isMinMaxRangeValid(
@@ -101,7 +146,7 @@ export const ChartSettingItem = ({
           RightComponent={
             <CommandMenuItemTextInput
               value={stringValue}
-              onChange={onTextInputChange}
+              onChange={handleTextInputChange}
               placeholder={
                 item.inputPlaceholder ? t(item.inputPlaceholder) : undefined
               }
@@ -117,21 +162,25 @@ export const ChartSettingItem = ({
       <SelectableListItem
         key={item.id}
         itemId={item.id}
-        onEnter={onToggleChange}
+        onEnter={handleToggleChange}
       >
         <CommandMenuItemToggle
           LeftIcon={item.Icon}
           text={t(item.label)}
           id={item.id}
           toggled={getChartSettingsValues(item.id) as boolean}
-          onToggleChange={onToggleChange}
+          onToggleChange={handleToggleChange}
         />
       </SelectableListItem>
     );
   }
 
   return (
-    <SelectableListItem key={item.id} itemId={item.id} onEnter={onDropdownOpen}>
+    <SelectableListItem
+      key={item.id}
+      itemId={item.id}
+      onEnter={handleDropdownOpen}
+    >
       <CommandMenuItemDropdown
         Icon={item.Icon}
         label={t(item.label)}
