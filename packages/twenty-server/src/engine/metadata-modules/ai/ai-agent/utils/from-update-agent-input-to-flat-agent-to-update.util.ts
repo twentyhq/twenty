@@ -95,10 +95,10 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
 }: FromUpdateAgentInputToFlatAgentToUpdateArgs): {
   flatAgentToUpdate: FlatAgent;
 } & FlatRoleTargetToUpdateCreateDelete => {
-  const { id: agentIdToUpdate, roleId } =
+  const { id: agentIdToUpdate } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawUpdateAgentInput,
-      ['id', 'roleId'],
+      ['id'],
     );
 
   const existingFlatAgent = flatAgentMaps.byId[agentIdToUpdate];
@@ -138,7 +138,7 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
     flatRoleTargetToCreate,
     flatRoleTargetToDelete,
   } = computeAgentFlatRoleTargetToUpdate({
-    roleId,
+    roleId: rawUpdateAgentInput.roleId,
     flatAgent: existingFlatAgent,
     flatRoleTargetMaps,
   });

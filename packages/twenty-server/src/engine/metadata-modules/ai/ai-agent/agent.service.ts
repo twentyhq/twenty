@@ -261,6 +261,9 @@ export class AgentService {
           dependencyAllFlatEntityMaps: { flatRoleMaps: existingFlatRoleMaps },
           buildOptions: {
             isSystemBuild: false,
+            inferDeletionFromMissingEntities: {
+              roleTarget: isDefined(flatRoleTargetToDelete),
+            },
           },
           workspaceId,
         },
