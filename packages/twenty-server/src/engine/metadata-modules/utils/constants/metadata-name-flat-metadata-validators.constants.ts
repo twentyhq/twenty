@@ -30,7 +30,10 @@ export const METADATA_NAME_VALIDATORS: FlatMetadataValidator<string>[] = [
       ),
   },
   {
-    message: msg`The name is not available`,
+    // Safety net: Catch any reserved keywords that bypass frontend sanitization
+    // (e.g., programmatic API access, old clients)
+    // Frontend auto-adds "Custom" suffix, so properly formed requests will pass
+    message: msg`This name is reserved. Use a different name or the system will add "Custom" suffix.`,
     validator: (name) => RESERVED_METADATA_NAME_KEYWORDS.includes(name),
   },
 ];
