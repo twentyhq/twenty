@@ -6,6 +6,7 @@ import {
   GraphType,
   type PieChartConfiguration,
 } from '~/generated-metadata/graphql';
+import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { generateGroupByQueryVariablesFromPieChartConfiguration } from '../generateGroupByQueryVariablesFromPieChartConfiguration';
 
 describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
@@ -117,6 +118,52 @@ describe('generateGroupByQueryVariablesFromPieChartConfiguration', () => {
 
       expect(result).toMatchSnapshot();
       expect(result.orderBy).toBeDefined();
+    });
+  });
+
+  describe('Relation date subfield', () => {
+    it('applies date granularity when grouping by a relation date subfield', () => {
+      const relationField = {
+        id: 'field-rel',
+        name: 'company',
+        type: FieldMetadataType.RELATION,
+        relation: { targetObjectMetadata: { nameSingular: 'company' } },
+      };
+
+      const mainObjectMetadata: ObjectMetadataItem = {
+        id: 'obj-main',
+        nameSingular: 'opportunity',
+        namePlural: 'opportunities',
+        fields: [relationField],
+      } as ObjectMetadataItem;
+
+      const targetObjectMetadata: ObjectMetadataItem = {
+        id: 'obj-company',
+        nameSingular: 'company',
+        namePlural: 'companies',
+        fields: [
+          {
+            id: 'company-created-at',
+            name: 'createdAt',
+            type: FieldMetadataType.DATE_TIME,
+          },
+        ],
+      } as ObjectMetadataItem;
+
+      const result = generateGroupByQueryVariablesFromPieChartConfiguration({
+        objectMetadataItem: mainObjectMetadata,
+        objectMetadataItems: [mainObjectMetadata, targetObjectMetadata],
+        chartConfiguration: buildPieChartConfiguration({
+          groupByFieldMetadataId: relationField.id,
+          groupBySubFieldName: 'createdAt',
+        }),
+      });
+
+      expect(result.groupBy[0]).toEqual({
+        company: {
+          createdAt: { granularity: ObjectRecordGroupByDateGranularity.DAY },
+        },
+      });
     });
   });
 

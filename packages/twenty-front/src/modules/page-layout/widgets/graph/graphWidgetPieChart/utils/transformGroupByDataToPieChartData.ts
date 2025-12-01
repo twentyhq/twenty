@@ -41,15 +41,7 @@ export const transformGroupByDataToPieChartData = ({
   configuration,
   aggregateOperation,
 }: TransformGroupByDataToPieChartDataParams): TransformGroupByDataToPieChartDataResult => {
-  console.log('[DEBUG] transformGroupByDataToPieChartData', {
-    groupByData,
-    objectMetadataItem: objectMetadataItem?.nameSingular,
-    configuration,
-    aggregateOperation,
-  });
-
   if (!isDefined(groupByData)) {
-    console.log('[DEBUG] No groupByData, returning empty');
     return EMPTY_PIE_CHART_RESULT;
   }
 
@@ -64,25 +56,13 @@ export const transformGroupByDataToPieChartData = ({
   );
 
   if (!isDefined(groupByField) || !isDefined(aggregateField)) {
-    console.log('[DEBUG] Field not found', { groupByField, aggregateField });
     return EMPTY_PIE_CHART_RESULT;
   }
-  console.log('[DEBUG] Fields found', {
-    groupByFieldName: groupByField.name,
-    aggregateFieldName: aggregateField.name,
-  });
 
   const queryName = getGroupByQueryResultGqlFieldName(objectMetadataItem);
   const rawResults = groupByData[queryName];
 
-  console.log('[DEBUG] Query results', {
-    queryName,
-    rawResultsLength: rawResults?.length,
-    firstResult: rawResults?.[0],
-  });
-
   if (!isDefined(rawResults) || !Array.isArray(rawResults)) {
-    console.log('[DEBUG] No rawResults, returning empty');
     return EMPTY_PIE_CHART_RESULT;
   }
 
@@ -122,13 +102,6 @@ export const transformGroupByDataToPieChartData = ({
   });
 
   const showLegend = configuration.displayLegend ?? true;
-
-  console.log('[DEBUG] Final pie chart data', {
-    dataLength: data.length,
-    firstItem: data[0],
-    allItemsHaveId: data.every((d) => d.id !== ''),
-    allItemsHaveValue: data.every((d) => d.value > 0),
-  });
 
   return {
     data,
