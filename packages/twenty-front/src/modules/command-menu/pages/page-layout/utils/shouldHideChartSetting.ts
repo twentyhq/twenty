@@ -90,6 +90,21 @@ export const shouldHideChartSetting = (
       }
     }
 
+    if (item.id === CHART_CONFIGURATION_SETTING_IDS.CUMULATIVE) {
+      const isBarOrLineChart =
+        configuration.__typename === 'BarChartConfiguration' ||
+        configuration.__typename === 'LineChartConfiguration';
+
+      if (isBarOrLineChart) {
+        return shouldHideDateGranularityBasedOnFieldType(
+          configuration.primaryAxisGroupByFieldMetadataId,
+          configuration.primaryAxisGroupBySubFieldName,
+          objectMetadataItem,
+          objectMetadataItems ?? [],
+        );
+      }
+    }
+
     if (item.id === CHART_CONFIGURATION_SETTING_IDS.SHOW_LEGEND) {
       if (configuration.__typename === 'PieChartConfiguration') {
         return false;

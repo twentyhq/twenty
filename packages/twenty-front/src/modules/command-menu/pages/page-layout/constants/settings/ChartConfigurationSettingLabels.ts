@@ -26,4 +26,5 @@ export const CHART_CONFIGURATION_SETTING_LABELS = {
   SHOW_LEGEND: msg`Legend`,
   PREFIX: msg`Prefix`,
   SUFFIX: msg`Suffix`,
+  CUMULATIVE: msg`Cumulative`,
 };

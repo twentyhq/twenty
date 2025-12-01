@@ -8,10 +8,11 @@ import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLin
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { applyCumulativeTransformToLineChartData } from '@/page-layout/widgets/graph/utils/applyCumulativeTransformToLineChartData';
 import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
-import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
+import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { isDefined } from 'twenty-shared/utils';
 import { type LineChartConfiguration } from '~/generated/graphql';
 
@@ -91,12 +92,16 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     })
     .filter((point) => isDefined(point));
 
+  const transformedData = configuration.isCumulative
+    ? applyCumulativeTransformToLineChartData(data)
+    : data;
+
   const series: LineChartSeries[] = [
     {
       id: aggregateField.name,
       label: aggregateField.label,
       color: (configuration.color ?? GRAPH_DEFAULT_COLOR) as GraphColor,
-      data,
+      data: transformedData,
     },
   ];
 

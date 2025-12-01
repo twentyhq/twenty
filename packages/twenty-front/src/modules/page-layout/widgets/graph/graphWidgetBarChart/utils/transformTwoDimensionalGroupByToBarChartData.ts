@@ -7,6 +7,7 @@ import { sortBarChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/g
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { applyCumulativeTransformToTwoDimensionalBarChartData } from '@/page-layout/widgets/graph/utils/applyCumulativeTransformToTwoDimensionalBarChartData';
 import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
@@ -153,7 +154,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
   }));
 
   const unsortedData = Array.from(dataMap.values());
-  const data = isDefined(configuration.primaryAxisOrderBy)
+  const sortedData = isDefined(configuration.primaryAxisOrderBy)
     ? sortBarChartDataBySecondaryDimensionSum({
         data: unsortedData,
         keys,
@@ -161,8 +162,12 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       })
     : unsortedData;
 
+  const finalData = configuration.isCumulative
+    ? applyCumulativeTransformToTwoDimensionalBarChartData(sortedData, keys)
+    : sortedData;
+
   return {
-    data,
+    data: finalData,
     indexBy: indexByKey,
     keys,
     series,
