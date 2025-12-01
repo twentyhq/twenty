@@ -112,7 +112,7 @@ export class MessagingResetChannelCommand extends CommandRunner {
 
     await messageFolderRepository.update(
       { messageChannelId },
-      { syncCursor: '' },
+      { syncCursor: null },
     );
 
     this.logger.log(
@@ -122,7 +122,7 @@ export class MessagingResetChannelCommand extends CommandRunner {
     await messageChannelRepository.update(
       { id: messageChannelId },
       {
-        syncCursor: '',
+        syncCursor: null,
         syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
         syncStatus: MessageChannelSyncStatus.ONGOING,
         syncStageStartedAt: null,
