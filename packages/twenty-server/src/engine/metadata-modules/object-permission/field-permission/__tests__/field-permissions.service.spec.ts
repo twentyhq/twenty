@@ -5,9 +5,9 @@ import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
 import { In, type Repository } from 'typeorm';
 
 import {
-    fieldRelationMock,
-    fieldTextMock,
-    objectMetadataItemMock,
+  fieldRelationMock,
+  fieldTextMock,
+  objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -15,9 +15,9 @@ import { type UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/ob
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import {
-    PermissionsException,
-    PermissionsExceptionCode,
-    PermissionsExceptionMessage,
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -234,10 +234,9 @@ describe('FieldPermissionService', () => {
           },
         );
 
-        expect(workspaceCacheService.invalidateAndRecompute).toHaveBeenCalledWith(
-          testWorkspaceId,
-          ['rolesPermissions'],
-        );
+        expect(
+          workspaceCacheService.invalidateAndRecompute,
+        ).toHaveBeenCalledWith(testWorkspaceId, ['rolesPermissions']);
       });
 
       it('should delete field permissions when both canReadFieldValue and canUpdateFieldValue are null', async () => {

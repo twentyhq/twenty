@@ -310,8 +310,9 @@ export const createAgentToolTestModule =
       },
     } as any);
 
-    const workspaceCacheService =
-      module.get<WorkspaceCacheService>(WorkspaceCacheService);
+    const workspaceCacheService = module.get<WorkspaceCacheService>(
+      WorkspaceCacheService,
+    );
 
     return {
       module,

@@ -9,9 +9,9 @@ import { type UpsertObjectPermissionsInput } from 'src/engine/metadata-modules/o
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import {
-    PermissionsException,
-    PermissionsExceptionCode,
-    PermissionsExceptionMessage,
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -142,7 +142,9 @@ describe('ObjectPermissionService', () => {
 
       // Verify that upsert was never called
       expect(objectPermissionRepository.upsert).not.toHaveBeenCalled();
-      expect(workspaceCacheService.invalidateAndRecompute).not.toHaveBeenCalled();
+      expect(
+        workspaceCacheService.invalidateAndRecompute,
+      ).not.toHaveBeenCalled();
     });
 
     it('should successfully create object permission for custom (non-system) object', async () => {

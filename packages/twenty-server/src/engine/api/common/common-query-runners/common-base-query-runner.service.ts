@@ -350,10 +350,10 @@ export abstract class CommonBaseQueryRunnerService<
       roleId = userWorkspaceRoleId;
     }
 
-    const { rolesPermissions } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      ['rolesPermissions'],
-    );
+    const { rolesPermissions } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'rolesPermissions',
+      ]);
 
     return { roleId, objectsPermissions: rolesPermissions[roleId] };
   }
