@@ -6,14 +6,10 @@ import { RecordBoardClickOutsideEffect } from '@/object-record/record-board/comp
 import { RecordBoardColumns } from '@/object-record/record-board/components/RecordBoardColumns';
 import { RecordBoardDragDropContext } from '@/object-record/record-board/components/RecordBoardDragDropContext';
 import { RecordBoardDragSelect } from '@/object-record/record-board/components/RecordBoardDragSelect';
+import { RecordBoardEffects } from '@/object-record/record-board/components/RecordBoardEffects';
 import { RecordBoardFetchMoreInViewTriggerComponent } from '@/object-record/record-board/components/RecordBoardFetchMoreInViewTriggerComponent';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
-import { RecordBoardQueryEffect } from '@/object-record/record-board/components/RecordBoardQueryEffect';
-import { RecordBoardScrollToFocusedCardEffect } from '@/object-record/record-board/components/RecordBoardScrollToFocusedCardEffect';
-import { RecordBoardSelectRecordsEffect } from '@/object-record/record-board/components/RecordBoardSelectRecordsEffect';
-import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { RecordBoardDeactivateBoardCardEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardDeactivateBoardCardEffect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 const StyledContainer = styled.div`
@@ -46,11 +42,7 @@ export const RecordBoard = () => {
       <ScrollWrapper
         componentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
       >
-        <RecordBoardStickyHeaderEffect />
-        <RecordBoardScrollToFocusedCardEffect />
-        <RecordBoardDeactivateBoardCardEffect />
-        <RecordBoardQueryEffect />
-        <RecordBoardSelectRecordsEffect />
+        <RecordBoardEffects />
         <StyledContainerContainer>
           <RecordBoardHeader />
           <StyledBoardContentContainer>

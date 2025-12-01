@@ -1,5 +1,6 @@
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RECORD_BOARD_FETCH_MORE_THROTTLING_WAIT_TIME_IN_MILLISECONDS_TO_AVOID_REACT_FREEZE } from '@/object-record/record-board/constants/RecordBoardFetchMoreThrottlingWaitTimeInMillisecondsToAvoidReactFreeze';
+import { RECORD_BOARD_QUERY_PAGE_SIZE } from '@/object-record/record-board/constants/RecordBoardQueryPageSize';
 
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
 import { recordBoardIsFetchingMoreComponentState } from '@/object-record/record-board/states/recordBoardIsFetchingMoreComponentState';
@@ -83,7 +84,7 @@ export const useTriggerRecordBoardFetchMore = () => {
           recordBoardCurrentGroupByQueryOffsetCallbackState,
         );
 
-        const newOffset = currentOffset + 10;
+        const newOffset = currentOffset + RECORD_BOARD_QUERY_PAGE_SIZE;
 
         const recordGroupValuesThatShouldBeFetched = recordGroupDefinitions
           .filter((recordGroupDefinition) => {
@@ -187,7 +188,7 @@ export const useTriggerRecordBoardFetchMore = () => {
 
           upsertRecordsInStore(newRecords);
 
-          if (newRecords.length < 10) {
+          if (newRecords.length < RECORD_BOARD_QUERY_PAGE_SIZE) {
             set(
               recordBoardShouldFetchMoreInColumnFamilyCallbackState(
                 recordGroupDefinition.id,

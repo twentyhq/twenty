@@ -1,4 +1,5 @@
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
+import { RECORD_BOARD_QUERY_PAGE_SIZE } from '@/object-record/record-board/constants/RecordBoardQueryPageSize';
 import { useSetRecordIdsForColumn } from '@/object-record/record-board/hooks/useSetRecordIdsForColumn';
 import { lastRecordBoardQueryIdentifierComponentState } from '@/object-record/record-board/states/lastRecordBoardQueryIdentifierComponentState';
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
@@ -142,7 +143,7 @@ export const useTriggerRecordBoardInitialQuery = () => {
 
           setRecordIdsForColumn(recordGroupDefinition.id, records);
 
-          if (records.length < 10) {
+          if (records.length < RECORD_BOARD_QUERY_PAGE_SIZE) {
             set(
               recordBoardShouldFetchMoreInColumnFamilyCallbackState(
                 recordGroupDefinition.id,

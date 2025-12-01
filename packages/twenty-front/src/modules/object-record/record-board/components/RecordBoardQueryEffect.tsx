@@ -84,5 +84,5 @@ export const RecordBoardQueryEffect = () => {
     triggerRecordBoardFetchMore,
   ]);
 
-  return <></>;
+  return null;
 };
