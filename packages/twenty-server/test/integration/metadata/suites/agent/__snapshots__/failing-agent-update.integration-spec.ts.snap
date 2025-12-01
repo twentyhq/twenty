@@ -12,6 +12,66 @@ exports[`Agent update should fail should fail when updating a non-existent agent
 }
 `;
 
+exports[`Agent update should fail when updating label to one that already exists 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "AGENT_ALREADY_EXISTS",
+              "message": "Agent with name "existingAgentForDuplicateTest" already exists",
+              "userFriendlyMessage": "An agent with this name already exists",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "status": "fail",
+          "type": "update_agent",
+        },
+      ],
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [],
+      "index": [],
+      "objectMetadata": [],
+      "role": [],
+      "roleTarget": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidAgent": 0,
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while updating agent",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Agent update should fail when updating responseFormat type to json without schema 1`] = `
 {
   "extensions": {
