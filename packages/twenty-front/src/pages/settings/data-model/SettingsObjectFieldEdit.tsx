@@ -277,6 +277,7 @@ export const SettingsObjectFieldEdit = () => {
       enqueueSuccessSnackBar({
         message: t`Field deleted`,
       });
+      closeModal(DELETE_FIELD_MODAL_ID);
       navigateSettings(SettingsPath.ObjectDetail, {
         objectNamePlural,
       });
@@ -284,6 +285,7 @@ export const SettingsObjectFieldEdit = () => {
     }
 
     setIsDeleting(false);
+    closeModal(DELETE_FIELD_MODAL_ID);
   };
 
   return (

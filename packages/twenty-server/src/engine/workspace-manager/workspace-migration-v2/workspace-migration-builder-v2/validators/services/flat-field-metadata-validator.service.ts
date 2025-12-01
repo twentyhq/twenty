@@ -247,19 +247,6 @@ export class FlatFieldMetadataValidatorService {
       });
     }
 
-    if (
-      flatFieldMetadataToDelete.isActive &&
-      !flatFieldMetadataToDelete.isCustom &&
-      !relationTargetObjectMetadataHasBeenDeleted &&
-      !parentObjectMetadataHasBeenDeleted
-    ) {
-      validationResult.errors.push({
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: "Active fields can't be deleted",
-        userFriendlyMessage: msg`Active fields cannot be deleted`,
-      });
-    }
-
     return validationResult;
   }
 
