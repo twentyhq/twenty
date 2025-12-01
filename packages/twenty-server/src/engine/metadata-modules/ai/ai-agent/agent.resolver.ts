@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -11,6 +11,7 @@ import {
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 
 import { AgentService } from './agent.service';
 
@@ -24,6 +25,7 @@ import { UpdateAgentInput } from './dtos/update-agent.input';
   FeatureFlagGuard,
   SettingsPermissionGuard(PermissionFlagType.AI),
 )
+@UseInterceptors(WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor)
 @Resolver()
 export class AgentResolver {
   constructor(private readonly agentService: AgentService) {}

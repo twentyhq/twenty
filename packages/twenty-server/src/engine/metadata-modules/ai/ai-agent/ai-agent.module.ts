@@ -14,6 +14,7 @@ import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-bi
 import { AiChatRouterModule } from 'src/engine/metadata-modules/ai/ai-chat-router/ai-chat-router.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { AiToolsModule } from 'src/engine/metadata-modules/ai/ai-tools/ai-tools.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -26,6 +27,8 @@ import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflo
 import { AgentResolver } from './agent.resolver';
 import { AgentService } from './agent.service';
 
+import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
+import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 import { AgentEntity } from './entities/agent.entity';
 import { AgentActorContextService } from './services/agent-actor-context.service';
 import { AgentExecutionService } from './services/agent-execution.service';
@@ -55,6 +58,8 @@ import { AgentToolGeneratorService } from './services/agent-tool-generator.servi
     UserWorkspaceModule,
     UserRoleModule,
     WorkspaceCacheModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    WorkspaceMigrationV2Module,
   ],
   providers: [
     AgentResolver,
@@ -65,6 +70,7 @@ import { AgentToolGeneratorService } from './services/agent-tool-generator.servi
     AgentToolGeneratorService,
     AgentTitleGenerationService,
     AgentActorContextService,
+    WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
   ],
   exports: [
     AgentService,

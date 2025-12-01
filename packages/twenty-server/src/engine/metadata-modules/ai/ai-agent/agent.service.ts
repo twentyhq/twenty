@@ -3,12 +3,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
 import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/update-agent.input';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
@@ -22,6 +28,8 @@ export class AgentService {
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     private readonly agentRoleService: AiAgentRoleService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {}
 
   async findManyAgents(workspaceId: string) {
@@ -248,10 +256,45 @@ export class AgentService {
   }
 
   async deleteOneAgent(id: string, workspaceId: string) {
-    const agent = await this.findOneAgent(workspaceId, { id });
+    const { flatAgentMaps: existingFlatAgentMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatAgentMaps'],
+        },
+      );
 
-    await this.agentRepository.softDelete({ id: agent.id });
+    const agentToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: existingFlatAgentMaps,
+    });
 
-    return agent;
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          fromToAllFlatEntityMaps: {
+            flatAgentMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatAgentMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [agentToDelete],
+              flatEntityToUpdate: [],
+            }),
+          },
+          buildOptions: {
+            isSystemBuild: false,
+            inferDeletionFromMissingEntities: {
+              agent: true,
+            },
+          },
+          workspaceId,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while deleting agent',
+      );
+    }
   }
 }
