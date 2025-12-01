@@ -157,9 +157,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   };
 
   return {
-    handleInputChange: (value: string) => setAgentChatInput(value),
     messages,
-    input: agentChatInput,
     handleSendMessage,
     isLoading,
     isStreaming,
