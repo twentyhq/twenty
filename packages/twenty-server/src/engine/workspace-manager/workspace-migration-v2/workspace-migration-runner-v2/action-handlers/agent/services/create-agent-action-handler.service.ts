@@ -45,7 +45,7 @@ export class CreateAgentActionHandlerService extends WorkspaceMigrationRunnerAct
     const agentRepository =
       queryRunner.manager.getRepository<AgentEntity>(AgentEntity);
 
-    await agentRepository.insert({
+    await agentRepository.save({
       ...flatEntity,
       workspaceId,
     });
@@ -57,4 +57,3 @@ export class CreateAgentActionHandlerService extends WorkspaceMigrationRunnerAct
     return;
   }
 }
-
