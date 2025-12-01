@@ -1,6 +1,7 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { CommandMenuItemNumberInput } from '@/command-menu/components/CommandMenuItemNumberInput';
+import { CommandMenuItemTextInput } from '@/command-menu/components/CommandMenuItemTextInput';
 import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
@@ -20,6 +21,7 @@ type ChartSettingItemProps = {
   ) => boolean | string | undefined;
   onToggleChange: () => void;
   onInputChange: (value: number | null) => void;
+  onTextInputChange: (value: string) => void;
   onDropdownOpen: () => void;
   onFilterClick: () => void;
 };
@@ -30,6 +32,7 @@ export const ChartSettingItem = ({
   getChartSettingsValues,
   onToggleChange,
   onInputChange,
+  onTextInputChange,
   onDropdownOpen,
   onFilterClick,
 }: ChartSettingItemProps) => {
@@ -51,7 +54,7 @@ export const ChartSettingItem = ({
     );
   }
 
-  if (isDefined(item.isInput)) {
+  if (isDefined(item.isNumberInput)) {
     const settingValue = getChartSettingsValues(item.id);
     const stringValue = isString(settingValue) ? settingValue : '';
 
@@ -75,6 +78,30 @@ export const ChartSettingItem = ({
                   configuration,
                 )
               }
+              placeholder={
+                item.inputPlaceholder ? t(item.inputPlaceholder) : undefined
+              }
+            />
+          }
+        />
+      </SelectableListItem>
+    );
+  }
+
+  if (isDefined(item.isTextInput)) {
+    const settingValue = getChartSettingsValues(item.id);
+    const stringValue = isString(settingValue) ? settingValue : '';
+
+    return (
+      <SelectableListItem key={item.id} itemId={item.id}>
+        <CommandMenuItem
+          id={item.id}
+          label={t(item.label)}
+          Icon={item.Icon}
+          RightComponent={
+            <CommandMenuItemTextInput
+              value={stringValue}
+              onChange={onTextInputChange}
               placeholder={
                 item.inputPlaceholder ? t(item.inputPlaceholder) : undefined
               }

@@ -11,6 +11,7 @@ import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/u
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateChartSettingInput } from '@/command-menu/pages/page-layout/hooks/useUpdateChartSettingInput';
+import { useUpdateChartSettingTextInput } from '@/command-menu/pages/page-layout/hooks/useUpdateChartSettingTextInput';
 import { useUpdateChartSettingToggle } from '@/command-menu/pages/page-layout/hooks/useUpdateChartSettingToggle';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useGetConfigToUpdateAfterGraphTypeChange } from '@/command-menu/pages/page-layout/hooks/useUpdateGraphTypeConfig';
@@ -67,6 +68,9 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   });
 
   const { updateChartSettingInput } = useUpdateChartSettingInput(pageLayoutId);
+
+  const { updateChartSettingTextInput } =
+    useUpdateChartSettingTextInput(pageLayoutId);
 
   const { getConfigToUpdateAfterGraphTypeChange } =
     useGetConfigToUpdateAfterGraphTypeChange({
@@ -188,6 +192,10 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                   updateChartSettingInput(item.id, value);
                 };
 
+                const handleItemTextInputChange = (value: string) => {
+                  updateChartSettingTextInput(item.id, value);
+                };
+
                 const handleItemDropdownOpen = () => {
                   openDropdown({
                     dropdownComponentInstanceIdFromProps: item.id,
@@ -208,6 +216,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
                     getChartSettingsValues={getChartSettingsValues}
                     onToggleChange={handleItemToggleChange}
                     onInputChange={handleItemInputChange}
+                    onTextInputChange={handleItemTextInputChange}
                     onDropdownOpen={handleItemDropdownOpen}
                     onFilterClick={handleFilterClick}
                   />

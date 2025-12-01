@@ -73,4 +73,14 @@ export class AggregateChartConfigurationDTO {
   @Min(0)
   @Max(7)
   firstDayOfTheWeek?: number;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  prefix?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  suffix?: string;
 }
