@@ -203,7 +203,7 @@ export const useChartSettingsValues = ({
         return configuration.displayDataLabel ?? undefined;
       case CHART_CONFIGURATION_SETTING_IDS.CENTER_METRIC:
         return isPieChart
-          ? (configuration.showCenterMetric ?? undefined)
+          ? (configuration.showCenterMetric ?? true)
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.STACKED_BARS:
         return configuration.__typename === 'BarChartConfiguration'
