@@ -10,8 +10,8 @@ import {
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 jest.mock(
   'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate',
@@ -33,7 +33,7 @@ describe('FeatureFlagService', () => {
 
   const mockWorkspaceCacheService = {
     getOrRecompute: jest.fn(),
-    invalidate: jest.fn(),
+    invalidateAndRecompute: jest.fn(),
   };
 
   const mockWorkspacePermissionsCacheService = {
@@ -173,7 +173,9 @@ describe('FeatureFlagService', () => {
       const keys = [FeatureFlagKey.IS_AI_ENABLED];
 
       mockFeatureFlagRepository.upsert.mockResolvedValue({});
-      mockWorkspaceCacheService.invalidate.mockResolvedValue(undefined);
+      mockWorkspaceCacheService.invalidateAndRecompute.mockResolvedValue(
+        undefined,
+      );
 
       // Act
       await service.enableFeatureFlags(keys, workspaceId);
@@ -186,10 +188,9 @@ describe('FeatureFlagService', () => {
           skipUpdateIfNoValuesChanged: true,
         },
       );
-      expect(mockWorkspaceCacheService.invalidate).toHaveBeenCalledWith(
-        workspaceId,
-        ['featureFlagsMap'],
-      );
+      expect(
+        mockWorkspaceCacheService.invalidateAndRecompute,
+      ).toHaveBeenCalledWith(workspaceId, ['featureFlagsMap']);
     });
   });
 
@@ -204,7 +205,9 @@ describe('FeatureFlagService', () => {
       };
 
       mockFeatureFlagRepository.save.mockResolvedValue(mockFeatureFlag);
-      mockWorkspaceCacheService.invalidate.mockResolvedValue(undefined);
+      mockWorkspaceCacheService.invalidateAndRecompute.mockResolvedValue(
+        undefined,
+      );
 
       (
         featureFlagValidator.assertIsFeatureFlagKey as jest.Mock
@@ -224,10 +227,9 @@ describe('FeatureFlagService', () => {
         value,
         workspaceId,
       });
-      expect(mockWorkspaceCacheService.invalidate).toHaveBeenCalledWith(
-        workspaceId,
-        ['featureFlagsMap'],
-      );
+      expect(
+        mockWorkspaceCacheService.invalidateAndRecompute,
+      ).toHaveBeenCalledWith(workspaceId, ['featureFlagsMap']);
     });
 
     it('should throw an exception when feature flag key is invalid', async () => {
