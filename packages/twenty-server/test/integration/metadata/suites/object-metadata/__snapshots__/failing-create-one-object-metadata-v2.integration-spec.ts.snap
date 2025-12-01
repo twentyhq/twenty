@@ -5314,7 +5314,7 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
           "errors": [
             {
               "code": "INVALID_OBJECT_INPUT",
-              "message": "The name is not available",
+              "message": "This name is reserved. Use a different name or the system will add \\"Custom\\" suffix.",
               "value": "users",
             },
           ],
@@ -8471,8 +8471,8 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "The name is not available",
-              "userFriendlyMessage": "The name is not available",
+              "message": "This name is reserved. Use a different name or the system will add \\"Custom\\" suffix.",
+              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add \\"Custom\\" suffix.",
               "value": "user",
             },
             {
@@ -8493,8 +8493,8 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "The name is not available",
-              "userFriendlyMessage": "The name is not available",
+              "message": "This name is reserved. Use a different name or the system will add \\"Custom\\" suffix.",
+              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add \\"Custom\\" suffix.",
               "value": "user",
             },
             {
@@ -8515,8 +8515,8 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "The name is not available",
-              "userFriendlyMessage": "The name is not available",
+              "message": "This name is reserved. Use a different name or the system will add \\"Custom\\" suffix.",
+              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add \\"Custom\\" suffix.",
               "value": "user",
             },
             {
@@ -8537,8 +8537,8 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "The name is not available",
-              "userFriendlyMessage": "The name is not available",
+              "message": "This name is reserved. Use a different name or the system will add \\"Custom\\" suffix.",
+              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add \\"Custom\\" suffix.",
               "value": "user",
             },
             {
@@ -8559,8 +8559,8 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "The name is not available",
-              "userFriendlyMessage": "The name is not available",
+              "message": "This name is reserved. Use a different name or the system will add \\"Custom\\" suffix.",
+              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add \\"Custom\\" suffix.",
               "value": "user",
             },
             {
@@ -8605,7 +8605,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "errors": [
             {
               "code": "INVALID_OBJECT_INPUT",
-              "message": "The name is not available",
+              "message": "This name is reserved. Use a different name or the system will add \\"Custom\\" suffix.",
               "value": "user",
             },
           ],
