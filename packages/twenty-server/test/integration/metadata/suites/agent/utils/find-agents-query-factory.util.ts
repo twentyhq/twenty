@@ -24,8 +24,8 @@ export const findAgentsQueryFactory = ({
   gqlFields = DEFAULT_AGENT_GQL_FIELDS,
 }: PerformMetadataQueryParams<void>) => ({
   query: gql`
-    query FindAgents {
-      agents {
+    query findManyAgents {
+      findManyAgents {
         ${gqlFields}
       }
     }

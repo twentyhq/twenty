@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
+import { findAgents } from 'test/integration/metadata/suites/agent/utils/find-agents.util';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
@@ -38,10 +39,30 @@ describe('Agent deletion should fail', () => {
         },
       });
 
-      expect(errors).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny(errors),
-      );
+      expectOneNotInternalServerErrorSnapshot({ errors });
     },
   );
-});
 
+  it('should fail when attempting to delete a standard agent', async () => {
+    const { data } = await findAgents({
+      expectToFail: false,
+      input: undefined,
+      gqlFields: 'id name isCustom',
+    });
+
+    const dashboardBuilderAgent = data.findManyAgents.find(
+      (agent) => agent.name === 'dashboard-builder' && agent.isCustom === false,
+    );
+
+    expect(dashboardBuilderAgent).toBeDefined();
+
+    const { errors } = await deleteOneAgent({
+      expectToFail: true,
+      input: {
+        id: dashboardBuilderAgent!.id,
+      },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+});

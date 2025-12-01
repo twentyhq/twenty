@@ -11,8 +11,8 @@ export const findAgents = async ({
   gqlFields,
   expectToFail = false,
   token,
-}: PerformMetadataQueryParams<void>): CommonResponseBody<{
-  agents: AgentDTO[];
+}: PerformMetadataQueryParams<undefined>): CommonResponseBody<{
+  findManyAgents: AgentDTO[];
 }> => {
   const graphqlOperation = findAgentsQueryFactory({
     gqlFields,

@@ -1,0 +1,74 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Agent deletion should fail should fail when attempting to delete a standard agent 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "AGENT_IS_STANDARD",
+              "message": "Cannot delete standard agent",
+              "userFriendlyMessage": "Cannot delete standard agent",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "dashboard-builder",
+          },
+          "status": "fail",
+          "type": "delete_agent",
+        },
+      ],
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [],
+      "index": [],
+      "objectMetadata": [],
+      "role": [],
+      "roleTarget": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidAgent": 0,
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while deleting agent",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Agent deletion should fail when deleting a non-existent agent 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "AGENT_NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Agent edf22158-d88e-48f9-b171-a9184524c3e8 not found",
+  "name": "NotFoundError",
+}
+`;
