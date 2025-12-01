@@ -256,6 +256,14 @@ export const useChartSettingsValues = ({
         return isBarOrLineChart || isPieChart
           ? (configuration.displayLegend ?? true)
           : true;
+      case CHART_CONFIGURATION_SETTING_IDS.PREFIX:
+        return configuration.__typename === 'AggregateChartConfiguration'
+          ? (configuration.prefix ?? '')
+          : '';
+      case CHART_CONFIGURATION_SETTING_IDS.SUFFIX:
+        return configuration.__typename === 'AggregateChartConfiguration'
+          ? (configuration.suffix ?? '')
+          : '';
       default:
         return '';
     }

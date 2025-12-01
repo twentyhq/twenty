@@ -9,6 +9,6 @@ export const RANGE_MIN_SETTING: ChartSettingsItem = {
   Icon: IconMathMin,
   label: CHART_CONFIGURATION_SETTING_LABELS.MIN_RANGE,
   id: CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE,
-  isInput: true,
+  isNumberInput: true,
   inputPlaceholder: msg`Min`,
 };

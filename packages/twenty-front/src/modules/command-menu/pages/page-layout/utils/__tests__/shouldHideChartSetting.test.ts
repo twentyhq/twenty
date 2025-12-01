@@ -13,7 +13,7 @@ describe('shouldHideChartSetting', () => {
     label: msg`Data Labels`,
     Icon: IconChartBar,
     isBoolean: true,
-    isInput: false,
+    isNumberInput: false,
   };
 
   const mockItemDependingOnSource: ChartSettingsItem = {
@@ -21,7 +21,7 @@ describe('shouldHideChartSetting', () => {
     label: msg`X Axis Data`,
     Icon: IconChartBar,
     isBoolean: false,
-    isInput: false,
+    isNumberInput: false,
     dependsOn: [CHART_CONFIGURATION_SETTING_IDS.SOURCE],
   };
 
@@ -30,7 +30,7 @@ describe('shouldHideChartSetting', () => {
     label: msg`Sort By Group`,
     Icon: IconChartBar,
     isBoolean: false,
-    isInput: false,
+    isNumberInput: false,
     dependsOn: [CHART_CONFIGURATION_SETTING_IDS.GROUP_BY],
   };
 
@@ -39,7 +39,7 @@ describe('shouldHideChartSetting', () => {
     label: msg`X Axis Data`,
     Icon: IconChartBar,
     isBoolean: false,
-    isInput: false,
+    isNumberInput: false,
     dependsOn: [
       CHART_CONFIGURATION_SETTING_IDS.SOURCE,
       CHART_CONFIGURATION_SETTING_IDS.GROUP_BY,
@@ -151,7 +151,7 @@ describe('shouldHideChartSetting', () => {
         label: msg`Data Labels`,
         Icon: IconChartBar,
         isBoolean: true,
-        isInput: false,
+        isNumberInput: false,
         dependsOn: undefined,
       };
 
@@ -170,7 +170,7 @@ describe('shouldHideChartSetting', () => {
         label: msg`Data Labels`,
         Icon: IconChartBar,
         isBoolean: true,
-        isInput: false,
+        isNumberInput: false,
         dependsOn: [],
       };
 
@@ -186,7 +186,7 @@ describe('shouldHideChartSetting', () => {
       label: msg`Date Granularity X`,
       Icon: IconChartBar,
       isBoolean: false,
-      isInput: false,
+      isNumberInput: false,
     };
 
     const mockDateGranularityYItem: ChartSettingsItem = {
@@ -194,7 +194,7 @@ describe('shouldHideChartSetting', () => {
       label: msg`Date Granularity Y`,
       Icon: IconChartBar,
       isBoolean: false,
-      isInput: false,
+      isNumberInput: false,
     };
 
     const mockDateGranularityItem: ChartSettingsItem = {
@@ -202,7 +202,7 @@ describe('shouldHideChartSetting', () => {
       label: msg`Date Granularity`,
       Icon: IconChartBar,
       isBoolean: false,
-      isInput: false,
+      isNumberInput: false,
     };
 
     const mockObjectMetadataItem: ObjectMetadataItem = {

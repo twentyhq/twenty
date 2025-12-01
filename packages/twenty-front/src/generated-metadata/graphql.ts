@@ -151,6 +151,8 @@ export type AggregateChartConfiguration = {
   format?: Maybe<Scalars['String']>;
   graphType: GraphType;
   label?: Maybe<Scalars['String']>;
+  prefix?: Maybe<Scalars['String']>;
+  suffix?: Maybe<Scalars['String']>;
   timezone?: Maybe<Scalars['String']>;
 };
 
