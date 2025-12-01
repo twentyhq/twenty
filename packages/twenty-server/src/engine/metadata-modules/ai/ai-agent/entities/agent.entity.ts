@@ -43,10 +43,10 @@ export class AgentEntity
   @Column({ nullable: false })
   label: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'text' })
   description: string | null;
 
   @Column({ nullable: false, type: 'text' })
