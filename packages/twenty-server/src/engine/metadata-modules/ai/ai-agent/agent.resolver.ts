@@ -11,22 +11,26 @@ import {
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
-import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 
 import { AgentService } from './agent.service';
 
 import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
+import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 import { AgentIdInput } from './dtos/agent-id.input';
 import { AgentDTO } from './dtos/agent.dto';
 import { CreateAgentInput } from './dtos/create-agent.input';
 import { UpdateAgentInput } from './dtos/update-agent.input';
+import { AgentGraphqlApiExceptionInterceptor } from './interceptors/agent-graphql-api-exception.interceptor';
 
 @UseGuards(
   WorkspaceAuthGuard,
   FeatureFlagGuard,
   SettingsPermissionGuard(PermissionFlagType.AI),
 )
-@UseInterceptors(WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor)
+@UseInterceptors(
+  WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
+  AgentGraphqlApiExceptionInterceptor,
+)
 @Resolver()
 export class AgentResolver {
   constructor(private readonly agentService: AgentService) {}

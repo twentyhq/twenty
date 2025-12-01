@@ -28,6 +28,7 @@ import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflo
 import { AgentResolver } from './agent.resolver';
 import { AgentService } from './agent.service';
 
+import { AgentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/ai-agent/interceptors/agent-graphql-api-exception.interceptor';
 import { FlatAgentModule } from 'src/engine/metadata-modules/flat-agent/flat-agent.module';
 import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
@@ -75,6 +76,7 @@ import { AgentToolGeneratorService } from './services/agent-tool-generator.servi
     AgentTitleGenerationService,
     AgentActorContextService,
     WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
+    AgentGraphqlApiExceptionInterceptor
   ],
   exports: [
     AgentService,
