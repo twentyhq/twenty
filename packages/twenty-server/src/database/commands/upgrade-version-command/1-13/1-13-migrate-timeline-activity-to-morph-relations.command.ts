@@ -4,19 +4,18 @@ import { Command } from 'nest-commander';
 import { capitalize } from 'twenty-shared/utils';
 import { DataSource, Repository } from 'typeorm';
 
-import {
-  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  type RunOnWorkspaceArgs,
-} from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 @Command({
-  name: 'upgrade:1-11:migrate-timeline-activity-to-morph-relations',
+  name: 'upgrade:1-13:migrate-timeline-activity-to-morph-relations',
   description:
     'Migrate timeline activity relations to morph relation fields and set feature flag',
 })
@@ -30,8 +29,9 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
+    protected readonly dataSourceService: DataSourceService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager);
+    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
 
   override async runOnWorkspace({
