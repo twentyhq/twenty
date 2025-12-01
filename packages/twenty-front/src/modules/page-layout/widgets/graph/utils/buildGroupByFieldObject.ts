@@ -20,11 +20,13 @@ export const buildGroupByFieldObject = ({
   subFieldName,
   dateGranularity,
   firstDayOfTheWeek,
+  isNestedDateField,
 }: {
   field: FieldMetadataItem;
   subFieldName?: string | null;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
   firstDayOfTheWeek?: number | null;
+  isNestedDateField?: boolean;
 }): GroupByFieldObject => {
   const isRelation = isFieldRelation(field) || isFieldMorphRelation(field);
   const isComposite = isCompositeFieldType(field.type);
@@ -38,6 +40,16 @@ export const buildGroupByFieldObject = ({
     const parts = subFieldName.split('.');
     const nestedFieldName = parts[0];
     const nestedSubFieldName = parts[1];
+
+    if (isNestedDateField === true || isDefined(dateGranularity)) {
+      return {
+        [field.name]: {
+          [nestedFieldName]: {
+            granularity: dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY,
+          },
+        },
+      };
+    }
 
     if (isDefined(nestedSubFieldName)) {
       return {

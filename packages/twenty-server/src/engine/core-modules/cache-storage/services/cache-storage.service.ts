@@ -28,6 +28,22 @@ export class CacheStorageService {
     return this.cache.del(this.getKey(key));
   }
 
+  async mdel(keys: string[]): Promise<void> {
+    if (keys.length === 0) {
+      return;
+    }
+
+    if (this.isRedisCache()) {
+      const prefixedKeys = keys.map((k) => this.getKey(k));
+
+      await (this.cache as RedisCache).store.client.del(prefixedKeys);
+
+      return;
+    }
+
+    await Promise.all(keys.map((k) => this.del(k)));
+  }
+
   async mget<T = unknown>(keys: string[]): Promise<(T | undefined)[]> {
     if (this.isRedisCache()) {
       const prefixedKeys = keys.map((k) => this.getKey(k));

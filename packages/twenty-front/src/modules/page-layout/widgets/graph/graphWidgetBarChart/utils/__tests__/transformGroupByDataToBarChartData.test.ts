@@ -1,0 +1,97 @@
+import { transformGroupByDataToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformGroupByDataToBarChartData';
+import {
+  FieldMetadataType,
+  ObjectRecordGroupByDateGranularity,
+} from 'twenty-shared/types';
+import { GraphType } from '~/generated-metadata/graphql';
+import { AxisNameDisplay } from '~/generated/graphql';
+
+jest.mock(
+  '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillDateGapsInBarChartData',
+  () => ({
+    fillDateGapsInBarChartData: jest.fn(({ data }) => ({
+      data,
+      wasTruncated: true,
+    })),
+  }),
+);
+
+jest.mock(
+  '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformOneDimensionalGroupByToBarChartData',
+  () => ({
+    transformOneDimensionalGroupByToBarChartData: jest.fn(() => ({
+      data: [],
+      indexBy: 'x',
+      keys: ['value'],
+      series: [],
+      hasTooManyGroups: false,
+      formattedToRawLookup: new Map(),
+    })),
+  }),
+);
+
+jest.mock('@/page-layout/widgets/graph/utils/filterGroupByResults', () => ({
+  filterGroupByResults: jest.fn((args) => args.rawResults),
+}));
+
+const { fillDateGapsInBarChartData } = jest.requireMock(
+  '@/page-layout/widgets/graph/graphWidgetBarChart/utils/fillDateGapsInBarChartData',
+) as { fillDateGapsInBarChartData: jest.Mock };
+
+describe('transformGroupByDataToBarChartData', () => {
+  it('fills date gaps when grouping by a relation date subfield with granularity', () => {
+    const groupByField = {
+      id: 'group-by-field',
+      name: 'company',
+      type: FieldMetadataType.RELATION,
+    };
+
+    const aggregateField = {
+      id: 'aggregate-field',
+      name: 'count',
+      type: FieldMetadataType.NUMBER,
+    };
+
+    const objectMetadataItem = {
+      id: 'obj-1',
+      nameSingular: 'company',
+      namePlural: 'companies',
+      fields: [groupByField, aggregateField],
+    } as any;
+
+    const configuration = {
+      __typename: 'BarChartConfiguration',
+      aggregateFieldMetadataId: aggregateField.id,
+      aggregateOperation: 'COUNT',
+      graphType: GraphType.VERTICAL_BAR,
+      primaryAxisGroupByFieldMetadataId: groupByField.id,
+      primaryAxisGroupBySubFieldName: 'createdAt',
+      primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
+      axisNameDisplay: AxisNameDisplay.BOTH,
+    } as any;
+
+    const groupByData = {
+      companiesGroupBy: [
+        { groupByDimensionValues: ['2024-01-01T00:00:00.000Z'], COUNT: 1 },
+      ],
+    };
+
+    fillDateGapsInBarChartData.mockClear();
+
+    const result = transformGroupByDataToBarChartData({
+      groupByData,
+      objectMetadataItem,
+      configuration,
+      aggregateOperation: 'COUNT',
+    });
+
+    expect(fillDateGapsInBarChartData).toHaveBeenCalledTimes(1);
+    expect(fillDateGapsInBarChartData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        dateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
+        hasSecondDimension: false,
+      }),
+    );
+    expect(result.hasTooManyGroups).toBe(true);
+  });
+});

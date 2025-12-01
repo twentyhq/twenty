@@ -17,6 +17,7 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
 
 @Global()
@@ -35,6 +36,7 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
     MessagingModule,
     PermissionsModule,
     ToolModule,
+    WorkspaceCacheModule,
   ],
   providers: [ToolService, ToolAdapterService, SearchArticlesTool],
   exports: [ToolService, ToolAdapterService, SearchArticlesTool],

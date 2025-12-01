@@ -1,9 +1,8 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 
 export const transformEmailsValue = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
-  isNullEquivalenceEnabled: boolean = false,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any => {
   if (!value) {
@@ -13,9 +12,7 @@ export const transformEmailsValue = (
   let additionalEmails: string | null = value?.additionalEmails;
   const primaryEmail = value?.primaryEmail
     ? value.primaryEmail.toLowerCase()
-    : isNullEquivalenceEnabled
-      ? null
-      : '';
+    : null;
 
   if (additionalEmails) {
     try {
@@ -25,16 +22,9 @@ export const transformEmailsValue = (
           : additionalEmails
       ) as string[];
 
-      additionalEmails = JSON.stringify(
-        emailArray.map((email) => email.toLowerCase()),
-      );
-
-      if (isNullEquivalenceEnabled) {
-        additionalEmails =
-          Array.isArray(emailArray) && emailArray.length === 0
-            ? null
-            : additionalEmails;
-      }
+      additionalEmails = isNonEmptyArray(emailArray)
+        ? JSON.stringify(emailArray.map((email) => email.toLowerCase()))
+        : null;
     } catch {
       /* empty */
     }

@@ -17,6 +17,7 @@ export type ChartSettingsItem = {
   dependsOn?: CHART_CONFIGURATION_SETTING_IDS[];
   DropdownContent?: ComponentType;
   dropdownWidth?: number;
-  isInput?: boolean;
+  isNumberInput?: boolean;
+  isTextInput?: boolean;
   inputPlaceholder?: MessageDescriptor;
 };

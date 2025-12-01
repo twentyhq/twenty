@@ -2,11 +2,8 @@ import { isNullEquivalentArrayFieldValue } from 'src/engine/api/common/common-ar
 
 export const transformArrayField = (
   value: string | string[] | null,
-  isNullEquivalenceEnabled: boolean = false,
 ): string[] | null => {
   if (typeof value === 'string') return [value];
 
-  return isNullEquivalenceEnabled && isNullEquivalentArrayFieldValue(value)
-    ? null
-    : value;
+  return isNullEquivalentArrayFieldValue(value) ? null : value;
 };

@@ -120,6 +120,8 @@ export {
   IconCalendarTime,
   IconCalendarWeek,
   IconCalendarX,
+  IconCaretLeft,
+  IconCaretRight,
   IconChartBar,
   IconChartCandle,
   IconChartDots3,
