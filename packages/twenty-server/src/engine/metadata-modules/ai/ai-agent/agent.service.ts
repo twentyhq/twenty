@@ -19,9 +19,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
 import { WorkspaceFlatRoleTargetByAgentIdService } from 'src/engine/metadata-modules/flat-agent/services/workspace-flat-role-target-by-agent-id.service';
-import {
-  FlatAgentWithRoleId
-} from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { AgentEntity } from './entities/agent.entity';
 
@@ -315,10 +313,17 @@ export class AgentService {
         },
       );
 
-    const agentToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow({
+    const agentToDelete = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: id,
       flatEntityMaps: existingFlatAgentMaps,
     });
+
+    if (!isDefined(agentToDelete)) {
+      throw new AgentException(
+        `Agent ${id} not found`,
+        AgentExceptionCode.AGENT_NOT_FOUND,
+      );
+    }
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
