@@ -15094,69 +15094,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@oxc-parser/binding-darwin-arm64@npm:0.36.0":
-  version: 0.36.0
-  resolution: "@oxc-parser/binding-darwin-arm64@npm:0.36.0"
-  conditions: os=darwin & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@oxc-parser/binding-darwin-x64@npm:0.36.0":
-  version: 0.36.0
-  resolution: "@oxc-parser/binding-darwin-x64@npm:0.36.0"
-  conditions: os=darwin & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@oxc-parser/binding-linux-arm64-gnu@npm:0.36.0":
-  version: 0.36.0
-  resolution: "@oxc-parser/binding-linux-arm64-gnu@npm:0.36.0"
-  conditions: os=linux & cpu=arm64 & libc=glibc
-  languageName: node
-  linkType: hard
-
-"@oxc-parser/binding-linux-arm64-musl@npm:0.36.0":
-  version: 0.36.0
-  resolution: "@oxc-parser/binding-linux-arm64-musl@npm:0.36.0"
-  conditions: os=linux & cpu=arm64 & libc=musl
-  languageName: node
-  linkType: hard
-
-"@oxc-parser/binding-linux-x64-gnu@npm:0.36.0":
-  version: 0.36.0
-  resolution: "@oxc-parser/binding-linux-x64-gnu@npm:0.36.0"
-  conditions: os=linux & cpu=x64 & libc=glibc
-  languageName: node
-  linkType: hard
-
-"@oxc-parser/binding-linux-x64-musl@npm:0.36.0":
-  version: 0.36.0
-  resolution: "@oxc-parser/binding-linux-x64-musl@npm:0.36.0"
-  conditions: os=linux & cpu=x64 & libc=musl
-  languageName: node
-  linkType: hard
-
-"@oxc-parser/binding-win32-arm64-msvc@npm:0.36.0":
-  version: 0.36.0
-  resolution: "@oxc-parser/binding-win32-arm64-msvc@npm:0.36.0"
-  conditions: os=win32 & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"@oxc-parser/binding-win32-x64-msvc@npm:0.36.0":
-  version: 0.36.0
-  resolution: "@oxc-parser/binding-win32-x64-msvc@npm:0.36.0"
-  conditions: os=win32 & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@oxc-project/types@npm:^0.36.0":
-  version: 0.36.0
-  resolution: "@oxc-project/types@npm:0.36.0"
-  checksum: 10c0/5fc5fd2af25da93e574ab69be819ba691fc881ed27a532867ae133100b82713535c6ece6ff8eeaf7f2bf0f7b3ccd89206902e4cf240b75aa877334e2d628cf24
-  languageName: node
-  linkType: hard
-
 "@paralleldrive/cuid2@npm:^2.2.2":
   version: 2.3.1
   resolution: "@paralleldrive/cuid2@npm:2.3.1"
@@ -42733,7 +42670,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"magic-string@npm:0.30.17, magic-string@npm:^0.30.0, magic-string@npm:^0.30.11, magic-string@npm:^0.30.17, magic-string@npm:^0.30.8":
+"magic-string@npm:0.30.17, magic-string@npm:^0.30.0, magic-string@npm:^0.30.11, magic-string@npm:^0.30.8":
   version: 0.30.17
   resolution: "magic-string@npm:0.30.17"
   dependencies:
@@ -44854,15 +44791,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^10.0.1":
-  version: 10.0.1
-  resolution: "minimatch@npm:10.0.1"
-  dependencies:
-    brace-expansion: "npm:^2.0.1"
-  checksum: 10c0/e6c29a81fe83e1877ad51348306be2e8aeca18c88fdee7a99df44322314279e15799e41d7cb274e4e8bb0b451a3bc622d6182e157dfa1717d6cda75e9cd8cd5d
-  languageName: node
-  linkType: hard
-
 "minimatch@npm:^10.0.3, minimatch@npm:^10.1.1":
   version: 10.1.1
   resolution: "minimatch@npm:10.1.1"
@@ -46965,40 +46893,6 @@ __metadata:
     object-keys: "npm:^1.1.1"
     safe-push-apply: "npm:^1.0.0"
   checksum: 10c0/6dfeb3455bff92ec3f16a982d4e3e65676345f6902d9f5ded1d8265a6318d0200ce461956d6d1c70053c7fe9f9fe65e552faac03f8140d37ef0fdd108e67013a
-  languageName: node
-  linkType: hard
-
-"oxc-parser@npm:^0.36.0":
-  version: 0.36.0
-  resolution: "oxc-parser@npm:0.36.0"
-  dependencies:
-    "@oxc-parser/binding-darwin-arm64": "npm:0.36.0"
-    "@oxc-parser/binding-darwin-x64": "npm:0.36.0"
-    "@oxc-parser/binding-linux-arm64-gnu": "npm:0.36.0"
-    "@oxc-parser/binding-linux-arm64-musl": "npm:0.36.0"
-    "@oxc-parser/binding-linux-x64-gnu": "npm:0.36.0"
-    "@oxc-parser/binding-linux-x64-musl": "npm:0.36.0"
-    "@oxc-parser/binding-win32-arm64-msvc": "npm:0.36.0"
-    "@oxc-parser/binding-win32-x64-msvc": "npm:0.36.0"
-    "@oxc-project/types": "npm:^0.36.0"
-  dependenciesMeta:
-    "@oxc-parser/binding-darwin-arm64":
-      optional: true
-    "@oxc-parser/binding-darwin-x64":
-      optional: true
-    "@oxc-parser/binding-linux-arm64-gnu":
-      optional: true
-    "@oxc-parser/binding-linux-arm64-musl":
-      optional: true
-    "@oxc-parser/binding-linux-x64-gnu":
-      optional: true
-    "@oxc-parser/binding-linux-x64-musl":
-      optional: true
-    "@oxc-parser/binding-win32-arm64-msvc":
-      optional: true
-    "@oxc-parser/binding-win32-x64-msvc":
-      optional: true
-  checksum: 10c0/7cc9cb102eb5aa89e7d5229b3c860fb904bad96f047515190d7f1e5903be8bbc6fc95ec7bc222ee7d6ddecb1bc5486797769554a7ac89efe9aeabe404b35bc99
   languageName: node
   linkType: hard
 
@@ -55638,8 +55532,6 @@ __metadata:
 "twenty-cli@workspace:packages/twenty-cli":
   version: 0.0.0-use.local
   resolution: "twenty-cli@workspace:packages/twenty-cli"
-  bin:
-    twenty: ./deprecate.js
   languageName: unknown
   linkType: soft
 
@@ -55674,6 +55566,7 @@ __metadata:
     "@types/react-dom": "npm:^19"
     react-email: "npm:4.0.6"
     twenty-shared: "workspace:*"
+    vite-plugin-dts: "npm:3.8.1"
   peerDependencies:
     react: ^18.2.0 || ^19.0.0
     react-dom: ^18.2.0 || ^19.0.0
@@ -55800,6 +55693,8 @@ __metadata:
     twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
     use-debounce: "npm:^10.0.0"
+    vite-plugin-checker: "npm:^0.10.2"
+    vite-plugin-svgr: "npm:^4.3.0"
     vite-tsconfig-paths: "npm:^4.2.1"
   languageName: unknown
   linkType: soft
@@ -56106,6 +56001,8 @@ __metadata:
     recoil: "npm:^0.7.7"
     tsx: "npm:^4.19.3"
     twenty-shared: "workspace:*"
+    vite-plugin-checker: "npm:^0.10.2"
+    vite-plugin-dts: "npm:3.8.1"
     vite-plugin-svgr: "npm:^4.3.0"
     zod: "npm:^4.1.11"
   languageName: unknown
@@ -56345,10 +56242,6 @@ __metadata:
     typescript: "npm:5.9.2"
     uuid: "npm:^9.0.0"
     vite: "npm:^7.0.0"
-    vite-plugin-checker: "npm:^0.10.2"
-    vite-plugin-cjs-interop: "npm:^2.2.0"
-    vite-plugin-dts: "npm:3.8.1"
-    vite-plugin-svgr: "npm:^4.2.0"
     vite-tsconfig-paths: "npm:^4.2.1"
     xlsx-ugnis: "npm:^0.19.3"
     zod: "npm:^4.1.11"
@@ -58046,20 +57939,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-cjs-interop@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "vite-plugin-cjs-interop@npm:2.2.0"
-  dependencies:
-    estree-walker: "npm:^3.0.3"
-    magic-string: "npm:^0.30.17"
-    minimatch: "npm:^10.0.1"
-    oxc-parser: "npm:^0.36.0"
-  peerDependencies:
-    vite: 4 || 5 || 6
-  checksum: 10c0/91e457c68d4217b97b9d8d629f7c33d7ab138b9292c5af6a9a1999050425c347b1ca979ccef5285d7a9ec38c0cb0cab6dcba423c2bd0f50b74b4c052bfad5aef
-  languageName: node
-  linkType: hard
-
 "vite-plugin-dts@npm:3.8.1":
   version: 3.8.1
   resolution: "vite-plugin-dts@npm:3.8.1"
@@ -58093,7 +57972,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-svgr@npm:^4.2.0, vite-plugin-svgr@npm:^4.3.0":
+"vite-plugin-svgr@npm:^4.3.0":
   version: 4.3.0
   resolution: "vite-plugin-svgr@npm:4.3.0"
   dependencies:

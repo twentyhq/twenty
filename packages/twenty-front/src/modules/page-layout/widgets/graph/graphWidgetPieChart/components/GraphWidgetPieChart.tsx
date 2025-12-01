@@ -71,7 +71,7 @@ export const GraphWidgetPieChart = ({
   customFormatter,
   onSliceClick,
   showDataLabels = false,
-  showCenterMetric = false,
+  showCenterMetric = true,
 }: GraphWidgetPieChartProps) => {
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);

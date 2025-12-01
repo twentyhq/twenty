@@ -20,7 +20,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 
 describe('FieldPermissionService', () => {
@@ -30,7 +30,7 @@ describe('FieldPermissionService', () => {
   >;
   let roleRepository: jest.Mocked<Repository<RoleEntity>>;
   let fieldMetadataRepository: jest.Mocked<Repository<FieldMetadataEntity>>;
-  let workspacePermissionsCacheService: jest.Mocked<WorkspacePermissionsCacheService>;
+  let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
   let workspaceManyOrAllFlatEntityMapsCacheService: jest.Mocked<WorkspaceManyOrAllFlatEntityMapsCacheService>;
 
   const testWorkspaceId = '20202020-0000-0000-0000-000000000000';
@@ -91,10 +91,11 @@ describe('FieldPermissionService', () => {
           },
         },
         {
-          provide: WorkspacePermissionsCacheService,
+          provide: WorkspaceCacheService,
           useValue: {
-            getRolesPermissionsFromCache: jest.fn(),
-            recomputeRolesPermissionsCache: jest.fn(),
+            getOrRecompute: jest.fn(),
+            invalidate: jest.fn(),
+            invalidateAndRecompute: jest.fn(),
           },
         },
         {
@@ -120,9 +121,7 @@ describe('FieldPermissionService', () => {
     fieldMetadataRepository = module.get(
       getRepositoryToken(FieldMetadataEntity),
     );
-    workspacePermissionsCacheService = module.get(
-      WorkspacePermissionsCacheService,
-    );
+    workspaceCacheService = module.get(WorkspaceCacheService);
     workspaceManyOrAllFlatEntityMapsCacheService = module.get(
       WorkspaceManyOrAllFlatEntityMapsCacheService,
     );
@@ -133,12 +132,9 @@ describe('FieldPermissionService', () => {
       fieldTextMock,
       fieldRelationMock,
     ]);
-    workspacePermissionsCacheService.getRolesPermissionsFromCache.mockResolvedValue(
-      {
-        version: '1',
-        data: mockRolesPermissions,
-      },
-    );
+    (workspaceCacheService.getOrRecompute as jest.Mock).mockResolvedValue({
+      rolesPermissions: mockRolesPermissions,
+    } as any);
     const testFieldMetadata = getMockFieldMetadataEntity({
       ...fieldTextMock,
       label: 'Test Field',
@@ -240,11 +236,8 @@ describe('FieldPermissionService', () => {
         );
 
         expect(
-          workspacePermissionsCacheService.recomputeRolesPermissionsCache,
-        ).toHaveBeenCalledWith({
-          workspaceId: testWorkspaceId,
-          roleIds: [testRoleId],
-        });
+          workspaceCacheService.invalidateAndRecompute,
+        ).toHaveBeenCalledWith(testWorkspaceId, ['rolesPermissions']);
       });
 
       it('should delete field permissions when both canReadFieldValue and canUpdateFieldValue are null', async () => {
@@ -533,12 +526,9 @@ describe('FieldPermissionService', () => {
       });
 
       it('should throw error when object permission is not found', async () => {
-        workspacePermissionsCacheService.getRolesPermissionsFromCache.mockResolvedValue(
-          {
-            version: '1',
-            data: {},
-          },
-        );
+        (workspaceCacheService.getOrRecompute as jest.Mock).mockResolvedValue({
+          rolesPermissions: {},
+        } as any);
 
         const input = createUpsertInput([
           {

@@ -82,6 +82,9 @@ export const ChartSettingItem = ({
     });
   };
   if (item.id === CHART_CONFIGURATION_SETTING_IDS.FILTER) {
+    const filterValue = getChartSettingsValues(item.id);
+    const filterDescription = isString(filterValue) ? filterValue : undefined;
+
     return (
       <SelectableListItem
         key={item.id}
@@ -94,6 +97,8 @@ export const ChartSettingItem = ({
           Icon={item.Icon}
           hasSubMenu
           onClick={handleFilterClick}
+          description={filterDescription}
+          contextualTextPosition="right"
         />
       </SelectableListItem>
     );

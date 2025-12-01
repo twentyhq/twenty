@@ -6,7 +6,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 describe('PermissionsService', () => {
   let service: PermissionsService;
@@ -28,7 +28,7 @@ describe('PermissionsService', () => {
           useValue: {},
         },
         {
-          provide: WorkspacePermissionsCacheService,
+          provide: WorkspaceCacheService,
           useValue: {},
         },
       ],

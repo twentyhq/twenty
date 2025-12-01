@@ -21,8 +21,8 @@ import {
   ToolOperation,
 } from 'src/engine/metadata-modules/ai/ai-chat-router/types/tool-hints.interface';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 
@@ -32,7 +32,7 @@ export class ToolService {
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    protected readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly createRecordService: CreateRecordService,
     private readonly updateRecordService: UpdateRecordService,
@@ -51,10 +51,10 @@ export class ToolService {
   ): Promise<ToolSet> {
     const tools: ToolSet = {};
 
-    const { data: rolesPermissions } =
-      await this.workspacePermissionsCacheService.getRolesPermissionsFromCache({
-        workspaceId,
-      });
+    const { rolesPermissions } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'rolesPermissions',
+      ]);
 
     let objectPermissions;
 

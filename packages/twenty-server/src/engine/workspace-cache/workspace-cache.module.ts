@@ -9,4 +9,4 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
   providers: [WorkspaceCacheService],
   exports: [WorkspaceCacheService],
 })
-export class WorkspaceContextCacheModule {}
+export class WorkspaceCacheModule {}

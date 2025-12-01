@@ -47,8 +47,8 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -76,7 +76,7 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly apiKeyRoleService: ApiKeyRoleService;
   @Inject()
-  protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService;
+  protected readonly workspaceCacheService: WorkspaceCacheService;
   @Inject()
   protected readonly commonResultGettersService: CommonResultGettersService;
   @Inject()
@@ -350,15 +350,12 @@ export abstract class CommonBaseQueryRunnerService<
       roleId = userWorkspaceRoleId;
     }
 
-    const objectMetadataPermissions =
-      await this.workspacePermissionsCacheService.getObjectRecordPermissionsForRoles(
-        {
-          workspaceId: workspaceId,
-          roleIds: [roleId],
-        },
-      );
+    const { rolesPermissions } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'rolesPermissions',
+      ]);
 
-    return { roleId, objectsPermissions: objectMetadataPermissions[roleId] };
+    return { roleId, objectsPermissions: rolesPermissions[roleId] };
   }
 
   private async prepareExtendedQueryRunnerContext(

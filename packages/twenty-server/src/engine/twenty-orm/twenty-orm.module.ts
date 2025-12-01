@@ -17,6 +17,7 @@ import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/s
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 import { PgPoolSharedModule } from './pg-shared-pool/pg-shared-pool.module';
 
@@ -37,6 +38,7 @@ import { PgPoolSharedModule } from './pg-shared-pool/pg-shared-pool.module';
     FeatureFlagModule,
     TwentyConfigModule,
     PgPoolSharedModule,
+    WorkspaceCacheModule,
   ],
   providers: [
     ...entitySchemaFactories,
