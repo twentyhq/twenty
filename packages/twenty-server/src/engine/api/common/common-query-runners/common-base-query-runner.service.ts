@@ -166,6 +166,8 @@ export abstract class CommonBaseQueryRunnerService<
     authContext: WorkspaceAuthContext,
   ): Promise<Output>;
 
+  protected abstract computeQueryComplexity(args: CommonInput<Args>): number;
+
   private async processArgs(
     args: CommonInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
