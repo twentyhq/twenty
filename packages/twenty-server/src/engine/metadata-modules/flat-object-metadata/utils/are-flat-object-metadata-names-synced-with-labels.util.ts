@@ -1,5 +1,5 @@
 import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
-
+src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const areFlatObjectMetadataNamesSyncedWithLabels = (

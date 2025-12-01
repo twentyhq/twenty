@@ -15,14 +15,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { FieldMetadataResolver } from 'src/engine/metadata-modules/field-metadata/field-metadata.resolver';
-import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
-import { FieldMetadataEnumValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service';
-import { FieldMetadataMorphRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-morph-relation.service';
-import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
-import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
-import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
-import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatFieldMetadataModule } from 'src/engine/metadata-modules/flat-field-metadata/flat-field-metadata.module';
 import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
@@ -73,12 +66,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         WorkspaceManyOrAllFlatEntityMapsCacheModule,
       ],
       services: [
-        IsFieldMetadataDefaultValue,
         FieldMetadataService,
-        FieldMetadataMorphRelationService,
-        FieldMetadataRelationService,
-        FieldMetadataValidationService,
-        FieldMetadataEnumValidationService,
       ],
       resolvers: [
         {
@@ -99,27 +87,17 @@ import { UpdateFieldInput } from './dtos/update-field.input';
           },
           delete: { disabled: true },
           guards: [WorkspaceAuthGuard],
-          interceptors: [FieldMetadataGraphqlApiExceptionInterceptor],
+          interceptors: [],
         },
       ],
     }),
   ],
   providers: [
-    IsFieldMetadataDefaultValue,
-    IsFieldMetadataOptions,
     FieldMetadataService,
-    FieldMetadataRelationService,
-    FieldMetadataMorphRelationService,
-    FieldMetadataValidationService,
-    FieldMetadataEnumValidationService,
     FieldMetadataResolver,
   ],
   exports: [
     FieldMetadataService,
-    FieldMetadataRelationService,
-    FieldMetadataMorphRelationService,
-    FieldMetadataEnumValidationService,
-    FieldMetadataValidationService,
   ],
 })
 export class FieldMetadataModule {}

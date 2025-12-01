@@ -1,4 +1,4 @@
-import { t, msg } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
@@ -7,7 +7,32 @@ import { areFlatObjectMetadataNamesSyncedWithLabels } from 'src/engine/metadata-
 import { validateFlatObjectMetadataLabel } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util';
 import { validateFlatObjectMetadataNames } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util';
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { doesOtherObjectWithSameNameExists } from 'src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util';
+import { isDefined } from 'twenty-shared/utils';
+
+type ValidateNoOtherObjectWithSameNameExistsOrThrowsParams = {
+  objectMetadataNameSingular: string;
+  objectMetadataNamePlural: string;
+  existingObjectMetadataId?: string;
+  objectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+};
+
+export const doesOtherObjectWithSameNameExists = ({
+  objectMetadataMaps,
+  objectMetadataNamePlural,
+  objectMetadataNameSingular,
+  existingObjectMetadataId,
+}: ValidateNoOtherObjectWithSameNameExistsOrThrowsParams) =>
+  Object.values(objectMetadataMaps.byId)
+    .filter(isDefined)
+    .some(
+      (objectMetadata) =>
+        (objectMetadata.nameSingular === objectMetadataNameSingular ||
+          objectMetadata.namePlural === objectMetadataNamePlural ||
+          objectMetadata.nameSingular === objectMetadataNamePlural ||
+          objectMetadata.namePlural === objectMetadataNameSingular) &&
+        objectMetadata.id !== existingObjectMetadataId,
+    );
+
 
 export const validateFlatObjectMetadataNameAndLabels = ({
   optimisticFlatObjectMetadataMaps,
