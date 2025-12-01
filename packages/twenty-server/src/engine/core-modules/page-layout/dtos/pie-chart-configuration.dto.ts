@@ -71,7 +71,7 @@ export class PieChartConfigurationDTO {
   @IsOptional()
   displayDataLabel?: boolean;
 
-  @Field(() => Boolean, { nullable: true, defaultValue: false })
+  @Field(() => Boolean, { nullable: true, defaultValue: true })
   @IsBoolean()
   @IsOptional()
   showCenterMetric?: boolean;
