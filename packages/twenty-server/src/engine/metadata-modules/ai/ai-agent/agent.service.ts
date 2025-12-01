@@ -2,18 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
 import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/update-agent.input';
 import { fromCreateAgentInputToFlatAgent } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util';
+import { fromUpdateAgentInputToFlatAgentToUpdate } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
@@ -29,7 +29,6 @@ export class AgentService {
     private readonly agentRepository: Repository<AgentEntity>,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
-    private readonly agentRoleService: AiAgentRoleService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
@@ -245,58 +244,92 @@ export class AgentService {
   }
 
   async updateOneAgent(input: UpdateAgentInput, workspaceId: string) {
-    const agent = await this.findOneAgent(workspaceId, { id: input.id });
-    const updateData = this.buildUpdateData(agent, input);
-    const updatedAgent = await this.agentRepository.save(updateData);
-
-    if (!('roleId' in input)) {
-      return updatedAgent;
-    }
-
-    await this.updateAgentRole(workspaceId, agent.id, input.roleId);
-
-    return this.findOneAgent(workspaceId, { id: updatedAgent.id });
-  }
-
-  private buildUpdateData(
-    agent: AgentEntity & { roleId: string | null },
-    input: UpdateAgentInput,
-  ): Partial<AgentEntity> {
-    const updateData: Partial<AgentEntity> = {
-      ...agent,
-      ...Object.fromEntries(
-        Object.entries(input).filter(([_, value]) => value !== undefined),
-      ),
-    };
-
-    if (input.label !== undefined) {
-      updateData.name = computeMetadataNameFromLabel(input.label);
-    } else if (input.name !== undefined) {
-      updateData.name = input.name;
-    }
-
-    return updateData;
-  }
-
-  private async updateAgentRole(
-    workspaceId: string,
-    agentId: string,
-    roleId: string | null | undefined,
-  ): Promise<void> {
-    if (isNonEmptyString(roleId)) {
-      await this.agentRoleService.assignRoleToAgent({
+    const {
+      flatAgentMaps: existingFlatAgentMaps,
+      flatRoleTargetMaps: existingFlatRoleTargetMaps,
+      flatRoleMaps: existingFlatRoleMaps,
+    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
         workspaceId,
-        agentId,
-        roleId,
-      });
+        flatMapsKeys: ['flatAgentMaps', 'flatRoleTargetMaps', 'flatRoleMaps'],
+      },
+    );
 
-      return;
+    const {
+      flatAgentToUpdate,
+      flatRoleTargetToCreate,
+      flatRoleTargetToDelete,
+      flatRoleTargetToUpdate,
+    } = fromUpdateAgentInputToFlatAgentToUpdate({
+      updateAgentInput: input,
+      flatAgentMaps: existingFlatAgentMaps,
+      flatRoleTargetMaps: existingFlatRoleTargetMaps,
+    });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          fromToAllFlatEntityMaps: {
+            flatAgentMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatAgentMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [flatAgentToUpdate],
+            }),
+            flatRoleTargetMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatRoleTargetMaps,
+              flatEntityToCreate: isDefined(flatRoleTargetToCreate)
+                ? [flatRoleTargetToCreate]
+                : [],
+              flatEntityToDelete: isDefined(flatRoleTargetToDelete)
+                ? [flatRoleTargetToDelete]
+                : [],
+              flatEntityToUpdate: isDefined(flatRoleTargetToUpdate)
+                ? [flatRoleTargetToUpdate]
+                : [],
+            }),
+          },
+          dependencyAllFlatEntityMaps: { flatRoleMaps: existingFlatRoleMaps },
+          buildOptions: {
+            isSystemBuild: false,
+          },
+          workspaceId,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while updating agent',
+      );
     }
 
-    await this.agentRoleService.removeRoleFromAgent({
-      workspaceId,
-      agentId,
+    const {
+      flatAgentMaps: recomputedFlatAgentMaps,
+      flatRoleTargetMaps: recomputedFlatRoleTargetMaps,
+    } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatAgentMaps', 'flatRoleTargetMaps'],
+        },
+      );
+
+    const updatedAgent = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: input.id,
+      flatEntityMaps: recomputedFlatAgentMaps,
     });
+
+    const existingRoleTarget = findFlatRoleTargetFromForeignKey({
+      flatRoleTargetMaps: recomputedFlatRoleTargetMaps,
+      targetMetadataForeignKey: 'agentId',
+      targetId: flatAgentToUpdate.id,
+    });
+
+    return {
+      ...updatedAgent,
+      roleId: existingRoleTarget?.roleId,
+    };
   }
 
   async deleteOneAgent(id: string, workspaceId: string) {

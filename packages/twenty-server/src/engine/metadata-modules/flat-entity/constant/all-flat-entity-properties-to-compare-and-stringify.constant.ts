@@ -2,6 +2,7 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { FLAT_CRON_TRIGGER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/cron-trigger/constants/flat-cron-trigger-editable-properties.constant';
 import { FLAT_DATABASE_EVENT_TRIGGER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/database-event-trigger/constants/flat-database-event-trigger-editable-properties.constant';
+import { FLAT_AGENT_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-agent/constants/flat-agent-editable-properties.constant';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-editable-properties.constant';
@@ -98,8 +99,8 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
     propertiesToStringify: [],
   },
   agent: {
-    propertiesToCompare: [],
-    propertiesToStringify: [],
+    propertiesToCompare: [...FLAT_AGENT_EDITABLE_PROPERTIES],
+    propertiesToStringify: ['responseFormat', 'modelConfiguration', 'evaluationInputs'],
   },
 } as const satisfies {
   [P in AllMetadataName]: OneFlatEntityConfiguration<P>;

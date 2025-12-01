@@ -10,17 +10,19 @@ import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/fla
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label.util';
 
+export type FromCreateAgentInputToFlatAgentArgs = {
+  createAgentInput: CreateAgentInput & { applicationId: string };
+  workspaceId: string;
+};
+
 export const fromCreateAgentInputToFlatAgent = ({
   createAgentInput: rawCreateAgentInput,
   workspaceId,
-}: {
-  createAgentInput: CreateAgentInput & { applicationId: string };
-  workspaceId: string;
-}): {
+}: FromCreateAgentInputToFlatAgentArgs): {
   flatAgentToCreate: FlatAgent;
   flatRoleTargetToCreate: FlatRoleTarget | null;
 } => {
-  const createAgentInput =
+  const { roleId, ...createAgentInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawCreateAgentInput,
       [
@@ -36,13 +38,13 @@ export const fromCreateAgentInputToFlatAgent = ({
       ],
     );
 
-  const now = new Date();
-  const id = v4();
+  const createdAt = new Date();
+  const agentId = v4();
   const standardId = createAgentInput.standardId ?? null;
-  const universalIdentifier = standardId ?? id;
+  const universalIdentifier = standardId ?? agentId;
 
   const flatAgentToCreate: FlatAgent = {
-    id,
+    id: agentId,
     standardId,
     name: isNonEmptyString(createAgentInput.name)
       ? createAgentInput.name
@@ -59,22 +61,20 @@ export const fromCreateAgentInputToFlatAgent = ({
     applicationId: createAgentInput.applicationId,
     modelConfiguration: createAgentInput.modelConfiguration ?? null,
     evaluationInputs: createAgentInput.evaluationInputs ?? [],
-    createdAt: now,
-    updatedAt: now,
+    createdAt,
+    updatedAt: createdAt,
     deletedAt: null,
   };
 
-  const flatRoleTargetToCreate: FlatRoleTarget | null = isDefined(
-    createAgentInput.roleId,
-  )
+  const flatRoleTargetToCreate: FlatRoleTarget | null = isDefined(roleId)
     ? {
         id: v4(),
-        roleId: createAgentInput.roleId,
+        roleId,
         userWorkspaceId: null,
-        agentId: id,
+        agentId,
         apiKeyId: null,
-        createdAt: now,
-        updatedAt: now,
+        createdAt,
+        updatedAt: createdAt,
         universalIdentifier: v4(),
         workspaceId,
         applicationId: createAgentInput.applicationId,
