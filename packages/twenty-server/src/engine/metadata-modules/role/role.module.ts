@@ -7,6 +7,7 @@ import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
+import { FlatAgentModule } from 'src/engine/metadata-modules/flat-agent/flat-agent.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceFlatRoleTargetMapCacheService } from 'src/engine/metadata-modules/flat-role-target/services/workspace-flat-role-target-map-cache.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -51,6 +52,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     FileModule,
     ApplicationModule,
     WorkspaceCacheModule,
+    FlatAgentModule
   ],
   providers: [
     RoleService,
