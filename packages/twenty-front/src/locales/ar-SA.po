@@ -178,6 +178,11 @@ msgstr "{deletedCount, plural, zero {تم حذف {deletedCount} وظائف بن�
 msgid "{failedCount} file(s) failed to upload"
 msgstr "فشل تحميل {failedCount} ملف/ملفات"
 
+#. js-lingui-id: bv2QCV
+#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+msgid "{filterRulesCount, plural, one {{filterRulesCount} rule} other {{filterRulesCount} rules}}"
+msgstr ""
+
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
