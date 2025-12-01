@@ -150,7 +150,6 @@ export const transformGroupByDataToBarChartData = ({
   const showLegend = configuration.displayLegend ?? true;
 
   const isDateField = isFieldMetadataDateKind(groupByFieldX.type);
-  // For relation fields, if dateGranularity is set, the nested field is a date field
   const isNestedDateField =
     !isDateField && isDefined(configuration.primaryAxisDateGranularity);
   const shouldApplyDateGapFill = isDateField || isNestedDateField;

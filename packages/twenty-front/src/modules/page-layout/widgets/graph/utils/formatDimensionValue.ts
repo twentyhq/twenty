@@ -89,7 +89,6 @@ export const formatDimensionValue = ({
     }
 
     case FieldMetadataType.RELATION: {
-      // For relation fields with dateGranularity, the nested field is a date field
       if (isDefined(dateGranularity)) {
         if (
           dateGranularity ===
