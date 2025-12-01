@@ -2,7 +2,9 @@ import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { WorkspaceFlatAgentMapCacheService } from 'src/engine/metadata-modules/flat-agent/services/workspace-flat-agent-map-cache.service';
 import { WorkspaceFlatFieldMetadataMapCacheService } from 'src/engine/metadata-modules/flat-field-metadata/services/workspace-flat-field-metadata-map-cache.service';
 import { WorkspaceFlatIndexMapCacheService } from 'src/engine/metadata-modules/flat-index-metadata/services/workspace-flat-index-map-cache.service';
 import { WorkspaceFlatObjectMetadataMapCacheService } from 'src/engine/metadata-modules/flat-object-metadata/services/workspace-flat-object-metadata-map-cache.service';
@@ -31,6 +33,7 @@ import { WorkspaceFlatMapCacheRegistryService } from 'src/engine/workspace-flat-
       IndexFieldMetadataEntity,
       FieldMetadataEntity,
       ObjectMetadataEntity,
+      AgentEntity,
     ]),
   ],
   providers: [
@@ -42,6 +45,7 @@ import { WorkspaceFlatMapCacheRegistryService } from 'src/engine/workspace-flat-
     WorkspaceFlatIndexMapCacheService,
     WorkspaceFlatFieldMetadataMapCacheService,
     WorkspaceFlatViewGroupMapCacheService,
+    WorkspaceFlatAgentMapCacheService,
   ],
   exports: [
     WorkspaceFlatMapCacheRegistryService,
@@ -52,6 +56,7 @@ import { WorkspaceFlatMapCacheRegistryService } from 'src/engine/workspace-flat-
     WorkspaceFlatIndexMapCacheService,
     WorkspaceFlatFieldMetadataMapCacheService,
     WorkspaceFlatViewGroupMapCacheService,
+    WorkspaceFlatAgentMapCacheService,
   ],
 })
 export class WorkspaceFlatMapCacheModule {}
