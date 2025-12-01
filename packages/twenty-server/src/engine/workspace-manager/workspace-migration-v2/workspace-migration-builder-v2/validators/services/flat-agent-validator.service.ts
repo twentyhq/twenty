@@ -11,6 +11,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { validateAgentNameUniqueness } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util';
+import { validateAgentRequiredProperties } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util';
 import { validateAgentResponseFormat } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
@@ -37,29 +38,11 @@ export class FlatAgentValidatorService {
       isDefined,
     );
 
-    if (flatAgent.label === '') {
-      validationResult.errors.push({
-        code: AgentExceptionCode.INVALID_AGENT_INPUT,
-        message: t`Label cannot be empty`,
-        userFriendlyMessage: msg`Label cannot be empty`,
-      });
-    }
-
-    if (flatAgent.prompt === '') {
-      validationResult.errors.push({
-        code: AgentExceptionCode.INVALID_AGENT_INPUT,
-        message: t`Prompt cannot be empty`,
-        userFriendlyMessage: msg`Prompt cannot be empty`,
-      });
-    }
-
-    if (flatAgent.modelId === '') {
-      validationResult.errors.push({
-        code: AgentExceptionCode.INVALID_AGENT_INPUT,
-        message: t`Model ID cannot be empty`,
-        userFriendlyMessage: msg`Model ID cannot be empty`,
-      });
-    }
+    validationResult.errors.push(
+      ...validateAgentRequiredProperties({
+        flatAgent,
+      }),
+    );
 
     validationResult.errors.push(
       ...validateAgentNameUniqueness({
@@ -173,36 +156,20 @@ export class FlatAgentValidatorService {
         updates: flatEntityUpdates,
       });
 
+    const optimisticFlatAgent: FlatAgent = {
+      ...fromFlatAgent,
+      ...partialFlatAgent,
+    };
+
     const existingAgents = Object.values(optimisticFlatAgentMaps.byId)
       .filter(isDefined)
       .filter((agent) => agent.id !== flatEntityId);
 
-    if (isDefined(partialFlatAgent.label) && partialFlatAgent.label === '') {
-      validationResult.errors.push({
-        code: AgentExceptionCode.INVALID_AGENT_INPUT,
-        message: t`Label cannot be empty`,
-        userFriendlyMessage: msg`Label cannot be empty`,
-      });
-    }
-
-    if (isDefined(partialFlatAgent.prompt) && partialFlatAgent.prompt === '') {
-      validationResult.errors.push({
-        code: AgentExceptionCode.INVALID_AGENT_INPUT,
-        message: t`Prompt cannot be empty`,
-        userFriendlyMessage: msg`Prompt cannot be empty`,
-      });
-    }
-
-    if (
-      isDefined(partialFlatAgent.modelId) &&
-      partialFlatAgent.modelId === ''
-    ) {
-      validationResult.errors.push({
-        code: AgentExceptionCode.INVALID_AGENT_INPUT,
-        message: t`Model ID cannot be empty`,
-        userFriendlyMessage: msg`Model ID cannot be empty`,
-      });
-    }
+    validationResult.errors.push(
+      ...validateAgentRequiredProperties({
+        flatAgent: optimisticFlatAgent,
+      }),
+    );
 
     if (isDefined(partialFlatAgent.name)) {
       validationResult.errors.push(

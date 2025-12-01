@@ -113,6 +113,17 @@ describe('Agent update should fail', () => {
       },
     },
     {
+      title: 'when settings null required properties',
+      context: {
+        input: (testSetup) => ({
+          id: testSetup.testAgentId,
+          label: null,
+          prompt: null,
+          modelId: null,
+        }),
+      },
+    },
+    {
       title: 'when updating responseFormat with invalid type',
       context: {
         input: (testSetup) => ({
@@ -186,4 +197,3 @@ describe('Agent update should fail', () => {
     });
   });
 });
-
