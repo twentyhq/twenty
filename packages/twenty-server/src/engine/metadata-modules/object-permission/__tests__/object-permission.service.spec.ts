@@ -52,6 +52,7 @@ describe('ObjectPermissionService', () => {
           provide: WorkspaceCacheService,
           useValue: {
             invalidate: jest.fn(),
+            invalidateAndRecompute: jest.fn(),
           },
         },
         {

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
@@ -8,7 +9,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -133,9 +133,9 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
           canDestroyObjectRecords: canDestroy,
           restrictedFields,
         };
-
-        permissionsByRoleId[role.id] = objectRecordsPermissions;
       }
+
+      permissionsByRoleId[role.id] = objectRecordsPermissions;
     }
 
     return permissionsByRoleId;

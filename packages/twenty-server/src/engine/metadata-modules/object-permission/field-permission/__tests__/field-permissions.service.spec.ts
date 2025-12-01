@@ -95,6 +95,7 @@ describe('FieldPermissionService', () => {
           useValue: {
             getOrRecompute: jest.fn(),
             invalidate: jest.fn(),
+            invalidateAndRecompute: jest.fn(),
           },
         },
         {
