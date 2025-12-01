@@ -6,9 +6,11 @@ import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
 import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/update-agent.input';
+import { fromCreateAgentInputToFlatAgent } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -30,6 +32,7 @@ export class AgentService {
     private readonly agentRoleService: AiAgentRoleService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async findManyAgents(workspaceId: string) {
@@ -160,44 +163,85 @@ export class AgentService {
     input: CreateAgentInput & { isCustom: boolean },
     workspaceId: string,
   ) {
-    const agent = this.buildNewAgent(input, workspaceId);
-    const createdAgent = await this.agentRepository.save(agent);
-
-    if (isNonEmptyString(input.roleId)) {
-      await this.assignRoleToNewAgent(
+    const {
+      flatAgentMaps: existingFlatAgentMaps,
+      flatRoleTargetMaps: existingFlatRoleTargetMaps,
+      flatRoleMaps: existingFlatRoleMaps,
+    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
         workspaceId,
-        createdAgent.id,
-        input.roleId,
+        flatMapsKeys: ['flatAgentMaps', 'flatRoleTargetMaps', 'flatRoleMaps'],
+      },
+    );
+
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
+    const { flatAgentToCreate, flatRoleTargetToCreate } =
+      fromCreateAgentInputToFlatAgent({
+        createAgentInput: {
+          ...input,
+          applicationId:
+            input.applicationId ?? workspaceCustomFlatApplication.id,
+        },
+        workspaceId,
+      });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          fromToAllFlatEntityMaps: {
+            flatAgentMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatAgentMaps,
+              flatEntityToCreate: [flatAgentToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            }),
+            flatRoleTargetMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatRoleTargetMaps,
+              flatEntityToCreate: isDefined(flatRoleTargetToCreate)
+                ? [flatRoleTargetToCreate]
+                : [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            }),
+          },
+          dependencyAllFlatEntityMaps: { flatRoleMaps: existingFlatRoleMaps },
+          buildOptions: {
+            isSystemBuild: false,
+          },
+          workspaceId,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while creating agent',
       );
     }
 
-    return this.findOneAgent(workspaceId, { id: createdAgent.id });
-  }
+    const { flatAgentMaps: recomputedFlatAgentMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatAgentMaps'],
+        },
+      );
 
-  private buildNewAgent(
-    input: CreateAgentInput & { isCustom: boolean },
-    workspaceId: string,
-  ): AgentEntity {
-    return this.agentRepository.create({
-      ...input,
-      name: isNonEmptyString(input.name)
-        ? input.name
-        : computeMetadataNameFromLabel(input.label),
-      workspaceId,
-      isCustom: input.isCustom,
+    const createdAgent = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatAgentToCreate.id,
+      flatEntityMaps: recomputedFlatAgentMaps,
     });
-  }
 
-  private async assignRoleToNewAgent(
-    workspaceId: string,
-    agentId: string,
-    roleId: string,
-  ): Promise<void> {
-    await this.agentRoleService.assignRoleToAgent({
-      workspaceId,
-      agentId,
-      roleId,
-    });
+    return {
+      ...createdAgent,
+      roleId: flatRoleTargetToCreate?.roleId ?? null,
+    };
   }
 
   async updateOneAgent(input: UpdateAgentInput, workspaceId: string) {

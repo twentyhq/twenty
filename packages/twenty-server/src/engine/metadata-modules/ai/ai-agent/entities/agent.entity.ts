@@ -44,10 +44,10 @@ export class AgentEntity
   label: string;
 
   @Column({ nullable: true })
-  icon: string;
+  icon: string | null;
 
   @Column({ nullable: true })
-  description: string;
+  description: string | null;
 
   @Column({ nullable: false, type: 'text' })
   prompt: string;
@@ -55,6 +55,7 @@ export class AgentEntity
   @Column({ nullable: false, type: 'varchar', default: DEFAULT_SMART_MODEL })
   modelId: ModelId;
 
+  // Should not be nullable
   @Column({ nullable: true, type: 'jsonb', default: { type: 'text' } })
   responseFormat: AgentResponseFormat;
 
@@ -80,7 +81,7 @@ export class AgentEntity
   deletedAt: Date | null;
 
   @Column({ nullable: true, type: 'jsonb' })
-  modelConfiguration: ModelConfiguration;
+  modelConfiguration: ModelConfiguration | null;
 
   @Column({ type: 'text', array: true, default: '{}' })
   evaluationInputs: string[];
