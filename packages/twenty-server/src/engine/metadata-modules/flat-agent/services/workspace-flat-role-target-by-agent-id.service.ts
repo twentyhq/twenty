@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { AllMetadataName } from 'twenty-shared/metadata';
+import { NonNullableRequired } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -11,8 +13,6 @@ import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-en
 import { FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
-import { NonNullableRequired } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 @WorkspaceFlatMapCache(
@@ -51,6 +51,7 @@ export class WorkspaceFlatRoleTargetByAgentIdService extends WorkspaceFlatMapCac
     );
 
     const flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps = {};
+
     for (const flatRoleTarget of agentRelatedRoleTargets) {
       flatRoleTargetByAgentIdMaps[flatRoleTarget.agentId] = flatRoleTarget;
     }

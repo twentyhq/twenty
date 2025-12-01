@@ -41,4 +41,3 @@ export const createOneAgent = async ({
 
   return { data: response.body.data, errors: response.body.errors };
 };
-

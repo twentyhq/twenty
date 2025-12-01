@@ -100,7 +100,11 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
   },
   agent: {
     propertiesToCompare: [...FLAT_AGENT_EDITABLE_PROPERTIES],
-    propertiesToStringify: ['responseFormat', 'modelConfiguration', 'evaluationInputs'],
+    propertiesToStringify: [
+      'responseFormat',
+      'modelConfiguration',
+      'evaluationInputs',
+    ],
   },
 } as const satisfies {
   [P in AllMetadataName]: OneFlatEntityConfiguration<P>;

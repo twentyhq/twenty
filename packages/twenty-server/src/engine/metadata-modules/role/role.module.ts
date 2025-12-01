@@ -52,7 +52,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     FileModule,
     ApplicationModule,
     WorkspaceCacheModule,
-    FlatAgentModule
+    FlatAgentModule,
   ],
   providers: [
     RoleService,

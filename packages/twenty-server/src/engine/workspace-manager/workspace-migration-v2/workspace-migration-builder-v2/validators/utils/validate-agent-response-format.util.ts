@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { AgentExceptionCode } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import {
   type AgentResponseFormat,
-  AgentJsonResponseFormat,
+  type AgentJsonResponseFormat,
 } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 
@@ -45,4 +45,3 @@ export const validateAgentResponseFormat = ({
 
   return errors;
 };
-

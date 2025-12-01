@@ -11,4 +11,3 @@ export const FLAT_AGENT_EDITABLE_PROPERTIES = [
   'modelConfiguration',
   'evaluationInputs',
 ] as const satisfies (keyof FlatAgent)[];
-

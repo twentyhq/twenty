@@ -11,10 +11,12 @@ import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
+import { AgentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/ai-agent/interceptors/agent-graphql-api-exception.interceptor';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiChatRouterModule } from 'src/engine/metadata-modules/ai/ai-chat-router/ai-chat-router.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { AiToolsModule } from 'src/engine/metadata-modules/ai/ai-tools/ai-tools.module';
+import { FlatAgentModule } from 'src/engine/metadata-modules/flat-agent/flat-agent.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -23,15 +25,13 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
+import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
 import { AgentResolver } from './agent.resolver';
 import { AgentService } from './agent.service';
 
-import { AgentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/ai-agent/interceptors/agent-graphql-api-exception.interceptor';
-import { FlatAgentModule } from 'src/engine/metadata-modules/flat-agent/flat-agent.module';
-import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
-import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 import { AgentEntity } from './entities/agent.entity';
 import { AgentActorContextService } from './services/agent-actor-context.service';
 import { AgentExecutionService } from './services/agent-execution.service';
@@ -64,7 +64,7 @@ import { AgentToolGeneratorService } from './services/agent-tool-generator.servi
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationV2Module,
     ApplicationModule,
-    FlatAgentModule
+    FlatAgentModule,
   ],
   providers: [
     AgentResolver,
@@ -76,7 +76,7 @@ import { AgentToolGeneratorService } from './services/agent-tool-generator.servi
     AgentTitleGenerationService,
     AgentActorContextService,
     WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
-    AgentGraphqlApiExceptionInterceptor
+    AgentGraphqlApiExceptionInterceptor,
   ],
   exports: [
     AgentService,

@@ -1,5 +1,5 @@
-import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
-import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { type AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
+import { type FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 
 export const fromFlatAgentWithRoleIdToAgentDto = ({
   applicationId,

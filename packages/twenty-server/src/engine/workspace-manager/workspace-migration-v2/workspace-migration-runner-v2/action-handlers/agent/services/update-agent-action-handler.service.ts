@@ -31,7 +31,9 @@ export class UpdateAgentActionHandlerService extends WorkspaceMigrationRunnerAct
 
     const updatedAgent = {
       ...existingAgent,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({ updates: flatEntityUpdates }),
+      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
+        updates: flatEntityUpdates,
+      }),
     };
 
     const updatedFlatAgentMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
@@ -55,7 +57,9 @@ export class UpdateAgentActionHandlerService extends WorkspaceMigrationRunnerAct
 
     await agentRepository.update(
       { id: flatEntityId, workspaceId },
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity({ updates: flatEntityUpdates }),
+      fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
+        updates: flatEntityUpdates,
+      }),
     );
   }
 
@@ -65,4 +69,3 @@ export class UpdateAgentActionHandlerService extends WorkspaceMigrationRunnerAct
     return;
   }
 }
-

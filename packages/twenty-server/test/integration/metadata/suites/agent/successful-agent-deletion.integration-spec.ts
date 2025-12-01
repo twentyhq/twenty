@@ -15,11 +15,10 @@ describe('Agent deletion should succeed', () => {
 
     const agentId = createData.createOneAgent.id;
 
-    const { data: findBeforeData } =
-      await findOneAgent({
-        expectToFail: false,
-        input: { id: agentId },
-      });
+    const { data: findBeforeData } = await findOneAgent({
+      expectToFail: false,
+      input: { id: agentId },
+    });
 
     expect(findBeforeData.findOneAgent.id).toBe(agentId);
 
@@ -40,4 +39,3 @@ describe('Agent deletion should succeed', () => {
     expect(findAfterErrors).toBeDefined();
   });
 });
-

@@ -1,5 +1,4 @@
 import gql from 'graphql-tag';
-
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
 const DEFAULT_AGENT_GQL_FIELDS = `
@@ -31,4 +30,3 @@ export const findAgentsQueryFactory = ({
     }
   `,
 });
-

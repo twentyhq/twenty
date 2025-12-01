@@ -15,12 +15,12 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
-
-import { AgentException, AgentExceptionCode } from './agent.exception';
-
 import { WorkspaceFlatRoleTargetByAgentIdService } from 'src/engine/metadata-modules/flat-agent/services/workspace-flat-role-target-by-agent-id.service';
 import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+
+import { AgentException, AgentExceptionCode } from './agent.exception';
+
 import { AgentEntity } from './entities/agent.entity';
 
 @Injectable()
@@ -118,6 +118,7 @@ export class AgentService {
     }
 
     const roleId = flatRoleTargetByAgendIdMaps[flatAgent.id]?.roleId;
+
     return { ...flatAgent, roleId: roleId ?? null };
   }
 

@@ -33,9 +33,7 @@ import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/serv
 import { ToolHints } from 'src/engine/metadata-modules/ai/ai-chat-router/types/tool-hints.interface';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import {
-  FlatAgentWithRoleId
-} from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 

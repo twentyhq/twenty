@@ -8,4 +8,3 @@ export class AgentResponseFormatJson {
   @IsNotEmpty()
   schema: Record<string, unknown>;
 }
-

@@ -4,4 +4,3 @@ export class AgentResponseFormatText {
   @IsEnum(['text'])
   type: 'text';
 }
-

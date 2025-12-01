@@ -1,5 +1,4 @@
 import gql from 'graphql-tag';
-
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
 import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/update-agent.input';
@@ -39,4 +38,3 @@ export const updateOneAgentQueryFactory = ({
     input,
   },
 });
-

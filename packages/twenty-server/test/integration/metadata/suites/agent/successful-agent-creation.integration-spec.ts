@@ -1,8 +1,9 @@
-import { CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
+
+import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
 
 describe('Agent creation should succeed', () => {
   let createdAgentId: string;

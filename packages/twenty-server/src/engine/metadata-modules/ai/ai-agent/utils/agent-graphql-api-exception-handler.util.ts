@@ -36,4 +36,3 @@ export const agentGraphqlApiExceptionHandler = (error: Error) => {
 
   throw error;
 };
-

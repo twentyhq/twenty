@@ -54,4 +54,3 @@ export class DeleteAgentActionHandlerService extends WorkspaceMigrationRunnerAct
     return;
   }
 }
-

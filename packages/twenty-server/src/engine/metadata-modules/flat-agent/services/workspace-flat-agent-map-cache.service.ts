@@ -50,4 +50,3 @@ export class WorkspaceFlatAgentMapCacheService extends WorkspaceFlatMapCacheServ
     return flatAgentMaps;
   }
 }
-
