@@ -5,18 +5,22 @@ import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AgentExceptionCode } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
-import { AgentJsonResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { validateAgentNameUniqueness } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util';
+import { validateAgentResponseFormat } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util';
+import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class FlatAgentValidatorService {
   public validateFlatAgentCreation({
-    flatEntityToValidate,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: { flatAgentMaps },
+    flatEntityToValidate: flatAgent,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatAgentMaps: optimisticFlatAgentMaps,
+    },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.agent
   >): FailedFlatEntityValidation<FlatAgent> {
@@ -24,12 +28,16 @@ export class FlatAgentValidatorService {
       type: 'create_agent',
       errors: [],
       flatEntityMinimalInformation: {
-        id: flatEntityToValidate.id,
-        name: flatEntityToValidate.name,
+        id: flatAgent.id,
+        name: flatAgent.name,
       },
     };
 
-    if (flatEntityToValidate.label === '') {
+    const existingAgents = Object.values(optimisticFlatAgentMaps.byId).filter(
+      isDefined,
+    );
+
+    if (flatAgent.label === '') {
       validationResult.errors.push({
         code: AgentExceptionCode.INVALID_AGENT_INPUT,
         message: t`Label cannot be empty`,
@@ -37,7 +45,7 @@ export class FlatAgentValidatorService {
       });
     }
 
-    if (flatEntityToValidate.prompt === '') {
+    if (flatAgent.prompt === '') {
       validationResult.errors.push({
         code: AgentExceptionCode.INVALID_AGENT_INPUT,
         message: t`Prompt cannot be empty`,
@@ -45,7 +53,7 @@ export class FlatAgentValidatorService {
       });
     }
 
-    if (flatEntityToValidate.modelId === '') {
+    if (flatAgent.modelId === '') {
       validationResult.errors.push({
         code: AgentExceptionCode.INVALID_AGENT_INPUT,
         message: t`Model ID cannot be empty`,
@@ -53,54 +61,19 @@ export class FlatAgentValidatorService {
       });
     }
 
-    const allExistingFlatAgents = Object.values(flatAgentMaps.byId).filter(
-      isDefined,
+    validationResult.errors.push(
+      ...validateAgentNameUniqueness({
+        name: flatAgent.name,
+        existingFlatAgents: existingAgents,
+      }),
     );
 
-    const existingAgentWithSameName = allExistingFlatAgents.find(
-      (agent) =>
-        agent.name === flatEntityToValidate.name &&
-        agent.id !== flatEntityToValidate.id,
-    );
-
-    if (isDefined(existingAgentWithSameName)) {
-      validationResult.errors.push({
-        code: AgentExceptionCode.AGENT_ALREADY_EXISTS,
-        message: t`Agent with name "${flatEntityToValidate.name}" already exists`,
-        userFriendlyMessage: msg`An agent with this name already exists`,
-      });
-    }
-
-    if (isDefined(flatEntityToValidate.responseFormat)) {
-      const responseFormat = flatEntityToValidate.responseFormat;
-      const type = responseFormat.type;
-
-      if (type !== 'text' && type !== 'json') {
-        validationResult.errors.push({
-          code: AgentExceptionCode.INVALID_AGENT_INPUT,
-          message: t`Response format type must be either "text" or "json"`,
-          userFriendlyMessage: msg`Invalid response format type`,
-        });
-      }
-
-      if (type === 'json' && !isDefined(responseFormat.schema)) {
-        validationResult.errors.push({
-          code: AgentExceptionCode.INVALID_AGENT_INPUT,
-          message: t`Response format with type "json" must include a schema`,
-          userFriendlyMessage: msg`JSON response format requires a schema`,
-        });
-      }
-
-      if (
-        type === 'text' &&
-        isDefined((responseFormat as unknown as AgentJsonResponseFormat).schema)
-      ) {
-        validationResult.errors.push({
-          code: AgentExceptionCode.INVALID_AGENT_INPUT,
-          message: t`Response format with type "text" should not include a schema`,
-          userFriendlyMessage: msg`Text response format should not have a schema`,
-        });
-      }
+    if (isDefined(flatAgent.responseFormat)) {
+      validationResult.errors.push(
+        ...validateAgentResponseFormat({
+          responseFormat: flatAgent.responseFormat,
+        }),
+      );
     }
 
     return validationResult;
@@ -108,7 +81,9 @@ export class FlatAgentValidatorService {
 
   public validateFlatAgentDeletion({
     flatEntityToValidate,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: { flatAgentMaps },
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatAgentMaps: optimisticFlatAgentMaps,
+    },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.agent
   >): FailedFlatEntityValidation<FlatAgent> {
@@ -123,7 +98,7 @@ export class FlatAgentValidatorService {
 
     const existingAgent = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatEntityToValidate.id,
-      flatEntityMaps: flatAgentMaps,
+      flatEntityMaps: optimisticFlatAgentMaps,
     });
 
     if (!isDefined(existingAgent)) {
@@ -153,7 +128,9 @@ export class FlatAgentValidatorService {
   public validateFlatAgentUpdate({
     flatEntityId,
     flatEntityUpdates,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: { flatAgentMaps },
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatAgentMaps: optimisticFlatAgentMaps,
+    },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.agent
   >): FailedFlatEntityValidation<FlatAgent> {
@@ -167,7 +144,7 @@ export class FlatAgentValidatorService {
 
     const fromFlatAgent = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId,
-      flatEntityMaps: flatAgentMaps,
+      flatEntityMaps: optimisticFlatAgentMaps,
     });
 
     if (!isDefined(fromFlatAgent)) {
@@ -180,7 +157,6 @@ export class FlatAgentValidatorService {
       return validationResult;
     }
 
-    // Check if agent is a standard (non-custom) agent and cannot be edited
     if (
       fromFlatAgent.isCustom === false &&
       isDefined(fromFlatAgent.standardId)
@@ -190,6 +166,59 @@ export class FlatAgentValidatorService {
         message: t`Cannot update standard agent`,
         userFriendlyMessage: msg`Cannot update standard agent`,
       });
+    }
+
+    const partialFlatAgent: Partial<FlatAgent> =
+      fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
+        updates: flatEntityUpdates,
+      });
+
+    const existingAgents = Object.values(optimisticFlatAgentMaps.byId)
+      .filter(isDefined)
+      .filter((agent) => agent.id !== flatEntityId);
+
+    if (isDefined(partialFlatAgent.label) && partialFlatAgent.label === '') {
+      validationResult.errors.push({
+        code: AgentExceptionCode.INVALID_AGENT_INPUT,
+        message: t`Label cannot be empty`,
+        userFriendlyMessage: msg`Label cannot be empty`,
+      });
+    }
+
+    if (isDefined(partialFlatAgent.prompt) && partialFlatAgent.prompt === '') {
+      validationResult.errors.push({
+        code: AgentExceptionCode.INVALID_AGENT_INPUT,
+        message: t`Prompt cannot be empty`,
+        userFriendlyMessage: msg`Prompt cannot be empty`,
+      });
+    }
+
+    if (
+      isDefined(partialFlatAgent.modelId) &&
+      partialFlatAgent.modelId === ''
+    ) {
+      validationResult.errors.push({
+        code: AgentExceptionCode.INVALID_AGENT_INPUT,
+        message: t`Model ID cannot be empty`,
+        userFriendlyMessage: msg`Model ID cannot be empty`,
+      });
+    }
+
+    if (isDefined(partialFlatAgent.name)) {
+      validationResult.errors.push(
+        ...validateAgentNameUniqueness({
+          name: partialFlatAgent.name,
+          existingFlatAgents: existingAgents,
+        }),
+      );
+    }
+
+    if (isDefined(partialFlatAgent.responseFormat)) {
+      validationResult.errors.push(
+        ...validateAgentResponseFormat({
+          responseFormat: partialFlatAgent.responseFormat,
+        }),
+      );
     }
 
     return validationResult;
