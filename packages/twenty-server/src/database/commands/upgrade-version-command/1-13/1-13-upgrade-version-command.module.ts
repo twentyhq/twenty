@@ -28,4 +28,4 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
   providers: [BackfillViewMainGroupByFieldMetadataIdCommand],
   exports: [BackfillViewMainGroupByFieldMetadataIdCommand],
 })
-export class V1_12_UpgradeVersionCommandModule {}
+export class V1_13_UpgradeVersionCommandModule {}
