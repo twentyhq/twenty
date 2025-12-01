@@ -15,6 +15,7 @@ import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/eng
 
 import { AgentService } from './agent.service';
 
+import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
 import { AgentIdInput } from './dtos/agent-id.input';
 import { AgentDTO } from './dtos/agent.dto';
 import { CreateAgentInput } from './dtos/create-agent.input';
@@ -32,8 +33,13 @@ export class AgentResolver {
 
   @Query(() => [AgentDTO])
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
-  async findManyAgents(@AuthWorkspace() { id: workspaceId }: WorkspaceEntity) {
-    return this.agentService.findManyAgents(workspaceId);
+  async findManyAgents(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<AgentDTO[]> {
+    const flatAgentsWithRoleId =
+      await this.agentService.findManyAgents(workspaceId);
+
+    return flatAgentsWithRoleId.map(fromFlatAgentWithRoleIdToAgentDto);
   }
 
   @Query(() => AgentDTO)
@@ -41,8 +47,13 @@ export class AgentResolver {
   async findOneAgent(
     @Args('input') { id }: AgentIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    return this.agentService.findOneAgent(workspaceId, { id });
+  ): Promise<AgentDTO> {
+    const fatAgentWithRoleId = await this.agentService.findOneAgentById({
+      workspaceId,
+      id,
+    });
+
+    return fromFlatAgentWithRoleIdToAgentDto(fatAgentWithRoleId);
   }
 
   @Mutation(() => AgentDTO)
@@ -51,11 +62,13 @@ export class AgentResolver {
   async createOneAgent(
     @Args('input') input: CreateAgentInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    return this.agentService.createOneAgent(
+  ): Promise<AgentDTO> {
+    const createdAgent = await this.agentService.createOneAgent(
       { ...input, isCustom: true },
       workspaceId,
     );
+
+    return fromFlatAgentWithRoleIdToAgentDto(createdAgent);
   }
 
   @Mutation(() => AgentDTO)
@@ -64,8 +77,13 @@ export class AgentResolver {
   async updateOneAgent(
     @Args('input') input: UpdateAgentInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    return this.agentService.updateOneAgent(input, workspaceId);
+  ): Promise<AgentDTO> {
+    const updatedAgent = await this.agentService.updateOneAgent({
+      input,
+      workspaceId,
+    });
+
+    return fromFlatAgentWithRoleIdToAgentDto(updatedAgent);
   }
 
   @Mutation(() => AgentDTO)
@@ -74,7 +92,12 @@ export class AgentResolver {
   async deleteOneAgent(
     @Args('input') { id }: AgentIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    return this.agentService.deleteOneAgent(id, workspaceId);
+  ): Promise<AgentDTO> {
+    const deletedFlatAgent = await this.agentService.deleteOneAgent(
+      id,
+      workspaceId,
+    );
+
+    return fromFlatAgentWithRoleIdToAgentDto(deletedFlatAgent);
   }
 }

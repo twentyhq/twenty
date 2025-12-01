@@ -24,7 +24,6 @@ import {
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
-import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-actor-context.service';
 import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-model-config.service';
 import { AgentToolGeneratorService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-tool-generator.service';
@@ -34,6 +33,9 @@ import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/serv
 import { ToolHints } from 'src/engine/metadata-modules/ai/ai-chat-router/types/tool-hints.interface';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import {
+  FlatAgentWithRoleId
+} from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -77,7 +79,7 @@ export class AgentExecutionService {
     toolHints,
   }: {
     system: string;
-    agent: AgentEntity | null;
+    agent: FlatAgentWithRoleId | null;
     messages: UIMessage<unknown, UIDataTypes, UITools>[];
     actorContext?: ActorMetadata;
     roleIds?: string[];
@@ -300,7 +302,8 @@ export class AgentExecutionService {
     };
   }> {
     try {
-      const agent = await this.agentService.findOneAgent(workspace.id, {
+      const agent = await this.agentService.findOneAgentById({
+        workspaceId: workspace.id,
         id: agentId,
       });
 

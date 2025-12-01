@@ -71,10 +71,10 @@ export class AgentPlanExecutorService {
         );
 
         const agent =
-          await this.agentExecutionService.agentService.findOneAgent(
-            workspace.id,
-            { name: step.agentName },
-          );
+          await this.agentExecutionService.agentService.findOneAgentByName({
+            name: step.agentName,
+            workspaceId: workspace.id,
+          });
 
         this.logger.log(
           `[PLAN EXECUTION] Step ${step.stepNumber}: Found agent "${agent.label}" (${agent.id})`,

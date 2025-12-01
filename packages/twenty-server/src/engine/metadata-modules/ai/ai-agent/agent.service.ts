@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
@@ -14,12 +13,16 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
-import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
+import { WorkspaceFlatRoleTargetByAgentIdService } from 'src/engine/metadata-modules/flat-agent/services/workspace-flat-role-target-by-agent-id.service';
+import {
+  FlatAgentWithRoleId
+} from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { AgentEntity } from './entities/agent.entity';
 
 @Injectable()
@@ -27,112 +30,52 @@ export class AgentService {
   constructor(
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
-    @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
+    private readonly workspaceFlatRoleTargetByAgentIdService: WorkspaceFlatRoleTargetByAgentIdService,
   ) {}
 
-  async findManyAgents(workspaceId: string) {
-    const agents = await this.agentRepository.find({
-      where: { workspaceId },
-      order: { createdAt: 'DESC' },
-    });
+  async findManyAgents(workspaceId: string): Promise<FlatAgentWithRoleId[]> {
+    const { flatAgentMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatAgentMaps'],
+        },
+      );
+    const flatRoleTargetByAgendIdMaps =
+      await this.workspaceFlatRoleTargetByAgentIdService.getExistingOrRecomputeFlatMaps(
+        {
+          workspaceId,
+        },
+      );
 
-    if (agents.length === 0) {
-      return [];
-    }
+    return Object.values(flatAgentMaps.byId)
+      .filter(isDefined)
+      .map((flatAgent) => {
+        const roleId = flatRoleTargetByAgendIdMaps[flatAgent.id]?.roleId;
 
-    const agentRoleMap = await this.buildAgentRoleMap(workspaceId, agents);
-
-    return agents.map((agent) => ({
-      ...agent,
-      roleId: agentRoleMap.get(agent.id) || null,
-    }));
+        return {
+          ...flatAgent,
+          roleId: roleId ?? null,
+        };
+      });
   }
 
-  private async buildAgentRoleMap(
-    workspaceId: string,
-    agents: AgentEntity[],
-  ): Promise<Map<string, string>> {
-    const roleTargets = await this.roleTargetRepository.find({
-      where: {
-        workspaceId,
-        agentId: In(agents.map((agent) => agent.id)),
-      },
-    });
-
-    const agentRoleMap = new Map<string, string>();
-
-    roleTargets.forEach((roleTarget) => {
-      if (roleTarget.agentId) {
-        agentRoleMap.set(roleTarget.agentId, roleTarget.roleId);
-      }
-    });
-
-    return agentRoleMap;
-  }
-
-  async findOneByApplicationAndStandardId({
-    applicationId,
-    standardId,
+  async findOneAgentByName({
+    name,
     workspaceId,
   }: {
-    applicationId: string;
-    standardId: string;
     workspaceId: string;
-  }) {
-    return await this.agentRepository.findOne({
-      where: { applicationId, standardId, workspaceId },
-    });
-  }
-
-  async findOneAgent(
-    workspaceId: string,
-    { id, name }: { id?: string; name?: string },
-  ) {
-    this.validateAgentIdentifier(id, name);
-
-    const agent = await this.fetchAgent(workspaceId, id, name);
-    const roleId = await this.fetchAgentRoleId(workspaceId, agent.id);
-
-    return {
-      ...agent,
-      roleId,
-    };
-  }
-
-  private validateAgentIdentifier(
-    id: string | undefined,
-    name: string | undefined,
-  ): void {
-    if (!isNonEmptyString(id) && !isNonEmptyString(name)) {
-      throw new AgentException(
-        'Either id or name must be provided',
-        AgentExceptionCode.AGENT_NOT_FOUND,
-      );
-    }
-
-    if (isNonEmptyString(id) && isNonEmptyString(name)) {
-      throw new AgentException(
-        'Cannot specify both id and name',
-        AgentExceptionCode.AGENT_NOT_FOUND,
-      );
-    }
-  }
-
-  private async fetchAgent(
-    workspaceId: string,
-    id: string | undefined,
-    name: string | undefined,
-  ): Promise<AgentEntity> {
+    name: string;
+  }): Promise<AgentEntity> {
     const agent = await this.agentRepository.findOne({
-      where: id ? { id, workspaceId } : { name, workspaceId },
+      where: { name, workspaceId },
     });
 
     if (!agent) {
-      const identifier = id ? `id "${id}"` : `name "${name}"`;
+      const identifier = `name "${name}"`;
 
       throw new AgentException(
         `Agent with ${identifier} not found`,
@@ -143,25 +86,47 @@ export class AgentService {
     return agent;
   }
 
-  private async fetchAgentRoleId(
-    workspaceId: string,
-    agentId: string,
-  ): Promise<string | null> {
-    const roleTarget = await this.roleTargetRepository.findOne({
-      where: {
-        agentId,
-        workspaceId,
-      },
-      select: ['roleId'],
+  async findOneAgentById({
+    id,
+    workspaceId,
+  }: {
+    workspaceId: string;
+    id: string;
+  }): Promise<FlatAgentWithRoleId> {
+    const { flatAgentMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatAgentMaps'],
+        },
+      );
+    const flatRoleTargetByAgendIdMaps =
+      await this.workspaceFlatRoleTargetByAgentIdService.getExistingOrRecomputeFlatMaps(
+        {
+          workspaceId,
+        },
+      );
+
+    const flatAgent = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatAgentMaps,
     });
 
-    return roleTarget?.roleId || null;
+    if (!isDefined(flatAgent)) {
+      throw new AgentException(
+        `Agent ${id} not found`,
+        AgentExceptionCode.AGENT_NOT_FOUND,
+      );
+    }
+
+    const roleId = flatRoleTargetByAgendIdMaps[flatAgent.id]?.roleId;
+    return { ...flatAgent, roleId: roleId ?? null };
   }
 
   async createOneAgent(
     input: CreateAgentInput & { isCustom: boolean },
     workspaceId: string,
-  ) {
+  ): Promise<FlatAgentWithRoleId> {
     const {
       flatAgentMaps: existingFlatAgentMaps,
       flatRoleTargetMaps: existingFlatRoleTargetMaps,
@@ -243,7 +208,13 @@ export class AgentService {
     };
   }
 
-  async updateOneAgent(input: UpdateAgentInput, workspaceId: string) {
+  async updateOneAgent({
+    input,
+    workspaceId,
+  }: {
+    input: UpdateAgentInput;
+    workspaceId: string;
+  }): Promise<FlatAgentWithRoleId> {
     const {
       flatAgentMaps: existingFlatAgentMaps,
       flatRoleTargetMaps: existingFlatRoleTargetMaps,
@@ -328,11 +299,14 @@ export class AgentService {
 
     return {
       ...updatedAgent,
-      roleId: existingRoleTarget?.roleId,
+      roleId: existingRoleTarget?.roleId ?? null,
     };
   }
 
-  async deleteOneAgent(id: string, workspaceId: string) {
+  async deleteOneAgent(
+    id: string,
+    workspaceId: string,
+  ): Promise<FlatAgentWithRoleId> {
     const { flatAgentMaps: existingFlatAgentMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -373,5 +347,17 @@ export class AgentService {
         'Multiple validation errors occurred while deleting agent',
       );
     }
+
+    const flatRoleTargetByAgendIdMaps =
+      await this.workspaceFlatRoleTargetByAgentIdService.getExistingOrRecomputeFlatMaps(
+        {
+          workspaceId,
+        },
+      );
+
+    return {
+      ...agentToDelete,
+      roleId: flatRoleTargetByAgendIdMaps[agentToDelete.id]?.roleId ?? null,
+    };
   }
 }
