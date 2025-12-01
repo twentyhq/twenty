@@ -220,9 +220,8 @@ export const useRecordShowPagePagination = (
     recordGqlFields: { id: true },
   });
 
-  const rankInView = allRecords.findIndex(
-    (record) => record.id === objectRecordId,
-  ) + 1;
+  const rankInView =
+    allRecords.findIndex((record) => record.id === objectRecordId) + 1;
 
   const rankFoundInView = rankInView > 0;
 
