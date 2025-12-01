@@ -12,6 +12,7 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceInvitationException } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
@@ -110,6 +111,12 @@ describe('WorkspaceInvitationService', () => {
             signFileUrl: jest
               .fn()
               .mockReturnValue('https://signed-url.com/logo.png'),
+          },
+        },
+        {
+          provide: ThrottlerService,
+          useValue: {
+            tokenBucketThrottleOrThrow: jest.fn(),
           },
         },
       ],

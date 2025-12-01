@@ -7,10 +7,18 @@ export const fromStandardRoleDefinitionToFlatRole = (
   standardRoleDefinition: StandardRoleDefinition,
   workspaceId: string,
 ): FlatRole => {
+  const createdAt = new Date();
+
   return {
     ...standardRoleDefinition,
     id: v4(),
     workspaceId,
     universalIdentifier: standardRoleDefinition.standardId || v4(),
+    createdAt,
+    updatedAt: createdAt,
+    permissionFlagIds: [],
+    fieldPermissionIds: [],
+    objectPermissionIds: [],
+    roleTargetIds: [],
   };
 };

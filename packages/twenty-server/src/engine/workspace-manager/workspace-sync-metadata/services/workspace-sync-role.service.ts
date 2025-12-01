@@ -38,7 +38,12 @@ export class WorkspaceSyncRoleService {
         workspaceId: context.workspaceId,
         standardId: Not(IsNull()),
       },
-      relations: ['permissionFlags'],
+      relations: [
+        'permissionFlags',
+        'roleTargets',
+        'objectPermissions',
+        'fieldPermissions',
+      ],
     });
 
     const targetStandardRoles = this.standardRoleFactory.create(
@@ -49,7 +54,7 @@ export class WorkspaceSyncRoleService {
 
     const roleComparatorResults = this.workspaceRoleComparator.compare({
       fromFlatRoles: existingStandardRoleEntities.map(fromRoleEntityToFlatRole),
-      toFlatRoles: targetStandardRoles.map(fromRoleEntityToFlatRole),
+      toFlatRoles: targetStandardRoles,
     });
 
     for (const roleComparatorResult of roleComparatorResults) {
