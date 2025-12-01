@@ -1,11 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type ImapFlow } from 'imapflow';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
-import { ImapMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-list-fetch-error-handler.service';
 import { ImapIncrementalSyncService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-incremental-sync.service';
+import { ImapMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-list-fetch-error-handler.service';
 import { createSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/create-sync-cursor.util';
 import { extractMailboxState } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-mailbox-state.util';
 import {
@@ -67,7 +72,7 @@ export class ImapGetMessageListService {
           result.push({
             messageExternalIds: [],
             nextSyncCursor: folder.syncCursor || '',
-            previousSyncCursor: folder.syncCursor,
+            previousSyncCursor: folder.syncCursor || '',
             messageExternalIdsToDelete: [],
             folderId: folder.id,
           });
@@ -86,7 +91,7 @@ export class ImapGetMessageListService {
       return messageFolders.map((folder) => ({
         messageExternalIds: [],
         nextSyncCursor: folder.syncCursor || '',
-        previousSyncCursor: folder.syncCursor,
+        previousSyncCursor: folder.syncCursor || '',
         messageExternalIdsToDelete: [],
         folderId: folder.id,
       }));
@@ -102,6 +107,13 @@ export class ImapGetMessageListService {
     folder: string,
     messageFolder: Pick<MessageFolderWorkspaceEntity, 'syncCursor'>,
   ): Promise<GetOneMessageListResponse> {
+    if (!isDefined(messageFolder.syncCursor)) {
+      throw new MessageImportDriverException(
+        'Message folder sync cursor is required',
+        MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+      );
+    }
+
     const { messages, messageExternalUidsToDelete, syncCursor } =
       await this.getMessagesFromFolder(
         client,

@@ -1,14 +1,19 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
 import { getGroupByOrderBy } from '@/page-layout/widgets/graph/utils/getGroupByOrderBy';
 import {
   type AggregateOrderByWithGroupByField,
   type ObjectRecordOrderByForCompositeField,
+  type ObjectRecordOrderByForRelationField,
   type ObjectRecordOrderByForScalarField,
   type ObjectRecordOrderByWithGroupByDateField,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { type PieChartConfiguration } from '~/generated/graphql';
-import { buildGroupByFieldObject } from './buildGroupByFieldObject';
+import {
+  buildGroupByFieldObject,
+  type GroupByFieldObject,
+} from './buildGroupByFieldObject';
 
 export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
   objectMetadataItem,
@@ -38,13 +43,16 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
     );
   }
 
-  const groupBy: Array<
-    Record<string, boolean | Record<string, boolean | string>>
-  > = [
+  const isFieldDate = isFieldMetadataDateKind(groupByField.type);
+
+  const groupBy: Array<GroupByFieldObject> = [
     buildGroupByFieldObject({
       field: groupByField,
       subFieldName: groupBySubFieldName,
-      dateGranularity,
+
+      dateGranularity: isFieldDate
+        ? (dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY)
+        : undefined,
       firstDayOfTheWeek,
     }),
   ];
@@ -54,6 +62,7 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
     | ObjectRecordOrderByForScalarField
     | ObjectRecordOrderByWithGroupByDateField
     | ObjectRecordOrderByForCompositeField
+    | ObjectRecordOrderByForRelationField
   > = [];
 
   if (isDefined(chartConfiguration.orderBy)) {
@@ -63,7 +72,9 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
         groupByField,
         groupBySubFieldName,
         aggregateOperation,
-        dateGranularity,
+        dateGranularity: isFieldDate
+          ? (dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY)
+          : undefined,
       }),
     );
   }

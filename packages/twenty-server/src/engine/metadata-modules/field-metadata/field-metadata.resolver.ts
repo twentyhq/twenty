@@ -25,7 +25,7 @@ import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
-import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -40,7 +40,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 )
 export class FieldMetadataResolver {
   constructor(
-    private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
+    private readonly fieldMetadataService: FieldMetadataService,
     private readonly i18nService: I18nService,
   ) {}
 
@@ -52,11 +52,10 @@ export class FieldMetadataResolver {
     @Context() context: I18nContext,
   ) {
     try {
-      const flatFieldMetadata =
-        await this.fieldMetadataServiceV2.createOneField({
-          createFieldInput: input.field,
-          workspaceId,
-        });
+      const flatFieldMetadata = await this.fieldMetadataService.createOneField({
+        createFieldInput: input.field,
+        workspaceId,
+      });
 
       return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
     } catch (error) {
@@ -75,11 +74,10 @@ export class FieldMetadataResolver {
     @Context() context: I18nContext,
   ) {
     try {
-      const flatFieldMetadata =
-        await this.fieldMetadataServiceV2.updateOneField({
-          updateFieldInput: { ...input.update, id: input.id },
-          workspaceId,
-        });
+      const flatFieldMetadata = await this.fieldMetadataService.updateOneField({
+        updateFieldInput: { ...input.update, id: input.id },
+        workspaceId,
+      });
 
       return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
     } catch (error) {
@@ -102,11 +100,10 @@ export class FieldMetadataResolver {
     }
 
     try {
-      const flatFieldMetadata =
-        await this.fieldMetadataServiceV2.deleteOneField({
-          deleteOneFieldInput,
-          workspaceId,
-        });
+      const flatFieldMetadata = await this.fieldMetadataService.deleteOneField({
+        deleteOneFieldInput,
+        workspaceId,
+      });
 
       return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
     } catch (error) {

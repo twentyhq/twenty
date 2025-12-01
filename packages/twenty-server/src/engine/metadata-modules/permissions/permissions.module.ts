@@ -7,6 +7,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-target.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -24,8 +25,9 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
     TypeOrmModule.forFeature([UserWorkspaceEntity]),
     UserRoleModule,
     WorkspacePermissionsCacheModule,
+    RoleTargetModule,
   ],
-  providers: [PermissionsService, ApiKeyRoleService],
+  providers: [ApiKeyRoleService, PermissionsService],
   exports: [PermissionsService],
 })
 export class PermissionsModule {}

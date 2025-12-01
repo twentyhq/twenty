@@ -247,23 +247,7 @@ describe('validateAndTransformWidgetConfiguration', () => {
   });
 
   describe('Feature flags', () => {
-    it('should throw error for unsupported graph type', () => {
-      expect(() =>
-        validateAndTransformWidgetConfiguration({
-          type: WidgetType.GRAPH,
-          configuration: TEST_PIE_CHART_CONFIG,
-          isDashboardV2Enabled: false,
-        }),
-      ).toThrow(/IS_DASHBOARD_V2_ENABLED feature flag/);
-
-      expect(() =>
-        validateAndTransformWidgetConfiguration({
-          type: WidgetType.GRAPH,
-          configuration: TEST_LINE_CHART_CONFIG,
-          isDashboardV2Enabled: false,
-        }),
-      ).toThrow(/IS_DASHBOARD_V2_ENABLED feature flag/);
-
+    it('should throw error for GAUGE chart type when IS_DASHBOARD_V2_ENABLED is false', () => {
       expect(() =>
         validateAndTransformWidgetConfiguration({
           type: WidgetType.GRAPH,
@@ -273,7 +257,25 @@ describe('validateAndTransformWidgetConfiguration', () => {
       ).toThrow(/IS_DASHBOARD_V2_ENABLED feature flag/);
     });
 
-    it('should not throw error when IS_DASHBOARD_V2_ENABLED feature flag is enabled', () => {
+    it('should not throw error for GAUGE chart type when IS_DASHBOARD_V2_ENABLED is true', () => {
+      expect(() =>
+        validateAndTransformWidgetConfiguration({
+          type: WidgetType.GRAPH,
+          configuration: TEST_GAUGE_CHART_CONFIG,
+          isDashboardV2Enabled: true,
+        }),
+      ).not.toThrow();
+    });
+
+    it('should not throw error for PIE chart type regardless of IS_DASHBOARD_V2_ENABLED', () => {
+      expect(() =>
+        validateAndTransformWidgetConfiguration({
+          type: WidgetType.GRAPH,
+          configuration: TEST_PIE_CHART_CONFIG,
+          isDashboardV2Enabled: false,
+        }),
+      ).not.toThrow();
+
       expect(() =>
         validateAndTransformWidgetConfiguration({
           type: WidgetType.GRAPH,
@@ -283,21 +285,19 @@ describe('validateAndTransformWidgetConfiguration', () => {
       ).not.toThrow();
     });
 
-    it('should not throw error when IS_DASHBOARD_V2_ENABLED feature flag is enabled', () => {
+    it('should not throw error for LINE chart type regardless of IS_DASHBOARD_V2_ENABLED', () => {
       expect(() =>
         validateAndTransformWidgetConfiguration({
           type: WidgetType.GRAPH,
           configuration: TEST_LINE_CHART_CONFIG,
-          isDashboardV2Enabled: true,
+          isDashboardV2Enabled: false,
         }),
       ).not.toThrow();
-    });
 
-    it('should not throw error when IS_DASHBOARD_V2_ENABLED feature flag is enabled', () => {
       expect(() =>
         validateAndTransformWidgetConfiguration({
           type: WidgetType.GRAPH,
-          configuration: TEST_GAUGE_CHART_CONFIG,
+          configuration: TEST_LINE_CHART_CONFIG,
           isDashboardV2Enabled: true,
         }),
       ).not.toThrow();

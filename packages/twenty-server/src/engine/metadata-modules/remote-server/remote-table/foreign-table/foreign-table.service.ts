@@ -24,7 +24,6 @@ import {
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 
 @Injectable()
@@ -32,7 +31,6 @@ export class ForeignTableService {
   constructor(
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
