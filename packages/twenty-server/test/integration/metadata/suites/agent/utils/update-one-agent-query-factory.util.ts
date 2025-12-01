@@ -29,14 +29,14 @@ export const updateOneAgentQueryFactory = ({
   input,
 }: PerformMetadataQueryParams<UpdateOneAgentFactoryInput>) => ({
   query: gql`
-    mutation UpdateOneAgent($updateAgentInput: UpdateAgentInput!) {
-      updateOneAgent(updateAgentInput: $updateAgentInput) {
+    mutation UpdateOneAgent($input: UpdateAgentInput!) {
+      updateOneAgent(input: $input) {
         ${gqlFields}
       }
     }
   `,
   variables: {
-    updateAgentInput: input,
+    input,
   },
 });
 

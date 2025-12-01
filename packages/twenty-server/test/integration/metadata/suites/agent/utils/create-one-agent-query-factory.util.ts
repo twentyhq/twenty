@@ -29,14 +29,14 @@ export const createOneAgentQueryFactory = ({
   gqlFields = DEFAULT_AGENT_GQL_FIELDS,
 }: PerformMetadataQueryParams<CreateOneAgentFactoryInput>) => ({
   query: gql`
-    mutation CreateOneAgent($createAgentInput: CreateAgentInput!) {
-      createOneAgent(createAgentInput: $createAgentInput) {
+    mutation CreateOneAgent($input: CreateAgentInput!) {
+      createOneAgent(input: $input) {
         ${gqlFields}
       }
     }
   `,
   variables: {
-    createAgentInput: input,
+    input,
   },
 });
 
