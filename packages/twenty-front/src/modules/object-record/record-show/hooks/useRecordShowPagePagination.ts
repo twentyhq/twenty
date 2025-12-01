@@ -212,16 +212,22 @@ export const useRecordShowPagePagination = (
     );
   };
 
-  const rankInView = recordIdsInCache.findIndex((id) => id === objectRecordId);
+  const { records: allRecords } = useFindManyRecords({
+    filter,
+    orderBy,
+    objectNameSingular,
+    recordGqlFields: { id: true },
+  });
 
-  const rankFoundInView = rankInView > -1;
+  const rankInView = allRecords.findIndex((record) => record.id === objectRecordId);
+  const rankFoundInView = !loading && (totalCountBefore >= 0 || totalCountAfter >= 0);
 
   const objectLabelPlural = objectMetadataItem.labelPlural;
 
   const totalCount = 1 + Math.max(totalCountBefore, totalCountAfter);
 
   const viewNameWithCount = rankFoundInView
-    ? `${rankInView + 1} of ${totalCount} in ${objectLabelPlural}`
+    ? `${rankInView} of ${totalCount} in ${objectLabelPlural}`
     : `${objectLabelPlural} (${totalCount})`;
 
   return {
