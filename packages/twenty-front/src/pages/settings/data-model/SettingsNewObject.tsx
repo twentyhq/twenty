@@ -1,8 +1,10 @@
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SETTINGS_OBJECT_MODEL_IS_LABEL_SYNCED_WITH_NAME_LABEL_DEFAULT_VALUE } from '@/settings/constants/SettingsObjectModel';
 import { SettingsDataModelObjectAboutForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
+import { getConflictingObjectMetadataItem } from '@/settings/data-model/utils/getConflictingObjectMetadataItem';
 import {
   type SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
@@ -12,8 +14,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -23,9 +26,10 @@ export const SettingsNewObject = () => {
   const navigate = useNavigateSettings();
   const [isLoading, setIsLoading] = useState(false);
   const { createOneObjectMetadataItem } = useCreateOneObjectMetadataItem();
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const formConfig = useForm<SettingsDataModelObjectAboutFormValues>({
-    mode: 'onSubmit',
+    mode: 'onChange',
     resolver: zodResolver(settingsDataModelObjectAboutFormSchema),
     defaultValues: {
       isLabelSyncedWithName:
@@ -33,8 +37,19 @@ export const SettingsNewObject = () => {
     },
   });
 
+  const nameSingular = formConfig.watch('nameSingular');
+  const namePlural = formConfig.watch('namePlural');
+
+  const conflictingObjectMetadataItem = getConflictingObjectMetadataItem({
+    objectMetadataItems,
+    nameSingular,
+    namePlural,
+  });
+
+  const hasNameConflict = isDefined(conflictingObjectMetadataItem);
+
   const { isValid, isSubmitting } = formConfig.formState;
-  const canSave = isValid && !isSubmitting;
+  const canSave = isValid && !isSubmitting && !hasNameConflict;
 
   const handleSave = async (
     formValues: SettingsDataModelObjectAboutFormValues,
@@ -90,6 +105,9 @@ export const SettingsNewObject = () => {
             />
             <SettingsDataModelObjectAboutForm
               onNewDirtyField={() => formConfig.trigger()}
+              conflictingObjectMetadataItem={
+                !isLoading ? conflictingObjectMetadataItem : undefined
+              }
             />
           </Section>
         </SettingsPageContainer>
