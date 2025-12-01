@@ -4,11 +4,11 @@ import {
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
-import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 
 export type FromCreateAgentInputToFlatAgentArgs = {
   createAgentInput: CreateAgentInput & { applicationId: string };
