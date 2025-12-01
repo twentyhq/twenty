@@ -6,10 +6,7 @@ import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import {
-  MessageImportDriverException,
-  MessageImportDriverExceptionCode,
-} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 
 type ConnectedAccountIdentifier = Pick<
   ConnectedAccountWorkspaceEntity,
@@ -85,13 +82,6 @@ export class ImapClientProvider {
 
     let client: ImapFlow | null = null;
     let timeoutId: NodeJS.Timeout | null = null;
-
-    if (!isDefined(connectionParameters.IMAP?.username)) {
-      throw new MessageImportDriverException(
-        'Username is required',
-        MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
-      );
-    }
 
     if (!isDefined(connectedAccount.handle)) {
       throw new CustomError(

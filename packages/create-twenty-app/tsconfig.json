@@ -1,0 +1,26 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "target": "es2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "declaration": false,
+    "sourceMap": true
+  },
+  "include": ["src"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/__tests__/**"
+  ]
+}

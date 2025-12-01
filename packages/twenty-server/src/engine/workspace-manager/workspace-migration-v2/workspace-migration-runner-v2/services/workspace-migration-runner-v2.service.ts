@@ -60,11 +60,6 @@ export class WorkspaceMigrationRunnerV2Service {
           workspaceId,
         ),
       );
-      asyncOperations.push(
-        this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
-          workspaceId,
-        }),
-      );
     }
 
     const shouldInvalidFindCoreViewsGraphqlCacheOperation = actions.some(
@@ -100,6 +95,43 @@ export class WorkspaceMigrationRunnerV2Service {
           operationName: FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION,
           workspaceId,
         }),
+      );
+    }
+
+    const shouldInvalidateRoleMapCache = actions.some((action) => {
+      switch (action.type) {
+        case 'create_role':
+        case 'delete_role':
+        case 'update_role':
+        case 'create_role_target':
+        case 'delete_role_target':
+        case 'update_role_target': {
+          return true;
+        }
+        default: {
+          return false;
+        }
+      }
+    });
+
+    if (
+      shouldIncrementMetadataGraphqlSchemaVersion ||
+      shouldInvalidateRoleMapCache
+    ) {
+      asyncOperations.push(
+        ...[
+          this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache({
+            workspaceId,
+          }),
+          this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
+            workspaceId,
+          }),
+          this.workspacePermissionsCacheService.recomputeUserWorkspaceRoleMapCache(
+            {
+              workspaceId,
+            },
+          ),
+        ],
       );
     }
 

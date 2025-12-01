@@ -105,7 +105,7 @@ msgid "A person"
 msgstr "Een persoon"
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-label-uniqueness.util.ts
 msgid "A role with this label already exists."
 msgstr "Er bestaat al een rol met dit label."
 
@@ -2767,6 +2767,11 @@ msgstr "Voorkeurstaal"
 msgid "Probability"
 msgstr "Waarschijnlijkheid"
 
+#. js-lingui-id: OTJNm9
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
+msgid "Property {property} is required for role"
+msgstr ""
+
 #. js-lingui-id: dtGxRz
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Provided and inferred calling code are conflicting"
@@ -2870,6 +2875,56 @@ msgstr "Reactiestatus"
 msgid "Role"
 msgstr "Rol"
 
+#. js-lingui-id: QbW1ho
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to agents"
+msgstr ""
+
+#. js-lingui-id: u1Fm8i
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to API keys"
+msgstr ""
+
+#. js-lingui-id: 9ZQkou
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to users"
+msgstr ""
+
+#. js-lingui-id: MvTCyk
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+msgid "Role not found"
+msgstr ""
+
+#. js-lingui-id: oCyyzG
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
+msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId"
+msgstr ""
+
+#. js-lingui-id: oNYUjk
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+msgid "Role target not found"
+msgstr ""
+
+#. js-lingui-id: alYNOd
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+msgid "Role target with this id already exists"
+msgstr ""
+
 #. js-lingui-id: MFW30/
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 msgid "Route already exists"
@@ -2966,7 +3021,7 @@ msgid "Settings"
 msgstr "Instellingen"
 
 #. js-lingui-id: RyE+Of
-#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
 msgid "Some of the information provided is invalid. Please check your input and try again."
 msgstr "Sommige van de verstrekte informatie is ongeldig. Controleer uw invoer en probeer het opnieuw."
 
@@ -3328,14 +3383,10 @@ msgid "The request is too complex to process. Please try reducing the amount of 
 msgstr ""
 
 #. js-lingui-id: Zi9X+u
-#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util.ts
+#: src/engine/metadata-modules/flat-role/utils/from-delete-role-input-to-flat-role-or-throw.util.ts
 msgid "The role you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "De rol die u zoekt kon niet worden gevonden. Het is mogelijk verwijderd of u hebt er geen toegang toe."
-
-#. js-lingui-id: 5h4Nxe
-#: src/engine/metadata-modules/user-role/user-role.service.ts
-msgid "The role you are trying to assign could not be found. It may have been deleted."
-msgstr "De rol die u probeert toe te wijzen kon niet worden gevonden. Het is mogelijk verwijderd."
 
 #. js-lingui-id: HRcugS
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
@@ -3421,13 +3472,8 @@ msgstr "Deze operatie is niet toegestaan. Probeer een andere methode of neem con
 msgid "This record already exists. Please check your data and try again."
 msgstr "Deze record bestaat al. Controleer uw gegevens en probeer het opnieuw."
 
-#. js-lingui-id: +L9yxk
-#: src/engine/metadata-modules/user-role/user-role.service.ts
-msgid "This role cannot be assigned to users. Please select a different role."
-msgstr "Deze rol kan niet aan gebruikers worden toegewezen. Kies een andere rol."
-
 #. js-lingui-id: KoDdqN
-#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-is-editable.util.ts
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -3539,6 +3585,11 @@ msgstr "Tijdlijnactiviteit"
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Title"
 msgstr "Titel"
+
+#. js-lingui-id: mfqtz7
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Too many workspace invitations sent. Please try again later."
+msgstr ""
 
 #. js-lingui-id: G3myU+
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -4212,7 +4263,7 @@ msgid "You cannot change your own role. Please ask another administrator to upda
 msgstr "En u kunt uw eigen rol niet veranderen. Vraag een andere beheerder om uw rol bij te werken."
 
 #. js-lingui-id: y5haJ4
-#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-read-write-permissions-consistency.util.ts
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "You cannot grant edit permissions without also granting read permissions. Please enable read access first."
 msgstr "U kunt geen bewerkingsrechten verlenen zonder ook leesrechten toe te kennen. Schakel eerst leesrechten in."

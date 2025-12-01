@@ -135,9 +135,6 @@ export const CommandMenuPageLayout = ({
       >
         <StyledSidePanel
           initial={false}
-          animate={{
-            x: isCommandMenuOpened ? 0 : COMMAND_MENU_SIDE_PANEL_WIDTH,
-          }}
           transition={{
             duration: theme.animation.duration.normal,
           }}

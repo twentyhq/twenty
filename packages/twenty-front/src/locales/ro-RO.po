@@ -1069,12 +1069,10 @@ msgstr "A apărut o eroare la procesarea mesajului dumneavoastră"
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
-#: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
-#: src/modules/views/hooks/internal/usePersistViewField.ts
 #: src/modules/views/hooks/internal/usePersistViewField.ts
 #: src/modules/views/hooks/internal/usePersistViewField.ts
 #: src/modules/views/hooks/internal/usePersistViewField.ts
@@ -7734,6 +7732,11 @@ msgstr "Valoare de returnare"
 msgid "Revoked for this object"
 msgstr "Revocat pentru acest obiect"
 
+#. js-lingui-id: E1BXUR
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "role"
+msgstr ""
+
 #. js-lingui-id: GDvlUT
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -7758,6 +7761,11 @@ msgstr "Numele rolului"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Role name cannot be empty"
 msgstr "Numele rolului nu poate fi gol"
+
+#. js-lingui-id: jLNGne
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "role target"
+msgstr ""
 
 #. js-lingui-id: M9SCiK
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
