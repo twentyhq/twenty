@@ -141,10 +141,8 @@ export const useHandleRecordGroupField = () => {
       updateView,
       setRecordGroupsFromViewGroups,
       objectMetadataItem,
-      loadRecordIndexStates,
       createViewGroups,
       deleteViewGroups,
-      createViewGroups,
     ],
   );
 

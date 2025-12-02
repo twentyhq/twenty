@@ -8,8 +8,8 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/constants/DEFAULT_VIEW_FIELD_SIZE';
 import {
-    BASE_OBJECT_STANDARD_FIELD_IDS,
-    MESSAGE_STANDARD_FIELD_IDS,
+  BASE_OBJECT_STANDARD_FIELD_IDS,
+  MESSAGE_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 export const messagesAllView = ({
