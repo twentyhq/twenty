@@ -83,14 +83,12 @@ export class AgentTurnResolver {
       agentId: string;
       input: string;
       workspaceId: string;
-      userWorkspaceId: string;
     }>(RunEvaluationInputJob.name, {
       turnId: savedTurn.id,
       threadId: savedThread.id,
       agentId,
       input,
       workspaceId: workspace.id,
-      userWorkspaceId,
     });
 
     const turnWithRelations = await this.turnRepository.findOne({

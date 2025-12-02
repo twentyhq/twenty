@@ -20,7 +20,6 @@ export type RunEvaluationInputJobData = {
   agentId: string;
   input: string;
   workspaceId: string;
-  userWorkspaceId: string;
 };
 
 @Processor({ queueName: MessageQueue.workspaceQueue, scope: Scope.REQUEST })
