@@ -68,7 +68,7 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
       const tableName = computeObjectTargetTable(objectMetadataItem);
 
       if (!objectMetadataItem.isCustom) {
-        await this.processStandardObjectTextFields(
+        await this.cleanUpEmptyStringDefaultsInTextFieldsInStandardObjects(
           objectMetadataItem,
           tableName,
           schemaName,
@@ -77,7 +77,7 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
         );
       }
 
-      await this.processNameFieldWithEmptyStringDefault(
+      await this.cleanUpEmptyStringDefaultsAndSetNullableInNameFieldInCustomObjects(
         objectMetadataItem,
         tableName,
         schemaName,
@@ -87,7 +87,7 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
     }
   }
 
-  private async processStandardObjectTextFields(
+  private async cleanUpEmptyStringDefaultsInTextFieldsInStandardObjects(
     objectMetadataItem: ObjectMetadataEntity,
     tableName: string,
     schemaName: string,
@@ -115,6 +115,8 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
            AND column_name = $3
            AND column_default IS NOT NULL`,
         [schemaName, tableName, field.name],
+        undefined,
+        { shouldBypassPermissionChecks: true },
       );
 
       if (!columnDefaultResult || columnDefaultResult.length === 0) {
@@ -143,20 +145,24 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
       );
 
       if (!isDryRun) {
-        // Drop the default constraint
         await dataSource.query(
           `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${field.name}" DROP DEFAULT`,
+          [],
+          undefined,
+          { shouldBypassPermissionChecks: true },
         );
 
-        // Update all empty string values to NULL
         await dataSource.query(
           `UPDATE "${schemaName}"."${tableName}" SET "${field.name}" = NULL WHERE "${field.name}" = ''`,
+          [],
+          undefined,
+          { shouldBypassPermissionChecks: true },
         );
       }
     }
   }
 
-  private async processNameFieldWithEmptyStringDefault(
+  private async cleanUpEmptyStringDefaultsAndSetNullableInNameFieldInCustomObjects(
     objectMetadataItem: ObjectMetadataEntity,
     tableName: string,
     schemaName: string,
@@ -179,19 +185,23 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
     );
 
     if (!isDryRun) {
-      // Drop the default constraint
-      await dataSource?.query(
-        `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "name" DROP DEFAULT`,
+      await dataSource.query(
+        `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "name" DROP DEFAULT, ALTER COLUMN "name" DROP NOT NULL`,
+        [],
+        undefined,
+        { shouldBypassPermissionChecks: true },
       );
 
-      // Update all empty string values to NULL
-      await dataSource?.query(
+      await dataSource.query(
         `UPDATE "${schemaName}"."${tableName}" SET "name" = NULL WHERE "name" = ''`,
+        [],
+        undefined,
+        { shouldBypassPermissionChecks: true },
       );
 
-      // Update field metadata to set defaultValue to null
       await this.fieldMetadataRepository.update(nameField.id, {
         defaultValue: null,
+        isNullable: true,
       });
 
       this.logger.log(
