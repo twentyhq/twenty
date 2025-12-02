@@ -178,6 +178,11 @@ msgstr "{deletedCount, plural, one {Excluído com sucesso {deletedCount} trabalh
 msgid "{failedCount} file(s) failed to upload"
 msgstr "{failedCount} arquivo(s) não conseguiu(aram) ser carregado(s)"
 
+#. js-lingui-id: bv2QCV
+#: src/modules/command-menu/pages/page-layout/hooks/useChartSettingsValues.ts
+msgid "{filterRulesCount, plural, one {{filterRulesCount} rule} other {{filterRulesCount} rules}}"
+msgstr ""
+
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
@@ -7291,6 +7296,11 @@ msgstr "Código Postal"
 msgid "Prefilling your workspace data..."
 msgstr "Preenchendo seus dados de espaço de trabalho..."
 
+#. js-lingui-id: rNqTKZ
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Prefix"
+msgstr ""
+
 #. js-lingui-id: ut1ZY+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
 msgid "Prevent from assigning the same value to different records"
@@ -8822,6 +8832,11 @@ msgstr ""
 msgid "Successfully merged {recordCount} records"
 msgstr "{recordCount, plural, one {Mesclou com sucesso {recordCount} registro} other {Mesclou com sucesso {recordCount} registros}}"
 
+#. js-lingui-id: QJz8/3
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Suffix"
+msgstr ""
+
 #. js-lingui-id: nyQWMb
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Suggested"
@@ -9577,6 +9592,12 @@ msgstr "Único"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
 msgid "Unique fields"
 msgstr "Campos únicos"
+
+#. js-lingui-id: pRpC/r
+#: src/modules/command-menu/pages/page-layout/constants/settings/SuffixSetting.ts
+#: src/modules/command-menu/pages/page-layout/constants/settings/PrefixSetting.ts
+msgid "unit"
+msgstr ""
 
 #. js-lingui-id: Ef7StM
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts

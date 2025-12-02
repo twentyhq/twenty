@@ -16,7 +16,6 @@ import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metad
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
-import { computeUniqueIndexWhereClause } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-index-where-clause.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
@@ -148,17 +147,6 @@ export class UpsertRecordService {
           ? conflictPathsUniqueFieldsToUpdate
           : ['id'];
 
-      //TODO : To delete once IS_NULL_EQUIVALENCE_ENABLED feature flag removed
-      const indexPredicate = uniqueFieldsToUpdate
-        .map((field) =>
-          computeUniqueIndexWhereClause({
-            type: field.type,
-            name: field.name,
-            defaultValue: field.defaultValue,
-          }),
-        )
-        .filter(isDefined);
-
       const restrictedFields =
         repository.objectRecordsPermissions?.[flatObjectMetadata.id]
           ?.restrictedFields;
@@ -173,10 +161,6 @@ export class UpsertRecordService {
         transformedObjectRecord,
         {
           conflictPaths: conflictPaths,
-          indexPredicate:
-            indexPredicate.length > 0
-              ? `${indexPredicate.join(' AND ')}`
-              : undefined,
         },
         undefined,
         selectedColumns,
