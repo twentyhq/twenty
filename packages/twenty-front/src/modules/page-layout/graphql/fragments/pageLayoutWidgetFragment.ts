@@ -94,6 +94,8 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         format
         description
         filter
+        prefix
+        suffix
         timezone
         firstDayOfTheWeek
       }
