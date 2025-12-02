@@ -48,7 +48,7 @@ export class AgentTurnResolver {
       order: { createdAt: 'DESC' },
     });
 
-    return turns;
+    return turns as unknown as AgentTurnDTO[];
   }
 
   @Mutation(() => AgentTurnEvaluationDTO)
@@ -57,7 +57,7 @@ export class AgentTurnResolver {
   ): Promise<AgentTurnEvaluationDTO> {
     const evaluation = await this.graderService.evaluateTurn(turnId);
 
-    return evaluation;
+    return evaluation as unknown as AgentTurnEvaluationDTO;
   }
 
   @Mutation(() => AgentTurnDTO)
@@ -104,6 +104,6 @@ export class AgentTurnResolver {
       });
     }
 
-    return turnWithRelations;
+    return turnWithRelations as unknown as AgentTurnDTO;
   }
 }
