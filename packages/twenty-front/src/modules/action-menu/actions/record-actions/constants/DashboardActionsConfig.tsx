@@ -87,7 +87,10 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         !selectedRecord?.isRemote &&
         !isDefined(selectedRecord?.deletedAt) &&
         isDefined(selectedRecord?.pageLayoutId),
-      availableOn: [ActionViewType.SHOW_PAGE],
+      availableOn: [
+        ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+        ActionViewType.SHOW_PAGE,
+      ],
       component: <DuplicateDashboardSingleRecordAction />,
     },
   },
