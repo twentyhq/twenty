@@ -38,6 +38,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         description
         filter
         groupMode
+        isCumulative
         timezone
         firstDayOfTheWeek
       }
@@ -63,6 +64,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         description
         filter
         isStacked
+        isCumulative
         timezone
         firstDayOfTheWeek
       }
