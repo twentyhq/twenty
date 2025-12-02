@@ -27,12 +27,9 @@ describe('AgentToolGeneratorService Integration', () => {
         .spyOn(context.roleRepository, 'find')
         .mockResolvedValue([roleWithFullPermissions]);
       jest
-        .spyOn(
-          context.workspacePermissionsCacheService,
-          'getRolesPermissionsFromCache',
-        )
+        .spyOn(context.workspaceCacheService, 'getOrRecompute')
         .mockResolvedValue({
-          data: {
+          rolesPermissions: {
             [context.testRoleId]: {
               [context.testObjectMetadata.id]: {
                 canReadObjectRecords: true,
@@ -43,8 +40,7 @@ describe('AgentToolGeneratorService Integration', () => {
               },
             },
           },
-          version: '1.0',
-        });
+        } as any);
       jest
         .spyOn(context.objectMetadataService, 'findManyWithinWorkspace')
         .mockResolvedValue([
@@ -75,12 +71,9 @@ describe('AgentToolGeneratorService Integration', () => {
         .spyOn(context.roleRepository, 'find')
         .mockResolvedValue([context.testRole]);
       jest
-        .spyOn(
-          context.workspacePermissionsCacheService,
-          'getRolesPermissionsFromCache',
-        )
+        .spyOn(context.workspaceCacheService, 'getOrRecompute')
         .mockResolvedValue({
-          data: {
+          rolesPermissions: {
             [context.testRoleId]: {
               [context.testObjectMetadata.id]: {
                 canReadObjectRecords: true,
@@ -91,8 +84,7 @@ describe('AgentToolGeneratorService Integration', () => {
               },
             },
           },
-          version: '1.0',
-        });
+        } as any);
       jest
         .spyOn(context.objectMetadataService, 'findManyWithinWorkspace')
         .mockResolvedValue([
@@ -136,12 +128,9 @@ describe('AgentToolGeneratorService Integration', () => {
         .spyOn(context.roleRepository, 'find')
         .mockResolvedValue([context.testRole]);
       jest
-        .spyOn(
-          context.workspacePermissionsCacheService,
-          'getRolesPermissionsFromCache',
-        )
+        .spyOn(context.workspaceCacheService, 'getOrRecompute')
         .mockResolvedValue({
-          data: {
+          rolesPermissions: {
             [context.testRoleId]: {
               [workflowObject.id]: {
                 canReadObjectRecords: true,
@@ -152,8 +141,7 @@ describe('AgentToolGeneratorService Integration', () => {
               },
             },
           },
-          version: '1.0',
-        });
+        } as any);
       jest
         .spyOn(context.objectMetadataService, 'findManyWithinWorkspace')
         .mockResolvedValue([

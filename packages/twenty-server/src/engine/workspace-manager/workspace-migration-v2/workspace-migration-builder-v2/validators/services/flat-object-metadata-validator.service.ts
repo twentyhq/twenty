@@ -143,14 +143,6 @@ export class FlatObjectMetadataValidatorService {
           userFriendlyMessage: msg`Standard objects cannot be deleted`,
         });
       }
-
-      if (!buildOptions.isSystemBuild && flatObjectMetadataToDelete.isActive) {
-        validationResult.errors.push({
-          code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-          message: t`Active objects cannot be deleted`,
-          userFriendlyMessage: msg`Active objects cannot be deleted`,
-        });
-      }
     }
 
     return validationResult;

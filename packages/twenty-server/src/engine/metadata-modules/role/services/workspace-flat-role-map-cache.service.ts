@@ -3,9 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
@@ -15,19 +14,16 @@ import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permi
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
-import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
+import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-flat-map-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
-@WorkspaceFlatMapCache('flatRoleMaps')
-export class WorkspaceFlatRoleMapCacheService extends WorkspaceFlatMapCacheService<
+@WorkspaceCache('flatRoleMaps')
+export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
   FlatEntityMaps<FlatRole>
 > {
   constructor(
-    @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
-    cacheStorageService: CacheStorageService,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(RoleTargetsEntity)
@@ -39,14 +35,12 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceFlatMapCacheServi
     @InjectRepository(FieldPermissionEntity)
     private readonly fieldPermissionRepository: Repository<FieldPermissionEntity>,
   ) {
-    super(cacheStorageService);
+    super();
   }
 
-  protected async computeFlatMap({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<FlatEntityMaps<FlatRole>> {
+  async computeForCache(
+    workspaceId: string,
+  ): Promise<FlatEntityMaps<FlatRole>> {
     const [
       roles,
       roleTargets,

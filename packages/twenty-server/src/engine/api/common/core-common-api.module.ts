@@ -25,6 +25,7 @@ import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-f
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-wo
     RecordTransformerModule,
     GlobalWorkspaceDataSourceModule,
     FeatureFlagModule,
+    WorkspaceCacheModule,
   ],
   providers: [
     ProcessNestedRelationsHelper,

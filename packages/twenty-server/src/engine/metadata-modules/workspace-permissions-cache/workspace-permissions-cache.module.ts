@@ -1,34 +1,36 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspaceFeatureFlagsMapCacheModule } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.module';
-import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache-storage.service';
-import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceApiKeyRoleMapCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-api-key-role-map-cache.service';
+import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-roles-permissions-cache.service';
+import { WorkspaceUserWorkspaceRoleMapCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-user-workspace-role-map-cache.service';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 import { WorkspacePermissionsCacheService } from './workspace-permissions-cache.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([WorkspaceEntity]),
     TypeOrmModule.forFeature([
       ObjectMetadataEntity,
       RoleEntity,
       RoleTargetsEntity,
     ]),
-    WorkspaceCacheStorageModule,
-    WorkspaceFeatureFlagsMapCacheModule,
+    WorkspaceCacheModule,
   ],
   providers: [
     WorkspacePermissionsCacheService,
-    WorkspacePermissionsCacheStorageService,
+    WorkspaceRolesPermissionsCacheService,
+    WorkspaceUserWorkspaceRoleMapCacheService,
+    WorkspaceApiKeyRoleMapCacheService,
   ],
   exports: [
     WorkspacePermissionsCacheService,
-    WorkspacePermissionsCacheStorageService,
+    WorkspaceRolesPermissionsCacheService,
+    WorkspaceUserWorkspaceRoleMapCacheService,
+    WorkspaceApiKeyRoleMapCacheService,
   ],
 })
 export class WorkspacePermissionsCacheModule {}

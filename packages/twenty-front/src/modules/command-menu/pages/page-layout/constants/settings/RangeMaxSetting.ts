@@ -9,6 +9,6 @@ export const RANGE_MAX_SETTING: ChartSettingsItem = {
   Icon: IconMathMax,
   label: CHART_CONFIGURATION_SETTING_LABELS.MAX_RANGE,
   id: CHART_CONFIGURATION_SETTING_IDS.MAX_RANGE,
-  isInput: true,
+  isNumberInput: true,
   inputPlaceholder: msg`Max`,
 };

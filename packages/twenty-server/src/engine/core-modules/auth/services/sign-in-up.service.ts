@@ -11,7 +11,6 @@ import { v4 } from 'uuid';
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { WorkspaceFlatApplicationMapCacheService } from 'src/engine/core-modules/application/services/workspace-flat-application-map-cache.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -39,6 +38,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
@@ -60,7 +60,7 @@ export class SignInUpService {
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly userService: UserService,
     private readonly metricsService: MetricsService,
-    private readonly workspaceFlatApplicationMapCacheService: WorkspaceFlatApplicationMapCacheService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
     @InjectDataSource()
     private readonly dataSource: DataSource,
@@ -526,9 +526,9 @@ export class SignInUpService {
       );
 
       await queryRunner.commitTransaction();
-      await this.workspaceFlatApplicationMapCacheService.invalidateCache({
-        workspaceId,
-      });
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
 
       return { user, workspace };
     } catch (error) {

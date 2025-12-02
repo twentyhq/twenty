@@ -7,9 +7,9 @@ import { UpdateRecordService } from 'src/engine/core-modules/record-crud/service
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { ToolService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
 
 // Minimal mock repository type
@@ -28,7 +28,7 @@ describe('ToolService', () => {
   const roleId = 'role_1';
 
   let service: ToolService;
-  let permissionsCacheService: WorkspacePermissionsCacheService;
+  let workspaceCacheService: WorkspaceCacheService;
 
   const testObject = getMockObjectMetadataEntity({
     workspaceId: '',
@@ -75,10 +75,10 @@ describe('ToolService', () => {
           },
         },
         {
-          provide: WorkspacePermissionsCacheService,
+          provide: WorkspaceCacheService,
           useValue: {
-            getRolesPermissionsFromCache: jest.fn().mockResolvedValue({
-              data: {
+            getOrRecompute: jest.fn().mockResolvedValue({
+              rolesPermissions: {
                 [roleId]: {
                   [testObject.id]: {
                     canReadObjectRecords: true,
@@ -135,16 +135,17 @@ describe('ToolService', () => {
     }).compile();
 
     service = moduleRef.get(ToolService);
-    permissionsCacheService = moduleRef.get(WorkspacePermissionsCacheService);
+    workspaceCacheService = moduleRef.get(WorkspaceCacheService);
   });
 
   describe('listTools', () => {
     it('should return tools based on role permissions', async () => {
       const tools = await service.listTools({ unionOf: [roleId] }, workspaceId);
 
-      expect(
-        permissionsCacheService.getRolesPermissionsFromCache,
-      ).toHaveBeenCalledWith({ workspaceId });
+      expect(workspaceCacheService.getOrRecompute).toHaveBeenCalledWith(
+        workspaceId,
+        ['rolesPermissions'],
+      );
 
       // Verify tool keys
       expect(tools['create_testObject']).toBeDefined();
