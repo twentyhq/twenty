@@ -4,7 +4,7 @@
   "projectType": "library",
   "tags": ["scope:create-app"],
   "targets": {
-    "build": {
+    "before-build": {
       "executor": "nx:run-commands",
       "cache": true,
       "options": {
@@ -12,6 +12,15 @@
         "commands": ["rimraf dist", "tsc --project tsconfig.json"]
       },
       "dependsOn": ["^build", "typecheck"]
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "packages/create-twenty-app",
+        "commands": ["mkdir -p dist/constants/base-application && cp -R src/constants/base-application dist/constants"]
+      },
+      "dependsOn": ["before-build"]
     },
     "dev": {
       "executor": "nx:run-commands",
