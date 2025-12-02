@@ -26,12 +26,6 @@ export const copyBaseApplicationProject = async ({
     description: appDescription,
     appDirectory,
   });
-
-  await createReadmeContent({
-    displayName: appDisplayName,
-    appDescription,
-    appDirectory,
-  });
 };
 
 const createYarnLock = async (appDirectory: string) => {
@@ -145,21 +139,4 @@ const createPackageJson = async ({
     JSON.stringify(packageJson, null, 2),
     'utf8',
   );
-};
-
-const createReadmeContent = async ({
-  displayName,
-  appDescription,
-  appDirectory,
-}: {
-  displayName: string;
-  appDescription: string;
-  appDirectory: string;
-}) => {
-  const readmeContent = `# ${displayName}
-
-${appDescription}
-`;
-
-  await fs.writeFile(join(appDirectory, 'README.md'), readmeContent);
 };
