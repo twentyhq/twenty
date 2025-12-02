@@ -48,9 +48,8 @@ export const formatDimensionValue = ({
     return t`Not Set`;
   }
 
-  const effectiveDateGranularity =
-    (dateGranularity ??
-      GRAPH_DEFAULT_DATE_GRANULARITY) as ObjectRecordGroupByDateGranularity;
+  const effectiveDateGranularity = (dateGranularity ??
+    GRAPH_DEFAULT_DATE_GRANULARITY) as ObjectRecordGroupByDateGranularity;
 
   switch (fieldMetadata.type) {
     case FieldMetadataType.SELECT: {
@@ -110,7 +109,7 @@ export const formatDimensionValue = ({
           dateGranularity ===
             ObjectRecordGroupByDateGranularity.MONTH_OF_THE_YEAR ||
           dateGranularity ===
-          ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR
+            ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR
         ) {
           return String(value);
         }
