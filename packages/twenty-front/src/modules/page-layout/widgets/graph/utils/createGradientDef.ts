@@ -1,6 +1,7 @@
 import { type GraphColorScheme } from '../types/GraphColorScheme';
 import { calculateAngularGradient } from './calculateAngularGradient';
 
+//TODO: Remove this util from gauge chart since gradient is no longer used
 export const createGradientDef = (
   colorScheme: GraphColorScheme,
   id: string,

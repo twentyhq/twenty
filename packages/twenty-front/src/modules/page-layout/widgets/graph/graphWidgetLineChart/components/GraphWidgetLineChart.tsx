@@ -34,7 +34,7 @@ import {
   type Point,
   type SliceTooltipProps,
 } from '@nivo/line';
-import { useCallback, useId, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -87,7 +87,6 @@ export const GraphWidgetLineChart = ({
   onSliceClick,
 }: GraphWidgetLineChartProps) => {
   const theme = useTheme();
-  const instanceId = useId();
   const colorRegistry = createGraphColorRegistry(theme);
   const chartTheme = useLineChartTheme();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -105,15 +104,10 @@ export const GraphWidgetLineChart = ({
   const effectiveMinimumValue = rangeMin ?? calculatedValueRange.minimum;
   const effectiveMaximumValue = rangeMax ?? calculatedValueRange.maximum;
 
-  const { enrichedSeries, nivoData, defs, fill, colors, legendItems } =
-    useLineChartData({
-      data,
-      colorRegistry,
-      id,
-      instanceId,
-      enableArea,
-      theme,
-    });
+  const { enrichedSeries, nivoData, colors, legendItems } = useLineChartData({
+    data,
+    colorRegistry,
+  });
 
   const hasClickableItems = isDefined(onSliceClick);
 
@@ -234,14 +228,13 @@ export const GraphWidgetLineChart = ({
           lineWidth={1}
           enableArea={enableArea}
           areaBaselineValue={0}
+          areaOpacity={0.04}
           enablePoints={true}
           pointSize={0}
           enablePointLabel={false}
           pointBorderWidth={0}
           colors={colors}
           areaBlendMode={'normal'}
-          defs={defs}
-          fill={fill}
           axisTop={null}
           axisRight={null}
           axisBottom={axisBottomConfig}
@@ -262,8 +255,6 @@ export const GraphWidgetLineChart = ({
             PointLabelsLayer,
             'legends',
           ]}
-          useMesh={true}
-          crosshairType="cross"
           theme={chartTheme}
         />
       </GraphWidgetChartContainer>

@@ -1,28 +1,18 @@
 import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartEnrichedSeries';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
-import { createGradientDef } from '@/page-layout/widgets/graph/utils/createGradientDef';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { type LineSeries } from '@nivo/line';
 import { useMemo } from 'react';
-import { type ThemeType } from 'twenty-ui/theme';
 
 type UseLineChartDataProps = {
   data: LineChartSeries[];
   colorRegistry: GraphColorRegistry;
-  id: string;
-  instanceId: string;
-  enableArea: boolean;
-  theme: ThemeType;
 };
 
 export const useLineChartData = ({
   data,
   colorRegistry,
-  id,
-  instanceId,
-  enableArea,
-  theme,
 }: UseLineChartDataProps) => {
   const enrichedSeries = useMemo((): LineChartEnrichedSeries[] => {
     return data.map((series, index) => {
@@ -32,18 +22,14 @@ export const useLineChartData = ({
         fallbackIndex: index,
         totalGroups: data.length,
       });
-      const shouldEnableArea = series.enableArea ?? enableArea;
-      const gradientId = `lineGradient-${id}-${instanceId}-${series.id}-${index}`;
 
       return {
         ...series,
         colorScheme,
-        gradientId,
-        shouldEnableArea,
         label: series.label || series.id,
       };
     });
-  }, [data, colorRegistry, id, instanceId, enableArea]);
+  }, [data, colorRegistry]);
 
   const nivoData: LineSeries[] = data.map((series) => ({
     id: series.id,
@@ -51,25 +37,6 @@ export const useLineChartData = ({
       x: point.x,
       y: point.y,
     })),
-  }));
-
-  const seriesWithArea = enrichedSeries.filter(
-    (series) => series.shouldEnableArea,
-  );
-
-  const defs = seriesWithArea.map((series) =>
-    createGradientDef(
-      series.colorScheme,
-      series.gradientId,
-      false,
-      90,
-      theme.name === 'light',
-    ),
-  );
-
-  const fill = seriesWithArea.map((series) => ({
-    match: { id: series.id },
-    id: series.gradientId,
   }));
 
   const colors = enrichedSeries.map((series) => series.colorScheme.solid);
@@ -85,8 +52,6 @@ export const useLineChartData = ({
   return {
     enrichedSeries,
     nivoData,
-    defs,
-    fill,
     colors,
     legendItems,
   };
