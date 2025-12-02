@@ -53,6 +53,26 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
       );
     }
 
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+    });
+
+    if (!isDefined(workspace)) {
+      throw new Error(
+        `Could not find workspace ${workspaceId}, should never occur`,
+      );
+    }
+    if (
+      !isDefined(workspace.version) ||
+      !['1.12.0', '1.12.1'].includes(workspace.version)
+    ) {
+      this.logger.log(
+        `Workspace ${workspaceId} is not a v1.12.0 or v1.12.1 workspace, skipping`,
+      );
+
+      return;
+    }
+
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
     if (isDryRun) {
@@ -77,13 +97,15 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
         );
       }
 
-      await this.cleanUpEmptyStringDefaultsAndSetNullableInNameFieldInCustomObjects(
-        objectMetadataItem,
-        tableName,
-        schemaName,
-        dataSource,
-        isDryRun,
-      );
+      if (objectMetadataItem.isCustom) {
+        await this.cleanUpEmptyStringDefaultsAndSetNullableInNameFieldInCustomObjects(
+          objectMetadataItem,
+          tableName,
+          schemaName,
+          dataSource,
+          isDryRun,
+        );
+      }
     }
   }
 
@@ -106,42 +128,8 @@ export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWo
         `Checking field ${field.name} on standard object ${objectMetadataItem.nameSingular} (Table: ${tableName})`,
       );
 
-      // Check if column has a default value in the database
-      const columnDefaultResult = await dataSource.query(
-        `SELECT column_default
-         FROM information_schema.columns
-         WHERE table_schema = $1
-           AND table_name = $2
-           AND column_name = $3
-           AND column_default IS NOT NULL`,
-        [schemaName, tableName, field.name],
-        undefined,
-        { shouldBypassPermissionChecks: true },
-      );
-
-      if (!columnDefaultResult || columnDefaultResult.length === 0) {
-        this.logger.log(
-          `No default value found for column ${field.name}, skipping`,
-        );
-        continue;
-      }
-
-      const columnDefault = columnDefaultResult[0].column_default;
-
-      const isEmptyStringDefault =
-        columnDefault === "''::text" ||
-        columnDefault === "''" ||
-        columnDefault === "''::character varying";
-
-      if (!isEmptyStringDefault) {
-        this.logger.log(
-          `Default value for ${field.name} is not empty string (${columnDefault}), skipping`,
-        );
-        continue;
-      }
-
       this.logger.log(
-        `Found empty string default for field ${field.name} on ${tableName}, cleaning up`,
+        `Cleaning up empty string default for field ${field.name} on ${tableName}`,
       );
 
       if (!isDryRun) {
