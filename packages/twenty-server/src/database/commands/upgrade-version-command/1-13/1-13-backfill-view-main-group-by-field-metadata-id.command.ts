@@ -4,44 +4,54 @@ import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
 
-import {
-  MigrationCommandOptions,
-  MigrationCommandRunner,
-} from 'src/database/commands/command-runners/migration.command-runner';
+import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { MigrationCommandOptions } from 'src/database/commands/command-runners/migration.command-runner';
+import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
   name: 'upgrade:1-13:backfill:view-main-group-by-field-metadata-id',
   description:
     'Backfill mainGroupByFieldMetadataId on views and clean up inconsistent viewGroups',
 })
-export class BackfillViewMainGroupByFieldMetadataIdCommand extends MigrationCommandRunner {
+export class BackfillViewMainGroupByFieldMetadataIdCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
     @InjectRepository(ViewGroupEntity)
     private readonly viewGroupRepository: Repository<ViewGroupEntity>,
+    @InjectRepository(WorkspaceEntity)
+    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly dataSourceService: DataSourceService,
   ) {
-    super();
+    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
 
-  override async runMigrationCommand(
-    _passedParams: string[],
-    options: MigrationCommandOptions,
-  ): Promise<void> {
-    await this.backfillMainGroupByFieldMetadataId(options);
-    await this.cleanupInconsistentViewGroups(options);
+  override async runOnWorkspace({
+    workspaceId,
+    options,
+  }: RunOnWorkspaceArgs): Promise<void> {
+    await this.backfillMainGroupByFieldMetadataId(workspaceId, options);
+    await this.cleanupInconsistentViewGroups(workspaceId, options);
   }
 
   private async backfillMainGroupByFieldMetadataId(
+    workspaceId: string,
     options: MigrationCommandOptions,
   ): Promise<void> {
-    this.logger.log('Starting backfill of mainGroupByFieldMetadataId...');
+    this.logger.log(
+      `Starting backfill of mainGroupByFieldMetadataId for workspace ${workspaceId}...`,
+    );
 
     const viewsToBackfill = await this.viewRepository.find({
       where: {
         mainGroupByFieldMetadataId: IsNull(),
+        workspaceId,
       },
       select: ['id', 'workspaceId'],
     });
@@ -58,6 +68,7 @@ export class BackfillViewMainGroupByFieldMetadataIdCommand extends MigrationComm
         where: {
           viewId: view.id,
           deletedAt: IsNull(),
+          workspaceId,
         },
         select: ['id', 'fieldMetadataId'],
       });
@@ -79,7 +90,7 @@ export class BackfillViewMainGroupByFieldMetadataIdCommand extends MigrationComm
           );
         } else {
           await this.viewRepository.update(
-            { id: view.id },
+            { id: view.id, workspaceId },
             { mainGroupByFieldMetadataId: fieldMetadataId },
           );
           this.logger.log(
@@ -137,6 +148,7 @@ export class BackfillViewMainGroupByFieldMetadataIdCommand extends MigrationComm
   }
 
   private async cleanupInconsistentViewGroups(
+    workspaceId: string,
     options: MigrationCommandOptions,
   ): Promise<void> {
     this.logger.log('Starting cleanup of inconsistent viewGroups...');
@@ -144,6 +156,7 @@ export class BackfillViewMainGroupByFieldMetadataIdCommand extends MigrationComm
     const viewsWithMainGroupBy = await this.viewRepository.find({
       where: {
         mainGroupByFieldMetadataId: Not(IsNull()),
+        workspaceId,
       },
       select: ['id', 'mainGroupByFieldMetadataId'],
     });
@@ -163,6 +176,7 @@ export class BackfillViewMainGroupByFieldMetadataIdCommand extends MigrationComm
         where: {
           viewId: view.id,
           fieldMetadataId: Not(view.mainGroupByFieldMetadataId),
+          workspaceId,
         },
         select: ['id'],
       });
@@ -178,7 +192,10 @@ export class BackfillViewMainGroupByFieldMetadataIdCommand extends MigrationComm
           `[DRY RUN] Would delete ${inconsistentViewGroups.length} viewGroups from view ${view.id}`,
         );
       } else {
-        await this.viewGroupRepository.delete({ id: In(viewGroupIds) });
+        await this.viewGroupRepository.delete({
+          id: In(viewGroupIds),
+          workspaceId,
+        });
         this.logger.log(
           `Deleted ${inconsistentViewGroups.length} viewGroups from view ${view.id}`,
         );
