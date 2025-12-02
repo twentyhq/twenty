@@ -1,4 +1,5 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from '@/page-layout/widgets/graph/constants/ExtraItemToDetectTooManyGroups.constant';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
@@ -33,6 +34,7 @@ export const useGraphPieChartWidgetData = ({
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
   });
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const {
     data: groupByData,
@@ -51,10 +53,17 @@ export const useGraphPieChartWidgetData = ({
       transformGroupByDataToPieChartData({
         groupByData,
         objectMetadataItem,
+        objectMetadataItems: objectMetadataItems ?? [],
         configuration,
         aggregateOperation,
       }),
-    [groupByData, objectMetadataItem, configuration, aggregateOperation],
+    [
+      groupByData,
+      objectMetadataItem,
+      objectMetadataItems,
+      configuration,
+      aggregateOperation,
+    ],
   );
 
   return {

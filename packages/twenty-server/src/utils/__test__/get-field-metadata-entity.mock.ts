@@ -21,6 +21,7 @@ export const getMockFieldMetadataEntity = <
 ): FieldMetadataEntity => {
   return {
     calendarViews: [],
+    mainGroupByFieldMetadataViews: [],
     viewFilters: [],
     viewFields: [],
     viewGroups: [],

@@ -3,6 +3,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { usePersistView } from '@/views/hooks/internal/usePersistView';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroup';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { type ViewGroup } from '@/views/types/ViewGroup';
@@ -23,6 +24,8 @@ export const useHandleRecordGroupField = () => {
 
   const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
+  const { updateView } = usePersistView();
+
   const handleRecordGroupFieldChange = useRecoilCallback(
     ({ snapshot }) =>
       async (fieldMetadataItem: FieldMetadataItem) => {
@@ -34,7 +37,7 @@ export const useHandleRecordGroupField = () => {
           return;
         }
 
-        const view = await getViewFromPrefetchState(currentViewId);
+        const view = getViewFromPrefetchState(currentViewId);
 
         if (isUndefinedOrNull(view)) {
           return;
@@ -46,6 +49,13 @@ export const useHandleRecordGroupField = () => {
         ) {
           return;
         }
+
+        await updateView({
+          id: view.id,
+          input: {
+            mainGroupByFieldMetadataId: fieldMetadataItem.id,
+          },
+        });
 
         const existingGroupKeys = new Set(
           view.viewGroups.map(
@@ -124,10 +134,11 @@ export const useHandleRecordGroupField = () => {
         }
       },
     [
-      objectMetadataItem,
       currentViewIdCallbackState,
       getViewFromPrefetchState,
+      updateView,
       setRecordGroupsFromViewGroups,
+      objectMetadataItem,
       createViewGroups,
       deleteViewGroups,
     ],

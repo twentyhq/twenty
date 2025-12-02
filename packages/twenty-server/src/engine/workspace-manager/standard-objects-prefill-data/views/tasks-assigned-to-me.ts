@@ -42,7 +42,10 @@ export const tasksAssignedToMeView = ({
     key: null,
     position: 2,
     icon: 'IconUserCircle',
-    kanbanFieldMetadataId: '',
+    mainGroupByFieldMetadataId:
+      taskObjectMetadata.fields.find(
+        (field) => field.standardId === TASK_STANDARD_FIELD_IDS.status,
+      )?.id ?? '',
     filters: [
       {
         fieldMetadataId:
