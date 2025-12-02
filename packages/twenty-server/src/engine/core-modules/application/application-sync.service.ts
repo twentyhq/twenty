@@ -37,7 +37,7 @@ import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/type
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
 import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
-import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
+import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
@@ -264,7 +264,7 @@ export class ApplicationSyncService {
 
     for (const fieldToCreate of fieldsToCreate) {
       const createFieldInput: CreateFieldInput = {
-        name: computeMetadataNameFromLabel(fieldToCreate.label),
+        name: computeMetadataNameFromLabelOrThrow(fieldToCreate.label),
         type: fieldToCreate.type,
         label: fieldToCreate.label,
         description: fieldToCreate.description ?? undefined,

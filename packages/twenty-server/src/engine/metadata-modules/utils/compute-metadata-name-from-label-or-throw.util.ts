@@ -8,7 +8,7 @@ import {
 
 // Server-specific wrapper that converts generic errors to InvalidMetadataException
 // This provides consistent error handling with proper exception codes for the server
-export const computeMetadataNameFromLabel = (label: string): string => {
+export const computeMetadataNameFromLabelOrThrow = (label: string): string => {
   if (!isDefined(label)) {
     throw new InvalidMetadataException(
       'Label is required',
@@ -26,22 +26,5 @@ export const computeMetadataNameFromLabel = (label: string): string => {
       );
     }
     throw error;
-  }
-};
-
-export const validateNameAndLabelAreSyncOrThrow = ({
-  label,
-  name,
-}: {
-  label: string;
-  name: string;
-}) => {
-  const computedName = computeMetadataNameFromLabel(label);
-
-  if (name !== computedName) {
-    throw new InvalidMetadataException(
-      `Name is not synced with label. Expected name: "${computedName}", got ${name}`,
-      InvalidMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL,
-    );
   }
 };
