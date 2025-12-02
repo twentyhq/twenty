@@ -44,6 +44,7 @@ describe('transformGroupByDataToBarChartData', () => {
       id: 'group-by-field',
       name: 'company',
       type: FieldMetadataType.RELATION,
+      relation: { targetObjectMetadata: { nameSingular: 'company' } },
     };
 
     const aggregateField = {
@@ -56,8 +57,14 @@ describe('transformGroupByDataToBarChartData', () => {
       id: 'obj-1',
       nameSingular: 'company',
       namePlural: 'companies',
-      fields: [groupByField, aggregateField],
+      fields: [
+        groupByField,
+        aggregateField,
+        { id: 'createdAt', name: 'createdAt', type: FieldMetadataType.DATE },
+      ],
     } as any;
+
+    const objectMetadataItems = [objectMetadataItem];
 
     const configuration = {
       __typename: 'BarChartConfiguration',
@@ -81,6 +88,7 @@ describe('transformGroupByDataToBarChartData', () => {
     const result = transformGroupByDataToBarChartData({
       groupByData,
       objectMetadataItem,
+      objectMetadataItems,
       configuration,
       aggregateOperation: 'COUNT',
     });
