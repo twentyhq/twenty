@@ -33,7 +33,7 @@ export class CreateAppCommand {
 
       await tryGitInit(appDirectory);
 
-      await this.logSuccess(appDirectory);
+      this.logSuccess(appDirectory);
     } catch (error) {
       console.error(
         chalk.red('Initialization failed:'),

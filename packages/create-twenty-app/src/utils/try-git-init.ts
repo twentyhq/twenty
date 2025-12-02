@@ -5,9 +5,9 @@ import { exec } from 'child_process';
 
 const execPromise = promisify(exec);
 
-const isInGitRepository = async (): Promise<boolean> => {
+const isInGitRepository = async (root: string): Promise<boolean> => {
   try {
-    await execPromise('git rev-parse --is-inside-work-tree');
+    await execPromise('git rev-parse --is-inside-work-tree', { cwd: root });
     return true;
   } catch {
     // Empty catch block
@@ -15,9 +15,9 @@ const isInGitRepository = async (): Promise<boolean> => {
   return false;
 };
 
-const isInMercurialRepository = async (): Promise<boolean> => {
+const isInMercurialRepository = async (root: string): Promise<boolean> => {
   try {
-    await execPromise('hg --cwd . root');
+    await execPromise('hg --cwd . root', { cwd: root });
     return true;
   } catch {
     // Empty catch block
@@ -25,9 +25,9 @@ const isInMercurialRepository = async (): Promise<boolean> => {
   return false;
 };
 
-const isDefaultBranchSet = async (): Promise<boolean> => {
+const isDefaultBranchSet = async (root: string): Promise<boolean> => {
   try {
-    await execPromise('git config init.defaultBranch');
+    await execPromise('git config init.defaultBranch', { cwd: root });
     return true;
   } catch {
     // Empty catch block
@@ -36,31 +36,35 @@ const isDefaultBranchSet = async (): Promise<boolean> => {
 };
 
 export const tryGitInit = async (root: string): Promise<boolean> => {
-  let didInit = false;
   try {
-    await execPromise('git --version');
-    if ((await isInGitRepository()) || (await isInMercurialRepository())) {
+    await execPromise('git --version', { cwd: root });
+
+    if (
+      (await isInGitRepository(root)) ||
+      (await isInMercurialRepository(root))
+    ) {
       return false;
     }
+    await execPromise('git init', { cwd: root });
 
-    await execPromise('git init');
-    didInit = true;
-
-    if (!isDefaultBranchSet()) {
-      await execPromise('git checkout -b main');
-    }
-
-    await execPromise('git add -A');
-    await execPromise('git commit -m "Initial commit from Create Next App"');
-    return true;
-  } catch {
-    if (didInit) {
-      try {
-        fs.rm(join(root, '.git'), { recursive: true, force: true });
-      } catch {
-        // Empty catch block
+    try {
+      if (!(await isDefaultBranchSet(root))) {
+        await execPromise('git checkout -b main', { cwd: root });
       }
+
+      await execPromise('git add -A', { cwd: root });
+      await execPromise(
+        'git commit -m "Initial commit from Create Twenty App"',
+        {
+          cwd: root,
+        },
+      );
+      return true;
+    } catch {
+      fs.rm(join(root, '.git'), { recursive: true, force: true });
+      return false;
     }
+  } catch {
     return false;
   }
 };
