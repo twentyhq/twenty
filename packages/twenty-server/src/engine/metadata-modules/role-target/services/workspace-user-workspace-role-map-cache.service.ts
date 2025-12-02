@@ -6,22 +6,23 @@ import { IsNull, Not, Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
-import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/workspace-permissions-cache/types/user-workspace-role-map.type';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+
+export type UserWorkspaceRoleMap = Record<string, string>;
 
 @Injectable()
 @WorkspaceCache('userWorkspaceRoleMap')
 export class WorkspaceUserWorkspaceRoleMapCacheService extends WorkspaceCacheProvider<UserWorkspaceRoleMap> {
   constructor(
-    @InjectRepository(RoleTargetsEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
+    @InjectRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
   ) {
     super();
   }
 
   async computeForCache(workspaceId: string): Promise<UserWorkspaceRoleMap> {
-    const roleTargetsMap = await this.roleTargetsRepository.find({
+    const roleTargetsMap = await this.roleTargetRepository.find({
       where: {
         workspaceId,
         userWorkspaceId: Not(IsNull()),

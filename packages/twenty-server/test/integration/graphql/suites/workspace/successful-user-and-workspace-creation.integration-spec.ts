@@ -203,7 +203,7 @@ describe('Successful user and workspace creation', () => {
       'searchFieldMetadata',
       'workspaceMigration',
       'role',
-      'roleTargets',
+      'roleTarget',
       'objectPermission',
       'fieldPermission',
       'permissionFlag',
