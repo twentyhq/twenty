@@ -31,9 +31,9 @@ export class AgentTurnResolver {
     private readonly turnRepository: Repository<AgentTurnEntity>,
     @InjectRepository(AgentChatThreadEntity)
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
-    private readonly graderService: AgentTurnGraderService,
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly graderService: AgentTurnGraderService,
   ) {}
 
   @Query(() => [AgentTurnDTO])

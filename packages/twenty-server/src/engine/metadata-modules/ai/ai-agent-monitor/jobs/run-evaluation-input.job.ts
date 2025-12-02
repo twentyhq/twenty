@@ -1,4 +1,4 @@
-import { Logger, Scope } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -22,7 +22,7 @@ export type RunEvaluationInputJobData = {
   workspaceId: string;
 };
 
-@Processor({ queueName: MessageQueue.workspaceQueue, scope: Scope.REQUEST })
+@Processor(MessageQueue.aiQueue)
 export class RunEvaluationInputJob {
   private readonly logger = new Logger(RunEvaluationInputJob.name);
 
@@ -31,7 +31,7 @@ export class RunEvaluationInputJob {
     private readonly agentRepository: Repository<AgentEntity>,
     private readonly agentChatService: AgentChatService,
     private readonly aiAgentExecutorService: AgentAsyncExecutorService,
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 

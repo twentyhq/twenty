@@ -1,4 +1,4 @@
-import { Logger, Scope } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -10,7 +10,7 @@ export type EvaluateAgentTurnJobData = {
   workspaceId: string;
 };
 
-@Processor({ queueName: MessageQueue.workspaceQueue, scope: Scope.REQUEST })
+@Processor(MessageQueue.aiQueue)
 export class EvaluateAgentTurnJob {
   private readonly logger = new Logger(EvaluateAgentTurnJob.name);
 
