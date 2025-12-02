@@ -1,7 +1,7 @@
-import { isNestedFieldDateType } from '@/page-layout/widgets/graph/utils/isNestedFieldDateType';
+import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-describe('isNestedFieldDateType', () => {
+describe('isRelationNestedFieldDateKind', () => {
   const companyObject = {
     id: 'company-id',
     nameSingular: 'company',
@@ -19,25 +19,30 @@ describe('isNestedFieldDateType', () => {
   } as any;
 
   it('returns true for a relation subfield that is a date type', () => {
-    const result = isNestedFieldDateType(relationField, 'createdAt', [
-      companyObject,
-    ]);
-
+    const result = isRelationNestedFieldDateKind({
+      relationField: relationField,
+      relationNestedFieldName: 'createdAt',
+      objectMetadataItems: [companyObject],
+    });
     expect(result).toBe(true);
   });
 
   it('returns false when the nested subfield is not a date type', () => {
-    const result = isNestedFieldDateType(relationField, 'name', [
-      companyObject,
-    ]);
+    const result = isRelationNestedFieldDateKind({
+      relationField: relationField,
+      relationNestedFieldName: 'name',
+      objectMetadataItems: [companyObject],
+    });
 
     expect(result).toBe(false);
   });
 
   it('returns false when subFieldName is missing', () => {
-    const result = isNestedFieldDateType(relationField, undefined, [
-      companyObject,
-    ]);
+    const result = isRelationNestedFieldDateKind({
+      relationField: relationField,
+      relationNestedFieldName: undefined as string | undefined,
+      objectMetadataItems: [companyObject],
+    });
 
     expect(result).toBe(false);
   });
@@ -48,9 +53,11 @@ describe('isNestedFieldDateType', () => {
       type: FieldMetadataType.TEXT,
     } as any;
 
-    const result = isNestedFieldDateType(nonRelationField, 'createdAt', [
-      companyObject,
-    ]);
+    const result = isRelationNestedFieldDateKind({
+      relationField: nonRelationField,
+      relationNestedFieldName: 'createdAt',
+      objectMetadataItems: [companyObject],
+    });
 
     expect(result).toBe(false);
   });

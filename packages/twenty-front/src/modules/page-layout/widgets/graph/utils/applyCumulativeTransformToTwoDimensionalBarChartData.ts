@@ -1,4 +1,5 @@
 import { type BarDatum } from '@nivo/bar';
+import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 type ApplyCumulativeTransformToTwoDimensionalBarChartDataOptions = {
@@ -24,7 +25,7 @@ export const applyCumulativeTransformToTwoDimensionalBarChartData = ({
       for (const key of keys) {
         const value = datum[key];
 
-        if (typeof value === 'number') {
+        if (isNumber(value)) {
           accumulator.runningTotals[key] += value;
         }
 

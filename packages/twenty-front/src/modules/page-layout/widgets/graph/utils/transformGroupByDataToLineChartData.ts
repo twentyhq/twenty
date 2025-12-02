@@ -7,9 +7,9 @@ import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLin
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGroupByResults';
+import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { transformOneDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/utils/transformOneDimensionalGroupByToLineChartData';
 import { transformTwoDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/utils/transformTwoDimensionalGroupByToLineChartData';
-import { isNestedFieldDateType } from '@/page-layout/widgets/graph/utils/isNestedFieldDateType';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import {
   AxisNameDisplay,
@@ -127,11 +127,11 @@ export const transformGroupByDataToLineChartData = ({
   const showLegend = configuration.displayLegend ?? true;
 
   const isDateField = isFieldMetadataDateKind(groupByFieldX.type);
-  const isNestedDateField = isNestedFieldDateType(
-    groupByFieldX,
-    primaryAxisSubFieldName,
+  const isNestedDateField = isRelationNestedFieldDateKind({
+    relationField: groupByFieldX,
+    relationNestedFieldName: primaryAxisSubFieldName,
     objectMetadataItems,
-  );
+  });
 
   const primaryAxisDateGranularity =
     isDateField || isNestedDateField
@@ -144,11 +144,11 @@ export const transformGroupByDataToLineChartData = ({
 
   const isSecondaryNestedDateField =
     isDefined(groupByFieldY) &&
-    isNestedFieldDateType(
-      groupByFieldY,
-      secondaryAxisSubFieldName,
+    isRelationNestedFieldDateKind({
+      relationField: groupByFieldY,
+      relationNestedFieldName: secondaryAxisSubFieldName,
       objectMetadataItems,
-    );
+    });
 
   const secondaryAxisDateGranularity =
     isSecondaryDateField || isSecondaryNestedDateField

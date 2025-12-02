@@ -3,21 +3,25 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
-export const isNestedFieldDateType = (
-  field: FieldMetadataItem,
-  subFieldName: string | undefined,
-  objectMetadataItems: ObjectMetadataItem[],
-): boolean => {
-  if (!isDefined(subFieldName)) {
+export const isRelationNestedFieldDateKind = ({
+  relationField,
+  relationNestedFieldName,
+  objectMetadataItems,
+}: {
+  relationField: FieldMetadataItem;
+  relationNestedFieldName: string | undefined;
+  objectMetadataItems: ObjectMetadataItem[];
+}): boolean => {
+  if (!isDefined(relationNestedFieldName)) {
     return false;
   }
 
-  if (!isFieldRelation(field)) {
+  if (!isFieldRelation(relationField)) {
     return false;
   }
 
   const targetObjectNameSingular =
-    field.relation?.targetObjectMetadata?.nameSingular;
+    relationField.relation?.targetObjectMetadata?.nameSingular;
 
   if (!isDefined(targetObjectNameSingular)) {
     return false;
@@ -31,7 +35,7 @@ export const isNestedFieldDateType = (
     return false;
   }
 
-  const nestedFieldName = subFieldName.split('.')[0];
+  const nestedFieldName = relationNestedFieldName.split('.')[0];
   const nestedField = targetObjectMetadataItem.fields.find(
     (f) => f.name === nestedFieldName,
   );
