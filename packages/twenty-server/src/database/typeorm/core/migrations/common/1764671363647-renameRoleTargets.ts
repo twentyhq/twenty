@@ -35,9 +35,61 @@ export class RenameRoleTargets1764671363647 implements MigrationInterface {
     await queryRunner.query(
       `ALTER INDEX "core"."IDX_ROLE_TARGETS_API_KEY_ID" RENAME TO "IDX_ROLE_TARGET_API_KEY_ID"`,
     );
+
+    // FK
+    await queryRunner.query(
+      `ALTER TABLE "core"."roleTarget" DROP CONSTRAINT "FK_d5838ba43033ee6266d8928d7d7"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."roleTarget" DROP CONSTRAINT "FK_915c8bcb0f861a56f793a4b8331"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."roleTarget" DROP CONSTRAINT "FK_d4fcfdc3cd562a3e81fa9f0dae5"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX "core"."IDX_3e571e80f99488686015f3d00c"`,
+    );
+    await queryRunner.query(
+      `CREATE UNIQUE INDEX "IDX_0082568653b80c15903c5a2ba9" ON "core"."roleTarget" ("workspaceId", "universalIdentifier") `,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."roleTarget" ADD CONSTRAINT "FK_b1db027b64f44029389ace305ac" FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."roleTarget" ADD CONSTRAINT "FK_83ea4a0433da5007a198db7667e" FOREIGN KEY ("roleId") REFERENCES "core"."role"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."roleTarget" ADD CONSTRAINT "FK_4b3865868c7da0747ee8e480851" FOREIGN KEY ("apiKeyId") REFERENCES "core"."apiKey"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    // FK
+    await queryRunner.query(
+      `ALTER TABLE "core"."roleTarget" DROP CONSTRAINT "FK_4b3865868c7da0747ee8e480851"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."roleTarget" DROP CONSTRAINT "FK_83ea4a0433da5007a198db7667e"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."roleTarget" DROP CONSTRAINT "FK_b1db027b64f44029389ace305ac"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX "core"."IDX_0082568653b80c15903c5a2ba9"`,
+    );
+    await queryRunner.query(
+      `CREATE UNIQUE INDEX "IDX_3e571e80f99488686015f3d00c" ON "core"."roleTarget" ("workspaceId", "universalIdentifier") `,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."roleTarget" ADD CONSTRAINT "FK_d4fcfdc3cd562a3e81fa9f0dae5" FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."roleTarget" ADD CONSTRAINT "FK_915c8bcb0f861a56f793a4b8331" FOREIGN KEY ("apiKeyId") REFERENCES "core"."apiKey"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."roleTarget" ADD CONSTRAINT "FK_d5838ba43033ee6266d8928d7d7" FOREIGN KEY ("roleId") REFERENCES "core"."role"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+
     // Rename indexes back
     await queryRunner.query(
       `ALTER INDEX "core"."IDX_ROLE_TARGET_API_KEY_ID" RENAME TO "IDX_ROLE_TARGETS_API_KEY_ID"`,
