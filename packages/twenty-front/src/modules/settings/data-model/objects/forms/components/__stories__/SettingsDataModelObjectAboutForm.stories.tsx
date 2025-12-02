@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { type Meta, type StoryObj } from '@storybook/react';
-
 import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -31,6 +31,7 @@ const meta: Meta<typeof SettingsDataModelObjectAboutForm> = {
     FormProviderDecorator,
     IconsProviderDecorator,
     ComponentDecorator,
+    MemoryRouterDecorator,
   ],
   parameters: {
     container: { width: 520 },

@@ -61,7 +61,7 @@ export const useGraphPieChartWidgetData = ({
     ...transformedData,
     objectMetadataItem,
     showDataLabels: configuration.displayDataLabel ?? false,
-    showCenterMetric: configuration.showCenterMetric ?? false,
+    showCenterMetric: configuration.showCenterMetric ?? true,
     loading,
     error,
   };

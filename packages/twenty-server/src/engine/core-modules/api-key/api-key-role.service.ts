@@ -13,7 +13,7 @@ import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class ApiKeyRoleService {
@@ -25,7 +25,7 @@ export class ApiKeyRoleService {
 
     @InjectRepository(ApiKeyEntity)
     private readonly apiKeyRepository: Repository<ApiKeyEntity>,
-    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly roleTargetService: RoleTargetService,
   ) {}
 
@@ -62,12 +62,12 @@ export class ApiKeyRoleService {
     apiKeyId: string,
     workspaceId: string,
   ): Promise<string> {
-    const apiKeyRoleMap =
-      await this.workspacePermissionsCacheService.getApiKeyRoleMapFromCache({
-        workspaceId,
-      });
+    const { apiKeyRoleMap } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['apiKeyRoleMap'],
+    );
 
-    const roleId = apiKeyRoleMap.data[apiKeyId];
+    const roleId = apiKeyRoleMap[apiKeyId];
 
     if (!roleId) {
       throw new ApiKeyException(
