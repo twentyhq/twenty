@@ -1,10 +1,10 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isFieldOrNestedFieldDateKind } from '../isFieldOrNestedFieldDateKind';
+import { isFieldOrRelationNestedFieldDateKind } from '../isFieldOrNestedFieldDateKind';
 
 describe('isFieldOrNestedFieldDateKind', () => {
   it('returns false when fieldId is null', () => {
-    const result = isFieldOrNestedFieldDateKind({
+    const result = isFieldOrRelationNestedFieldDateKind({
       fieldId: null,
       subFieldName: null,
       objectMetadataItem: {} as ObjectMetadataItem,
@@ -18,7 +18,7 @@ describe('isFieldOrNestedFieldDateKind', () => {
       fields: [{ id: 'date-field-id', type: FieldMetadataType.DATE }],
     } as ObjectMetadataItem;
 
-    const result = isFieldOrNestedFieldDateKind({
+    const result = isFieldOrRelationNestedFieldDateKind({
       fieldId: 'date-field-id',
       subFieldName: null,
       objectMetadataItem,
@@ -32,7 +32,7 @@ describe('isFieldOrNestedFieldDateKind', () => {
       fields: [{ id: 'text-field-id', type: FieldMetadataType.TEXT }],
     } as ObjectMetadataItem;
 
-    const result = isFieldOrNestedFieldDateKind({
+    const result = isFieldOrRelationNestedFieldDateKind({
       fieldId: 'text-field-id',
       subFieldName: null,
       objectMetadataItem,
@@ -62,7 +62,7 @@ describe('isFieldOrNestedFieldDateKind', () => {
       ],
     } as ObjectMetadataItem;
 
-    const result = isFieldOrNestedFieldDateKind({
+    const result = isFieldOrRelationNestedFieldDateKind({
       fieldId: 'relation-field-id',
       subFieldName: 'createdAt',
       objectMetadataItem,

@@ -13,7 +13,7 @@ import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupBy
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGroupByResults';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
-import { isNestedFieldDateType } from '@/page-layout/widgets/graph/utils/isNestedFieldDateType';
+import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { type BarDatum } from '@nivo/bar';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { GraphType } from '~/generated-metadata/graphql';
@@ -159,11 +159,11 @@ export const transformGroupByDataToBarChartData = ({
   const showLegend = configuration.displayLegend ?? true;
 
   const isDateField = isFieldMetadataDateKind(groupByFieldX.type);
-  const isNestedDateField = isNestedFieldDateType(
-    groupByFieldX,
-    primaryAxisSubFieldName,
+  const isNestedDateField = isRelationNestedFieldDateKind({
+    relationField: groupByFieldX,
+    relationNestedFieldName: primaryAxisSubFieldName,
     objectMetadataItems,
-  );
+  });
 
   const primaryAxisDateGranularity =
     isDateField || isNestedDateField
@@ -177,11 +177,11 @@ export const transformGroupByDataToBarChartData = ({
 
   const isSecondaryNestedDateField =
     isDefined(groupByFieldY) &&
-    isNestedFieldDateType(
-      groupByFieldY,
-      secondaryAxisSubFieldName ?? undefined,
+    isRelationNestedFieldDateKind({
+      relationField: groupByFieldY,
+      relationNestedFieldName: secondaryAxisSubFieldName,
       objectMetadataItems,
-    );
+    });
 
   const secondaryAxisDateGranularity =
     isSecondaryDateField || isSecondaryNestedDateField

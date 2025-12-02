@@ -11,7 +11,7 @@ import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDim
 import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
-import { isNestedFieldDateType } from '@/page-layout/widgets/graph/utils/isNestedFieldDateType';
+import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { type PieChartConfiguration } from '~/generated/graphql';
@@ -71,11 +71,11 @@ export const transformGroupByDataToPieChartData = ({
   }
 
   const isDateField = isFieldMetadataDateKind(groupByField.type);
-  const isNestedDateField = isNestedFieldDateType(
-    groupByField,
-    configuration.groupBySubFieldName ?? undefined,
+  const isNestedDateField = isRelationNestedFieldDateKind({
+    relationField: groupByField,
+    relationNestedFieldName: configuration.groupBySubFieldName ?? undefined,
     objectMetadataItems,
-  );
+  });
 
   const dateGranularity: ObjectRecordGroupByDateGranularity | undefined =
     isDateField || isNestedDateField
