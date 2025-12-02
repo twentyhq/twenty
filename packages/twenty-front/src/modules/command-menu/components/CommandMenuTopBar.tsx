@@ -5,6 +5,7 @@ import { CommandMenuTopBarRightCornerIcon } from '@/command-menu/components/Comm
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE } from '@/command-menu/constants/CommandMenuSearchBarHeightMobile';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
+import { COMMAND_MENU_SEARCH_INPUT_FOCUS_ID } from '@/command-menu/constants/CommandMenuSearchInputFocusId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuContextChips';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
@@ -76,8 +77,6 @@ const StyledContentContainer = styled.div`
   min-width: 0;
   overflow: hidden;
 `;
-
-const COMMAND_MENU_SEARCH_INPUT_FOCUS_ID = 'command-menu-search-input';
 
 export const CommandMenuTopBar = () => {
   const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
@@ -175,7 +174,7 @@ export const CommandMenuTopBar = () => {
           commandMenuPage === CommandMenuPages.SearchRecords) && (
           <>
             <StyledInput
-              data-testid="command-menu-search-input"
+              data-testid={COMMAND_MENU_SEARCH_INPUT_FOCUS_ID}
               ref={inputRef}
               value={commandMenuSearch}
               placeholder={t`Type anything...`}
