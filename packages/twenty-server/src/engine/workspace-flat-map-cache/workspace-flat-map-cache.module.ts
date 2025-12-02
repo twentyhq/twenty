@@ -17,13 +17,11 @@ import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceFlatMapCacheRegistryService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache-registry.service';
 
 @Module({
   imports: [
     DiscoveryModule,
-    WorkspacePermissionsCacheModule,
     TypeOrmModule.forFeature([
       ViewEntity,
       ViewFieldEntity,

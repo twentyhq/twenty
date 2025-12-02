@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`applyCumulativeTransformToLineChartData should handle basic accumulation 1`] = `
+[
+  {
+    "x": "Jan",
+    "y": 10,
+  },
+  {
+    "x": "Feb",
+    "y": 30,
+  },
+  {
+    "x": "Mar",
+    "y": 60,
+  },
+]
+`;
+
+exports[`applyCumulativeTransformToLineChartData should handle empty data 1`] = `[]`;
+
+exports[`applyCumulativeTransformToLineChartData should handle filter above rangeMax 1`] = `
+[
+  {
+    "x": "a",
+    "y": 10,
+  },
+]
+`;
+
+exports[`applyCumulativeTransformToLineChartData should handle filter below rangeMin 1`] = `
+[
+  {
+    "x": "b",
+    "y": 20,
+  },
+  {
+    "x": "c",
+    "y": 30,
+  },
+]
+`;
+
+exports[`applyCumulativeTransformToLineChartData should handle skip null y values 1`] = `
+[
+  {
+    "x": "a",
+    "y": 10,
+  },
+  {
+    "x": "b",
+    "y": 10,
+  },
+  {
+    "x": "c",
+    "y": 30,
+  },
+]
+`;

@@ -10,8 +10,8 @@ import {
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
 import { AiAgentRoleService } from './ai-agent-role.service';
@@ -20,7 +20,7 @@ describe('AiAgentRoleService', () => {
   let service: AiAgentRoleService;
   let agentRepository: Repository<AgentEntity>;
   let roleRepository: Repository<RoleEntity>;
-  let roleTargetsRepository: Repository<RoleTargetsEntity>;
+  let roleTargetRepository: Repository<RoleTargetEntity>;
   let roleTargetService: RoleTargetService;
 
   const testWorkspaceId = 'test-workspace-id';
@@ -47,7 +47,7 @@ describe('AiAgentRoleService', () => {
           },
         },
         {
-          provide: getRepositoryToken(RoleTargetsEntity),
+          provide: getRepositoryToken(RoleTargetEntity),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
@@ -72,8 +72,8 @@ describe('AiAgentRoleService', () => {
     roleRepository = module.get<Repository<RoleEntity>>(
       getRepositoryToken(RoleEntity),
     );
-    roleTargetsRepository = module.get<Repository<RoleTargetsEntity>>(
-      getRepositoryToken(RoleTargetsEntity),
+    roleTargetRepository = module.get<Repository<RoleTargetEntity>>(
+      getRepositoryToken(RoleTargetEntity),
     );
     roleTargetService = module.get<RoleTargetService>(RoleTargetService);
 
@@ -135,7 +135,7 @@ describe('AiAgentRoleService', () => {
       // Arrange
       jest.spyOn(agentRepository, 'findOne').mockResolvedValue(testAgent);
       jest.spyOn(roleRepository, 'findOne').mockResolvedValue(testRole);
-      jest.spyOn(roleTargetsRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(roleTargetRepository, 'findOne').mockResolvedValue(null);
       jest
         .spyOn(roleTargetService, 'create')
         .mockResolvedValue({} as FlatRoleTarget);
@@ -154,7 +154,7 @@ describe('AiAgentRoleService', () => {
       expect(roleRepository.findOne).toHaveBeenCalledWith({
         where: { id: testRole.id, workspaceId: testWorkspaceId },
       });
-      expect(roleTargetsRepository.findOne).toHaveBeenCalledWith({
+      expect(roleTargetRepository.findOne).toHaveBeenCalledWith({
         where: {
           agentId: testAgent.id,
           roleId: testRole.id,
@@ -175,7 +175,7 @@ describe('AiAgentRoleService', () => {
       // Arrange
       jest.spyOn(agentRepository, 'findOne').mockResolvedValue(testAgent);
       jest.spyOn(roleRepository, 'findOne').mockResolvedValue(testRole2);
-      jest.spyOn(roleTargetsRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(roleTargetRepository, 'findOne').mockResolvedValue(null);
       jest
         .spyOn(roleTargetService, 'create')
         .mockResolvedValue({} as FlatRoleTarget);
@@ -207,12 +207,12 @@ describe('AiAgentRoleService', () => {
         workspaceId: testWorkspaceId,
         createdAt: new Date(),
         updatedAt: new Date(),
-      } as RoleTargetsEntity;
+      } as RoleTargetEntity;
 
       jest.spyOn(agentRepository, 'findOne').mockResolvedValue(testAgent);
       jest.spyOn(roleRepository, 'findOne').mockResolvedValue(testRole);
       jest
-        .spyOn(roleTargetsRepository, 'findOne')
+        .spyOn(roleTargetRepository, 'findOne')
         .mockResolvedValue(existingRoleTarget);
 
       // Act
@@ -319,10 +319,10 @@ describe('AiAgentRoleService', () => {
         workspaceId: testWorkspaceId,
         createdAt: new Date(),
         updatedAt: new Date(),
-      } as RoleTargetsEntity;
+      } as RoleTargetEntity;
 
       jest
-        .spyOn(roleTargetsRepository, 'findOne')
+        .spyOn(roleTargetRepository, 'findOne')
         .mockResolvedValue(existingRoleTarget);
       jest.spyOn(roleTargetService, 'delete').mockResolvedValue(undefined);
 
@@ -333,7 +333,7 @@ describe('AiAgentRoleService', () => {
       });
 
       // Assert
-      expect(roleTargetsRepository.findOne).toHaveBeenCalledWith({
+      expect(roleTargetRepository.findOne).toHaveBeenCalledWith({
         where: {
           agentId: testAgent.id,
           workspaceId: testWorkspaceId,
@@ -347,7 +347,7 @@ describe('AiAgentRoleService', () => {
 
     it('should throw error when removing role from agent that has no role', async () => {
       // Arrange
-      jest.spyOn(roleTargetsRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(roleTargetRepository, 'findOne').mockResolvedValue(null);
 
       // Act & Assert
       await expect(

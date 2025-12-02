@@ -33,7 +33,6 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
-import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -59,7 +58,6 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
         RemoteTableRelationsModule,
         IndexMetadataModule,
         PermissionsModule,
-        WorkspacePermissionsCacheModule,
         WorkspaceCacheStorageModule,
         WorkspaceDataSourceModule,
         FeatureFlagModule,

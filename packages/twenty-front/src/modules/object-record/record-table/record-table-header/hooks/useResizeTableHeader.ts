@@ -5,10 +5,12 @@ import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/cons
 import { RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnWithGroupLastEmptyColumnWidthVariableName';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
-import { useRecordTableLastColumnWidthToFill } from '@/object-record/record-table/hooks/useRecordTableLastColumnWidthToFill';
+import { recordTableWidthComponentState } from '@/object-record/record-table/states/recordTableWidthComponentState';
 
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
+import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState';
+import { computeLastRecordTableColumnWidth } from '@/object-record/record-table/utils/computeLastRecordTableColumnWidth';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
@@ -16,6 +18,7 @@ import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPoin
 import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useSaveRecordFields } from '@/views/hooks/useSaveRecordFields';
@@ -55,7 +58,13 @@ export const useResizeTableHeader = () => {
 
   const { updateRecordField } = useUpdateRecordField();
 
-  const { lastColumnWidth } = useRecordTableLastColumnWidthToFill();
+  const recordTableWidth = useRecoilComponentValue(
+    recordTableWidthComponentState,
+  );
+
+  const shouldCompactRecordTableFirstColumn = useRecoilComponentValue(
+    shouldCompactRecordTableFirstColumnComponentState,
+  );
 
   const handleResizeHandlerStart = useCallback<PointerEventListener>(
     ({ x }) => {
@@ -90,6 +99,12 @@ export const useResizeTableHeader = () => {
         `${newWidth}px`,
       );
 
+      const { lastColumnWidth } = computeLastRecordTableColumnWidth({
+        recordFields: visibleRecordFields,
+        shouldCompactFirstColumn: shouldCompactRecordTableFirstColumn,
+        tableWidth: recordTableWidth,
+      });
+
       const newLastColumnWidth = lastColumnWidth - newResizeOffset;
 
       updateRecordTableCSSVariable(
@@ -110,11 +125,12 @@ export const useResizeTableHeader = () => {
       setResizeFieldOffset(x - initialPointerPositionX);
     },
     [
-      setResizeFieldOffset,
       initialPointerPositionX,
       recordField,
-      lastColumnWidth,
       visibleRecordFields,
+      shouldCompactRecordTableFirstColumn,
+      recordTableWidth,
+      setResizeFieldOffset,
     ],
   );
 

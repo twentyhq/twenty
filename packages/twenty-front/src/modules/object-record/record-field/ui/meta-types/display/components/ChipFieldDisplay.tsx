@@ -1,8 +1,9 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useChipFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useChipFieldDisplay';
+import { shouldCompactRecordIndexLabelIdentifierComponentState } from '@/object-record/record-index/states/shouldCompactRecordIndexLabelIdentifierComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipSize } from 'twenty-ui/components';
-import { useIsMobile } from 'twenty-ui/utilities';
 
 export const ChipFieldDisplay = () => {
   const {
@@ -15,10 +16,11 @@ export const ChipFieldDisplay = () => {
     onRecordChipClick,
   } = useChipFieldDisplay();
 
-  const isMobile = useIsMobile();
+  const shouldCompactRecordIndexLabelIdentifier = useRecoilComponentValue(
+    shouldCompactRecordIndexLabelIdentifierComponentState,
+  );
 
-  // TODO: reimplement scrolled horizontally here.
-  const isLabelIdentifierCompact = isMobile;
+  const isLabelIdentifierCompact = shouldCompactRecordIndexLabelIdentifier;
 
   if (!isDefined(recordValue)) {
     return null;

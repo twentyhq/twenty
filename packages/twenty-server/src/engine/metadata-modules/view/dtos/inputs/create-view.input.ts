@@ -93,6 +93,11 @@ export class CreateViewInput {
   calendarFieldMetadataId?: string;
 
   @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  mainGroupByFieldMetadataId?: string;
+
+  @IsOptional()
   @IsEnum(ViewVisibility)
   @Field(() => ViewVisibility, {
     nullable: true,

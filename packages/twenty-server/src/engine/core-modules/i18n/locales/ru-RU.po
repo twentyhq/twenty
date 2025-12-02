@@ -39,11 +39,6 @@ msgstr "Поля типа {fieldType} не могут иметь значени�
 msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
 msgstr "{hostnameCount} имен хостов найдено для домена '{domainName}'. Ожидается 1"
 
-#. js-lingui-id: 8haj+G
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
-msgid "{name} should be in camelCase"
-msgstr "{name} должно быть в стиле camelCase"
-
 #. js-lingui-id: kZR6+h
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "A company"
@@ -929,7 +924,6 @@ msgstr "Декабрь"
 
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Значение по умолчанию \"{defaultValue}\" должно быть одним из значений опций"
 
@@ -940,13 +934,11 @@ msgstr "Значение по умолчанию должно быть стро�
 
 #. js-lingui-id: sv9P4Q
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Default value should be as quoted string"
 msgstr "Значение по умолчанию должно быть в виде строкового литерала"
 
 #. js-lingui-id: 6pJV03
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Default values must be unique"
 msgstr "Значения по умолчанию должны быть уникальными"
 
@@ -1001,7 +993,6 @@ msgstr "Срок исполнения"
 
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Duplicated option {field}"
 msgstr "Дублированная опция {field}"
 
@@ -1587,7 +1578,6 @@ msgstr "Идеальный клиентский профиль: Указывае
 
 #. js-lingui-id: YcVn4w
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "If defined default value must contain at least one value"
 msgstr "Если определено, значение по умолчанию должно содержать хотя бы одно значение"
 
@@ -1637,11 +1627,6 @@ msgstr "Индекс с таким же идентификатором уже с
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index with same name already exists"
 msgstr "Индекс с таким же именем уже существует"
-
-#. js-lingui-id: 71VJzG
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
-msgid "Input is too short: \"{name}\""
-msgstr "Ввод слишком короткий: \"{name}\""
 
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -1695,11 +1680,6 @@ msgstr "Недействительное значение минуты. Долж
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Invalid morph relation input"
 msgstr "Неверный ввод отношения морфинга"
-
-#. js-lingui-id: VvhAS2
-#: src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util.ts
-msgid "Invalid object metadata input"
-msgstr "Неверный ввод метаданных объекта."
 
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
@@ -1850,13 +1830,11 @@ msgstr "Поле представления идентификатора мет�
 
 #. js-lingui-id: 4EGmy6
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Label must not be empty"
 msgstr "Метка не должна быть пустой"
 
 #. js-lingui-id: k731jp
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Label must not contain a comma"
 msgstr "Метка не должна содержать запятую"
 
@@ -2175,11 +2153,6 @@ msgstr "Найдено несколько записей с одинаковым
 msgid "Name"
 msgstr "Имя"
 
-#. js-lingui-id: aD053i
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service.ts
-msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
-msgstr "Имя \"{computedMetadataNameFromLabel}\" не может быть одинаковым с обеих сторон отношения"
-
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
@@ -2195,11 +2168,6 @@ msgstr "Имя \"{name}\" недоступно, так как уже испол�
 msgid "Name \"{name}\" is not available as it is already used by join column name"
 msgstr ""
 
-#. js-lingui-id: RGz1nY
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
-msgid "Name is not available, it may be duplicating another field's name."
-msgstr "Имя недоступно, возможно, оно дублирует имя другого поля."
-
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters"
@@ -2209,11 +2177,6 @@ msgstr "Имя недействительно: должно начинаться
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is too long"
 msgstr "Имя слишком длинное"
-
-#. js-lingui-id: 0MobB1
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils.ts
-msgid "Name is too long: it exceeds the 63 characters limit."
-msgstr "Имя слишком длинное: превышает лимит в 63 символа."
 
 #. js-lingui-id: go/Vg1
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
@@ -2400,7 +2363,6 @@ msgid "Number of employees in the company"
 msgstr "Количество сотрудников в компании"
 
 #. js-lingui-id: ECRKYR
-#: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Object already exists"
 msgstr "Объект уже существует"
@@ -2533,25 +2495,21 @@ msgstr "Стадия возможности"
 
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option id is invalid"
 msgstr "Неверный идентификатор опции"
 
 #. js-lingui-id: MniXaX
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option id is required"
 msgstr "Требуется идентификатор опции"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
 msgstr "Метка опции \"{sanitizedLabel}\" меньше 1 символа"
 
 #. js-lingui-id: mTFS0z
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label exceeds 63 characters"
 msgstr "Метка опции превосходит 63 символа"
 
@@ -2563,7 +2521,6 @@ msgstr "Формат метки параметра не поддерживает
 #. js-lingui-id: +E9N4m
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label is required"
 msgstr "Требуется метка опции"
 
@@ -2574,13 +2531,11 @@ msgstr "Метка опции должна быть строкой из хотя
 
 #. js-lingui-id: nQqNzE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Значение опции \"{sanitizedValue}\" меньше 1 символа"
 
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value exceeds 63 characters"
 msgstr "Значение опции превосходит 63 символа"
 
@@ -2592,7 +2547,6 @@ msgstr "Формат значения опции не поддерживаетс
 #. js-lingui-id: /wsRPd
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value is required"
 msgstr "Требуется значение опции"
 
@@ -3071,11 +3025,6 @@ msgstr "Статусы нельзя задать вручную."
 msgid "Step is not a form"
 msgstr "Шаг не является формой"
 
-#. js-lingui-id: YFMPch
-#: src/engine/metadata-modules/utils/validate-metadata-name-start-with-lowercase-letter-and-contain-digits-nor-letters.utils.ts
-msgid "String \"{name}\" is not valid: must start with lowercase letter and contain only alphanumeric letters"
-msgstr "Строка \"{name}\" недействительна: должна начинаться с маленькой буквы и содержать только цифры и буквы"
-
 #. js-lingui-id: UJmAAK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -3416,25 +3365,14 @@ msgid "There was an issue with your connection settings. Please try again."
 msgstr "Возникла проблема с вашими настройками соединения. Пожалуйста, повторите попытку."
 
 #. js-lingui-id: Izdz+Y
-#: src/engine/core-modules/api-key/api-key.service.ts
+#: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "Этот API-ключ отозван и больше не может быть использован."
 
 #. js-lingui-id: Jmzgho
-#: src/engine/core-modules/api-key/api-key.service.ts
+#: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "Срок действия этого API-ключа истек. Пожалуйста, создайте новый."
-
-#. js-lingui-id: mAs70Y
-#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field."
-msgstr "Это имя недоступно, так как уже используется другим полем."
-
-#. js-lingui-id: yIUmAs
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
-#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available."
-msgstr "Это имя недоступно."
 
 #. js-lingui-id: gPBck6
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
@@ -3691,7 +3629,6 @@ msgstr "Проверка не пройдена для 0 объекта(ов) и 
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "Значение должно быть в ВЕРХНЕМ_РЕГИСТРЕ и соответствовать snake_case \"{sanitizedValue}\""
 

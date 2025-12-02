@@ -19,7 +19,7 @@ A CLI and SDK to develop, build, and publish applications that extend [Twenty CR
 - Works great with the scaffolder: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app)
 
 ## Prerequisites
-- Node.js 18+ (recommended) and Yarn 4
+- Node.js 24+ (recommended) and Yarn 4
 - A Twenty workspace and an API key. Generate one at https://app.twenty.com/settings/api-webhooks
 
 ## Installation

@@ -14,7 +14,7 @@ import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { type RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { type RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { type FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
@@ -205,6 +205,6 @@ export type AllFlatEntityTypesByMetadataName = {
       deleted: DeleteRoleTargetAction;
     };
     flatEntity: FlatRoleTarget;
-    entity: RoleTargetsEntity;
+    entity: RoleTargetEntity;
   };
 };

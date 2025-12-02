@@ -39,11 +39,6 @@ msgstr "Поља типа {fieldType} не могу имати подразум�
 msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
 msgstr "Пронађено је {hostnameCount} назива хоста за домен '{domainName}'. Очекујте 1"
 
-#. js-lingui-id: 8haj+G
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
-msgid "{name} should be in camelCase"
-msgstr "{name} треба да буде у camelCase формату"
-
 #. js-lingui-id: kZR6+h
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "A company"
@@ -929,7 +924,6 @@ msgstr "Децембар"
 
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Подразумевана вредност \"{defaultValue}\" мора бити једна од вредности опција"
 
@@ -940,13 +934,11 @@ msgstr "Подразумевана вредност мора бити стрин
 
 #. js-lingui-id: sv9P4Q
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Default value should be as quoted string"
 msgstr "Подразумевана вредност треба бити наведена у наводницима"
 
 #. js-lingui-id: 6pJV03
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Default values must be unique"
 msgstr "Подразумеване вредности морају бити јединствене"
 
@@ -1001,7 +993,6 @@ msgstr "Рок за испуњење"
 
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Duplicated option {field}"
 msgstr "Дуплирана опција {field}"
 
@@ -1587,7 +1578,6 @@ msgstr "Идеалан купачки профил: Указује на то д�
 
 #. js-lingui-id: YcVn4w
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "If defined default value must contain at least one value"
 msgstr "Ако је дефинисано, подразумевана вредност мора садржати барем једну вредност"
 
@@ -1637,11 +1627,6 @@ msgstr "Индекс са истим идентификатором већ по�
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index with same name already exists"
 msgstr "Индекс са истим именом већ постоји"
-
-#. js-lingui-id: 71VJzG
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
-msgid "Input is too short: \"{name}\""
-msgstr "Унос је превише кратак: \"{name}\""
 
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -1695,11 +1680,6 @@ msgstr "Неважећа вредност минута. Требало би да
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Invalid morph relation input"
 msgstr "Неисправан унос односа морфа"
-
-#. js-lingui-id: VvhAS2
-#: src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util.ts
-msgid "Invalid object metadata input"
-msgstr "Унос метаподатака објекта је неважећи."
 
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
@@ -1850,13 +1830,11 @@ msgstr "Поле приказа идентификатора етикете мо
 
 #. js-lingui-id: 4EGmy6
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Label must not be empty"
 msgstr "Етикета не сме бити празна"
 
 #. js-lingui-id: k731jp
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Label must not contain a comma"
 msgstr "Етикета не сме садржати зарез"
 
@@ -2175,11 +2153,6 @@ msgstr "Пронађено је више записа са истим једин
 msgid "Name"
 msgstr "Име"
 
-#. js-lingui-id: aD053i
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service.ts
-msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
-msgstr "Име \"{computedMetadataNameFromLabel}\" не може бити исто на обе стране односа"
-
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
@@ -2195,11 +2168,6 @@ msgstr "Име \"{name}\" није доступно јер га већ кори�
 msgid "Name \"{name}\" is not available as it is already used by join column name"
 msgstr ""
 
-#. js-lingui-id: RGz1nY
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
-msgid "Name is not available, it may be duplicating another field's name."
-msgstr "Назив није доступан, вероватно дуплира назив другог поља."
-
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters"
@@ -2209,11 +2177,6 @@ msgstr "Наслов није важећи: мора почети малим с�
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is too long"
 msgstr "Име је предугачко"
-
-#. js-lingui-id: 0MobB1
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils.ts
-msgid "Name is too long: it exceeds the 63 characters limit."
-msgstr "Назив је превише дугачак: прелази лимит од 63 карактера."
 
 #. js-lingui-id: go/Vg1
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
@@ -2400,7 +2363,6 @@ msgid "Number of employees in the company"
 msgstr "Број запослених у фирми"
 
 #. js-lingui-id: ECRKYR
-#: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Object already exists"
 msgstr "Објекат већ постоји"
@@ -2533,25 +2495,21 @@ msgstr "Фаза прилике"
 
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option id is invalid"
 msgstr "ИД опције је неважећи"
 
 #. js-lingui-id: MniXaX
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option id is required"
 msgstr "ИД опције је обавезан"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
 msgstr "Етикета опције \"{sanitizedLabel}\" је краћа од 1 карактера"
 
 #. js-lingui-id: mTFS0z
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label exceeds 63 characters"
 msgstr "Етикета опције превазилази 63 карактера"
 
@@ -2563,7 +2521,6 @@ msgstr "Формат ознаке за опцију није подржан"
 #. js-lingui-id: +E9N4m
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label is required"
 msgstr "Етикета опције је обавезна"
 
@@ -2574,13 +2531,11 @@ msgstr "Натпис за опцију мора бити низ од најма�
 
 #. js-lingui-id: nQqNzE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Вредност опције \"{sanitizedValue}\" је краћа од 1 карактера"
 
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value exceeds 63 characters"
 msgstr "Вредност опције превазилази 63 карактера"
 
@@ -2592,7 +2547,6 @@ msgstr "Формат вредности опције није подржан"
 #. js-lingui-id: /wsRPd
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value is required"
 msgstr "Вредност опције је обавезна"
 
@@ -3071,11 +3025,6 @@ msgstr "Статусе није могуће ручно поставити."
 msgid "Step is not a form"
 msgstr "Корак није формулар"
 
-#. js-lingui-id: YFMPch
-#: src/engine/metadata-modules/utils/validate-metadata-name-start-with-lowercase-letter-and-contain-digits-nor-letters.utils.ts
-msgid "String \"{name}\" is not valid: must start with lowercase letter and contain only alphanumeric letters"
-msgstr "Ниска \"{name}\" није важећа: мора почети малим словом и садржавати само алфанумеричка слова"
-
 #. js-lingui-id: UJmAAK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -3416,25 +3365,14 @@ msgid "There was an issue with your connection settings. Please try again."
 msgstr "Дошло је до проблема са вашим подешавањима везе. Молимо покушајте поново."
 
 #. js-lingui-id: Izdz+Y
-#: src/engine/core-modules/api-key/api-key.service.ts
+#: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "Овај API кључ је опозван и више се не може користити."
 
 #. js-lingui-id: Jmzgho
-#: src/engine/core-modules/api-key/api-key.service.ts
+#: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "Овај API кључ је истекао. Молимо направите нови."
-
-#. js-lingui-id: mAs70Y
-#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field."
-msgstr "Ово име није доступно јер га већ користи друго поље."
-
-#. js-lingui-id: yIUmAs
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
-#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available."
-msgstr "Ово име није доступно."
 
 #. js-lingui-id: gPBck6
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
@@ -3691,7 +3629,6 @@ msgstr "Провера није успела за 0 објеката и 0 пољ
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "Вредност мора бити у ВЕЛИКАМ СЛОВИМА и да следи формат snake_case \"{sanitizedValue}\""
 

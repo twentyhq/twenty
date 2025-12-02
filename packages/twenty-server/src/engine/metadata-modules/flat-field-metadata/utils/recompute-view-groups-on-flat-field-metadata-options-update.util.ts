@@ -1,5 +1,5 @@
-import { isDefined } from 'class-validator';
 import { type EnumFieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import {
@@ -63,7 +63,8 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
   const flatViewGroupsToUpdate = updatedFieldMetadataOptions.flatMap(
     ({ from: fromOption, to: toOption }) =>
       flatViewGroups.flatMap((flatViewGroup) =>
-        flatViewGroup.fieldValue === fromOption.value
+        flatViewGroup.fieldValue === fromOption.value &&
+        flatViewGroup.fieldMetadataId === fromFlatFieldMetadata.id
           ? { ...flatViewGroup, fieldValue: toOption.value }
           : [],
       ),

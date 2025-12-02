@@ -12,7 +12,7 @@ import { fromRoleEntityToFlatRole } from 'src/engine/metadata-modules/flat-role/
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-flat-map-cache/utils/regroup-entities-by-related-entity-id';
@@ -26,8 +26,8 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
   constructor(
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(RoleTargetsEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
+    @InjectRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(ObjectPermissionEntity)
     private readonly objectPermissionRepository: Repository<ObjectPermissionEntity>,
     @InjectRepository(PermissionFlagEntity)
@@ -52,7 +52,7 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
         where: { workspaceId },
         withDeleted: true,
       }),
-      this.roleTargetsRepository.find({
+      this.roleTargetRepository.find({
         where: { workspaceId },
         select: ['id', 'roleId'],
         withDeleted: true,

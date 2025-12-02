@@ -41,6 +41,7 @@ describe('transformGroupByDataToPieChartData', () => {
       namePlural: 'companies',
       fields: [groupByField, aggregateField],
     } as any;
+    const objectMetadataItems = [objectMetadataItem];
 
     const configuration = {
       __typename: 'PieChartConfiguration',
@@ -72,6 +73,7 @@ describe('transformGroupByDataToPieChartData', () => {
     const result = transformGroupByDataToPieChartData({
       groupByData,
       objectMetadataItem,
+      objectMetadataItems,
       configuration,
       aggregateOperation: 'COUNT',
     });
@@ -106,6 +108,7 @@ describe('transformGroupByDataToPieChartData', () => {
       namePlural: 'companies',
       fields: [groupByField, aggregateField],
     } as any;
+    const objectMetadataItems = [objectMetadataItem];
 
     const configuration = {
       __typename: 'PieChartConfiguration',
@@ -137,6 +140,7 @@ describe('transformGroupByDataToPieChartData', () => {
     const result = transformGroupByDataToPieChartData({
       groupByData,
       objectMetadataItem,
+      objectMetadataItems,
       configuration,
       aggregateOperation: 'COUNT',
     });

@@ -29,6 +29,11 @@ export const opportunitiesByStageView = ({
   const viewUniversalIdentifier =
     STANDARD_OBJECTS.opportunity.views.byStage.universalIdentifier;
 
+  const stageFieldMetadataId =
+    opportunityObjectMetadata.fields.find(
+      (field) => field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.stage,
+    )?.id ?? '';
+
   return {
     id: v4(),
     universalIdentifier: viewUniversalIdentifier,
@@ -39,16 +44,13 @@ export const opportunitiesByStageView = ({
     key: null,
     position: 2,
     icon: 'IconLayoutKanban',
-    kanbanFieldMetadataId:
-      opportunityObjectMetadata.fields.find(
-        (field) => field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.stage,
-      )?.id ?? '',
     kanbanAggregateOperation: AggregateOperations.MIN,
     kanbanAggregateOperationFieldMetadataId:
       opportunityObjectMetadata.fields.find(
         (field) => field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.amount,
       )?.id ?? '',
     filters: [],
+    mainGroupByFieldMetadataId: stageFieldMetadataId,
     fields: [
       {
         fieldMetadataId:

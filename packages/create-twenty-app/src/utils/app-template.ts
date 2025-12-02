@@ -13,25 +13,17 @@ export const copyBaseApplicationProject = async ({
   appDescription: string;
   appDirectory: string;
 }) => {
+  await fs.copy(join(__dirname, '../constants/base-application'), appDirectory);
+
   await createPackageJson({ appName, appDirectory });
 
+  await createGitignore(appDirectory);
+
   await createYarnLock(appDirectory);
-
-  await createYarnRc(appDirectory);
-
-  await createNvmRc(appDirectory);
-
-  await createTsConfig(appDirectory);
 
   await createApplicationConfig({
     displayName: appDisplayName,
     description: appDescription,
-    appDirectory,
-  });
-
-  await createReadmeContent({
-    displayName: appDisplayName,
-    appDescription,
     appDirectory,
   });
 };
@@ -43,55 +35,45 @@ const createYarnLock = async (appDirectory: string) => {
 
   await fs.writeFile(join(appDirectory, 'yarn.lock'), yarnLockContent);
 };
+const createGitignore = async (appDirectory: string) => {
+  const gitignoreContent = `# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-const createYarnRc = async (appDirectory: string) => {
-  const yarnRcContent = `nodeLinker: node-modules
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn
+
+# codegen
+generated
+
+# testing
+/coverage
+
+# dev
+/dist/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# typescript
+*.tsbuildinfo
 `;
 
-  await fs.writeFile(join(appDirectory, '.yarnrc.yml'), yarnRcContent);
-};
-
-const createNvmRc = async (appDirectory: string) => {
-  const nvmRcContent = `24.5.0
-`;
-
-  await fs.writeFile(join(appDirectory, '.nvmrc'), nvmRcContent);
-};
-
-const createTsConfig = async (appDirectory: string) => {
-  const tsConfigJson = {
-    compileOnSave: false,
-    compilerOptions: {
-      sourceMap: true,
-      declaration: true,
-      outDir: './dist',
-      rootDir: '.',
-      moduleResolution: 'node',
-      allowSyntheticDefaultImports: true,
-      emitDecoratorMetadata: true,
-      experimentalDecorators: true,
-      importHelpers: true,
-      allowUnreachableCode: false,
-      strictNullChecks: true,
-      alwaysStrict: true,
-      noImplicitAny: true,
-      strictBindCallApply: false,
-      target: 'es2018',
-      module: 'esnext',
-      lib: ['es2020', 'dom'],
-      skipLibCheck: true,
-      skipDefaultLibCheck: true,
-      resolveJsonModule: true,
-    },
-
-    exclude: ['node_modules', 'dist', '**/*.test.ts', '**/*.spec.ts'],
-  };
-
-  await fs.writeFile(
-    join(appDirectory, 'tsconfig.json'),
-    JSON.stringify(tsConfigJson, null, 2),
-    'utf8',
-  );
+  await fs.writeFile(join(appDirectory, '.gitignore'), gitignoreContent);
 };
 
 const createApplicationConfig = async ({
@@ -126,7 +108,7 @@ const createPackageJson = async ({
 }) => {
   const packageJson = {
     name: appName,
-    version: '0.0.1',
+    version: '0.1.0',
     license: 'MIT',
     engines: {
       node: '^24.5.0',
@@ -156,21 +138,4 @@ const createPackageJson = async ({
     JSON.stringify(packageJson, null, 2),
     'utf8',
   );
-};
-
-const createReadmeContent = async ({
-  displayName,
-  appDescription,
-  appDirectory,
-}: {
-  displayName: string;
-  appDescription: string;
-  appDirectory: string;
-}) => {
-  const readmeContent = `# ${displayName}
-
-${appDescription}
-`;
-
-  await fs.writeFile(join(appDirectory, 'README.md'), readmeContent);
 };

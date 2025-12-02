@@ -2,15 +2,13 @@ import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import * as path from 'path';
-import { exec } from 'child_process';
-import { promisify } from 'util';
 import { copyBaseApplicationProject } from './utils/app-template';
 import kebabCase from 'lodash.kebabcase';
 import { convertToLabel } from './utils/convert-to-label';
+import { tryGitInit } from './utils/try-git-init';
+import { install } from './utils/install';
 
 const CURRENT_EXECUTION_DIRECTORY = process.env.INIT_CWD || process.cwd();
-
-const execPromise = promisify(exec);
 
 export class CreateAppCommand {
   async execute(directory?: string): Promise<void> {
@@ -31,18 +29,11 @@ export class CreateAppCommand {
         appDirectory,
       });
 
-      try {
-        const result = await execPromise('yarn --version', {
-          cwd: appDirectory,
-        });
-        console.log('Installing dependencies using yarn', result.stdout);
-        await execPromise('yarn', { cwd: appDirectory });
-      } catch (error: any) {
-        console.error(chalk.red('yarn install failed:'), error.stdout);
-        process.exit(1);
-      }
+      await install(appDirectory);
 
-      await this.logSuccess(appDirectory);
+      await tryGitInit(appDirectory);
+
+      this.logSuccess(appDirectory);
     } catch (error) {
       console.error(
         chalk.red('Initialization failed:'),
@@ -128,10 +119,10 @@ export class CreateAppCommand {
   }
 
   private logSuccess(appDirectory: string): void {
-    console.log(chalk.green('✅ Application created successfully!'));
+    console.log(chalk.green('✅ Application created!'));
     console.log('');
     console.log(chalk.blue('Next steps:'));
-    console.log(`  cd ${appDirectory.split('/').reverse()[0] ?? ''}`);
-    console.log('  twenty app dev');
+    console.log(`cd ${appDirectory.split('/').reverse()[0] ?? ''}`);
+    console.log('twenty app dev');
   }
 }

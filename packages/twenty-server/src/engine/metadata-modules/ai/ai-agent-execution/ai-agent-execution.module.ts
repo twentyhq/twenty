@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { AiToolsModule } from 'src/engine/metadata-modules/ai/ai-tools/ai-tools.module';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 
 import { AgentMessagePartEntity } from './entities/agent-message-part.entity';
 import { AgentMessageEntity } from './entities/agent-message.entity';
@@ -20,7 +20,7 @@ import { AgentAsyncExecutorService } from './services/agent-async-executor.servi
       AgentMessageEntity,
       AgentMessagePartEntity,
       AgentTurnEntity,
-      RoleTargetsEntity,
+      RoleTargetEntity,
     ]),
   ],
   providers: [AgentAsyncExecutorService],
