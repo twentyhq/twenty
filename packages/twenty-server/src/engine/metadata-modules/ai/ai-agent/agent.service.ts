@@ -20,7 +20,7 @@ export class AgentService {
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
     @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetEntity>,
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     private readonly agentRoleService: AiAgentRoleService,
   ) {}
 
@@ -46,7 +46,7 @@ export class AgentService {
     workspaceId: string,
     agents: AgentEntity[],
   ): Promise<Map<string, string>> {
-    const roleTargets = await this.roleTargetsRepository.find({
+    const roleTargets = await this.roleTargetRepository.find({
       where: {
         workspaceId,
         agentId: In(agents.map((agent) => agent.id)),
@@ -137,7 +137,7 @@ export class AgentService {
     workspaceId: string,
     agentId: string,
   ): Promise<string | null> {
-    const roleTarget = await this.roleTargetsRepository.findOne({
+    const roleTarget = await this.roleTargetRepository.findOne({
       where: {
         agentId,
         workspaceId,

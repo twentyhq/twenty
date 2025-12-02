@@ -20,7 +20,7 @@ describe('AiAgentRoleService', () => {
   let service: AiAgentRoleService;
   let agentRepository: Repository<AgentEntity>;
   let roleRepository: Repository<RoleEntity>;
-  let roleTargetsRepository: Repository<RoleTargetEntity>;
+  let roleTargetRepository: Repository<RoleTargetEntity>;
   let roleTargetService: RoleTargetService;
 
   const testWorkspaceId = 'test-workspace-id';
@@ -72,7 +72,7 @@ describe('AiAgentRoleService', () => {
     roleRepository = module.get<Repository<RoleEntity>>(
       getRepositoryToken(RoleEntity),
     );
-    roleTargetsRepository = module.get<Repository<RoleTargetEntity>>(
+    roleTargetRepository = module.get<Repository<RoleTargetEntity>>(
       getRepositoryToken(RoleTargetEntity),
     );
     roleTargetService = module.get<RoleTargetService>(RoleTargetService);
@@ -135,7 +135,7 @@ describe('AiAgentRoleService', () => {
       // Arrange
       jest.spyOn(agentRepository, 'findOne').mockResolvedValue(testAgent);
       jest.spyOn(roleRepository, 'findOne').mockResolvedValue(testRole);
-      jest.spyOn(roleTargetsRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(roleTargetRepository, 'findOne').mockResolvedValue(null);
       jest
         .spyOn(roleTargetService, 'create')
         .mockResolvedValue({} as FlatRoleTarget);
@@ -154,7 +154,7 @@ describe('AiAgentRoleService', () => {
       expect(roleRepository.findOne).toHaveBeenCalledWith({
         where: { id: testRole.id, workspaceId: testWorkspaceId },
       });
-      expect(roleTargetsRepository.findOne).toHaveBeenCalledWith({
+      expect(roleTargetRepository.findOne).toHaveBeenCalledWith({
         where: {
           agentId: testAgent.id,
           roleId: testRole.id,
@@ -175,7 +175,7 @@ describe('AiAgentRoleService', () => {
       // Arrange
       jest.spyOn(agentRepository, 'findOne').mockResolvedValue(testAgent);
       jest.spyOn(roleRepository, 'findOne').mockResolvedValue(testRole2);
-      jest.spyOn(roleTargetsRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(roleTargetRepository, 'findOne').mockResolvedValue(null);
       jest
         .spyOn(roleTargetService, 'create')
         .mockResolvedValue({} as FlatRoleTarget);
@@ -212,7 +212,7 @@ describe('AiAgentRoleService', () => {
       jest.spyOn(agentRepository, 'findOne').mockResolvedValue(testAgent);
       jest.spyOn(roleRepository, 'findOne').mockResolvedValue(testRole);
       jest
-        .spyOn(roleTargetsRepository, 'findOne')
+        .spyOn(roleTargetRepository, 'findOne')
         .mockResolvedValue(existingRoleTarget);
 
       // Act
@@ -322,7 +322,7 @@ describe('AiAgentRoleService', () => {
       } as RoleTargetEntity;
 
       jest
-        .spyOn(roleTargetsRepository, 'findOne')
+        .spyOn(roleTargetRepository, 'findOne')
         .mockResolvedValue(existingRoleTarget);
       jest.spyOn(roleTargetService, 'delete').mockResolvedValue(undefined);
 
@@ -333,7 +333,7 @@ describe('AiAgentRoleService', () => {
       });
 
       // Assert
-      expect(roleTargetsRepository.findOne).toHaveBeenCalledWith({
+      expect(roleTargetRepository.findOne).toHaveBeenCalledWith({
         where: {
           agentId: testAgent.id,
           workspaceId: testWorkspaceId,
@@ -347,7 +347,7 @@ describe('AiAgentRoleService', () => {
 
     it('should throw error when removing role from agent that has no role', async () => {
       // Arrange
-      jest.spyOn(roleTargetsRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(roleTargetRepository, 'findOne').mockResolvedValue(null);
 
       // Act & Assert
       await expect(

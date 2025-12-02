@@ -56,7 +56,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
     @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetEntity>,
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
@@ -95,7 +95,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         });
 
         if (isDefined(agent)) {
-          const roleTarget = await this.roleTargetsRepository.findOne({
+          const roleTarget = await this.roleTargetRepository.findOne({
             where: {
               agentId: agent.id,
               workspaceId,

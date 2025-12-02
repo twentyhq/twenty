@@ -46,7 +46,7 @@ export class WorkspaceManagerService {
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetEntity>,
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly applicationService: ApplicationService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -164,7 +164,7 @@ export class WorkspaceManagerService {
   // TODO investigate why some entities are not on cascade delete
   // Are foreign keys correctly applied ?
   public async delete(workspaceId: string): Promise<void> {
-    await this.roleTargetsRepository.delete({
+    await this.roleTargetRepository.delete({
       workspaceId,
     });
     await this.roleRepository.delete({

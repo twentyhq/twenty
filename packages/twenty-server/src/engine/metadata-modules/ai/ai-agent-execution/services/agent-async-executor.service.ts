@@ -33,7 +33,7 @@ export class AgentAsyncExecutorService {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly toolAdapterService: ToolAdapterService,
     @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetEntity>,
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     private readonly toolService: ToolService,
   ) {}
 
@@ -43,7 +43,7 @@ export class AgentAsyncExecutorService {
     actorContext?: ActorMetadata,
     rolePermissionConfig?: RolePermissionConfig,
   ): Promise<ToolSet> {
-    const roleTarget = await this.roleTargetsRepository.findOne({
+    const roleTarget = await this.roleTargetRepository.findOne({
       where: {
         agentId: agentId,
         workspaceId,

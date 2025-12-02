@@ -17,13 +17,13 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 export class WorkspaceFlatRoleTargetMapCacheService extends WorkspaceCacheProvider<FlatRoleTargetMaps> {
   constructor(
     @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetEntity>,
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
   ) {
     super();
   }
 
   async computeForCache(workspaceId: string): Promise<FlatRoleTargetMaps> {
-    const roleTargets = await this.roleTargetsRepository.find({
+    const roleTargets = await this.roleTargetRepository.find({
       where: {
         workspaceId,
       },

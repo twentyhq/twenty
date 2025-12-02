@@ -27,7 +27,7 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetEntity>,
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(ObjectPermissionEntity)
     private readonly objectPermissionRepository: Repository<ObjectPermissionEntity>,
     @InjectRepository(PermissionFlagEntity)
@@ -52,7 +52,7 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
         where: { workspaceId },
         withDeleted: true,
       }),
-      this.roleTargetsRepository.find({
+      this.roleTargetRepository.find({
         where: { workspaceId },
         select: ['id', 'roleId'],
         withDeleted: true,

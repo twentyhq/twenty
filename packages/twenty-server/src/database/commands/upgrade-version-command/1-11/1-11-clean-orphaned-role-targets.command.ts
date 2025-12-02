@@ -20,7 +20,7 @@ export class CleanOrphanedRoleTargetsCommand extends ActiveOrSuspendedWorkspaces
   private hasRunOnce = false;
   constructor(
     @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetEntity>,
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -43,7 +43,7 @@ export class CleanOrphanedRoleTargetsCommand extends ActiveOrSuspendedWorkspaces
       this.logger.log('Dry run mode: No changes will be applied');
     }
 
-    const orphanedRoleTargets = await this.roleTargetsRepository
+    const orphanedRoleTargets = await this.roleTargetRepository
       .createQueryBuilder('roleTarget')
       .leftJoin(
         UserWorkspaceEntity,
@@ -82,7 +82,7 @@ export class CleanOrphanedRoleTargetsCommand extends ActiveOrSuspendedWorkspaces
 
     const orphanedIds = orphanedRoleTargets.map((roleTarget) => roleTarget.id);
 
-    await this.roleTargetsRepository.delete({ id: In(orphanedIds) });
+    await this.roleTargetRepository.delete({ id: In(orphanedIds) });
 
     this.logger.log(
       `Deleted ${orphanedRoleTargets.length} orphaned roleTarget(s)`,

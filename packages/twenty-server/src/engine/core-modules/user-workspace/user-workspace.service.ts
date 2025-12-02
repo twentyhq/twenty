@@ -45,7 +45,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetEntity>,
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly loginTokenService: LoginTokenService,
@@ -246,10 +246,10 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     softDelete?: boolean;
   }): Promise<void> {
     if (softDelete) {
-      await this.roleTargetsRepository.softRemove({ userWorkspaceId });
+      await this.roleTargetRepository.softRemove({ userWorkspaceId });
       await this.userWorkspaceRepository.softDelete({ id: userWorkspaceId });
     } else {
-      await this.roleTargetsRepository.delete({ userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
+      await this.roleTargetRepository.delete({ userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
       await this.userWorkspaceRepository.delete({ id: userWorkspaceId });
     }
   }

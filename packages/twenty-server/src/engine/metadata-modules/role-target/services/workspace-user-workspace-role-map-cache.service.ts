@@ -16,13 +16,13 @@ export type UserWorkspaceRoleMap = Record<string, string>;
 export class WorkspaceUserWorkspaceRoleMapCacheService extends WorkspaceCacheProvider<UserWorkspaceRoleMap> {
   constructor(
     @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetEntity>,
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
   ) {
     super();
   }
 
   async computeForCache(workspaceId: string): Promise<UserWorkspaceRoleMap> {
-    const roleTargetsMap = await this.roleTargetsRepository.find({
+    const roleTargetsMap = await this.roleTargetRepository.find({
       where: {
         workspaceId,
         userWorkspaceId: Not(IsNull()),

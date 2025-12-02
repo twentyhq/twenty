@@ -14,12 +14,13 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 
 import { ApiKeyEntity } from './api-key.entity';
+
 import { ApiKeyService } from './services/api-key.service';
 
 describe('ApiKeyService', () => {
   let service: ApiKeyService;
   let mockApiKeyRepository: any;
-  let mockRoleTargetsRepository: any;
+  let mockroleTargetRepository: any;
   let mockJwtWrapperService: any;
   let mockApiKeyRoleService: any;
   let mockRoleTargetService: any;
@@ -60,7 +61,7 @@ describe('ApiKeyService', () => {
       update: jest.fn(),
     };
 
-    mockRoleTargetsRepository = {
+    mockroleTargetRepository = {
       delete: jest.fn(),
       save: jest.fn(),
       findOne: jest.fn(),
@@ -102,7 +103,7 @@ describe('ApiKeyService', () => {
         },
         {
           provide: getRepositoryToken(RoleTargetEntity),
-          useValue: mockRoleTargetsRepository,
+          useValue: mockroleTargetRepository,
         },
         {
           provide: ApiKeyRoleService,

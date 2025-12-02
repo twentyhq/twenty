@@ -14,7 +14,7 @@ import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manag
 export class TwentyORMManager {
   constructor(
     @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetEntity>,
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     private readonly workspaceDataSourceFactory: WorkspaceDatasourceFactory,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
@@ -53,7 +53,7 @@ export class TwentyORMManager {
     let roleId: string | undefined;
 
     if (isDefined(userWorkspaceId)) {
-      const roleTarget = await this.roleTargetsRepository.findOne({
+      const roleTarget = await this.roleTargetRepository.findOne({
         where: {
           userWorkspaceId,
           workspaceId,
@@ -62,7 +62,7 @@ export class TwentyORMManager {
 
       roleId = roleTarget?.roleId;
     } else if (isDefined(apiKeyId)) {
-      const roleTarget = await this.roleTargetsRepository.findOne({
+      const roleTarget = await this.roleTargetRepository.findOne({
         where: {
           apiKeyId,
           workspaceId,

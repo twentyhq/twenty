@@ -86,10 +86,10 @@ export class WorkspaceSyncAgentService {
                 );
               }
 
-              const roleTargetsRepository =
+              const roleTargetRepository =
                 manager.getRepository(RoleTargetEntity);
 
-              await roleTargetsRepository.save({
+              await roleTargetRepository.save({
                 roleId: role.id,
                 agentId: createdAgent.id,
                 workspaceId: context.workspaceId,
@@ -137,10 +137,10 @@ export class WorkspaceSyncAgentService {
                 );
               }
 
-              const roleTargetsRepository =
+              const roleTargetRepository =
                 manager.getRepository(RoleTargetEntity);
 
-              await roleTargetsRepository.save({
+              await roleTargetRepository.save({
                 roleId: role.id,
                 agentId: agentToUpdate.id,
                 workspaceId: context.workspaceId,

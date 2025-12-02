@@ -21,7 +21,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 export class UserRoleService {
   constructor(
     @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetEntity>,
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -88,7 +88,7 @@ export class UserRoleService {
       return new Map();
     }
 
-    const allRoleTargets = await this.roleTargetsRepository.find({
+    const allRoleTargets = await this.roleTargetRepository.find({
       where: {
         userWorkspaceId: In(userWorkspaceIds),
         workspaceId,

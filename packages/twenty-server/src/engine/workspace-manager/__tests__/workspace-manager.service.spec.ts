@@ -31,7 +31,7 @@ describe('WorkspaceManagerService', () => {
   let workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>;
   let dataSourceRepository: Repository<DataSourceEntity>;
   let workspaceDataSourceService: WorkspaceDataSourceService;
-  let roleTargetsRepository: Repository<RoleTargetEntity>;
+  let roleTargetRepository: Repository<RoleTargetEntity>;
   let roleRepository: Repository<RoleEntity>;
   let mockDataSource: jest.Mocked<DataSource>;
   let objectMetadataService: ObjectMetadataService;
@@ -165,7 +165,7 @@ describe('WorkspaceManagerService', () => {
     workspaceDataSourceService = module.get<WorkspaceDataSourceService>(
       WorkspaceDataSourceService,
     );
-    roleTargetsRepository = module.get<Repository<RoleTargetEntity>>(
+    roleTargetRepository = module.get<Repository<RoleTargetEntity>>(
       getRepositoryToken(RoleTargetEntity),
     );
     roleRepository = module.get<Repository<RoleEntity>>(
@@ -192,7 +192,7 @@ describe('WorkspaceManagerService', () => {
       expect(dataSourceRepository.delete).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
       });
-      expect(roleTargetsRepository.delete).toHaveBeenCalledWith({
+      expect(roleTargetRepository.delete).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
       });
       expect(roleRepository.delete).toHaveBeenCalledWith({

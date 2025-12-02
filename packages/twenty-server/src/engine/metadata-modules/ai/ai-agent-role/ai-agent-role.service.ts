@@ -21,7 +21,7 @@ export class AiAgentRoleService {
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetEntity>,
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     private readonly roleTargetService: RoleTargetService,
   ) {}
 
@@ -88,7 +88,7 @@ export class AiAgentRoleService {
     workspaceId: string;
     agentId: string;
   }): Promise<void> {
-    const existingRoleTarget = await this.roleTargetsRepository.findOne({
+    const existingRoleTarget = await this.roleTargetRepository.findOne({
       where: {
         agentId,
         workspaceId,
@@ -112,7 +112,7 @@ export class AiAgentRoleService {
     roleId: string,
     workspaceId: string,
   ): Promise<AgentEntity[]> {
-    const roleTargets = await this.roleTargetsRepository.find({
+    const roleTargets = await this.roleTargetRepository.find({
       where: {
         roleId,
         workspaceId,
@@ -176,7 +176,7 @@ export class AiAgentRoleService {
       );
     }
 
-    const existingRoleTarget = await this.roleTargetsRepository.findOne({
+    const existingRoleTarget = await this.roleTargetRepository.findOne({
       where: {
         agentId,
         roleId,
@@ -211,7 +211,7 @@ export class AiAgentRoleService {
       return;
     }
 
-    const remainingAssignments = await this.roleTargetsRepository.count({
+    const remainingAssignments = await this.roleTargetRepository.count({
       where: {
         roleId,
         workspaceId,

@@ -15,13 +15,13 @@ export class WorkspaceApiKeyRoleMapCacheService extends WorkspaceCacheProvider<
 > {
   constructor(
     @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetEntity>,
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
   ) {
     super();
   }
 
   async computeForCache(workspaceId: string): Promise<Record<string, string>> {
-    const roleTargetsMap = await this.roleTargetsRepository.find({
+    const roleTargetsMap = await this.roleTargetRepository.find({
       where: {
         workspaceId,
         apiKeyId: Not(IsNull()),

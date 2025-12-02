@@ -19,7 +19,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 export class ApiKeyRoleService {
   constructor(
     @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetEntity>,
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
 
@@ -117,7 +117,7 @@ export class ApiKeyRoleService {
       );
     }
 
-    const existingRoleTarget = await this.roleTargetsRepository.findOne({
+    const existingRoleTarget = await this.roleTargetRepository.findOne({
       where: {
         apiKeyId,
         roleId,
@@ -141,7 +141,7 @@ export class ApiKeyRoleService {
       return new Map();
     }
 
-    const roleTargets = await this.roleTargetsRepository.find({
+    const roleTargets = await this.roleTargetRepository.find({
       where: {
         apiKeyId: In(apiKeyIds),
         workspaceId,
@@ -167,7 +167,7 @@ export class ApiKeyRoleService {
     roleId: string,
     workspaceId: string,
   ): Promise<ApiKeyEntity[]> {
-    const roleTargets = await this.roleTargetsRepository.find({
+    const roleTargets = await this.roleTargetRepository.find({
       where: {
         roleId,
         workspaceId,
