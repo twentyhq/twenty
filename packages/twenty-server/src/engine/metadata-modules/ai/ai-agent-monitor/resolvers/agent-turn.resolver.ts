@@ -48,7 +48,7 @@ export class AgentTurnResolver {
       order: { createdAt: 'DESC' },
     });
 
-    return turns as unknown as AgentTurnDTO[];
+    return turns;
   }
 
   @Mutation(() => AgentTurnEvaluationDTO)
@@ -104,6 +104,6 @@ export class AgentTurnResolver {
       });
     }
 
-    return turnWithRelations as unknown as AgentTurnDTO;
+    return turnWithRelations;
   }
 }
