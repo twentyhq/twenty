@@ -39,11 +39,6 @@ msgstr "Τα πεδία {fieldType} δεν μπορούν να έχουν προ
 msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
 msgstr "Βρέθηκαν {hostnameCount} ονόματα υποδοχής για το domain '{domainName}'. Αναμένεται 1"
 
-#. js-lingui-id: 8haj+G
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
-msgid "{name} should be in camelCase"
-msgstr "{name} θα πρέπει να είναι σε camelCase"
-
 #. js-lingui-id: kZR6+h
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "A company"
@@ -929,7 +924,6 @@ msgstr "Δεκέμβριος"
 
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Η προεπιλεγμένη τιμή \"{defaultValue}\" πρέπει να είναι μία από τις τιμές επιλογής"
 
@@ -940,13 +934,11 @@ msgstr "Η προεπιλεγμένη τιμή πρέπει να είναι συ
 
 #. js-lingui-id: sv9P4Q
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Default value should be as quoted string"
 msgstr "Η αρχική τιμή πρέπει να είναι ως παρατιθέμενη συμβολοσειρά"
 
 #. js-lingui-id: 6pJV03
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Default values must be unique"
 msgstr "Οι προεπιλεγμένες τιμές πρέπει να είναι μοναδικές"
 
@@ -1001,7 +993,6 @@ msgstr "Ημερομηνία Λήξης"
 
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Duplicated option {field}"
 msgstr "Διπλή επιλογή {field}"
 
@@ -1587,7 +1578,6 @@ msgstr "Ιδανικό Προφίλ Πελάτη: Δείχνει εάν η ετ�
 
 #. js-lingui-id: YcVn4w
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "If defined default value must contain at least one value"
 msgstr "Αν οριστεί, η αρχική τιμή πρέπει να περιέχει τουλάχιστον μία τιμή"
 
@@ -1637,11 +1627,6 @@ msgstr "Το ευρετήριο με το ίδιο αναγνωριστικό υ
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index with same name already exists"
 msgstr "Το ευρετήριο με το ίδιο όνομα υπάρχει ήδη"
-
-#. js-lingui-id: 71VJzG
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
-msgid "Input is too short: \"{name}\""
-msgstr "Η εισαγωγή είναι πολύ μικρή: \"{name}\""
 
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -1695,11 +1680,6 @@ msgstr "Η τιμή λεπτού δεν είναι έγκυρη. Πρέπει ν
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Invalid morph relation input"
 msgstr "Μη έγκυρη εισαγωγή σχέσης μορφής"
-
-#. js-lingui-id: VvhAS2
-#: src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util.ts
-msgid "Invalid object metadata input"
-msgstr "Μη έγκυρη είσοδος μεταδεδομένων αντικειμένου"
 
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
@@ -1850,13 +1830,11 @@ msgstr "Το πεδίο προβολής αναγνωριστικού ετικέ
 
 #. js-lingui-id: 4EGmy6
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Label must not be empty"
 msgstr "Η ετικέτα δεν πρέπει να είναι κενή"
 
 #. js-lingui-id: k731jp
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Label must not contain a comma"
 msgstr "Η ετικέτα δεν πρέπει να περιέχει κόμμα"
 
@@ -2175,11 +2153,6 @@ msgstr "Βρέθηκαν πολλαπλές εγγραφές με τις ίδι�
 msgid "Name"
 msgstr "Όνομα"
 
-#. js-lingui-id: aD053i
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service.ts
-msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
-msgstr "Το όνομα \"{computedMetadataNameFromLabel}\" δεν μπορεί να είναι το ίδιο και στις δύο πλευρές της σχέσης"
-
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
@@ -2195,11 +2168,6 @@ msgstr "Το όνομα \"{name}\" δεν είναι διαθέσιμο καθώ
 msgid "Name \"{name}\" is not available as it is already used by join column name"
 msgstr ""
 
-#. js-lingui-id: RGz1nY
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
-msgid "Name is not available, it may be duplicating another field's name."
-msgstr "Το όνομα δεν είναι διαθέσιμο, μπορεί να αναπαράγει το όνομα άλλου πεδίου."
-
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters"
@@ -2209,11 +2177,6 @@ msgstr "Το όνομα δεν είναι έγκυρο: πρέπει να ξεκ
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is too long"
 msgstr "Το όνομα είναι πολύ μεγάλο"
-
-#. js-lingui-id: 0MobB1
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils.ts
-msgid "Name is too long: it exceeds the 63 characters limit."
-msgstr "Το όνομα είναι πολύ μακρύ: υπερβαίνει το όριο των 63 χαρακτήρων."
 
 #. js-lingui-id: go/Vg1
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
@@ -2400,7 +2363,6 @@ msgid "Number of employees in the company"
 msgstr "Αριθμός εργαζομένων στην εταιρεία"
 
 #. js-lingui-id: ECRKYR
-#: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Object already exists"
 msgstr "Το αντικείμενο υπάρχει ήδη"
@@ -2533,25 +2495,21 @@ msgstr "Στάδιο Ευκαιρίας"
 
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option id is invalid"
 msgstr "Μη έγκυρο αναγνωριστικό επιλογής"
 
 #. js-lingui-id: MniXaX
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option id is required"
 msgstr "Απαιτείται αναγνωριστικό επιλογής"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
 msgstr "Η ετικέτα επιλογής \"{sanitizedLabel}\" είναι κάτω από 1 χαρακτήρα"
 
 #. js-lingui-id: mTFS0z
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label exceeds 63 characters"
 msgstr "Η ετικέτα επιλογής υπερβαίνει τους 63 χαρακτήρες"
 
@@ -2563,7 +2521,6 @@ msgstr "Μορφή ετικέτας επιλογής μη υποστηριζόμ
 #. js-lingui-id: +E9N4m
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label is required"
 msgstr "Απαιτείται ετικέτα επιλογής"
 
@@ -2574,13 +2531,11 @@ msgstr "Η ετικέτα επιλογής πρέπει να είναι μια �
 
 #. js-lingui-id: nQqNzE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Η τιμή επιλογής \"{sanitizedValue}\" είναι κάτω από 1 χαρακτήρα"
 
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value exceeds 63 characters"
 msgstr "Η τιμή επιλογής υπερβαίνει τους 63 χαρακτήρες"
 
@@ -2592,7 +2547,6 @@ msgstr "Η μορφή τιμής επιλογής δεν υποστηρίζετ�
 #. js-lingui-id: /wsRPd
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value is required"
 msgstr "Απαιτείται τιμή επιλογής"
 
@@ -3071,11 +3025,6 @@ msgstr "Οι καταστάσεις δεν μπορούν να οριστούν 
 msgid "Step is not a form"
 msgstr "Το βήμα δεν είναι φόρμα"
 
-#. js-lingui-id: YFMPch
-#: src/engine/metadata-modules/utils/validate-metadata-name-start-with-lowercase-letter-and-contain-digits-nor-letters.utils.ts
-msgid "String \"{name}\" is not valid: must start with lowercase letter and contain only alphanumeric letters"
-msgstr "Η συμβολοσειρά \"{name}\" δεν είναι έγκυρη: πρέπει να ξεκινά με πεζό γράμμα και να περιέχει μόνο αριθμογράμματα"
-
 #. js-lingui-id: UJmAAK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -3425,17 +3374,6 @@ msgstr "Αυτό το κλειδί API έχει ανακληθεί και δεν
 msgid "This API Key has expired. Please create a new one."
 msgstr "Το κλειδί API έχει λήξει. Παρακαλώ δημιουργήστε ένα νέο."
 
-#. js-lingui-id: mAs70Y
-#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field."
-msgstr "Αυτό το όνομα δεν είναι διαθέσιμο καθώς χρησιμοποιείται ήδη από άλλο πεδίο."
-
-#. js-lingui-id: yIUmAs
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
-#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available."
-msgstr "Αυτό το όνομα δεν είναι διαθέσιμο."
-
 #. js-lingui-id: gPBck6
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "This name is reserved. Use a different name or the system will add \"Custom\" suffix."
@@ -3691,7 +3629,6 @@ msgstr "Η επικύρωση απέτυχε για 0 αντικείμενο(α)
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "Η τιμή πρέπει να είναι σε πεζές κεφαλαία και να ακολουθεί snake_case \"{sanitizedValue}\""
 

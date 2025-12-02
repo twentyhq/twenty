@@ -89,6 +89,8 @@ Use the AI codebase search to find:
 
 ### 1. Setup Git Branch
 
+**IMPORTANT**: Always start from an up-to-date main branch to avoid merge conflicts and ensure the changelog is based on the latest code.
+
 ```bash
 cd /Users/thomascolasdesfrancs/code/twenty
 git checkout main
@@ -97,6 +99,8 @@ git checkout -b {VERSION}
 ```
 
 Replace `{VERSION}` with the actual version number (e.g., `1.9.0`)
+
+⚠️ **Do this first** before making any file changes. This ensures your branch is based on the latest main.
 
 ### 2. Create File Structure
 
@@ -174,6 +178,7 @@ Description of the third feature.
 - Focus on user benefits, not technical implementation
 - Use active voice
 - Start with what the user can now do
+- **NEVER mention the brand name "Twenty"** in changelog text - use "your workspace", "the platform", or similar neutral references instead
 
 **Reference Previous Changelogs:**
 - Check `packages/twenty-website/src/content/releases/` for examples

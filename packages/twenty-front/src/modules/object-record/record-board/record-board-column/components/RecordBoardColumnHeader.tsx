@@ -5,16 +5,25 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
+
+import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
+import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useRecoilCallback } from 'recoil';
+import { findByProperty, isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -56,8 +65,8 @@ const StyledColumn = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
   display: flex;
   flex-direction: column;
-  max-width: 200px;
-  min-width: 200px;
+  max-width: ${RECORD_BOARD_COLUMN_WIDTH}px;
+  min-width: ${RECORD_BOARD_COLUMN_WIDTH}px;
 
   padding: ${({ theme }) => theme.spacing(2)};
 
@@ -95,14 +104,62 @@ export const RecordBoardColumnHeader = () => {
       recordIndexAggregateDisplayValueForGroupValueComponentFamilyState,
       { groupValue: columnDefinition?.value ?? '' },
     );
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
+
+  const recordIndexRecordIdsByGroupCallbackState =
+    useRecoilComponentCallbackState(
+      recordIndexRecordIdsByGroupComponentFamilyState,
+    );
 
   const recordIndexAggregateDisplayLabel = useRecoilComponentValue(
     recordIndexAggregateDisplayLabelComponentState,
   );
 
+  const recordGroupDefinitions = useRecoilComponentValue(
+    recordGroupDefinitionsComponentSelector,
+  );
+
   const { toggleDropdown } = useToggleDropdown();
 
   const dropdownId = `record-board-column-dropdown-${columnDefinition.id}`;
+
+  const handleCreateNewRecordClick = useRecoilCallback(
+    ({ set, snapshot }) =>
+      async () => {
+        const createdRecord = await createNewIndexRecord({
+          position: 'first',
+          [selectFieldMetadataItem.name]: columnDefinition.value,
+        });
+
+        const recordGroup = recordGroupDefinitions.find(
+          findByProperty('value', createdRecord[selectFieldMetadataItem.name]),
+        );
+
+        if (isDefined(recordGroup)) {
+          const currentRecordIds = getSnapshotValue(
+            snapshot,
+            recordIndexRecordIdsByGroupCallbackState(recordGroup.id),
+          );
+
+          const newRecordIds = [createdRecord.id, ...currentRecordIds];
+
+          set(
+            recordIndexRecordIdsByGroupCallbackState(recordGroup.id),
+            newRecordIds,
+          );
+        }
+
+        upsertRecordsInStore([createdRecord]);
+      },
+    [
+      createNewIndexRecord,
+      columnDefinition,
+      recordGroupDefinitions,
+      recordIndexRecordIdsByGroupCallbackState,
+      upsertRecordsInStore,
+      selectFieldMetadataItem,
+    ],
+  );
 
   return (
     <StyledColumn>
@@ -166,13 +223,7 @@ export const RecordBoardColumnHeader = () => {
                     <LightIconButton
                       accent="tertiary"
                       Icon={IconPlus}
-                      onClick={() => {
-                        createNewIndexRecord({
-                          position: 'first',
-                          [selectFieldMetadataItem.name]:
-                            columnDefinition.value,
-                        });
-                      }}
+                      onClick={handleCreateNewRecordClick}
                     />
                   )}
               </StyledHeaderActions>

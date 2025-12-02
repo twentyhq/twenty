@@ -8,6 +8,7 @@ import { computeContextStoreFilters } from '@/context-store/utils/computeContext
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
+import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
@@ -28,6 +29,8 @@ export const RestoreMultipleRecordsAction = () => {
   }
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
+  const { removeSelectedRecordsFromRecordBoard } =
+    useRemoveSelectedRecordsFromRecordBoard(recordIndexId);
 
   const { restoreManyRecords } = useRestoreManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -75,6 +78,7 @@ export const RestoreMultipleRecordsAction = () => {
   });
 
   const handleRestoreClick = async () => {
+    removeSelectedRecordsFromRecordBoard();
     const recordsToRestore = await fetchAllRecordIds();
     const recordIdsToRestore = recordsToRestore.map((record) => record.id);
 
