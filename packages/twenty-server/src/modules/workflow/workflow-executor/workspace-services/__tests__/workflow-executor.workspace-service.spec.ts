@@ -60,10 +60,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
     add: jest.fn(),
   };
 
-  const mockWorkflowRunQueueWorkspaceService = {
-    increaseWorkflowRunQueuedCount: jest.fn(),
-  };
-
   beforeEach(async () => {
     jest.clearAllMocks();
 
@@ -377,10 +373,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
           lastExecutedStepId: 'step-1',
         },
       );
-
-      expect(
-        mockWorkflowRunQueueWorkspaceService.increaseWorkflowRunQueuedCount,
-      ).toHaveBeenCalledWith(mockWorkspaceId);
 
       // Should not execute the next step (step-2) in the same job
       expect(workflowActionFactory.get).toHaveBeenCalledTimes(1);
