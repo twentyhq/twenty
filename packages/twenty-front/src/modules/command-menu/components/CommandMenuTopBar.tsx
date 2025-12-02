@@ -11,6 +11,9 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -74,6 +77,8 @@ const StyledContentContainer = styled.div`
   overflow: hidden;
 `;
 
+const COMMAND_MENU_SEARCH_INPUT_FOCUS_ID = 'command-menu-search-input';
+
 export const CommandMenuTopBar = () => {
   const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
     commandMenuSearchState,
@@ -99,6 +104,28 @@ export const CommandMenuTopBar = () => {
   const theme = useTheme();
 
   const { contextChips } = useCommandMenuContextChips();
+
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } = useRemoveFocusItemFromFocusStackById();
+
+  const handleInputFocus = () => {
+    pushFocusItemToFocusStack({
+      focusId: COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
+      component: {
+        type: FocusComponentType.TEXT_INPUT,
+        instanceId: COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
+    });
+  };
+
+  const handleInputBlur = () => {
+    removeFocusItemFromFocusStackById({
+      focusId: COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
+    });
+  };
 
   const canGoBack = commandMenuNavigationStack.length > 1;
 
@@ -153,6 +180,8 @@ export const CommandMenuTopBar = () => {
               value={commandMenuSearch}
               placeholder={t`Type anything...`}
               onChange={handleSearchChange}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
             />
             <CommandMenuTopBarInputFocusEffect inputRef={inputRef} />
           </>
