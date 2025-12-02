@@ -7,7 +7,7 @@ import {
 
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { DeleteRoleTargetAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/role-target/types/workspace-migration-role-target-action-v2.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 
@@ -45,7 +45,7 @@ export class DeleteRoleTargetActionHandlerService extends WorkspaceMigrationRunn
     const { roleTargetId } = action;
 
     const roleTargetRepository =
-      queryRunner.manager.getRepository<RoleTargetsEntity>(RoleTargetsEntity);
+      queryRunner.manager.getRepository<RoleTargetEntity>(RoleTargetEntity);
 
     await roleTargetRepository.delete({
       id: roleTargetId,

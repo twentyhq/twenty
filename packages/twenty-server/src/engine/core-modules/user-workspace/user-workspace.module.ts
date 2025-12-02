@@ -19,7 +19,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -32,7 +32,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
           UserEntity,
           UserWorkspaceEntity,
           WorkspaceEntity,
-          RoleTargetsEntity,
+          RoleTargetEntity,
         ]),
         NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
         TypeORMModule,

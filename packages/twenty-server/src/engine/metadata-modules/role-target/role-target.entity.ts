@@ -17,21 +17,21 @@ import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/inte
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
-@Entity('roleTargets')
-@Unique('IDX_ROLE_TARGETS_UNIQUE_USER_WORKSPACE', [
+@Entity('roleTarget')
+@Unique('IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE', [
   'workspaceId',
   'userWorkspaceId',
 ])
-@Unique('IDX_ROLE_TARGETS_UNIQUE_AGENT', ['workspaceId', 'agentId'])
-@Unique('IDX_ROLE_TARGETS_UNIQUE_API_KEY', ['workspaceId', 'apiKeyId'])
-@Index('IDX_ROLE_TARGETS_WORKSPACE_ID', ['userWorkspaceId', 'workspaceId'])
-@Index('IDX_ROLE_TARGETS_AGENT_ID', ['agentId'])
-@Index('IDX_ROLE_TARGETS_API_KEY_ID', ['apiKeyId'])
+@Unique('IDX_ROLE_TARGET_UNIQUE_AGENT', ['workspaceId', 'agentId'])
+@Unique('IDX_ROLE_TARGET_UNIQUE_API_KEY', ['workspaceId', 'apiKeyId'])
+@Index('IDX_ROLE_TARGET_WORKSPACE_ID', ['userWorkspaceId', 'workspaceId'])
+@Index('IDX_ROLE_TARGET_AGENT_ID', ['agentId'])
+@Index('IDX_ROLE_TARGET_API_KEY_ID', ['apiKeyId'])
 @Check(
-  'CHK_role_targets_single_entity',
+  'CHK_role_target_single_entity',
   '("agentId" IS NOT NULL AND "userWorkspaceId" IS NULL AND "apiKeyId" IS NULL) OR ("agentId" IS NULL AND "userWorkspaceId" IS NOT NULL AND "apiKeyId" IS NULL) OR ("agentId" IS NULL AND "userWorkspaceId" IS NULL AND "apiKeyId" IS NOT NULL)',
 )
-export class RoleTargetsEntity extends SyncableEntity {
+export class RoleTargetEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

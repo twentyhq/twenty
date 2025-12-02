@@ -8,7 +8,7 @@ import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspac
 
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { transformAgentEntityToFlatAgent } from 'src/engine/metadata-modules/flat-agent/utils/transform-agent-entity-to-flat-agent.util';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceAgentComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-agent.comparator';
 import { StandardAgentFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-agent.factory';
@@ -87,7 +87,7 @@ export class WorkspaceSyncAgentService {
               }
 
               const roleTargetsRepository =
-                manager.getRepository(RoleTargetsEntity);
+                manager.getRepository(RoleTargetEntity);
 
               await roleTargetsRepository.save({
                 roleId: role.id,
@@ -138,7 +138,7 @@ export class WorkspaceSyncAgentService {
               }
 
               const roleTargetsRepository =
-                manager.getRepository(RoleTargetsEntity);
+                manager.getRepository(RoleTargetEntity);
 
               await roleTargetsRepository.save({
                 roleId: role.id,

@@ -3,18 +3,18 @@ import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { IsNull } from 'typeorm';
 
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import {
   ApiKeyException,
   ApiKeyExceptionCode,
-} from 'src/engine/core-modules/api-key/api-key.exception';
+} from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 
 import { ApiKeyEntity } from './api-key.entity';
-import { ApiKeyService } from './api-key.service';
+import { ApiKeyService } from './services/api-key.service';
 
 describe('ApiKeyService', () => {
   let service: ApiKeyService;
@@ -101,7 +101,7 @@ describe('ApiKeyService', () => {
           useValue: mockRoleTargetService,
         },
         {
-          provide: getRepositoryToken(RoleTargetsEntity),
+          provide: getRepositoryToken(RoleTargetEntity),
           useValue: mockRoleTargetsRepository,
         },
         {

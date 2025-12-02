@@ -2,7 +2,7 @@ import { type CanActivate } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { ApiKeyService } from 'src/engine/core-modules/api-key/api-key.service';
+import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
