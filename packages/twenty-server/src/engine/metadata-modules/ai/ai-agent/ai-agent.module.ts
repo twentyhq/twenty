@@ -27,11 +27,11 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 import { AgentResolver } from './agent.resolver';
 import { AgentService } from './agent.service';
 
-import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { AgentEntity } from './entities/agent.entity';
 import { AgentActorContextService } from './services/agent-actor-context.service';
 import { AgentExecutionService } from './services/agent-execution.service';
