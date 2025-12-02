@@ -151,6 +151,7 @@ describe('WorkspaceEntityManager', () => {
       viewGroupIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
+      mainGroupByFieldMetadataViewIds: [],
       relationTargetFieldMetadataId: null,
       relationTargetObjectMetadataId: null,
       morphId: null,
