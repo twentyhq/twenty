@@ -1,10 +1,8 @@
 import { Logger, Scope } from '@nestjs/common';
 
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { AgentTurnGraderService } from 'src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service';
 
 export type EvaluateAgentTurnJobData = {
@@ -16,11 +14,7 @@ export type EvaluateAgentTurnJobData = {
 export class EvaluateAgentTurnJob {
   private readonly logger = new Logger(EvaluateAgentTurnJob.name);
 
-  constructor(
-    private readonly graderService: AgentTurnGraderService,
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
-    private readonly messageQueueService: MessageQueueService,
-  ) {}
+  constructor(private readonly graderService: AgentTurnGraderService) {}
 
   @Process(EvaluateAgentTurnJob.name)
   async handle(data: EvaluateAgentTurnJobData): Promise<void> {
