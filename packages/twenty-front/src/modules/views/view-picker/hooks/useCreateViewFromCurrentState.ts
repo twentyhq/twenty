@@ -2,6 +2,7 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useCreateViewFromCurrentView } from '@/views/hooks/useCreateViewFromCurrentView';
+import { ViewType } from '@/views/types/ViewType';
 import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAndResetViewPicker';
 import { viewPickerCalendarFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerCalendarFieldMetadataIdComponentState';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
@@ -100,7 +101,8 @@ export const useCreateViewFromCurrentState = () => {
             name,
             icon: iconKey,
             type,
-            mainGroupByFieldMetadataId,
+            mainGroupByFieldMetadataId:
+              type === ViewType.Kanban ? mainGroupByFieldMetadataId : null,
             calendarFieldMetadataId,
             visibility,
           },
