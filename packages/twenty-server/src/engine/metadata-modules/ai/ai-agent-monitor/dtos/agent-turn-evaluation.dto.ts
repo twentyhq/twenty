@@ -16,7 +16,7 @@ export class AgentTurnEvaluationDTO {
   score: number;
 
   @Field({ nullable: true })
-  comment?: string | null;
+  comment: string | null;
 
   @IsDateString()
   @Field()
