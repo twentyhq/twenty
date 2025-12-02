@@ -13,7 +13,7 @@ export class WorkflowEnqueueAwaitingRunsJob {
 
   @Process(WorkflowEnqueueAwaitingRunsJob.name)
   async handle({ workspaceId }: { workspaceId: string }): Promise<void> {
-    this.workflowEnqueueAwaitingRunsWorkspaceService.enqueueRuns({
+    await this.workflowEnqueueAwaitingRunsWorkspaceService.enqueueRuns({
       workspaceIds: [workspaceId],
     });
   }
