@@ -16,7 +16,7 @@ import { type FlatAgentMaps } from 'src/engine/metadata-modules/flat-agent/types
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
-import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
+import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 type FlatRoleTargetToUpdateCreateDelete = {
@@ -116,7 +116,7 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
     isDefined(updatedEditableAgentProperties.label) &&
     !isDefined(updatedEditableAgentProperties.name)
   ) {
-    updatedEditableAgentProperties.name = computeMetadataNameFromLabel(
+    updatedEditableAgentProperties.name = computeMetadataNameFromLabelOrThrow(
       updatedEditableAgentProperties.label,
     );
   }
