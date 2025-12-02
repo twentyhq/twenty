@@ -14,7 +14,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
-import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -29,7 +28,6 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
     FeatureFlagModule,
     RecordCrudModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
-    WorkspacePermissionsCacheModule,
     WorkspaceCacheStorageModule,
     UserRoleModule,
     TwentyORMModule,

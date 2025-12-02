@@ -23,7 +23,7 @@ import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/co
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { ToolAdapterService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool-adapter.service';
 import { ToolService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool.service';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
@@ -32,8 +32,8 @@ export class AgentAsyncExecutorService {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly toolAdapterService: ToolAdapterService,
-    @InjectRepository(RoleTargetsEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
+    @InjectRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     private readonly toolService: ToolService,
   ) {}
 
@@ -43,7 +43,7 @@ export class AgentAsyncExecutorService {
     actorContext?: ActorMetadata,
     rolePermissionConfig?: RolePermissionConfig,
   ): Promise<ToolSet> {
-    const roleTarget = await this.roleTargetsRepository.findOne({
+    const roleTarget = await this.roleTargetRepository.findOne({
       where: {
         agentId: agentId,
         workspaceId,

@@ -3,7 +3,7 @@ import { DiscoveryService, Reflector } from '@nestjs/core';
 
 import crypto from 'crypto';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -13,9 +13,13 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 import { WORKSPACE_CACHE_KEY } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import {
+  WorkspaceCacheException,
+  WorkspaceCacheExceptionCode,
+} from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
+import {
   WORKSPACE_CACHE_KEYS_V2,
+  WorkspaceCacheKeyName,
   type WorkspaceCacheDataMap,
-  type WorkspaceCacheKeyName,
   type WorkspaceCacheResult,
 } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
@@ -70,10 +74,21 @@ export class WorkspaceCacheService implements OnModuleInit {
     }
   }
 
-  async getOrRecompute<const K extends WorkspaceCacheKeyName[]>(
+  public async getOrRecompute<const K extends WorkspaceCacheKeyName[]>(
     workspaceId: string,
     workspaceCacheKeyNames: K,
   ): Promise<WorkspaceCacheResult<K>> {
+    if (
+      !isDefined(workspaceId) ||
+      workspaceCacheKeyNames.length === 0 ||
+      !isValidUuid(workspaceId)
+    ) {
+      throw new WorkspaceCacheException(
+        'Invalid parameters: workspace ID and cache key names are required',
+        WorkspaceCacheExceptionCode.INVALID_PARAMETERS,
+      );
+    }
+
     const memoKey =
       `${workspaceId}-${[...workspaceCacheKeyNames].sort().join(',')}` as const;
 
@@ -117,7 +132,7 @@ export class WorkspaceCacheService implements OnModuleInit {
     return result as WorkspaceCacheResult<K>;
   }
 
-  async invalidateAndRecompute(
+  public async invalidateAndRecompute(
     workspaceId: string,
     workspaceCacheKeys: WorkspaceCacheKeyName[],
   ): Promise<void> {
@@ -127,7 +142,7 @@ export class WorkspaceCacheService implements OnModuleInit {
     await this.recomputeCache(workspaceId, workspaceCacheKeys);
   }
 
-  async flush(
+  public async flush(
     workspaceId: string,
     workspaceCacheKeys: WorkspaceCacheKeyName[],
   ): Promise<void> {
