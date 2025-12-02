@@ -3,7 +3,7 @@ import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layou
 import { type ChartSettingsItem } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
-import { isNestedFieldDateType } from '@/page-layout/widgets/graph/utils/isNestedFieldDateType';
+import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
@@ -26,7 +26,7 @@ const shouldHideDateGranularityBasedOnFieldType = (
   }
 
   if (isFieldRelation(field) && isDefined(subFieldName)) {
-    return !isNestedFieldDateType(field, subFieldName, objectMetadataItems);
+    return !isRelationNestedFieldDateKind(field, subFieldName, objectMetadataItems);
   }
 
   return !isFieldMetadataDateKind(field.type);

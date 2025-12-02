@@ -1,7 +1,7 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/constants/GraphDefaultDateGranularity.constant';
 import { getGroupByOrderBy } from '@/page-layout/widgets/graph/utils/getGroupByOrderBy';
-import { isNestedFieldDateType } from '@/page-layout/widgets/graph/utils/isNestedFieldDateType';
+import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import {
   type AggregateOrderByWithGroupByField,
   type ObjectRecordOrderByForCompositeField,
@@ -61,7 +61,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
 
   const isFieldXDate = isFieldMetadataDateKind(groupByFieldX.type);
 
-  const isFieldXNestedDate = isNestedFieldDateType(
+  const isFieldXNestedDate = isRelationNestedFieldDateKind(
     groupByFieldX,
     groupBySubFieldNameX,
     objectMetadataItems,
@@ -87,7 +87,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
   if (isDefined(groupByFieldY)) {
     const isFieldYDate = isFieldMetadataDateKind(groupByFieldY.type);
 
-    const isFieldYNestedDate = isNestedFieldDateType(
+    const isFieldYNestedDate = isRelationNestedFieldDateKind(
       groupByFieldY,
       groupBySubFieldNameY,
       objectMetadataItems,
@@ -137,7 +137,7 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
   ) {
     const isFieldYDateForOrderBy = isFieldMetadataDateKind(groupByFieldY.type);
 
-    const isFieldYNestedDateForOrderBy = isNestedFieldDateType(
+    const isFieldYNestedDateForOrderBy = isRelationNestedFieldDateKind(
       groupByFieldY,
       groupBySubFieldNameY,
       objectMetadataItems,

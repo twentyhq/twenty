@@ -3,7 +3,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
-export const isNestedFieldDateType = (
+export const isRelationNestedFieldDateKind = (
   field: FieldMetadataItem,
   subFieldName: string | undefined,
   objectMetadataItems: ObjectMetadataItem[],

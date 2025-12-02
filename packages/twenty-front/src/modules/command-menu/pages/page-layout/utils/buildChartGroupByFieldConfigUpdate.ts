@@ -1,5 +1,5 @@
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
-import { isFieldOrNestedFieldDateKind } from '@/command-menu/pages/page-layout/utils/isFieldOrNestedFieldDateKind';
+import { isFieldOrRelationNestedFieldDateKind } from '@/command-menu/pages/page-layout/utils/isFieldOrNestedFieldDateKind';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -50,7 +50,7 @@ export const buildChartGroupByFieldConfigUpdate = <
         ? configuration.primaryAxisDateGranularity
         : null;
 
-    const isNewFieldDateType = isFieldOrNestedFieldDateKind({
+    const isNewFieldDateType = isFieldOrRelationNestedFieldDateKind({
       fieldId,
       subFieldName,
       objectMetadataItem,

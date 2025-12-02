@@ -1,7 +1,7 @@
-import { isNestedFieldDateType } from '@/page-layout/widgets/graph/utils/isNestedFieldDateType';
+import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-describe('isNestedFieldDateType', () => {
+describe('isRelationNestedFieldDateKind', () => {
   const companyObject = {
     id: 'company-id',
     nameSingular: 'company',
@@ -19,7 +19,7 @@ describe('isNestedFieldDateType', () => {
   } as any;
 
   it('returns true for a relation subfield that is a date type', () => {
-    const result = isNestedFieldDateType(relationField, 'createdAt', [
+    const result = isRelationNestedFieldDateKind(relationField, 'createdAt', [
       companyObject,
     ]);
 
@@ -27,7 +27,7 @@ describe('isNestedFieldDateType', () => {
   });
 
   it('returns false when the nested subfield is not a date type', () => {
-    const result = isNestedFieldDateType(relationField, 'name', [
+    const result = isRelationNestedFieldDateKind(relationField, 'name', [
       companyObject,
     ]);
 
@@ -35,7 +35,7 @@ describe('isNestedFieldDateType', () => {
   });
 
   it('returns false when subFieldName is missing', () => {
-    const result = isNestedFieldDateType(relationField, undefined, [
+    const result = isRelationNestedFieldDateKind(relationField, undefined, [
       companyObject,
     ]);
 
@@ -48,9 +48,11 @@ describe('isNestedFieldDateType', () => {
       type: FieldMetadataType.TEXT,
     } as any;
 
-    const result = isNestedFieldDateType(nonRelationField, 'createdAt', [
-      companyObject,
-    ]);
+    const result = isRelationNestedFieldDateKind(
+      nonRelationField,
+      'createdAt',
+      [companyObject],
+    );
 
     expect(result).toBe(false);
   });
