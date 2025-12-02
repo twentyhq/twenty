@@ -3365,12 +3365,12 @@ msgid "There was an issue with your connection settings. Please try again."
 msgstr "Возникла проблема с вашими настройками соединения. Пожалуйста, повторите попытку."
 
 #. js-lingui-id: Izdz+Y
-#: src/engine/core-modules/api-key/api-key.service.ts
+#: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "Этот API-ключ отозван и больше не может быть использован."
 
 #. js-lingui-id: Jmzgho
-#: src/engine/core-modules/api-key/api-key.service.ts
+#: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "Срок действия этого API-ключа истек. Пожалуйста, создайте новый."
 

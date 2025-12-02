@@ -3365,12 +3365,12 @@ msgid "There was an issue with your connection settings. Please try again."
 msgstr "연결 설정에 문제가 있습니다. 다시 시도하십시오."
 
 #. js-lingui-id: Izdz+Y
-#: src/engine/core-modules/api-key/api-key.service.ts
+#: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "이 API 키는 철회되어 더 이상 사용할 수 없습니다."
 
 #. js-lingui-id: Jmzgho
-#: src/engine/core-modules/api-key/api-key.service.ts
+#: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "이 API 키의 기한이 만료되었습니다. 새 키를 만드십시오."
 
