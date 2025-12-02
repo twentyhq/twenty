@@ -2,7 +2,6 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
-import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { usePersistView } from '@/views/hooks/internal/usePersistView';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroup';
@@ -26,7 +25,6 @@ export const useHandleRecordGroupField = () => {
   const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
   const { updateView } = usePersistView();
-  const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
   const handleRecordGroupFieldChange = useRecoilCallback(
     ({ snapshot }) =>
