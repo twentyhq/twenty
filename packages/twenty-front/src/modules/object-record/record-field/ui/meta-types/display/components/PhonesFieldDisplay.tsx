@@ -4,10 +4,14 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { PhonesDisplay } from '@/ui/field/display/components/PhonesDisplay';
 import { useLingui } from '@lingui/react/macro';
 import React from 'react';
+import {
+  FieldClickAction,
+  type FieldMetadataMultiItemSettings,
+} from 'twenty-shared/types';
 import { useIcons } from 'twenty-ui/display';
 
 export const PhonesFieldDisplay = () => {
-  const { fieldValue } = usePhonesFieldDisplay();
+  const { fieldValue, fieldDefinition } = usePhonesFieldDisplay();
 
   const { isFocused } = useFieldFocus();
 
@@ -20,29 +24,35 @@ export const PhonesFieldDisplay = () => {
   const IconCircleCheck = getIcon('IconCircleCheck');
   const IconExclamationCircle = getIcon('IconExclamationCircle');
 
+  const settings = fieldDefinition.metadata
+    .settings as FieldMetadataMultiItemSettings | null;
+  const clickAction = settings?.clickAction ?? FieldClickAction.COPY;
+
   const handleClick = async (
     phoneNumber: string,
     event: React.MouseEvent<HTMLElement>,
   ) => {
-    event.preventDefault();
+    if (clickAction === FieldClickAction.COPY) {
+      event.preventDefault();
 
-    try {
-      await navigator.clipboard.writeText(phoneNumber);
-      enqueueSuccessSnackBar({
-        message: t`Phone number copied to clipboard`,
-        options: {
-          icon: <IconCircleCheck size={16} color="green" />,
-          duration: 2000,
-        },
-      });
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Error copying to clipboard`,
-        options: {
-          icon: <IconExclamationCircle size={16} color="red" />,
-          duration: 2000,
-        },
-      });
+      try {
+        await navigator.clipboard.writeText(phoneNumber);
+        enqueueSuccessSnackBar({
+          message: t`Phone number copied to clipboard`,
+          options: {
+            icon: <IconCircleCheck size={16} color="green" />,
+            duration: 2000,
+          },
+        });
+      } catch {
+        enqueueErrorSnackBar({
+          message: t`Error copying to clipboard`,
+          options: {
+            icon: <IconExclamationCircle size={16} color="red" />,
+            duration: 2000,
+          },
+        });
+      }
     }
   };
 
@@ -51,6 +61,7 @@ export const PhonesFieldDisplay = () => {
       value={fieldValue}
       isFocused={isFocused}
       onPhoneNumberClick={handleClick}
+      clickAction={clickAction}
     />
   );
 };
