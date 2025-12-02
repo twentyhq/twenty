@@ -68,6 +68,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
             'id',
             'kanbanAggregateOperationFieldMetadataId',
             'calendarFieldMetadataId',
+            'mainGroupByFieldMetadataId',
           ],
           withDeleted: true,
         }),
@@ -78,8 +79,8 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
       viewFiltersByFieldId,
       viewGroupsByFieldId,
       calendarViewsByFieldId,
-      mainGroupByFieldMetadataViewsByFieldId,
       kanbanViewsByFieldId,
+      mainGroupByFieldMetadataViewsByFieldId,
     ] = (
       [
         {
