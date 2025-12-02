@@ -5,16 +5,9 @@ import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/r
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
-type RecordIndexBoardDataLoaderEffectProps = {
-  recordBoardId: string;
-};
-
-export const RecordIndexBoardDataLoaderEffect = ({
-  recordBoardId,
-}: RecordIndexBoardDataLoaderEffectProps) => {
+export const RecordBoardSelectRecordsEffect = () => {
   const selectedRecordIds = useRecoilComponentValue(
     recordBoardSelectedRecordIdsComponentSelector,
-    recordBoardId,
   );
 
   const setContextStoreTargetedRecords = useSetRecoilComponentState(

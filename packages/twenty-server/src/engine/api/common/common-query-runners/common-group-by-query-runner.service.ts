@@ -158,6 +158,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         queryRunnerContext,
         orderByForRecords: args.orderByForRecords ?? [],
         groupLimit: args.limit,
+        offsetForRecords: args.offsetForRecords,
       });
     }
 

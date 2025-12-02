@@ -10,6 +10,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { useIncrementalDestroyManyRecords } from '@/object-record/hooks/useIncrementalDestroyManyRecords';
+import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
@@ -32,6 +33,8 @@ export const DestroyMultipleRecordsAction = () => {
   }
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
+  const { removeSelectedRecordsFromRecordBoard } =
+    useRemoveSelectedRecordsFromRecordBoard(recordIndexId);
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
@@ -93,6 +96,7 @@ export const DestroyMultipleRecordsAction = () => {
   };
 
   const handleDestroyClick = async () => {
+    removeSelectedRecordsFromRecordBoard();
     resetTableRowSelection();
     await incrementalDestroyManyRecords();
   };

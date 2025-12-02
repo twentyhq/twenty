@@ -1,8 +1,9 @@
 import gql from 'graphql-tag';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getGroupByAggregateQueryName } from '@/object-record/record-aggregate/utils/getGroupByAggregateQueryName';
+import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { capitalize } from 'twenty-shared/utils';
-import { getGroupByQueryResultGqlFieldName } from '../../../page-layout/utils/getGroupByQueryResultGqlFieldName';
 
 export const generateGroupByAggregateQuery = ({
   objectMetadataItem,
@@ -12,7 +13,9 @@ export const generateGroupByAggregateQuery = ({
   aggregateOperationGqlFields: string[];
 }) => {
   const capitalizedSingular = capitalize(objectMetadataItem.nameSingular);
-  const queryName = `${capitalize(objectMetadataItem.namePlural)}GroupBy`;
+  const queryName = getGroupByAggregateQueryName({
+    objectMetadataNamePlural: objectMetadataItem.namePlural,
+  });
   const queryFieldName = getGroupByQueryResultGqlFieldName(objectMetadataItem);
 
   return gql`
