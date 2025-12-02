@@ -15,6 +15,7 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AgentTurnDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-turn.dto';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { AgentTurnEvaluationDTO } from 'src/engine/metadata-modules/ai/ai-agent-monitor/dtos/agent-turn-evaluation.dto';
 import { RunEvaluationInputJob } from 'src/engine/metadata-modules/ai/ai-agent-monitor/jobs/run-evaluation-input.job';
@@ -37,10 +38,10 @@ export class AgentTurnResolver {
     private readonly graderService: AgentTurnGraderService,
   ) {}
 
-  @Query(() => [AgentTurnEntity])
+  @Query(() => [AgentTurnDTO])
   async agentTurns(
     @Args('agentId', { type: () => UUIDScalarType }) agentId: string,
-  ): Promise<AgentTurnEntity[]> {
+  ): Promise<AgentTurnDTO[]> {
     const turns = await this.turnRepository.find({
       where: { agentId },
       relations: ['evaluations', 'messages', 'messages.parts'],
@@ -59,13 +60,13 @@ export class AgentTurnResolver {
     return evaluation;
   }
 
-  @Mutation(() => AgentTurnEntity)
+  @Mutation(() => AgentTurnDTO)
   async runEvaluationInput(
     @Args('agentId', { type: () => UUIDScalarType }) agentId: string,
     @Args('input') input: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-  ): Promise<AgentTurnEntity> {
+  ): Promise<AgentTurnDTO> {
     const thread = this.threadRepository.create({
       userWorkspaceId,
       title: `Eval: ${input.substring(0, 50)}...`,
