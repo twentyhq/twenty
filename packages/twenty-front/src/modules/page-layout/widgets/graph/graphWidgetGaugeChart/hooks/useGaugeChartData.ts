@@ -1,6 +1,5 @@
 import { type GaugeChartData } from '@/page-layout/widgets/graph/graphWidgetGaugeChart/types/GaugeChartData';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
-import { createGradientDef } from '@/page-layout/widgets/graph/utils/createGradientDef';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { useMemo } from 'react';
 
@@ -17,7 +16,6 @@ export const useGaugeChartData = ({
   colorRegistry,
   id,
   instanceId,
-  isHovered,
 }: UseGaugeChartDataProps) => {
   const { value, min, max, color = 'blue' } = data;
 
@@ -54,12 +52,6 @@ export const useGaugeChartData = ({
   );
 
   const gradientId = `gaugeGradient-${id}-${instanceId}`;
-  const gaugeAngle = -90 + (clampedNormalizedValue / 100) * 90;
-
-  const defs = useMemo(
-    () => [createGradientDef(colorScheme, gradientId, isHovered, gaugeAngle)],
-    [colorScheme, gradientId, isHovered, gaugeAngle],
-  );
 
   return {
     colorScheme,
@@ -67,6 +59,5 @@ export const useGaugeChartData = ({
     clampedNormalizedValue,
     chartData,
     gradientId,
-    defs,
   };
 };
