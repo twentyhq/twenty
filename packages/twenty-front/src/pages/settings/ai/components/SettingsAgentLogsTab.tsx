@@ -222,11 +222,7 @@ export const SettingsAgentLogsTab = ({
                 />
               ) : evaluatingTurnIds.has(turn.id) ||
                 backgroundEvaluatingTurnIds.has(turn.id) ? (
-                <Status
-                  color="blue"
-                  text={t`Evaluating`}
-                  isLoaderVisible={true}
-                />
+                <Status color="blue" text={t`Evaluating`} isLoaderVisible />
               ) : (
                 <Button
                   size="small"
