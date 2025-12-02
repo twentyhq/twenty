@@ -8,8 +8,8 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 import { ViewOpenRecordInType } from 'src/engine/metadata-modules/view/types/view-open-record-in-type.type';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import {
-  BASE_OBJECT_STANDARD_FIELD_IDS,
-  WORKFLOW_VERSION_STANDARD_FIELD_IDS,
+    BASE_OBJECT_STANDARD_FIELD_IDS,
+    WORKFLOW_VERSION_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 export const workflowVersionsAllView = ({
@@ -46,7 +46,6 @@ export const workflowVersionsAllView = ({
     position: 0,
     icon: 'IconVersions',
     openRecordIn: ViewOpenRecordInType.RECORD_PAGE,
-    kanbanFieldMetadataId: '',
     filters: [],
     fields: [
       {
