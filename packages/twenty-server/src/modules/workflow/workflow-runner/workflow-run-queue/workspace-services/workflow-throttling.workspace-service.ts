@@ -15,7 +15,7 @@ import {
 import { getWorkflowRunNotStartedCountCacheKey } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-workflow-run-not-started-count-cache-key.util';
 
 @Injectable()
-export class WorkflowNotStartedRunsWorkspaceService {
+export class WorkflowThrottlingWorkspaceService {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
     private readonly cacheStorage: CacheStorageService,
@@ -23,6 +23,35 @@ export class WorkflowNotStartedRunsWorkspaceService {
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
+
+  async getRemainingRunsToEnqueueCount(workspaceId: string) {
+    return this.throttlerService.getAvailableTokensCount(
+      `${workspaceId}-workflow-execution-soft-throttle`,
+      this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_LIMIT'),
+      this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_TTL'),
+    );
+  }
+
+  async consumeRemainingRunsToEnqueueCount(
+    workspaceId: string,
+    runsToConsume: number,
+  ) {
+    await this.throttlerService.consumeTokens(
+      `${workspaceId}-workflow-execution-soft-throttle`,
+      runsToConsume,
+      this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_LIMIT'),
+      this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_TTL'),
+    );
+  }
+
+  async throttleOrThrowIfHardLimitReached(workspaceId: string) {
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `${workspaceId}-workflow-execution-hard-throttle`,
+      1,
+      this.twentyConfigService.get('WORKFLOW_EXEC_HARD_THROTTLE_LIMIT'),
+      this.twentyConfigService.get('WORKFLOW_EXEC_HARD_THROTTLE_TTL'),
+    );
+  }
 
   async increaseWorkflowRunNotStartedCount(
     workspaceId: string,
@@ -92,32 +121,6 @@ export class WorkflowNotStartedRunsWorkspaceService {
         status: In([WorkflowRunStatus.NOT_STARTED]),
       },
     });
-  }
-
-  async throttleAndReturnRemainingRunsToEnqueueCount(workspaceId: string) {
-    return this.throttlerService.tokenBucketThrottleOrThrow(
-      `${workspaceId}-workflow-execution-soft-throttle`,
-      1,
-      this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_LIMIT'),
-      this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_TTL'),
-    );
-  }
-
-  async getRemainingRunsToEnqueueCount(workspaceId: string) {
-    return this.throttlerService.getAvailableTokensCount(
-      `${workspaceId}-workflow-execution-soft-throttle`,
-      this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_LIMIT'),
-      this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_TTL'),
-    );
-  }
-
-  async throttleOrThrowIfHardLimitReached(workspaceId: string) {
-    await this.throttlerService.tokenBucketThrottleOrThrow(
-      `${workspaceId}-workflow-execution-hard-throttle`,
-      1,
-      this.twentyConfigService.get('WORKFLOW_EXEC_HARD_THROTTLE_LIMIT'),
-      this.twentyConfigService.get('WORKFLOW_EXEC_HARD_THROTTLE_TTL'),
-    );
   }
 
   private async setWorkflowRunNotStartedCount(

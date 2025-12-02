@@ -48,6 +48,30 @@ export class ThrottlerService {
     return availableTokens - tokensToConsume;
   }
 
+  async consumeTokens(
+    key: string,
+    tokensToConsume: number,
+    maxTokens: number,
+    timeWindow: number,
+  ) {
+    const now = Date.now();
+    const availableTokens = await this.getAvailableTokensCount(
+      key,
+      maxTokens,
+      timeWindow,
+      now,
+    );
+
+    await this.cacheStorage.set(
+      key,
+      {
+        tokens: availableTokens - tokensToConsume,
+        lastRefillAt: now,
+      },
+      timeWindow * 2,
+    );
+  }
+
   async getAvailableTokensCount(
     key: string,
     maxTokens: number,

@@ -8,7 +8,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkflowEnqueueAwaitingRunsWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-enqueue-awaiting-runs.workspace-service';
+import { WorkflowRunEnqueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-enqueue.workspace-service';
 
 export const WORKFLOW_RUN_ENQUEUE_CRON_PATTERN = '*/5 * * * *';
 
@@ -17,7 +17,7 @@ export class WorkflowRunEnqueueCronJob {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly workflowEnqueueAwaitingRunsWorkspaceService: WorkflowEnqueueAwaitingRunsWorkspaceService,
+    private readonly WorkflowRunEnqueueWorkspaceService: WorkflowRunEnqueueWorkspaceService,
   ) {}
 
   @Process(WorkflowRunEnqueueCronJob.name)
@@ -32,8 +32,9 @@ export class WorkflowRunEnqueueCronJob {
       },
     });
 
-    await this.workflowEnqueueAwaitingRunsWorkspaceService.enqueueRuns({
+    await this.WorkflowRunEnqueueWorkspaceService.enqueueRuns({
       workspaceIds: activeWorkspaces.map((workspace) => workspace.id),
+      isCacheMode: false,
     });
   }
 }

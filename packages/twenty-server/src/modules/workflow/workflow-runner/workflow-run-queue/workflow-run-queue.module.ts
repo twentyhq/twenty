@@ -14,10 +14,10 @@ import { WorkflowRunEnqueueCronCommand } from 'src/modules/workflow/workflow-run
 import { WorkflowCleanWorkflowRunsJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-clean-workflow-runs.cron.job';
 import { WorkflowHandleStaledRunsJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-handle-staled-runs.cron.job';
 import { WorkflowRunEnqueueCronJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-run-enqueue.cron.job';
-import { WorkflowEnqueueAwaitingRunsJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/jobs/workflow-enqueue-awaiting-runs.job';
-import { WorkflowEnqueueAwaitingRunsWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-enqueue-awaiting-runs.workspace-service';
+import { WorkflowRunEnqueueJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/jobs/workflow-run-enqueue.job';
 import { WorkflowHandleStaledRunsWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-handle-staled-runs.workspace-service';
-import { WorkflowNotStartedRunsWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-not-started-runs.workspace-service';
+import { WorkflowRunEnqueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-enqueue.workspace-service';
+import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
 
 @Module({
   imports: [
@@ -29,11 +29,11 @@ import { WorkflowNotStartedRunsWorkspaceService } from 'src/modules/workflow/wor
     ThrottlerModule,
   ],
   providers: [
-    WorkflowNotStartedRunsWorkspaceService,
+    WorkflowThrottlingWorkspaceService,
     WorkflowRunEnqueueCronJob,
     WorkflowRunEnqueueCronCommand,
-    WorkflowEnqueueAwaitingRunsWorkspaceService,
-    WorkflowEnqueueAwaitingRunsJob,
+    WorkflowRunEnqueueWorkspaceService,
+    WorkflowRunEnqueueJob,
     WorkflowHandleStaledRunsWorkspaceService,
     WorkflowHandleStaledRunsCronCommand,
     WorkflowHandleStaledRunsCommand,
@@ -42,8 +42,8 @@ import { WorkflowNotStartedRunsWorkspaceService } from 'src/modules/workflow/wor
     WorkflowCleanWorkflowRunsCronCommand,
   ],
   exports: [
-    WorkflowNotStartedRunsWorkspaceService,
-    WorkflowEnqueueAwaitingRunsJob,
+    WorkflowThrottlingWorkspaceService,
+    WorkflowRunEnqueueJob,
     WorkflowRunEnqueueCronJob,
     WorkflowRunEnqueueCronCommand,
     WorkflowHandleStaledRunsCronCommand,

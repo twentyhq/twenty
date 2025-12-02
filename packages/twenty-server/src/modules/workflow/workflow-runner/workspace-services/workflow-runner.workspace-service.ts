@@ -26,15 +26,13 @@ import {
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
-import { WorkflowEnqueueAwaitingRunsJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/jobs/workflow-enqueue-awaiting-runs.job';
-import { WorkflowNotStartedRunsWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-not-started-runs.workspace-service';
+import {
+  WorkflowRunEnqueueJob,
+  type WorkflowRunEnqueueJobData,
+} from 'src/modules/workflow/workflow-runner/workflow-run-queue/jobs/workflow-run-enqueue.job';
+import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-
-type ThrottleCheckResult =
-  | { type: 'hard_throttled' }
-  | { type: 'soft_throttled' }
-  | { type: 'allowed'; remainingRunsToEnqueueCount: number };
 
 @Injectable()
 export class WorkflowRunnerWorkspaceService {
@@ -46,7 +44,7 @@ export class WorkflowRunnerWorkspaceService {
     private readonly messageQueueService: MessageQueueService,
     private readonly billingUsageService: BillingUsageService,
     private readonly workflowVersionStepOperationsWorkspaceService: WorkflowVersionStepOperationsWorkspaceService,
-    private readonly workflowNotStartedRunsWorkspaceService: WorkflowNotStartedRunsWorkspaceService,
+    private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly metricsService: MetricsService,
   ) {}
 
@@ -81,28 +79,9 @@ export class WorkflowRunnerWorkspaceService {
     const isManualTrigger =
       workflowVersion.trigger?.type === WorkflowTriggerType.MANUAL;
 
-    const throttleResult = await this.checkThrottleLimits(workspaceId);
+    const isHardThrottled = await this.checkHardThrottleLimit(workspaceId);
 
-    if (throttleResult.type === 'allowed' || isManualTrigger) {
-      return this.enqueueWorkflowRunAndPotentialAwaitingRuns({
-        workspaceId,
-        workflowVersionId,
-        initialWorkflowRunId,
-        source,
-        payload,
-        remainingRunsToEnqueueCount:
-          throttleResult.type === 'allowed'
-            ? throttleResult.remainingRunsToEnqueueCount
-            : 0,
-      });
-    }
-
-    if (throttleResult.type === 'hard_throttled') {
-      this.metricsService.incrementCounter({
-        key: MetricsKeys.WorkflowRunHardThrottled,
-        eventId: workspaceId,
-      });
-
+    if (isHardThrottled) {
       return this.createFailedWorkflowRun({
         workflowVersionId,
         initialWorkflowRunId,
@@ -111,18 +90,13 @@ export class WorkflowRunnerWorkspaceService {
       });
     }
 
-    // soft throttled
-    this.metricsService.incrementCounter({
-      key: MetricsKeys.WorkflowRunSoftThrottled,
-      eventId: workspaceId,
-    });
-
-    return this.createNotStartedWorkflowRun({
+    return this.createNotStartedWorkflowRunAndTriggerEnqueue({
       workspaceId,
       workflowVersionId,
       initialWorkflowRunId,
       source,
       payload,
+      isManualTrigger,
     });
   }
 
@@ -135,10 +109,13 @@ export class WorkflowRunnerWorkspaceService {
     workflowRunId: string;
     lastExecutedStepId: string;
   }) {
-    await this.enqueueWorkflowRun(
-      workspaceId,
-      workflowRunId,
-      lastExecutedStepId,
+    await this.messageQueueService.add<RunWorkflowJobData>(
+      RunWorkflowJob.name,
+      {
+        workspaceId,
+        workflowRunId,
+        lastExecutedStepId,
+      },
     );
   }
 
@@ -254,26 +231,20 @@ export class WorkflowRunnerWorkspaceService {
     };
   }
 
-  private async checkThrottleLimits(
-    workspaceId: string,
-  ): Promise<ThrottleCheckResult> {
+  private async checkHardThrottleLimit(workspaceId: string): Promise<boolean> {
     try {
-      await this.workflowNotStartedRunsWorkspaceService.throttleOrThrowIfHardLimitReached(
+      await this.workflowThrottlingWorkspaceService.throttleOrThrowIfHardLimitReached(
         workspaceId,
       );
-    } catch {
-      return { type: 'hard_throttled' };
-    }
 
-    try {
-      const remainingRunsToEnqueueCount =
-        await this.workflowNotStartedRunsWorkspaceService.throttleAndReturnRemainingRunsToEnqueueCount(
-          workspaceId,
-        );
-
-      return { type: 'allowed', remainingRunsToEnqueueCount };
+      return false;
     } catch {
-      return { type: 'soft_throttled' };
+      this.metricsService.incrementCounter({
+        key: MetricsKeys.WorkflowRunThrottled,
+        eventId: workspaceId,
+      });
+
+      return true;
     }
   }
 
@@ -301,18 +272,20 @@ export class WorkflowRunnerWorkspaceService {
     return { workflowRunId };
   }
 
-  private async createNotStartedWorkflowRun({
+  private async createNotStartedWorkflowRunAndTriggerEnqueue({
     workspaceId,
     workflowVersionId,
     initialWorkflowRunId,
     source,
     payload,
+    isManualTrigger,
   }: {
     workspaceId: string;
     workflowVersionId: string;
     initialWorkflowRunId?: string;
     source: ActorMetadata;
     payload: object;
+    isManualTrigger: boolean;
   }) {
     const workflowRunId =
       await this.workflowRunWorkspaceService.createWorkflowRun({
@@ -323,66 +296,19 @@ export class WorkflowRunnerWorkspaceService {
         triggerPayload: payload,
       });
 
-    await this.workflowNotStartedRunsWorkspaceService.increaseWorkflowRunNotStartedCount(
+    await this.workflowThrottlingWorkspaceService.increaseWorkflowRunNotStartedCount(
       workspaceId,
     );
 
-    return { workflowRunId };
-  }
-
-  private async enqueueWorkflowRunAndPotentialAwaitingRuns({
-    workspaceId,
-    initialWorkflowRunId,
-    workflowVersionId,
-    source,
-    payload,
-    remainingRunsToEnqueueCount,
-  }: {
-    workspaceId: string;
-    initialWorkflowRunId?: string;
-    workflowVersionId: string;
-    source: ActorMetadata;
-    payload: object;
-    remainingRunsToEnqueueCount: number;
-  }) {
-    const workflowRunId =
-      await this.workflowRunWorkspaceService.createWorkflowRun({
-        workflowVersionId,
-        workflowRunId: initialWorkflowRunId,
-        createdBy: source,
-        status: WorkflowRunStatus.ENQUEUED,
-        triggerPayload: payload,
-      });
-
-    await this.enqueueWorkflowRun(workspaceId, workflowRunId);
-
-    const currentNotStartedRunsCount =
-      await this.workflowNotStartedRunsWorkspaceService.getNotStartedRunsCountFromCache(
-        workspaceId,
-      );
-
-    if (remainingRunsToEnqueueCount > 0 && currentNotStartedRunsCount > 0) {
-      await this.messageQueueService.add<{ workspaceId: string }>(
-        WorkflowEnqueueAwaitingRunsJob.name,
-        { workspaceId },
-      );
-    }
-
-    return { workflowRunId };
-  }
-
-  private async enqueueWorkflowRun(
-    workspaceId: string,
-    workflowRunId: string,
-    lastExecutedStepId?: string,
-  ) {
-    await this.messageQueueService.add<RunWorkflowJobData>(
-      RunWorkflowJob.name,
+    await this.messageQueueService.add<WorkflowRunEnqueueJobData>(
+      WorkflowRunEnqueueJob.name,
       {
         workspaceId,
-        workflowRunId,
-        lastExecutedStepId,
+        workflowRunId: isManualTrigger ? workflowRunId : undefined,
+        isCacheMode: true,
       },
     );
+
+    return { workflowRunId };
   }
 }
