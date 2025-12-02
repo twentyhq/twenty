@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class ChangeAgentDescriptionToText1764672601466
   implements MigrationInterface
@@ -17,4 +17,3 @@ export class ChangeAgentDescriptionToText1764672601466
     );
   }
 }
-

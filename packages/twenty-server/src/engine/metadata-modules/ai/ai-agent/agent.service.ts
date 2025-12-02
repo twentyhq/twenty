@@ -9,15 +9,14 @@ import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/d
 import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/update-agent.input';
 import { fromCreateAgentInputToFlatAgent } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util';
 import { fromUpdateAgentInputToFlatAgentToUpdate } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util';
+import { WorkspaceFlatRoleTargetByAgentIdService } from 'src/engine/metadata-modules/flat-agent/services/workspace-flat-role-target-by-agent-id.service';
+import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
-import { WorkspaceFlatRoleTargetByAgentIdService } from 'src/engine/metadata-modules/flat-agent/services/workspace-flat-role-target-by-agent-id.service';
-import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
@@ -225,6 +224,13 @@ export class AgentService {
       },
     );
 
+    const flatRoleTargetByAgentIdMaps =
+      await this.workspaceFlatRoleTargetByAgentIdService.getExistingOrRecomputeFlatMaps(
+        {
+          workspaceId,
+        },
+      );
+
     const {
       flatAgentToUpdate,
       flatRoleTargetToCreate,
@@ -233,7 +239,7 @@ export class AgentService {
     } = fromUpdateAgentInputToFlatAgentToUpdate({
       updateAgentInput: input,
       flatAgentMaps: existingFlatAgentMaps,
-      flatRoleTargetMaps: existingFlatRoleTargetMaps,
+      flatRoleTargetByAgentIdMaps,
     });
 
     const validateAndBuildResult =
@@ -277,14 +283,18 @@ export class AgentService {
       );
     }
 
-    const {
-      flatAgentMaps: recomputedFlatAgentMaps,
-      flatRoleTargetMaps: recomputedFlatRoleTargetMaps,
-    } =
+    const { flatAgentMaps: recomputedFlatAgentMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
           flatMapsKeys: ['flatAgentMaps', 'flatRoleTargetMaps'],
+        },
+      );
+
+    const recmputedFlatRoleTargetByAgentIdMaps =
+      await this.workspaceFlatRoleTargetByAgentIdService.getExistingOrRecomputeFlatMaps(
+        {
+          workspaceId,
         },
       );
 
@@ -293,11 +303,8 @@ export class AgentService {
       flatEntityMaps: recomputedFlatAgentMaps,
     });
 
-    const existingRoleTarget = findFlatRoleTargetFromForeignKey({
-      flatRoleTargetMaps: recomputedFlatRoleTargetMaps,
-      targetMetadataForeignKey: 'agentId',
-      targetId: flatAgentToUpdate.id,
-    });
+    const existingRoleTarget =
+      recmputedFlatRoleTargetByAgentIdMaps[flatAgentToUpdate.id];
 
     return {
       ...updatedAgent,

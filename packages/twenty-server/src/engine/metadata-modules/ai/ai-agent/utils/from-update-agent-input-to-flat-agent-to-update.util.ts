@@ -14,9 +14,8 @@ import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/d
 import { FLAT_AGENT_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-agent/constants/flat-agent-editable-properties.constant';
 import { type FlatAgentMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-agent-maps.type';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
-import { type FlatRoleTargetMaps } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target-maps.type';
+import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
-import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
@@ -28,22 +27,17 @@ type FlatRoleTargetToUpdateCreateDelete = {
 const computeAgentFlatRoleTargetToUpdate = ({
   roleId,
   flatAgent,
-  flatRoleTargetMaps,
+  flatRoleTargetByAgentIdMaps,
 }: {
   roleId: string | null | undefined;
-  flatRoleTargetMaps: FlatRoleTargetMaps;
+  flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
   flatAgent: FlatAgent;
 }): FlatRoleTargetToUpdateCreateDelete => {
   if (roleId === undefined) {
     return {};
   }
 
-  const existingRoleTarget = findFlatRoleTargetFromForeignKey({
-    flatRoleTargetMaps,
-    targetMetadataForeignKey: 'agentId',
-    targetId: flatAgent.id,
-  });
-
+  const existingRoleTarget = flatRoleTargetByAgentIdMaps[flatAgent.id];
   const updatedAt = new Date();
 
   if (roleId === null) {
@@ -85,13 +79,13 @@ const computeAgentFlatRoleTargetToUpdate = ({
 export type FromUpdateAgentInputToFlatAgentToUpdateArgs = {
   updateAgentInput: UpdateAgentInput;
   flatAgentMaps: FlatAgentMaps;
-  flatRoleTargetMaps: FlatRoleTargetMaps;
+  flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
 };
 
 export const fromUpdateAgentInputToFlatAgentToUpdate = ({
   updateAgentInput: rawUpdateAgentInput,
   flatAgentMaps,
-  flatRoleTargetMaps,
+  flatRoleTargetByAgentIdMaps,
 }: FromUpdateAgentInputToFlatAgentToUpdateArgs): {
   flatAgentToUpdate: FlatAgent;
 } & FlatRoleTargetToUpdateCreateDelete => {
@@ -140,7 +134,7 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
   } = computeAgentFlatRoleTargetToUpdate({
     roleId: rawUpdateAgentInput.roleId,
     flatAgent: existingFlatAgent,
-    flatRoleTargetMaps,
+    flatRoleTargetByAgentIdMaps,
   });
 
   return {
