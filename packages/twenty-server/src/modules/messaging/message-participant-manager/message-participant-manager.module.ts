@@ -12,6 +12,7 @@ import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-module
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { GetDataFromCacheWithRecomputeService } from 'src/engine/workspace-cache-storage/services/get-data-from-cache-with-recompute.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { ContactCreationManagerModule } from 'src/modules/contact-creation-manager/contact-creation-manager.module';
 import { MatchParticipantModule } from 'src/modules/match-participant/match-participant.module';
@@ -40,6 +41,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
     ]),
     MessagingCommonModule,
     MatchParticipantModule,
+    WorkspaceCacheModule,
   ],
   providers: [
     MessagingMessageParticipantService,
