@@ -91,7 +91,6 @@ export const GraphWidgetGaugeChart = ({
     clampedNormalizedValue,
     chartData,
     gradientId,
-    defs,
   } = useGaugeChartData({
     data,
     colorRegistry,
@@ -134,7 +133,6 @@ export const GraphWidgetGaugeChart = ({
           innerRadius={0.7}
           padding={0.2}
           colors={[`url(#${gradientId})`, theme.background.tertiary]}
-          defs={defs}
           fill={[
             {
               match: (d: { x: string }) => d.x === 'value',

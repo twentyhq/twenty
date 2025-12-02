@@ -7,10 +7,6 @@ describe('useGaugeChartData', () => {
   const mockColorRegistry: GraphColorRegistry = {
     blue: {
       name: 'blue',
-      gradient: {
-        normal: ['blue1', 'blue2'],
-        hover: ['blue3', 'blue4'],
-      },
       solid: 'blueSolid',
       variations: [
         'blue1',
@@ -29,10 +25,6 @@ describe('useGaugeChartData', () => {
     },
     green: {
       name: 'green',
-      gradient: {
-        normal: ['green1', 'green2'],
-        hover: ['green3', 'green4'],
-      },
       solid: 'greenSolid',
       variations: [
         'green1',
@@ -223,84 +215,6 @@ describe('useGaugeChartData', () => {
         ],
       },
     ]);
-  });
-
-  it('should generate gradient with correct angle', () => {
-    const data: GaugeChartData = {
-      value: 50,
-      min: 0,
-      max: 100,
-    };
-
-    const { result } = renderHook(() =>
-      useGaugeChartData({
-        data,
-        colorRegistry: mockColorRegistry,
-        id: 'test-gauge',
-        instanceId: 'instance-1',
-        isHovered: false,
-      }),
-    );
-
-    expect(result.current.defs[0].id).toBe(
-      'gaugeGradient-test-gauge-instance-1',
-    );
-    const expectedAngle = -45;
-    const expectedRadians = (expectedAngle * Math.PI) / 180 + Math.PI / 2;
-    const expectedSin = Math.sin(expectedRadians);
-    const expectedCos = -Math.cos(expectedRadians);
-    const expectedX1 = 50 - expectedSin * 50;
-    const expectedY1 = 50 - expectedCos * 50;
-
-    const actualX1 = parseFloat(result.current.defs[0].x1);
-    const actualY1 = parseFloat(result.current.defs[0].y1);
-    expect(actualX1).toBeCloseTo(expectedX1, 5);
-    expect(actualY1).toBeCloseTo(expectedY1, 5);
-  });
-
-  it('should handle hover state', () => {
-    const data: GaugeChartData = {
-      value: 50,
-      min: 0,
-      max: 100,
-    };
-
-    const { result } = renderHook(() =>
-      useGaugeChartData({
-        data,
-        colorRegistry: mockColorRegistry,
-        id: 'test-gauge',
-        instanceId: 'instance-1',
-        isHovered: true,
-      }),
-    );
-
-    expect(result.current.defs[0].colors).toEqual([
-      { offset: 0, color: 'blue3' },
-      { offset: 100, color: 'blue4' },
-    ]);
-  });
-
-  it('should generate unique gradient id', () => {
-    const data: GaugeChartData = {
-      value: 50,
-      min: 0,
-      max: 100,
-    };
-
-    const { result } = renderHook(() =>
-      useGaugeChartData({
-        data,
-        colorRegistry: mockColorRegistry,
-        id: 'unique-id',
-        instanceId: 'unique-instance',
-        isHovered: false,
-      }),
-    );
-
-    expect(result.current.gradientId).toBe(
-      'gaugeGradient-unique-id-unique-instance',
-    );
   });
 
   it('should memoize calculations', () => {
