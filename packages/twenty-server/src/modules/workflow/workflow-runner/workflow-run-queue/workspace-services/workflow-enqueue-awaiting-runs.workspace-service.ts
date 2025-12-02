@@ -12,13 +12,15 @@ import {
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
-import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
+import { WorkflowNotStartedRunsWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-not-started-runs.workspace-service';
 
 @Injectable()
-export class WorkflowRunEnqueueWorkspaceService {
-  private readonly logger = new Logger(WorkflowRunEnqueueWorkspaceService.name);
+export class WorkflowEnqueueAwaitingRunsWorkspaceService {
+  private readonly logger = new Logger(
+    WorkflowEnqueueAwaitingRunsWorkspaceService.name,
+  );
   constructor(
-    private readonly workflowRunQueueWorkspaceService: WorkflowRunQueueWorkspaceService,
+    private readonly workflowNotStartedRunsWorkspaceService: WorkflowNotStartedRunsWorkspaceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -35,22 +37,31 @@ export class WorkflowRunEnqueueWorkspaceService {
             { shouldBypassPermissionChecks: true },
           );
 
-        const remainingWorkflowRunToEnqueueCount =
-          await this.workflowRunQueueWorkspaceService.getRemainingRunsToEnqueueCountFromDatabase(
+        const notStartedRunsCount =
+          await this.workflowNotStartedRunsWorkspaceService.getNotStartedRunsCountFromDatabase(
             workspaceId,
           );
 
-        if (remainingWorkflowRunToEnqueueCount <= 0) {
-          await this.workflowRunQueueWorkspaceService.recomputeWorkflowRunQueuedCount(
+        if (notStartedRunsCount <= 0) {
+          await this.workflowNotStartedRunsWorkspaceService.recomputeWorkflowRunNotStartedCount(
             workspaceId,
           );
 
           continue;
         }
 
+        const remainingWorkflowRunToEnqueueCount =
+          await this.workflowNotStartedRunsWorkspaceService.getRemainingRunsToEnqueueCount(
+            workspaceId,
+          );
+
         const workflowRunsToEnqueue = await workflowRunRepository.find({
           where: {
             status: WorkflowRunStatus.NOT_STARTED,
+          },
+          select: {
+            id: true,
+            status: true,
           },
           order: {
             createdAt: 'ASC',
@@ -59,7 +70,7 @@ export class WorkflowRunEnqueueWorkspaceService {
         });
 
         if (workflowRunsToEnqueue.length <= 0) {
-          await this.workflowRunQueueWorkspaceService.recomputeWorkflowRunQueuedCount(
+          await this.workflowNotStartedRunsWorkspaceService.recomputeWorkflowRunNotStartedCount(
             workspaceId,
           );
 
@@ -85,8 +96,9 @@ export class WorkflowRunEnqueueWorkspaceService {
           );
         }
 
-        await this.workflowRunQueueWorkspaceService.recomputeWorkflowRunQueuedCount(
+        await this.workflowNotStartedRunsWorkspaceService.decreaseWorkflowRunNotStartedCount(
           workspaceId,
+          workflowRunIds.length,
         );
       } catch (error) {
         this.metricsService.incrementCounter({

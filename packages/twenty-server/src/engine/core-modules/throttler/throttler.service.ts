@@ -20,18 +20,14 @@ export class ThrottlerService {
     tokensToConsume: number,
     maxTokens: number,
     timeWindow: number,
-  ): Promise<void> {
+  ): Promise<number> {
     const now = Date.now();
-    const refillRate = maxTokens / timeWindow;
-
-    const { tokens, lastRefillAt } = (await this.cacheStorage.get<{
-      tokens: number;
-      lastRefillAt: number;
-    }>(key)) || { tokens: maxTokens, lastRefillAt: now };
-
-    const refillAmount = Math.floor((now - lastRefillAt) * refillRate);
-
-    const availableTokens = Math.min(tokens + refillAmount, maxTokens);
+    const availableTokens = await this.getAvailableTokensCount(
+      key,
+      maxTokens,
+      timeWindow,
+      now,
+    );
 
     if (availableTokens < tokensToConsume) {
       throw new ThrottlerException(
@@ -48,5 +44,25 @@ export class ThrottlerService {
       },
       timeWindow * 2,
     );
+
+    return availableTokens - tokensToConsume;
+  }
+
+  async getAvailableTokensCount(
+    key: string,
+    maxTokens: number,
+    timeWindow: number,
+    now = Date.now(),
+  ): Promise<number> {
+    const refillRate = maxTokens / timeWindow;
+
+    const { tokens, lastRefillAt } = (await this.cacheStorage.get<{
+      tokens: number;
+      lastRefillAt: number;
+    }>(key)) || { tokens: maxTokens, lastRefillAt: now };
+
+    const refillAmount = Math.floor((now - lastRefillAt) * refillRate);
+
+    return Math.min(tokens + refillAmount, maxTokens);
   }
 }

@@ -8,21 +8,21 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkflowRunEnqueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-enqueue.workspace-service';
+import { WorkflowEnqueueAwaitingRunsWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-enqueue-awaiting-runs.workspace-service';
 
 export const WORKFLOW_RUN_ENQUEUE_CRON_PATTERN = '*/5 * * * *';
 
 @Processor(MessageQueue.cronQueue)
-export class WorkflowRunEnqueueJob {
+export class WorkflowRunEnqueueCronJob {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly workflowRunEnqueueWorkspaceService: WorkflowRunEnqueueWorkspaceService,
+    private readonly workflowEnqueueAwaitingRunsWorkspaceService: WorkflowEnqueueAwaitingRunsWorkspaceService,
   ) {}
 
-  @Process(WorkflowRunEnqueueJob.name)
+  @Process(WorkflowRunEnqueueCronJob.name)
   @SentryCronMonitor(
-    WorkflowRunEnqueueJob.name,
+    WorkflowRunEnqueueCronJob.name,
     WORKFLOW_RUN_ENQUEUE_CRON_PATTERN,
   )
   async handle() {
@@ -32,7 +32,7 @@ export class WorkflowRunEnqueueJob {
       },
     });
 
-    await this.workflowRunEnqueueWorkspaceService.enqueueRuns({
+    await this.workflowEnqueueAwaitingRunsWorkspaceService.enqueueRuns({
       workspaceIds: activeWorkspaces.map((workspace) => workspace.id),
     });
   }

@@ -7,7 +7,7 @@ import {
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
+import { WorkflowNotStartedRunsWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-not-started-runs.workspace-service';
 
 @Injectable()
 export class WorkflowHandleStaledRunsWorkspaceService {
@@ -16,7 +16,7 @@ export class WorkflowHandleStaledRunsWorkspaceService {
   );
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly workflowRunQueueWorkspaceService: WorkflowRunQueueWorkspaceService,
+    private readonly workflowNotStartedRunsWorkspaceService: WorkflowNotStartedRunsWorkspaceService,
   ) {}
 
   async handleStaledRuns({ workspaceIds }: { workspaceIds: string[] }) {
@@ -50,7 +50,7 @@ export class WorkflowHandleStaledRunsWorkspaceService {
           },
         );
 
-        await this.workflowRunQueueWorkspaceService.recomputeWorkflowRunQueuedCount(
+        await this.workflowNotStartedRunsWorkspaceService.recomputeWorkflowRunNotStartedCount(
           workspaceId,
         );
       } catch (error) {

@@ -15,7 +15,6 @@ import {
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
-import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 jest.mock(
@@ -92,10 +91,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
         {
           provide: `MESSAGE_QUEUE_${MessageQueue.workflowQueue}`,
           useValue: mockMessageQueueService,
-        },
-        {
-          provide: WorkflowRunQueueWorkspaceService,
-          useValue: mockWorkflowRunQueueWorkspaceService,
         },
       ],
     }).compile();

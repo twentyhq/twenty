@@ -41,12 +41,17 @@ export class WorkflowRunWorkspaceService {
     workflowRunId,
     status,
     triggerPayload,
+    error,
   }: {
     workflowVersionId: string;
     createdBy: ActorMetadata;
-    status: WorkflowRunStatus.NOT_STARTED | WorkflowRunStatus.ENQUEUED;
+    status:
+      | WorkflowRunStatus.NOT_STARTED
+      | WorkflowRunStatus.ENQUEUED
+      | WorkflowRunStatus.FAILED;
     triggerPayload: object;
     workflowRunId?: string;
+    error?: string;
   }) {
     const workspaceId =
       this.scopedWorkspaceContextFactory.create()?.workspaceId;
@@ -100,7 +105,7 @@ export class WorkflowRunWorkspaceService {
       workspaceId,
     });
 
-    const initState = this.getInitState(workflowVersion, triggerPayload);
+    const initState = this.getInitState(workflowVersion, triggerPayload, error);
 
     const lastWorkflowRun = await workflowRunRepository.findOne({
       where: {
@@ -415,6 +420,7 @@ export class WorkflowRunWorkspaceService {
   private getInitState(
     workflowVersion: WorkflowVersionWorkspaceEntity,
     triggerPayload: object,
+    error?: string,
   ): WorkflowRunState | undefined {
     if (
       !isDefined(workflowVersion.trigger) ||
@@ -437,6 +443,7 @@ export class WorkflowRunWorkspaceService {
           ]),
         ),
       },
+      workflowRunError: error,
     };
   }
 
