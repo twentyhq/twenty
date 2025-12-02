@@ -57,7 +57,7 @@ export class AgentTurnResolver {
   ): Promise<AgentTurnEvaluationDTO> {
     const evaluation = await this.graderService.evaluateTurn(turnId);
 
-    return evaluation as unknown as AgentTurnEvaluationDTO;
+    return evaluation;
   }
 
   @Mutation(() => AgentTurnDTO)
