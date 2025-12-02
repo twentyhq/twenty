@@ -128,20 +128,21 @@ export const SettingsAgentLogsTab = ({
       });
       refetch();
     },
-    onError: (_, variables) => {
-      const turnId = (variables as { turnId: string })?.turnId;
-      if (isDefined(turnId)) {
-        setEvaluatingTurnIds((prev) => {
-          const next = new Set(prev);
-          next.delete(turnId);
-          return next;
-        });
-      }
+  });
+
+  const handleEvaluateTurn = (turnId: string) => {
+    setEvaluatingTurnIds((prev) => new Set(prev).add(turnId));
+    evaluateTurn({ variables: { turnId } }).catch(() => {
+      setEvaluatingTurnIds((prev) => {
+        const next = new Set(prev);
+        next.delete(turnId);
+        return next;
+      });
       enqueueErrorSnackBar({
         message: t`Failed to evaluate turn`,
       });
-    },
-  });
+    });
+  };
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'green';
@@ -227,10 +228,7 @@ export const SettingsAgentLogsTab = ({
                 <Button
                   size="small"
                   variant="secondary"
-                  onClick={() => {
-                    setEvaluatingTurnIds((prev) => new Set(prev).add(turn.id));
-                    evaluateTurn({ variables: { turnId: turn.id } });
-                  }}
+                  onClick={() => handleEvaluateTurn(turn.id)}
                   disabled={evaluating}
                   title={t`Evaluate`}
                 />
