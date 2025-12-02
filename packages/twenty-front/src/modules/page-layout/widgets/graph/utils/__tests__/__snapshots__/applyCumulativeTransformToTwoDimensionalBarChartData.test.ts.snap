@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`applyCumulativeTransformToTwoDimensionalBarChartData should handle accumulate each key independently 1`] = `
+[
+  {
+    "id": "Jan",
+    "revenue": 100,
+    "sales": 10,
+  },
+  {
+    "id": "Feb",
+    "revenue": 300,
+    "sales": 30,
+  },
+  {
+    "id": "Mar",
+    "revenue": 600,
+    "sales": 60,
+  },
+]
+`;
+
+exports[`applyCumulativeTransformToTwoDimensionalBarChartData should handle empty data 1`] = `[]`;
+
+exports[`applyCumulativeTransformToTwoDimensionalBarChartData should handle filter above rangeMax based on total sum 1`] = `
+[
+  {
+    "id": "a",
+    "x": 10,
+    "y": 10,
+  },
+]
+`;
+
+exports[`applyCumulativeTransformToTwoDimensionalBarChartData should handle filter below rangeMin based on total sum 1`] = `
+[
+  {
+    "id": "c",
+    "x": 30,
+    "y": 30,
+  },
+]
+`;
+
+exports[`applyCumulativeTransformToTwoDimensionalBarChartData should handle skip non-numeric values 1`] = `
+[
+  {
+    "id": "a",
+    "x": 10,
+  },
+  {
+    "id": "b",
+    "x": 10,
+  },
+  {
+    "id": "c",
+    "x": 30,
+  },
+]
+`;
