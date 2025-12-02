@@ -1,0 +1,202 @@
+import { Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Command } from 'nest-commander';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
+
+import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+
+@Command({
+  name: 'upgrade:1-13:clean-empty-string-null-in-text-fields',
+  description:
+    'Clean up empty string defaults in TEXT fields and convert them to NULL',
+})
+export class CleanEmptyStringNullInTextFieldsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+  protected readonly logger = new Logger(
+    CleanEmptyStringNullInTextFieldsCommand.name,
+  );
+
+  constructor(
+    @InjectRepository(WorkspaceEntity)
+    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    @InjectRepository(ObjectMetadataEntity)
+    protected readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(FieldMetadataEntity)
+    protected readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    protected readonly dataSourceService: DataSourceService,
+  ) {
+    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
+  }
+
+  override async runOnWorkspace({
+    workspaceId,
+    options,
+    dataSource,
+  }: RunOnWorkspaceArgs): Promise<void> {
+    const isDryRun = options.dryRun || false;
+
+    if (!isDefined(dataSource)) {
+      throw new Error(
+        `Could not find data source for workspace ${workspaceId}, should never occur`,
+      );
+    }
+
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+
+    if (isDryRun) {
+      this.logger.log('Dry run mode: No changes will be applied');
+    }
+
+    const objectMetadataItems = await this.objectMetadataRepository.find({
+      where: { workspaceId },
+      relations: ['fields'],
+    });
+
+    for (const objectMetadataItem of objectMetadataItems) {
+      const tableName = computeObjectTargetTable(objectMetadataItem);
+
+      if (!objectMetadataItem.isCustom) {
+        await this.processStandardObjectTextFields(
+          objectMetadataItem,
+          tableName,
+          schemaName,
+          dataSource,
+          isDryRun,
+        );
+      }
+
+      await this.processNameFieldWithEmptyStringDefault(
+        objectMetadataItem,
+        tableName,
+        schemaName,
+        dataSource,
+        isDryRun,
+      );
+    }
+  }
+
+  private async processStandardObjectTextFields(
+    objectMetadataItem: ObjectMetadataEntity,
+    tableName: string,
+    schemaName: string,
+    dataSource: WorkspaceDataSource,
+    isDryRun: boolean,
+  ): Promise<void> {
+    const textFields = objectMetadataItem.fields.filter(
+      (field) =>
+        field.type === FieldMetadataType.TEXT &&
+        field.isNullable === true &&
+        field.defaultValue === null,
+    );
+
+    for (const field of textFields) {
+      this.logger.log(
+        `Checking field ${field.name} on standard object ${objectMetadataItem.nameSingular} (Table: ${tableName})`,
+      );
+
+      // Check if column has a default value in the database
+      const columnDefaultResult = await dataSource.query(
+        `SELECT column_default
+         FROM information_schema.columns
+         WHERE table_schema = $1
+           AND table_name = $2
+           AND column_name = $3
+           AND column_default IS NOT NULL`,
+        [schemaName, tableName, field.name],
+      );
+
+      if (!columnDefaultResult || columnDefaultResult.length === 0) {
+        this.logger.log(
+          `No default value found for column ${field.name}, skipping`,
+        );
+        continue;
+      }
+
+      const columnDefault = columnDefaultResult[0].column_default;
+
+      const isEmptyStringDefault =
+        columnDefault === "''::text" ||
+        columnDefault === "''" ||
+        columnDefault === "''::character varying";
+
+      if (!isEmptyStringDefault) {
+        this.logger.log(
+          `Default value for ${field.name} is not empty string (${columnDefault}), skipping`,
+        );
+        continue;
+      }
+
+      this.logger.log(
+        `Found empty string default for field ${field.name} on ${tableName}, cleaning up`,
+      );
+
+      if (!isDryRun) {
+        // Drop the default constraint
+        await dataSource.query(
+          `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${field.name}" DROP DEFAULT`,
+        );
+
+        // Update all empty string values to NULL
+        await dataSource.query(
+          `UPDATE "${schemaName}"."${tableName}" SET "${field.name}" = NULL WHERE "${field.name}" = ''`,
+        );
+      }
+    }
+  }
+
+  private async processNameFieldWithEmptyStringDefault(
+    objectMetadataItem: ObjectMetadataEntity,
+    tableName: string,
+    schemaName: string,
+    dataSource: WorkspaceDataSource,
+    isDryRun: boolean,
+  ): Promise<void> {
+    const nameField = objectMetadataItem.fields.find(
+      (field) =>
+        field.name === 'name' &&
+        field.type === FieldMetadataType.TEXT &&
+        field.defaultValue === "''",
+    );
+
+    if (!isDefined(nameField)) {
+      return;
+    }
+
+    this.logger.log(
+      `Found "name" field with empty string default on ${objectMetadataItem.nameSingular} (Table: ${tableName})`,
+    );
+
+    if (!isDryRun) {
+      // Drop the default constraint
+      await dataSource?.query(
+        `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "name" DROP DEFAULT`,
+      );
+
+      // Update all empty string values to NULL
+      await dataSource?.query(
+        `UPDATE "${schemaName}"."${tableName}" SET "name" = NULL WHERE "name" = ''`,
+      );
+
+      // Update field metadata to set defaultValue to null
+      await this.fieldMetadataRepository.update(nameField.id, {
+        defaultValue: null,
+      });
+
+      this.logger.log(
+        `Updated "name" field metadata and cleaned empty strings for ${objectMetadataItem.nameSingular}`,
+      );
+    }
+  }
+}
