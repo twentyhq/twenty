@@ -3365,12 +3365,12 @@ msgid "There was an issue with your connection settings. Please try again."
 msgstr "حدث خطأ في إعدادات الاتصال الخاصة بك. يُرجى المحاولة مرة أخرى."
 
 #. js-lingui-id: Izdz+Y
-#: src/engine/core-modules/api-key/api-key.service.ts
+#: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "تم إلغاء صلاحية مفتاح API هذا ولم يعد قابلًا للاستخدام."
 
 #. js-lingui-id: Jmzgho
-#: src/engine/core-modules/api-key/api-key.service.ts
+#: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "انتهت صلاحية مفتاح API هذا. يُرجى إنشاء مفتاح جديد."
 
