@@ -58,6 +58,7 @@ export {
   IconCaretLeft,
   IconCaretRight,
   IconChartBar,
+  IconChartBarPopular,
   IconChartCandle,
   IconChartDots3,
   IconChartLine,

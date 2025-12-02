@@ -2,6 +2,7 @@ import { CHART_SETTINGS_HEADINGS } from '@/command-menu/pages/page-layout/consta
 import { AXIS_NAME_SETTING } from '@/command-menu/pages/page-layout/constants/settings/AxisNameSetting';
 import { CHART_DATA_SOURCE_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ChartDataSourceSetting';
 import { COLORS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ColorsSetting';
+import { CUMULATIVE_SETTING } from '@/command-menu/pages/page-layout/constants/settings/CumulativeSetting';
 import { DATA_DISPLAY_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataDisplayXSetting';
 import { DATA_DISPLAY_Y_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataDisplayYSetting';
 import { DATA_LABELS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataLabelsSetting';
@@ -39,6 +40,7 @@ export const LINE_CHART_SETTINGS: ChartSettingsGroup[] = [
       GROUP_BY_SETTING,
       DATE_GRANULARITY_Y_SETTING,
       SORT_BY_GROUP_BY_FIELD_SETTING,
+      CUMULATIVE_SETTING,
       RANGE_MIN_SETTING,
       RANGE_MAX_SETTING,
     ],

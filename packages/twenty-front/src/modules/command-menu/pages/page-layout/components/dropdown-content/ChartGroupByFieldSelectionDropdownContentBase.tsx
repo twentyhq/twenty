@@ -123,6 +123,8 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
         subFieldNameKey,
         fieldId: fieldMetadataItem.id,
         subFieldName: null,
+        objectMetadataItem: sourceObjectMetadataItem,
+        objectMetadataItems,
       }),
     });
     closeDropdown();
@@ -136,6 +138,8 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
         subFieldNameKey,
         fieldId: null,
         subFieldName: null,
+        objectMetadataItem: sourceObjectMetadataItem,
+        objectMetadataItems,
       }),
     });
     closeDropdown();
@@ -161,6 +165,8 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
         subFieldNameKey,
         fieldId: selectedCompositeField.id,
         subFieldName,
+        objectMetadataItem: sourceObjectMetadataItem,
+        objectMetadataItems,
       }),
     });
     closeDropdown();
@@ -178,6 +184,8 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
         subFieldNameKey,
         fieldId: selectedRelationField.id,
         subFieldName,
+        objectMetadataItem: sourceObjectMetadataItem,
+        objectMetadataItems,
       }),
     });
     closeDropdown();

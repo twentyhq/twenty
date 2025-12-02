@@ -121,8 +121,12 @@ export const transformGroupByDataToBarChartData = ({
   const filteredResults = filterGroupByResults({
     rawResults,
     filterOptions: {
-      rangeMin: configuration.rangeMin ?? undefined,
-      rangeMax: configuration.rangeMax ?? undefined,
+      rangeMin: configuration.isCumulative
+        ? undefined
+        : (configuration.rangeMin ?? undefined),
+      rangeMax: configuration.isCumulative
+        ? undefined
+        : (configuration.rangeMax ?? undefined),
       omitNullValues: configuration.omitNullValues ?? false,
     },
     aggregateField,
