@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "rootDir": "src",
     "moduleResolution": "bundler",
     "strict": true,
     "noEmit": true,
@@ -11,18 +12,8 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "declaration": true,
-    "declarationMap": true,
-    "rootDir": "src"
+    "declarationMap": true
   },
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.cli.json"
-    },
-    {
-      "path": "./tsconfig.e2e.json"
-    }
-  ],
   "include": ["src/**/*.ts", "vite.config.ts"],
   "exclude": [
     "src/cli/**",

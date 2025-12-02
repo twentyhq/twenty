@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "AGPL-3.0",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
