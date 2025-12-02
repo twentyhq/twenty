@@ -145,6 +145,13 @@ export class BarChartConfigurationDTO {
   @IsOptional()
   groupMode?: BarChartGroupMode;
 
+  @Field(() => Boolean, {
+    nullable: true,
+  })
+  @IsBoolean()
+  @IsOptional()
+  isCumulative?: boolean;
+
   @Field(() => String, { nullable: true, defaultValue: 'UTC' })
   @IsTimeZone()
   @IsOptional()

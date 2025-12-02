@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
+import { useResetRecordBoardSelection } from '@/object-record/record-board/hooks/useResetRecordBoardSelection';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { allCardsSelectedStatusComponentSelector } from '@/object-record/record-board/states/selectors/allCardsSelectedStatusComponentSelector';
 import { allRecordIdsOfAllRecordGroupsComponentSelector } from '@/object-record/record-index/states/selectors/allRecordIdsOfAllRecordGroupsComponentSelector';
@@ -22,7 +22,8 @@ export const useSelectAllCards = (recordBoardId?: string) => {
       recordBoardId,
     );
 
-  const { resetRecordSelection } = useRecordBoardSelection(recordBoardId);
+  const { resetRecordBoardSelection } =
+    useResetRecordBoardSelection(recordBoardId);
 
   const selectAllCards = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -38,7 +39,7 @@ export const useSelectAllCards = (recordBoardId?: string) => {
         );
 
         if (allCardsSelectedStatus === 'all') {
-          resetRecordSelection();
+          resetRecordBoardSelection();
         }
 
         for (const recordId of allRecordIds) {
@@ -52,7 +53,7 @@ export const useSelectAllCards = (recordBoardId?: string) => {
     [
       allCardsSelectedStatusSelector,
       allRecordIdsOfAllRecordGroupsCallbackSelector,
-      resetRecordSelection,
+      resetRecordBoardSelection,
       isRecordBoardCardSelectedFamilyState,
     ],
   );

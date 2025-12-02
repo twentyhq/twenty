@@ -96,6 +96,12 @@ export class PromiseMemoizer<T> {
         await this.clearKey(cacheKey, onDelete);
       }
     }
+
+    for (const cacheKey of [...this.pending.keys()]) {
+      if (cacheKey.startsWith(cacheKeyPrefix)) {
+        this.pending.delete(cacheKey);
+      }
+    }
   }
 
   async clearAll(onDelete?: (value: T) => Promise<void> | void): Promise<void> {

@@ -2,11 +2,11 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { useReorderRecordGroups } from '@/object-record/record-group/hooks/useReorderRecordGroups';
-import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { type RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
@@ -49,8 +49,8 @@ export const useRecordGroupActions = ({
     objectNameSingular,
   });
 
-  const recordGroupFieldMetadata = useRecoilComponentValue(
-    recordGroupFieldMetadataComponentState,
+  const recordIndexGroupFieldMetadataItem = useRecoilComponentValue(
+    recordIndexGroupFieldMetadataItemComponentState,
   );
 
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
@@ -73,13 +73,13 @@ export const useRecordGroupActions = ({
   const navigateToSelectSettings = useCallback(() => {
     setNavigationMemorizedUrl(location.pathname + location.search);
 
-    if (!isDefined(recordGroupFieldMetadata)) {
+    if (!isDefined(recordIndexGroupFieldMetadataItem)) {
       throw new Error('recordGroupFieldMetadata is not a non-empty string');
     }
 
     navigate(SettingsPath.ObjectFieldEdit, {
       objectNamePlural: objectMetadataItem.namePlural,
-      fieldName: recordGroupFieldMetadata.name,
+      fieldName: recordIndexGroupFieldMetadataItem.name,
     });
   }, [
     setNavigationMemorizedUrl,
@@ -87,7 +87,7 @@ export const useRecordGroupActions = ({
     location.search,
     navigate,
     objectMetadataItem,
-    recordGroupFieldMetadata,
+    recordIndexGroupFieldMetadataItem,
   ]);
 
   const hasAccessToDataModelSettings = useHasPermissionFlag(

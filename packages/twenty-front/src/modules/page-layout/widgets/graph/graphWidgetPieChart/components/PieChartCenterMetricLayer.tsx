@@ -1,30 +1,25 @@
-import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
-import {
-  formatGraphValue,
-  type GraphValueFormatOptions,
-} from '@/page-layout/widgets/graph/utils/graphFormatters';
+import { usePieChartCenterMetricData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartCenterMetricData';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Trans } from '@lingui/react/macro';
+import { AnimatePresence, motion } from 'framer-motion';
+import { type PieChartConfiguration } from '~/generated/graphql';
 
 type PieChartCenterMetricProps = {
-  data: PieChartDataItem[];
-  formatOptions: GraphValueFormatOptions;
+  objectMetadataItemId: string;
+  configuration: PieChartConfiguration;
   show: boolean;
 };
 
-const StyledCenterMetricContainer = styled.div<{ show: boolean }>`
+const StyledCenterMetricContainer = styled(motion.div)`
   align-items: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
   left: 50%;
-  opacity: ${({ show }) => (show ? 1 : 0)};
   pointer-events: none;
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  transition: opacity ${({ theme }) => theme.animation.duration.fast}s
-    ease-in-out;
 `;
 
 const StyledValue = styled.span`
@@ -39,18 +34,34 @@ const StyledLabel = styled.span`
 `;
 
 export const PieChartCenterMetric = ({
-  data,
-  formatOptions,
+  objectMetadataItemId,
+  configuration,
   show,
 }: PieChartCenterMetricProps) => {
-  const total = data.reduce((sum, datum) => sum + datum.value, 0);
+  const theme = useTheme();
+
+  const { centerMetricValue, centerMetricLabel } = usePieChartCenterMetricData({
+    objectMetadataItemId,
+    configuration,
+    skip: !show,
+  });
 
   return (
-    <StyledCenterMetricContainer show={show}>
-      <StyledValue>{formatGraphValue(total, formatOptions)}</StyledValue>
-      <StyledLabel>
-        <Trans>Total</Trans>
-      </StyledLabel>
-    </StyledCenterMetricContainer>
+    <AnimatePresence>
+      {show && (
+        <StyledCenterMetricContainer
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{
+            duration: theme.animation.duration.fast,
+            ease: 'easeInOut',
+          }}
+        >
+          <StyledValue>{centerMetricValue}</StyledValue>
+          <StyledLabel>{centerMetricLabel}</StyledLabel>
+        </StyledCenterMetricContainer>
+      )}
+    </AnimatePresence>
   );
 };

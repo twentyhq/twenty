@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 import { In, Repository } from 'typeorm';
 
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
 import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/update-agent.input';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
-import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label.util';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
@@ -19,8 +19,8 @@ export class AgentService {
   constructor(
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
-    @InjectRepository(RoleTargetsEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
+    @InjectRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     private readonly agentRoleService: AiAgentRoleService,
   ) {}
 
@@ -46,7 +46,7 @@ export class AgentService {
     workspaceId: string,
     agents: AgentEntity[],
   ): Promise<Map<string, string>> {
-    const roleTargets = await this.roleTargetsRepository.find({
+    const roleTargets = await this.roleTargetRepository.find({
       where: {
         workspaceId,
         agentId: In(agents.map((agent) => agent.id)),
@@ -137,7 +137,7 @@ export class AgentService {
     workspaceId: string,
     agentId: string,
   ): Promise<string | null> {
-    const roleTarget = await this.roleTargetsRepository.findOne({
+    const roleTarget = await this.roleTargetRepository.findOne({
       where: {
         agentId,
         workspaceId,

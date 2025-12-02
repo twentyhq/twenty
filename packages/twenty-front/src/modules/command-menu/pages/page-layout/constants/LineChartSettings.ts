@@ -1,6 +1,8 @@
+import { CHART_SETTINGS_HEADINGS } from '@/command-menu/pages/page-layout/constants/ChartSettingsHeadings';
 import { AXIS_NAME_SETTING } from '@/command-menu/pages/page-layout/constants/settings/AxisNameSetting';
 import { CHART_DATA_SOURCE_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ChartDataSourceSetting';
 import { COLORS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ColorsSetting';
+import { CUMULATIVE_SETTING } from '@/command-menu/pages/page-layout/constants/settings/CumulativeSetting';
 import { DATA_DISPLAY_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataDisplayXSetting';
 import { DATA_DISPLAY_Y_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataDisplayYSetting';
 import { DATA_LABELS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataLabelsSetting';
@@ -19,11 +21,11 @@ import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/
 
 export const LINE_CHART_SETTINGS: ChartSettingsGroup[] = [
   {
-    heading: 'Data',
+    heading: CHART_SETTINGS_HEADINGS.DATA,
     items: [CHART_DATA_SOURCE_SETTING, FILTER_SETTING],
   },
   {
-    heading: 'X axis',
+    heading: CHART_SETTINGS_HEADINGS.X_AXIS,
     items: [
       DATA_DISPLAY_X_SETTING,
       DATE_GRANULARITY_X_SETTING,
@@ -32,18 +34,19 @@ export const LINE_CHART_SETTINGS: ChartSettingsGroup[] = [
     ],
   },
   {
-    heading: 'Y axis',
+    heading: CHART_SETTINGS_HEADINGS.Y_AXIS,
     items: [
       DATA_DISPLAY_Y_SETTING,
       GROUP_BY_SETTING,
       DATE_GRANULARITY_Y_SETTING,
       SORT_BY_GROUP_BY_FIELD_SETTING,
+      CUMULATIVE_SETTING,
       RANGE_MIN_SETTING,
       RANGE_MAX_SETTING,
     ],
   },
   {
-    heading: 'Style',
+    heading: CHART_SETTINGS_HEADINGS.STYLE,
     items: [
       COLORS_SETTING,
       AXIS_NAME_SETTING,

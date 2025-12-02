@@ -4,8 +4,8 @@ import {
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { type ViewGroup } from '@/views/types/ViewGroup';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const mapViewGroupsToRecordGroupDefinitions = ({
   objectMetadataItem,
@@ -36,6 +36,10 @@ export const mapViewGroupsToRecordGroupDefinitions = ({
 
   const recordGroupDefinitionsFromViewGroups = viewGroups
     .map((viewGroup) => {
+      if (viewGroup.fieldMetadataId !== selectFieldMetadataItem.id) {
+        return null;
+      }
+
       const selectedOption = selectFieldMetadataItem.options?.find(
         (option) => option.value === viewGroup.fieldValue,
       );

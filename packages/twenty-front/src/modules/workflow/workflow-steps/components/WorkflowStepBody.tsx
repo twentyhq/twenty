@@ -17,11 +17,13 @@ const StyledWorkflowStepBody = styled.div`
 
 export const WorkflowStepBody = ({
   children,
+  className,
 }: {
   children: React.ReactNode;
+  className?: string;
 }) => {
   return (
-    <StyledWorkflowStepBody>
+    <StyledWorkflowStepBody className={className}>
       <AppErrorBoundary
         resetOnLocationChange={true}
         FallbackComponent={({

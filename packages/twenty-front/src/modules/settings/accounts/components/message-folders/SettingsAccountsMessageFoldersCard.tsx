@@ -5,6 +5,7 @@ import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graph
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsMessageFoldersEmptyStateCard } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard';
+import { SettingsMessageFoldersSkeletonLoader } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersSkeletonLoader';
 import { SettingsMessageFoldersTreeItem } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem';
 import { computeMessageFolderTree } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
 import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
@@ -52,7 +53,7 @@ const StyledSectionHeader = styled.div`
   display: flex;
   height: ${({ theme }) => theme.spacing(6)};
   justify-content: space-between;
-  padding: 0 ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
   text-align: left;
 `;
 
@@ -80,7 +81,7 @@ export const SettingsAccountsMessageFoldersCard = () => {
     shouldOnlyLoadRelationIdentifiers: false,
   });
 
-  const { record: messageChannel } = useFindOneRecord<MessageChannel>({
+  const { record: messageChannel, loading } = useFindOneRecord<MessageChannel>({
     objectNameSingular: CoreObjectNameSingular.MessageChannel,
     objectRecordId: settingsAccountsSelectedMessageChannel?.id,
     recordGqlFields,
@@ -126,6 +127,16 @@ export const SettingsAccountsMessageFoldersCard = () => {
       },
     });
   };
+
+  if (loading) {
+    return (
+      <Section>
+        <Table>
+          <SettingsMessageFoldersSkeletonLoader />
+        </Table>
+      </Section>
+    );
+  }
 
   if (!messageFolders || messageFolders.length === 0) {
     return <SettingsMessageFoldersEmptyStateCard />;

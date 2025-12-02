@@ -8,6 +8,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('Custom object renaming', () => {
   let listingObjectId = '';
+  const uniqueSuffix = Date.now().toString().slice(-8);
 
   const STANDARD_OBJECT_RELATIONS = [
     'noteTarget',
@@ -79,10 +80,10 @@ describe('Custom object renaming', () => {
     fillStandardObjectRelationsMapObjectMetadataId(standardObjects);
 
     const CUSTOM_OBJECT = {
-      namePlural: 'customObjectNamePlural',
-      nameSingular: 'customObjectNameSingular',
-      labelPlural: 'customObjectLabelPlural',
-      labelSingular: 'customObjectLabelSingular',
+      namePlural: `customObjects${uniqueSuffix}`,
+      nameSingular: `customObject${uniqueSuffix}`,
+      labelPlural: `Custom Objects ${uniqueSuffix}`,
+      labelSingular: `Custom Object ${uniqueSuffix}`,
       description: 'Custom object description',
       icon: 'IconListNumbers',
       isLabelSyncedWithName: false,
@@ -135,10 +136,10 @@ describe('Custom object renaming', () => {
 
   it('2. should rename custom object', async () => {
     // Arrange
-    const HOUSE_NAME_SINGULAR = 'house';
-    const HOUSE_NAME_PLURAL = 'houses';
-    const HOUSE_LABEL_SINGULAR = 'House';
-    const HOUSE_LABEL_PLURAL = 'Houses';
+    const HOUSE_NAME_SINGULAR = `house${uniqueSuffix}`;
+    const HOUSE_NAME_PLURAL = `houses${uniqueSuffix}`;
+    const HOUSE_LABEL_SINGULAR = `House ${uniqueSuffix}`;
+    const HOUSE_LABEL_PLURAL = `Houses ${uniqueSuffix}`;
 
     // Act
     const { data } = await updateOneObjectMetadata({

@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'class-validator';
 import { type OrderByWithGroupBy } from 'twenty-shared/types';
 import { type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
 
@@ -6,10 +8,6 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import {
@@ -17,30 +15,35 @@ import {
   type GraphqlQuerySelectedFieldsResult,
 } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { type GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 
 export class GraphqlQueryParser {
-  private objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
-  private objectMetadataMaps: ObjectMetadataMaps;
+  private flatObjectMetadata: FlatObjectMetadata;
+  private flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  private flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   private filterConditionParser: GraphqlQueryFilterConditionParser;
   private orderFieldParser: GraphqlQueryOrderFieldParser;
 
   constructor(
-    objectMetadataMapItem: ObjectMetadataItemWithFieldMaps,
-    objectMetadataMaps: ObjectMetadataMaps,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ) {
-    this.objectMetadataMapItem = objectMetadataMapItem;
-    this.objectMetadataMaps = objectMetadataMaps;
+    this.flatObjectMetadata = flatObjectMetadata;
+    this.flatObjectMetadataMaps = flatObjectMetadataMaps;
+    this.flatFieldMetadataMaps = flatFieldMetadataMaps;
 
     this.filterConditionParser = new GraphqlQueryFilterConditionParser(
-      this.objectMetadataMapItem,
+      this.flatObjectMetadata,
+      this.flatFieldMetadataMaps,
     );
     this.orderFieldParser = new GraphqlQueryOrderFieldParser(
-      this.objectMetadataMapItem,
-      this.objectMetadataMaps,
+      this.flatObjectMetadata,
+      this.flatObjectMetadataMaps,
+      this.flatFieldMetadataMaps,
     );
   }
 
@@ -114,6 +117,36 @@ export class GraphqlQueryParser {
     return queryBuilder.orderBy(parsedOrderBys);
   }
 
+  public getOrderByRawSQL(
+    orderBy: ObjectRecordOrderBy | OrderByWithGroupBy,
+    objectNameSingular: string,
+    isForwardPagination = true,
+  ): string {
+    const parsedOrderBys = this.orderFieldParser.parse(
+      orderBy as ObjectRecordOrderBy,
+      objectNameSingular,
+      isForwardPagination,
+    );
+
+    const orderByRawSQLClauseArray = Object.entries(parsedOrderBys).map(
+      ([orderByField, orderByCondition]) => {
+        const nullsCondition = isDefined(orderByCondition.nulls)
+          ? ` ${orderByCondition.nulls}`
+          : '';
+
+        return `${orderByField} ${orderByCondition.order}${nullsCondition}`;
+      },
+    );
+
+    const orderByRawSQLString = orderByRawSQLClauseArray.join(', ');
+
+    const orderByCompleteSQLClause = isNonEmptyString(orderByRawSQLString)
+      ? `ORDER BY ${orderByRawSQLString}`
+      : '';
+
+    return orderByCompleteSQLClause;
+  }
+
   public applyGroupByOrderToBuilder(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     queryBuilder: WorkspaceSelectQueryBuilder<any>,
@@ -143,26 +176,14 @@ export class GraphqlQueryParser {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
   ): GraphqlQuerySelectedFieldsResult {
-    const objectMetadataMapItem = getObjectMetadataMapItemByNameSingular(
-      this.objectMetadataMaps,
-      this.objectMetadataMapItem.nameSingular,
-    );
-
-    if (!objectMetadataMapItem) {
-      throw new GraphqlQueryRunnerException(
-        `Could not find object metadata for ${this.objectMetadataMapItem.nameSingular}`,
-        GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
-      );
-    }
-
     const selectedFieldsParser = new GraphqlQuerySelectedFieldsParser(
-      this.objectMetadataMaps,
+      this.flatObjectMetadataMaps,
+      this.flatFieldMetadataMaps,
     );
 
     return selectedFieldsParser.parse(
       graphqlSelectedFields,
-      this.objectMetadataMapItem,
-      this.objectMetadataMaps,
+      this.flatObjectMetadata,
     );
   }
 }

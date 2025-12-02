@@ -49,4 +49,8 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     fieldMetadata: true,
     view: true,
   },
+  role: {},
+  roleTarget: {
+    role: true,
+  },
 } as const satisfies MetadataRequiredForValidation;

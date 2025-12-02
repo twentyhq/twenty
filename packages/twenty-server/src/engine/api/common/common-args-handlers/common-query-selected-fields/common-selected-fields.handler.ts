@@ -11,39 +11,43 @@ import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-s
 import { getAllSelectableFields } from 'src/engine/api/rest/core/rest-to-common-args-handlers/utils/get-all-selectable-fields.util';
 import { MAX_DEPTH } from 'src/engine/api/rest/input-request-parsers/constants/max-depth.constant';
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
 export class CommonSelectedFieldsHandler {
   computeFromDepth = ({
     objectsPermissions,
-    objectMetadataMaps,
-    objectMetadataMapItem,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    flatObjectMetadata,
     depth,
   }: {
     objectsPermissions: ObjectsPermissions;
-    objectMetadataMaps: ObjectMetadataMaps;
-    objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatObjectMetadata: FlatObjectMetadata;
     depth: Depth | undefined;
   }): CommonSelectedFieldsResult => {
     const restrictedFields =
-      objectsPermissions[objectMetadataMapItem.id].restrictedFields;
+      objectsPermissions[flatObjectMetadata.id].restrictedFields;
 
     const { relations, relationsSelectFields } =
       this.getRelationsAndRelationsSelectFields({
-        objectMetadataMaps,
-        objectMetadataMapItem,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatObjectMetadata,
         objectsPermissions,
         depth,
       });
 
     const selectableFields = getAllSelectableFields({
       restrictedFields,
-      objectMetadata: {
-        objectMetadataMapItem,
-      },
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
     });
 
     return {
@@ -57,13 +61,15 @@ export class CommonSelectedFieldsHandler {
   };
 
   private getRelationsAndRelationsSelectFields({
-    objectMetadataMaps,
-    objectMetadataMapItem,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    flatObjectMetadata,
     objectsPermissions,
     depth,
   }: {
-    objectMetadataMaps: ObjectMetadataMaps;
-    objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatObjectMetadata: FlatObjectMetadata;
     objectsPermissions: ObjectsPermissions;
     depth: Depth | undefined;
   }) {
@@ -82,12 +88,19 @@ export class CommonSelectedFieldsHandler {
         | { [key: string]: boolean | { [key: string]: boolean } };
     } = {};
 
-    for (const field of Object.values(objectMetadataMapItem.fieldsById)) {
-      if (!isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION))
+    for (const fieldId of flatObjectMetadata.fieldMetadataIds) {
+      const field = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityMaps: flatFieldMetadataMaps,
+        flatEntityId: fieldId,
+      });
+
+      if (!isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION))
         continue;
 
+      if (!field.relationTargetObjectMetadataId) continue;
+
       const relationTargetObjectMetadata =
-        objectMetadataMaps.byId[field.relationTargetObjectMetadataId];
+        flatObjectMetadataMaps.byId[field.relationTargetObjectMetadataId];
 
       if (!isDefined(relationTargetObjectMetadata)) {
         throw new CommonQueryRunnerException(
@@ -98,9 +111,8 @@ export class CommonSelectedFieldsHandler {
       const relationFieldSelectFields = getAllSelectableFields({
         restrictedFields:
           objectsPermissions[relationTargetObjectMetadata.id].restrictedFields,
-        objectMetadata: {
-          objectMetadataMapItem: relationTargetObjectMetadata,
-        },
+        flatObjectMetadata: relationTargetObjectMetadata,
+        flatFieldMetadataMaps,
       });
 
       if (Object.keys(relationFieldSelectFields).length === 0) continue;
@@ -113,8 +125,9 @@ export class CommonSelectedFieldsHandler {
           relations: depth2Relations,
           relationsSelectFields: depth2RelationsSelectFields,
         } = this.getRelationsAndRelationsSelectFields({
-          objectMetadataMaps,
-          objectMetadataMapItem: relationTargetObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          flatObjectMetadata: relationTargetObjectMetadata,
           objectsPermissions,
           depth: 1,
         }) as {

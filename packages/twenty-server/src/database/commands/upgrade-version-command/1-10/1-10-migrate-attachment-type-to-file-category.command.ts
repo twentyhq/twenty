@@ -1,6 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
@@ -61,6 +62,10 @@ export class MigrateAttachmentTypeToFileCategoryCommand extends ActiveOrSuspende
 
     for (const attachment of attachments) {
       const { id, type } = attachment;
+
+      if (!isDefined(type)) {
+        throw new Error(`Attachment ${id} has no type`);
+      }
 
       const fileCategory =
         TYPE_TO_FILE_CATEGORY_MAPPING[type] ||

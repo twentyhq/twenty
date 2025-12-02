@@ -2,19 +2,24 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
+import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
-import { isDefined } from 'twenty-shared/utils';
+import { isNestedFieldDateType } from '@/page-layout/widgets/graph/utils/isNestedFieldDateType';
+import { type ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { type PieChartConfiguration } from '~/generated/graphql';
 
 type TransformGroupByDataToPieChartDataParams = {
   groupByData: Record<string, GroupByRawResult[]> | null | undefined;
   objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItems: ObjectMetadataItem[];
   configuration: PieChartConfiguration;
   aggregateOperation: string;
 };
@@ -36,6 +41,7 @@ const EMPTY_PIE_CHART_RESULT: TransformGroupByDataToPieChartDataResult = {
 export const transformGroupByDataToPieChartData = ({
   groupByData,
   objectMetadataItem,
+  objectMetadataItems,
   configuration,
   aggregateOperation,
 }: TransformGroupByDataToPieChartDataParams): TransformGroupByDataToPieChartDataResult => {
@@ -64,6 +70,18 @@ export const transformGroupByDataToPieChartData = ({
     return EMPTY_PIE_CHART_RESULT;
   }
 
+  const isDateField = isFieldMetadataDateKind(groupByField.type);
+  const isNestedDateField = isNestedFieldDateType(
+    groupByField,
+    configuration.groupBySubFieldName ?? undefined,
+    objectMetadataItems,
+  );
+
+  const dateGranularity: ObjectRecordGroupByDateGranularity | undefined =
+    isDateField || isNestedDateField
+      ? (configuration.dateGranularity ?? undefined)
+      : undefined;
+
   // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
   const limitedResults = rawResults.slice(
     0,
@@ -73,7 +91,7 @@ export const transformGroupByDataToPieChartData = ({
   const formattedValues = formatPrimaryDimensionValues({
     groupByRawResults: limitedResults,
     primaryAxisGroupByField: groupByField,
-    primaryAxisDateGranularity: configuration.dateGranularity ?? undefined,
+    primaryAxisDateGranularity: dateGranularity,
     primaryAxisGroupBySubFieldName:
       configuration.groupBySubFieldName ?? undefined,
   });
@@ -95,6 +113,7 @@ export const transformGroupByDataToPieChartData = ({
     return {
       id,
       value,
+      color: (configuration.color ?? GRAPH_DEFAULT_COLOR) as GraphColor,
     };
   });
 

@@ -1,3 +1,4 @@
+import { CHART_SETTINGS_HEADINGS } from '@/command-menu/pages/page-layout/constants/ChartSettingsHeadings';
 import { CENTER_METRIC_SETTING } from '@/command-menu/pages/page-layout/constants/settings/CenterMetricSetting';
 import { CHART_DATA_SOURCE_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ChartDataSourceSetting';
 import { COLORS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/ColorsSetting';
@@ -12,7 +13,7 @@ import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/
 
 export const PIE_CHART_SETTINGS: ChartSettingsGroup[] = [
   {
-    heading: 'Data',
+    heading: CHART_SETTINGS_HEADINGS.DATA,
     items: [
       CHART_DATA_SOURCE_SETTING,
       FILTER_SETTING,
@@ -23,7 +24,7 @@ export const PIE_CHART_SETTINGS: ChartSettingsGroup[] = [
     ],
   },
   {
-    heading: 'Style',
+    heading: CHART_SETTINGS_HEADINGS.STYLE,
     items: [
       COLORS_SETTING,
       DATA_LABELS_SETTING,

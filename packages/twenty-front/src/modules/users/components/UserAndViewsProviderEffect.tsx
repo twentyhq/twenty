@@ -151,7 +151,7 @@ export const UserAndViewsProviderEffect = () => {
     ) => {
       return {
         ...workspaceMember,
-        colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
+        colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'System',
         locale:
           (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,
       };

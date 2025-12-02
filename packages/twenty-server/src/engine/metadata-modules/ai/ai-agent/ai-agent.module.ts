@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
@@ -9,7 +9,6 @@ import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
-import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiChatRouterModule } from 'src/engine/metadata-modules/ai/ai-chat-router/ai-chat-router.module';
@@ -17,11 +16,11 @@ import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-mode
 import { AiToolsModule } from 'src/engine/metadata-modules/ai/ai-tools/ai-tools.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
-import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
 import { AgentResolver } from './agent.resolver';
@@ -36,7 +35,7 @@ import { AgentTitleGenerationService } from './services/agent-title-generation.s
 import { AgentToolGeneratorService } from './services/agent-tool-generator.service';
 @Module({
   imports: [
-    TypeOrmModule.forFeature([AgentEntity, RoleEntity, RoleTargetsEntity]),
+    TypeOrmModule.forFeature([AgentEntity, RoleEntity, RoleTargetEntity]),
     AiModelsModule,
     AiToolsModule,
     AiBillingModule,
@@ -49,14 +48,13 @@ import { AgentToolGeneratorService } from './services/agent-tool-generator.servi
     ObjectMetadataModule,
     PermissionsModule,
     AiChatRouterModule,
-    WorkspacePermissionsCacheModule,
     WorkspaceCacheStorageModule,
     TokenModule,
     WorkspaceDomainsModule,
     WorkflowToolsModule,
-    forwardRef(() => UserModule),
     UserWorkspaceModule,
     UserRoleModule,
+    WorkspaceCacheModule,
   ],
   providers: [
     AgentResolver,

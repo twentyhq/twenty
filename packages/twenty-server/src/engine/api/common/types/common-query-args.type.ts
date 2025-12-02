@@ -71,6 +71,7 @@ export interface GroupByQueryArgs {
   includeRecords?: boolean;
   selectedFields: CommonSelectedFields;
   limit?: number;
+  offsetForRecords?: number;
 }
 export interface DestroyOneQueryArgs {
   id: string;

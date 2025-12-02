@@ -18,11 +18,14 @@ import {
 } from '@nivo/pie';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { type PieChartConfiguration } from '~/generated/graphql';
 
 type GraphWidgetPieChartProps = {
   data: PieChartDataItem[];
   showLegend?: boolean;
   id: string;
+  objectMetadataItemId: string;
+  configuration: PieChartConfiguration;
   onSliceClick?: (datum: PieChartDataItem) => void;
   showDataLabels?: boolean;
   showCenterMetric?: boolean;
@@ -59,6 +62,8 @@ export const GraphWidgetPieChart = ({
   data,
   showLegend = true,
   id,
+  objectMetadataItemId,
+  configuration,
   displayType,
   decimals,
   prefix,
@@ -66,7 +71,7 @@ export const GraphWidgetPieChart = ({
   customFormatter,
   onSliceClick,
   showDataLabels = false,
-  showCenterMetric = false,
+  showCenterMetric = true,
 }: GraphWidgetPieChartProps) => {
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
@@ -100,10 +105,14 @@ export const GraphWidgetPieChart = ({
     const tooltipData = createTooltipData(datum);
     if (!isDefined(tooltipData)) return null;
 
+    const handleTooltipClick: (() => void) | undefined = isDefined(onSliceClick)
+      ? () => handleSliceClick(datum)
+      : undefined;
+
     return (
       <GraphWidgetTooltip
         items={[tooltipData.tooltipItem]}
-        onGraphWidgetTooltipClick={() => handleSliceClick(datum)}
+        onGraphWidgetTooltipClick={handleTooltipClick}
       />
     );
   };
@@ -158,8 +167,8 @@ export const GraphWidgetPieChart = ({
             }}
           />
           <PieChartCenterMetric
-            data={data}
-            formatOptions={formatOptions}
+            objectMetadataItemId={objectMetadataItemId}
+            configuration={configuration}
             show={showCenterMetric && !hasNoData}
           />
         </StyledPieChartWrapper>

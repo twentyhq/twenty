@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
 
 import {
@@ -8,7 +9,8 @@ import {
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
 @Injectable()
@@ -18,8 +20,9 @@ export class AiAgentRoleService {
     private readonly agentRepository: Repository<AgentEntity>,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(RoleTargetsEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
+    @InjectRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
+    private readonly roleTargetService: RoleTargetService,
   ) {}
 
   public async assignRoleToAgent({
@@ -41,16 +44,13 @@ export class AiAgentRoleService {
       return;
     }
 
-    const newRoleTarget = await this.roleTargetsRepository.save({
-      roleId,
-      agentId,
+    await this.roleTargetService.create({
+      createRoleTargetInput: {
+        roleId,
+        targetId: agentId,
+        targetMetadataForeignKey: 'agentId',
+      },
       workspaceId,
-    });
-
-    await this.roleTargetsRepository.delete({
-      agentId,
-      workspaceId,
-      id: Not(newRoleTarget.id),
     });
   }
 
@@ -67,7 +67,7 @@ export class AiAgentRoleService {
       where: { standardId: standardRoleId, workspaceId },
     });
 
-    if (!role) {
+    if (!isDefined(role)) {
       throw new AgentException(
         `Standard role with standard ID ${standardRoleId} not found in workspace`,
         AgentExceptionCode.ROLE_NOT_FOUND,
@@ -88,8 +88,22 @@ export class AiAgentRoleService {
     workspaceId: string;
     agentId: string;
   }): Promise<void> {
-    await this.roleTargetsRepository.delete({
-      agentId,
+    const existingRoleTarget = await this.roleTargetRepository.findOne({
+      where: {
+        agentId,
+        workspaceId,
+      },
+    });
+
+    if (!isDefined(existingRoleTarget)) {
+      throw new AgentException(
+        `Role target not found for agent ${agentId}`,
+        AgentExceptionCode.ROLE_NOT_FOUND,
+      );
+    }
+
+    await this.roleTargetService.delete({
+      id: existingRoleTarget.id,
       workspaceId,
     });
   }
@@ -98,7 +112,7 @@ export class AiAgentRoleService {
     roleId: string,
     workspaceId: string,
   ): Promise<AgentEntity[]> {
-    const roleTargets = await this.roleTargetsRepository.find({
+    const roleTargets = await this.roleTargetRepository.find({
       where: {
         roleId,
         workspaceId,
@@ -162,7 +176,7 @@ export class AiAgentRoleService {
       );
     }
 
-    const existingRoleTarget = await this.roleTargetsRepository.findOne({
+    const existingRoleTarget = await this.roleTargetRepository.findOne({
       where: {
         agentId,
         roleId,
@@ -173,5 +187,40 @@ export class AiAgentRoleService {
     return {
       roleToAssignIsSameAsCurrentRole: Boolean(existingRoleTarget),
     };
+  }
+
+  public async deleteAgentOnlyRoleIfUnused({
+    roleId,
+    roleTargetId,
+    workspaceId,
+  }: {
+    roleId: string;
+    roleTargetId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const role = await this.roleRepository.findOne({
+      where: { id: roleId, workspaceId },
+    });
+
+    if (
+      !isDefined(role) ||
+      !role.canBeAssignedToAgents ||
+      role.canBeAssignedToUsers ||
+      role.canBeAssignedToApiKeys
+    ) {
+      return;
+    }
+
+    const remainingAssignments = await this.roleTargetRepository.count({
+      where: {
+        roleId,
+        workspaceId,
+        id: Not(roleTargetId),
+      },
+    });
+
+    if (remainingAssignments === 0) {
+      await this.roleRepository.delete({ id: roleId, workspaceId });
+    }
   }
 }

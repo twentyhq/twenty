@@ -9,7 +9,7 @@ import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-build
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { GraphQLOutputTypeFieldConfigMap } from 'src/engine/api/graphql/workspace-schema-builder/types/graphql-field-config-map.types';
 import { computeObjectMetadataObjectTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-object-type-key.util';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
@@ -21,30 +21,30 @@ export class EdgeGqlObjectTypeGenerator {
     private readonly gqlTypesStorage: GqlTypesStorage,
   ) {}
 
-  public buildAndStore(objectMetadata: ObjectMetadataEntity) {
+  public buildAndStore(flatObjectMetadata: FlatObjectMetadata) {
     const kind = ObjectTypeDefinitionKind.Edge;
     const key = computeObjectMetadataObjectTypeKey(
-      objectMetadata.nameSingular,
+      flatObjectMetadata.nameSingular,
       kind,
     );
 
     this.gqlTypesStorage.addGqlType(
       key,
       new GraphQLObjectType({
-        name: `${pascalCase(objectMetadata.nameSingular)}${kind.toString()}`,
-        description: objectMetadata.description,
-        fields: () => this.generateFields(objectMetadata),
+        name: `${pascalCase(flatObjectMetadata.nameSingular)}${kind.toString()}`,
+        description: flatObjectMetadata.description,
+        fields: () => this.generateFields(flatObjectMetadata.nameSingular),
       }),
     );
   }
 
   private generateFields(
-    objectMetadata: ObjectMetadataEntity,
+    objectNameSingular: string,
   ): GraphQLOutputTypeFieldConfigMap {
     const fields: GraphQLOutputTypeFieldConfigMap = {};
 
     const key = computeObjectMetadataObjectTypeKey(
-      objectMetadata.nameSingular,
+      objectNameSingular,
       ObjectTypeDefinitionKind.Plain,
     );
 
@@ -52,14 +52,11 @@ export class EdgeGqlObjectTypeGenerator {
 
     if (!isDefined(objectType) || isInputObjectType(objectType)) {
       this.logger.error(
-        `Node type for ${objectMetadata.nameSingular} was not found. Please, check if you have defined it.`,
-        {
-          objectMetadata,
-        },
+        `Node type for ${objectNameSingular} was not found. Please, check if you have defined it.`,
       );
 
       throw new Error(
-        `Node type for ${objectMetadata.nameSingular} was not found. Please, check if you have defined it.`,
+        `Node type for ${objectNameSingular} was not found. Please, check if you have defined it.`,
       );
     }
 

@@ -1,8 +1,10 @@
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphPieChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/useGraphPieChartWidgetData';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -44,6 +46,9 @@ export const GraphWidgetPieChartRenderer = ({
   const navigate = useNavigate();
   const configuration = widget.configuration as PieChartConfiguration;
 
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+  );
   const indexViewId = useRecoilValue(
     coreIndexViewIdFromObjectMetadataItemFamilySelector({
       objectMetadataItemId: objectMetadataItem.id,
@@ -86,9 +91,11 @@ export const GraphWidgetPieChartRenderer = ({
       <GraphWidgetPieChart
         data={data}
         id={widget.id}
+        objectMetadataItemId={widget.objectMetadataId}
+        configuration={configuration}
         showLegend={showLegend}
         displayType="shortNumber"
-        onSliceClick={handleSliceClick}
+        onSliceClick={isPageLayoutInEditMode ? undefined : handleSliceClick}
         showDataLabels={showDataLabels}
         showCenterMetric={showCenterMetric}
       />

@@ -41,6 +41,10 @@ export const ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY = {
       metadataName: 'fieldMetadata',
       flatEntityForeignKeyAggregator: 'calendarViewIds',
     },
+    mainGroupByFieldMetadataId: {
+      metadataName: 'fieldMetadata',
+      flatEntityForeignKeyAggregator: 'mainGroupByFieldMetadataViewIds',
+    },
     objectMetadataId: {
       metadataName: 'objectMetadata',
       flatEntityForeignKeyAggregator: 'viewIds',
@@ -99,6 +103,13 @@ export const ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY = {
     fieldMetadataId: {
       metadataName: 'fieldMetadata',
       flatEntityForeignKeyAggregator: 'viewFilterIds',
+    },
+  },
+  role: {},
+  roleTarget: {
+    roleId: {
+      metadataName: 'role',
+      flatEntityForeignKeyAggregator: 'roleTargetIds',
     },
   },
 } as const satisfies MetadataNameAndRelations;

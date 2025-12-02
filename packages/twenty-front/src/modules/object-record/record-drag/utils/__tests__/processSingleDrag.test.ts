@@ -13,6 +13,7 @@ describe('processSingleDrag', () => {
       sourceRecordId: 'record-1',
       targetRecordId: 'record-3',
       recordsWithPosition: mockRecordPositionData,
+      isDroppedAfterList: true,
     });
 
     expect(dragResult).toEqual({
@@ -26,6 +27,7 @@ describe('processSingleDrag', () => {
       sourceRecordId: 'record-3',
       targetRecordId: 'record-1',
       recordsWithPosition: mockRecordPositionData,
+      isDroppedAfterList: false,
     });
 
     expect(dragResult).toEqual({
@@ -39,6 +41,7 @@ describe('processSingleDrag', () => {
       sourceRecordId: 'record-1',
       targetRecordId: 'record-2',
       recordsWithPosition: mockRecordPositionData,
+      isDroppedAfterList: false,
     });
 
     expect(dragResult).toEqual({
@@ -52,6 +55,7 @@ describe('processSingleDrag', () => {
       sourceRecordId: 'record-3',
       targetRecordId: 'record-2',
       recordsWithPosition: mockRecordPositionData,
+      isDroppedAfterList: false,
     });
 
     expect(dragResult).toEqual({
@@ -65,6 +69,7 @@ describe('processSingleDrag', () => {
       sourceRecordId: 'record-4',
       targetRecordId: 'record-2',
       recordsWithPosition: mockRecordPositionData,
+      isDroppedAfterList: false,
     });
 
     expect(dragResult).toEqual({
@@ -79,6 +84,7 @@ describe('processSingleDrag', () => {
         sourceRecordId: 'record-1',
         targetRecordId: 'record-1',
         recordsWithPosition: [],
+        isDroppedAfterList: false,
       }),
     ).toThrowError('Cannot find item to move for id : record-1');
   });

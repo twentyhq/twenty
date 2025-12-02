@@ -15,14 +15,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { FieldMetadataResolver } from 'src/engine/metadata-modules/field-metadata/field-metadata.resolver';
-import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
-import { FieldMetadataEnumValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service';
-import { FieldMetadataMorphRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-morph-relation.service';
-import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
-import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service';
-import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
-import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
-import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatFieldMetadataModule } from 'src/engine/metadata-modules/flat-field-metadata/flat-field-metadata.module';
 import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
@@ -38,6 +31,7 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
+import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
@@ -72,21 +66,14 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         IndexMetadataModule,
         WorkspaceManyOrAllFlatEntityMapsCacheModule,
       ],
-      services: [
-        IsFieldMetadataDefaultValue,
-        FieldMetadataServiceV2,
-        FieldMetadataMorphRelationService,
-        FieldMetadataRelationService,
-        FieldMetadataValidationService,
-        FieldMetadataEnumValidationService,
-      ],
+      services: [FieldMetadataService],
       resolvers: [
         {
           EntityClass: FieldMetadataEntity,
           DTOClass: FieldMetadataDTO,
           CreateDTOClass: CreateFieldInput,
           UpdateDTOClass: UpdateFieldInput,
-          ServiceClass: FieldMetadataServiceV2,
+          ServiceClass: FieldMetadataService,
           pagingStrategy: PagingStrategies.CURSOR,
           read: {
             defaultSort: [{ field: 'id', direction: SortDirection.DESC }],
@@ -104,22 +91,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
       ],
     }),
   ],
-  providers: [
-    IsFieldMetadataDefaultValue,
-    IsFieldMetadataOptions,
-    FieldMetadataServiceV2,
-    FieldMetadataRelationService,
-    FieldMetadataMorphRelationService,
-    FieldMetadataValidationService,
-    FieldMetadataEnumValidationService,
-    FieldMetadataResolver,
-  ],
-  exports: [
-    FieldMetadataServiceV2,
-    FieldMetadataRelationService,
-    FieldMetadataMorphRelationService,
-    FieldMetadataEnumValidationService,
-    FieldMetadataValidationService,
-  ],
+  providers: [FieldMetadataService, FieldMetadataResolver],
+  exports: [FieldMetadataService],
 })
 export class FieldMetadataModule {}

@@ -1,4 +1,9 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import {
+  UseFilters,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+} from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -11,7 +16,8 @@ import {
 import { msg } from '@lingui/core/macro';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -49,7 +55,9 @@ import {
 } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { fromRoleEntitiesToRoleDtos } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Resolver(() => RoleDTO)
@@ -62,6 +70,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
+@UseInterceptors(WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor)
 export class RoleResolver {
   constructor(
     private readonly userRoleService: UserRoleService,
@@ -72,13 +81,16 @@ export class RoleResolver {
     private readonly agentRoleService: AiAgentRoleService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly fieldPermissionService: FieldPermissionService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   @Query(() => [RoleDTO])
   async getRoles(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<RoleDTO[]> {
-    return this.roleService.getWorkspaceRoles(workspace.id);
+    const roleEntities = await this.roleService.getWorkspaceRoles(workspace.id);
+
+    return fromRoleEntitiesToRoleDtos(roleEntities);
   }
 
   @Mutation(() => WorkspaceMemberDTO)
@@ -141,9 +153,18 @@ export class RoleResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('createRoleInput') createRoleInput: CreateRoleInput,
   ): Promise<RoleDTO> {
+    const { id: workspaceId } = workspace;
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     return await this.roleService.createRole({
-      workspaceId: workspace.id,
+      workspaceId,
       input: createRoleInput,
+      applicationId: workspaceCustomFlatApplication.id,
     });
   }
 
@@ -165,12 +186,12 @@ export class RoleResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
   ): Promise<string> {
-    const deletedRoleId = await this.roleService.deleteRole(
+    const deletedRole = await this.roleService.deleteRole({
       roleId,
-      workspace.id,
-    );
+      workspaceId: workspace.id,
+    });
 
-    return deletedRoleId;
+    return deletedRole.id;
   }
 
   @Mutation(() => [ObjectPermissionDTO])

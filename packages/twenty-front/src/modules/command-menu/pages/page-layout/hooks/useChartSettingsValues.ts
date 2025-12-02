@@ -3,11 +3,13 @@ import { useGraphXSortOptionLabels } from '@/command-menu/pages/page-layout/hook
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { getChartAxisNameDisplayOptions } from '@/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions';
+import { getChartFilterRulesCount } from '@/command-menu/pages/page-layout/utils/getChartFilterRulesCount';
 import { getDateGranularityLabel } from '@/command-menu/pages/page-layout/utils/getDateGranularityLabel';
 import { getFieldLabelWithSubField } from '@/command-menu/pages/page-layout/utils/getFieldLabelWithSubField';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
+import { plural } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -84,6 +86,7 @@ export const useChartSettingsValues = ({
       ? getFieldLabelWithSubField({
           field: groupByFieldX,
           subFieldName: groupBySubFieldNameX,
+          objectMetadataItems,
         })
       : undefined;
 
@@ -181,6 +184,7 @@ export const useChartSettingsValues = ({
             ? getFieldLabelWithSubField({
                 field: pieChartGroupByField,
                 subFieldName: finalGroupBySubFieldNameY,
+                objectMetadataItems,
               })
             : undefined;
 
@@ -199,9 +203,18 @@ export const useChartSettingsValues = ({
         return groupByOrderByLabel;
       case CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS:
         return configuration.displayDataLabel ?? undefined;
+      case CHART_CONFIGURATION_SETTING_IDS.FILTER: {
+        const filterRulesCount = getChartFilterRulesCount(configuration.filter);
+        return filterRulesCount > 0
+          ? plural(filterRulesCount, {
+              one: `${filterRulesCount} rule`,
+              other: `${filterRulesCount} rules`,
+            })
+          : undefined;
+      }
       case CHART_CONFIGURATION_SETTING_IDS.CENTER_METRIC:
         return isPieChart
-          ? (configuration.showCenterMetric ?? undefined)
+          ? (configuration.showCenterMetric ?? true)
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.STACKED_BARS:
         return configuration.__typename === 'BarChartConfiguration'
@@ -211,6 +224,8 @@ export const useChartSettingsValues = ({
         return configuration.__typename === 'LineChartConfiguration'
           ? configuration.isStacked !== false
           : true;
+      case CHART_CONFIGURATION_SETTING_IDS.CUMULATIVE:
+        return isBarOrLineChart ? (configuration.isCumulative ?? false) : false;
       case CHART_CONFIGURATION_SETTING_IDS.OMIT_NULL_VALUES:
         return isBarOrLineChart
           ? (configuration.omitNullValues ?? false)
@@ -243,6 +258,14 @@ export const useChartSettingsValues = ({
         return isBarOrLineChart || isPieChart
           ? (configuration.displayLegend ?? true)
           : true;
+      case CHART_CONFIGURATION_SETTING_IDS.PREFIX:
+        return configuration.__typename === 'AggregateChartConfiguration'
+          ? (configuration.prefix ?? '')
+          : '';
+      case CHART_CONFIGURATION_SETTING_IDS.SUFFIX:
+        return configuration.__typename === 'AggregateChartConfiguration'
+          ? (configuration.suffix ?? '')
+          : '';
       default:
         return '';
     }

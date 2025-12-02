@@ -9,17 +9,15 @@ import {
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { type DeleteRecordParams } from 'src/engine/core-modules/record-crud/types/delete-record-params.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class DeleteRecordService {
   private readonly logger = new Logger(DeleteRecordService.name);
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
   async execute(params: DeleteRecordParams): Promise<ToolOutput> {
@@ -55,16 +53,27 @@ export class DeleteRecordService {
           rolePermissionConfig,
         );
 
-      const { objectMetadataItemWithFieldsMaps } =
-        await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-          objectName,
-          workspaceId,
+      const { flatObjectMetadataMaps, objectIdByNameSingular } =
+        repository.internalContext;
+
+      const objectId = objectIdByNameSingular[objectName];
+
+      if (!isDefined(objectId)) {
+        throw new RecordCrudException(
+          `Object ${objectName} not found`,
+          RecordCrudExceptionCode.INVALID_REQUEST,
         );
+      }
+
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityMaps: flatObjectMetadataMaps,
+        flatEntityId: objectId,
+      });
 
       if (
         !canObjectBeManagedByWorkflow({
-          nameSingular: objectMetadataItemWithFieldsMaps.nameSingular,
-          isSystem: objectMetadataItemWithFieldsMaps.isSystem,
+          nameSingular: flatObjectMetadata.nameSingular,
+          isSystem: flatObjectMetadata.isSystem,
         })
       ) {
         throw new RecordCrudException(

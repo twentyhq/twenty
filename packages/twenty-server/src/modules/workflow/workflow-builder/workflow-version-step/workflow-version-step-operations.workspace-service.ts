@@ -6,11 +6,14 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
+import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
@@ -26,7 +29,6 @@ import {
   type WorkflowEmptyAction,
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-
 const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
   outputSchema: {},
   errorHandlingOptions: {
@@ -53,9 +55,12 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly serverlessFunctionService: ServerlessFunctionService,
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
+    @InjectRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly aiAgentRoleService: AiAgentRoleService,
   ) {}
 
   async runWorkflowVersionStepDeletionSideEffects({
@@ -90,7 +95,22 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         });
 
         if (isDefined(agent)) {
+          const roleTarget = await this.roleTargetRepository.findOne({
+            where: {
+              agentId: agent.id,
+              workspaceId,
+            },
+          });
+
           await this.agentRepository.delete({ id: agent.id, workspaceId });
+
+          if (isDefined(roleTarget?.roleId) && isDefined(roleTarget?.id)) {
+            await this.aiAgentRoleService.deleteAgentOnlyRoleIfUnused({
+              roleId: roleTarget.roleId,
+              roleTargetId: roleTarget.id,
+              workspaceId,
+            });
+          }
         }
         break;
       }
@@ -460,14 +480,15 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           // @ts-expect-error legacy noImplicitAny
           isValidUuid(response[key].id)
         ) {
-          const objectMetadataInfo =
-            await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+          const { flatObjectMetadata, flatFieldMetadataMaps } =
+            await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
               field.settings.objectName,
               workspaceId,
             );
 
-          const relationFieldsNames = Object.values(
-            objectMetadataInfo.objectMetadataItemWithFieldsMaps.fieldsById,
+          const relationFieldsNames = getFlatFieldsFromFlatObjectMetadata(
+            flatObjectMetadata,
+            flatFieldMetadataMaps,
           )
             .filter((field) => field.type === FieldMetadataType.RELATION)
             .map((field) => field.name);

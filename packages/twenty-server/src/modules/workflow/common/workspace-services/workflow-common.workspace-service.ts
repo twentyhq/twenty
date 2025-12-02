@@ -2,13 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { buildObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-metadata-item-with-field-maps.util';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
@@ -32,8 +31,9 @@ import {
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
 export type ObjectMetadataInfo = {
-  objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
-  objectMetadataMaps: ObjectMetadataMaps;
+  flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 };
 
 @Injectable()
@@ -95,55 +95,52 @@ export class WorkflowCommonWorkspaceService {
     return { ...workflowVersion, trigger: workflowVersion.trigger };
   }
 
-  async getObjectMetadataMaps(
-    workspaceId: string,
-  ): Promise<ObjectMetadataMaps> {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
+  async getFlatEntityMaps(workspaceId: string): Promise<{
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    objectIdByNameSingular: Record<string, string>;
+  }> {
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: [
-            'flatObjectMetadataMaps',
-            'flatFieldMetadataMaps',
-            'flatIndexMaps',
-          ],
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
         },
       );
 
     const { idByNameSingular } = buildObjectIdByNameMaps(
       flatObjectMetadataMaps,
     );
-    const objectMetadataMaps: ObjectMetadataMaps = {
-      byId: {},
-      idByNameSingular,
+
+    return {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular: idByNameSingular,
     };
-
-    for (const [id, flatObj] of Object.entries(flatObjectMetadataMaps.byId)) {
-      if (isDefined(flatObj)) {
-        objectMetadataMaps.byId[id] = buildObjectMetadataItemWithFieldMaps(
-          flatObj,
-          flatFieldMetadataMaps,
-          flatIndexMaps,
-        );
-      }
-    }
-
-    return objectMetadataMaps;
   }
 
-  async getObjectMetadataItemWithFieldsMaps(
+  async getObjectMetadataInfo(
     objectNameSingular: string,
     workspaceId: string,
   ): Promise<ObjectMetadataInfo> {
-    const objectMetadataMaps = await this.getObjectMetadataMaps(workspaceId);
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
+    } = await this.getFlatEntityMaps(workspaceId);
 
-    const objectMetadataItemWithFieldsMaps =
-      getObjectMetadataMapItemByNameSingular(
-        objectMetadataMaps,
-        objectNameSingular,
+    const objectId = objectIdByNameSingular[objectNameSingular];
+
+    if (!isDefined(objectId)) {
+      throw new WorkflowCommonException(
+        `Failed to read: Object ${objectNameSingular} not found`,
+        WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
+    }
 
-    if (!objectMetadataItemWithFieldsMaps) {
+    const flatObjectMetadata = flatObjectMetadataMaps.byId[objectId];
+
+    if (!isDefined(flatObjectMetadata)) {
       throw new WorkflowCommonException(
         `Failed to read: Object ${objectNameSingular} not found`,
         WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND,
@@ -151,8 +148,9 @@ export class WorkflowCommonWorkspaceService {
     }
 
     return {
-      objectMetadataItemWithFieldsMaps,
-      objectMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     };
   }
 

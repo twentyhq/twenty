@@ -13,18 +13,19 @@ import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupBy
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGroupByResults';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
+import { isNestedFieldDateType } from '@/page-layout/widgets/graph/utils/isNestedFieldDateType';
 import { type BarDatum } from '@nivo/bar';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { GraphType } from '~/generated-metadata/graphql';
 import {
   AxisNameDisplay,
-  FieldMetadataType,
   type BarChartConfiguration,
 } from '~/generated/graphql';
 
 type TransformGroupByDataToBarChartDataParams = {
   groupByData: Record<string, GroupByRawResult[]> | null | undefined;
   objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItems: ObjectMetadataItem[];
   configuration: BarChartConfiguration;
   aggregateOperation: string;
 };
@@ -60,6 +61,7 @@ const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
 export const transformGroupByDataToBarChartData = ({
   groupByData,
   objectMetadataItem,
+  objectMetadataItems,
   configuration,
   aggregateOperation,
 }: TransformGroupByDataToBarChartDataParams): TransformGroupByDataToBarChartDataResult => {
@@ -98,6 +100,8 @@ export const transformGroupByDataToBarChartData = ({
 
   const primaryAxisSubFieldName =
     configuration.primaryAxisGroupBySubFieldName ?? undefined;
+  const secondaryAxisSubFieldName =
+    configuration.secondaryAxisGroupBySubFieldName ?? undefined;
 
   const indexByKey = getFieldKey({
     field: groupByFieldX,
@@ -122,8 +126,12 @@ export const transformGroupByDataToBarChartData = ({
   const filteredResults = filterGroupByResults({
     rawResults,
     filterOptions: {
-      rangeMin: configuration.rangeMin ?? undefined,
-      rangeMax: configuration.rangeMax ?? undefined,
+      rangeMin: configuration.isCumulative
+        ? undefined
+        : (configuration.rangeMin ?? undefined),
+      rangeMax: configuration.isCumulative
+        ? undefined
+        : (configuration.rangeMax ?? undefined),
       omitNullValues: configuration.omitNullValues ?? false,
     },
     aggregateField,
@@ -150,20 +158,55 @@ export const transformGroupByDataToBarChartData = ({
   const showDataLabels = configuration.displayDataLabel ?? false;
   const showLegend = configuration.displayLegend ?? true;
 
-  const isDateField =
-    groupByFieldX.type === FieldMetadataType.DATE ||
-    groupByFieldX.type === FieldMetadataType.DATE_TIME;
+  const isDateField = isFieldMetadataDateKind(groupByFieldX.type);
+  const isNestedDateField = isNestedFieldDateType(
+    groupByFieldX,
+    primaryAxisSubFieldName,
+    objectMetadataItems,
+  );
+
+  const primaryAxisDateGranularity =
+    isDateField || isNestedDateField
+      ? (configuration.primaryAxisDateGranularity ??
+        GRAPH_DEFAULT_DATE_GRANULARITY)
+      : undefined;
+
+  const isSecondaryDateField = isDefined(groupByFieldY)
+    ? isFieldMetadataDateKind(groupByFieldY.type)
+    : false;
+
+  const isSecondaryNestedDateField =
+    isDefined(groupByFieldY) &&
+    isNestedFieldDateType(
+      groupByFieldY,
+      secondaryAxisSubFieldName ?? undefined,
+      objectMetadataItems,
+    );
+
+  const secondaryAxisDateGranularity =
+    isSecondaryDateField || isSecondaryNestedDateField
+      ? (configuration.secondaryAxisGroupByDateGranularity ??
+        GRAPH_DEFAULT_DATE_GRANULARITY)
+      : undefined;
+
+  const sanitizedConfiguration: BarChartConfiguration = {
+    ...configuration,
+    primaryAxisDateGranularity: primaryAxisDateGranularity ?? undefined,
+    secondaryAxisGroupByDateGranularity:
+      secondaryAxisDateGranularity ?? undefined,
+  };
+
+  const shouldApplyDateGapFill = isDefined(primaryAxisDateGranularity);
 
   const omitNullValues = configuration.omitNullValues ?? false;
 
   const dateGapFillResult =
-    isDateField && !omitNullValues
+    shouldApplyDateGapFill && !omitNullValues
       ? fillDateGapsInBarChartData({
           data: filteredResults,
           keys: [aggregateField.name],
           dateGranularity:
-            configuration.primaryAxisDateGranularity ??
-            GRAPH_DEFAULT_DATE_GRANULARITY,
+            primaryAxisDateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY,
           hasSecondDimension: isDefined(groupByFieldY),
         })
       : { data: filteredResults, wasTruncated: false };
@@ -177,7 +220,7 @@ export const transformGroupByDataToBarChartData = ({
         groupByFieldX,
         groupByFieldY,
         aggregateField,
-        configuration,
+        configuration: sanitizedConfiguration,
         aggregateOperation,
         objectMetadataItem,
         primaryAxisSubFieldName,
@@ -186,7 +229,7 @@ export const transformGroupByDataToBarChartData = ({
         rawResults: filteredResultsWithDateGaps,
         groupByFieldX,
         aggregateField,
-        configuration,
+        configuration: sanitizedConfiguration,
         aggregateOperation,
         objectMetadataItem,
         primaryAxisSubFieldName,
