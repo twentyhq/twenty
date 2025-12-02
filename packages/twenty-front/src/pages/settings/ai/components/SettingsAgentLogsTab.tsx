@@ -3,12 +3,12 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useMutation, useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, Status } from 'twenty-ui/display';
 import { Button, LightIconButton } from 'twenty-ui/input';
 import {
@@ -19,8 +19,10 @@ import {
   AnimatedPlaceholderEmptyTitle,
 } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { EVALUATE_AGENT_TURN } from '@/ai/graphql/mutations/evaluateAgentTurn';
-import { GET_AGENT_TURNS } from '@/ai/graphql/queries/getAgentTurns';
+import {
+  useEvaluateAgentTurnMutation,
+  useGetAgentTurnsQuery,
+} from '~/generated-metadata/graphql';
 
 const StyledTable = styled(Table)`
   margin-top: ${({ theme }) => theme.spacing(3)};
@@ -63,30 +65,9 @@ export const SettingsAgentLogsTab = ({
   agentId,
 }: SettingsAgentLogsTabProps) => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-
-  const { data, loading, refetch } = useQuery(GET_AGENT_TURNS, {
-    variables: { agentId },
-    skip: !agentId,
-  });
-
-  const [evaluateTurn, { loading: evaluating }] = useMutation(
-    EVALUATE_AGENT_TURN,
-    {
-      onCompleted: () => {
-        enqueueSuccessSnackBar({
-          message: t`Turn evaluated successfully`,
-        });
-        refetch();
-      },
-      onError: () => {
-        enqueueErrorSnackBar({
-          message: t`Failed to evaluate turn`,
-        });
-      },
-    },
+  const [evaluatingTurnIds, setEvaluatingTurnIds] = useState<Set<string>>(
+    new Set(),
   );
-
-  const turns = data?.agentTurns || [];
 
   const getLatestEvaluation = (evaluations: any[]) => {
     if (!evaluations || evaluations.length === 0) return null;
@@ -95,6 +76,72 @@ export const SettingsAgentLogsTab = ({
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     )[0];
   };
+
+  const computeBackgroundEvaluatingTurnIds = (turnsData: any[]) => {
+    const now = Date.now();
+    const RECENT_TURN_THRESHOLD = 5 * 60 * 1000;
+    const backgroundEvaluatingTurnIds = new Set<string>();
+
+    turnsData.forEach((turn: any) => {
+      const latestEvaluation = getLatestEvaluation(turn.evaluations);
+      const turnAge = now - new Date(turn.createdAt).getTime();
+
+      if (!isDefined(latestEvaluation) && turnAge < RECENT_TURN_THRESHOLD) {
+        backgroundEvaluatingTurnIds.add(turn.id);
+      }
+    });
+
+    return backgroundEvaluatingTurnIds;
+  };
+
+  const { data, loading, refetch, startPolling, stopPolling } =
+    useGetAgentTurnsQuery({
+      variables: { agentId },
+      skip: !agentId,
+      onCompleted: (completedData) => {
+        const backgroundIds = computeBackgroundEvaluatingTurnIds(
+          completedData?.agentTurns || [],
+        );
+        if (backgroundIds.size > 0) {
+          startPolling(3000);
+        } else {
+          stopPolling();
+        }
+      },
+    });
+
+  const turns = data?.agentTurns || [];
+  const backgroundEvaluatingTurnIds = computeBackgroundEvaluatingTurnIds(turns);
+
+  const [evaluateTurn, { loading: evaluating }] = useEvaluateAgentTurnMutation({
+    onCompleted: (data) => {
+      const turnId = data?.evaluateAgentTurn?.turnId;
+      if (isDefined(turnId)) {
+        setEvaluatingTurnIds((prev) => {
+          const next = new Set(prev);
+          next.delete(turnId);
+          return next;
+        });
+      }
+      enqueueSuccessSnackBar({
+        message: t`Turn evaluated successfully`,
+      });
+      refetch();
+    },
+    onError: (_, variables) => {
+      const turnId = (variables as { turnId: string })?.turnId;
+      if (isDefined(turnId)) {
+        setEvaluatingTurnIds((prev) => {
+          const next = new Set(prev);
+          next.delete(turnId);
+          return next;
+        });
+      }
+      enqueueErrorSnackBar({
+        message: t`Failed to evaluate turn`,
+      });
+    },
+  });
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'green';
@@ -173,13 +220,21 @@ export const SettingsAgentLogsTab = ({
                   color={getScoreColor(latestEvaluation.score)}
                   text={`${latestEvaluation.score}`}
                 />
+              ) : evaluatingTurnIds.has(turn.id) ||
+                backgroundEvaluatingTurnIds.has(turn.id) ? (
+                <Status
+                  color="blue"
+                  text={t`Evaluating`}
+                  isLoaderVisible={true}
+                />
               ) : (
                 <Button
                   size="small"
                   variant="secondary"
-                  onClick={() =>
-                    evaluateTurn({ variables: { turnId: turn.id } })
-                  }
+                  onClick={() => {
+                    setEvaluatingTurnIds((prev) => new Set(prev).add(turn.id));
+                    evaluateTurn({ variables: { turnId: turn.id } });
+                  }}
                   disabled={evaluating}
                   title={t`Evaluate`}
                 />
