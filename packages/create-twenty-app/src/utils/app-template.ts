@@ -42,11 +42,10 @@ const createGitignore = async (appDirectory: string) => {
 /node_modules
 /.pnp
 .pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+.yarn
+
+# codegen
+generated
 
 # testing
 /coverage
