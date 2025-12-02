@@ -37,57 +37,49 @@ export class RunEvaluationInputJob {
 
   @Process(RunEvaluationInputJob.name)
   async handle(data: RunEvaluationInputJobData): Promise<void> {
-    try {
-      await this.agentChatService.addMessage({
-        threadId: data.threadId,
-        turnId: data.turnId,
-        uiMessage: {
-          role: 'user',
-          parts: [{ type: 'text', text: data.input }],
-        },
-      });
+    await this.agentChatService.addMessage({
+      threadId: data.threadId,
+      turnId: data.turnId,
+      uiMessage: {
+        role: 'user',
+        parts: [{ type: 'text', text: data.input }],
+      },
+    });
 
-      const agent = await this.agentRepository.findOne({
-        where: { id: data.agentId },
-      });
+    const agent = await this.agentRepository.findOne({
+      where: { id: data.agentId },
+    });
 
-      if (!agent) {
-        throw new Error(`Agent ${data.agentId} not found`);
-      }
-
-      const executionResult = await this.aiAgentExecutorService.executeAgent({
-        agent,
-        userPrompt: data.input,
-      });
-
-      await this.agentChatService.addMessage({
-        threadId: data.threadId,
-        turnId: data.turnId,
-        agentId: agent.id,
-        uiMessage: {
-          role: 'assistant',
-          parts: [
-            {
-              type: 'text',
-              text: JSON.stringify(executionResult.result) || '',
-            },
-          ],
-        },
-      });
-
-      await this.messageQueueService.add<{
-        turnId: string;
-        workspaceId: string;
-      }>(EvaluateAgentTurnJob.name, {
-        turnId: data.turnId,
-        workspaceId: data.workspaceId,
-      });
-    } catch (error) {
-      this.logger.error(
-        `Failed to execute evaluation input for turn ${data.turnId} in workspace ${data.workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
-        error instanceof Error ? error.stack : undefined,
-      );
-      throw error;
+    if (!agent) {
+      throw new Error(`Agent ${data.agentId} not found`);
     }
+
+    const executionResult = await this.aiAgentExecutorService.executeAgent({
+      agent,
+      userPrompt: data.input,
+    });
+
+    await this.agentChatService.addMessage({
+      threadId: data.threadId,
+      turnId: data.turnId,
+      agentId: agent.id,
+      uiMessage: {
+        role: 'assistant',
+        parts: [
+          {
+            type: 'text',
+            text: JSON.stringify(executionResult.result) || '',
+          },
+        ],
+      },
+    });
+
+    await this.messageQueueService.add<{
+      turnId: string;
+      workspaceId: string;
+    }>(EvaluateAgentTurnJob.name, {
+      turnId: data.turnId,
+      workspaceId: data.workspaceId,
+    });
   }
 }
