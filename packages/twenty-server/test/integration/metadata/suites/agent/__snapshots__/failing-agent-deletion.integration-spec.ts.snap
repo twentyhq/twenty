@@ -68,7 +68,7 @@ exports[`Agent deletion should fail when deleting a non-existent agent 1`] = `
     "subCode": "AGENT_NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Agent edf22158-d88e-48f9-b171-a9184524c3e8 not found",
+  "message": "Agent 1ddaa284-c587-4647-bb74-b7102f258f0e not found",
   "name": "NotFoundError",
 }
 `;
