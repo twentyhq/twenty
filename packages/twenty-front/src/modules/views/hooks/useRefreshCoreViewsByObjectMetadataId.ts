@@ -49,18 +49,25 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
           )
           .getValue();
 
-        if (
-          isDeeplyEqual(coreViewsForObjectMetadataId, result.data.getCoreViews)
-        ) {
+        const coreViewsFromResult = result.data.getCoreViews.map(
+          (coreView) => ({
+            ...coreView,
+            viewGroups: coreView.viewGroups.map((viewGroup) => ({
+              ...viewGroup,
+            })),
+          }),
+        );
+
+        if (isDeeplyEqual(coreViewsForObjectMetadataId, coreViewsFromResult)) {
           return;
         }
 
         set(
           coreViewsByObjectMetadataIdFamilySelector(objectMetadataId),
-          result.data.getCoreViews,
+          coreViewsFromResult,
         );
 
-        for (const coreView of result.data.getCoreViews) {
+        for (const coreView of coreViewsFromResult) {
           const existingView = coreViewsForObjectMetadataId.find(
             (coreViewForObjectMetadata) =>
               coreViewForObjectMetadata.id === coreView.id,

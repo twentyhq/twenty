@@ -59,7 +59,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
         }),
         this.viewGroupRepository.find({
           where: { workspaceId },
-          select: ['id', 'fieldMetadataId'],
+          select: ['id'],
           withDeleted: true,
         }),
         this.viewRepository.find({
@@ -77,7 +77,6 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
     const [
       viewFieldsByFieldId,
       viewFiltersByFieldId,
-      viewGroupsByFieldId,
       calendarViewsByFieldId,
       kanbanViewsByFieldId,
       mainGroupByFieldMetadataViewsByFieldId,
@@ -117,7 +116,6 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
         ...fieldMetadataEntity,
         viewFields: viewFieldsByFieldId.get(fieldMetadataEntity.id) || [],
         viewFilters: viewFiltersByFieldId.get(fieldMetadataEntity.id) || [],
-        viewGroups: viewGroupsByFieldId.get(fieldMetadataEntity.id) || [],
         kanbanAggregateOperationViews:
           kanbanViewsByFieldId.get(fieldMetadataEntity.id) || [],
         calendarViews: calendarViewsByFieldId.get(fieldMetadataEntity.id) || [],

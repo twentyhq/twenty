@@ -56,7 +56,6 @@ export class FlatViewGroupValidatorService {
     validationResult.flatEntityMinimalInformation = {
       id: updatedFlatViewGroup.id,
       viewId: updatedFlatViewGroup.viewId,
-      fieldMetadataId: updatedFlatViewGroup.fieldMetadataId,
     };
 
     const flatView = findFlatEntityByIdInFlatEntityMaps({
@@ -69,19 +68,6 @@ export class FlatViewGroupValidatorService {
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`View group to update parent view not found`,
         userFriendlyMessage: msg`View group to update parent view not found`,
-      });
-    }
-
-    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: updatedFlatViewGroup.fieldMetadataId,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
-
-    if (!isDefined(flatFieldMetadata)) {
-      validationResult.errors.push({
-        code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View group to update parent field not found`,
-        userFriendlyMessage: msg`View group to update parent field not found`,
       });
     }
 
@@ -122,7 +108,6 @@ export class FlatViewGroupValidatorService {
     flatEntityToValidate: flatViewGroupToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewGroupMaps: optimisticFlatViewGroupMaps,
-      flatFieldMetadataMaps,
       flatViewMaps,
     },
   }: FlatEntityValidationArgs<
@@ -134,7 +119,6 @@ export class FlatViewGroupValidatorService {
       flatEntityMinimalInformation: {
         id: flatViewGroupToValidate.id,
         viewId: flatViewGroupToValidate.viewId,
-        fieldMetadataId: flatViewGroupToValidate.fieldMetadataId,
       },
     };
 
@@ -148,19 +132,6 @@ export class FlatViewGroupValidatorService {
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`View group metadata with id ${flatViewGroupId} already exists`,
         userFriendlyMessage: msg`View group metadata already exists`,
-      });
-    }
-
-    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatViewGroupToValidate.fieldMetadataId,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
-
-    if (!isDefined(flatFieldMetadata)) {
-      validationResult.errors.push({
-        code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`Field metadata not found`,
-        userFriendlyMessage: msg`Field metadata not found`,
       });
     }
 

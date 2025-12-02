@@ -32,9 +32,13 @@ export const usePersistViewGroupRecords = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const createViewGroups = useCallback(
-    async (
-      createCoreViewGroupInputs: CreateManyCoreViewGroupsMutationVariables,
-    ): Promise<
+    async ({
+      createCoreViewGroupInputs,
+      mainGroupByFieldMetadataId,
+    }: {
+      createCoreViewGroupInputs: CreateManyCoreViewGroupsMutationVariables;
+      mainGroupByFieldMetadataId: string;
+    }): Promise<
       MetadataRequestResult<Awaited<
         ReturnType<typeof createManyCoreViewGroupsMutation>
       > | null>
@@ -58,8 +62,15 @@ export const usePersistViewGroupRecords = () => {
               return;
             }
 
+            const createdViewGroupsWithFieldMetadataId = createdViewGroups.map(
+              (createdViewGroup) => ({
+                ...createdViewGroup,
+                fieldMetadataId: mainGroupByFieldMetadataId,
+              }),
+            );
+
             triggerViewGroupOptimisticEffect({
-              createdViewGroups,
+              createdViewGroups: createdViewGroupsWithFieldMetadataId,
             });
           },
         });
@@ -118,7 +129,12 @@ export const usePersistViewGroupRecords = () => {
                 }
 
                 triggerViewGroupOptimisticEffect({
-                  updatedViewGroups: [updatedViewGroup],
+                  updatedViewGroups: [
+                    {
+                      ...updatedViewGroup,
+                      fieldMetadataId: variables.input.update.fieldMetadataId,
+                    },
+                  ],
                 });
               },
             }),

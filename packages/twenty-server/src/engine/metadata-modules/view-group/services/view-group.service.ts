@@ -92,12 +92,25 @@ export class ViewGroupService {
     );
 
     const flatViewGroupsToCreate = createViewGroupInputs.map(
-      (createViewGroupInput) =>
-        fromCreateViewGroupInputToFlatViewGroupToCreate({
+      (createViewGroupInput) => {
+        const mainGroupByFieldMetadataId =
+          flatViewMaps.byId[createViewGroupInput.viewId]
+            ?.mainGroupByFieldMetadataId;
+
+        if (!isDefined(mainGroupByFieldMetadataId)) {
+          throw new ViewGroupException(
+            'Main group by field metadata id is required',
+            ViewGroupExceptionCode.MISSING_MAIN_GROUP_BY_FIELD_METADATA_ID,
+          );
+        }
+
+        return fromCreateViewGroupInputToFlatViewGroupToCreate({
           createViewGroupInput,
           workspaceId,
           workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
-        }),
+          mainGroupByFieldMetadataId,
+        });
+      },
     );
 
     const validateAndBuildResult =

@@ -6,10 +6,15 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { type CoreViewGroup } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+
+type CoreViewGroupWithFieldMetadataId = CoreViewGroup & {
+  fieldMetadataId: string;
+};
+
 type UpdatedDeletedCoreViewGroup = {
-  createdViewGroups?: Omit<CoreViewGroup, 'workspaceId'>[];
-  updatedViewGroups?: Omit<CoreViewGroup, 'workspaceId'>[];
-  deletedViewGroups?: Pick<CoreViewGroup, 'id' | 'viewId'>[];
+  createdViewGroups?: Omit<CoreViewGroupWithFieldMetadataId, 'workspaceId'>[];
+  updatedViewGroups?: Omit<CoreViewGroupWithFieldMetadataId, 'workspaceId'>[];
+  deletedViewGroups?: Pick<CoreViewGroupWithFieldMetadataId, 'id' | 'viewId'>[];
 };
 export const useTriggerViewGroupOptimisticEffect = () => {
   const apolloClient = useApolloClient();

@@ -182,7 +182,10 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         }
 
         if (type === ViewType.Kanban) {
-          if (!isDefined(mainGroupByFieldMetadataId)) {
+          if (
+            !isDefined(mainGroupByFieldMetadataId) ||
+            mainGroupByFieldMetadataId === ''
+          ) {
             throw new Error('Kanban view must have a kanban field');
           }
 
@@ -194,7 +197,6 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
                   ({
                     id: v4(),
                     __typename: 'ViewGroup',
-                    fieldMetadataId: mainGroupByFieldMetadataId,
                     fieldValue: option.value,
                     isVisible: true,
                     position: index,
@@ -207,14 +209,18 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             fieldValue: '',
             position: viewGroupsToCreate.length,
             isVisible: true,
-            fieldMetadataId: mainGroupByFieldMetadataId,
           } satisfies ViewGroup);
 
           const groupResult = await createViewGroups({
-            inputs: viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
-              ...viewGroup,
-              viewId: newViewId,
-            })),
+            createCoreViewGroupInputs: {
+              inputs: viewGroupsToCreate.map(
+                ({ __typename, ...viewGroup }) => ({
+                  ...viewGroup,
+                  viewId: newViewId,
+                }),
+              ),
+            },
+            mainGroupByFieldMetadataId,
           });
 
           if (groupResult.status === 'failed') {

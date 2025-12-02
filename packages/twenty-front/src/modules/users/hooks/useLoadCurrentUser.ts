@@ -135,7 +135,14 @@ export const useLoadCurrentUser = () => {
     }
 
     if (isDefined(coreViewsResult.data?.getCoreViews)) {
-      setCoreViews(coreViewsResult.data.getCoreViews);
+      const views = coreViewsResult.data.getCoreViews.map((coreView) => ({
+        ...coreView,
+        viewGroups: coreView.viewGroups.map((viewGroup) => ({
+          ...viewGroup,
+        })),
+      }));
+
+      setCoreViews(views);
     }
 
     return {
