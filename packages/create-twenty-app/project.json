@@ -18,7 +18,11 @@
       "cache": true,
       "options": {
         "cwd": "packages/create-twenty-app",
-        "commands": ["mkdir -p dist/constants/base-application && cp -R src/constants/base-application dist/constants"]
+        "commands": [
+          "mkdir -p dist/constants/base-application",
+          "cp -R src/constants/base-application dist/constants",
+          "cp -R ../../.yarn/releases dist/constants/base-application/.yarn"
+        ]
       },
       "dependsOn": ["before-build"]
     },
