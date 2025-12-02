@@ -78,6 +78,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
       viewFiltersByFieldId,
       viewGroupsByFieldId,
       calendarViewsByFieldId,
+      mainGroupByFieldMetadataViewsByFieldId,
       kanbanViewsByFieldId,
     ] = (
       [
@@ -101,6 +102,10 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
           entities: views,
           foreignKey: 'kanbanAggregateOperationFieldMetadataId',
         },
+        {
+          entities: views,
+          foreignKey: 'mainGroupByFieldMetadataId',
+        },
       ] as const
     ).map(regroupEntitiesByRelatedEntityId);
 
@@ -115,6 +120,9 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
         kanbanAggregateOperationViews:
           kanbanViewsByFieldId.get(fieldMetadataEntity.id) || [],
         calendarViews: calendarViewsByFieldId.get(fieldMetadataEntity.id) || [],
+        mainGroupByFieldMetadataViews:
+          mainGroupByFieldMetadataViewsByFieldId.get(fieldMetadataEntity.id) ||
+          [],
       } as FieldMetadataEntity);
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
