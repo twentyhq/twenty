@@ -5,6 +5,7 @@ exports[`updateOne FieldMetadataService morph relation fields v2 - Add one targe
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -82,6 +83,7 @@ exports[`updateOne FieldMetadataService morph relation fields v2 - Add one targe
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
@@ -109,6 +111,7 @@ exports[`updateOne FieldMetadataService morph relation fields v2 - Add one targe
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -174,6 +177,7 @@ exports[`updateOne FieldMetadataService morph relation fields v2 - Add one targe
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
