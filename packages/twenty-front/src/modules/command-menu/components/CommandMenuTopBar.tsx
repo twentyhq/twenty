@@ -105,7 +105,8 @@ export const CommandMenuTopBar = () => {
   const { contextChips } = useCommandMenuContextChips();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { removeFocusItemFromFocusStackById } = useRemoveFocusItemFromFocusStackById();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const handleInputFocus = () => {
     pushFocusItemToFocusStack({

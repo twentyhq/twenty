@@ -152,7 +152,9 @@ export const LimitedPermissions: Story = {
 export const MatchingNavigate: Story = {
   play: async () => {
     const canvas = within(document.body);
-    const searchInput = await canvas.findByTestId(COMMAND_MENU_SEARCH_INPUT_FOCUS_ID);
+    const searchInput = await canvas.findByTestId(
+      COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
+    );
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'ta');
     expect(await canvas.findByText('Go to Tasks')).toBeVisible();
@@ -162,7 +164,9 @@ export const MatchingNavigate: Story = {
 export const MatchingNavigateShortcuts: Story = {
   play: async () => {
     const canvas = within(document.body);
-    const searchInput = await canvas.findByTestId(COMMAND_MENU_SEARCH_INPUT_FOCUS_ID);
+    const searchInput = await canvas.findByTestId(
+      COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
+    );
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'gp');
     expect(await canvas.findByText('Go to People')).toBeVisible();
@@ -187,7 +191,9 @@ export const MatchingNavigateShortcuts: Story = {
 export const NoResultsSearchFallback: Story = {
   play: async () => {
     const canvas = within(document.body);
-    const searchInput = await canvas.findByTestId(COMMAND_MENU_SEARCH_INPUT_FOCUS_ID);
+    const searchInput = await canvas.findByTestId(
+      COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
+    );
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'input without results');
     expect(await canvas.findByText('No results found')).toBeVisible();
