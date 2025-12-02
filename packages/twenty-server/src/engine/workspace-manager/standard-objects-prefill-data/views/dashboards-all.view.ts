@@ -8,8 +8,8 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 import { ViewOpenRecordInType } from 'src/engine/metadata-modules/view/types/view-open-record-in-type.type';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import {
-  BASE_OBJECT_STANDARD_FIELD_IDS,
-  DASHBOARD_STANDARD_FIELD_IDS,
+    BASE_OBJECT_STANDARD_FIELD_IDS,
+    DASHBOARD_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 export const dashboardsAllView = ({
@@ -42,7 +42,6 @@ export const dashboardsAllView = ({
     key: 'INDEX',
     position: 0,
     icon: 'IconLayoutDashboard',
-    kanbanFieldMetadataId: '',
     openRecordIn: ViewOpenRecordInType.RECORD_PAGE,
     filters: [],
     fields: [
