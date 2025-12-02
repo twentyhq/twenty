@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 
 import { useContext, useRef } from 'react';
 
-import { RecordBoardClickOutsideEffect } from '@/object-record/record-board/components/RecordBoardClickOutsideEffect';
 import { RecordBoardColumns } from '@/object-record/record-board/components/RecordBoardColumns';
 import { RecordBoardDragDropContext } from '@/object-record/record-board/components/RecordBoardDragDropContext';
 import { RecordBoardDragSelect } from '@/object-record/record-board/components/RecordBoardDragSelect';
@@ -56,7 +55,6 @@ export const RecordBoard = () => {
           </StyledBoardContentContainer>
         </StyledContainerContainer>
       </ScrollWrapper>
-      <RecordBoardClickOutsideEffect />
     </>
   );
 };

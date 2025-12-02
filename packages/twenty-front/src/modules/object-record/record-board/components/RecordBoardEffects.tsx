@@ -1,3 +1,4 @@
+import { RecordBoardClickOutsideEffect } from '@/object-record/record-board/components/RecordBoardClickOutsideEffect';
 import { RecordBoardQueryEffect } from '@/object-record/record-board/components/RecordBoardQueryEffect';
 import { RecordBoardScrollToFocusedCardEffect } from '@/object-record/record-board/components/RecordBoardScrollToFocusedCardEffect';
 import { RecordBoardSelectRecordsEffect } from '@/object-record/record-board/components/RecordBoardSelectRecordsEffect';
@@ -12,6 +13,7 @@ export const RecordBoardEffects = () => {
       <RecordBoardDeactivateBoardCardEffect />
       <RecordBoardQueryEffect />
       <RecordBoardSelectRecordsEffect />
+      <RecordBoardClickOutsideEffect />
     </>
   );
 };
