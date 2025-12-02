@@ -48,11 +48,11 @@ export const generateGroupByQueryVariablesFromPieChartConfiguration = ({
 
   const isFieldDate = isFieldMetadataDateKind(groupByField.type);
 
-  const isNestedDate = isRelationNestedFieldDateKind(
-    groupByField,
-    groupBySubFieldName,
+  const isNestedDate = isRelationNestedFieldDateKind({
+    relationField: groupByField,
+    relationNestedFieldName: groupBySubFieldName,
     objectMetadataItems,
-  );
+  });
 
   const shouldApplyDateGranularity = isFieldDate || isNestedDate;
 

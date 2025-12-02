@@ -19,25 +19,30 @@ describe('isRelationNestedFieldDateKind', () => {
   } as any;
 
   it('returns true for a relation subfield that is a date type', () => {
-    const result = isRelationNestedFieldDateKind(relationField, 'createdAt', [
-      companyObject,
-    ]);
-
+    const result = isRelationNestedFieldDateKind({
+      relationField: relationField,
+      relationNestedFieldName: 'createdAt',
+      objectMetadataItems: [companyObject],
+    });
     expect(result).toBe(true);
   });
 
   it('returns false when the nested subfield is not a date type', () => {
-    const result = isRelationNestedFieldDateKind(relationField, 'name', [
-      companyObject,
-    ]);
+    const result = isRelationNestedFieldDateKind({
+      relationField: relationField,
+      relationNestedFieldName: 'name',
+      objectMetadataItems: [companyObject],
+    });
 
     expect(result).toBe(false);
   });
 
   it('returns false when subFieldName is missing', () => {
-    const result = isRelationNestedFieldDateKind(relationField, undefined, [
-      companyObject,
-    ]);
+    const result = isRelationNestedFieldDateKind({
+      relationField: relationField,
+      relationNestedFieldName: undefined as string | undefined,
+      objectMetadataItems: [companyObject],
+    });
 
     expect(result).toBe(false);
   });
@@ -48,11 +53,11 @@ describe('isRelationNestedFieldDateKind', () => {
       type: FieldMetadataType.TEXT,
     } as any;
 
-    const result = isRelationNestedFieldDateKind(
-      nonRelationField,
-      'createdAt',
-      [companyObject],
-    );
+    const result = isRelationNestedFieldDateKind({
+      relationField: nonRelationField,
+      relationNestedFieldName: 'createdAt',
+      objectMetadataItems: [companyObject],
+    });
 
     expect(result).toBe(false);
   });

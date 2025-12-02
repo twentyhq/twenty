@@ -26,7 +26,11 @@ const shouldHideDateGranularityBasedOnFieldType = (
   }
 
   if (isFieldRelation(field) && isDefined(subFieldName)) {
-    return !isRelationNestedFieldDateKind(field, subFieldName, objectMetadataItems);
+    return !isRelationNestedFieldDateKind({
+      relationField: field,
+      relationNestedFieldName: subFieldName,
+      objectMetadataItems: objectMetadataItems ?? [],
+    });
   }
 
   return !isFieldMetadataDateKind(field.type);

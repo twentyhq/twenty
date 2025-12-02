@@ -61,11 +61,11 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
 
   const isFieldXDate = isFieldMetadataDateKind(groupByFieldX.type);
 
-  const isFieldXNestedDate = isRelationNestedFieldDateKind(
-    groupByFieldX,
-    groupBySubFieldNameX,
+  const isFieldXNestedDate = isRelationNestedFieldDateKind({
+    relationField: groupByFieldX,
+    relationNestedFieldName: groupBySubFieldNameX,
     objectMetadataItems,
-  );
+  });
 
   const shouldApplyDateGranularityX = isFieldXDate || isFieldXNestedDate;
 
@@ -87,11 +87,11 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
   if (isDefined(groupByFieldY)) {
     const isFieldYDate = isFieldMetadataDateKind(groupByFieldY.type);
 
-    const isFieldYNestedDate = isRelationNestedFieldDateKind(
-      groupByFieldY,
-      groupBySubFieldNameY,
+    const isFieldYNestedDate = isRelationNestedFieldDateKind({
+      relationField: groupByFieldY,
+      relationNestedFieldName: groupBySubFieldNameY,
       objectMetadataItems,
-    );
+    });
 
     const shouldApplyDateGranularityY = isFieldYDate || isFieldYNestedDate;
 
@@ -137,11 +137,11 @@ export const generateGroupByQueryVariablesFromBarOrLineChartConfiguration = ({
   ) {
     const isFieldYDateForOrderBy = isFieldMetadataDateKind(groupByFieldY.type);
 
-    const isFieldYNestedDateForOrderBy = isRelationNestedFieldDateKind(
-      groupByFieldY,
-      groupBySubFieldNameY,
+    const isFieldYNestedDateForOrderBy = isRelationNestedFieldDateKind({
+      relationField: groupByFieldY,
+      relationNestedFieldName: groupBySubFieldNameY,
       objectMetadataItems,
-    );
+    });
 
     const shouldApplyDateGranularityYForOrderBy =
       isFieldYDateForOrderBy || isFieldYNestedDateForOrderBy;
