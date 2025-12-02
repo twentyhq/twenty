@@ -8,7 +8,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { WORKSPACE_CACHE_KEY } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const WORKSPACE_ID = '20202020-0000-0000-0000-000000000000';
+const WORKSPACE_ID = '20202020-0000-4000-8000-000000000000';
 
 class MockFeatureFlagsCacheProvider extends WorkspaceCacheProvider<{
   testData: string;
@@ -259,8 +259,8 @@ describe('WorkspaceCacheService', () => {
       await service.invalidateAndRecompute(WORKSPACE_ID, ['featureFlagsMap']);
 
       expect(cacheStorageService.mdel).toHaveBeenCalledWith([
-        'feature-flag:feature-flags-map:20202020-0000-0000-0000-000000000000:data',
-        'feature-flag:feature-flags-map:20202020-0000-0000-0000-000000000000:hash',
+        'feature-flag:feature-flags-map:20202020-0000-4000-8000-000000000000:data',
+        'feature-flag:feature-flags-map:20202020-0000-4000-8000-000000000000:hash',
       ]);
       expect(mockProvider.computeForCache).toHaveBeenCalledWith(WORKSPACE_ID);
       expect(cacheStorageService.mset).toHaveBeenCalled();
@@ -306,10 +306,10 @@ describe('WorkspaceCacheService', () => {
 
       expect(cacheStorageService.mdel).toHaveBeenCalledWith(
         expect.arrayContaining([
-          'feature-flag:feature-flags-map:20202020-0000-0000-0000-000000000000:data',
-          'feature-flag:feature-flags-map:20202020-0000-0000-0000-000000000000:hash',
-          'metadata:permissions:roles-permissions:20202020-0000-0000-0000-000000000000:data',
-          'metadata:permissions:roles-permissions:20202020-0000-0000-0000-000000000000:hash',
+          'feature-flag:feature-flags-map:20202020-0000-4000-8000-000000000000:data',
+          'feature-flag:feature-flags-map:20202020-0000-4000-8000-000000000000:hash',
+          'metadata:permissions:roles-permissions:20202020-0000-4000-8000-000000000000:data',
+          'metadata:permissions:roles-permissions:20202020-0000-4000-8000-000000000000:hash',
         ]),
       );
     });
@@ -322,8 +322,8 @@ describe('WorkspaceCacheService', () => {
       await service.flush(WORKSPACE_ID, ['featureFlagsMap']);
 
       expect(cacheStorageService.mdel).toHaveBeenCalledWith([
-        'feature-flag:feature-flags-map:20202020-0000-0000-0000-000000000000:data',
-        'feature-flag:feature-flags-map:20202020-0000-0000-0000-000000000000:hash',
+        'feature-flag:feature-flags-map:20202020-0000-4000-8000-000000000000:data',
+        'feature-flag:feature-flags-map:20202020-0000-4000-8000-000000000000:hash',
       ]);
     });
 
