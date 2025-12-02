@@ -1,17 +1,17 @@
 import { plainToInstance } from 'class-transformer';
 import {
-    IsEnum,
-    IsString,
-    IsUUID,
-    validateOrReject,
-    type ValidationError,
+  IsEnum,
+  IsString,
+  IsUUID,
+  validateOrReject,
+  type ValidationError,
 } from 'class-validator';
+import { RelationType } from 'twenty-shared/types';
 
 import {
-    FieldMetadataException,
-    FieldMetadataExceptionCode,
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { RelationType } from 'twenty-shared/types';
 
 class RelationCreationPayloadValidation {
   @IsUUID()

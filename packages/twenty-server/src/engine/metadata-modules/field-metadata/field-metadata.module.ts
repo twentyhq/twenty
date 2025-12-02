@@ -31,10 +31,10 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
+import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
-import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
 import { CreateFieldInput } from './dtos/create-field.input';
 import { UpdateFieldInput } from './dtos/update-field.input';
 
@@ -66,9 +66,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         IndexMetadataModule,
         WorkspaceManyOrAllFlatEntityMapsCacheModule,
       ],
-      services: [
-        FieldMetadataService,
-      ],
+      services: [FieldMetadataService],
       resolvers: [
         {
           EntityClass: FieldMetadataEntity,
@@ -93,12 +91,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
       ],
     }),
   ],
-  providers: [
-    FieldMetadataService,
-    FieldMetadataResolver,
-  ],
-  exports: [
-    FieldMetadataService,
-  ],
+  providers: [FieldMetadataService, FieldMetadataResolver],
+  exports: [FieldMetadataService],
 })
 export class FieldMetadataModule {}
