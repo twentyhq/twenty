@@ -20,7 +20,6 @@ jobs:
     with:
       files: |
         packages/create-twenty-app/**
-        packages/twenty-server/**
   create-app-test:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
