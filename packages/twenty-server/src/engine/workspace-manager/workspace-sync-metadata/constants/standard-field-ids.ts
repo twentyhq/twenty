@@ -416,6 +416,7 @@ export const VIEW_STANDARD_FIELD_IDS = {
   kanbanAggregateOperation: '20202020-8da2-45de-a731-61bed84b17a8',
   kanbanAggregateOperationFieldMetadataId:
     '20202020-b1b3-4bf3-85e4-dc7d58aa9b02',
+  mainGroupByFieldMetadataId: '20202020-f782-4f89-96eb-083a02cca887',
   position: '20202020-e9db-4303-b271-e8250c450172',
   isCompact: '20202020-674e-4314-994d-05754ea7b22b',
   openRecordIn: '20202020-086d-4eef-9f03-56c6392eacb8',

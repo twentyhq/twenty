@@ -113,13 +113,10 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
         >
           {currentView?.key !== 'INDEX' && (
             <>
-              <SelectableListItem
-                itemId="GroupBy"
-                onEnter={() => onContentChange('recordGroupFields')}
-              >
+              <SelectableListItem itemId="GroupBy">
                 <MenuItem
                   focused={selectedItemId === 'GroupBy'}
-                  onClick={() => onContentChange('recordGroupFields')}
+                  disabled
                   LeftIcon={IconLayoutList}
                   text={t`Group by`}
                   contextualText={recordGroupFieldMetadata?.label}

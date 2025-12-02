@@ -94,6 +94,7 @@ describe('WorkspaceRepository', () => {
       viewGroupIds: [],
       kanbanAggregateOperationViewIds: [],
       viewFieldIds: [],
+      mainGroupByFieldMetadataViewIds: [],
     };
 
     mockInternalContext = {

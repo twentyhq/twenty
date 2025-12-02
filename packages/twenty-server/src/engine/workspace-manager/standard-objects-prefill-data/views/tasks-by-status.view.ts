@@ -41,7 +41,7 @@ export const tasksByStatusView = ({
     key: null,
     position: 1,
     icon: 'IconLayoutKanban',
-    kanbanFieldMetadataId:
+    mainGroupByFieldMetadataId:
       taskObjectMetadata.fields.find(
         (field) => field.standardId === TASK_STANDARD_FIELD_IDS.status,
       )?.id ?? '',
