@@ -106,7 +106,12 @@ export const transformOneDimensionalGroupByToBarChartData = ({
   ];
 
   const finalData = configuration.isCumulative
-    ? applyCumulativeTransformToBarChartData(data, aggregateValueKey)
+    ? applyCumulativeTransformToBarChartData({
+        data,
+        aggregateKey: aggregateValueKey,
+        rangeMin: configuration.rangeMin ?? undefined,
+        rangeMax: configuration.rangeMax ?? undefined,
+      })
     : data;
 
   return {

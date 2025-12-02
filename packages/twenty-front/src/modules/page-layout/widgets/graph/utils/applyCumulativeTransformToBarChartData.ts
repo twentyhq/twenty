@@ -1,18 +1,41 @@
 import { type BarDatum } from '@nivo/bar';
+import { isDefined } from 'twenty-shared/utils';
 
-export const applyCumulativeTransformToBarChartData = (
-  data: BarDatum[],
-  aggregateKey: string,
-): BarDatum[] => {
-  let runningTotal = 0;
+type ApplyCumulativeTransformToBarChartDataOptions = {
+  data: BarDatum[];
+  aggregateKey: string;
+  rangeMin?: number;
+  rangeMax?: number;
+};
 
-  return data.map((datum) => {
-    const value = datum[aggregateKey];
+export const applyCumulativeTransformToBarChartData = ({
+  data,
+  aggregateKey,
+  rangeMin,
+  rangeMax,
+}: ApplyCumulativeTransformToBarChartDataOptions): BarDatum[] => {
+  const { result } = data.reduce<{ result: BarDatum[]; runningTotal: number }>(
+    (accumulator, datum) => {
+      const value = datum[aggregateKey];
 
-    if (typeof value === 'number') {
-      runningTotal += value;
-    }
+      if (typeof value === 'number') {
+        accumulator.runningTotal += value;
+      }
 
-    return { ...datum, [aggregateKey]: runningTotal };
-  });
+      const cumulativeValue = accumulator.runningTotal;
+
+      const isOutOfRange =
+        (isDefined(rangeMin) && cumulativeValue < rangeMin) ||
+        (isDefined(rangeMax) && cumulativeValue > rangeMax);
+
+      if (!isOutOfRange) {
+        accumulator.result.push({ ...datum, [aggregateKey]: cumulativeValue });
+      }
+
+      return accumulator;
+    },
+    { result: [], runningTotal: 0 },
+  );
+
+  return result;
 };

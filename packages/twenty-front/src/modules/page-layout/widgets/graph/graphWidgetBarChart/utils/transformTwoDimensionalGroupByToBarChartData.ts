@@ -163,7 +163,12 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     : unsortedData;
 
   const finalData = configuration.isCumulative
-    ? applyCumulativeTransformToTwoDimensionalBarChartData(sortedData, keys)
+    ? applyCumulativeTransformToTwoDimensionalBarChartData({
+        data: sortedData,
+        keys,
+        rangeMin: configuration.rangeMin ?? undefined,
+        rangeMax: configuration.rangeMax ?? undefined,
+      })
     : sortedData;
 
   return {

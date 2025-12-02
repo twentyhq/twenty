@@ -1,26 +1,56 @@
 import { type BarDatum } from '@nivo/bar';
+import { isDefined } from 'twenty-shared/utils';
 
-export const applyCumulativeTransformToTwoDimensionalBarChartData = (
-  data: BarDatum[],
-  keys: string[],
-): BarDatum[] => {
-  const runningTotals: Record<string, number> = Object.fromEntries(
-    keys.map((key) => [key, 0]),
-  );
+type ApplyCumulativeTransformToTwoDimensionalBarChartDataOptions = {
+  data: BarDatum[];
+  keys: string[];
+  rangeMin?: number;
+  rangeMax?: number;
+};
 
-  return data.map((datum) => {
-    const newDatum = { ...datum };
+export const applyCumulativeTransformToTwoDimensionalBarChartData = ({
+  data,
+  keys,
+  rangeMin,
+  rangeMax,
+}: ApplyCumulativeTransformToTwoDimensionalBarChartDataOptions): BarDatum[] => {
+  const { result } = data.reduce<{
+    result: BarDatum[];
+    runningTotals: Record<string, number>;
+  }>(
+    (accumulator, datum) => {
+      const newDatum = { ...datum };
 
-    for (const key of keys) {
-      const value = datum[key];
+      for (const key of keys) {
+        const value = datum[key];
 
-      if (typeof value === 'number') {
-        runningTotals[key] += value;
+        if (typeof value === 'number') {
+          accumulator.runningTotals[key] += value;
+        }
+
+        newDatum[key] = accumulator.runningTotals[key];
       }
 
-      newDatum[key] = runningTotals[key];
-    }
+      const totalValue = keys.reduce((sum, key) => {
+        const value = newDatum[key];
+        return sum + (typeof value === 'number' ? value : 0);
+      }, 0);
 
-    return newDatum;
-  });
+      const isOutOfRange =
+        (isDefined(rangeMin) && totalValue < rangeMin) ||
+        (isDefined(rangeMax) && totalValue > rangeMax);
+
+      if (!isOutOfRange) {
+        accumulator.result.push(newDatum);
+      }
+
+      return accumulator;
+    },
+    {
+      result: [],
+      runningTotals: Object.fromEntries(keys.map((key) => [key, 0])),
+    },
+  );
+
+  return result;
 };

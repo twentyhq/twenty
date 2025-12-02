@@ -119,7 +119,11 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
       }));
 
       const transformedData = configuration.isCumulative
-        ? applyCumulativeTransformToLineChartData(data)
+        ? applyCumulativeTransformToLineChartData({
+            data,
+            rangeMin: configuration.rangeMin ?? undefined,
+            rangeMax: configuration.rangeMax ?? undefined,
+          })
         : data;
 
       return {
