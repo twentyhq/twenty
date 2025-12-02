@@ -7,7 +7,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceFeatureFlagsMapCacheModule } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.module';
-import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entity-schema-column.factory';
 import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
@@ -24,7 +23,6 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
     DataSourceModule,
     WorkspaceCacheStorageModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
-    WorkspacePermissionsCacheModule,
     WorkspaceFeatureFlagsMapCacheModule,
     FeatureFlagModule,
     TwentyConfigModule,

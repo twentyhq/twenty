@@ -16,7 +16,6 @@ import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permi
 import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-target.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
-import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -45,7 +44,6 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     WorkspaceSyncMetadataModule,
     TypeOrmModule.forFeature([WorkspaceEntity, ObjectMetadataEntity]),
     ObjectPermissionModule,
-    WorkspacePermissionsCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceCacheModule,
   ],

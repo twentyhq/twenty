@@ -11,7 +11,7 @@ import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.serv
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 
 // Mock the guards and decorators
 jest.mock('../../../../../src/engine/guards/feature-flag.guard', () => ({
@@ -54,7 +54,7 @@ describe('agentResolver', () => {
           },
         },
         {
-          provide: getRepositoryToken(RoleTargetsEntity),
+          provide: getRepositoryToken(RoleTargetEntity),
           useValue: {
             findOne: jest.fn(),
           },
