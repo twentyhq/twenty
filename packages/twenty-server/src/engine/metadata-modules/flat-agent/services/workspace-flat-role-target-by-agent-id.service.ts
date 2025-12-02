@@ -1,20 +1,21 @@
 import { Injectable } from '@nestjs/common';
 
-import { NonNullableRequired } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
+import { InjectRepository } from '@nestjs/typeorm';
 import { FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
+import { fromRoleTargetsEntityToFlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/utils/from-role-target-entity-to-flat-role-target.util';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { NonNullableRequired } from 'twenty-shared/types';
+import { IsNull, Not, Repository } from 'typeorm';
 
 @Injectable()
 @WorkspaceCache('flatApplicationMaps')
 export class WorkspaceFlatRoleTargetByAgentIdService extends WorkspaceCacheProvider<FlatRoleTargetByAgentIdMaps> {
   constructor(
-    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    @InjectRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
   ) {
     super();
   }
@@ -22,28 +23,23 @@ export class WorkspaceFlatRoleTargetByAgentIdService extends WorkspaceCacheProvi
   async computeForCache(
     workspaceId: string,
   ): Promise<FlatRoleTargetByAgentIdMaps> {
-    const { flatRoleTargetMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRoleTargetMaps'],
-        },
-      );
-
-    const agentRelatedRoleTargets = Object.values(
-      flatRoleTargetMaps.byId,
-    ).filter(
-      (
-        flatRoleTarget,
-      ): flatRoleTarget is Omit<FlatRoleTarget, 'agentId'> &
-        NonNullableRequired<Pick<FlatRoleTarget, 'agentId'>> =>
-        isDefined(flatRoleTarget) && isDefined(flatRoleTarget.agentId),
-    );
+    const roleTargetEntities = await this.roleTargetRepository.find({
+      where: {
+        workspaceId,
+        agentId: Not(IsNull()),
+      },
+      withDeleted: true,
+    });
 
     const flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps = {};
 
-    for (const flatRoleTarget of agentRelatedRoleTargets) {
-      flatRoleTargetByAgentIdMaps[flatRoleTarget.agentId] = flatRoleTarget;
+    for (const roleTargetEntity of roleTargetEntities as Array<
+      Omit<RoleTargetEntity, 'agentId'> &
+        NonNullableRequired<Pick<RoleTargetEntity, 'agentId'>>
+    >) {
+      const flatRoleTarget =
+        fromRoleTargetsEntityToFlatRoleTarget(roleTargetEntity);
+      flatRoleTargetByAgentIdMaps[roleTargetEntity.agentId] = flatRoleTarget;
     }
 
     return flatRoleTargetByAgentIdMaps;
