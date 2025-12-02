@@ -12,7 +12,7 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 
 @Injectable()
-@WorkspaceCache('flatApplicationMaps')
+@WorkspaceCache('flatRoleTargetByAgentIdMaps')
 export class WorkspaceFlatRoleTargetByAgentIdService extends WorkspaceCacheProvider<FlatRoleTargetByAgentIdMaps> {
   constructor(
     @InjectRepository(RoleTargetEntity)
