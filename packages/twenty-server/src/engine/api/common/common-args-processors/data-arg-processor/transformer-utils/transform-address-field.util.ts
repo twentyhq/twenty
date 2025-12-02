@@ -14,7 +14,6 @@ export const transformAddressField = (
     addressLat?: number | null;
     addressLng?: number | null;
   } | null,
-  isNullEquivalenceEnabled: boolean = false,
 ): {
   addressStreet1?: string | null;
   addressStreet2?: string | null;
@@ -30,22 +29,22 @@ export const transformAddressField = (
   return {
     addressStreet1: isUndefined(value.addressStreet1)
       ? undefined
-      : transformTextField(value.addressStreet1, isNullEquivalenceEnabled),
+      : transformTextField(value.addressStreet1),
     addressStreet2: isUndefined(value.addressStreet2)
       ? undefined
-      : transformTextField(value.addressStreet2, isNullEquivalenceEnabled),
+      : transformTextField(value.addressStreet2),
     addressCity: isUndefined(value.addressCity)
       ? undefined
-      : transformTextField(value.addressCity, isNullEquivalenceEnabled),
+      : transformTextField(value.addressCity),
     addressState: isUndefined(value.addressState)
       ? undefined
-      : transformTextField(value.addressState, isNullEquivalenceEnabled),
+      : transformTextField(value.addressState),
     addressPostcode: isUndefined(value.addressPostcode)
       ? undefined
-      : transformTextField(value.addressPostcode, isNullEquivalenceEnabled),
+      : transformTextField(value.addressPostcode),
     addressCountry: isUndefined(value.addressCountry)
       ? undefined
-      : transformTextField(value.addressCountry, isNullEquivalenceEnabled),
+      : transformTextField(value.addressCountry),
     addressLat: isUndefined(value.addressLat)
       ? undefined
       : transformNumericField(value.addressLat),

@@ -2,7 +2,7 @@ import { transformFullNameField } from 'src/engine/api/common/common-args-proces
 
 describe('transformFullNameField', () => {
   it('should return null when value is null', () => {
-    const result = transformFullNameField(null, true);
+    const result = transformFullNameField(null);
 
     expect(result).toBeNull();
   });
@@ -12,7 +12,7 @@ describe('transformFullNameField', () => {
       firstName: 'John',
       lastName: 'Doe',
     };
-    const result = transformFullNameField(value, true);
+    const result = transformFullNameField(value);
 
     expect(result).toEqual({
       firstName: 'John',
@@ -24,7 +24,7 @@ describe('transformFullNameField', () => {
     const value = {
       lastName: '',
     };
-    const result = transformFullNameField(value, true);
+    const result = transformFullNameField(value);
 
     expect(result).toEqual({
       lastName: null,

@@ -24,4 +24,6 @@ export const CHART_CONFIGURATION_SETTING_LABELS = {
   DATE_GRANULARITY_Y: msg`Date granularity`,
   DATE_GRANULARITY: msg`Date granularity`,
   SHOW_LEGEND: msg`Legend`,
+  PREFIX: msg`Prefix`,
+  SUFFIX: msg`Suffix`,
 };

@@ -3,9 +3,6 @@ import { isNullEquivalentRawJsonFieldValue } from 'src/engine/api/common/common-
 
 export const transformRawJsonField = (
   value: object | string | null,
-  isNullEquivalenceEnabled: boolean = false,
 ): object | string | null => {
-  return isNullEquivalenceEnabled && isNullEquivalentRawJsonFieldValue(value)
-    ? null
-    : value;
+  return isNullEquivalentRawJsonFieldValue(value) ? null : value;
 };
