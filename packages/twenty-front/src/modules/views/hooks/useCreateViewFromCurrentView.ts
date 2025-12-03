@@ -13,10 +13,7 @@ import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistVi
 import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePersistViewFilterGroup';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSort';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
-import {
-  useTriggerViewGroupOptimisticEffect,
-  type CoreViewGroupWithFieldMetadataId,
-} from '@/views/optimistic-effects/hooks/useTriggerViewGroupOptimisticEffect';
+import { useTriggerViewGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewGroupOptimisticEffect';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
@@ -31,7 +28,10 @@ import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { ViewCalendarLayout } from '~/generated-metadata/graphql';
+import {
+  type CoreViewGroup,
+  ViewCalendarLayout,
+} from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
@@ -227,11 +227,10 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
                 ({
                   ...viewGroup,
                   viewId: newViewId,
-                  fieldMetadataId: mainGroupByFieldMetadataId,
                   createdAt: new Date().toISOString(),
                   updatedAt: new Date().toISOString(),
                   deletedAt: null,
-                }) as Omit<CoreViewGroupWithFieldMetadataId, 'workspaceId'>,
+                }) as Omit<CoreViewGroup, 'workspaceId'>,
             ),
           });
         }
