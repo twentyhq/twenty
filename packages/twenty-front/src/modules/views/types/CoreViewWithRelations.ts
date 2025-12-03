@@ -30,6 +30,7 @@ export type CoreViewWithRelations = {
     'workspaceId' | 'createdAt' | 'updatedAt'
   >[];
   viewSorts: CoreViewSortEssential[];
+  mainGroupByFieldMetadataId?: string | null;
   kanbanAggregateOperation?: AggregateOperations | null;
   kanbanAggregateOperationFieldMetadataId?: string | null;
   calendarFieldMetadataId?: string | null;

@@ -13,7 +13,7 @@ export const copyBaseApplicationProject = async ({
   appDescription: string;
   appDirectory: string;
 }) => {
-  await fs.copy(join(__dirname, '../constants/base-application'), appDirectory);
+  await fs.copy(join(__dirname, './constants/base-application'), appDirectory);
 
   await createPackageJson({ appName, appDirectory });
 
@@ -125,7 +125,7 @@ const createPackageJson = async ({
       auth: 'twenty auth login',
     },
     dependencies: {
-      'twenty-sdk': '0.1.0',
+      'twenty-sdk': '0.1.2',
     },
     devDependencies: {
       '@types/node': '^24.7.2',

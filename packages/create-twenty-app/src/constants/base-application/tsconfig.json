@@ -11,7 +11,7 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "allowUnreachableCode": false,
-    "strictNullChecks": true,
+    "strict": true,
     "alwaysStrict": true,
     "noImplicitAny": true,
     "strictBindCallApply": false,
@@ -22,6 +22,5 @@
     "skipDefaultLibCheck": true,
     "resolveJsonModule": true,
   },
-
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

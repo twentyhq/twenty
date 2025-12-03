@@ -77,7 +77,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           id,
           name,
           icon,
-          kanbanFieldMetadataId,
+          mainGroupByFieldMetadataId,
           calendarFieldMetadataId,
           type,
           visibility,
@@ -87,7 +87,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             | 'id'
             | 'name'
             | 'icon'
-            | 'kanbanFieldMetadataId'
+            | 'mainGroupByFieldMetadataId'
             | 'calendarFieldMetadataId'
             | 'type'
             | 'visibility'
@@ -133,6 +133,9 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               shouldCopyFiltersAndSortsAndAggregate
                 ? sourceView.kanbanAggregateOperationFieldMetadataId
                 : undefined,
+            mainGroupByFieldMetadataId: shouldCopyFiltersAndSortsAndAggregate
+              ? sourceView.mainGroupByFieldMetadataId
+              : mainGroupByFieldMetadataId,
             type: convertViewTypeToCore(viewType),
             objectMetadataId: sourceView.objectMetadataId,
             openRecordIn: convertViewOpenRecordInToCore(
@@ -179,19 +182,19 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         }
 
         if (type === ViewType.Kanban) {
-          if (!isDefined(kanbanFieldMetadataId)) {
+          if (!isDefined(mainGroupByFieldMetadataId)) {
             throw new Error('Kanban view must have a kanban field');
           }
 
           const viewGroupsToCreate =
             objectMetadataItem.fields
-              ?.find((field) => field.id === kanbanFieldMetadataId)
+              ?.find((field) => field.id === mainGroupByFieldMetadataId)
               ?.options?.map(
                 (option, index) =>
                   ({
                     id: v4(),
                     __typename: 'ViewGroup',
-                    fieldMetadataId: kanbanFieldMetadataId,
+                    fieldMetadataId: mainGroupByFieldMetadataId,
                     fieldValue: option.value,
                     isVisible: true,
                     position: index,
@@ -204,7 +207,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             fieldValue: '',
             position: viewGroupsToCreate.length,
             isVisible: true,
-            fieldMetadataId: kanbanFieldMetadataId,
+            fieldMetadataId: mainGroupByFieldMetadataId,
           } satisfies ViewGroup);
 
           const groupResult = await createViewGroups({

@@ -44,7 +44,6 @@ export const timelineActivitiesAllView = ({
     position: 0,
     icon: 'IconList',
     openRecordIn: ViewOpenRecordInType.RECORD_PAGE,
-    kanbanFieldMetadataId: '',
     filters: [],
     fields: [
       {

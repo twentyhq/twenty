@@ -3,6 +3,7 @@ import { type EntityMetadata } from 'typeorm';
 
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/services/workspace-user-workspace-role-map-cache.service';
 
@@ -26,6 +27,8 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatRoleMaps: 'flat-maps:role',
   flatRoleTargetMaps: 'flat-maps:role-target',
   ORMEntityMetadatas: 'orm:entity-metadatas',
+  flatAgentMaps: 'flat-maps:agent',
+  flatRoleTargetByAgentIdMaps: 'flat-maps:flatRoleTargetByAgentId',
 } as const satisfies Record<WorkspaceCacheKeyName, string>;
 
 type AdditionalCacheDataMap = {
@@ -35,6 +38,7 @@ type AdditionalCacheDataMap = {
   apiKeyRoleMap: Record<string, string>;
   flatApplicationMaps: FlatApplicationCacheMaps;
   ORMEntityMetadatas: EntityMetadata[];
+  flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
 };
 
 export type WorkspaceCacheDataMap = AllFlatEntityMaps & AdditionalCacheDataMap;
