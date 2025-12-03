@@ -5,6 +5,7 @@ import {
   type SliceHoverData,
 } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomCrosshairLayer';
 import { CustomPointLabelsLayer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomPointLabelsLayer';
+import { CustomStackedAreasLayer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomStackedAreasLayer';
 import { GraphLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphLineChartTooltip';
 import { LINE_CHART_MARGIN_BOTTOM } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginBottom';
 import { LINE_CHART_MARGIN_LEFT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginLeft';
@@ -40,6 +41,7 @@ import { useDebouncedCallback } from 'use-debounce';
 
 type CrosshairLayerProps = LineCustomSvgLayerProps<LineSeries>;
 type PointLabelsLayerProps = LineCustomSvgLayerProps<LineSeries>;
+type StackedAreasLayerProps = LineCustomSvgLayerProps<LineSeries>;
 
 type GraphWidgetLineChartProps = {
   data: LineChartSeries[];
@@ -104,12 +106,11 @@ export const GraphWidgetLineChart = ({
   const effectiveMinimumValue = rangeMin ?? calculatedValueRange.minimum;
   const effectiveMaximumValue = rangeMax ?? calculatedValueRange.maximum;
 
-  const { enrichedSeries, nivoData, defs, fill, colors, legendItems } =
-    useLineChartData({
-      data,
-      colorRegistry,
-      id,
-    });
+  const { enrichedSeries, nivoData, colors, legendItems } = useLineChartData({
+    data,
+    colorRegistry,
+    id,
+  });
 
   const hasClickableItems = isDefined(onSliceClick);
 
@@ -190,6 +191,17 @@ export const GraphWidgetLineChart = ({
     />
   );
 
+  const StackedAreasLayer = (layerProps: StackedAreasLayerProps) => (
+    <CustomStackedAreasLayer
+      series={layerProps.series}
+      innerHeight={layerProps.innerHeight}
+      enrichedSeries={enrichedSeries}
+      enableArea={enableArea}
+      yScale={layerProps.yScale}
+      isStacked={groupMode === 'stacked'}
+    />
+  );
+
   const axisBottomConfig = getLineChartAxisBottomConfig(
     xAxisLabel,
     chartWidth,
@@ -228,16 +240,11 @@ export const GraphWidgetLineChart = ({
           }}
           curve={'monotoneX'}
           lineWidth={1}
-          enableArea={enableArea}
-          areaBaselineValue={0}
-          areaOpacity={1}
           enablePoints={true}
           pointSize={0}
           enablePointLabel={false}
           pointBorderWidth={0}
           colors={colors}
-          defs={defs}
-          fill={fill}
           axisTop={null}
           axisRight={null}
           axisBottom={axisBottomConfig}
@@ -251,7 +258,7 @@ export const GraphWidgetLineChart = ({
             'grid',
             'markers',
             'axes',
-            'areas',
+            StackedAreasLayer,
             'lines',
             CrosshairLayer,
             'points',

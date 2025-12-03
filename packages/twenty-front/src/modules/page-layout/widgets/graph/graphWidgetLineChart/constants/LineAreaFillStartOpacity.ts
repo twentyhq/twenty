@@ -1,0 +1,1 @@
+export const LINE_AREA_FILL_START_OPACITY = 0.14;

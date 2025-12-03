@@ -1,7 +1,6 @@
 import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartEnrichedSeries';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
-import { createAreaFillDef } from '@/page-layout/widgets/graph/utils/createAreaFillDef';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { type LineSeries } from '@nivo/line';
 
@@ -18,8 +17,6 @@ export const useLineChartData = ({
 }: UseLineChartDataProps) => {
   const enrichedSeries: LineChartEnrichedSeries[] = [];
   const nivoData: LineSeries[] = [];
-  const defs: ReturnType<typeof createAreaFillDef>[] = [];
-  const fill: { match: { id: string }; id: string }[] = [];
   const colors: string[] = [];
   const legendItems: { id: string; label: string; color: string }[] = [];
 
@@ -42,11 +39,9 @@ export const useLineChartData = ({
       id: series.id,
       data: series.data.map((point) => ({ x: point.x, y: point.y })),
     });
-    defs.push(createAreaFillDef(colorScheme, areaFillId));
-    fill.push({ match: { id: series.id }, id: areaFillId });
     colors.push(colorScheme.solid);
     legendItems.push({ id: series.id, label, color: colorScheme.solid });
   }
 
-  return { enrichedSeries, nivoData, defs, fill, colors, legendItems };
+  return { enrichedSeries, nivoData, colors, legendItems };
 };
