@@ -11,7 +11,11 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
-import { WORKSPACE_CACHE_KEY } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import {
+  WORKSPACE_CACHE_KEY,
+  WORKSPACE_CACHE_OPTIONS,
+  type WorkspaceCacheOptions,
+} from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import {
   WorkspaceCacheException,
   WorkspaceCacheExceptionCode,
@@ -39,6 +43,7 @@ export class WorkspaceCacheService implements OnModuleInit {
     WorkspaceCacheKeyName,
     WorkspaceCacheProvider<CacheDataType>
   >();
+  private readonly localOnlyKeys = new Set<WorkspaceCacheKeyName>();
   private readonly memoizer = new PromiseMemoizer<
     Partial<WorkspaceCacheDataMap>
   >(MEMOIZER_TTL_MS);
@@ -70,6 +75,15 @@ export class WorkspaceCacheService implements OnModuleInit {
         instance instanceof WorkspaceCacheProvider
       ) {
         this.workspaceCacheProviders.set(workspaceCacheKeyName, instance);
+
+        const options = this.reflector.get<WorkspaceCacheOptions>(
+          WORKSPACE_CACHE_OPTIONS,
+          instance.constructor,
+        );
+
+        if (options?.localOnly) {
+          this.localOnlyKeys.add(workspaceCacheKeyName);
+        }
       }
     }
   }
@@ -146,7 +160,14 @@ export class WorkspaceCacheService implements OnModuleInit {
     workspaceId: string,
     workspaceCacheKeys: WorkspaceCacheKeyName[],
   ): Promise<void> {
-    await this.deleteFromRedis(workspaceId, workspaceCacheKeys);
+    const nonLocalOnlyKeys = workspaceCacheKeys.filter(
+      (key) => !this.localOnlyKeys.has(key),
+    );
+
+    if (nonLocalOnlyKeys.length > 0) {
+      await this.deleteFromRedis(workspaceId, nonLocalOnlyKeys);
+    }
+
     this.deleteFromLocalCache(workspaceId, workspaceCacheKeys);
   }
 
@@ -178,7 +199,7 @@ export class WorkspaceCacheService implements OnModuleInit {
     workspaceId: string,
     workspaceCacheKeys: WorkspaceCacheKeyName[],
   ): Promise<void> {
-    const computed = await this.computeAndStoreInRedis(
+    const computed = await this.computeAndStore(
       workspaceId,
       workspaceCacheKeys,
     );
@@ -219,7 +240,7 @@ export class WorkspaceCacheService implements OnModuleInit {
   ): Promise<Partial<WorkspaceCacheDataMap>> {
     const result: Partial<WorkspaceCacheDataMap> = {};
 
-    const { validFromLocal, needsRedisCheck } =
+    const { validFromLocal, needsRedisFetch, needsCompute } =
       await this.partitionKeysByLocalStaleness(workspaceId, workspaceCacheKeys);
 
     for (const workspaceCacheKeyName of validFromLocal) {
@@ -239,32 +260,29 @@ export class WorkspaceCacheService implements OnModuleInit {
       );
     }
 
-    if (needsRedisCheck.length === 0) {
-      return result;
+    let keysToCompute = [...needsCompute];
+
+    if (needsRedisFetch.length > 0) {
+      const {
+        validDataFromRedis: validFromRedis,
+        cacheKeysToRecomputeFromProviders,
+      } = await this.fetchDataFromRedis(workspaceId, needsRedisFetch);
+
+      for (const { workspaceCacheKeyName, data, hash } of validFromRedis) {
+        Object.assign(result, { [workspaceCacheKeyName]: data });
+        this.setInLocalCache(workspaceId, workspaceCacheKeyName, data, hash);
+      }
+
+      keysToCompute = [...keysToCompute, ...cacheKeysToRecomputeFromProviders];
     }
 
-    const {
-      validDataFromRedis: validFromRedis,
-      cacheKeysToRecomputeFromProviders: needsCompute,
-    } = await this.fetchDataFromRedis(workspaceId, needsRedisCheck);
+    if (keysToCompute.length > 0) {
+      const computed = await this.computeAndStore(workspaceId, keysToCompute);
 
-    for (const { workspaceCacheKeyName, data, hash } of validFromRedis) {
-      Object.assign(result, { [workspaceCacheKeyName]: data });
-      this.setInLocalCache(workspaceId, workspaceCacheKeyName, data, hash);
-    }
-
-    if (needsCompute.length === 0) {
-      return result;
-    }
-
-    const computed = await this.computeAndStoreInRedis(
-      workspaceId,
-      needsCompute,
-    );
-
-    for (const { workspaceCacheKeyName, data, hash } of computed) {
-      Object.assign(result, { [workspaceCacheKeyName]: data });
-      this.setInLocalCache(workspaceId, workspaceCacheKeyName, data, hash);
+      for (const { workspaceCacheKeyName, data, hash } of computed) {
+        Object.assign(result, { [workspaceCacheKeyName]: data });
+        this.setInLocalCache(workspaceId, workspaceCacheKeyName, data, hash);
+      }
     }
 
     return result;
@@ -275,35 +293,61 @@ export class WorkspaceCacheService implements OnModuleInit {
     workspaceCacheKeys: WorkspaceCacheKeyName[],
   ): Promise<{
     validFromLocal: WorkspaceCacheKeyName[];
-    needsRedisCheck: WorkspaceCacheKeyName[];
+    needsRedisFetch: WorkspaceCacheKeyName[];
+    needsCompute: WorkspaceCacheKeyName[];
   }> {
     const validFromLocal: WorkspaceCacheKeyName[] = [];
-    const needsRedisCheck: WorkspaceCacheKeyName[] = [];
+    const needsRedisFetch: WorkspaceCacheKeyName[] = [];
+    const needsCompute: WorkspaceCacheKeyName[] = [];
 
-    const hashKeys = workspaceCacheKeys.map(
-      (workspaceCacheKeyName) =>
-        `${this.buildCacheKey(workspaceId, workspaceCacheKeyName)}:hash`,
-    );
+    const localOnlyKeysToCheck: WorkspaceCacheKeyName[] = [];
+    const nonLocalOnlyKeys: WorkspaceCacheKeyName[] = [];
 
-    const redisHashes = await this.cacheStorage.mget<string>(hashKeys);
-
-    for (const [index, workspaceCacheKeyName] of workspaceCacheKeys.entries()) {
-      const redisHash = redisHashes[index];
-      const localKey = this.buildCacheKey(workspaceId, workspaceCacheKeyName);
-      const localEntry = this.localCache.get(localKey);
-
-      if (
-        isDefined(localEntry) &&
-        isDefined(redisHash) &&
-        localEntry.hash === redisHash
-      ) {
-        validFromLocal.push(workspaceCacheKeyName);
+    for (const key of workspaceCacheKeys) {
+      if (this.localOnlyKeys.has(key)) {
+        localOnlyKeysToCheck.push(key);
       } else {
-        needsRedisCheck.push(workspaceCacheKeyName);
+        nonLocalOnlyKeys.push(key);
       }
     }
 
-    return { validFromLocal, needsRedisCheck };
+    for (const workspaceCacheKeyName of localOnlyKeysToCheck) {
+      const localKey = this.buildCacheKey(workspaceId, workspaceCacheKeyName);
+      const localEntry = this.localCache.get(localKey);
+
+      if (isDefined(localEntry)) {
+        validFromLocal.push(workspaceCacheKeyName);
+      } else {
+        needsCompute.push(workspaceCacheKeyName);
+      }
+    }
+
+    if (nonLocalOnlyKeys.length > 0) {
+      const hashKeys = nonLocalOnlyKeys.map(
+        (workspaceCacheKeyName) =>
+          `${this.buildCacheKey(workspaceId, workspaceCacheKeyName)}:hash`,
+      );
+
+      const redisHashes = await this.cacheStorage.mget<string>(hashKeys);
+
+      for (const [index, workspaceCacheKeyName] of nonLocalOnlyKeys.entries()) {
+        const redisHash = redisHashes[index];
+        const localKey = this.buildCacheKey(workspaceId, workspaceCacheKeyName);
+        const localEntry = this.localCache.get(localKey);
+
+        if (
+          isDefined(localEntry) &&
+          isDefined(redisHash) &&
+          localEntry.hash === redisHash
+        ) {
+          validFromLocal.push(workspaceCacheKeyName);
+        } else {
+          needsRedisFetch.push(workspaceCacheKeyName);
+        }
+      }
+    }
+
+    return { validFromLocal, needsRedisFetch: needsRedisFetch, needsCompute };
   }
 
   private async fetchDataFromRedis(
@@ -363,7 +407,7 @@ export class WorkspaceCacheService implements OnModuleInit {
     return provider;
   }
 
-  private async computeAndStoreInRedis(
+  private async computeAndStore(
     workspaceId: string,
     workspaceCacheKeys: WorkspaceCacheKeyName[],
   ): Promise<
@@ -376,37 +420,46 @@ export class WorkspaceCacheService implements OnModuleInit {
     const computePromises = workspaceCacheKeys.map(
       async (workspaceCacheKeyName) => {
         const provider = this.getProviderOrThrow(workspaceCacheKeyName);
-
         const data = await provider.computeForCache(workspaceId);
 
-        return { workspaceCacheKeyName, data };
+        // Skip hash generation for local-only keys - they don't use Redis hash comparison
+        const hash = this.localOnlyKeys.has(workspaceCacheKeyName)
+          ? ''
+          : this.generateHash(data);
+
+        return { workspaceCacheKeyName, data, hash };
       },
     );
 
     const computed = await Promise.all(computePromises);
 
-    const redisEntries: Array<{ key: string; value: unknown }> = [];
+    const nonLocalOnlyComputed = computed.filter(
+      ({ workspaceCacheKeyName }) =>
+        !this.localOnlyKeys.has(workspaceCacheKeyName),
+    );
 
-    for (const { workspaceCacheKeyName, data } of computed) {
-      const hash = this.generateHash(data);
+    if (nonLocalOnlyComputed.length > 0) {
+      const redisEntries: Array<{ key: string; value: unknown }> = [];
 
-      redisEntries.push({
-        key: `${this.buildCacheKey(workspaceId, workspaceCacheKeyName)}:data`,
-        value: data,
-      });
-      redisEntries.push({
-        key: `${this.buildCacheKey(workspaceId, workspaceCacheKeyName)}:hash`,
-        value: hash,
-      });
+      for (const {
+        workspaceCacheKeyName,
+        data,
+        hash,
+      } of nonLocalOnlyComputed) {
+        redisEntries.push({
+          key: `${this.buildCacheKey(workspaceId, workspaceCacheKeyName)}:data`,
+          value: data,
+        });
+        redisEntries.push({
+          key: `${this.buildCacheKey(workspaceId, workspaceCacheKeyName)}:hash`,
+          value: hash,
+        });
+      }
+
+      await this.cacheStorage.mset(redisEntries);
     }
 
-    await this.cacheStorage.mset(redisEntries);
-
-    return computed.map(({ workspaceCacheKeyName, data }) => ({
-      workspaceCacheKeyName,
-      data,
-      hash: this.generateHash(data),
-    }));
+    return computed;
   }
 
   private setInLocalCache(
