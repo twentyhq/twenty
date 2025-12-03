@@ -1677,14 +1677,6 @@ export const STANDARD_OBJECTS = {
       userId: {
         universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userId,
       },
-      authoredActivities: {
-        universalIdentifier:
-          WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredActivities,
-      },
-      assignedActivities: {
-        universalIdentifier:
-          WORKSPACE_MEMBER_STANDARD_FIELD_IDS.assignedActivities,
-      },
       assignedTasks: {
         universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.assignedTasks,
       },
@@ -1698,10 +1690,6 @@ export const STANDARD_OBJECTS = {
       authoredAttachments: {
         universalIdentifier:
           WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredAttachments,
-      },
-      authoredComments: {
-        universalIdentifier:
-          WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredComments,
       },
       connectedAccounts: {
         universalIdentifier:
@@ -1721,13 +1709,6 @@ export const STANDARD_OBJECTS = {
       timelineActivities: {
         universalIdentifier:
           WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timelineActivities,
-      },
-      auditLogs: {
-        universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.auditLogs,
-      },
-      messageThreadSubscribers: {
-        universalIdentifier:
-          WORKSPACE_MEMBER_STANDARD_FIELD_IDS.messageThreadSubscribers,
       },
       timeZone: {
         universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeZone,
