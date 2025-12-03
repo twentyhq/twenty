@@ -96,6 +96,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       existingFlatObjectMetadataMaps,
       sourceFlatObjectMetadata: flatObjectMetadataToCreate,
       workspaceId,
+      workspaceCustomApplicationId,
     });
 
     const objectFlatFieldMetadatas: FlatFieldMetadata[] = [

@@ -40,6 +40,8 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
           input: {
             sourceFlatObjectMetadata: COMPANY_FLAT_OBJECT_MOCK,
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
+            sourceFlatFieldMetadataType: FieldMetadataType.RELATION,
+            targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'petId',
             workspaceId: mockWorkspaceId,
             workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
@@ -75,6 +77,8 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
           input: {
             sourceFlatObjectMetadata: COMPANY_FLAT_OBJECT_MOCK,
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
+            sourceFlatFieldMetadataType: FieldMetadataType.RELATION,
+            targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'petId',
             workspaceId: mockWorkspaceId,
             workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
@@ -110,6 +114,8 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
           input: {
             sourceFlatObjectMetadata: COMPANY_FLAT_OBJECT_MOCK,
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
+            sourceFlatFieldMetadataType: FieldMetadataType.RELATION,
+            targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'petId',
             workspaceId: mockWorkspaceId,
             workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
@@ -145,6 +151,8 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
           input: {
             sourceFlatObjectMetadata: COMPANY_FLAT_OBJECT_MOCK,
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
+            sourceFlatFieldMetadataType: FieldMetadataType.MORPH_RELATION,
+            targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'targetPetId',
             workspaceId: mockWorkspaceId,
             workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
@@ -181,6 +189,8 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
           input: {
             sourceFlatObjectMetadata: COMPANY_FLAT_OBJECT_MOCK,
             targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
+            sourceFlatFieldMetadataType: FieldMetadataType.MORPH_RELATION,
+            targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'targetPetId',
             workspaceId: mockWorkspaceId,
             workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
@@ -210,6 +220,44 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
           shouldSourceHaveMorphId: true,
         },
       },
+      {
+        title:
+          'should generate a MORPH_RELATION (ONE_TO_MANY) field pair with MORPH as target',
+        context: {
+          input: {
+            sourceFlatObjectMetadata: COMPANY_FLAT_OBJECT_MOCK,
+            targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
+            sourceFlatFieldMetadataType: FieldMetadataType.RELATION,
+            targetFlatFieldMetadataType: FieldMetadataType.MORPH_RELATION,
+            sourceFlatObjectMetadataJoinColumnName: 'targetPetId',
+            workspaceId: mockWorkspaceId,
+            workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
+            morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
+            createFieldInput: {
+              name: 'targetPet',
+              label: 'Target Pet',
+              description: 'Morph relation to pet',
+              icon: 'IconCat',
+              type: FieldMetadataType.RELATION,
+              objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
+              isCustom: false,
+              isSystem: true,
+              isUnique: false,
+              relationCreationPayload: {
+                type: RelationType.ONE_TO_MANY,
+                targetObjectMetadataId: PET_FLAT_OBJECT_MOCK.id,
+                targetFieldLabel: 'Companies',
+                targetFieldIcon: 'IconBuildingSkyscraper',
+              },
+            },
+          },
+          expectedSourceFieldType: FieldMetadataType.RELATION,
+          expectedTargetFieldType: FieldMetadataType.MORPH_RELATION,
+          expectedSourceRelationType: RelationType.ONE_TO_MANY,
+          expectedTargetRelationType: RelationType.MANY_TO_ONE,
+          shouldSourceHaveMorphId: false,
+        },
+      },
     ];
 
     test.each(testCases)(
@@ -233,7 +281,6 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
         const [sourceFieldMetadata, targetFieldMetadata] =
           result.flatFieldMetadatas;
 
-        // Validate source field metadata
         expect(sourceFieldMetadata.type).toBe(expectedSourceFieldType);
         expect(sourceFieldMetadata.name).toBe(input.createFieldInput.name);
         expect(sourceFieldMetadata.label).toBe(input.createFieldInput.label);
@@ -250,14 +297,12 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
 
         expect(sourceSettings.relationType).toBe(expectedSourceRelationType);
 
-        // Validate morphId
         if (shouldSourceHaveMorphId) {
           expect(sourceFieldMetadata.morphId).toBe(input.morphId);
         } else {
           expect(sourceFieldMetadata.morphId).toBeNull();
         }
 
-        // Validate target field metadata
         expect(targetFieldMetadata.type).toBe(expectedTargetFieldType);
         expect(targetFieldMetadata.objectMetadataId).toBe(
           input.targetFlatObjectMetadata.id,
@@ -267,7 +312,6 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
         );
         expect(targetSettings.relationType).toBe(expectedTargetRelationType);
 
-        // Validate bidirectional relation target field metadata IDs
         expect(sourceFieldMetadata.relationTargetFieldMetadataId).toBe(
           targetFieldMetadata.id,
         );
@@ -275,7 +319,6 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
           sourceFieldMetadata.id,
         );
 
-        // Validate MANY_TO_ONE settings have joinColumnName and onDelete
         if (expectedSourceRelationType === RelationType.MANY_TO_ONE) {
           expect(sourceSettings.joinColumnName).toBe(
             input.sourceFlatObjectMetadataJoinColumnName,
