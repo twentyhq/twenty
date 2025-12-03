@@ -18,6 +18,7 @@ import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sy
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.message,
@@ -113,4 +114,16 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   messageChannelMessageAssociations: Relation<
     MessageChannelMessageAssociationWorkspaceEntity[]
   >;
+
+  @WorkspaceRelation({
+    standardId: MESSAGE_STANDARD_FIELD_IDS.timelineActivities,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Timeline Activities`,
+    description: msg`Timeline Activities linked to the message`,
+    icon: 'IconTimelineEvent',
+    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 }

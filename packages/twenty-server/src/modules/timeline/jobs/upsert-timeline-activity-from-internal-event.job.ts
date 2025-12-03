@@ -7,6 +7,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { SYSTEM_OBJECTS_WITH_TIMELINE_ACTIVITIES } from 'src/modules/timeline/constants/system-objects-with-timeline-activities.constant';
 import { TimelineActivityService } from 'src/modules/timeline/services/timeline-activity.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -27,8 +28,9 @@ export class UpsertTimelineActivityFromInternalEvent {
 
     if (
       workspaceEventBatch.objectMetadata.isSystem &&
-      workspaceEventBatch.objectMetadata.nameSingular !== 'noteTarget' &&
-      workspaceEventBatch.objectMetadata.nameSingular !== 'taskTarget'
+      !SYSTEM_OBJECTS_WITH_TIMELINE_ACTIVITIES.includes(
+        workspaceEventBatch.objectMetadata.nameSingular,
+      )
     ) {
       return;
     }
