@@ -24,6 +24,11 @@ export const useComputeComplexity = (
         },
         Field: {
           enter(node: FieldNode) {
+            // Skip introspection fields entirely
+            if (node.name.value.startsWith('__')) {
+              return false; // Don't traverse children
+            }
+
             requestedFieldsCount++;
             depth++;
             if (depth === 1) {
