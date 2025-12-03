@@ -19,65 +19,65 @@ export class AgentMessagePartDTO {
   @Field()
   type: string;
 
-  @Field({ nullable: true })
-  textContent?: string;
+  @Field(() => String, { nullable: true })
+  textContent: string | null;
 
-  @Field({ nullable: true })
-  reasoningContent?: string;
+  @Field(() => String, { nullable: true })
+  reasoningContent: string | null;
 
-  @Field({ nullable: true })
-  toolName?: string;
+  @Field(() => String, { nullable: true })
+  toolName: string | null;
 
-  @Field({ nullable: true })
-  toolCallId?: string;
-
-  @Field(() => GraphQLJSON, { nullable: true })
-  toolInput?: Record<string, unknown>;
+  @Field(() => String, { nullable: true })
+  toolCallId: string | null;
 
   @Field(() => GraphQLJSON, { nullable: true })
-  toolOutput?: Record<string, unknown>;
-
-  @Field({ nullable: true })
-  state?: string;
-
-  @Field({ nullable: true })
-  errorMessage?: string;
+  toolInput: unknown | null;
 
   @Field(() => GraphQLJSON, { nullable: true })
-  errorDetails?: Record<string, unknown>;
+  toolOutput: unknown | null;
 
-  @Field({ nullable: true })
-  sourceUrlSourceId?: string;
+  @Field(() => String, { nullable: true })
+  state: string | null;
 
-  @Field({ nullable: true })
-  sourceUrlUrl?: string;
-
-  @Field({ nullable: true })
-  sourceUrlTitle?: string;
-
-  @Field({ nullable: true })
-  sourceDocumentSourceId?: string;
-
-  @Field({ nullable: true })
-  sourceDocumentMediaType?: string;
-
-  @Field({ nullable: true })
-  sourceDocumentTitle?: string;
-
-  @Field({ nullable: true })
-  sourceDocumentFilename?: string;
-
-  @Field({ nullable: true })
-  fileMediaType?: string;
-
-  @Field({ nullable: true })
-  fileFilename?: string;
-
-  @Field({ nullable: true })
-  fileUrl?: string;
+  @Field(() => String, { nullable: true })
+  errorMessage: string | null;
 
   @Field(() => GraphQLJSON, { nullable: true })
-  providerMetadata?: Record<string, unknown>;
+  errorDetails: Record<string, unknown> | null;
+
+  @Field(() => String, { nullable: true })
+  sourceUrlSourceId: string | null;
+
+  @Field(() => String, { nullable: true })
+  sourceUrlUrl: string | null;
+
+  @Field(() => String, { nullable: true })
+  sourceUrlTitle: string | null;
+
+  @Field(() => String, { nullable: true })
+  sourceDocumentSourceId: string | null;
+
+  @Field(() => String, { nullable: true })
+  sourceDocumentMediaType: string | null;
+
+  @Field(() => String, { nullable: true })
+  sourceDocumentTitle: string | null;
+
+  @Field(() => String, { nullable: true })
+  sourceDocumentFilename: string | null;
+
+  @Field(() => String, { nullable: true })
+  fileMediaType: string | null;
+
+  @Field(() => String, { nullable: true })
+  fileFilename: string | null;
+
+  @Field(() => String, { nullable: true })
+  fileUrl: string | null;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  providerMetadata: Record<string, unknown> | null;
 
   @IsDateString()
   @Field()
