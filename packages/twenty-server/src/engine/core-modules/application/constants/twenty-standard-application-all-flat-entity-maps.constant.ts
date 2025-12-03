@@ -1,6 +1,6 @@
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-import { getStandardObjectMetadataIdByName } from 'src/engine/core-modules/application/constants/get-standard-object-metadata-id-by-name.util';
+import { getStandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/core-modules/application/constants/get-standard-field-metadata-id-by-object-and-field-name.util';
 import { AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
@@ -17,10 +17,11 @@ type Prastoin = {
 export const buildTwentyStandardApplicationAllFlatEntityMaps = (
   createdAt: Date,
 ): Prastoin => {
-  const standardObjectMetadataIdByName = getStandardObjectMetadataIdByName();
+  const standardFieldMetadataIdByObjectAndFieldName =
+    getStandardFieldMetadataIdByObjectAndFieldName();
   const standardFlatObjectMetadatas = buildStandardFlatObjectMetadatas({
     createdAt,
-    standardObjectMetadataIdByName,
+    standardFieldMetadataIdByObjectAndFieldName,
   });
 
   // Build the byId map
