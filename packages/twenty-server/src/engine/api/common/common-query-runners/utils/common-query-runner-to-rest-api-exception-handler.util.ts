@@ -25,6 +25,7 @@ export const commonQueryRunnerToRestApiExceptionHandler = (
     case CommonQueryRunnerExceptionCode.INVALID_CURSOR:
     case CommonQueryRunnerExceptionCode.TOO_MANY_RECORDS_TO_UPDATE:
     case CommonQueryRunnerExceptionCode.BAD_REQUEST:
+    case CommonQueryRunnerExceptionCode.TOO_COMPLEX_QUERY:
       throw new BadRequestException(error.message);
     case CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND:
       throw new NotFoundException('Record not found');
