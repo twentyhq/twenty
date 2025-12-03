@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { autoUpdate, useFloating } from '@floating-ui/react';
+import { autoUpdate, flip, useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
@@ -32,6 +32,7 @@ export const CustomSlashMenu = ({
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
     whileElementsMounted: autoUpdate,
+    middleware: [flip()],
   });
 
   const { setSelectedItemId } = useSelectableList(SLASH_MENU_LIST_ID);
