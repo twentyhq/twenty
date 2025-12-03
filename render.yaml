@@ -2,9 +2,14 @@ services:
   # Main Modular Application (Frontend + Backend combined)
   - type: web
     name: modular-dev
-    runtime: docker
-    dockerfilePath: ./packages/twenty-docker/twenty/Dockerfile
-    dockerContext: ./
+    runtime: image
+    image:
+      url: ghcr.io/rozzaswap/modular-crm:latest
+      credentials:
+        registry: ghcr.io
+        username: rozzaswap
+        password:
+          fromSecret: GITHUB_REGISTRY_TOKEN
     plan: free
     healthCheckPath: /healthz
     envVars:
@@ -33,9 +38,14 @@ services:
   # Background Worker
   - type: worker
     name: modular-worker
-    runtime: docker
-    dockerfilePath: ./packages/twenty-docker/twenty/Dockerfile
-    dockerContext: ./
+    runtime: image
+    image:
+      url: ghcr.io/rozzaswap/modular-crm:latest
+      credentials:
+        registry: ghcr.io
+        username: rozzaswap
+        password:
+          fromSecret: GITHUB_REGISTRY_TOKEN
     dockerCommand: yarn worker:prod
     plan: starter
     envVars:
