@@ -2,6 +2,7 @@ import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
   type FieldMetadataDefaultValueForAnyType,
+  FieldMetadataSettings,
   FieldMetadataType,
 } from 'twenty-shared/types';
 
@@ -29,7 +30,7 @@ export type CreateStandardRelationFieldOptions<
   isNullable?: boolean;
   isUIReadOnly?: boolean;
   defaultValue?: FieldMetadataDefaultValueForAnyType;
-  settings?: Record<string, unknown> | null;
+  settings: FieldMetadataSettings<FieldMetadataType.RELATION>;
   options?: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[] | null;
   createdAt: Date;
 };
@@ -64,7 +65,7 @@ export const createStandardRelationFieldFlatMetadata = <
     isNullable = true,
     isUIReadOnly = false,
     defaultValue = null,
-    settings = null,
+    settings,
     options: fieldOptions = null,
     createdAt,
   } = options;
