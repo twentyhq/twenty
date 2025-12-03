@@ -66,17 +66,24 @@ describe('useLineChartData', () => {
     },
   ];
 
-  it('should enrich series with color schemes', () => {
+  it('should enrich series with color schemes and area fill ids', () => {
     const { result } = renderHook(() =>
       useLineChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        id: 'test-chart',
       }),
     );
 
     expect(result.current.enrichedSeries[0].label).toBe('Sales');
+    expect(result.current.enrichedSeries[0].areaFillId).toBe(
+      'areaFill-test-chart-series1-0',
+    );
 
     expect(result.current.enrichedSeries[1].label).toBe('Costs');
+    expect(result.current.enrichedSeries[1].areaFillId).toBe(
+      'areaFill-test-chart-series2-1',
+    );
   });
 
   it('should format data for Nivo', () => {
@@ -84,6 +91,7 @@ describe('useLineChartData', () => {
       useLineChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        id: 'test-chart',
       }),
     );
 
@@ -112,6 +120,7 @@ describe('useLineChartData', () => {
       useLineChartData({
         data: mockData,
         colorRegistry: mockColorRegistry,
+        id: 'test-chart',
       }),
     );
 
@@ -134,11 +143,14 @@ describe('useLineChartData', () => {
       useLineChartData({
         data: [],
         colorRegistry: mockColorRegistry,
+        id: 'test-chart',
       }),
     );
 
     expect(result.current.enrichedSeries).toEqual([]);
     expect(result.current.nivoData).toEqual([]);
+    expect(result.current.defs).toEqual([]);
+    expect(result.current.fill).toEqual([]);
     expect(result.current.colors).toEqual([]);
     expect(result.current.legendItems).toEqual([]);
   });
@@ -155,9 +167,47 @@ describe('useLineChartData', () => {
       useLineChartData({
         data: dataWithoutLabel,
         colorRegistry: mockColorRegistry,
+        id: 'test-chart',
       }),
     );
 
     expect(result.current.enrichedSeries[0].label).toBe('series1');
+  });
+
+  it('should generate defs and fill for area fills', () => {
+    const { result } = renderHook(() =>
+      useLineChartData({
+        data: mockData,
+        colorRegistry: mockColorRegistry,
+        id: 'test-chart',
+      }),
+    );
+
+    const firstSeriesColor = result.current.colors[0];
+
+    expect(result.current.defs).toHaveLength(2);
+    expect(result.current.defs[0]).toEqual({
+      id: 'areaFill-test-chart-series1-0',
+      type: 'linearGradient',
+      x1: '0%',
+      y1: '0%',
+      x2: '0%',
+      y2: '100%',
+      colors: [
+        { offset: 0, color: firstSeriesColor, opacity: 0.08 },
+        { offset: 100, color: firstSeriesColor, opacity: 0 },
+      ],
+    });
+
+    expect(result.current.fill).toEqual([
+      {
+        match: { id: 'series1' },
+        id: 'areaFill-test-chart-series1-0',
+      },
+      {
+        match: { id: 'series2' },
+        id: 'areaFill-test-chart-series2-1',
+      },
+    ]);
   });
 });

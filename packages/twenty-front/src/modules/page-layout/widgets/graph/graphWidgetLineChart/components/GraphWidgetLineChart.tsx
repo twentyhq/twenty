@@ -104,10 +104,12 @@ export const GraphWidgetLineChart = ({
   const effectiveMinimumValue = rangeMin ?? calculatedValueRange.minimum;
   const effectiveMaximumValue = rangeMax ?? calculatedValueRange.maximum;
 
-  const { enrichedSeries, nivoData, colors, legendItems } = useLineChartData({
-    data,
-    colorRegistry,
-  });
+  const { enrichedSeries, nivoData, defs, fill, colors, legendItems } =
+    useLineChartData({
+      data,
+      colorRegistry,
+      id,
+    });
 
   const hasClickableItems = isDefined(onSliceClick);
 
@@ -228,13 +230,14 @@ export const GraphWidgetLineChart = ({
           lineWidth={1}
           enableArea={enableArea}
           areaBaselineValue={0}
-          areaOpacity={0.04}
+          areaOpacity={1}
           enablePoints={true}
           pointSize={0}
           enablePointLabel={false}
           pointBorderWidth={0}
           colors={colors}
-          areaBlendMode={'normal'}
+          defs={defs}
+          fill={fill}
           axisTop={null}
           axisRight={null}
           axisBottom={axisBottomConfig}

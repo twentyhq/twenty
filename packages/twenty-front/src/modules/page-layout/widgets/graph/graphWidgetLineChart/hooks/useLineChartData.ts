@@ -1,58 +1,52 @@
 import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartEnrichedSeries';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
+import { createAreaFillDef } from '@/page-layout/widgets/graph/utils/createAreaFillDef';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { type LineSeries } from '@nivo/line';
-import { useMemo } from 'react';
 
 type UseLineChartDataProps = {
   data: LineChartSeries[];
   colorRegistry: GraphColorRegistry;
+  id: string;
 };
 
 export const useLineChartData = ({
   data,
   colorRegistry,
+  id,
 }: UseLineChartDataProps) => {
-  const enrichedSeries = useMemo((): LineChartEnrichedSeries[] => {
-    return data.map((series, index) => {
-      const colorScheme = getColorScheme({
-        registry: colorRegistry,
-        colorName: series.color,
-        fallbackIndex: index,
-        totalGroups: data.length,
-      });
+  const enrichedSeries: LineChartEnrichedSeries[] = [];
+  const nivoData: LineSeries[] = [];
+  const defs: ReturnType<typeof createAreaFillDef>[] = [];
+  const fill: { match: { id: string }; id: string }[] = [];
+  const colors: string[] = [];
+  const legendItems: { id: string; label: string; color: string }[] = [];
 
-      return {
-        ...series,
-        colorScheme,
-        label: series.label || series.id,
-      };
+  for (const [index, series] of data.entries()) {
+    const colorScheme = getColorScheme({
+      registry: colorRegistry,
+      colorName: series.color,
+      fallbackIndex: index,
+      totalGroups: data.length,
     });
-  }, [data, colorRegistry]);
 
-  const nivoData: LineSeries[] = data.map((series) => ({
-    id: series.id,
-    data: series.data.map((point) => ({
-      x: point.x,
-      y: point.y,
-    })),
-  }));
+    const sanitizedSeriesId = series.id
+      .replace(/\s+/g, '_')
+      .replace(/[^a-zA-Z0-9_-]/g, '');
+    const areaFillId = `areaFill-${id}-${sanitizedSeriesId}-${index}`;
+    const label = series.label || series.id;
 
-  const colors = enrichedSeries.map((series) => series.colorScheme.solid);
-
-  const legendItems = enrichedSeries.map((series) => {
-    return {
+    enrichedSeries.push({ ...series, colorScheme, areaFillId, label });
+    nivoData.push({
       id: series.id,
-      label: series.label,
-      color: series.colorScheme.solid,
-    };
-  });
+      data: series.data.map((point) => ({ x: point.x, y: point.y })),
+    });
+    defs.push(createAreaFillDef(colorScheme, areaFillId));
+    fill.push({ match: { id: series.id }, id: areaFillId });
+    colors.push(colorScheme.solid);
+    legendItems.push({ id: series.id, label, color: colorScheme.solid });
+  }
 
-  return {
-    enrichedSeries,
-    nivoData,
-    colors,
-    legendItems,
-  };
+  return { enrichedSeries, nivoData, defs, fill, colors, legendItems };
 };

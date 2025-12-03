@@ -3,5 +3,6 @@ import { type GraphColorScheme } from '@/page-layout/widgets/graph/types/GraphCo
 
 export type LineChartEnrichedSeries = LineChartSeries & {
   colorScheme: GraphColorScheme;
+  areaFillId: string;
   label: string;
 };
