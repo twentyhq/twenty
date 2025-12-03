@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { type ValidationContext } from 'graphql';
+import { type FieldNode, type ValidationContext } from 'graphql';
 import { type Plugin } from 'graphql-yoga';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -13,19 +13,36 @@ export const useComputeComplexity = (
       let requestedFieldsCount = 0;
       let requestedRootResolversCount = 0;
       let depth = 0;
+      const rootResolverNames = new Set<string>();
 
       return {
         OperationDefinition: {
           enter() {
             depth = 0;
+            rootResolverNames.clear();
           },
         },
         Field: {
-          enter() {
+          enter(node: FieldNode) {
             requestedFieldsCount++;
             depth++;
             if (depth === 1) {
               requestedRootResolversCount++;
+
+              const fieldName = node.name.value;
+
+              if (rootResolverNames.has(fieldName)) {
+                context.reportError(
+                  new UserInputError(
+                    `Duplicate root resolver: "${fieldName}"`,
+                    {
+                      userFriendlyMessage: msg`Duplicate root resolver found. Each root resolver can only be called once per document.`,
+                    },
+                  ),
+                );
+              } else {
+                rootResolverNames.add(fieldName);
+              }
             }
           },
           leave() {

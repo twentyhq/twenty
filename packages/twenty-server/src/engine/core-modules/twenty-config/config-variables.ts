@@ -1000,7 +1000,7 @@ export class ConfigVariables {
     description: 'Maximum root resolvers allowed for GQL queries',
     type: ConfigVariableType.NUMBER,
   })
-  GRAPHQL_MAX_ROOT_RESOLVERS = 5;
+  GRAPHQL_MAX_ROOT_RESOLVERS = 20;
 
   @CastToPositiveNumber()
   @ConfigVariablesMetadata({
