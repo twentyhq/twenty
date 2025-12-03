@@ -2,6 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 
+import { COMMAND_MENU_SEARCH_INPUT_FOCUS_ID } from '@/command-menu/constants/CommandMenuSearchInputFocusId';
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
@@ -33,6 +34,9 @@ export const useCommandMenu = () => {
           set(isCommandMenuClosingState, true);
           set(isDragSelectionStartEnabledState, true);
           closeAnyOpenDropdown();
+          removeFocusItemFromFocusStackById({
+            focusId: COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
+          });
           removeFocusItemFromFocusStackById({
             focusId: SIDE_PANEL_FOCUS_ID,
           });

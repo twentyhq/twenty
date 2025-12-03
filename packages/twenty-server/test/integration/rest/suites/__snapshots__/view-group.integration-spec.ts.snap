@@ -4,6 +4,7 @@ exports[`View Group REST API POST /metadata/viewGroups should fail to create vie
 {
   "error": "METADATA_VALIDATION_ERROR",
   "errors": {
+    "agent": [],
     "cronTrigger": [],
     "databaseEventTrigger": [],
     "fieldMetadata": [],
@@ -37,6 +38,7 @@ exports[`View Group REST API POST /metadata/viewGroups should fail to create vie
   "message": "Multiple validation errors occurred while creating view groups",
   "statusCode": 400,
   "summary": {
+    "invalidAgent": 0,
     "invalidCronTrigger": 0,
     "invalidDatabaseEventTrigger": 0,
     "invalidFieldMetadata": 0,

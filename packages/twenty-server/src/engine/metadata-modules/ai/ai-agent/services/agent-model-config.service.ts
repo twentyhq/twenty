@@ -6,9 +6,9 @@ import { ProviderOptions } from '@ai-sdk/provider-utils';
 import { ToolSet } from 'ai';
 
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
-import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { ModelProvider } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { RegisteredAIModel } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 
 @Injectable()
 export class AgentModelConfigService {
@@ -16,7 +16,7 @@ export class AgentModelConfigService {
 
   getProviderOptions(
     model: RegisteredAIModel,
-    agent: AgentEntity,
+    agent: FlatAgentWithRoleId,
   ): ProviderOptions {
     switch (model.provider) {
       case ModelProvider.XAI:
@@ -28,7 +28,10 @@ export class AgentModelConfigService {
     }
   }
 
-  getNativeModelTools(model: RegisteredAIModel, agent: AgentEntity): ToolSet {
+  getNativeModelTools(
+    model: RegisteredAIModel,
+    agent: FlatAgentWithRoleId,
+  ): ToolSet {
     const tools: ToolSet = {};
 
     if (!agent.modelConfiguration) {
@@ -51,7 +54,7 @@ export class AgentModelConfigService {
     return tools;
   }
 
-  private getXaiProviderOptions(agent: AgentEntity): ProviderOptions {
+  private getXaiProviderOptions(agent: FlatAgentWithRoleId): ProviderOptions {
     if (
       !agent.modelConfiguration ||
       (!agent.modelConfiguration.webSearch?.enabled &&

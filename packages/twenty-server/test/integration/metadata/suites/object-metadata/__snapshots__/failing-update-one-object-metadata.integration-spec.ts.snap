@@ -6,6 +6,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [],
@@ -56,6 +57,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
@@ -85,6 +87,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a known 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [],
@@ -140,6 +143,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a known 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
@@ -186,6 +190,7 @@ exports[`Object metadata update should fail when labelIdentifier is null 1`] = `
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [],
@@ -219,6 +224,7 @@ exports[`Object metadata update should fail when labelIdentifier is null 1`] = `
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,

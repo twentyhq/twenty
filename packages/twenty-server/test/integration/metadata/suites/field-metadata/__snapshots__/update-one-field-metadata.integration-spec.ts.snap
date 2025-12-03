@@ -6,6 +6,7 @@ exports[`updateOne failing update should not update a field name if it is not sy
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -39,6 +40,7 @@ exports[`updateOne failing update should not update a field name if it is not sy
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
@@ -68,6 +70,7 @@ exports[`updateOne failing update should throw if the field name is not availabl
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -107,6 +110,7 @@ exports[`updateOne failing update should throw if the field name is not availabl
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,

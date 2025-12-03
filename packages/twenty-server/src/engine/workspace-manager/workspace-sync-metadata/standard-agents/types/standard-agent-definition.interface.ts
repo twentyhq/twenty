@@ -4,7 +4,13 @@ export type AgentOutputStrategy = 'direct' | 'synthesize';
 
 export type StandardAgentDefinition = Omit<
   FlatAgent,
-  'id' | 'workspaceId' | 'universalIdentifier' | 'standardId'
+  | 'id'
+  | 'workspaceId'
+  | 'universalIdentifier'
+  | 'standardId'
+  | 'updatedAt'
+  | 'deletedAt'
+  | 'createdAt'
 > & {
   standardId: string;
   standardRoleId?: string;

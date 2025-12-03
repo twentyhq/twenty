@@ -30875,8 +30875,11 @@ __metadata:
     lodash.kebabcase: "npm:^4.1.1"
     lodash.startcase: "npm:^4.4.0"
     uuid: "npm:^13.0.0"
+    vite: "npm:^7.0.0"
+    vite-plugin-dts: "npm:3.8.1"
+    vite-tsconfig-paths: "npm:^4.2.1"
   bin:
-    create-twenty-app: dist/cli.js
+    create-twenty-app: dist/cli.cjs
   languageName: unknown
   linkType: soft
 

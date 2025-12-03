@@ -198,6 +198,7 @@ export const WorkflowEditActionUpdateRecord = ({
             }
             readonly={isFormDisabled ?? false}
             defaultFields={formData.fieldsToUpdate}
+            actionType="UPDATE_RECORD"
           />
         )}
 

@@ -51,6 +51,7 @@ export type NavigationDrawerItemProps = {
   isRightOptionsDropdownOpen?: boolean;
   triggerEvent?: TriggerEventType;
   mouseUpNavigation?: boolean;
+  preventCollapseOnMobile?: boolean;
 };
 
 type StyledItemProps = Pick<
@@ -267,6 +268,7 @@ export const NavigationDrawerItem = ({
   isRightOptionsDropdownOpen,
   triggerEvent,
   mouseUpNavigation = false,
+  preventCollapseOnMobile = false,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -282,7 +284,7 @@ export const NavigationDrawerItem = ({
   );
 
   const handleMobileNavigation = () => {
-    if (isMobile) {
+    if (isMobile && !preventCollapseOnMobile) {
       setIsNavigationDrawerExpanded(false);
     }
   };
