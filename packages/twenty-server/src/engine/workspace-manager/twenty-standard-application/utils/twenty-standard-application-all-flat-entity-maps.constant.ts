@@ -1,11 +1,9 @@
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { getStandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
-
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { buildStandardFlatFieldMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/build-standard-flat-field-metadata-maps.util';
-import { buildStandardFlatObjectMetadatas } from './create-standard-flat-object-metadata.util';
+import { buildStandardFlatObjectMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/build-standard-flat-object-metadata-maps.util';
+import { getStandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
-export const buildTwentyStandardApplicationAllFlatEntityMaps = ({
+export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
   createdAt,
   workspaceId,
 }: {
@@ -14,27 +12,18 @@ export const buildTwentyStandardApplicationAllFlatEntityMaps = ({
 }): AllFlatEntityMaps => {
   const standardFieldMetadataIdByObjectAndFieldName =
     getStandardFieldMetadataIdByObjectAndFieldName();
-  const standardFlatObjectMetadatas = buildStandardFlatObjectMetadatas({
+
+  const builderArgs = {
     createdAt,
     workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
-  });
+  };
 
-  // Build the byId map
-  const flatObjectMetadataById: Record<string, FlatObjectMetadata> =
-    Object.fromEntries(
-      Object.values(standardFlatObjectMetadatas).map((metadata) => [
-        metadata.id,
-        metadata,
-      ]),
-    );
+  // Build object metadata maps using addFlatEntityToFlatEntityMapsOrThrow to prevent duplicate IDs
+  const flatObjectMetadataMaps = buildStandardFlatObjectMetadataMaps(builderArgs);
 
   // Build field metadata maps using addFlatEntityToFlatEntityMapsOrThrow to prevent duplicate IDs
-  const flatFieldMetadataMaps = buildStandardFlatFieldMetadataMaps({
-    createdAt,
-    workspaceId,
-    standardFieldMetadataIdByObjectAndFieldName,
-  });
+  const flatFieldMetadataMaps = buildStandardFlatFieldMetadataMaps(builderArgs);
 
   return {
     flatAgentMaps: {
@@ -58,11 +47,7 @@ export const buildTwentyStandardApplicationAllFlatEntityMaps = ({
       idByUniversalIdentifier: {},
       universalIdentifiersByApplicationId: {},
     },
-    flatObjectMetadataMaps: {
-      byId: flatObjectMetadataById,
-      idByUniversalIdentifier: {},
-      universalIdentifiersByApplicationId: {},
-    },
+    flatObjectMetadataMaps,
     flatRoleMaps: {
       byId: {},
       idByUniversalIdentifier: {},
