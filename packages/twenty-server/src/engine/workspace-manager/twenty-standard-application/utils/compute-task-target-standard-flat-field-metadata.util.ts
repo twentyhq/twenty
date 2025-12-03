@@ -1,4 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -103,6 +107,11 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'task',
       targetFieldName: 'taskTargets',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'taskId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -118,6 +127,11 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'person',
       targetFieldName: 'taskTargets',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'personId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -133,6 +147,11 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'company',
       targetFieldName: 'taskTargets',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'companyId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -148,6 +167,11 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'opportunity',
       targetFieldName: 'taskTargets',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'opportunityId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -164,6 +188,11 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       // Custom is a dynamic relation
       targetObjectName: 'task',
       targetFieldName: 'taskTargets',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'customId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),

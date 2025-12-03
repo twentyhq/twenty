@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -194,6 +194,9 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'noteTarget',
       targetFieldName: 'note',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -210,6 +213,9 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'attachment',
       targetFieldName: 'note',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -226,6 +232,9 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'note',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -242,6 +251,9 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'favorite',
       targetFieldName: 'note',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),

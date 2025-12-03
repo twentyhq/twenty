@@ -1,4 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -187,6 +191,11 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'timelineActivities',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'workspaceMemberId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -202,6 +211,11 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'person',
       targetFieldName: 'timelineActivities',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'personId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -217,6 +231,11 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'company',
       targetFieldName: 'timelineActivities',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'companyId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -232,6 +251,11 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'opportunity',
       targetFieldName: 'timelineActivities',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'opportunityId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -247,6 +271,11 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'note',
       targetFieldName: 'timelineActivities',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'noteId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -262,6 +291,11 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'task',
       targetFieldName: 'timelineActivities',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'taskId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -277,6 +311,11 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'workflow',
       targetFieldName: 'timelineActivities',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'workflowId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -292,6 +331,11 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'workflowVersion',
       targetFieldName: 'timelineActivities',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'workflowVersionId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -307,6 +351,11 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'workflowRun',
       targetFieldName: 'timelineActivities',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'workflowRunId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -322,6 +371,11 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'dashboard',
       targetFieldName: 'timelineActivities',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'dashboardId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -337,6 +391,11 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'note',
       targetFieldName: 'timelineActivities',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'customId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),

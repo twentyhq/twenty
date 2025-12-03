@@ -1,4 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -233,6 +237,9 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'taskTarget',
       targetFieldName: 'task',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -249,6 +256,9 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'attachment',
       targetFieldName: 'task',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -264,6 +274,11 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'assignedTasks',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'assigneeId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -280,6 +295,9 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'task',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -296,6 +314,9 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'favorite',
       targetFieldName: 'task',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),

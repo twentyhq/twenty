@@ -1,4 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -145,6 +149,11 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         createdAt,
         targetObjectName: 'messageChannel',
         targetFieldName: 'messageChannelMessageAssociations',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.CASCADE,
+          joinColumnName: 'messageChannelId',
+        },
       },
       standardFieldMetadataIdByObjectAndFieldName,
     }),
@@ -160,6 +169,11 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         createdAt,
         targetObjectName: 'messageThread',
         targetFieldName: 'messageChannelMessageAssociations',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.CASCADE,
+          joinColumnName: 'messageThreadId',
+        },
       },
       standardFieldMetadataIdByObjectAndFieldName,
     }),
@@ -175,6 +189,11 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         createdAt,
         targetObjectName: 'message',
         targetFieldName: 'messageChannelMessageAssociations',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.CASCADE,
+          joinColumnName: 'messageId',
+        },
       },
       standardFieldMetadataIdByObjectAndFieldName,
     }),
