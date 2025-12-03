@@ -12,10 +12,6 @@ describe('usePieChartData', () => {
   const mockColorRegistry: GraphColorRegistry = {
     red: {
       name: 'red',
-      gradient: {
-        normal: ['red1', 'red2'],
-        hover: ['red3', 'red4'],
-      },
       solid: 'redSolid',
       variations: [
         'red1',
@@ -34,10 +30,6 @@ describe('usePieChartData', () => {
     },
     blue: {
       name: 'blue',
-      gradient: {
-        normal: ['blue1', 'blue2'],
-        hover: ['blue3', 'blue4'],
-      },
       solid: 'blueSolid',
       variations: [
         'blue1',

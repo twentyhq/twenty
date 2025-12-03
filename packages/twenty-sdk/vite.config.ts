@@ -5,12 +5,10 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 
 const moduleEntries = Object.keys((packageJson as any).exports || {})
-  .filter(
-    (key) => key !== './style.css' && key !== '.' && !key.startsWith('./src/'),
-  )
+  .filter((key) => key !== '.' && !key.startsWith('./src/'))
   .map((module) => `src/${module.replace(/^\.\//, '')}/index.ts`);
 
-const entries = ['src/index.ts', ...moduleEntries];
+const entries = ['src/index.ts', 'src/cli/cli.ts', ...moduleEntries];
 
 const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
   if (!chunk.isEntry) {
@@ -33,7 +31,7 @@ const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
   return `${moduleDirectory}.${extension}`;
 };
 export default defineConfig(() => {
-  const tsConfigPath = path.resolve(__dirname, './tsconfig.json');
+  const tsConfigPath = path.resolve(__dirname, './tsconfig.lib.json');
 
   return {
     root: __dirname,

@@ -40,7 +40,12 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
     propertiesToStringify: ['standardOverrides'],
   },
   view: {
-    propertiesToCompare: ['key', 'deletedAt', ...FLAT_VIEW_EDITABLE_PROPERTIES],
+    propertiesToCompare: [
+      'key',
+      'deletedAt',
+      'createdByUserWorkspaceId',
+      ...FLAT_VIEW_EDITABLE_PROPERTIES,
+    ],
     propertiesToStringify: [],
   },
   viewField: {
