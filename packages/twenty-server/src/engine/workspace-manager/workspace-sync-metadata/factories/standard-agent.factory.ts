@@ -16,28 +16,18 @@ export class StandardAgentFactory {
   ): FlatAgent[] {
     const computedAgents: FlatAgent[] = [];
 
-    for (const agentDefinition of agentDefinitions) {
-      const existingAgent = existingAgents.find(
-        (agent) => agent.standardId === agentDefinition.standardId,
+    for (const standardAgentDefinition of agentDefinitions) {
+      const existingAgentEntity = existingAgents.find(
+        (agent) => agent.standardId === standardAgentDefinition.standardId,
       );
 
-      const flatAgent = transformStandardAgentDefinitionToFlatAgent(
-        agentDefinition,
-        context.workspaceId,
-      );
+      const flatAgent = transformStandardAgentDefinitionToFlatAgent({
+        standardAgentDefinition,
+        workspaceId: context.workspaceId,
+        existingAgentEntity,
+      });
 
-      if (existingAgent) {
-        computedAgents.push({
-          ...flatAgent,
-          id: existingAgent.id,
-          universalIdentifier: agentDefinition.standardId,
-        });
-      } else {
-        computedAgents.push({
-          ...flatAgent,
-          universalIdentifier: agentDefinition.standardId,
-        });
-      }
+      computedAgents.push(flatAgent);
     }
 
     return computedAgents;

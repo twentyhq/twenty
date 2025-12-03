@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
@@ -10,18 +11,23 @@ import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
+import { AgentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/ai-agent/interceptors/agent-graphql-api-exception.interceptor';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiChatRouterModule } from 'src/engine/metadata-modules/ai/ai-chat-router/ai-chat-router.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { AiToolsModule } from 'src/engine/metadata-modules/ai/ai-tools/ai-tools.module';
+import { FlatAgentModule } from 'src/engine/metadata-modules/flat-agent/flat-agent.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
-import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
+import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 import { AgentResolver } from './agent.resolver';
 import { AgentService } from './agent.service';
@@ -55,6 +61,11 @@ import { AgentToolGeneratorService } from './services/agent-tool-generator.servi
     UserWorkspaceModule,
     UserRoleModule,
     WorkspaceCacheModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    WorkspaceMigrationV2Module,
+    ApplicationModule,
+    FlatAgentModule,
+    WorkspaceCacheModule,
   ],
   providers: [
     AgentResolver,
@@ -65,6 +76,8 @@ import { AgentToolGeneratorService } from './services/agent-tool-generator.servi
     AgentToolGeneratorService,
     AgentTitleGenerationService,
     AgentActorContextService,
+    WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
+    AgentGraphqlApiExceptionInterceptor,
   ],
   exports: [
     AgentService,
