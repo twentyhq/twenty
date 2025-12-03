@@ -34,7 +34,6 @@ export const CustomSlashMenu = ({
     whileElementsMounted: autoUpdate,
     middleware: [
       flip(),
-      // Apply offset only when flipped to top placement
       offset(({ placement }) => (placement.startsWith('top') ? 50 : 0)),
     ],
   });
