@@ -3,9 +3,26 @@ import { TWO_NESTED_ONE_TO_MANY_QUERY_GQL_FIELDS } from 'test/integration/graphq
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { createConfigVariable } from 'test/integration/twenty-config/utils/create-config-variable.util';
+import { deleteConfigVariable } from 'test/integration/twenty-config/utils/delete-config-variable.util';
 
 describe('Query Complexity - Failing Scenarios', () => {
-  xit('should fail findMany query with two nested one to many relations', async () => {
+  beforeAll(async () => {
+    await createConfigVariable({
+      input: {
+        key: 'COMMON_QUERY_COMPLEXITY_LIMIT',
+        value: 10,
+      },
+    });
+  });
+
+  afterAll(async () => {
+    await deleteConfigVariable({
+      input: { key: 'COMMON_QUERY_COMPLEXITY_LIMIT' },
+    }).catch(() => {});
+  });
+
+  it('should fail findMany query with two nested one to many relations', async () => {
     const findManyPeopleOperation = findManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
@@ -32,7 +49,7 @@ describe('Query Complexity - Failing Scenarios', () => {
     expect(response.body.errors[0].message).toMatchSnapshot();
   });
 
-  xit('should fail groupBy query with too many relation fields', async () => {
+  it('should fail groupBy query with too many relation fields', async () => {
     const groupByOperation = groupByOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',

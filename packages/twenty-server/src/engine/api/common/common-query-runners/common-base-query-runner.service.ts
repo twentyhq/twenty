@@ -133,6 +133,8 @@ export abstract class CommonBaseQueryRunnerService<
       this.operationName,
     );
 
+    this.validateQueryComplexity(selectedFieldsResult, args);
+
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       authContext,
       async () =>
@@ -403,8 +405,6 @@ export abstract class CommonBaseQueryRunnerService<
       selectedFieldsComplexity,
       args,
     );
-
-    console.log('queryComplexity', queryComplexity);
 
     const maximumComplexity = this.twentyConfigService.get(
       'COMMON_QUERY_COMPLEXITY_LIMIT',
