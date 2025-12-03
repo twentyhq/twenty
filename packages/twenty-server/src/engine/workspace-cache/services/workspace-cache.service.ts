@@ -28,7 +28,7 @@ import {
 } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
 
-const LOCAL_STALENESS_TTL_MS = 100;
+const LOCAL_TTL_MS = 100;
 const MEMOIZER_TTL_MS = 10_000;
 
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
@@ -43,7 +43,7 @@ export class WorkspaceCacheService implements OnModuleInit {
     WorkspaceCacheKeyName,
     WorkspaceCacheProvider<CacheDataType>
   >();
-  private readonly localOnlyKeys = new Set<WorkspaceCacheKeyName>();
+  private readonly localDataOnlyKeys = new Set<WorkspaceCacheKeyName>();
   private readonly memoizer = new PromiseMemoizer<
     Partial<WorkspaceCacheDataMap>
   >(MEMOIZER_TTL_MS);
@@ -81,8 +81,8 @@ export class WorkspaceCacheService implements OnModuleInit {
           instance.constructor,
         );
 
-        if (options?.localOnly) {
-          this.localOnlyKeys.add(workspaceCacheKeyName);
+        if (options?.localDataOnly) {
+          this.localDataOnlyKeys.add(workspaceCacheKeyName);
         }
       }
     }
@@ -90,11 +90,11 @@ export class WorkspaceCacheService implements OnModuleInit {
 
   public async getOrRecompute<const K extends WorkspaceCacheKeyName[]>(
     workspaceId: string,
-    workspaceCacheKeyNames: K,
+    cacheKeyNames: K,
   ): Promise<WorkspaceCacheResult<K>> {
     if (
       !isDefined(workspaceId) ||
-      workspaceCacheKeyNames.length === 0 ||
+      cacheKeyNames.length === 0 ||
       !isValidUuid(workspaceId)
     ) {
       throw new WorkspaceCacheException(
@@ -104,42 +104,46 @@ export class WorkspaceCacheService implements OnModuleInit {
     }
 
     const memoKey =
-      `${workspaceId}-${[...workspaceCacheKeyNames].sort().join(',')}` as const;
+      `${workspaceId}-${[...cacheKeyNames].sort().join(',')}` as const;
 
     const result = await this.memoizer.memoizePromiseAndExecute(
       memoKey,
       async () => {
-        const freshResult: Partial<WorkspaceCacheDataMap> = {};
-
-        const { freshKeys, staleKeys } = this.partitionKeysByTTLStaleness(
+        // Stage 1: Check local TTL
+        const { freshKeys, staleKeys } = this.checkLocalTTL(
           workspaceId,
-          workspaceCacheKeyNames,
+          cacheKeyNames,
         );
-
-        for (const workspaceCacheKeyName of freshKeys) {
-          const localKey = this.buildCacheKey(
-            workspaceId,
-            workspaceCacheKeyName,
-          );
-          const cached = this.localCache.get(localKey);
-
-          if (isDefined(cached)) {
-            Object.assign(freshResult, {
-              [workspaceCacheKeyName]: cached.data,
-            });
-          }
-        }
+        const freshData = this.getFromLocalCache(workspaceId, freshKeys);
 
         if (staleKeys.length === 0) {
-          return freshResult;
+          return freshData;
         }
 
-        const staleResults = await this.resolveStaleKeys(
+        // Stage 2: Validate ttl stale keys against Redis hash
+        const { validKeys, keysNeedingDataFromRedis, keysNeedingRecompute } =
+          await this.validateLocalHashAgainstRedisHash(workspaceId, staleKeys);
+        const validatedData = this.getFromLocalCache(workspaceId, validKeys);
+
+        // Stage 3: Fetch data from Redis
+        const { redisData, missingInRedis } = await this.fetchDataFromRedis(
           workspaceId,
-          staleKeys,
+          keysNeedingDataFromRedis,
         );
 
-        return { ...freshResult, ...staleResults };
+        // Stage 4: Recompute remaining
+        const keysToRecompute = [...keysNeedingRecompute, ...missingInRedis];
+        const recomputedData = await this.recomputeDataFromProvider(
+          workspaceId,
+          keysToRecompute,
+        );
+
+        return {
+          ...freshData,
+          ...validatedData,
+          ...redisData,
+          ...recomputedData,
+        };
       },
     );
 
@@ -148,35 +152,197 @@ export class WorkspaceCacheService implements OnModuleInit {
 
   public async invalidateAndRecompute(
     workspaceId: string,
-    workspaceCacheKeys: WorkspaceCacheKeyName[],
+    cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<void> {
     await this.memoizer.clearKeys(`${workspaceId}-`);
 
-    await this.flush(workspaceId, workspaceCacheKeys);
-    await this.recomputeCache(workspaceId, workspaceCacheKeys);
+    await this.flush(workspaceId, cacheKeyNames);
+    await this.recomputeDataFromProvider(workspaceId, cacheKeyNames);
   }
 
   public async flush(
     workspaceId: string,
-    workspaceCacheKeys: WorkspaceCacheKeyName[],
+    cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<void> {
-    const nonLocalOnlyKeys = workspaceCacheKeys.filter(
-      (key) => !this.localOnlyKeys.has(key),
-    );
+    await this.deleteFromRedis(workspaceId, cacheKeyNames);
 
-    if (nonLocalOnlyKeys.length > 0) {
-      await this.deleteFromRedis(workspaceId, nonLocalOnlyKeys);
+    this.deleteFromLocalCache(workspaceId, cacheKeyNames);
+  }
+
+  private checkLocalTTL<K extends WorkspaceCacheKeyName>(
+    workspaceId: string,
+    cacheKeyNames: readonly K[],
+  ): { freshKeys: K[]; staleKeys: K[] } {
+    const freshKeys: K[] = [];
+    const staleKeys: K[] = [];
+    const now = Date.now();
+
+    for (const keyName of cacheKeyNames) {
+      const localKey = this.buildCacheKey(workspaceId, keyName);
+      const cached = this.localCache.get(localKey);
+
+      if (isDefined(cached) && now - cached.lastCheckedAt < LOCAL_TTL_MS) {
+        freshKeys.push(keyName);
+      } else {
+        staleKeys.push(keyName);
+      }
     }
 
-    this.deleteFromLocalCache(workspaceId, workspaceCacheKeys);
+    return { freshKeys, staleKeys };
+  }
+
+  private async validateLocalHashAgainstRedisHash(
+    workspaceId: string,
+    cacheKeyNames: WorkspaceCacheKeyName[],
+  ): Promise<{
+    validKeys: WorkspaceCacheKeyName[];
+    keysNeedingDataFromRedis: WorkspaceCacheKeyName[];
+    keysNeedingRecompute: WorkspaceCacheKeyName[];
+  }> {
+    const validKeys: WorkspaceCacheKeyName[] = [];
+    const keysNeedingDataFromRedis: WorkspaceCacheKeyName[] = [];
+    const keysNeedingRecompute: WorkspaceCacheKeyName[] = [];
+
+    if (cacheKeyNames.length === 0) {
+      return { validKeys, keysNeedingDataFromRedis, keysNeedingRecompute };
+    }
+
+    const hashKeys = cacheKeyNames.map(
+      (keyName) => `${this.buildCacheKey(workspaceId, keyName)}:hash`,
+    );
+
+    const redisHashes = await this.cacheStorage.mget<string>(hashKeys);
+
+    for (const [index, keyName] of cacheKeyNames.entries()) {
+      const redisHash = redisHashes[index];
+      const localKey = this.buildCacheKey(workspaceId, keyName);
+      const localEntry = this.localCache.get(localKey);
+
+      if (
+        isDefined(localEntry) &&
+        isDefined(redisHash) &&
+        localEntry.hash === redisHash
+      ) {
+        localEntry.lastCheckedAt = Date.now();
+        validKeys.push(keyName);
+      } else if (this.localDataOnlyKeys.has(keyName)) {
+        keysNeedingRecompute.push(keyName);
+      } else {
+        keysNeedingDataFromRedis.push(keyName);
+      }
+    }
+
+    return { validKeys, keysNeedingDataFromRedis, keysNeedingRecompute };
+  }
+
+  private async fetchDataFromRedis(
+    workspaceId: string,
+    cacheKeyNames: WorkspaceCacheKeyName[],
+  ): Promise<{
+    redisData: Partial<WorkspaceCacheDataMap>;
+    missingInRedis: WorkspaceCacheKeyName[];
+  }> {
+    const redisData: Partial<WorkspaceCacheDataMap> = {};
+    const missingInRedis: WorkspaceCacheKeyName[] = [];
+
+    if (cacheKeyNames.length === 0) {
+      return { redisData, missingInRedis };
+    }
+
+    const dataKeys = cacheKeyNames.map(
+      (keyName) => `${this.buildCacheKey(workspaceId, keyName)}:data`,
+    );
+    const hashKeys = cacheKeyNames.map(
+      (keyName) => `${this.buildCacheKey(workspaceId, keyName)}:hash`,
+    );
+
+    const [redisDataValues, redisHashValues] = await Promise.all([
+      this.cacheStorage.mget<CacheDataType>(dataKeys),
+      this.cacheStorage.mget<string>(hashKeys),
+    ]);
+
+    for (const [index, keyName] of cacheKeyNames.entries()) {
+      const data = redisDataValues[index];
+      const hash = redisHashValues[index];
+
+      if (isDefined(data) && isDefined(hash)) {
+        Object.assign(redisData, { [keyName]: data });
+        this.setInLocalCache(workspaceId, keyName, data, hash);
+      } else {
+        missingInRedis.push(keyName);
+      }
+    }
+
+    return { redisData, missingInRedis };
+  }
+
+  private async recomputeDataFromProvider(
+    workspaceId: string,
+    cacheKeyNames: WorkspaceCacheKeyName[],
+  ): Promise<Partial<WorkspaceCacheDataMap>> {
+    const result: Partial<WorkspaceCacheDataMap> = {};
+
+    if (cacheKeyNames.length === 0) {
+      return result;
+    }
+
+    const computePromises = cacheKeyNames.map(async (keyName) => {
+      const provider = this.getProviderOrThrow(keyName);
+      const data = await provider.computeForCache(workspaceId);
+      const hash = crypto.randomUUID();
+
+      return { keyName, data, hash };
+    });
+
+    const computed = await Promise.all(computePromises);
+
+    const redisEntries: Array<{ key: string; value: unknown }> = [];
+
+    for (const { keyName, data, hash } of computed) {
+      Object.assign(result, { [keyName]: data });
+
+      const baseKey = this.buildCacheKey(workspaceId, keyName);
+
+      redisEntries.push({ key: `${baseKey}:hash`, value: hash });
+
+      if (!this.localDataOnlyKeys.has(keyName)) {
+        redisEntries.push({ key: `${baseKey}:data`, value: data });
+      }
+
+      this.setInLocalCache(workspaceId, keyName, data, hash);
+    }
+
+    if (redisEntries.length > 0) {
+      await this.cacheStorage.mset(redisEntries);
+    }
+
+    return result;
+  }
+
+  private getFromLocalCache(
+    workspaceId: string,
+    workspaceCacheKeyNames: WorkspaceCacheKeyName[],
+  ): Partial<WorkspaceCacheDataMap> {
+    const result: Partial<WorkspaceCacheDataMap> = {};
+
+    for (const keyName of workspaceCacheKeyNames) {
+      const localKey = this.buildCacheKey(workspaceId, keyName);
+      const cached = this.localCache.get(localKey);
+
+      if (isDefined(cached)) {
+        Object.assign(result, { [keyName]: cached.data });
+      }
+    }
+
+    return result;
   }
 
   private deleteFromLocalCache(
     workspaceId: string,
-    workspaceCacheKeys: WorkspaceCacheKeyName[],
+    cacheKeyNames: WorkspaceCacheKeyName[],
   ): void {
-    for (const workspaceCacheKeyName of workspaceCacheKeys) {
-      const localKey = this.buildCacheKey(workspaceId, workspaceCacheKeyName);
+    for (const keyName of cacheKeyNames) {
+      const localKey = this.buildCacheKey(workspaceId, keyName);
 
       this.localCache.delete(localKey);
     }
@@ -184,10 +350,10 @@ export class WorkspaceCacheService implements OnModuleInit {
 
   private async deleteFromRedis(
     workspaceId: string,
-    workspaceCacheKeys: WorkspaceCacheKeyName[],
+    cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<void> {
-    const keysToDelete = workspaceCacheKeys.flatMap((workspaceCacheKeyName) => {
-      const baseKey = this.buildCacheKey(workspaceId, workspaceCacheKeyName);
+    const keysToDelete = cacheKeyNames.flatMap((keyName) => {
+      const baseKey = this.buildCacheKey(workspaceId, keyName);
 
       return [`${baseKey}:data`, `${baseKey}:hash`];
     });
@@ -195,280 +361,13 @@ export class WorkspaceCacheService implements OnModuleInit {
     await this.cacheStorage.mdel(keysToDelete);
   }
 
-  private async recomputeCache(
-    workspaceId: string,
-    workspaceCacheKeys: WorkspaceCacheKeyName[],
-  ): Promise<void> {
-    const computed = await this.computeAndStore(
-      workspaceId,
-      workspaceCacheKeys,
-    );
-
-    for (const { workspaceCacheKeyName, data, hash } of computed) {
-      this.setInLocalCache(workspaceId, workspaceCacheKeyName, data, hash);
-    }
-  }
-
-  private partitionKeysByTTLStaleness<K extends WorkspaceCacheKeyName>(
-    workspaceId: string,
-    workspaceCacheKeys: readonly K[],
-  ): { freshKeys: K[]; staleKeys: K[] } {
-    const freshKeys: K[] = [];
-    const staleKeys: K[] = [];
-    const now = Date.now();
-
-    for (const workspaceCacheKeyName of workspaceCacheKeys) {
-      const localKey = this.buildCacheKey(workspaceId, workspaceCacheKeyName);
-      const cached = this.localCache.get(localKey);
-
-      if (
-        isDefined(cached) &&
-        now - cached.lastCheckedAt < LOCAL_STALENESS_TTL_MS
-      ) {
-        freshKeys.push(workspaceCacheKeyName);
-      } else {
-        staleKeys.push(workspaceCacheKeyName);
-      }
-    }
-
-    return { freshKeys, staleKeys };
-  }
-
-  private async resolveStaleKeys(
-    workspaceId: string,
-    workspaceCacheKeys: WorkspaceCacheKeyName[],
-  ): Promise<Partial<WorkspaceCacheDataMap>> {
-    const result: Partial<WorkspaceCacheDataMap> = {};
-
-    const { validFromLocal, needsRedisFetch, needsCompute } =
-      await this.partitionKeysByLocalStaleness(workspaceId, workspaceCacheKeys);
-
-    for (const workspaceCacheKeyName of validFromLocal) {
-      const localKey = this.buildCacheKey(workspaceId, workspaceCacheKeyName);
-      const localEntry = this.localCache.get(localKey);
-
-      if (!isDefined(localEntry)) {
-        continue;
-      }
-
-      Object.assign(result, { [workspaceCacheKeyName]: localEntry.data });
-      this.setInLocalCache(
-        workspaceId,
-        workspaceCacheKeyName,
-        localEntry.data,
-        localEntry.hash,
-      );
-    }
-
-    let keysToCompute = [...needsCompute];
-
-    if (needsRedisFetch.length > 0) {
-      const {
-        validDataFromRedis: validFromRedis,
-        cacheKeysToRecomputeFromProviders,
-      } = await this.fetchDataFromRedis(workspaceId, needsRedisFetch);
-
-      for (const { workspaceCacheKeyName, data, hash } of validFromRedis) {
-        Object.assign(result, { [workspaceCacheKeyName]: data });
-        this.setInLocalCache(workspaceId, workspaceCacheKeyName, data, hash);
-      }
-
-      keysToCompute = [...keysToCompute, ...cacheKeysToRecomputeFromProviders];
-    }
-
-    if (keysToCompute.length > 0) {
-      const computed = await this.computeAndStore(workspaceId, keysToCompute);
-
-      for (const { workspaceCacheKeyName, data, hash } of computed) {
-        Object.assign(result, { [workspaceCacheKeyName]: data });
-        this.setInLocalCache(workspaceId, workspaceCacheKeyName, data, hash);
-      }
-    }
-
-    return result;
-  }
-
-  private async partitionKeysByLocalStaleness(
-    workspaceId: string,
-    workspaceCacheKeys: WorkspaceCacheKeyName[],
-  ): Promise<{
-    validFromLocal: WorkspaceCacheKeyName[];
-    needsRedisFetch: WorkspaceCacheKeyName[];
-    needsCompute: WorkspaceCacheKeyName[];
-  }> {
-    const validFromLocal: WorkspaceCacheKeyName[] = [];
-    const needsRedisFetch: WorkspaceCacheKeyName[] = [];
-    const needsCompute: WorkspaceCacheKeyName[] = [];
-
-    const localOnlyKeysToCheck: WorkspaceCacheKeyName[] = [];
-    const nonLocalOnlyKeys: WorkspaceCacheKeyName[] = [];
-
-    for (const key of workspaceCacheKeys) {
-      if (this.localOnlyKeys.has(key)) {
-        localOnlyKeysToCheck.push(key);
-      } else {
-        nonLocalOnlyKeys.push(key);
-      }
-    }
-
-    for (const workspaceCacheKeyName of localOnlyKeysToCheck) {
-      const localKey = this.buildCacheKey(workspaceId, workspaceCacheKeyName);
-      const localEntry = this.localCache.get(localKey);
-
-      if (isDefined(localEntry)) {
-        validFromLocal.push(workspaceCacheKeyName);
-      } else {
-        needsCompute.push(workspaceCacheKeyName);
-      }
-    }
-
-    if (nonLocalOnlyKeys.length > 0) {
-      const hashKeys = nonLocalOnlyKeys.map(
-        (workspaceCacheKeyName) =>
-          `${this.buildCacheKey(workspaceId, workspaceCacheKeyName)}:hash`,
-      );
-
-      const redisHashes = await this.cacheStorage.mget<string>(hashKeys);
-
-      for (const [index, workspaceCacheKeyName] of nonLocalOnlyKeys.entries()) {
-        const redisHash = redisHashes[index];
-        const localKey = this.buildCacheKey(workspaceId, workspaceCacheKeyName);
-        const localEntry = this.localCache.get(localKey);
-
-        if (
-          isDefined(localEntry) &&
-          isDefined(redisHash) &&
-          localEntry.hash === redisHash
-        ) {
-          validFromLocal.push(workspaceCacheKeyName);
-        } else {
-          needsRedisFetch.push(workspaceCacheKeyName);
-        }
-      }
-    }
-
-    return { validFromLocal, needsRedisFetch: needsRedisFetch, needsCompute };
-  }
-
-  private async fetchDataFromRedis(
-    workspaceId: string,
-    workspaceCacheKeys: WorkspaceCacheKeyName[],
-  ): Promise<{
-    validDataFromRedis: Array<{
-      workspaceCacheKeyName: WorkspaceCacheKeyName;
-      data: CacheDataType;
-      hash: string;
-    }>;
-    cacheKeysToRecomputeFromProviders: WorkspaceCacheKeyName[];
-  }> {
-    const validDataFromRedis: Array<{
-      workspaceCacheKeyName: WorkspaceCacheKeyName;
-      data: CacheDataType;
-      hash: string;
-    }> = [];
-    const cacheKeysToRecomputeFromProviders: WorkspaceCacheKeyName[] = [];
-
-    const dataKeys = workspaceCacheKeys.map(
-      (workspaceCacheKeyName) =>
-        `${this.buildCacheKey(workspaceId, workspaceCacheKeyName)}:data`,
-    );
-
-    const redisData = await this.cacheStorage.mget<CacheDataType>(dataKeys);
-
-    for (const [index, workspaceCacheKeyName] of workspaceCacheKeys.entries()) {
-      const data = redisData[index];
-
-      if (isDefined(data)) {
-        const hash = this.generateHash(data);
-
-        validDataFromRedis.push({ workspaceCacheKeyName, data, hash });
-      } else {
-        cacheKeysToRecomputeFromProviders.push(workspaceCacheKeyName);
-      }
-    }
-
-    return {
-      validDataFromRedis,
-      cacheKeysToRecomputeFromProviders,
-    };
-  }
-
-  private getProviderOrThrow(
-    workspaceCacheKeyName: WorkspaceCacheKeyName,
-  ): WorkspaceCacheProvider<CacheDataType> {
-    const provider = this.workspaceCacheProviders.get(workspaceCacheKeyName);
-
-    if (!isDefined(provider)) {
-      throw new Error(
-        `Cache provider with key name "${workspaceCacheKeyName}" not found`,
-      );
-    }
-
-    return provider;
-  }
-
-  private async computeAndStore(
-    workspaceId: string,
-    workspaceCacheKeys: WorkspaceCacheKeyName[],
-  ): Promise<
-    Array<{
-      workspaceCacheKeyName: WorkspaceCacheKeyName;
-      data: CacheDataType;
-      hash: string;
-    }>
-  > {
-    const computePromises = workspaceCacheKeys.map(
-      async (workspaceCacheKeyName) => {
-        const provider = this.getProviderOrThrow(workspaceCacheKeyName);
-        const data = await provider.computeForCache(workspaceId);
-
-        // Skip hash generation for local-only keys - they don't use Redis hash comparison
-        const hash = this.localOnlyKeys.has(workspaceCacheKeyName)
-          ? ''
-          : this.generateHash(data);
-
-        return { workspaceCacheKeyName, data, hash };
-      },
-    );
-
-    const computed = await Promise.all(computePromises);
-
-    const nonLocalOnlyComputed = computed.filter(
-      ({ workspaceCacheKeyName }) =>
-        !this.localOnlyKeys.has(workspaceCacheKeyName),
-    );
-
-    if (nonLocalOnlyComputed.length > 0) {
-      const redisEntries: Array<{ key: string; value: unknown }> = [];
-
-      for (const {
-        workspaceCacheKeyName,
-        data,
-        hash,
-      } of nonLocalOnlyComputed) {
-        redisEntries.push({
-          key: `${this.buildCacheKey(workspaceId, workspaceCacheKeyName)}:data`,
-          value: data,
-        });
-        redisEntries.push({
-          key: `${this.buildCacheKey(workspaceId, workspaceCacheKeyName)}:hash`,
-          value: hash,
-        });
-      }
-
-      await this.cacheStorage.mset(redisEntries);
-    }
-
-    return computed;
-  }
-
   private setInLocalCache(
     workspaceId: string,
-    workspaceCacheKeyName: WorkspaceCacheKeyName,
+    keyName: WorkspaceCacheKeyName,
     data: CacheDataType,
     hash: string,
   ): void {
-    const localKey = this.buildCacheKey(workspaceId, workspaceCacheKeyName);
+    const localKey = this.buildCacheKey(workspaceId, keyName);
 
     this.localCache.set(localKey, {
       data,
@@ -477,17 +376,22 @@ export class WorkspaceCacheService implements OnModuleInit {
     });
   }
 
-  private buildCacheKey(
-    workspaceId: string,
-    workspaceCacheKeyName: WorkspaceCacheKeyName,
-  ): string {
-    return `${WORKSPACE_CACHE_KEYS_V2[workspaceCacheKeyName]}:${workspaceId}`;
+  private getProviderOrThrow(
+    keyName: WorkspaceCacheKeyName,
+  ): WorkspaceCacheProvider<CacheDataType> {
+    const provider = this.workspaceCacheProviders.get(keyName);
+
+    if (!isDefined(provider)) {
+      throw new Error(`Cache provider with key name "${keyName}" not found`);
+    }
+
+    return provider;
   }
 
-  private generateHash(data: unknown): string {
-    return crypto
-      .createHash('sha256')
-      .update(JSON.stringify(data))
-      .digest('hex');
+  private buildCacheKey(
+    workspaceId: string,
+    keyName: WorkspaceCacheKeyName,
+  ): string {
+    return `${WORKSPACE_CACHE_KEYS_V2[keyName]}:${workspaceId}`;
   }
 }
