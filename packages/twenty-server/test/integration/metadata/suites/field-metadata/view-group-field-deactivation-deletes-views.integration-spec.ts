@@ -234,11 +234,7 @@ describe('view-group-field-deactivation-deletes-views', () => {
   });
 
   it('should handle deactivation when view has multiple view groups with different fields', async () => {
-    const {
-      data: {
-        createOneField: { id: anotherGroupByFieldMetadataId },
-      },
-    } = await createOneFieldMetadata({
+    await createOneFieldMetadata({
       expectToFail: false,
       input: {
         name: 'anotherGroupByField',
