@@ -1,5 +1,3 @@
-import { v4 } from 'uuid';
-
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/core-modules/application/constants/twenty-standard-applications';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -7,6 +5,7 @@ import { AllStandardObjectFieldName } from 'src/engine/core-modules/application/
 import { AllStandardObjectName } from 'src/engine/core-modules/application/types/all-standard-object-name.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
+import { StandardObjectMetadataIdByName } from 'src/engine/core-modules/application/constants/get-standard-object-metadata-id-by-name.util';
 import { STANDARD_OBJECTS } from './standard-object.constant';
 
 const TWENTY_STANDARD_APPLICATION_ID =
@@ -33,6 +32,7 @@ const createStandardObjectFlatMetadata = <T extends AllStandardObjectName>({
     createdAt,
     labelIdentifierFieldMetadataName,
   },
+  standardObjectMetadataIdByName,
   fields,
 }: {
   options: {
@@ -53,8 +53,8 @@ const createStandardObjectFlatMetadata = <T extends AllStandardObjectName>({
     labelIdentifierFieldMetadataName: AllStandardObjectFieldName<T>;
   };
   fields: Record<AllStandardObjectFieldName<T>, FlatFieldMetadata>;
+  standardObjectMetadataIdByName: StandardObjectMetadataIdByName;
 }): FlatObjectMetadata => ({
-  id: v4(),
   universalIdentifier,
   standardId,
   applicationId: TWENTY_STANDARD_APPLICATION_ID,
@@ -84,6 +84,7 @@ const createStandardObjectFlatMetadata = <T extends AllStandardObjectName>({
   viewIds: [],
   createdAt,
   updatedAt: createdAt,
+  id: standardObjectMetadataIdByName[nameSingular],
 });
 
 // Helper to create placeholder fields for now
@@ -93,9 +94,13 @@ const createPlaceholderFields = <T extends AllStandardObjectName>(
   return {} as Record<AllStandardObjectFieldName<T>, FlatFieldMetadata>;
 };
 
-export const buildStandardFlatObjectMetadatas = (
-  createdAt: Date,
-): Record<string, FlatObjectMetadata> => ({
+export const buildStandardFlatObjectMetadatas = ({
+  createdAt,
+  standardObjectMetadataIdByName,
+}: {
+  createdAt: Date;
+  standardObjectMetadataIdByName: StandardObjectMetadataIdByName;
+}): Record<string, FlatObjectMetadata> => ({
   attachment: createStandardObjectFlatMetadata({
     options: {
       universalIdentifier: STANDARD_OBJECTS.attachment.universalIdentifier,
@@ -111,6 +116,7 @@ export const buildStandardFlatObjectMetadatas = (
       labelIdentifierFieldMetadataName: 'name',
     },
     fields: createPlaceholderFields('attachment'),
+    standardObjectMetadataIdByName,
   }),
   blocklist: createStandardObjectFlatMetadata({
     options: {
@@ -126,6 +132,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'handle',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('blocklist'),
   }),
   calendarChannelEventAssociation: createStandardObjectFlatMetadata({
@@ -145,6 +152,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'id',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('calendarChannelEventAssociation'),
   }),
   calendarChannel: createStandardObjectFlatMetadata({
@@ -162,6 +170,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'handle',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('calendarChannel'),
   }),
   calendarEventParticipant: createStandardObjectFlatMetadata({
@@ -180,6 +189,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'handle',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('calendarEventParticipant'),
   }),
   calendarEvent: createStandardObjectFlatMetadata({
@@ -198,6 +208,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'title',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('calendarEvent'),
   }),
   company: createStandardObjectFlatMetadata({
@@ -215,6 +226,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'name',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('company'),
   }),
   connectedAccount: createStandardObjectFlatMetadata({
@@ -233,6 +245,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'handle',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('connectedAccount'),
   }),
   dashboard: createStandardObjectFlatMetadata({
@@ -250,6 +263,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'title',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('dashboard'),
   }),
   favorite: createStandardObjectFlatMetadata({
@@ -266,6 +280,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'id',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('favorite'),
   }),
   favoriteFolder: createStandardObjectFlatMetadata({
@@ -282,6 +297,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'id',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('favoriteFolder'),
   }),
   messageChannelMessageAssociation: createStandardObjectFlatMetadata({
@@ -301,6 +317,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'id',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('messageChannelMessageAssociation'),
   }),
   messageChannel: createStandardObjectFlatMetadata({
@@ -318,6 +335,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'handle',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('messageChannel'),
   }),
   messageFolder: createStandardObjectFlatMetadata({
@@ -335,6 +353,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'id',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('messageFolder'),
   }),
   messageParticipant: createStandardObjectFlatMetadata({
@@ -353,6 +372,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'handle',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('messageParticipant'),
   }),
   messageThread: createStandardObjectFlatMetadata({
@@ -371,6 +391,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'id',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('messageThread'),
   }),
   message: createStandardObjectFlatMetadata({
@@ -389,6 +410,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'subject',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('message'),
   }),
   note: createStandardObjectFlatMetadata({
@@ -406,6 +428,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'title',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('note'),
   }),
   noteTarget: createStandardObjectFlatMetadata({
@@ -422,6 +445,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'id',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('noteTarget'),
   }),
   opportunity: createStandardObjectFlatMetadata({
@@ -439,6 +463,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'name',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('opportunity'),
   }),
   person: createStandardObjectFlatMetadata({
@@ -456,6 +481,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'name',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('person'),
   }),
   task: createStandardObjectFlatMetadata({
@@ -473,6 +499,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'title',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('task'),
   }),
   taskTarget: createStandardObjectFlatMetadata({
@@ -489,6 +516,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'id',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('taskTarget'),
   }),
   timelineActivity: createStandardObjectFlatMetadata({
@@ -500,12 +528,14 @@ export const buildStandardFlatObjectMetadatas = (
       namePlural: 'timelineActivities',
       labelSingular: 'Timeline Activity',
       labelPlural: 'Timeline Activities',
-      description: 'Aggregated / filtered event to be displayed on the timeline',
+      description:
+        'Aggregated / filtered event to be displayed on the timeline',
       icon: 'IconTimelineEvent',
       isSystem: true,
       createdAt,
       labelIdentifierFieldMetadataName: 'name',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('timelineActivity'),
   }),
   workflow: createStandardObjectFlatMetadata({
@@ -523,6 +553,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'name',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('workflow'),
   }),
   workflowAutomatedTrigger: createStandardObjectFlatMetadata({
@@ -540,6 +571,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'id',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('workflowAutomatedTrigger'),
   }),
   workflowRun: createStandardObjectFlatMetadata({
@@ -556,6 +588,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'name',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('workflowRun'),
   }),
   workflowVersion: createStandardObjectFlatMetadata({
@@ -572,6 +605,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'name',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('workflowVersion'),
   }),
   workspaceMember: createStandardObjectFlatMetadata({
@@ -588,6 +622,7 @@ export const buildStandardFlatObjectMetadatas = (
       createdAt,
       labelIdentifierFieldMetadataName: 'name',
     },
+    standardObjectMetadataIdByName,
     fields: createPlaceholderFields('workspaceMember'),
   }),
 });
