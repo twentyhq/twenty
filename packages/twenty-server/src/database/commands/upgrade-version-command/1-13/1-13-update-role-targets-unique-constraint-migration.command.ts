@@ -75,4 +75,3 @@ export class UpdateRoleTargetsUniqueConstraintMigrationCommand extends ActiveOrS
     }
   }
 }
-

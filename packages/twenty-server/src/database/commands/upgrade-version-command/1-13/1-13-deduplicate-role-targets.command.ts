@@ -127,4 +127,3 @@ export class DeduplicateRoleTargetsCommand extends ActiveOrSuspendedWorkspacesMi
     return roleTargets.slice(1).map((roleTarget) => roleTarget.id);
   }
 }
-
