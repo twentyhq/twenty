@@ -37,7 +37,7 @@ services:
     dockerfilePath: ./packages/twenty-docker/twenty/Dockerfile
     dockerContext: ./
     dockerCommand: yarn worker:prod
-    plan: free
+    plan: starter
     envVars:
       - key: PG_DATABASE_URL
         fromDatabase:
