@@ -56119,7 +56119,7 @@ __metadata:
     vite-tsconfig-paths: "npm:^4.2.1"
     wait-on: "npm:^7.2.0"
   bin:
-    twenty: dist/cli/cli.cjs
+    twenty: dist/cli.cjs
   languageName: unknown
   linkType: soft
 
