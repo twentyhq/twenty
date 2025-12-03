@@ -105,7 +105,42 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
       },
       {
         title:
-          'should generate a MORPH_RELATION field pair with morphId when provided',
+          'should generate a regular RELATION with isCustom, isSytem, isUnique not default values',
+        context: {
+          input: {
+            sourceFlatObjectMetadata: COMPANY_FLAT_OBJECT_MOCK,
+            targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
+            sourceFlatObjectMetadataJoinColumnName: 'petId',
+            workspaceId: mockWorkspaceId,
+            workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
+            createFieldInput: {
+              name: 'pets',
+              label: 'Pets',
+              description: 'Company pets',
+              icon: 'IconCat',
+              type: FieldMetadataType.RELATION,
+              objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
+              isCustom: false,
+              isSystem: true,
+              isUnique: true,
+              relationCreationPayload: {
+                type: RelationType.MANY_TO_ONE,
+                targetObjectMetadataId: PET_FLAT_OBJECT_MOCK.id,
+                targetFieldLabel: 'Company',
+                targetFieldIcon: 'IconBuildingSkyscraper',
+              },
+            },
+          },
+          expectedSourceFieldType: FieldMetadataType.RELATION,
+          expectedTargetFieldType: FieldMetadataType.RELATION,
+          expectedSourceRelationType: RelationType.MANY_TO_ONE,
+          expectedTargetRelationType: RelationType.ONE_TO_MANY,
+          shouldSourceHaveMorphId: false,
+        },
+      },
+      {
+        title:
+          'should generate a MORPH_RELATION (MANY_TO_ONE) field pair with morphId when provided',
         context: {
           input: {
             sourceFlatObjectMetadata: COMPANY_FLAT_OBJECT_MOCK,
@@ -136,6 +171,42 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
           expectedTargetFieldType: FieldMetadataType.RELATION,
           expectedSourceRelationType: RelationType.MANY_TO_ONE,
           expectedTargetRelationType: RelationType.ONE_TO_MANY,
+          shouldSourceHaveMorphId: true,
+        },
+      },
+      {
+        title:
+          'should generate a MORPH_RELATION (ONE_TO_MANY) field pair with morphId when provided',
+        context: {
+          input: {
+            sourceFlatObjectMetadata: COMPANY_FLAT_OBJECT_MOCK,
+            targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
+            sourceFlatObjectMetadataJoinColumnName: 'targetPetId',
+            workspaceId: mockWorkspaceId,
+            workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
+            morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
+            createFieldInput: {
+              name: 'targetPet',
+              label: 'Target Pet',
+              description: 'Morph relation to pet',
+              icon: 'IconCat',
+              type: FieldMetadataType.MORPH_RELATION,
+              objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
+              isCustom: false,
+              isSystem: true,
+              isUnique: false,
+              relationCreationPayload: {
+                type: RelationType.ONE_TO_MANY,
+                targetObjectMetadataId: PET_FLAT_OBJECT_MOCK.id,
+                targetFieldLabel: 'Companies',
+                targetFieldIcon: 'IconBuildingSkyscraper',
+              },
+            },
+          },
+          expectedSourceFieldType: FieldMetadataType.MORPH_RELATION,
+          expectedTargetFieldType: FieldMetadataType.RELATION,
+          expectedSourceRelationType: RelationType.ONE_TO_MANY,
+          expectedTargetRelationType: RelationType.MANY_TO_ONE,
           shouldSourceHaveMorphId: true,
         },
       },
