@@ -133,7 +133,6 @@ export const createGraphColorRegistry = (
   },
   green: {
     name: 'green',
-
     solid: theme.color.green8,
     variations: [
       theme.color.green1,
@@ -152,7 +151,6 @@ export const createGraphColorRegistry = (
   },
   sky: {
     name: 'sky',
-
     solid: theme.color.sky8,
     variations: [
       theme.color.sky1,
