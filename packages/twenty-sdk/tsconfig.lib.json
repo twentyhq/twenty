@@ -1,20 +1,18 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist/cli",
-    "rootDir": "./src/cli",
-    "moduleResolution": "bundler",
+    "outDir": "./dist",
+    "rootDir": "./src",
     "strict": true,
-    "noEmit": false,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
     "skipLibCheck": true,
+    "resolveJsonModule": true,
     "declaration": false,
-    "declarationMap": false,
-    "isolatedModules": false
+    "sourceMap": true
   },
-  "include": ["src/cli/**/*.ts"],
+  "include": ["src"],
   "exclude": [
     "node_modules",
     "dist",

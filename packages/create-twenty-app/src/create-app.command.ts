@@ -123,6 +123,6 @@ export class CreateAppCommand {
     console.log('');
     console.log(chalk.blue('Next steps:'));
     console.log(`cd ${appDirectory.split('/').reverse()[0] ?? ''}`);
-    console.log('twenty app dev');
+    console.log('yarn auth');
   }
 }
