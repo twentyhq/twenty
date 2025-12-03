@@ -1344,7 +1344,6 @@ export const STANDARD_OBJECTS = {
       happensAt: {
         universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.happensAt,
       },
-      type: { universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.type },
       name: { universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.name },
       properties: {
         universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.properties,

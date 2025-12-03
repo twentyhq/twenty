@@ -196,21 +196,6 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  probability: createStandardFieldFlatMetadata({
-    objectName: 'opportunity',
-    workspaceId,
-    options: {
-      fieldName: 'probability',
-      type: FieldMetadataType.TEXT,
-      label: 'Probability',
-      description: 'Opportunity probability',
-      icon: 'IconProgressCheck',
-      isNullable: false,
-      defaultValue: "'0'",
-      createdAt,
-    },
-    standardFieldMetadataIdByObjectAndFieldName,
-  }),
   searchVector: createStandardFieldFlatMetadata({
     objectName: 'opportunity',
     workspaceId,
