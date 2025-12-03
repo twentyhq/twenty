@@ -58,9 +58,9 @@
                     ]
                   },
                   {
-                    "group": "Concepts",
+                    "group": "Capabilities",
                     "pages": [
-                      "user-guide/calendar-emails/concepts/emails-and-calendars"
+                      "user-guide/calendar-emails/capabilities/emails-and-calendars"
                     ]
                   },
                   {
@@ -83,11 +83,11 @@
                     ]
                   },
                   {
-                    "group": "Concepts",
+                    "group": "Capabilities",
                     "pages": [
-                      "user-guide/data-model/concepts/objects",
-                      "user-guide/data-model/concepts/fields",
-                      "user-guide/data-model/concepts/relation-fields"
+                      "user-guide/data-model/capabilities/objects",
+                      "user-guide/data-model/capabilities/fields",
+                      "user-guide/data-model/capabilities/relation-fields"
                     ]
                   },
                   {
@@ -111,9 +111,9 @@
                     ]
                   },
                   {
-                    "group": "Concepts",
+                    "group": "Capabilities",
                     "pages": [
-                      "user-guide/data-migration/concepts/supported-file-formats-and-field-mapping"
+                      "user-guide/data-migration/capabilities/supported-file-formats-and-field-mapping"
                     ]
                   },
                   {
@@ -136,11 +136,11 @@
                     ]
                   },
                   {
-                    "group": "Concepts",
+                    "group": "Capabilities",
                     "pages": [
-                      "user-guide/views-pipelines/concepts/kanban-views",
-                      "user-guide/views-pipelines/concepts/views-sort-filter",
-                      "user-guide/views-pipelines/concepts/pipeline"
+                      "user-guide/views-pipelines/capabilities/kanban-views",
+                      "user-guide/views-pipelines/capabilities/views-sort-filter",
+                      "user-guide/views-pipelines/capabilities/pipeline"
                     ]
                   },
                   {
@@ -164,12 +164,12 @@
                     ]
                   },
                   {
-                    "group": "Concepts",
+                    "group": "Capabilities",
                     "pages": [
-                      "user-guide/workflows/concepts/workflow-triggers",
-                      "user-guide/workflows/concepts/workflow-actions",
-                      "user-guide/workflows/concepts/workflow-forms",
-                      "user-guide/workflows/concepts/workflow-credits"
+                      "user-guide/workflows/capabilities/workflow-triggers",
+                      "user-guide/workflows/capabilities/workflow-actions",
+                      "user-guide/workflows/capabilities/workflow-forms",
+                      "user-guide/workflows/capabilities/workflow-credits"
                     ]
                   },
                   {
@@ -194,9 +194,9 @@
                     ]
                   },
                   {
-                    "group": "Concepts",
+                    "group": "Capabilities",
                     "pages": [
-                      "user-guide/ai/concepts/ai-features-and-capabilities"
+                      "user-guide/ai/capabilities/ai-features-and-capabilities"
                     ]
                   },
                   {
@@ -219,9 +219,9 @@
                     ]
                   },
                   {
-                    "group": "Concepts",
+                    "group": "Capabilities",
                     "pages": [
-                      "user-guide/dashboards/concepts/charts-and-visualizations"
+                      "user-guide/dashboards/capabilities/charts-and-visualizations"
                     ]
                   },
                   {
@@ -244,10 +244,10 @@
                     ]
                   },
                   {
-                    "group": "Concepts",
+                    "group": "Capabilities",
                     "pages": [
-                      "user-guide/permissions-access/concepts/permissions",
-                      "user-guide/permissions-access/concepts/sso-configuration"
+                      "user-guide/permissions-access/capabilities/permissions",
+                      "user-guide/permissions-access/capabilities/sso-configuration"
                     ]
                   },
                   {
@@ -270,9 +270,9 @@
                     ]
                   },
                   {
-                    "group": "Concepts",
+                    "group": "Capabilities",
                     "pages": [
-                      "user-guide/billing/concepts/billing-and-pricing-faq"
+                      "user-guide/billing/capabilities/billing-and-pricing-faq"
                     ]
                   },
                   {
@@ -295,13 +295,13 @@
                     ]
                   },
                   {
-                    "group": "Concepts",
+                    "group": "Capabilities",
                     "pages": [
-                      "user-guide/settings/concepts/workspace-settings",
-                      "user-guide/settings/concepts/profile-settings",
-                      "user-guide/settings/concepts/experience-settings",
-                      "user-guide/settings/concepts/domains-settings",
-                      "user-guide/settings/concepts/releases-settings"
+                      "user-guide/settings/capabilities/workspace-settings",
+                      "user-guide/settings/capabilities/profile-settings",
+                      "user-guide/settings/capabilities/experience-settings",
+                      "user-guide/settings/capabilities/domains-settings",
+                      "user-guide/settings/capabilities/releases-settings"
                     ]
                   },
                   {
