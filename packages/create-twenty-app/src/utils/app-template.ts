@@ -13,7 +13,7 @@ export const copyBaseApplicationProject = async ({
   appDescription: string;
   appDirectory: string;
 }) => {
-  await fs.copy(join(__dirname, '../constants/base-application'), appDirectory);
+  await fs.copy(join(__dirname, './constants/base-application'), appDirectory);
 
   await createPackageJson({ appName, appDirectory });
 

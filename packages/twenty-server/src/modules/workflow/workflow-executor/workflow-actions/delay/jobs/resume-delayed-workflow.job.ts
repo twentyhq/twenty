@@ -17,7 +17,6 @@ import {
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
-import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Processor({
@@ -29,7 +28,6 @@ export class ResumeDelayedWorkflowJob {
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
-    private readonly workflowRunQueueWorkspaceService: WorkflowRunQueueWorkspaceService,
   ) {}
 
   @Process(RESUME_DELAYED_WORKFLOW_JOB_NAME)
@@ -88,10 +86,6 @@ export class ResumeDelayedWorkflowJob {
           workflowRunId,
           lastExecutedStepId: stepId,
         },
-      );
-
-      await this.workflowRunQueueWorkspaceService.increaseWorkflowRunQueuedCount(
-        workspaceId,
       );
     } catch (error) {
       await this.workflowRunWorkspaceService.endWorkflowRun({
