@@ -1,3 +1,4 @@
+import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { CancelDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/components/CancelDashboardSingleRecordAction';
 import { DuplicateDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/components/DuplicateDashboardSingleRecordAction';
@@ -101,6 +102,8 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     SingleRecordActionKeys.DELETE,
     SingleRecordActionKeys.DESTROY,
     SingleRecordActionKeys.RESTORE,
+    MultipleRecordsActionKeys.DELETE,
+    MultipleRecordsActionKeys.DESTROY,
     SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW,
     SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
     SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
@@ -129,6 +132,10 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       position: 7,
       label: msg`Delete dashboard`,
     },
+    [MultipleRecordsActionKeys.DELETE]: {
+      position: 12,
+      label: msg`Delete dashboards`,
+    },
     [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
       position: 8,
       isPinned: true,
@@ -145,30 +152,34 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       position: 11,
       label: msg`Permanently destroy dashboard`,
     },
+    [MultipleRecordsActionKeys.DESTROY]: {
+      position: 13,
+      label: msg`Permanently destroy dashboards`,
+    },
     [SingleRecordActionKeys.RESTORE]: {
-      position: 12,
+      position: 14,
       label: msg`Restore dashboard`,
     },
     [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
-      position: 13,
-    },
-    [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
-      position: 14,
-    },
-    [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
       position: 15,
     },
-    [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
+    [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
       position: 16,
     },
-    [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
+    [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
       position: 17,
     },
-    [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
+    [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
       position: 18,
     },
-    [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+    [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
       position: 19,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
+      position: 20,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+      position: 21,
     },
   },
 });
