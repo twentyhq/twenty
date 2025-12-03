@@ -56,7 +56,6 @@ describe('useGaugeChartData', () => {
         colorRegistry: mockColorRegistry,
         id: 'test-gauge',
         instanceId: 'instance-1',
-        isHovered: false,
       }),
     );
 
@@ -77,7 +76,6 @@ describe('useGaugeChartData', () => {
         colorRegistry: mockColorRegistry,
         id: 'test-gauge',
         instanceId: 'instance-1',
-        isHovered: false,
       }),
     );
 
@@ -98,7 +96,6 @@ describe('useGaugeChartData', () => {
         colorRegistry: mockColorRegistry,
         id: 'test-gauge',
         instanceId: 'instance-1',
-        isHovered: false,
       }),
     );
 
@@ -119,7 +116,6 @@ describe('useGaugeChartData', () => {
         colorRegistry: mockColorRegistry,
         id: 'test-gauge',
         instanceId: 'instance-1',
-        isHovered: false,
       }),
     );
 
@@ -140,7 +136,6 @@ describe('useGaugeChartData', () => {
         colorRegistry: mockColorRegistry,
         id: 'test-gauge',
         instanceId: 'instance-1',
-        isHovered: false,
       }),
     );
 
@@ -162,7 +157,6 @@ describe('useGaugeChartData', () => {
         colorRegistry: mockColorRegistry,
         id: 'test-gauge',
         instanceId: 'instance-1',
-        isHovered: false,
       }),
     );
 
@@ -182,7 +176,6 @@ describe('useGaugeChartData', () => {
         colorRegistry: mockColorRegistry,
         id: 'test-gauge',
         instanceId: 'instance-1',
-        isHovered: false,
       }),
     );
 
@@ -202,7 +195,6 @@ describe('useGaugeChartData', () => {
         colorRegistry: mockColorRegistry,
         id: 'test-gauge',
         instanceId: 'instance-1',
-        isHovered: false,
       }),
     );
 
@@ -224,22 +216,17 @@ describe('useGaugeChartData', () => {
       max: 100,
     };
 
-    const { result, rerender } = renderHook(
-      ({ isHovered }) =>
-        useGaugeChartData({
-          data,
-          colorRegistry: mockColorRegistry,
-          id: 'test-gauge',
-          instanceId: 'instance-1',
-          isHovered,
-        }),
-      { initialProps: { isHovered: false } },
+    const { result } = renderHook(() =>
+      useGaugeChartData({
+        data,
+        colorRegistry: mockColorRegistry,
+        id: 'test-gauge',
+        instanceId: 'instance-1',
+      }),
     );
 
     const firstColorScheme = result.current.colorScheme;
     const firstChartData = result.current.chartData;
-
-    rerender({ isHovered: false });
 
     expect(result.current.colorScheme).toBe(firstColorScheme);
     expect(result.current.chartData).toBe(firstChartData);

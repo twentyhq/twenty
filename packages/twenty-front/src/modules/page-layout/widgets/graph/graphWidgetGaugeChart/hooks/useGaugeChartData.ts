@@ -8,7 +8,6 @@ type UseGaugeChartDataProps = {
   colorRegistry: GraphColorRegistry;
   id: string;
   instanceId: string;
-  isHovered: boolean;
 };
 
 export const useGaugeChartData = ({
