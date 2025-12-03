@@ -989,10 +989,18 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
-    description: 'Maximum complexity allowed for GQL queries',
+    description: 'Maximum fields allowed for GQL queries',
     type: ConfigVariableType.NUMBER,
   })
-  GRAPHQL_MAX_COMPLEXITY = 2000;
+  GRAPHQL_MAX_FIELDS = 2000;
+
+  @CastToPositiveNumber()
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description: 'Maximum root resolvers allowed for GQL queries',
+    type: ConfigVariableType.NUMBER,
+  })
+  GRAPHQL_MAX_ROOT_RESOLVERS = 5;
 
   @CastToPositiveNumber()
   @ConfigVariablesMetadata({

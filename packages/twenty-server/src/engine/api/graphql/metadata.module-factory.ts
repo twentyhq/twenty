@@ -46,7 +46,10 @@ export const metadataModuleFactory = async (
       useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers(
         twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION,
       ),
-      useComputeComplexity(twentyConfigService.get('GRAPHQL_MAX_COMPLEXITY')),
+      useComputeComplexity(
+        twentyConfigService.get('GRAPHQL_MAX_FIELDS'),
+        twentyConfigService.get('GRAPHQL_MAX_ROOT_RESOLVERS'),
+      ),
     ],
     path: '/metadata',
     context: () => ({

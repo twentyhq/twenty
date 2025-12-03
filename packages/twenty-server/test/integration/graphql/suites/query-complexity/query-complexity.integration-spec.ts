@@ -1,3 +1,4 @@
+import gql from 'graphql-tag';
 import { generateGqlFields } from 'test/integration/graphql/suites/query-complexity/generate-gql-fields.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
@@ -31,8 +32,60 @@ describe('Query Complexity', () => {
     const response = await makeGraphqlAPIRequest(findManyPeopleOperation);
 
     expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].message).toContain(
-      'Query complexity is too high',
-    );
+    expect(response.body.errors[0].message).toMatchSnapshot();
+  });
+
+  it('should fail to execute a query with too many root resolvers', async () => {
+    const response = await makeGraphqlAPIRequest({
+      query: gql`
+        query {
+          people {
+            edges {
+              node {
+                id
+              }
+            }
+          }
+          people {
+            edges {
+              node {
+                id
+              }
+            }
+          }
+          people {
+            edges {
+              node {
+                id
+              }
+            }
+          }
+          people {
+            edges {
+              node {
+                id
+              }
+            }
+          }
+          people {
+            edges {
+              node {
+                id
+              }
+            }
+          }
+          people {
+            edges {
+              node {
+                id
+              }
+            }
+          }
+        }
+      `,
+    });
+
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toMatchSnapshot();
   });
 });
