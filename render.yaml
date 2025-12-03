@@ -5,13 +5,9 @@ services:
     runtime: image
     image:
       url: ghcr.io/rozzaswap/modular-crm:latest
-      credentials:
-        registry: ghcr.io
-        username: rozzaswap
-        password:
-          fromSecret: GITHUB_REGISTRY_TOKEN
     plan: free
     healthCheckPath: /healthz
+    registryCredential: github-registry
     envVars:
       - key: NODE_PORT
         value: 3000
@@ -41,13 +37,9 @@ services:
     runtime: image
     image:
       url: ghcr.io/rozzaswap/modular-crm:latest
-      credentials:
-        registry: ghcr.io
-        username: rozzaswap
-        password:
-          fromSecret: GITHUB_REGISTRY_TOKEN
     dockerCommand: yarn worker:prod
     plan: starter
+    registryCredential: github-registry
     envVars:
       - key: PG_DATABASE_URL
         fromDatabase:
