@@ -28,8 +28,8 @@ export const useHandleRecordGroupField = () => {
 
   const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
-  const { updateView } = usePersistView(); // ADD THIS
-  const { loadRecordIndexStates } = useLoadRecordIndexStates(); // ADD THIS
+  const { updateView } = usePersistView();
+  const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
   const handleRecordGroupFieldChange = useRecoilCallback(
     ({ snapshot }) =>
@@ -67,18 +67,6 @@ export const useHandleRecordGroupField = () => {
             ?.updateCoreView as CoreView;
 
           if (isDefined(updatedCoreView)) {
-            // Update the frontend cache
-            // set(coreViewsState, (currentCoreViews) =>
-            //   upsertIntoArrayOfObjectsComparingId(currentCoreViews, {
-            //     ...updatedCoreView,
-            //     // Ensure viewGroups have the correct fieldMetadataId
-            //     viewGroups: updatedCoreView.viewGroups.map((viewGroup) => ({
-            //       ...viewGroup,
-            //       fieldMetadataId: updatedCoreView.mainGroupByFieldMetadataId,
-            //     })),
-            //   }),
-            // );
-
             // Reload record index states to reflect the change
             const updatedViewConverted = convertCoreViewToView(updatedCoreView);
             await loadRecordIndexStates(
@@ -126,10 +114,6 @@ export const useHandleRecordGroupField = () => {
           } satisfies ViewGroup);
         }
 
-        const viewGroupsToDelete = view.viewGroups.filter(
-          (_group) => view.mainGroupByFieldMetadataId !== fieldMetadataItem.id,
-        );
-
         const newViewGroupsList = [
           ...view.viewGroups.filter(
             (_group) =>
@@ -144,36 +128,6 @@ export const useHandleRecordGroupField = () => {
           viewGroups: newViewGroupsList,
           objectMetadataItem,
         });
-
-        if (viewGroupsToCreate.length > 0) {
-          // TODO optimistic
-          // await createViewGroups({
-          //   createCoreViewGroupInputs: {
-          //     inputs: viewGroupsToCreate.map(
-          //       ({
-          //         __typename,
-          //         fieldMetadataId: _fieldMetadataId,
-          //         ...viewGroup
-          //       }) => ({
-          //         ...viewGroup,
-          //         viewId: view.id,
-          //       }),
-          //     ),
-          //   },
-          //   mainGroupByFieldMetadataId: fieldMetadataItem.id,
-          // });
-        }
-
-        if (viewGroupsToDelete.length > 0) {
-          // TODO trigger optimistic
-          // await deleteViewGroups(
-          //   viewGroupsToDelete.map((group) => ({
-          //     input: {
-          //       id: group.id,
-          //     },
-          //   })),
-          // );
-        }
       },
     [
       currentViewIdCallbackState,
