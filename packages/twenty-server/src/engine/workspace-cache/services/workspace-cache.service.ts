@@ -186,7 +186,7 @@ export class WorkspaceCacheService implements OnModuleInit {
       const localKey = this.buildCacheKey(workspaceId, keyName);
       const cached = this.localCache.get(localKey);
 
-      if (isDefined(cached) && now - cached.lastCheckedAt < LOCAL_TTL_MS) {
+      if (isDefined(cached) && now - cached.lastHashCheckedAt < LOCAL_TTL_MS) {
         freshKeys.push(keyName);
       } else {
         staleKeys.push(keyName);
@@ -228,7 +228,7 @@ export class WorkspaceCacheService implements OnModuleInit {
         isDefined(redisHash) &&
         localEntry.latestHash === redisHash
       ) {
-        localEntry.lastCheckedAt = Date.now();
+        localEntry.lastHashCheckedAt = Date.now();
         validKeys.push(keyName);
       } else if (this.localDataOnlyKeys.has(keyName)) {
         keysNeedingRecompute.push(keyName);
@@ -335,6 +335,7 @@ export class WorkspaceCacheService implements OnModuleInit {
       const version = entry?.versions.get(entry.latestHash);
 
       if (isDefined(entry) && isDefined(version)) {
+        version.lastReadAt = Date.now();
         Object.assign(result, { [keyName]: version.data });
         this.cleanupStaleVersions(entry);
       }
@@ -352,7 +353,7 @@ export class WorkspaceCacheService implements OnModuleInit {
       const entry = this.localCache.get(localKey);
 
       if (isDefined(entry)) {
-        entry.lastCheckedAt = 0;
+        entry.lastHashCheckedAt = 0;
       }
     }
   }
@@ -380,13 +381,13 @@ export class WorkspaceCacheService implements OnModuleInit {
     let entry = this.localCache.get(localKey);
 
     if (!isDefined(entry)) {
-      entry = { versions: new Map(), latestHash: '', lastCheckedAt: 0 };
+      entry = { versions: new Map(), latestHash: '', lastHashCheckedAt: 0 };
       this.localCache.set(localKey, entry);
     }
 
-    entry.versions.set(hash, { data, createdAt: Date.now() });
+    entry.versions.set(hash, { data, lastReadAt: Date.now() });
     entry.latestHash = hash;
-    entry.lastCheckedAt = Date.now();
+    entry.lastHashCheckedAt = Date.now();
   }
 
   private cleanupStaleVersions(
@@ -397,7 +398,7 @@ export class WorkspaceCacheService implements OnModuleInit {
     for (const [hash, version] of entry.versions) {
       if (
         hash !== entry.latestHash &&
-        now - version.createdAt > STALE_VERSION_TTL_MS
+        now - version.lastReadAt > STALE_VERSION_TTL_MS
       ) {
         entry.versions.delete(hash);
       }
@@ -406,7 +407,7 @@ export class WorkspaceCacheService implements OnModuleInit {
     if (entry.versions.size >= MAX_LOCAL_STALE_VERSIONS) {
       const sorted = [...entry.versions.entries()]
         .filter(([hash]) => hash !== entry.latestHash)
-        .sort((entryA, entryB) => entryA[1].createdAt - entryB[1].createdAt);
+        .sort((entryA, entryB) => entryA[1].lastReadAt - entryB[1].lastReadAt);
 
       while (
         entry.versions.size >= MAX_LOCAL_STALE_VERSIONS &&

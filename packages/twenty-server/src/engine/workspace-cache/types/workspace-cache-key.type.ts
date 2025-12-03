@@ -25,7 +25,7 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatApplicationMaps: 'flat-maps:flatApplicationMaps',
   flatRoleMaps: 'flat-maps:role',
   flatRoleTargetMaps: 'flat-maps:role-target',
-  entityMetadatas: 'orm:entity-metadatas',
+  ORMEntityMetadatas: 'orm:entity-metadatas',
 } as const satisfies Record<WorkspaceCacheKeyName, string>;
 
 type AdditionalCacheDataMap = {
@@ -34,7 +34,7 @@ type AdditionalCacheDataMap = {
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   apiKeyRoleMap: Record<string, string>;
   flatApplicationMaps: FlatApplicationCacheMaps;
-  entityMetadatas: EntityMetadata[];
+  ORMEntityMetadatas: EntityMetadata[];
 };
 
 export type WorkspaceCacheDataMap = AllFlatEntityMaps & AdditionalCacheDataMap;

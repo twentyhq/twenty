@@ -82,14 +82,14 @@ export class GlobalWorkspaceOrmManager {
       flatIndexMaps,
       featureFlagsMap,
       rolesPermissions: permissionsPerRoleId,
-      entityMetadatas,
+      ORMEntityMetadatas: entityMetadatas,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
       'flatIndexMaps',
       'featureFlagsMap',
       'rolesPermissions',
-      'entityMetadatas',
+      'ORMEntityMetadatas',
     ]);
 
     const { idByNameSingular: objectIdByNameSingular } =
