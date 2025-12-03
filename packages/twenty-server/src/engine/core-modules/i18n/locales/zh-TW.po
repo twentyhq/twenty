@@ -1174,6 +1174,11 @@ msgstr "預期在所有操作中對 {connectFieldName} 使用相同的限制條�
 msgid "External ID"
 msgstr "外部 ID"
 
+#. js-lingui-id: E7Dsiq
+#: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
+msgid "Failed to create evaluation. Please try again."
+msgstr ""
+
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
 msgid "Failed to delete jobs. Please try again later."
