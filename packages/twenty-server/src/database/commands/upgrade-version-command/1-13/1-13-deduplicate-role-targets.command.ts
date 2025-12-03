@@ -13,7 +13,6 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 type DuplicateKey = 'apiKeyId' | 'agentId' | 'userWorkspaceId';
 
 type DuplicateGroup = {
-  workspaceId: string;
   foreignKeyId: string;
   duplicateKey: DuplicateKey;
 };
@@ -24,8 +23,6 @@ type DuplicateGroup = {
     'Remove duplicate roleTargets keeping only the most recently updated one for each unique constraint',
 })
 export class DeduplicateRoleTargetsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
-  private hasRunOnce = false;
-
   constructor(
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
@@ -39,41 +36,29 @@ export class DeduplicateRoleTargetsCommand extends ActiveOrSuspendedWorkspacesMi
 
   override async runOnWorkspace({
     options,
+    workspaceId,
   }: RunOnWorkspaceArgs): Promise<void> {
-    if (this.hasRunOnce) {
-      this.logger.log('This command has already been run');
-
-      return;
-    }
-
     const isDryRun = options.dryRun || false;
 
-    if (isDryRun) {
-      this.logger.log('Dry run mode: No changes will be applied');
-    }
-
-    const duplicateGroups = await this.findAllDuplicateGroups();
+    const duplicateGroups =
+      await this.findDuplicateGroupsForWorkspace(workspaceId);
 
     if (duplicateGroups.length === 0) {
-      this.logger.log('No duplicate roleTargets found');
-      this.hasRunOnce = true;
-
       return;
     }
 
     const idsToDelete: string[] = [];
 
     for (const duplicateGroup of duplicateGroups) {
-      const duplicateIds =
-        await this.findDuplicateIdsToDelete(duplicateGroup);
+      const duplicateIds = await this.findDuplicateIdsToDelete(
+        workspaceId,
+        duplicateGroup,
+      );
 
       idsToDelete.push(...duplicateIds);
     }
 
     if (idsToDelete.length === 0) {
-      this.logger.log('No duplicate roleTargets to delete');
-      this.hasRunOnce = true;
-
       return;
     }
 
@@ -81,7 +66,6 @@ export class DeduplicateRoleTargetsCommand extends ActiveOrSuspendedWorkspacesMi
       this.logger.log(
         `DRY RUN: Would delete ${idsToDelete.length} duplicate roleTarget(s)`,
       );
-      this.hasRunOnce = true;
 
       return;
     }
@@ -89,11 +73,11 @@ export class DeduplicateRoleTargetsCommand extends ActiveOrSuspendedWorkspacesMi
     await this.roleTargetRepository.delete({ id: In(idsToDelete) });
 
     this.logger.log(`Deleted ${idsToDelete.length} duplicate roleTarget(s)`);
-
-    this.hasRunOnce = true;
   }
 
-  private async findAllDuplicateGroups(): Promise<DuplicateGroup[]> {
+  private async findDuplicateGroupsForWorkspace(
+    workspaceId: string,
+  ): Promise<DuplicateGroup[]> {
     const duplicateGroups: DuplicateGroup[] = [];
 
     const duplicateKeys: DuplicateKey[] = [
@@ -105,18 +89,15 @@ export class DeduplicateRoleTargetsCommand extends ActiveOrSuspendedWorkspacesMi
     for (const duplicateKey of duplicateKeys) {
       const duplicates = await this.roleTargetRepository
         .createQueryBuilder('roleTarget')
-        .select([
-          'roleTarget.workspaceId AS "workspaceId"',
-          `roleTarget.${duplicateKey} AS "foreignKeyId"`,
-        ])
-        .where(`roleTarget.${duplicateKey} IS NOT NULL`)
-        .groupBy(`roleTarget.workspaceId, roleTarget.${duplicateKey}`)
+        .select([`roleTarget.${duplicateKey} AS "foreignKeyId"`])
+        .where('roleTarget.workspaceId = :workspaceId', { workspaceId })
+        .andWhere(`roleTarget.${duplicateKey} IS NOT NULL`)
+        .groupBy(`roleTarget.${duplicateKey}`)
         .having('COUNT(*) > 1')
-        .getRawMany<{ workspaceId: string; foreignKeyId: string }>();
+        .getRawMany<{ foreignKeyId: string }>();
 
       for (const duplicate of duplicates) {
         duplicateGroups.push({
-          workspaceId: duplicate.workspaceId,
           foreignKeyId: duplicate.foreignKeyId,
           duplicateKey,
         });
@@ -127,9 +108,10 @@ export class DeduplicateRoleTargetsCommand extends ActiveOrSuspendedWorkspacesMi
   }
 
   private async findDuplicateIdsToDelete(
+    workspaceId: string,
     duplicateGroup: DuplicateGroup,
   ): Promise<string[]> {
-    const { workspaceId, foreignKeyId, duplicateKey } = duplicateGroup;
+    const { foreignKeyId, duplicateKey } = duplicateGroup;
 
     const roleTargets = await this.roleTargetRepository.find({
       where: {

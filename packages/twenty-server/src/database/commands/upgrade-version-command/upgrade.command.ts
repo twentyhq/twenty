@@ -28,6 +28,7 @@ import { CreateWorkspaceCustomApplicationCommand } from 'src/database/commands/u
 import { SetStandardApplicationNotUninstallableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-set-standard-application-not-uninstallable.command';
 import { WorkspaceCustomApplicationIdNonNullableCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-workspace-custom-application-id-non-nullable-migration.command';
 import { DeduplicateRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-deduplicate-role-targets.command';
+import { UpdateRoleTargetsUniqueConstraintMigrationCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-update-role-targets-unique-constraint-migration.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
 import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-deduplicate-unique-fields.command';
@@ -96,6 +97,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.13 Commands
     protected readonly deduplicateRoleTargetsCommand: DeduplicateRoleTargetsCommand,
+    protected readonly updateRoleTargetsUniqueConstraintMigrationCommand: UpdateRoleTargetsUniqueConstraintMigrationCommand,
   ) {
     super(
       workspaceRepository,
@@ -164,7 +166,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_1130: VersionCommands = {
-      beforeSyncMetadata: [this.deduplicateRoleTargetsCommand],
+      beforeSyncMetadata: [
+        this.deduplicateRoleTargetsCommand,
+        this.updateRoleTargetsUniqueConstraintMigrationCommand,
+      ],
       afterSyncMetadata: [],
     };
 
