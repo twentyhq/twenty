@@ -6,10 +6,15 @@ import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-l
 
 import { createPageLayoutOperationFactory } from './create-page-layout-operation-factory.util';
 import { destroyPageLayoutOperationFactory } from './destroy-page-layout-operation-factory.util';
+import { findPageLayoutOperationFactory } from './find-page-layout-operation-factory.util';
 import { findPageLayoutsOperationFactory } from './find-page-layouts-operation-factory.util';
 
 interface CreatePageLayoutResponse extends Record<string, unknown> {
   createPageLayout: PageLayoutEntity;
+}
+
+interface FindPageLayoutResponse extends Record<string, unknown> {
+  getPageLayout: PageLayoutEntity | null;
 }
 
 export const createTestPageLayoutWithGraphQL = async (
@@ -42,6 +47,30 @@ export const createTestPageLayoutWithGraphQL = async (
   }
 
   return response.body.data.createPageLayout;
+};
+
+export const findPageLayoutWithGraphQL = async (
+  pageLayoutId: string,
+): Promise<PageLayoutEntity> => {
+  const operation = findPageLayoutOperationFactory({
+    pageLayoutId,
+  });
+
+  const response = (await makeGraphqlAPIRequest(
+    operation,
+  )) as GraphQLResponse<FindPageLayoutResponse>;
+
+  if (response.body.errors) {
+    throw new Error(
+      `Failed to find page layout: ${JSON.stringify(response.body.errors)}`,
+    );
+  }
+
+  if (!response.body.data?.getPageLayout) {
+    throw new Error(`Page layout not found with id: ${pageLayoutId}`);
+  }
+
+  return response.body.data.getPageLayout;
 };
 
 export const cleanupPageLayoutRecordsWithGraphQL = async (): Promise<void> => {
