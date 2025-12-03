@@ -107,7 +107,6 @@ export const CALENDAR_EVENT_STANDARD_FIELD_IDS = {
   conferenceLink: '20202020-35da-43ef-9ca0-e936e9dc237b',
   calendarChannelEventAssociations: '20202020-bdf8-4572-a2cc-ecbb6bcc3a02',
   calendarEventParticipants: '20202020-e07e-4ccb-88f5-6f3d00458eec',
-  timelineActivities: '20202020-9d4e-4f6a-8b3c-2c3d4e5f6a7b',
 } as const;
 
 // TODO: check if this can be deleted
@@ -173,8 +172,6 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   workflowVersion: '20202020-74f1-4711-a129-e14ca0ecd744',
   workflowRun: '20202020-96f0-401b-9186-a3a0759225ac',
   dashboard: '20202020-7864-48f5-af7c-9e4b60140948',
-  message: '20202020-8a1b-4c2d-9e3f-1a2b3c4d5e6f',
-  calendarEvent: '20202020-9b2c-4d3e-af4a-2b3c4d5e6f7a',
   custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
   linkedRecordCachedName: '20202020-cfdb-4bef-bbce-a29f41230934',
   linkedRecordId: '20202020-2e0e-48c0-b445-ee6c1e61687d',
@@ -274,7 +271,6 @@ export const MESSAGE_STANDARD_FIELD_IDS = {
   receivedAt: '20202020-140a-4a2a-9f86-f13b6a979afc',
   messageParticipants: '20202020-7cff-4a74-b63c-73228448cbd9',
   messageChannelMessageAssociations: '20202020-3cef-43a3-82c6-50e7cfbc9ae4',
-  timelineActivities: '20202020-8c3d-4e5f-9a2b-1b2c3d4e5f6a',
 } as const;
 
 export const NOTE_STANDARD_FIELD_IDS = {

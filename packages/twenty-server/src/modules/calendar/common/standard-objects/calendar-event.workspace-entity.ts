@@ -21,7 +21,6 @@ import { CALENDAR_EVENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.calendarEvent,
@@ -196,17 +195,4 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   calendarEventParticipants: Relation<
     CalendarEventParticipantWorkspaceEntity[]
   >;
-
-  @WorkspaceRelation({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.timelineActivities,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Timeline Activities`,
-    description: msg`Timeline Activities linked to the calendar event`,
-    icon: 'IconTimelineEvent',
-    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsFieldUIReadOnly()
-  @WorkspaceIsNullable()
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 }

@@ -17,10 +17,8 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { TIMELINE_ACTIVITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
-import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
-import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -264,38 +262,6 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('dashboard')
   dashboardId: string | null;
-
-  @WorkspaceRelation({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.message,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Message`,
-    description: msg`Event message`,
-    icon: 'IconMail',
-    inverseSideTarget: () => MessageWorkspaceEntity,
-    inverseSideFieldKey: 'timelineActivities',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @WorkspaceIsNullable()
-  message: Relation<MessageWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('message')
-  messageId: string | null;
-
-  @WorkspaceRelation({
-    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.calendarEvent,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Calendar Event`,
-    description: msg`Event calendar event`,
-    icon: 'IconCalendarEvent',
-    inverseSideTarget: () => CalendarEventWorkspaceEntity,
-    inverseSideFieldKey: 'timelineActivities',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @WorkspaceIsNullable()
-  calendarEvent: Relation<CalendarEventWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('calendarEvent')
-  calendarEventId: string | null;
 
   @WorkspaceDynamicRelation({
     type: RelationType.MANY_TO_ONE,
