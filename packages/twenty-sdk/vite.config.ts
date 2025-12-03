@@ -6,7 +6,8 @@ import packageJson from './package.json';
 
 const moduleEntries = Object.keys((packageJson as any).exports || {})
   .filter(
-    (key) => key !== './style.css' && key !== '.' && !key.startsWith('./src/'),
+    (key) =>
+      key !== './package.json' && key !== '.' && !key.startsWith('./src/'),
   )
   .map((module) => `src/${module.replace(/^\.\//, '')}/index.ts`);
 
