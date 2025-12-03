@@ -15,13 +15,13 @@ export class UpdateRoleTargetsUniqueConstraint1764329720503
         `ALTER TABLE "core"."roleTargets" DROP CONSTRAINT "IDX_ROLE_TARGETS_UNIQUE"`,
       );
       await queryRunner.query(
-        `ALTER TABLE "core"."roleTargets" ADD CONSTRAINT "IDX_ROLE_TARGETS_UNIQUE_API_KEY" UNIQUE ("workspaceId", "apiKeyId")`,
+        `ALTER TABLE "core"."roleTargets" ADD CONSTRAINT "IDX_ROLE_TARGET_UNIQUE_API_KEY" UNIQUE ("workspaceId", "apiKeyId")`,
       );
       await queryRunner.query(
-        `ALTER TABLE "core"."roleTargets" ADD CONSTRAINT "IDX_ROLE_TARGETS_UNIQUE_AGENT" UNIQUE ("workspaceId", "agentId")`,
+        `ALTER TABLE "core"."roleTargets" ADD CONSTRAINT "IDX_ROLE_TARGET_UNIQUE_AGENT" UNIQUE ("workspaceId", "agentId")`,
       );
       await queryRunner.query(
-        `ALTER TABLE "core"."roleTargets" ADD CONSTRAINT "IDX_ROLE_TARGETS_UNIQUE_USER_WORKSPACE" UNIQUE ("workspaceId", "userWorkspaceId")`,
+        `ALTER TABLE "core"."roleTargets" ADD CONSTRAINT "IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE" UNIQUE ("workspaceId", "userWorkspaceId")`,
       );
 
       await queryRunner.query(`RELEASE SAVEPOINT ${savepointName}`);
@@ -48,13 +48,13 @@ export class UpdateRoleTargetsUniqueConstraint1764329720503
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."roleTargets" DROP CONSTRAINT "IDX_ROLE_TARGETS_UNIQUE_USER_WORKSPACE"`,
+      `ALTER TABLE "core"."roleTargets" DROP CONSTRAINT "IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."roleTargets" DROP CONSTRAINT "IDX_ROLE_TARGETS_UNIQUE_AGENT"`,
+      `ALTER TABLE "core"."roleTargets" DROP CONSTRAINT "IDX_ROLE_TARGET_UNIQUE_AGENT"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."roleTargets" DROP CONSTRAINT "IDX_ROLE_TARGETS_UNIQUE_API_KEY"`,
+      `ALTER TABLE "core"."roleTargets" DROP CONSTRAINT "IDX_ROLE_TARGET_UNIQUE_API_KEY"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."roleTargets" ADD CONSTRAINT "IDX_ROLE_TARGETS_UNIQUE" UNIQUE ("workspaceId", "userWorkspaceId", "agentId", "apiKeyId")`,
