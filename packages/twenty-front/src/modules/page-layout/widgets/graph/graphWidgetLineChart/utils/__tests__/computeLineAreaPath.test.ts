@@ -60,14 +60,14 @@ describe('computeLineAreaPath', () => {
       { x: 0, y: 10 },
       { x: 10, y: 20 },
     ]);
-    const prevSeries = buildComputedSeries([
+    const previousStackedSeries = buildComputedSeries([
       { x: 0, y: 5 },
       { x: 10, y: 15 },
     ]);
 
     const path = computeLineAreaPath({
       currentSeries,
-      prevSeries,
+      previousStackedSeries,
       baseline: 100,
     });
 

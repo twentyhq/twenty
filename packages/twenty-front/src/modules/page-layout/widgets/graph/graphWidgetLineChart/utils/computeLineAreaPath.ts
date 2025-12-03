@@ -1,17 +1,18 @@
 import { area, curveMonotoneX, type CurveFactory } from 'd3-shape';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type ComputedSeries, type LineSeries } from '@nivo/line';
 
 type ComputeLineAreaPathParams = {
   currentSeries: ComputedSeries<LineSeries>;
-  prevSeries?: ComputedSeries<LineSeries> | null;
+  previousStackedSeries?: ComputedSeries<LineSeries> | null;
   baseline: number;
   curve?: CurveFactory;
 };
 
 export const computeLineAreaPath = ({
   currentSeries,
-  prevSeries,
+  previousStackedSeries,
   baseline,
   curve = curveMonotoneX,
 }: ComputeLineAreaPathParams) => {
@@ -22,10 +23,10 @@ export const computeLineAreaPath = ({
     .x((d) => d.position.x ?? 0)
     .y1((d) => d.position.y ?? 0)
     .y0((_, index) => {
-      if (prevSeries !== null && prevSeries !== undefined) {
-        const prevPoint = prevSeries.data[index];
-        if (prevPoint !== undefined && prevPoint.position.y !== null) {
-          return prevPoint.position.y;
+      if (isDefined(previousStackedSeries)) {
+        const previousPoint = previousStackedSeries.data[index];
+        if (isDefined(previousPoint) && isDefined(previousPoint.position.y)) {
+          return previousPoint.position.y;
         }
       }
       return baseline;

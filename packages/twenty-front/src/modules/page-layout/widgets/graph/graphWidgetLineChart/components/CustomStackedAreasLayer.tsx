@@ -47,9 +47,7 @@ export const CustomStackedAreasLayer = ({
     if (!isNumberOrNaN(scaled)) {
       return innerHeight;
     }
-    if (scaled < 0) return 0;
-    if (scaled > innerHeight) return innerHeight;
-    return scaled;
+    return Math.max(0, Math.min(scaled, innerHeight));
   }, [innerHeight, yScale]);
 
   const paths = useMemo(() => {
@@ -60,11 +58,8 @@ export const CustomStackedAreasLayer = ({
     const initialAreaPathData: AreaPathData[] = [];
 
     return series.reduce((acc, currentSeries, index) => {
-      const prevSeriesCandidate =
-        isStacked && index > 0 ? series[index - 1] : undefined;
-      const prevSeries = isDefined(prevSeriesCandidate)
-        ? prevSeriesCandidate
-        : null;
+      const previousStackedSeries =
+        isStacked && index > 0 ? series[index - 1] : null;
 
       const enriched = seriesById.get(String(currentSeries.id));
       if (!isDefined(enriched)) {
@@ -73,7 +68,7 @@ export const CustomStackedAreasLayer = ({
 
       const path = computeLineAreaPath({
         currentSeries,
-        prevSeries,
+        previousStackedSeries,
         baseline,
       });
 
