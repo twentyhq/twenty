@@ -1174,6 +1174,11 @@ msgstr "预期在所有操作中一致地使用相同的约束字段用于{conne
 msgid "External ID"
 msgstr "外部 ID"
 
+#. js-lingui-id: E7Dsiq
+#: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
+msgid "Failed to create evaluation. Please try again."
+msgstr ""
+
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
 msgid "Failed to delete jobs. Please try again later."

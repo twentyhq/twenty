@@ -1174,6 +1174,11 @@ msgstr "Forventet at de samme begrensningsfeltene brukes konsekvent på tvers av
 msgid "External ID"
 msgstr "Extern ID"
 
+#. js-lingui-id: E7Dsiq
+#: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
+msgid "Failed to create evaluation. Please try again."
+msgstr ""
+
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
 msgid "Failed to delete jobs. Please try again later."
