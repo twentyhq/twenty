@@ -1,7 +1,7 @@
 services:
-  # Main Twenty Application (Frontend + Backend combined)
+  # Main Modular Application (Frontend + Backend combined)
   - type: web
-    name: twenty-dev
+    name: modular-dev
     runtime: docker
     dockerfilePath: ./packages/twenty-docker/twenty/Dockerfile
     dockerContext: ./
@@ -12,11 +12,11 @@ services:
         value: 3000
       - key: PG_DATABASE_URL
         fromDatabase:
-          name: twenty-postgres
+          name: modular-postgres
           property: connectionString
       - key: REDIS_URL
         fromService:
-          name: twenty-redis
+          name: modular-redis
           type: redis
           property: connectionString
       - key: APP_SECRET
@@ -32,7 +32,7 @@ services:
 
   # Background Worker
   - type: worker
-    name: twenty-worker
+    name: modular-worker
     runtime: docker
     dockerfilePath: ./packages/twenty-docker/twenty/Dockerfile
     dockerContext: ./
@@ -41,11 +41,11 @@ services:
     envVars:
       - key: PG_DATABASE_URL
         fromDatabase:
-          name: twenty-postgres
+          name: modular-postgres
           property: connectionString
       - key: REDIS_URL
         fromService:
-          name: twenty-redis
+          name: modular-redis
           type: redis
           property: connectionString
       - key: APP_SECRET
@@ -61,14 +61,14 @@ services:
 
   # Redis Cache
   - type: redis
-    name: twenty-redis
+    name: modular-redis
     plan: free
     ipAllowList: []
 
 databases:
   # PostgreSQL Database
-  - name: twenty-postgres
+  - name: modular-postgres
     plan: free
-    databaseName: twenty
-    user: twenty
+    databaseName: modular
+    user: modular
     ipAllowList: []
