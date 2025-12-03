@@ -1,70 +1,68 @@
 import { Injectable } from '@nestjs/common';
 
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type EntitySchemaRelationOptions } from 'typeorm';
 
-import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  type EntitySchemaFieldMetadata,
+  type EntitySchemaFieldMetadataMaps,
+  type EntitySchemaObjectMetadata,
+  type EntitySchemaObjectMetadataMaps,
+} from 'src/engine/twenty-orm/global-workspace-datasource/types/entity-schema-metadata.type';
 import { determineSchemaRelationDetails } from 'src/engine/twenty-orm/utils/determine-schema-relation-details.util';
 
 type EntitySchemaRelationMap = {
   [key: string]: EntitySchemaRelationOptions;
 };
 
+type RelationFieldMetadata = EntitySchemaFieldMetadata<
+  FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+>;
+
 @Injectable()
 export class EntitySchemaRelationFactory {
   constructor() {}
 
   create(
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    objectMetadata: EntitySchemaObjectMetadata,
+    objectMetadataMaps: EntitySchemaObjectMetadataMaps,
+    fieldMetadataMaps: EntitySchemaFieldMetadataMaps,
   ): EntitySchemaRelationMap {
     const entitySchemaRelationMap: EntitySchemaRelationMap = {};
 
-    const flatFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    );
+    const fieldMetadatas = objectMetadata.fieldMetadataIds
+      .map((fieldId) => fieldMetadataMaps.byId[fieldId])
+      .filter(isDefined);
 
-    for (const flatFieldMetadata of flatFieldMetadatas) {
-      if (!isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
+    for (const fieldMetadata of fieldMetadatas) {
+      if (!this.isRelationField(fieldMetadata)) {
         continue;
       }
 
-      if (!flatFieldMetadata.settings) {
-        throw new Error(
-          `Field metadata settings are missing for field ${flatFieldMetadata.name}`,
-        );
-      }
-
-      const schemaRelationDetails = determineSchemaRelationDetails(
-        flatFieldMetadata,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
+      const relationDetails = determineSchemaRelationDetails(
+        fieldMetadata,
+        objectMetadataMaps,
+        fieldMetadataMaps,
       );
 
-      const targetObjectMetadata =
-        flatObjectMetadataMaps.byId[
-          flatFieldMetadata.relationTargetObjectMetadataId
-        ];
-
-      if (!targetObjectMetadata) {
-        throw new Error(
-          `Target object metadata not found for field ${flatFieldMetadata.name}`,
-        );
-      }
-
-      entitySchemaRelationMap[flatFieldMetadata.name] = {
-        type: schemaRelationDetails.relationType,
-        target: schemaRelationDetails.target,
-        inverseSide: schemaRelationDetails.inverseSide,
-        joinColumn: schemaRelationDetails.joinColumn,
+      entitySchemaRelationMap[fieldMetadata.name] = {
+        type: relationDetails.relationType,
+        target: relationDetails.target,
+        inverseSide: relationDetails.inverseSide,
+        joinColumn: relationDetails.joinColumn,
       } satisfies EntitySchemaRelationOptions;
     }
 
     return entitySchemaRelationMap;
+  }
+
+  private isRelationField(
+    fieldMetadata: EntitySchemaFieldMetadata,
+  ): fieldMetadata is RelationFieldMetadata {
+    return (
+      fieldMetadata.type === FieldMetadataType.RELATION ||
+      fieldMetadata.type === FieldMetadataType.MORPH_RELATION
+    );
   }
 }

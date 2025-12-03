@@ -43,12 +43,19 @@ export const shouldDisplayFormField = ({
   switch (actionType) {
     case 'CREATE_RECORD':
     case 'UPDATE_RECORD':
-    case 'UPSERT_RECORD':
       return (
         !isNotSupportedRelation &&
         !fieldMetadataItem.isUIReadOnly &&
         !fieldMetadataItem.isSystem &&
         fieldMetadataItem.isActive
+      );
+    case 'UPSERT_RECORD':
+      return (
+        (!isNotSupportedRelation &&
+          !fieldMetadataItem.isUIReadOnly &&
+          !fieldMetadataItem.isSystem &&
+          fieldMetadataItem.isActive) ||
+        isIdField
       );
     case 'FIND_RECORDS':
       return (

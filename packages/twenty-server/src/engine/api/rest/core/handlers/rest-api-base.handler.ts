@@ -99,6 +99,13 @@ export abstract class RestApiBaseHandler {
         authContext.workspace.id,
       );
     } else {
+      if (!isDefined(authContext.userWorkspaceId)) {
+        throw new PermissionsException(
+          'No user workspace ID found in authentication context',
+          PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
+        );
+      }
+
       const userWorkspaceRoleId =
         await this.userRoleService.getRoleIdForUserWorkspace({
           userWorkspaceId: authContext.userWorkspaceId,

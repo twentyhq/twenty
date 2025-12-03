@@ -1,13 +1,8 @@
 #!/usr/bin/env node
 import chalk from 'chalk';
 import { Command, CommanderError } from 'commander';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import { CreateAppCommand } from './create-app.command';
-
-const packageJson = JSON.parse(
-  readFileSync(join(__dirname, '../package.json'), 'utf-8'),
-);
+import packageJson from '../package.json';
 
 const program = new Command(packageJson.name)
   .description('CLI tool to initialize a new Twenty application')

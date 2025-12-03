@@ -1,18 +1,10 @@
 import { Injectable, type Type } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-import { EntitySchema, ObjectLiteral } from 'typeorm';
-import { EntitySchemaTransformer } from 'typeorm/entity-schema/EntitySchemaTransformer';
-import { EntityMetadataBuilder } from 'typeorm/metadata-builder/EntityMetadataBuilder';
+import { ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import {
@@ -27,8 +19,6 @@ import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manag
 export class GlobalWorkspaceOrmManager {
   constructor(
     private readonly globalWorkspaceDataSourceService: GlobalWorkspaceDataSourceService,
-    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly entitySchemaFactory: EntitySchemaFactory,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -92,25 +82,18 @@ export class GlobalWorkspaceOrmManager {
       flatIndexMaps,
       featureFlagsMap,
       rolesPermissions: permissionsPerRoleId,
+      ORMEntityMetadatas: entityMetadatas,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
       'flatIndexMaps',
       'featureFlagsMap',
       'rolesPermissions',
-      'userWorkspaceRoleMap',
+      'ORMEntityMetadatas',
     ]);
 
     const { idByNameSingular: objectIdByNameSingular } =
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
-
-    const entitySchemas = this.buildEntitySchemas(
-      workspaceId,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    );
-
-    const entityMetadatas = this.buildEntityMetadatas(entitySchemas);
 
     return {
       authContext,
@@ -122,34 +105,5 @@ export class GlobalWorkspaceOrmManager {
       permissionsPerRoleId,
       entityMetadatas,
     };
-  }
-
-  private buildEntitySchemas(
-    workspaceId: string,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-  ) {
-    return Object.values(flatObjectMetadataMaps.byId)
-      .filter(isDefined)
-      .map((flatObjectMetadata) =>
-        this.entitySchemaFactory.create(
-          workspaceId,
-          flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-        ),
-      );
-  }
-
-  private buildEntityMetadatas(entitySchemas: EntitySchema[]) {
-    const transformer = new EntitySchemaTransformer();
-    const metadataArgsStorage = transformer.transform(entitySchemas);
-
-    const entityMetadataBuilder = new EntityMetadataBuilder(
-      this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSource(),
-      metadataArgsStorage,
-    );
-
-    return entityMetadataBuilder.build();
   }
 }
