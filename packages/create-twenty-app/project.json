@@ -21,7 +21,7 @@
       "dependsOn": ["build"],
       "options": {
         "cwd": "packages/create-twenty-app",
-        "command": "node dist/cli.js"
+        "command": "node dist/cli.cjs"
       }
     },
     "typecheck": {},
