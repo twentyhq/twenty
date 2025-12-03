@@ -1,83 +1,74 @@
 services:
-- type: web
-  name: server
-  runtime: image
-  image:
-    url: twentycrm/twenty:latest
-  dockerCommand: "sh -c ./scripts/render-run.sh"
-  autoDeploy: false
-  plan: standard
-  envVars:
-    - key: FRONT_BASE_URL
-      fromService:
-        name: server
-        type: web
-        envVarKey: RENDER_EXTERNAL_URL
-    - key: SERVER_URL
-      fromService:
-        name: server
-        type: web
-        envVarKey: RENDER_EXTERNAL_URL
-    - key: APP_SECRET
-      generateValue: true
-    - key: PG_DATABASE_HOST
-      fromService:
-        name: twenty_postgres
-        type: pserv
-        property: host
-    - key: PG_DATABASE_PORT
-      fromService:
-        name: twenty_postgres
-        type: pserv
-        property: port
-- type: worker
-  name: worker
-  runtime: image
-  image:
-    url: twentycrm/twenty:latest
-  dockerCommand: "sh -c ./scripts/render-worker.sh"
-  autoDeploy: false
-  plan: standard
-  envVars:
-    - key: FRONT_BASE_URL
-      fromService:
-        name: server
-        type: web
-        envVarKey: RENDER_EXTERNAL_URL
-    - key: SERVER_URL
-      fromService:
-        name: server
-        type: web
-        envVarKey: RENDER_EXTERNAL_URL
-    - key: APP_SECRET
-      generateValue: true
-    - key: PG_DATABASE_HOST
-      fromService:
-        name: twenty_postgres
-        type: pserv
-        property: host
-    - key: PG_DATABASE_PORT
-      fromService:
-        name: twenty_postgres
-        type: pserv
-        property: port
-  disk:
-    name: twenty-disk
-    mountPath: /.local-storage
-    sizeGB: 5
-- type: pserv
-  name: twenty_postgres
-  plan: starter
-  runtime: image
-  image:
-    url: twentycrm/twenty-postgres:latest
-  autoDeploy: false
-  disk:
-    name: data
-    mountPath: /var/lib/postgresql/data
-    sizeGB: 10
-  envVars:
-  - key: POSTGRES_USER
-    value: postgres
-  - key: POSTGRES_PASSWORD
-    value: postgres
+  # Main Twenty Application (Frontend + Backend combined)
+  - type: web
+    name: twenty-dev
+    runtime: docker
+    dockerfilePath: ./packages/twenty-docker/twenty/Dockerfile
+    dockerContext: ./
+    plan: free
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_PORT
+        value: 3000
+      - key: PG_DATABASE_URL
+        fromDatabase:
+          name: twenty-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: twenty-redis
+          type: redis
+          property: connectionString
+      - key: APP_SECRET
+        generateValue: true
+      - key: SERVER_URL
+        sync: false
+      - key: STORAGE_TYPE
+        value: local
+      - key: DISABLE_DB_MIGRATIONS
+        value: false
+      - key: DISABLE_CRON_JOBS_REGISTRATION
+        value: false
+
+  # Background Worker
+  - type: worker
+    name: twenty-worker
+    runtime: docker
+    dockerfilePath: ./packages/twenty-docker/twenty/Dockerfile
+    dockerContext: ./
+    dockerCommand: yarn worker:prod
+    plan: free
+    envVars:
+      - key: PG_DATABASE_URL
+        fromDatabase:
+          name: twenty-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: twenty-redis
+          type: redis
+          property: connectionString
+      - key: APP_SECRET
+        sync: false
+      - key: SERVER_URL
+        sync: false
+      - key: STORAGE_TYPE
+        value: local
+      - key: DISABLE_DB_MIGRATIONS
+        value: true
+      - key: DISABLE_CRON_JOBS_REGISTRATION
+        value: true
+
+  # Redis Cache
+  - type: redis
+    name: twenty-redis
+    plan: free
+    ipAllowList: []
+
+databases:
+  # PostgreSQL Database
+  - name: twenty-postgres
+    plan: free
+    databaseName: twenty
+    user: twenty
+    ipAllowList: []

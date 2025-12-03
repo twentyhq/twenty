@@ -10,7 +10,7 @@ postgres-on-docker: ensure-docker-network
 	-e POSTGRES_PASSWORD=postgres \
 	-e ALLOW_NOSSL=true \
 	-v twenty_db_data:/var/lib/postgresql/data \
-	-p 5432:5432 \
+	-p 5435:5432 \
 	postgres:16
 	@echo "Waiting for PostgreSQL to be ready..."
 	@until docker exec twenty_pg psql -U postgres -d postgres \
@@ -22,7 +22,7 @@ postgres-on-docker: ensure-docker-network
 		-c "CREATE DATABASE \"test\" WITH OWNER postgres;"
 
 redis-on-docker: ensure-docker-network
-	docker run -d --network $(DOCKER_NETWORK) --name twenty_redis -p 6379:6379 redis/redis-stack-server:latest
+	docker run -d --network $(DOCKER_NETWORK) --name twenty_redis -p 6378:6379 redis/redis-stack-server:latest
 
 clickhouse-on-docker: ensure-docker-network
 	docker run -d --network $(DOCKER_NETWORK) --name twenty_clickhouse -p 8123:8123 -p 9000:9000 -e CLICKHOUSE_PASSWORD=devPassword clickhouse/clickhouse-server:latest \
