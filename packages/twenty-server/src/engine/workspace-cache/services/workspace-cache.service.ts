@@ -14,7 +14,7 @@ import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.
 import {
   WORKSPACE_CACHE_KEY,
   WORKSPACE_CACHE_OPTIONS,
-  type WorkspaceCacheOptions,
+  WorkspaceCacheOptions,
 } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import {
   WorkspaceCacheException,
@@ -76,10 +76,11 @@ export class WorkspaceCacheService implements OnModuleInit {
       ) {
         this.workspaceCacheProviders.set(workspaceCacheKeyName, instance);
 
-        const options = this.reflector.get<WorkspaceCacheOptions>(
-          WORKSPACE_CACHE_OPTIONS,
-          instance.constructor,
-        );
+        const options: WorkspaceCacheOptions | undefined =
+          this.reflector.get<WorkspaceCacheOptions>(
+            WORKSPACE_CACHE_OPTIONS,
+            instance.constructor,
+          );
 
         if (options?.localDataOnly) {
           this.localDataOnlyKeys.add(workspaceCacheKeyName);
