@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -11,6 +11,8 @@ import {
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
+import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 
 import { AgentService } from './agent.service';
 
@@ -18,11 +20,16 @@ import { AgentIdInput } from './dtos/agent-id.input';
 import { AgentDTO } from './dtos/agent.dto';
 import { CreateAgentInput } from './dtos/create-agent.input';
 import { UpdateAgentInput } from './dtos/update-agent.input';
+import { AgentGraphqlApiExceptionInterceptor } from './interceptors/agent-graphql-api-exception.interceptor';
 
 @UseGuards(
   WorkspaceAuthGuard,
   FeatureFlagGuard,
   SettingsPermissionGuard(PermissionFlagType.AI),
+)
+@UseInterceptors(
+  WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
+  AgentGraphqlApiExceptionInterceptor,
 )
 @Resolver()
 export class AgentResolver {
@@ -30,8 +37,13 @@ export class AgentResolver {
 
   @Query(() => [AgentDTO])
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
-  async findManyAgents(@AuthWorkspace() { id: workspaceId }: WorkspaceEntity) {
-    return this.agentService.findManyAgents(workspaceId);
+  async findManyAgents(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<AgentDTO[]> {
+    const flatAgentsWithRoleId =
+      await this.agentService.findManyAgents(workspaceId);
+
+    return flatAgentsWithRoleId.map(fromFlatAgentWithRoleIdToAgentDto);
   }
 
   @Query(() => AgentDTO)
@@ -39,8 +51,13 @@ export class AgentResolver {
   async findOneAgent(
     @Args('input') { id }: AgentIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    return this.agentService.findOneAgent(workspaceId, { id });
+  ): Promise<AgentDTO> {
+    const fatAgentWithRoleId = await this.agentService.findOneAgentById({
+      workspaceId,
+      id,
+    });
+
+    return fromFlatAgentWithRoleIdToAgentDto(fatAgentWithRoleId);
   }
 
   @Mutation(() => AgentDTO)
@@ -49,11 +66,13 @@ export class AgentResolver {
   async createOneAgent(
     @Args('input') input: CreateAgentInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    return this.agentService.createOneAgent(
+  ): Promise<AgentDTO> {
+    const createdAgent = await this.agentService.createOneAgent(
       { ...input, isCustom: true },
       workspaceId,
     );
+
+    return fromFlatAgentWithRoleIdToAgentDto(createdAgent);
   }
 
   @Mutation(() => AgentDTO)
@@ -62,8 +81,13 @@ export class AgentResolver {
   async updateOneAgent(
     @Args('input') input: UpdateAgentInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    return this.agentService.updateOneAgent(input, workspaceId);
+  ): Promise<AgentDTO> {
+    const updatedAgent = await this.agentService.updateOneAgent({
+      input,
+      workspaceId,
+    });
+
+    return fromFlatAgentWithRoleIdToAgentDto(updatedAgent);
   }
 
   @Mutation(() => AgentDTO)
@@ -72,7 +96,12 @@ export class AgentResolver {
   async deleteOneAgent(
     @Args('input') { id }: AgentIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    return this.agentService.deleteOneAgent(id, workspaceId);
+  ): Promise<AgentDTO> {
+    const deletedFlatAgent = await this.agentService.deleteOneAgent(
+      id,
+      workspaceId,
+    );
+
+    return fromFlatAgentWithRoleIdToAgentDto(deletedFlatAgent);
   }
 }

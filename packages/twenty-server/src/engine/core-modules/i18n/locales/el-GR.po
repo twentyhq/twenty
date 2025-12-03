@@ -196,6 +196,19 @@ msgstr "Διεύθυνση της εταιρείας"
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "Διεύθυνση της εταιρείας - παρωχημένη υπέρ του νέου πεδίου διεύθυνσης"
 
+#. js-lingui-id: mDXkHu
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+msgid "Agent not found"
+msgstr ""
+
+#. js-lingui-id: EisfDV
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util.ts
+msgid "Agent with name \"{name}\" already exists"
+msgstr ""
+
 #. js-lingui-id: W58PBh
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Aggregated / filtered event to be displayed on the timeline"
@@ -223,6 +236,11 @@ msgstr "Όλα ({objectLabelPlural}"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Amount"
 msgstr "Ποσό"
+
+#. js-lingui-id: pZEIPj
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util.ts
+msgid "An agent with this name already exists"
+msgstr ""
 
 #. js-lingui-id: MjyFvC
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -611,6 +629,12 @@ msgstr "Δεν είναι δυνατή η δημιουργία έκδοσης ρ
 msgid "Cannot delete account: you are the only admin. Assign another admin or delete the workspace(s) first."
 msgstr "Δεν μπορείτε να διαγράψετε τον λογαριασμό: είστε ο μόνος διαχειριστής. Ανάθεση άλλου διαχειριστή ή διαγραφή των workspace(s) πρώτα."
 
+#. js-lingui-id: RYRFbW
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+msgid "Cannot delete standard agent"
+msgstr ""
+
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Cannot delete, please update the label identifier field first"
@@ -635,6 +659,12 @@ msgstr "Δεν μπορεί να υπάρχει περισσότερη από μ
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
 msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
 msgstr "Δεν είναι δυνατή η ενημέρωση του καναλιού μηνυμάτων ενώ ο συγχρονισμός είναι σε εξέλιξη. Παρακαλώ περιμένετε να ολοκληρωθεί ο συγχρονισμός."
+
+#. js-lingui-id: fpzw+t
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+msgid "Cannot update standard agent"
+msgstr ""
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -1174,6 +1204,11 @@ msgstr "Αναμενόταν να χρησιμοποιηθούν τα ίδια �
 msgid "External ID"
 msgstr "Εξωτερικό ID"
 
+#. js-lingui-id: E7Dsiq
+#: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
+msgid "Failed to create evaluation. Please try again."
+msgstr ""
+
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
 msgid "Failed to delete jobs. Please try again later."
@@ -1692,6 +1727,11 @@ msgstr "Μη έγκυρο περιεχόμενο δημιουργίας σχέσ
 msgid "Invalid relation field target"
 msgstr ""
 
+#. js-lingui-id: m4y7mj
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Invalid response format type"
+msgstr ""
+
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid setting type provided in cron trigger"
@@ -1788,6 +1828,11 @@ msgstr "Αντικείμενο JSON για την παροχή βημάτων"
 msgid "Json object to provide trigger"
 msgstr "Αντικείμενο JSON για την παροχή εναύσματος"
 
+#. js-lingui-id: eCBMag
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "JSON response format requires a schema"
+msgstr ""
+
 #. js-lingui-id: TVc0/Q
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Json value for event details"
@@ -1802,6 +1847,12 @@ msgstr "Ιούλιος"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "June"
 msgstr "Ιούνιος"
+
+#. js-lingui-id: 6sFS+I
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+msgid "Label cannot be empty"
+msgstr ""
 
 #. js-lingui-id: ljUvzm
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -2106,6 +2157,12 @@ msgstr "Διακριτικό ανανέωσης παρόχου ανταλλαγ�
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "Λείπουν απαραίτητα πεδία: τουλάχιστον ένας μοναδικός περιορισμός πρέπει να είναι πλήρως συμπληρωμένος για το '{connectFieldName}'."
+
+#. js-lingui-id: AHuHeg
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+msgid "Model ID cannot be empty"
+msgstr ""
 
 #. js-lingui-id: hty0d5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -2700,6 +2757,12 @@ msgstr "\\\\"
 msgid "Probability"
 msgstr "\\\\"
 
+#. js-lingui-id: t/0e9D
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+msgid "Prompt cannot be empty"
+msgstr ""
+
 #. js-lingui-id: OTJNm9
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
 msgid "Property {property} is required for role"
@@ -2795,6 +2858,21 @@ msgstr "Τα απομακρυσμένα αντικείμενα δεν υποστ
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Request has expired, please try again."
 msgstr "Το αίτημα έχει λήξει, παρακαλούμε προσπαθήστε ξανά."
+
+#. js-lingui-id: KPIUoa
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Response format type must be either \"text\" or \"json\""
+msgstr ""
+
+#. js-lingui-id: 6Plp3x
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Response format with type \"json\" must include a schema"
+msgstr ""
+
+#. js-lingui-id: JCqfz6
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Response format with type \"text\" should not include a schema"
+msgstr ""
 
 #. js-lingui-id: rnCndp
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
@@ -3196,6 +3274,11 @@ msgstr "Στόχος Εργασίας της Εργασίας"
 msgid "Text"
 msgstr "Κείμενο"
 
+#. js-lingui-id: mQj02P
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Text response format should not have a schema"
+msgstr ""
+
 #. js-lingui-id: 6PJbR2
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "The account handle (email, username, phone number, etc.)"
@@ -3205,6 +3288,11 @@ msgstr "Ο λογαριασμός χειρισμού (email, όνομα χρήσ
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "The account provider"
 msgstr "Ο πάροχος του λογαριασμού"
+
+#. js-lingui-id: GekZDw
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
+msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
+msgstr ""
 
 #. js-lingui-id: eC8p5b
 #: src/engine/metadata-modules/permissions/permissions.service.ts

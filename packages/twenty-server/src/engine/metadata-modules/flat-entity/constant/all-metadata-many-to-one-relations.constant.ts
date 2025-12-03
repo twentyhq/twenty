@@ -108,4 +108,5 @@ export const ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY = {
       flatEntityForeignKeyAggregator: 'roleTargetIds',
     },
   },
+  agent: {},
 } as const satisfies MetadataNameAndRelations;
