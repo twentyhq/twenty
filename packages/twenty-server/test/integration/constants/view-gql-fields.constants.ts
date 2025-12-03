@@ -50,7 +50,6 @@ export const VIEW_FILTER_GQL_FIELDS = `
 
 export const VIEW_GROUP_GQL_FIELDS = `
     id
-    fieldMetadataId
     fieldValue
     isVisible
     position

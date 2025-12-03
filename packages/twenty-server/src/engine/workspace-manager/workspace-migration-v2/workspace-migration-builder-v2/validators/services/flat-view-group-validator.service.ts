@@ -52,6 +52,14 @@ export class FlatViewGroupValidatorService {
       }),
     };
 
+    if (!isDefined(updatedFlatViewGroup.fieldValue)) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Field value is required`,
+        userFriendlyMessage: msg`Field value is required`,
+      });
+    }
+
     validationResult.flatEntityMinimalInformation = {
       id: updatedFlatViewGroup.id,
       viewId: updatedFlatViewGroup.viewId,
@@ -144,6 +152,14 @@ export class FlatViewGroupValidatorService {
       });
 
       return validationResult;
+    }
+
+    if (!isDefined(flatViewGroupToValidate.fieldValue)) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Field value is required`,
+        userFriendlyMessage: msg`Field value is required`,
+      });
     }
 
     return validationResult;

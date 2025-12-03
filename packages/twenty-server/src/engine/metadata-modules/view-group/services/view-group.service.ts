@@ -99,7 +99,7 @@ export class ViewGroupService {
 
         if (!isDefined(mainGroupByFieldMetadataId)) {
           throw new ViewGroupException(
-            'Main group by field metadata id is required',
+            'mainGroupByFieldMetadataId is required',
             ViewGroupExceptionCode.MISSING_MAIN_GROUP_BY_FIELD_METADATA_ID,
           );
         }
