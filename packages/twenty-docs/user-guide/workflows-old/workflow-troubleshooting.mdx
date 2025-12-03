@@ -1,0 +1,114 @@
+---
+title: Workflow Troubleshooting
+info: Debug and optimize your workflows with troubleshooting techniques and performance optimization tips.
+image: /images/user-guide/what-is-twenty/20.png
+sectionInfo: Automate processes and integrate with external tools
+---
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Debugging with Workflow Runs
+
+Use the **Workflow Runs** interface to debug issues:
+- Access via the **Runs** panel in the workflow editor
+- Click on individual runs to see input/output data for each step
+- Check execution status, error messages, and data flow between steps
+
+## Common Issues and Solutions
+
+### Workflow Not Triggering
+**Problem**: Workflow doesn't execute when expected.
+
+**Solutions**:
+- Verify the workflow is **Active** (not in Draft mode)
+- Check trigger configuration matches your data structure
+- For Record triggers, ensure the correct object and fields are selected
+- For Webhook triggers, verify the URL and expected data format
+- For Scheduled triggers, check the timing configuration
+
+### Forms Not Accessible
+**Problem**: Form actions are hard to find or access in automated workflows.
+
+<Warning>
+Forms are currently designed for manual triggers only. For workflows with other triggers (Record Created, Updated, etc.), forms are only accessible via the workflow run interface, which is not the expected user experience. A notifications center will be released in 2026 to properly support forms in automated workflows.
+</Warning>
+
+**Workaround**: Use manual triggers when forms are required, or restructure workflows to avoid forms in automated flows.
+
+### High Credit Consumption
+**Problem**: Workflows consuming more credits than expected.
+
+**Common Causes & Solutions**:
+- **Inefficient API Calls**: Batch API calls when possible instead of individual requests
+- **Wrong Manual Trigger Configuration**: Use `Bulk` availability instead of `Single` to process multiple records in one workflow run
+- **Missing Filters**: Add conditional logic to stop workflows when criteria aren't met
+- **Unnecessary Steps**: Remove redundant actions and optimize workflow logic
+- **Real-time vs. Scheduled**: Use scheduled workflows for non-urgent processes
+
+### Concurrent Workflow Limits
+**Problem**: Hitting the 100 concurrent workflow limit per workspace.
+
+<Warning>
+You cannot run more than 100 workflows in parallel at any given time per workspace.
+</Warning>
+
+**Solutions**:
+- Use `Bulk` availability for manual triggers to process multiple records in one run
+- Implement delays between workflow executions using scheduled triggers
+- Optimize workflows to run faster and reduce concurrent execution time
+- Consider batch processing during off-peak hours
+
+### API Rate Limiting
+**Problem**: External API calls failing due to rate limits.
+
+**Solutions**:
+- Use scheduled workflows instead of real-time triggers when possible
+- Implement delays between API calls in Code actions
+- Batch API requests when the external service supports it
+- Monitor workflow runs for rate limit errors and adjust timing
+
+### Iterator Issues
+**Problem**: Iterator actions not working as expected.
+
+**Solutions**:
+- **Note**: Iterator is currently in beta. Activate it under Settings → Releases → Lab
+- Verify the input is an array of records from a previous step
+- Check that actions within the Iterator are properly configured
+- Use Iterator with `Bulk` manual triggers for optimal performance
+
+### Missing Permissions
+**Problem**: Cannot access workflows section.
+
+<Warning>
+If you don't see the Workflows section, this is due to a permissions issue. Contact your workspace administrator to grant you access to workflows.
+</Warning>
+
+## Optimization Tips
+
+### Performance Best Practices
+- **Start simple** and add complexity gradually
+- **Use `Bulk` availability** for manual triggers to process multiple records efficiently
+- **Add filters early** to stop workflows when criteria aren't met
+- **Batch API calls** and use scheduled workflows for non-urgent processes
+- **Hide workflow runs** from pages showing all workflows to improve loading performance
+- **Monitor credit usage** regularly in Settings → Billing
+
+### Error Prevention
+- **Test in draft mode** before activating workflows
+- **Validate API responses** and implement fallback actions
+- **Use descriptive step names** for easier maintenance
+- **Document complex logic** for team members
+
+## Getting Help
+
+### Self-Service Resources
+- Review [Workflow Features](/user-guide/workflows/workflow-features) for technical details
+- Check [Workflow Credits](/user-guide/workflows/workflow-credits) for optimization tips
+- Explore [Internal Automations](/user-guide/workflows/internal-automations) and [External Tool Integration](/user-guide/workflows/external-tool-integration) for examples
+
+### Professional Support
+- Contact our [Professional Services](/user-guide/workflows/professional-services) for complex troubleshooting
+- Reach out to support via contact@twenty.com for technical assistance
+
+

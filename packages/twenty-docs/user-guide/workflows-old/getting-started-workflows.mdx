@@ -1,0 +1,73 @@
+---
+title: Getting Started With Workflows
+info: "Learn how to add automations and ideas to get started."
+image: /images/user-guide/workflows/workflow.png
+sectionInfo: Automate processes and integrate with external tools
+---
+<Frame>
+  <img src="/images/user-guide/workflows/workflow.png" alt="Header" />
+</Frame>
+
+## Why Workflows Matter
+
+Twenty was built to bring maximum flexibility to its users. Rather than forcing you to adapt your business processes to rigid, pre-built features, workflows enable you to build automations that create the CRM that best supports your unique business use cases.
+
+Workflows are Twenty's in-app feature for building these automations. They give you the building blocks to create exactly what your business needs, when it needs it.
+
+## What can I do with workflows?
+
+We recommend building automations for two main purposes:
+
+1. **Internal automations to facilitate your team's day-to-day**: Reduce the amount of manual entries and repetitive tasks that slow down your team.
+2. **Bring data in and out of Twenty**: Connect Twenty via API calls and webhooks to your database and other tools.
+
+Let's explore examples of what's possible before diving into the how.  
+
+## 1. Internal Automations
+
+Your CRM is only helpful if the data is up to date, but no one likes updating it. Use workflows to automate low-value, repeatable tasks and keep your team focused on what matters.
+
+Examples of what you can automate internally:
+- **Data management**: Auto-flag personal emails, lead assignment, data validation
+- **Sales processes**: Stage-based updates, churn management, stale opportunity alerts  
+- **Productivity**: Weekly task reminders, meeting follow-ups, cross-object field synchronization
+
+For detailed examples and step-by-step guidance, see our [Internal Automations](/user-guide/workflows/internal-automations) guide.
+
+
+## 2. External Integrations
+
+Connect Twenty with your other tools and data sources to create a unified business system. You can bring data into Twenty from webforms, product databases, call recorders, and enrichment services. You can also send data out to email marketing tools, billing systems, and other business applications.
+
+Examples of what you can integrate:
+- **Data ingestion**: Webform submissions, product data sync, meeting notes, data enrichment
+- **Data distribution**: Newsletter management, email sequences, lead scoring, invoice generation
+
+For detailed integration patterns and implementation guidance, see our [External Tool Integration](/user-guide/workflows/external-tool-integration) guide. 
+
+### What if I don't want to build those connections?
+We offer [Professional Services](/user-guide/workflows/professional-services) to help you create the automations you need.  
+Depending on the scope of your project, we will suggest an [Onboarding pack](https://twenty.com/onboarding-packages) or we will put you in contact with our certified implementation partners. They can create your data model, migrate your data, build your workflows.  
+
+### I'm not sure the connection I need is feasible 
+Send us a message and we will help you assess the feasibility.
+
+## Workflow Best Practices
+
+As you start building workflows, keep these tips in mind:
+
+- **Edit step names**: Rename your workflow steps to clearly describe what each one does. This helps with maintenance and makes it easier to hand off to coworkers
+- **Leverage previous step data**: You can use fields from records returned by any previous step in your workflow
+- **Start simple**: Begin with basic workflows and add complexity over time as you become more comfortable with the system
+- **Plan before building**: Map out your workflow logic before you start building to avoid getting stuck halfway through
+- **Use branches wisely**: After a `Search Records` step, create branches to handle both "update existing record" and "create new record" scenarios, then merge the paths back together
+
+
+## What we're working on
+Here are the main items we're working on to improve workflows:
+- Loops (Iterator is currently in beta, activate it under Settings → Releases → Lab)
+- If / Else step
+- AI agent to build workflows on your behalf
+
+
+

@@ -1,0 +1,197 @@
+---
+title: External Tool Integration
+info: These workflows focus on bringing data in and out of Twenty through API calls and webhooks.
+image: /images/user-guide/integrations/plug.png
+sectionInfo: Automate processes and integrate with external tools
+---
+<Frame>
+  <img src="/images/user-guide/integrations/plug.png" alt="Header" />
+</Frame>
+
+Below are workflow examples you could roll out to connect Twenty with the rest of your stack.
+
+
+## Data Ingestion Use Cases
+
+### Webform Submissions
+**Problem**: You need to capture leads from website forms, landing pages, or contact forms directly into Twenty.
+
+**Solution**: Use webhook triggers to automatically create records from form submissions.
+
+**Setup**:
+- Create a workflow with a Webhook trigger
+- Configure the webhook to expect form data (name, email, company, etc.)
+- Set the webhook method to POST
+- Define the expected body structure in the trigger
+
+**Trigger**: Webhook (POST request from your form)  
+
+**Actions**:
+- Search Records to check if person/company already exists
+- Branch: If exists → Update Record, If not → Create Record
+- Create Record for follow-up task assigned to sales rep
+- Send Email notification to sales team
+
+### Product Data Synchronization
+**Problem**: Your sales team needs visibility into product usage, billing, or feature adoption data stored in your data warehouse.
+
+**Solution**: Regularly sync product data into Twenty to give sellers context about their accounts.
+
+**Trigger**: On a Schedule (daily or weekly)  
+
+**Actions**:
+- HTTP Request to your data warehouse API
+- Code action to process and format the data
+- Use the Iterator function for the following steps
+- Search Records to find matching company records
+- Update Record to add product usage metrics
+- Create Record for tasks when usage drops below threshold
+
+### Meeting Notes from Call Recorders
+**Problem**: Important insights from sales calls get lost or aren't properly documented in the CRM.
+
+**Solution**: Automatically create notes and action items from call recording systems.
+
+**Trigger**: Webhook (from call recording platform)  
+
+**Actions**:
+- Code action to extract meeting summary and action items
+- Search Records to find the related opportunity or contact
+- Create Record for a note with meeting summary
+- Create Record for follow-up tasks based on action items
+- Send Email to attendees with summary and next steps
+
+### Data Enrichment
+**Problem**: Your contact and company records lack important demographic and firmographic information.
+
+**Solution**: Automatically enrich records using external data providers.
+
+**Trigger**: Record is Created (People or Companies object)  
+
+**Actions**:
+- HTTP Request to enrichment API
+- Code action to process enrichment response
+- Use the Iterator function for the following steps
+- Update Record with additional company/contact information
+- Create Record for sales task if high-value prospect identified
+- Send Email alert if enrichment reveals key buying signals
+
+## Data Distribution Use Cases
+
+### Newsletter Subscriber Management
+**Problem**: You want to send marketing emails to specific segments of your CRM data using specialized email tools.
+
+**Solution**: Export subscriber lists to your email marketing platform when needed.
+
+**Setup**: Create a view in Twenty with all newsletter recipients
+
+**Trigger**: Launch Manually (when no record is selected)  
+
+**Actions**:
+- Search Records using the newsletter view criteria
+- Code action to format email addresses for your email platform
+- HTTP Request to add subscribers to your email marketing tool
+- Create Record for campaign tracking
+- Send Email confirmation to marketing team
+
+### Email Sequence Triggers
+**Problem**: You want to trigger sophisticated email sequences based on CRM events using dedicated email automation tools.
+
+**Solution**: Send new leads or customers to your email automation platform when specific events occur.
+
+**Trigger**: Record is Created (People object with specific criteria)  
+
+**Actions**:
+- Code action to determine appropriate email sequence
+- HTTP Request to add contact to email automation platform
+- Update Record to track sequence enrollment
+- Create Record for follow-up task to monitor engagement
+
+### Lead Scoring Integration
+**Problem**: You need sophisticated lead scoring that combines CRM data with external signals.
+
+**Solution**: Send lead data to external scoring tools or implement scoring logic within workflows.
+
+**Option 1 - External Tool**:
+
+**Trigger**: Record is Updated (People object)  
+
+**Actions**:
+- HTTP Request to send lead data to scoring platform
+- Code action to process score response
+- Update Record with lead score
+- Create Record for sales task if score exceeds threshold
+
+**Option 2 - Internal Logic**:
+
+**Trigger**: Record is Updated (People object)  
+
+**Actions**:
+- Code action with scoring algorithm (company size, industry, behavior)
+- Update Record with calculated score
+- Send Email alert to sales rep for high-scoring leads
+
+### Invoice Generation
+**Problem**: When deals close, your billing system needs to be updated with customer and deal information.
+
+**Solution**: Automatically send deal data to your invoicing system when opportunities are won.
+
+**Trigger**: Record is Updated (Opportunities object, Stage = "Closed Won")  
+
+**Actions**:
+- Search Records to get complete customer information
+- Code action to format data for billing system
+- HTTP Request to create customer in billing platform
+- HTTP Request to generate invoice
+- Update Record to store invoice reference
+- Send Email to finance team with invoice details
+
+## Advanced Integration Patterns
+
+### Bi-directional Sync
+**Problem**: You need to keep data synchronized between Twenty and another system in both directions.
+
+**Solution**: Combine scheduled workflows with webhook triggers for real-time sync.
+
+**From Twenty to External System**:
+
+**Trigger**: Record is Updated (any relevant object)  
+
+**Actions**:
+- HTTP Request to update external system
+- Update Record to track sync status and timestamp
+
+**From External System to Twenty**:
+
+**Trigger**: Webhook (from external system)  
+
+**Actions**:
+- Search Records to find matching record
+- Update Record with new data from external system
+- Create Record for conflict resolution task if needed
+
+### Multi-step Data Processing
+**Problem**: Data from external sources needs complex processing before it can be used in Twenty.
+
+**Solution**: Use Code actions for data transformation and validation.
+
+**Trigger**: Webhook or On a Schedule  
+
+**Actions**:
+- Code action to validate incoming data format
+- Code action to transform data structure
+- Code action to apply business rules and calculations
+- Search Records to check for duplicates
+- Create or Update Record with processed data
+- Send Email alert if data quality issues detected
+
+## Implementation Tips
+- Store API keys securely in Settings → API & Webhooks
+- Use HTTPS for all external API calls
+- Be mindful of API rate limits - use scheduled workflows when possible
+- Consider batch updates "On a Schedule" when real-time processing isn't required
+- Remember the 100 concurrent workflow limit per workspace - use "Bulk" availability for manual triggers when processing multiple records (see [Workflow Features](/user-guide/workflows/workflow-features) for details)
+- Test with sample data before activating workflows
+
+For troubleshooting integration issues, see our [Workflow Troubleshooting](/user-guide/workflows/workflow-troubleshooting) guide. For help implementing complex integrations, consider our [Professional Services](/user-guide/workflows/professional-services).
+
