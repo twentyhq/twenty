@@ -147,7 +147,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     const commands_1110: VersionCommands = {
       beforeSyncMetadata: [this.createTwentyStandardApplicationCommand],
       afterSyncMetadata: [
-        this.migrateTimelineActivityToMorphRelationsCommand,
         this.cleanOrphanedUserWorkspacesCommand,
         this.cleanOrphanedRoleTargetsCommand,
       ],
@@ -164,6 +163,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [this.setStandardApplicationNotUninstallableCommand],
     };
 
+    const commands_1130: VersionCommands = {
+      beforeSyncMetadata: [],
+      afterSyncMetadata: [this.migrateTimelineActivityToMorphRelationsCommand],
+    };
+
     this.allCommands = {
       '1.6.0': commands_160,
       '1.7.0': commands_170,
@@ -171,6 +175,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '1.10.0': commands_1100,
       '1.11.0': commands_1110,
       '1.12.0': commands_1120,
+      '1.13.0': commands_1130,
     };
   }
 
