@@ -36,11 +36,12 @@ export class DashboardDuplicationService {
     await queryRunner.startTransaction();
 
     try {
-      const newDashboard = await this.duplicateDashboardWithinTransaction(
-        dashboardId,
-        workspaceId,
-        queryRunner.manager,
-      );
+      const newDashboard =
+        await this.duplicateDashboardWithPageLayoutDuplicationWithinTransaction(
+          dashboardId,
+          workspaceId,
+          queryRunner.manager,
+        );
 
       await queryRunner.commitTransaction();
 
@@ -66,7 +67,7 @@ export class DashboardDuplicationService {
     }
   }
 
-  private async duplicateDashboardWithinTransaction(
+  private async duplicateDashboardWithPageLayoutDuplicationWithinTransaction(
     dashboardId: string,
     workspaceId: string,
     transactionManager: EntityManager,
