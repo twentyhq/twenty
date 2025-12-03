@@ -28,5 +28,12 @@ export const injectWidgetConfigurationDiscriminator = (
     } as ConfigurationWithDiscriminator;
   }
 
+  if (widgetType === WidgetType.STANDALONE_RICH_TEXT) {
+    return {
+      ...configuration,
+      configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT_CONFIG,
+    } as ConfigurationWithDiscriminator;
+  }
+
   return configuration as ConfigurationWithDiscriminator;
 };

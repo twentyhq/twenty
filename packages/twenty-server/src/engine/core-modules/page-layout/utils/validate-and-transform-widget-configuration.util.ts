@@ -8,6 +8,7 @@ import { GaugeChartConfigurationDTO } from 'src/engine/core-modules/page-layout/
 import { IframeConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/iframe-configuration.dto';
 import { LineChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/line-chart-configuration.dto';
 import { PieChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/pie-chart-configuration.dto';
+import { StandaloneRichTextConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/standalone-rich-text-configuration.dto';
 import { type WidgetConfigurationInterface } from 'src/engine/core-modules/page-layout/dtos/widget-configuration.interface';
 import { BarChartGroupMode } from 'src/engine/core-modules/page-layout/enums/bar-chart-group-mode.enum';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
@@ -161,6 +162,26 @@ const validateIframeConfiguration = (
   return instance;
 };
 
+const validateStandaloneRichTextConfiguration = (
+  configuration: unknown,
+): WidgetConfigurationInterface | null => {
+  const instance = plainToInstance(
+    StandaloneRichTextConfigurationDTO,
+    configuration,
+  );
+
+  const errors = validateSync(instance, {
+    whitelist: true,
+    forbidUnknownValues: true,
+  });
+
+  if (errors.length > 0) {
+    throw errors;
+  }
+
+  return instance;
+};
+
 export const validateAndTransformWidgetConfiguration = ({
   type,
   configuration,
@@ -183,6 +204,8 @@ export const validateAndTransformWidgetConfiguration = ({
         });
       case WidgetType.IFRAME:
         return validateIframeConfiguration(configuration);
+      case WidgetType.STANDALONE_RICH_TEXT:
+        return validateStandaloneRichTextConfiguration(configuration);
       default:
         return null;
     }
