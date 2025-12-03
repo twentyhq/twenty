@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { IsNull, Repository } from 'typeorm';
 
-import { InjectRepository } from '@nestjs/typeorm';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
@@ -22,8 +24,6 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { IsNull, Repository } from 'typeorm';
 
 @Injectable()
 export class ViewService {
