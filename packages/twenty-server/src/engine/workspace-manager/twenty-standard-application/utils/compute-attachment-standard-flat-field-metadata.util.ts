@@ -1,4 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -202,6 +206,11 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'authoredAttachments',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'authorId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -218,6 +227,11 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       // Activity is deprecated, pointing to a non-existent target
       targetObjectName: 'note',
       targetFieldName: 'attachments',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'activityId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -233,6 +247,11 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'task',
       targetFieldName: 'attachments',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'taskId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -248,6 +267,11 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'note',
       targetFieldName: 'attachments',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'noteId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -263,6 +287,11 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'person',
       targetFieldName: 'attachments',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'personId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -278,6 +307,11 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'company',
       targetFieldName: 'attachments',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'companyId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -293,6 +327,11 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'opportunity',
       targetFieldName: 'attachments',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'opportunityId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -308,6 +347,11 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'dashboard',
       targetFieldName: 'attachments',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'dashboardId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -323,6 +367,11 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'workflow',
       targetFieldName: 'attachments',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'workflowId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -339,6 +388,11 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       // Custom is a dynamic relation, pointing to custom objects
       targetObjectName: 'note',
       targetFieldName: 'attachments',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'customId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),

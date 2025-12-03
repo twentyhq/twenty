@@ -1,4 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -225,6 +229,11 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'person',
       targetFieldName: 'pointOfContactForOpportunities',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'pointOfContactId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -240,6 +249,11 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'company',
       targetFieldName: 'opportunities',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'companyId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -256,6 +270,9 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'favorite',
       targetFieldName: 'opportunity',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -272,6 +289,9 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'taskTarget',
       targetFieldName: 'opportunity',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -288,6 +308,9 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'noteTarget',
       targetFieldName: 'opportunity',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -304,6 +327,9 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'attachment',
       targetFieldName: 'opportunity',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -320,6 +346,9 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'opportunity',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),

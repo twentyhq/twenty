@@ -1,4 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -129,6 +133,11 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'favorites',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'forWorkspaceMemberId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -144,6 +153,11 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'person',
       targetFieldName: 'favorites',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'personId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -159,6 +173,11 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'company',
       targetFieldName: 'favorites',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'companyId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -174,6 +193,11 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'opportunity',
       targetFieldName: 'favorites',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'opportunityId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -189,6 +213,11 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'workflow',
       targetFieldName: 'favorites',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'workflowId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -204,6 +233,11 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'workflowVersion',
       targetFieldName: 'favorites',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'workflowVersionId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -219,6 +253,11 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'workflowRun',
       targetFieldName: 'favorites',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'workflowRunId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -234,6 +273,11 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'task',
       targetFieldName: 'favorites',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'taskId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -249,6 +293,11 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'note',
       targetFieldName: 'favorites',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'noteId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -264,6 +313,11 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'dashboard',
       targetFieldName: 'favorites',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'dashboardId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -279,6 +333,11 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'favoriteFolder',
       targetFieldName: 'favorites',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'favoriteFolderId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -294,6 +353,11 @@ export const buildFavoriteStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'note',
       targetFieldName: 'favorites',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'customId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),

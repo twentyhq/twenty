@@ -1,4 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -284,6 +288,11 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'company',
       targetFieldName: 'people',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'companyId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -300,6 +309,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'opportunity',
       targetFieldName: 'pointOfContact',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -316,6 +328,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'taskTarget',
       targetFieldName: 'person',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -332,6 +347,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'noteTarget',
       targetFieldName: 'person',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -348,6 +366,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'favorite',
       targetFieldName: 'person',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -364,6 +385,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'attachment',
       targetFieldName: 'person',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -380,6 +404,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'messageParticipant',
       targetFieldName: 'person',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -396,6 +423,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'calendarEventParticipant',
       targetFieldName: 'person',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -412,6 +442,9 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'person',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),

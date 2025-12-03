@@ -1,4 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -238,6 +242,11 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'connectedAccounts',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'accountOwnerId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -253,6 +262,9 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'messageChannel',
       targetFieldName: 'connectedAccount',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -268,6 +280,9 @@ export const buildConnectedAccountStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'calendarChannel',
       targetFieldName: 'connectedAccount',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
