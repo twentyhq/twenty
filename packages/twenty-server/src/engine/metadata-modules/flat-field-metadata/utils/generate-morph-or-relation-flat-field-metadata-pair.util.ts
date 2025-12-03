@@ -1,10 +1,10 @@
+import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
-import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
@@ -14,6 +14,8 @@ import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/f
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-from-field.util';
+import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
 
 type ComputeFieldMetadataRelationSettingsForRelationTypeArgs = {
   relationType: RelationType;
@@ -74,6 +76,17 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     });
   const targetRelationTargetFieldMetadataId = v4();
   const sourceRelationTargetFieldMetadataId = v4();
+
+  const defaultDescriptionFromField =
+    buildDescriptionForRelationFieldMetadataOnFromField({
+      relationObjectMetadataNamePlural: sourceFlatObjectMetadata.namePlural,
+      targetObjectLabelSingular: targetFlatObjectMetadata.labelSingular,
+    });
+  const defaultDescriptionToField =
+    buildDescriptionForRelationFieldMetadataOnToField({
+      relationObjectMetadataNamePlural: targetFlatObjectMetadata.namePlural,
+      targetObjectLabelSingular: sourceFlatObjectMetadata.labelSingular,
+    });
   const sourceFlatFieldMetadata: Omit<
     FlatFieldMetadata<MorphOrRelationFieldMetadataType>,
     'flatRelationTargetFieldMetadata'
@@ -88,6 +101,8 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     objectMetadataId: sourceFlatObjectMetadata.id,
     icon: createFieldInput.icon ?? 'IconRelationOneToMany',
     type: createFieldInput.type,
+    description:
+      createFieldInput.description ?? defaultDescriptionFromField.description,
     defaultValue: null,
     settings: sourceFlatFieldMetadataSettings,
     options: null,
@@ -97,6 +112,11 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
 
   const targetCreateFieldInput: CreateFieldInput = {
     icon: relationCreationPayload.targetFieldIcon ?? 'Icon123',
+    isCustom: createFieldInput.isCustom,
+    isSystem: createFieldInput.isSystem,
+    isUnique: createFieldInput.isUnique,
+    description:
+      createFieldInput.description ?? defaultDescriptionToField.description,
     label: relationCreationPayload.targetFieldLabel,
     name:
       targetFieldName ??
