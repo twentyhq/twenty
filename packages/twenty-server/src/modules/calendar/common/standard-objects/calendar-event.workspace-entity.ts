@@ -12,9 +12,9 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
-import { WorkspaceIsObjectUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-object-ui-readonly.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { CALENDAR_EVENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
@@ -35,7 +35,6 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
-@WorkspaceIsObjectUIReadOnly()
 export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.title,
@@ -44,6 +43,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Title`,
     icon: 'IconH1',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   title: string | null;
 
@@ -55,6 +55,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCalendarCancel',
     defaultValue: false,
   })
+  @WorkspaceIsFieldUIReadOnly()
   isCanceled: boolean;
 
   @WorkspaceField({
@@ -65,6 +66,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconHours24',
     defaultValue: false,
   })
+  @WorkspaceIsFieldUIReadOnly()
   isFullDay: boolean;
 
   @WorkspaceField({
@@ -74,6 +76,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Start Date`,
     icon: 'IconCalendarClock',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   startsAt: string | null;
 
@@ -84,6 +87,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`End Date`,
     icon: 'IconCalendarClock',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   endsAt: string | null;
 
@@ -94,6 +98,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Creation DateTime`,
     icon: 'IconCalendarPlus',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   externalCreatedAt: string | null;
 
@@ -104,6 +109,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Update DateTime`,
     icon: 'IconCalendarCog',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   externalUpdatedAt: string | null;
 
@@ -114,6 +120,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Description`,
     icon: 'IconFileDescription',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   description: string | null;
 
@@ -124,6 +131,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Location`,
     icon: 'IconMapPin',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   location: string | null;
 
@@ -134,6 +142,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`iCal UID`,
     icon: 'IconKey',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   iCalUID: string | null;
 
@@ -144,6 +153,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Conference Solution`,
     icon: 'IconScreenShare',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   conferenceSolution: string | null;
 
@@ -154,6 +164,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Meet Link`,
     icon: 'IconLink',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   conferenceLink: LinksMetadata;
 
@@ -167,6 +178,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => CalendarChannelEventAssociationWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   calendarChannelEventAssociations: Relation<
     CalendarChannelEventAssociationWorkspaceEntity[]
   >;
@@ -180,6 +192,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => CalendarEventParticipantWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   calendarEventParticipants: Relation<
     CalendarEventParticipantWorkspaceEntity[]
   >;
@@ -193,6 +206,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 }
