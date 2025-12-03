@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataComplexOption, FieldMetadataDefaultOption, FieldMetadataDefaultValueForAnyType, FieldMetadataType } from 'twenty-shared/types';
 
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/core-modules/application/constants/twenty-standard-applications';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -23,9 +23,9 @@ type CreateStandardFieldFlatMetadataOptions = {
   isNullable?: boolean;
   isUnique?: boolean;
   isUIReadOnly?: boolean;
-  defaultValue?: unknown;
+  defaultValue?: FieldMetadataDefaultValueForAnyType;
   settings?: Record<string, unknown> | null;
-  options?: unknown;
+  options?: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[] | null;
   createdAt: Date;
 };
 
