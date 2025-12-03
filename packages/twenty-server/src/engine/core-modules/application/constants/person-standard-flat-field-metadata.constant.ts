@@ -1,92 +1,10 @@
-import { FieldMetadataComplexOption, FieldMetadataDefaultOption, FieldMetadataDefaultValueForAnyType, FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/core-modules/application/constants/twenty-standard-applications';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-
+import { createStandardFieldFlatMetadata } from 'src/engine/core-modules/application/constants/create-standard-field-flat-metadata.util';
+import { createStandardRelationFieldFlatMetadata } from 'src/engine/core-modules/application/constants/create-standard-relation-field-flat-metadata.util';
 import { StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/core-modules/application/constants/get-standard-field-metadata-id-by-object-and-field-name.util';
 import { AllStandardObjectFieldName } from 'src/engine/core-modules/application/types/all-standard-object-field-name.type';
-import { STANDARD_OBJECTS } from './standard-object.constant';
-
-const TWENTY_STANDARD_APPLICATION_ID =
-  TWENTY_STANDARD_APPLICATION.universalIdentifier;
-
-// Placeholder workspace ID for standard application constant
-const PLACEHOLDER_WORKSPACE_ID = '';
-
-type CreateStandardFieldFlatMetadataOptions = {
-  fieldName: AllStandardObjectFieldName<'person'>;
-  type: FieldMetadataType;
-  label: string;
-  description: string;
-  icon: string;
-  isSystem?: boolean;
-  isNullable?: boolean;
-  isUnique?: boolean;
-  isUIReadOnly?: boolean;
-  defaultValue?: FieldMetadataDefaultValueForAnyType;
-  settings?: Record<string, unknown> | null;
-  options?: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[] | null;
-  createdAt: Date;
-};
-
-type CreateStandardFieldFlatMetadataArgs = {
-  options: CreateStandardFieldFlatMetadataOptions;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-};
-
-const createStandardFieldFlatMetadata = ({
-  options: {
-    fieldName,
-    type,
-    label,
-    description,
-    icon,
-    isSystem = false,
-    isNullable = true,
-    isUnique = false,
-    isUIReadOnly = false,
-    defaultValue = null,
-    settings = null,
-    options = null,
-    createdAt,
-  },
-  standardFieldMetadataIdByObjectAndFieldName,
-}: CreateStandardFieldFlatMetadataArgs): FlatFieldMetadata => ({
-  id: standardFieldMetadataIdByObjectAndFieldName.person.fields[fieldName],
-  universalIdentifier:
-    STANDARD_OBJECTS.person.fields[fieldName].universalIdentifier,
-  standardId: STANDARD_OBJECTS.person.fields[fieldName].universalIdentifier,
-  applicationId: TWENTY_STANDARD_APPLICATION_ID,
-  workspaceId: PLACEHOLDER_WORKSPACE_ID,
-  objectMetadataId: standardFieldMetadataIdByObjectAndFieldName.person.id,
-  type,
-  name: fieldName,
-  label,
-  description,
-  icon,
-  isCustom: false,
-  isActive: true,
-  isSystem,
-  isNullable,
-  isUnique,
-  isUIReadOnly,
-  isLabelSyncedWithName: false,
-  standardOverrides: null,
-  defaultValue,
-  settings,
-  options,
-  relationTargetFieldMetadataId: null,
-  relationTargetObjectMetadataId: null,
-  morphId: null,
-  viewFieldIds: [],
-  viewFilterIds: [],
-  viewGroupIds: [],
-  kanbanAggregateOperationViewIds: [],
-  calendarViewIds: [],
-  mainGroupByFieldMetadataViewIds: [],
-  createdAt,
-  updatedAt: createdAt,
-});
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 export const buildPersonStandardFlatFieldMetadatas = ({
   createdAt,
@@ -97,6 +15,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
 }): Record<AllStandardObjectFieldName<'person'>, FlatFieldMetadata> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
@@ -112,6 +31,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   createdAt: createStandardFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
@@ -129,6 +49,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   updatedAt: createStandardFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
@@ -146,6 +67,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   deletedAt: createStandardFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
@@ -164,6 +86,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
 
   // Person-specific fields
   name: createStandardFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'name',
       type: FieldMetadataType.FULL_NAME,
@@ -176,6 +99,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   email: createStandardFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'email',
       type: FieldMetadataType.TEXT,
@@ -188,6 +112,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   emails: createStandardFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'emails',
       type: FieldMetadataType.EMAILS,
@@ -204,6 +129,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   linkedinLink: createStandardFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'linkedinLink',
       type: FieldMetadataType.LINKS,
@@ -216,6 +142,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   xLink: createStandardFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'xLink',
       type: FieldMetadataType.LINKS,
@@ -228,6 +155,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   jobTitle: createStandardFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'jobTitle',
       type: FieldMetadataType.TEXT,
@@ -240,6 +168,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   phone: createStandardFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'phone',
       type: FieldMetadataType.TEXT,
@@ -252,6 +181,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   phones: createStandardFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'phones',
       type: FieldMetadataType.PHONES,
@@ -267,6 +197,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   city: createStandardFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'city',
       type: FieldMetadataType.TEXT,
@@ -279,6 +210,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   avatarUrl: createStandardFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'avatarUrl',
       type: FieldMetadataType.TEXT,
@@ -292,6 +224,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   position: createStandardFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
@@ -306,6 +239,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   createdBy: createStandardFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'createdBy',
       type: FieldMetadataType.ACTOR,
@@ -320,123 +254,142 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
 
   // Relation fields
-  company: createStandardFieldFlatMetadata({
+  company: createStandardRelationFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'company',
-      type: FieldMetadataType.RELATION,
       label: 'Company',
       description: "Contact's company",
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
       createdAt,
+      targetObjectName: 'company',
+      targetFieldName: 'people',
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  pointOfContactForOpportunities: createStandardFieldFlatMetadata({
+  pointOfContactForOpportunities: createStandardRelationFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'pointOfContactForOpportunities',
-      type: FieldMetadataType.RELATION,
       label: 'Opportunities',
       description:
         'List of opportunities for which that person is the point of contact',
       icon: 'IconTargetArrow',
       isNullable: true,
       createdAt,
+      targetObjectName: 'opportunity',
+      targetFieldName: 'pointOfContact',
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  taskTargets: createStandardFieldFlatMetadata({
+  taskTargets: createStandardRelationFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'taskTargets',
-      type: FieldMetadataType.RELATION,
       label: 'Tasks',
       description: 'Tasks tied to the contact',
       icon: 'IconCheckbox',
       isUIReadOnly: true,
       isNullable: true,
       createdAt,
+      targetObjectName: 'taskTarget',
+      targetFieldName: 'person',
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  noteTargets: createStandardFieldFlatMetadata({
+  noteTargets: createStandardRelationFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'noteTargets',
-      type: FieldMetadataType.RELATION,
       label: 'Notes',
       description: 'Notes tied to the contact',
       icon: 'IconNotes',
       isUIReadOnly: true,
       isNullable: true,
       createdAt,
+      targetObjectName: 'noteTarget',
+      targetFieldName: 'person',
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  favorites: createStandardFieldFlatMetadata({
+  favorites: createStandardRelationFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'favorites',
-      type: FieldMetadataType.RELATION,
       label: 'Favorites',
       description: 'Favorites linked to the contact',
       icon: 'IconHeart',
       isSystem: true,
       isNullable: true,
       createdAt,
+      targetObjectName: 'favorite',
+      targetFieldName: 'person',
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  attachments: createStandardFieldFlatMetadata({
+  attachments: createStandardRelationFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'attachments',
-      type: FieldMetadataType.RELATION,
       label: 'Attachments',
       description: 'Attachments linked to the contact.',
       icon: 'IconFileImport',
       isSystem: true,
       isNullable: true,
       createdAt,
+      targetObjectName: 'attachment',
+      targetFieldName: 'person',
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  messageParticipants: createStandardFieldFlatMetadata({
+  messageParticipants: createStandardRelationFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'messageParticipants',
-      type: FieldMetadataType.RELATION,
       label: 'Message Participants',
       description: 'Message Participants',
       icon: 'IconUserCircle',
       isSystem: true,
       isNullable: true,
       createdAt,
+      targetObjectName: 'messageParticipant',
+      targetFieldName: 'person',
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  calendarEventParticipants: createStandardFieldFlatMetadata({
+  calendarEventParticipants: createStandardRelationFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'calendarEventParticipants',
-      type: FieldMetadataType.RELATION,
       label: 'Calendar Event Participants',
       description: 'Calendar Event Participants',
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: true,
       createdAt,
+      targetObjectName: 'calendarEventParticipant',
+      targetFieldName: 'person',
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  timelineActivities: createStandardFieldFlatMetadata({
+  timelineActivities: createStandardRelationFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'timelineActivities',
-      type: FieldMetadataType.RELATION,
       label: 'Events',
       description: 'Events linked to the person',
       icon: 'IconTimelineEvent',
       isSystem: true,
       isNullable: true,
       createdAt,
+      targetObjectName: 'timelineActivity',
+      targetFieldName: 'person',
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   searchVector: createStandardFieldFlatMetadata({
+    objectName: 'person',
     options: {
       fieldName: 'searchVector',
       type: FieldMetadataType.TS_VECTOR,
