@@ -208,59 +208,6 @@
                 ]
               },
               {
-                "group": "Record Management",
-                "icon": "address-book",
-                "pages": [
-                  "user-guide/record-management/overview",
-                  {
-                    "group": "Getting Started",
-                    "pages": [
-                      "user-guide/record-management/getting-started/contact-and-account-management"
-                    ]
-                  },
-                  {
-                    "group": "Concepts",
-                    "pages": [
-                      "user-guide/record-management/concepts/company-hierarchies",
-                      "user-guide/record-management/concepts/duplicates-management",
-                      "user-guide/record-management/concepts/soft-deleted-records"
-                    ]
-                  },
-                  {
-                    "group": "How-Tos",
-                    "pages": [
-                      "user-guide/record-management/how-tos/manage-contacts-and-companies"
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "Team Collaboration",
-                "icon": "users",
-                "pages": [
-                  "user-guide/team-collaboration/overview",
-                  {
-                    "group": "Getting Started",
-                    "pages": [
-                      "user-guide/team-collaboration/getting-started/getting-started-with-collaboration"
-                    ]
-                  },
-                  {
-                    "group": "Concepts",
-                    "pages": [
-                      "user-guide/team-collaboration/concepts/tasks",
-                      "user-guide/team-collaboration/concepts/notes"
-                    ]
-                  },
-                  {
-                    "group": "How-Tos",
-                    "pages": [
-                      "user-guide/team-collaboration/how-tos/collaborate-with-team"
-                    ]
-                  }
-                ]
-              },
-              {
                 "group": "Dashboards",
                 "icon": "chart-bar",
                 "pages": [
@@ -361,6 +308,21 @@
                     "group": "How-Tos",
                     "pages": [
                       "user-guide/settings/how-tos/settings-faq"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Tutorials",
+                "icon": "graduation-cap",
+                "pages": [
+                  "user-guide/tutorials/overview",
+                  {
+                    "group": "Browse by use case",
+                    "pages": [
+                      "user-guide/tutorials/company-hierarchies",
+                      "user-guide/tutorials/duplicates-management",
+                      "user-guide/tutorials/soft-deleted-records"
                     ]
                   }
                 ]
