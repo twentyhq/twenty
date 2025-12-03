@@ -1,12 +1,10 @@
 services:
-  # Main Modular Application (Frontend + Backend combined)
+  # Backend API
   - type: web
-    name: modular-dev
-    runtime: image
-    image:
-      url: ghcr.io/rozzaswap/modular-crm:latest
-      registryCredential:
-        name: github-registry
+    name: modular-backend
+    runtime: docker
+    dockerfilePath: ./packages/twenty-docker/backend-only.Dockerfile
+    dockerContext: ./
     plan: free
     healthCheckPath: /healthz
     envVars:
@@ -32,14 +30,23 @@ services:
       - key: DISABLE_CRON_JOBS_REGISTRATION
         value: false
 
+  # Frontend
+  - type: web
+    name: modular-frontend
+    runtime: docker
+    dockerfilePath: ./packages/twenty-docker/frontend-only.Dockerfile
+    dockerContext: ./
+    plan: free
+    envVars:
+      - key: REACT_APP_SERVER_BASE_URL
+        sync: false
+
   # Background Worker
   - type: worker
     name: modular-worker
-    runtime: image
-    image:
-      url: ghcr.io/rozzaswap/modular-crm:latest
-      registryCredential:
-        name: github-registry
+    runtime: docker
+    dockerfilePath: ./packages/twenty-docker/backend-only.Dockerfile
+    dockerContext: ./
     dockerCommand: yarn worker:prod
     plan: starter
     envVars:
