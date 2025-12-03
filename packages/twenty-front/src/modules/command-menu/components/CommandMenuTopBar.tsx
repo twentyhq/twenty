@@ -5,12 +5,16 @@ import { CommandMenuTopBarRightCornerIcon } from '@/command-menu/components/Comm
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE } from '@/command-menu/constants/CommandMenuSearchBarHeightMobile';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
+import { COMMAND_MENU_SEARCH_INPUT_FOCUS_ID } from '@/command-menu/constants/CommandMenuSearchInputFocusId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuContextChips';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -100,6 +104,29 @@ export const CommandMenuTopBar = () => {
 
   const { contextChips } = useCommandMenuContextChips();
 
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
+
+  const handleInputFocus = () => {
+    pushFocusItemToFocusStack({
+      focusId: COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
+      component: {
+        type: FocusComponentType.TEXT_INPUT,
+        instanceId: COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
+    });
+  };
+
+  const handleInputBlur = () => {
+    removeFocusItemFromFocusStackById({
+      focusId: COMMAND_MENU_SEARCH_INPUT_FOCUS_ID,
+    });
+  };
+
   const canGoBack = commandMenuNavigationStack.length > 1;
 
   const shouldShowCloseButton =
@@ -148,11 +175,13 @@ export const CommandMenuTopBar = () => {
           commandMenuPage === CommandMenuPages.SearchRecords) && (
           <>
             <StyledInput
-              data-testid="command-menu-search-input"
+              data-testid={COMMAND_MENU_SEARCH_INPUT_FOCUS_ID}
               ref={inputRef}
               value={commandMenuSearch}
               placeholder={t`Type anything...`}
               onChange={handleSearchChange}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
             />
             <CommandMenuTopBarInputFocusEffect inputRef={inputRef} />
           </>

@@ -1,4 +1,5 @@
 import { type BarDatum } from '@nivo/bar';
+import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 type ApplyCumulativeTransformToBarChartDataOptions = {
@@ -18,7 +19,7 @@ export const applyCumulativeTransformToBarChartData = ({
     (accumulator, datum) => {
       const value = datum[aggregateKey];
 
-      if (typeof value === 'number') {
+      if (isNumber(value)) {
         accumulator.runningTotal += value;
       }
 
