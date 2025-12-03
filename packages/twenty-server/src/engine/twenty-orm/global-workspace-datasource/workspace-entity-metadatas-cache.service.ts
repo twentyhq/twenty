@@ -9,12 +9,10 @@ import { EntityMetadataBuilder } from 'typeorm/metadata-builder/EntityMetadataBu
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
+import { buildEntitySchemaMetadataMaps } from 'src/engine/twenty-orm/global-workspace-datasource/types/entity-schema-metadata.type';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 
 @Injectable()
@@ -45,81 +43,21 @@ export class WorkspaceEntityMetadatasCacheService extends WorkspaceCacheProvider
       }),
     ]);
 
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      this.buildFlatMaps(objectMetadatas, fieldMetadatas);
+    const { objectMetadataMaps, fieldMetadataMaps } =
+      buildEntitySchemaMetadataMaps(objectMetadatas, fieldMetadatas);
 
-    const entitySchemas = Object.values(flatObjectMetadataMaps.byId)
+    const entitySchemas = Object.values(objectMetadataMaps.byId)
       .filter(isDefined)
-      .map((flatObjectMetadata) =>
+      .map((objectMetadata) =>
         this.entitySchemaFactory.create(
           workspaceId,
-          flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
+          objectMetadata,
+          objectMetadataMaps,
+          fieldMetadataMaps,
         ),
       );
 
     return this.buildEntityMetadatas(entitySchemas);
-  }
-
-  private buildFlatMaps(
-    objectMetadatas: ObjectMetadataEntity[],
-    fieldMetadatas: FieldMetadataEntity[],
-  ): {
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  } {
-    const fieldIdsByObjectId = new Map<string, string[]>();
-
-    for (const field of fieldMetadatas) {
-      const existing = fieldIdsByObjectId.get(field.objectMetadataId);
-
-      if (existing) {
-        existing.push(field.id);
-      } else {
-        fieldIdsByObjectId.set(field.objectMetadataId, [field.id]);
-      }
-    }
-
-    const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
-      byId: {},
-      idByUniversalIdentifier: {},
-      universalIdentifiersByApplicationId: {},
-    };
-
-    for (const object of objectMetadatas) {
-      const universalIdentifier = object.standardId ?? object.id;
-
-      flatObjectMetadataMaps.byId[object.id] = {
-        ...object,
-        fieldMetadataIds: fieldIdsByObjectId.get(object.id) ?? [],
-        indexMetadataIds: [],
-        viewIds: [],
-        universalIdentifier,
-      } as unknown as FlatObjectMetadata;
-    }
-
-    const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
-      byId: {},
-      idByUniversalIdentifier: {},
-      universalIdentifiersByApplicationId: {},
-    };
-
-    for (const field of fieldMetadatas) {
-      const universalIdentifier = field.standardId ?? field.id;
-
-      flatFieldMetadataMaps.byId[field.id] = {
-        ...field,
-        viewFieldIds: [],
-        viewFilterIds: [],
-        viewGroupIds: [],
-        calendarViewIds: [],
-        kanbanAggregateOperationViewIds: [],
-        universalIdentifier,
-      } as unknown as FlatFieldMetadata;
-    }
-
-    return { flatObjectMetadataMaps, flatFieldMetadataMaps };
   }
 
   private buildEntityMetadatas(
