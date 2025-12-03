@@ -400,4 +400,13 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       ),
     };
   }
+
+  protected override computeQueryComplexity(
+    selectedFieldsComplexityCost: number,
+    args: CommonInput<GroupByQueryArgs>,
+  ): number {
+    return (args.includeRecords ?? false)
+      ? selectedFieldsComplexityCost * getGroupLimit(args.limit)
+      : 1;
+  }
 }

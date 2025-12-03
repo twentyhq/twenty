@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Omit } from 'zod/v4/core/util.cjs';
 
@@ -12,6 +13,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { countRelationInSelectedFields } from 'src/engine/api/common/common-query-runners/utils/count-relation-in-selected-fields.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
@@ -22,6 +24,7 @@ import {
   CommonQueryNames,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonQueryResult } from 'src/engine/api/common/types/common-query-result.type';
+import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { isWorkspaceAuthContext } from 'src/engine/api/common/utils/is-workspace-auth-context.util';
 import { OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/graphql/graphql-query-runner/constants/objects-with-settings-permissions-requirements';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
@@ -128,7 +131,6 @@ export abstract class CommonBaseQueryRunnerService<
       args,
       queryRunnerContext,
       this.operationName,
-      commonQueryParser,
     );
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
@@ -166,18 +168,18 @@ export abstract class CommonBaseQueryRunnerService<
     authContext: WorkspaceAuthContext,
   ): Promise<Output>;
 
-  protected abstract computeQueryComplexity(args: CommonInput<Args>): number;
+  protected computeQueryComplexity(
+    selectedFieldsComplexity: number,
+    _args: CommonInput<Args>,
+  ): number {
+    return selectedFieldsComplexity;
+  }
 
   private async processArgs(
     args: CommonInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
     operationName: CommonQueryNames,
-    commonQueryParser: GraphqlQueryParser,
-  ): Promise<CommonExtendedInput<Args>> {
-    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
-      args.selectedFields,
-    );
-
+  ): Promise<CommonInput<Args>> {
     const { authContext, flatObjectMetadata } = queryRunnerContext;
 
     const computedArgs = await this.computeArgs(args, queryRunnerContext);
@@ -190,10 +192,7 @@ export abstract class CommonBaseQueryRunnerService<
         computedArgs as WorkspacePreQueryHookPayload<CommonQueryNames>,
       )) as CommonInput<Args>;
 
-    return {
-      ...hookedArgs,
-      selectedFieldsResult,
-    };
+    return hookedArgs;
   }
 
   private async executeQueryAndEnrichResults(
@@ -388,6 +387,37 @@ export abstract class CommonBaseQueryRunnerService<
       });
 
       throw error;
+    }
+  }
+
+  private validateQueryComplexity(
+    selectedFieldsResult: CommonSelectedFieldsResult,
+    args: CommonInput<Args>,
+  ) {
+    const simpleFieldsComplexity = 1;
+    const selectedFieldsComplexity =
+      simpleFieldsComplexity +
+      countRelationInSelectedFields(selectedFieldsResult.relations);
+
+    const queryComplexity = this.computeQueryComplexity(
+      selectedFieldsComplexity,
+      args,
+    );
+
+    console.log('queryComplexity', queryComplexity);
+
+    const maximumComplexity = this.twentyConfigService.get(
+      'COMMON_QUERY_COMPLEXITY_LIMIT',
+    );
+
+    if (queryComplexity > maximumComplexity) {
+      throw new CommonQueryRunnerException(
+        `Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: ${queryComplexity}. Maximum complexity: ${maximumComplexity}.`,
+        CommonQueryRunnerExceptionCode.TOO_COMPLEX_QUERY,
+        {
+          userFriendlyMessage: msg`Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: ${queryComplexity}. Maximum complexity: ${maximumComplexity}.`,
+        },
+      );
     }
   }
 }

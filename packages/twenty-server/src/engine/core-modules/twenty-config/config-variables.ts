@@ -994,6 +994,14 @@ export class ConfigVariables {
   })
   GRAPHQL_MAX_COMPLEXITY = 2000;
 
+  @CastToPositiveNumber()
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description: 'Maximum complexity allowed for Common API queries',
+    type: ConfigVariableType.NUMBER,
+  })
+  COMMON_QUERY_COMPLEXITY_LIMIT = 20;
+
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
     description:
