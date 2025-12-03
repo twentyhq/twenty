@@ -1,16 +1,16 @@
 import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
-  FieldMetadataDefaultValueForAnyType,
-  FieldMetadataType,
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
+  type FieldMetadataDefaultValueForAnyType,
+  type FieldMetadataType,
 } from 'twenty-shared/types';
 
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
-import { AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
-import { AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
+import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
+import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
+import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
 const TWENTY_STANDARD_APPLICATION_ID =
   TWENTY_STANDARD_APPLICATION.universalIdentifier;
@@ -68,6 +68,7 @@ export const createStandardFieldFlatMetadata = <
     standardFieldMetadataIdByObjectAndFieldName[objectName].fields;
 
   const name = fieldName.toString();
+
   return {
     id: fieldIds[fieldName],
     universalIdentifier: fieldDefinition.universalIdentifier,

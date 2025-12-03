@@ -1,10 +1,10 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-relation-field-flat-metadata.util';
-import { StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
+import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
 export const buildOpportunityStandardFlatFieldMetadatas = ({
   createdAt,
@@ -146,9 +146,19 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       defaultValue: "'NEW'",
       options: [
         { value: 'NEW', label: 'New', position: 0, color: 'red' },
-        { value: 'SCREENING', label: 'Screening', position: 1, color: 'purple' },
+        {
+          value: 'SCREENING',
+          label: 'Screening',
+          position: 1,
+          color: 'purple',
+        },
         { value: 'MEETING', label: 'Meeting', position: 2, color: 'sky' },
-        { value: 'PROPOSAL', label: 'Proposal', position: 3, color: 'turquoise' },
+        {
+          value: 'PROPOSAL',
+          label: 'Proposal',
+          position: 3,
+          color: 'turquoise',
+        },
         { value: 'CUSTOMER', label: 'Customer', position: 4, color: 'yellow' },
       ],
       createdAt,
@@ -329,4 +339,3 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
 });
-
