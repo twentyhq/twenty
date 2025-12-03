@@ -53,4 +53,5 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   roleTarget: {
     role: true,
   },
+  agent: {},
 } as const satisfies MetadataRequiredForValidation;

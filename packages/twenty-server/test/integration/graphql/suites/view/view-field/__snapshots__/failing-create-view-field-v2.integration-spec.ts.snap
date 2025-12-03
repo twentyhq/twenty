@@ -5,6 +5,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 Should fail to crea
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
@@ -38,6 +39,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 Should fail to crea
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
@@ -65,6 +67,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
@@ -98,6 +101,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
@@ -125,6 +129,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
@@ -158,6 +163,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
