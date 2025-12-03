@@ -1169,6 +1169,11 @@ msgstr "Expected the same constraint fields to be used consistently across all o
 msgid "External ID"
 msgstr "External ID"
 
+#. js-lingui-id: E7Dsiq
+#: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
+msgid "Failed to create evaluation. Please try again."
+msgstr "Failed to create evaluation. Please try again."
+
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
 msgid "Failed to delete jobs. Please try again later."
