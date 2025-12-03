@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import {
+  BREAK,
   type FieldNode,
   type FragmentDefinitionNode,
   type FragmentSpreadNode,
@@ -113,6 +114,8 @@ export const useValidateQueryComplexity = ({
               userFriendlyMessage: msg`Duplicate root resolver found. Each root resolver can only be called once per document.`,
             }),
           );
+
+          return BREAK;
         } else {
           rootResolverNames.add(fieldName);
         }
@@ -128,6 +131,8 @@ export const useValidateQueryComplexity = ({
               `Query too complex - Too many nested fields requested: ${depth} - Maximum allowed nested fields: ${maximumAllowedNestedFields}`,
             ),
           );
+
+          return BREAK;
         }
       };
 
@@ -182,10 +187,18 @@ export const useValidateQueryComplexity = ({
               operationDepth++;
 
               if (operationDepth === 1) {
-                checkAndAddRootResolver(node.name.value);
+                const result = checkAndAddRootResolver(node.name.value);
+
+                if (result === BREAK) {
+                  return BREAK;
+                }
               }
 
-              checkNestedFieldDepth(operationDepth);
+              const result = checkNestedFieldDepth(operationDepth);
+
+              if (result === BREAK) {
+                return BREAK;
+              }
             }
           },
           leave() {
@@ -221,7 +234,11 @@ export const useValidateQueryComplexity = ({
 
             if (operationDepth === 0) {
               for (const fieldName of metadata.rootFieldNames) {
-                checkAndAddRootResolver(fieldName);
+                const result = checkAndAddRootResolver(fieldName);
+
+                if (result === BREAK) {
+                  return BREAK;
+                }
               }
             }
           },

@@ -49,7 +49,7 @@ export const metadataModuleFactory = async (
       useValidateQueryComplexity({
         maximumAllowedFields: twentyConfigService.get('GRAPHQL_MAX_FIELDS'),
         maximumAllowedRootResolvers: 10,
-        maximumAllowedNestedFields: 5,
+        maximumAllowedNestedFields: 7,
         checkDuplicateRootResolvers: true,
       }),
     ],
