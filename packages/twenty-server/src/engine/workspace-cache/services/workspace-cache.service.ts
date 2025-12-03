@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService, Reflector } from '@nestjs/core';
 
 import crypto from 'crypto';
@@ -30,6 +30,8 @@ import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/
 
 const LOCAL_TTL_MS = 100;
 const MEMOIZER_TTL_MS = 10_000;
+const STALE_VERSION_TTL_MS = 5_000;
+const MAX_LOCAL_STALE_VERSIONS = 5;
 
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
 
@@ -47,6 +49,8 @@ export class WorkspaceCacheService implements OnModuleInit {
   private readonly memoizer = new PromiseMemoizer<
     Partial<WorkspaceCacheDataMap>
   >(MEMOIZER_TTL_MS);
+
+  private readonly logger = new Logger(WorkspaceCacheService.name);
 
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
@@ -222,7 +226,7 @@ export class WorkspaceCacheService implements OnModuleInit {
       if (
         isDefined(localEntry) &&
         isDefined(redisHash) &&
-        localEntry.hash === redisHash
+        localEntry.latestHash === redisHash
       ) {
         localEntry.lastCheckedAt = Date.now();
         validKeys.push(keyName);
@@ -250,21 +254,20 @@ export class WorkspaceCacheService implements OnModuleInit {
       return { redisData, missingInRedis };
     }
 
-    const dataKeys = cacheKeyNames.map(
-      (keyName) => `${this.buildCacheKey(workspaceId, keyName)}:data`,
-    );
-    const hashKeys = cacheKeyNames.map(
-      (keyName) => `${this.buildCacheKey(workspaceId, keyName)}:hash`,
-    );
+    // Interleave data and hash keys for atomic fetch: [data1, hash1, data2, hash2, ...]
+    const allKeys = cacheKeyNames.flatMap((keyName) => {
+      const baseKey = this.buildCacheKey(workspaceId, keyName);
 
-    const [redisDataValues, redisHashValues] = await Promise.all([
-      this.cacheStorage.mget<CacheDataType>(dataKeys),
-      this.cacheStorage.mget<string>(hashKeys),
-    ]);
+      return [`${baseKey}:data`, `${baseKey}:hash`];
+    });
+
+    const allValues = await this.cacheStorage.mget<CacheDataType | string>(
+      allKeys,
+    );
 
     for (const [index, keyName] of cacheKeyNames.entries()) {
-      const data = redisDataValues[index];
-      const hash = redisHashValues[index];
+      const data = allValues[index * 2] as CacheDataType | undefined;
+      const hash = allValues[index * 2 + 1] as string | undefined;
 
       if (isDefined(data) && isDefined(hash)) {
         Object.assign(redisData, { [keyName]: data });
@@ -328,10 +331,12 @@ export class WorkspaceCacheService implements OnModuleInit {
 
     for (const keyName of workspaceCacheKeyNames) {
       const localKey = this.buildCacheKey(workspaceId, keyName);
-      const cached = this.localCache.get(localKey);
+      const entry = this.localCache.get(localKey);
+      const version = entry?.versions.get(entry.latestHash);
 
-      if (isDefined(cached)) {
-        Object.assign(result, { [keyName]: cached.data });
+      if (isDefined(entry) && isDefined(version)) {
+        Object.assign(result, { [keyName]: version.data });
+        this.cleanupStaleVersions(entry);
       }
     }
 
@@ -344,8 +349,11 @@ export class WorkspaceCacheService implements OnModuleInit {
   ): void {
     for (const keyName of cacheKeyNames) {
       const localKey = this.buildCacheKey(workspaceId, keyName);
+      const entry = this.localCache.get(localKey);
 
-      this.localCache.delete(localKey);
+      if (isDefined(entry)) {
+        entry.lastCheckedAt = 0;
+      }
     }
   }
 
@@ -369,12 +377,48 @@ export class WorkspaceCacheService implements OnModuleInit {
     hash: string,
   ): void {
     const localKey = this.buildCacheKey(workspaceId, keyName);
+    let entry = this.localCache.get(localKey);
 
-    this.localCache.set(localKey, {
-      data,
-      hash,
-      lastCheckedAt: Date.now(),
-    });
+    if (!isDefined(entry)) {
+      entry = { versions: new Map(), latestHash: '', lastCheckedAt: 0 };
+      this.localCache.set(localKey, entry);
+    }
+
+    entry.versions.set(hash, { data, createdAt: Date.now() });
+    entry.latestHash = hash;
+    entry.lastCheckedAt = Date.now();
+  }
+
+  private cleanupStaleVersions(
+    entry: WorkspaceLocalCacheEntry<CacheDataType>,
+  ): void {
+    const now = Date.now();
+
+    for (const [hash, version] of entry.versions) {
+      if (
+        hash !== entry.latestHash &&
+        now - version.createdAt > STALE_VERSION_TTL_MS
+      ) {
+        entry.versions.delete(hash);
+      }
+    }
+
+    if (entry.versions.size >= MAX_LOCAL_STALE_VERSIONS) {
+      const sorted = [...entry.versions.entries()]
+        .filter(([hash]) => hash !== entry.latestHash)
+        .sort((entryA, entryB) => entryA[1].createdAt - entryB[1].createdAt);
+
+      while (
+        entry.versions.size >= MAX_LOCAL_STALE_VERSIONS &&
+        sorted.length > 0
+      ) {
+        const oldestEntry = sorted.shift();
+
+        if (isDefined(oldestEntry)) {
+          entry.versions.delete(oldestEntry[0]);
+        }
+      }
+    }
   }
 
   private getProviderOrThrow(
