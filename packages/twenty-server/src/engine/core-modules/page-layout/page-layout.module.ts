@@ -11,6 +11,7 @@ import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/p
 import { PageLayoutTabResolver } from 'src/engine/core-modules/page-layout/resolvers/page-layout-tab.resolver';
 import { PageLayoutWidgetResolver } from 'src/engine/core-modules/page-layout/resolvers/page-layout-widget.resolver';
 import { PageLayoutResolver } from 'src/engine/core-modules/page-layout/resolvers/page-layout.resolver';
+import { PageLayoutDuplicationService } from 'src/engine/core-modules/page-layout/services/page-layout-duplication.service';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutUpdateService } from 'src/engine/core-modules/page-layout/services/page-layout-update.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
@@ -38,11 +39,17 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
     PageLayoutService,
     PageLayoutTabService,
     PageLayoutWidgetService,
+    PageLayoutDuplicationService,
     PageLayoutResolver,
     PageLayoutTabResolver,
     PageLayoutWidgetResolver,
     PageLayoutUpdateService,
   ],
-  exports: [PageLayoutService, PageLayoutTabService, PageLayoutWidgetService],
+  exports: [
+    PageLayoutService,
+    PageLayoutTabService,
+    PageLayoutWidgetService,
+    PageLayoutDuplicationService,
+  ],
 })
 export class PageLayoutModule {}
