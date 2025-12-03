@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { AgentTurnEvaluationEntity } from 'src/engine/metadata-modules/ai/ai-agent-monitor/entities/agent-turn-evaluation.entity';
+import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
@@ -25,7 +26,7 @@ export class AgentTurnGraderService {
   async evaluateTurn(turnId: string): Promise<AgentTurnEvaluationEntity> {
     const turn = await this.turnRepository.findOne({
       where: { id: turnId },
-      relations: ['messages', 'messages.parts'],
+      relations: ['messages', 'messages.parts', 'agent'],
     });
 
     if (!turn) {
@@ -55,17 +56,21 @@ export class AgentTurnGraderService {
         return this.getFallbackEvaluation(turn);
       }
 
+      const agentContext = this.buildAgentContext(turn.agent);
       const evaluationContext = this.buildEvaluationContext(turn);
 
       const prompt = `You are evaluating an AI agent's performance on a single turn (user request + agent response).
 
+${agentContext}
+
 ${evaluationContext}
 
 Evaluate this agent turn based on:
-1. **Task Completion**: Did the agent accomplish what the user asked?
-2. **Tool Usage**: Were tools used correctly and appropriately?
-3. **Response Quality**: Is the response clear, accurate, and helpful?
-4. **Error Handling**: Were errors handled gracefully?
+1. **Following Instructions**: Did the agent follow its system prompt and intended behavior?
+2. **Task Completion**: Did the agent accomplish what the user asked?
+3. **Tool Usage**: Were the configured tools used correctly and appropriately?
+4. **Response Quality**: Is the response clear, accurate, and helpful?
+5. **Error Handling**: Were errors handled gracefully?
 
 Provide:
 - A score from 0 to 100 (0 = complete failure, 100 = perfect)
@@ -92,6 +97,45 @@ Respond ONLY with valid JSON in this exact format:
 
       return this.getFallbackEvaluation(turn);
     }
+  }
+
+  private buildAgentContext(agent: AgentEntity | null): string {
+    if (!agent) {
+      return '**Agent Configuration:** No agent configuration available\n';
+    }
+
+    let context = '**Agent Configuration:**\n';
+
+    if (agent.name) {
+      context += `- Agent Name: ${agent.name}\n`;
+    }
+
+    if (agent.description) {
+      context += `- Agent Purpose: ${agent.description}\n`;
+    }
+
+    if (agent.prompt) {
+      const promptPreview =
+        agent.prompt.length > 500
+          ? agent.prompt.substring(0, 500) + '...'
+          : agent.prompt;
+
+      context += `- System Prompt/Instructions:\n${promptPreview}\n`;
+    }
+
+    if (agent.modelConfiguration) {
+      const configDetails = [];
+
+      if (agent.modelConfiguration.webSearch?.enabled) {
+        configDetails.push('Web Search');
+      }
+
+      if (configDetails.length > 0) {
+        context += `- Native Tools Enabled: ${configDetails.join(', ')}\n`;
+      }
+    }
+
+    return context + '\n';
   }
 
   private buildEvaluationContext(

@@ -12,6 +12,7 @@ import {
 
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentTurnEvaluationEntity } from 'src/engine/metadata-modules/ai/ai-agent-monitor/entities/agent-turn-evaluation.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 
 @Entity('agentTurn')
@@ -32,6 +33,10 @@ export class AgentTurnEntity {
   @Column({ type: 'uuid', nullable: true })
   @Index()
   agentId: string | null;
+
+  @ManyToOne(() => AgentEntity, { nullable: true })
+  @JoinColumn({ name: 'agentId' })
+  agent: Relation<AgentEntity> | null;
 
   @OneToMany(() => AgentMessageEntity, (message) => message.turn)
   messages: Relation<AgentMessageEntity[]>;
