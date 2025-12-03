@@ -71,4 +71,3 @@ export class RemoveIsWorkspaceMigrationV2EnabledFeatureFlagCommand extends Activ
     );
   }
 }
-
