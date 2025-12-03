@@ -1,15 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { generateText } from 'ai';
+import { generateText, type ToolSet } from 'ai';
 import { Repository } from 'typeorm';
 
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { AgentTurnEvaluationEntity } from 'src/engine/metadata-modules/ai/ai-agent-monitor/entities/agent-turn-evaluation.entity';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AgentToolGeneratorService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-tool-generator.service';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class AgentTurnGraderService {
@@ -21,6 +23,8 @@ export class AgentTurnGraderService {
     @InjectRepository(AgentTurnEvaluationEntity)
     private readonly evaluationRepository: Repository<AgentTurnEvaluationEntity>,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly agentToolGeneratorService: AgentToolGeneratorService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async evaluateTurn(turnId: string): Promise<AgentTurnEvaluationEntity> {
@@ -33,7 +37,34 @@ export class AgentTurnGraderService {
       throw new Error(`Turn ${turnId} not found`);
     }
 
-    const { score, comment } = await this.evaluateWithAI(turn);
+    let availableTools: ToolSet = {};
+
+    if (turn.agent) {
+      try {
+        const { flatRoleTargetByAgentIdMaps } =
+          await this.workspaceCacheService.getOrRecompute(
+            turn.agent.workspaceId,
+            ['flatRoleTargetByAgentIdMaps'],
+          );
+
+        const roleId = flatRoleTargetByAgentIdMaps[turn.agent.id]?.roleId;
+        const roleIds = roleId ? [roleId] : undefined;
+
+        availableTools =
+          await this.agentToolGeneratorService.generateToolsForAgent(
+            turn.agent.id,
+            turn.agent.workspaceId,
+            undefined,
+            roleIds,
+          );
+      } catch (error) {
+        this.logger.warn(
+          `Failed to generate tools for evaluation: ${error.message}`,
+        );
+      }
+    }
+
+    const { score, comment } = await this.evaluateWithAI(turn, availableTools);
 
     const evaluation = this.evaluationRepository.create({
       turnId,
@@ -46,6 +77,7 @@ export class AgentTurnGraderService {
 
   private async evaluateWithAI(
     turn: AgentTurnEntity & { messages: AgentMessageEntity[] },
+    availableTools: ToolSet,
   ): Promise<{ score: number; comment: string }> {
     try {
       const defaultModel = this.aiModelRegistryService.getDefaultSpeedModel();
@@ -56,7 +88,7 @@ export class AgentTurnGraderService {
         return this.getFallbackEvaluation(turn);
       }
 
-      const agentContext = this.buildAgentContext(turn.agent);
+      const agentContext = this.buildAgentContext(turn.agent, availableTools);
       const evaluationContext = this.buildEvaluationContext(turn);
 
       const prompt = `You are evaluating an AI agent's performance on a single turn (user request + agent response).
@@ -65,15 +97,30 @@ ${agentContext}
 
 ${evaluationContext}
 
-Evaluate this agent turn based on:
+Evaluate the agent's overall performance on this turn.
+
+You have the Available Tools list above - use this to objectively assess if the agent took appropriate action when needed.
+
+**Evaluate:**
+
 1. **Following Instructions**: Did the agent follow its system prompt and intended behavior?
-2. **Task Completion**: Did the agent accomplish what the user asked?
-3. **Tool Usage**: Were the configured tools used correctly and appropriately?
+
+2. **Task Accomplishment**: Did the agent successfully complete what the user requested?
+   - If user requested an action but agent only described what to do: This is a failure
+   - Check if appropriate tools from the available list were used
+
+3. **Execution Quality**: How well did the agent execute?
+   - Were appropriate tools selected?
+   - Were tools used with proper parameters?
+   - Do outputs show successful work?
+
 4. **Response Quality**: Is the response clear, accurate, and helpful?
-5. **Error Handling**: Were errors handled gracefully?
+
+**Key Consideration:**
+If the user requested something actionable and the agent had relevant tools available but didn't use them, this indicates failure to execute properly.
 
 Provide:
-- A score from 0 to 100 (0 = complete failure, 100 = perfect)
+- A score from 0 to 100 based on overall agent performance (0 = complete failure, 100 = perfect)
 - A brief comment explaining the score (max 200 characters)
 
 Respond ONLY with valid JSON in this exact format:
@@ -99,7 +146,10 @@ Respond ONLY with valid JSON in this exact format:
     }
   }
 
-  private buildAgentContext(agent: AgentEntity | null): string {
+  private buildAgentContext(
+    agent: AgentEntity | null,
+    availableTools: ToolSet,
+  ): string {
     if (!agent) {
       return '**Agent Configuration:** No agent configuration available\n';
     }
@@ -135,7 +185,76 @@ Respond ONLY with valid JSON in this exact format:
       }
     }
 
-    return context + '\n';
+    context += '\n' + this.formatToolsForEvaluation(availableTools) + '\n';
+
+    return context;
+  }
+
+  private formatToolsForEvaluation(tools: ToolSet): string {
+    if (!tools || Object.keys(tools).length === 0) {
+      return '**Available Tools:** None';
+    }
+
+    let formatted = '**Available Tools:**\n';
+
+    Object.entries(tools).forEach(([name, tool]) => {
+      formatted += `- ${name}`;
+
+      if (tool.description) {
+        formatted += `: ${tool.description}`;
+      }
+
+      try {
+        const paramNames = this.extractParameterNames(tool);
+
+        if (paramNames.length > 0) {
+          formatted += ` (${paramNames.join(', ')})`;
+        }
+      } catch {
+        // Silently skip parameter extraction if it fails
+      }
+
+      formatted += '\n';
+    });
+
+    return formatted;
+  }
+
+  private extractParameterNames(tool: unknown): string[] {
+    if (!tool || typeof tool !== 'object') return [];
+
+    const toolObj = tool as Record<string, unknown>;
+
+    const inputSchema = toolObj.inputSchema as
+      | Record<string, unknown>
+      | undefined;
+
+    if (inputSchema?.properties && typeof inputSchema.properties === 'object') {
+      return Object.keys(inputSchema.properties);
+    }
+
+    const parameters = toolObj.parameters as
+      | Record<string, unknown>
+      | undefined;
+
+    if (parameters?.properties && typeof parameters.properties === 'object') {
+      return Object.keys(parameters.properties);
+    }
+
+    if (
+      parameters?.parameters &&
+      typeof parameters.parameters === 'object' &&
+      (parameters.parameters as Record<string, unknown>).properties
+    ) {
+      const nestedProps = (parameters.parameters as Record<string, unknown>)
+        .properties;
+
+      if (typeof nestedProps === 'object' && nestedProps !== null) {
+        return Object.keys(nestedProps);
+      }
+    }
+
+    return [];
   }
 
   private buildEvaluationContext(
@@ -159,29 +278,49 @@ Respond ONLY with valid JSON in this exact format:
       .map((p) => p.textContent)
       .join('\n');
 
-    const toolCalls = assistantParts
-      .filter((p) => p.toolName)
-      .map((p) => ({
-        tool: p.toolName,
-        hasError: !!p.errorMessage,
-        error: p.errorMessage,
-      }));
-
-    const errors = assistantParts
-      .filter((p) => p.errorMessage)
-      .map((p) => p.errorMessage);
+    const toolParts = assistantParts.filter((p) => p.toolName);
 
     let context = `**User Request:**\n${userText || '(no text)'}\n\n`;
 
+    if (toolParts.length > 0) {
+      context += `**Tool Execution Details:**\n\n`;
+
+      toolParts.forEach((part, idx) => {
+        const status = part.errorMessage ? 'FAILED' : 'SUCCESS';
+
+        context += `${idx + 1}. ${part.toolName} (${status})\n`;
+
+        if (part.toolInput) {
+          const inputStr = JSON.stringify(part.toolInput, null, 2);
+          const truncatedInput =
+            inputStr.length > 300
+              ? inputStr.substring(0, 300) + '...'
+              : inputStr;
+
+          context += `   Input:\n${truncatedInput}\n`;
+        }
+
+        if (part.toolOutput) {
+          const outputStr = JSON.stringify(part.toolOutput, null, 2);
+          const truncatedOutput =
+            outputStr.length > 300
+              ? outputStr.substring(0, 300) + '...'
+              : outputStr;
+
+          context += `   Output:\n${truncatedOutput}\n`;
+        }
+
+        if (part.errorMessage) {
+          context += `   Error: ${part.errorMessage}\n`;
+        }
+
+        context += '\n';
+      });
+    } else {
+      context += `**Tool Execution Details:**\nNo tools were called\n\n`;
+    }
+
     context += `**Agent Response:**\n${assistantText || '(no text response)'}\n\n`;
-
-    if (toolCalls.length > 0) {
-      context += `**Tools Used:**\n${toolCalls.map((t) => `- ${t.tool}${t.hasError ? ' (FAILED)' : ''}`).join('\n')}\n\n`;
-    }
-
-    if (errors.length > 0) {
-      context += `**Errors:**\n${errors.map((e) => `- ${e}`).join('\n')}\n\n`;
-    }
 
     return context;
   }
