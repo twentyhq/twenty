@@ -62,15 +62,8 @@ export const usePersistViewGroupRecords = () => {
               return;
             }
 
-            const createdViewGroupsWithFieldMetadataId = createdViewGroups.map(
-              (createdViewGroup) => ({
-                ...createdViewGroup,
-                fieldMetadataId: mainGroupByFieldMetadataId,
-              }),
-            );
-
             triggerViewGroupOptimisticEffect({
-              createdViewGroups: createdViewGroupsWithFieldMetadataId,
+              createdViewGroups,
             });
           },
         });
@@ -129,12 +122,7 @@ export const usePersistViewGroupRecords = () => {
                 }
 
                 triggerViewGroupOptimisticEffect({
-                  updatedViewGroups: [
-                    {
-                      ...updatedViewGroup,
-                      fieldMetadataId: variables.input.update.fieldMetadataId,
-                    },
-                  ],
+                  updatedViewGroups: [updatedViewGroup],
                 });
               },
             }),

@@ -67,7 +67,6 @@ export const useHandleRecordGroupField = () => {
             ?.updateCoreView as CoreView;
 
           if (isDefined(updatedCoreView)) {
-            // Reload record index states to reflect the change
             const updatedViewConverted = convertCoreViewToView(updatedCoreView);
             await loadRecordIndexStates(
               updatedViewConverted,

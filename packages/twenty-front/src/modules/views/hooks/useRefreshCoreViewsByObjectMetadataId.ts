@@ -49,14 +49,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
           )
           .getValue();
 
-        const coreViewsFromResult = result.data.getCoreViews.map(
-          (coreView) => ({
-            ...coreView,
-            viewGroups: coreView.viewGroups.map((viewGroup) => ({
-              ...viewGroup,
-            })),
-          }),
-        );
+        const coreViewsFromResult = result.data.getCoreViews;
 
         if (isDeeplyEqual(coreViewsForObjectMetadataId, coreViewsFromResult)) {
           return;
