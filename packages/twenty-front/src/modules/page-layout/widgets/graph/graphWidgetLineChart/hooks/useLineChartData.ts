@@ -3,6 +3,7 @@ import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLin
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { type LineSeries } from '@nivo/line';
+import { useMemo } from 'react';
 
 type UseLineChartDataProps = {
   data: LineChartSeries[];
@@ -15,33 +16,35 @@ export const useLineChartData = ({
   colorRegistry,
   id,
 }: UseLineChartDataProps) => {
-  const enrichedSeries: LineChartEnrichedSeries[] = [];
-  const nivoData: LineSeries[] = [];
-  const colors: string[] = [];
-  const legendItems: { id: string; label: string; color: string }[] = [];
+  return useMemo(() => {
+    const enrichedSeries: LineChartEnrichedSeries[] = [];
+    const nivoData: LineSeries[] = [];
+    const colors: string[] = [];
+    const legendItems: { id: string; label: string; color: string }[] = [];
 
-  for (const [index, series] of data.entries()) {
-    const colorScheme = getColorScheme({
-      registry: colorRegistry,
-      colorName: series.color,
-      fallbackIndex: index,
-      totalGroups: data.length,
-    });
+    for (const [index, series] of data.entries()) {
+      const colorScheme = getColorScheme({
+        registry: colorRegistry,
+        colorName: series.color,
+        fallbackIndex: index,
+        totalGroups: data.length,
+      });
 
-    const sanitizedSeriesId = series.id
-      .replace(/\s+/g, '_')
-      .replace(/[^a-zA-Z0-9_-]/g, '');
-    const areaFillId = `areaFill-${id}-${sanitizedSeriesId}-${index}`;
-    const label = series.label || series.id;
+      const sanitizedSeriesId = series.id
+        .replace(/\s+/g, '_')
+        .replace(/[^a-zA-Z0-9_-]/g, '');
+      const areaFillId = `areaFill-${id}-${sanitizedSeriesId}-${index}`;
+      const label = series.label || series.id;
 
-    enrichedSeries.push({ ...series, colorScheme, areaFillId, label });
-    nivoData.push({
-      id: series.id,
-      data: series.data.map((point) => ({ x: point.x, y: point.y })),
-    });
-    colors.push(colorScheme.solid);
-    legendItems.push({ id: series.id, label, color: colorScheme.solid });
-  }
+      enrichedSeries.push({ ...series, colorScheme, areaFillId, label });
+      nivoData.push({
+        id: series.id,
+        data: series.data.map((point) => ({ x: point.x, y: point.y })),
+      });
+      colors.push(colorScheme.solid);
+      legendItems.push({ id: series.id, label, color: colorScheme.solid });
+    }
 
-  return { enrichedSeries, nivoData, colors, legendItems };
+    return { enrichedSeries, nivoData, colors, legendItems };
+  }, [data, colorRegistry, id]);
 };

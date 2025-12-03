@@ -1,7 +1,7 @@
 import { LineAnimatedAreaPath } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/LineAnimatedAreaPath';
+import { LineAreaGradientDefs } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/LineAreaGradientDefs';
 import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartEnrichedSeries';
 import { computeLineAreaPath } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/computeLineAreaPath';
-import { createAreaFillDef } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/createAreaFillDef';
 import {
   type ComputedSeries,
   type LineCustomSvgLayerProps,
@@ -9,6 +9,7 @@ import {
 } from '@nivo/line';
 import { isNumberOrNaN } from '@sniptt/guards';
 import { useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type CustomStackedAreasLayerProps = {
   series: readonly ComputedSeries<LineSeries>[];
@@ -17,6 +18,12 @@ type CustomStackedAreasLayerProps = {
   enableArea: boolean;
   yScale: LineCustomSvgLayerProps<LineSeries>['yScale'];
   isStacked: boolean;
+};
+
+type AreaPathData = {
+  id: string;
+  path: string;
+  fillId: string;
 };
 
 export const CustomStackedAreasLayer = ({
@@ -50,35 +57,36 @@ export const CustomStackedAreasLayer = ({
       return [];
     }
 
-    return series.reduce(
-      (acc, currentSeries, index) => {
-        const prevSeries =
-          isStacked && index > 0
-            ? (series[index - 1] as typeof currentSeries)
-            : null;
-        const enriched = seriesById.get(String(currentSeries.id));
-        if (!enriched) {
-          return acc;
-        }
+    const initialAreaPathData: AreaPathData[] = [];
 
-        const path = computeLineAreaPath({
-          currentSeries,
-          prevSeries,
-          baseline,
-        });
+    return series.reduce((acc, currentSeries, index) => {
+      const prevSeriesCandidate =
+        isStacked && index > 0 ? series[index - 1] : undefined;
+      const prevSeries = isDefined(prevSeriesCandidate)
+        ? prevSeriesCandidate
+        : null;
 
-        if (path !== null) {
-          acc.push({
-            id: String(currentSeries.id),
-            path,
-            fillId: enriched.areaFillId,
-          });
-        }
-
+      const enriched = seriesById.get(String(currentSeries.id));
+      if (!isDefined(enriched)) {
         return acc;
-      },
-      [] as { id: string; path: string; fillId: string }[],
-    );
+      }
+
+      const path = computeLineAreaPath({
+        currentSeries,
+        prevSeries,
+        baseline,
+      });
+
+      if (isDefined(path)) {
+        acc.push({
+          id: String(currentSeries.id),
+          path,
+          fillId: enriched.areaFillId,
+        });
+      }
+
+      return acc;
+    }, initialAreaPathData);
   }, [enableArea, series, seriesById, baseline, isStacked]);
 
   if (!enableArea) {
@@ -87,33 +95,7 @@ export const CustomStackedAreasLayer = ({
 
   return (
     <g>
-      <defs>
-        {enrichedSeries.map((seriesItem) => {
-          const def = createAreaFillDef(
-            seriesItem.colorScheme,
-            seriesItem.areaFillId,
-          );
-          return (
-            <linearGradient
-              key={def.id}
-              id={def.id}
-              x1={def.x1}
-              y1={def.y1}
-              x2={def.x2}
-              y2={def.y2}
-            >
-              {def.colors.map((color, idx) => (
-                <stop
-                  key={idx}
-                  offset={`${color.offset}%`}
-                  stopColor={color.color}
-                  stopOpacity={color.opacity}
-                />
-              ))}
-            </linearGradient>
-          );
-        })}
-      </defs>
+      <LineAreaGradientDefs enrichedSeries={enrichedSeries} />
       {paths.map(({ id, path, fillId }) => (
         <LineAnimatedAreaPath key={id} path={path} fillId={fillId} />
       ))}
