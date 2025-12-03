@@ -12,6 +12,26 @@ export const TEST_IFRAME_CONFIG = {
   url: 'https://example.com/dashboard',
 };
 
+export const TEST_STANDALONE_RICH_TEXT_CONFIG = {
+  body: {
+    blocknote:
+      '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hello world"}]}]}',
+    markdown: '# Hello world',
+  },
+};
+
+export const TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL = {
+  body: {
+    markdown: 'Simple text',
+  },
+};
+
+export const INVALID_STANDALONE_RICH_TEXT_CONFIG_MISSING_BODY = {};
+
+export const INVALID_STANDALONE_RICH_TEXT_CONFIG_EMPTY_BODY = {
+  body: {},
+};
+
 export const TEST_IFRAME_CONFIG_ALTERNATIVE = {
   url: 'https://app.twenty.com/analytics',
 };
@@ -263,6 +283,8 @@ export function getValidConfigForWidgetType(widgetType: string): any {
 
       return configs[Math.floor(Math.random() * configs.length)];
     }
+    case 'STANDALONE_RICH_TEXT':
+      return TEST_STANDALONE_RICH_TEXT_CONFIG;
     case 'VIEW':
     case 'FIELDS':
     case 'TIMELINE':
@@ -271,6 +293,7 @@ export function getValidConfigForWidgetType(widgetType: string): any {
     case 'FILES':
     case 'EMAILS':
     case 'CALENDAR':
+    case 'FIELD_RICH_TEXT':
       return null;
     default:
       return null;

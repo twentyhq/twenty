@@ -4,6 +4,7 @@ import {
   INVALID_IFRAME_CONFIG_EMPTY_URL,
   INVALID_NUMBER_CHART_CONFIG_BAD_UUID,
   INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
+  INVALID_STANDALONE_RICH_TEXT_CONFIG_MISSING_BODY,
   INVALID_VERTICAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
   TEST_GAUGE_CHART_CONFIG,
   TEST_HORIZONTAL_BAR_CHART_CONFIG,
@@ -13,6 +14,8 @@ import {
   TEST_NUMBER_CHART_CONFIG,
   TEST_NUMBER_CHART_CONFIG_MINIMAL,
   TEST_PIE_CHART_CONFIG,
+  TEST_STANDALONE_RICH_TEXT_CONFIG,
+  TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL,
   TEST_VERTICAL_BAR_CHART_CONFIG,
   TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL,
 } from 'test/integration/constants/widget-configuration-test-data.constants';
@@ -50,6 +53,38 @@ describe('validateAndTransformWidgetConfiguration', () => {
           isDashboardV2Enabled: false,
         }),
       ).toThrow(/url must be a URL address/);
+    });
+  });
+
+  describe('STANDALONE_RICH_TEXT widget', () => {
+    it('should validate and transform valid standalone rich text configuration', () => {
+      const result = validateAndTransformWidgetConfiguration({
+        type: WidgetType.STANDALONE_RICH_TEXT,
+        configuration: TEST_STANDALONE_RICH_TEXT_CONFIG,
+        isDashboardV2Enabled: false,
+      });
+
+      expect(result).toMatchObject(TEST_STANDALONE_RICH_TEXT_CONFIG);
+    });
+
+    it('should validate minimal standalone rich text configuration', () => {
+      const result = validateAndTransformWidgetConfiguration({
+        type: WidgetType.STANDALONE_RICH_TEXT,
+        configuration: TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL,
+        isDashboardV2Enabled: false,
+      });
+
+      expect(result).toMatchObject(TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL);
+    });
+
+    it('should throw error for missing body', () => {
+      expect(() =>
+        validateAndTransformWidgetConfiguration({
+          type: WidgetType.STANDALONE_RICH_TEXT,
+          configuration: INVALID_STANDALONE_RICH_TEXT_CONFIG_MISSING_BODY,
+          isDashboardV2Enabled: false,
+        }),
+      ).toThrow(/body/);
     });
   });
 
