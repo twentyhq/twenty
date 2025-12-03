@@ -5,6 +5,7 @@
   },
   "include": [
     "**/__mocks__/**/*",
+    "vite.config.ts",
     "jest.config.mjs",
     "src/**/*.d.ts",
     "src/**/*.spec.ts",
