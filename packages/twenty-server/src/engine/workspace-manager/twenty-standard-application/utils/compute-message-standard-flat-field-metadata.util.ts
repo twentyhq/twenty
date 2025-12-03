@@ -6,7 +6,7 @@ import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/tw
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-relation-field-flat-metadata.util';
 import { StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
-export const buildNoteStandardFlatFieldMetadatas = ({
+export const buildMessageStandardFlatFieldMetadatas = ({
   createdAt,
   workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
@@ -14,10 +14,9 @@ export const buildNoteStandardFlatFieldMetadatas = ({
   createdAt: Date;
   workspaceId: string;
   standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<AllStandardObjectFieldName<'note'>, FlatFieldMetadata> => ({
-  // Base fields from BaseWorkspaceEntity
+}): Record<AllStandardObjectFieldName<'message'>, FlatFieldMetadata> => ({
   id: createStandardFieldFlatMetadata({
-    objectName: 'note',
+    objectName: 'message',
     workspaceId,
     options: {
       fieldName: 'id',
@@ -34,7 +33,7 @@ export const buildNoteStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   createdAt: createStandardFieldFlatMetadata({
-    objectName: 'note',
+    objectName: 'message',
     workspaceId,
     options: {
       fieldName: 'createdAt',
@@ -45,15 +44,13 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: {
-        displayFormat: 'RELATIVE',
-      },
+      settings: { displayFormat: 'RELATIVE' },
       createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   updatedAt: createStandardFieldFlatMetadata({
-    objectName: 'note',
+    objectName: 'message',
     workspaceId,
     options: {
       fieldName: 'updatedAt',
@@ -64,15 +61,13 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: {
-        displayFormat: 'RELATIVE',
-      },
+      settings: { displayFormat: 'RELATIVE' },
       createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   deletedAt: createStandardFieldFlatMetadata({
-    objectName: 'note',
+    objectName: 'message',
     workspaceId,
     options: {
       fieldName: 'deletedAt',
@@ -82,168 +77,129 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isNullable: true,
       isUIReadOnly: true,
-      settings: {
-        displayFormat: 'RELATIVE',
-      },
+      settings: { displayFormat: 'RELATIVE' },
       createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-
-  // Note-specific fields
-  position: createStandardFieldFlatMetadata({
-    objectName: 'note',
+  headerMessageId: createStandardFieldFlatMetadata({
+    objectName: 'message',
     workspaceId,
     options: {
-      fieldName: 'position',
-      type: FieldMetadataType.POSITION,
-      label: 'Position',
-      description: 'Note record position',
-      icon: 'IconHierarchy2',
-      isSystem: true,
-      isNullable: false,
-      defaultValue: 0,
-      createdAt,
-    },
-    standardFieldMetadataIdByObjectAndFieldName,
-  }),
-  title: createStandardFieldFlatMetadata({
-    objectName: 'note',
-    workspaceId,
-    options: {
-      fieldName: 'title',
+      fieldName: 'headerMessageId',
       type: FieldMetadataType.TEXT,
-      label: 'Title',
-      description: 'Note title',
-      icon: 'IconNotes',
+      label: 'Header message Id',
+      description: 'Message id from the message header',
+      icon: 'IconHash',
       isNullable: true,
       createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  body: createStandardFieldFlatMetadata({
-    objectName: 'note',
+  direction: createStandardFieldFlatMetadata({
+    objectName: 'message',
     workspaceId,
     options: {
-      fieldName: 'body',
+      fieldName: 'direction',
+      type: FieldMetadataType.SELECT,
+      label: 'Direction',
+      description: 'Message Direction',
+      icon: 'IconDirection',
+      isNullable: false,
+      defaultValue: "'INCOMING'",
+      options: [
+        { value: 'INCOMING', label: 'Incoming', position: 0, color: 'green' },
+        { value: 'OUTGOING', label: 'Outgoing', position: 1, color: 'blue' },
+      ],
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  subject: createStandardFieldFlatMetadata({
+    objectName: 'message',
+    workspaceId,
+    options: {
+      fieldName: 'subject',
       type: FieldMetadataType.TEXT,
-      label: 'Body (deprecated)',
-      description: 'Note body (deprecated - use bodyV2)',
-      icon: 'IconFilePencil',
+      label: 'Subject',
+      description: 'Subject',
+      icon: 'IconMessage',
       isNullable: true,
       createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  bodyV2: createStandardFieldFlatMetadata({
-    objectName: 'note',
+  text: createStandardFieldFlatMetadata({
+    objectName: 'message',
     workspaceId,
     options: {
-      fieldName: 'bodyV2',
-      type: FieldMetadataType.RICH_TEXT_V2,
-      label: 'Body',
-      description: 'Note body',
-      icon: 'IconFilePencil',
+      fieldName: 'text',
+      type: FieldMetadataType.TEXT,
+      label: 'Text',
+      description: 'Text',
+      icon: 'IconMessage',
       isNullable: true,
       createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  createdBy: createStandardFieldFlatMetadata({
-    objectName: 'note',
+  receivedAt: createStandardFieldFlatMetadata({
+    objectName: 'message',
     workspaceId,
     options: {
-      fieldName: 'createdBy',
-      type: FieldMetadataType.ACTOR,
-      label: 'Created by',
-      description: 'The creator of the record',
-      icon: 'IconCreativeCommonsSa',
-      isUIReadOnly: true,
-      isNullable: false,
-      createdAt,
-    },
-    standardFieldMetadataIdByObjectAndFieldName,
-  }),
-  searchVector: createStandardFieldFlatMetadata({
-    objectName: 'note',
-    workspaceId,
-    options: {
-      fieldName: 'searchVector',
-      type: FieldMetadataType.TS_VECTOR,
-      label: 'Search vector',
-      description: 'Field used for full-text search',
-      icon: 'IconUser',
-      isSystem: true,
+      fieldName: 'receivedAt',
+      type: FieldMetadataType.DATE_TIME,
+      label: 'Received At',
+      description: 'The date the message was received',
+      icon: 'IconCalendar',
       isNullable: true,
       createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-
-  // Relation fields
-  noteTargets: createStandardRelationFieldFlatMetadata({
-    objectName: 'note',
+  messageThread: createStandardRelationFieldFlatMetadata({
+    objectName: 'message',
     workspaceId,
     options: {
-      fieldName: 'noteTargets',
-      label: 'Relations',
-      description: 'Note targets',
-      icon: 'IconArrowUpRight',
-      isSystem: true,
+      fieldName: 'messageThread',
+      label: 'Message Thread Id',
+      description: 'Message Thread Id',
+      icon: 'IconHash',
       isNullable: true,
       createdAt,
-      targetObjectName: 'noteTarget',
-      targetFieldName: 'note',
+      targetObjectName: 'messageThread',
+      targetFieldName: 'messages',
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  attachments: createStandardRelationFieldFlatMetadata({
-    objectName: 'note',
+  messageParticipants: createStandardRelationFieldFlatMetadata({
+    objectName: 'message',
     workspaceId,
     options: {
-      fieldName: 'attachments',
-      label: 'Attachments',
-      description: 'Note attachments',
-      icon: 'IconFileImport',
-      isSystem: true,
+      fieldName: 'messageParticipants',
+      label: 'Message Participants',
+      description: 'Message Participants',
+      icon: 'IconUserCircle',
       isNullable: true,
       createdAt,
-      targetObjectName: 'attachment',
-      targetFieldName: 'note',
+      targetObjectName: 'messageParticipant',
+      targetFieldName: 'message',
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  timelineActivities: createStandardRelationFieldFlatMetadata({
-    objectName: 'note',
+  messageChannelMessageAssociations: createStandardRelationFieldFlatMetadata({
+    objectName: 'message',
     workspaceId,
     options: {
-      fieldName: 'timelineActivities',
-      label: 'Timeline Activities',
-      description: 'Timeline Activities linked to the note.',
-      icon: 'IconTimelineEvent',
-      isSystem: true,
+      fieldName: 'messageChannelMessageAssociations',
+      label: 'Message Channel Association',
+      description: 'Messages from the channel.',
+      icon: 'IconMessage',
       isNullable: true,
       createdAt,
-      targetObjectName: 'timelineActivity',
-      targetFieldName: 'note',
-    },
-    standardFieldMetadataIdByObjectAndFieldName,
-  }),
-  favorites: createStandardRelationFieldFlatMetadata({
-    objectName: 'note',
-    workspaceId,
-    options: {
-      fieldName: 'favorites',
-      label: 'Favorites',
-      description: 'Favorites linked to the note',
-      icon: 'IconHeart',
-      isSystem: true,
-      isNullable: false,
-      createdAt,
-      targetObjectName: 'favorite',
-      targetFieldName: 'note',
+      targetObjectName: 'messageChannelMessageAssociation',
+      targetFieldName: 'message',
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
 });
-

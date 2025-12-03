@@ -6,7 +6,7 @@ import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/tw
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-relation-field-flat-metadata.util';
 import { StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
-export const buildNoteStandardFlatFieldMetadatas = ({
+export const buildWorkflowStandardFlatFieldMetadatas = ({
   createdAt,
   workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
@@ -14,10 +14,9 @@ export const buildNoteStandardFlatFieldMetadatas = ({
   createdAt: Date;
   workspaceId: string;
   standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<AllStandardObjectFieldName<'note'>, FlatFieldMetadata> => ({
-  // Base fields from BaseWorkspaceEntity
+}): Record<AllStandardObjectFieldName<'workflow'>, FlatFieldMetadata> => ({
   id: createStandardFieldFlatMetadata({
-    objectName: 'note',
+    objectName: 'workflow',
     workspaceId,
     options: {
       fieldName: 'id',
@@ -34,7 +33,7 @@ export const buildNoteStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   createdAt: createStandardFieldFlatMetadata({
-    objectName: 'note',
+    objectName: 'workflow',
     workspaceId,
     options: {
       fieldName: 'createdAt',
@@ -45,15 +44,13 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: {
-        displayFormat: 'RELATIVE',
-      },
+      settings: { displayFormat: 'RELATIVE' },
       createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   updatedAt: createStandardFieldFlatMetadata({
-    objectName: 'note',
+    objectName: 'workflow',
     workspaceId,
     options: {
       fieldName: 'updatedAt',
@@ -64,15 +61,13 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: {
-        displayFormat: 'RELATIVE',
-      },
+      settings: { displayFormat: 'RELATIVE' },
       createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   deletedAt: createStandardFieldFlatMetadata({
-    objectName: 'note',
+    objectName: 'workflow',
     workspaceId,
     options: {
       fieldName: 'deletedAt',
@@ -82,23 +77,73 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isNullable: true,
       isUIReadOnly: true,
-      settings: {
-        displayFormat: 'RELATIVE',
-      },
+      settings: { displayFormat: 'RELATIVE' },
       createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-
-  // Note-specific fields
+  name: createStandardFieldFlatMetadata({
+    objectName: 'workflow',
+    workspaceId,
+    options: {
+      fieldName: 'name',
+      type: FieldMetadataType.TEXT,
+      label: 'Name',
+      description: 'The workflow name',
+      icon: 'IconSettingsAutomation',
+      isNullable: true,
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  lastPublishedVersionId: createStandardFieldFlatMetadata({
+    objectName: 'workflow',
+    workspaceId,
+    options: {
+      fieldName: 'lastPublishedVersionId',
+      type: FieldMetadataType.TEXT,
+      label: 'Last published Version Id',
+      description: 'The workflow last published version id',
+      icon: 'IconVersions',
+      isNullable: true,
+      isUIReadOnly: true,
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  statuses: createStandardFieldFlatMetadata({
+    objectName: 'workflow',
+    workspaceId,
+    options: {
+      fieldName: 'statuses',
+      type: FieldMetadataType.MULTI_SELECT,
+      label: 'Statuses',
+      description: 'The current statuses of the workflow versions',
+      icon: 'IconStatusChange',
+      isNullable: true,
+      isUIReadOnly: true,
+      options: [
+        { value: 'DRAFT', label: 'Draft', position: 0, color: 'yellow' },
+        { value: 'ACTIVE', label: 'Active', position: 1, color: 'green' },
+        {
+          value: 'DEACTIVATED',
+          label: 'Deactivated',
+          position: 2,
+          color: 'gray',
+        },
+      ],
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
   position: createStandardFieldFlatMetadata({
-    objectName: 'note',
+    objectName: 'workflow',
     workspaceId,
     options: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
       label: 'Position',
-      description: 'Note record position',
+      description: 'Workflow record position',
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,
@@ -107,50 +152,8 @@ export const buildNoteStandardFlatFieldMetadatas = ({
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  title: createStandardFieldFlatMetadata({
-    objectName: 'note',
-    workspaceId,
-    options: {
-      fieldName: 'title',
-      type: FieldMetadataType.TEXT,
-      label: 'Title',
-      description: 'Note title',
-      icon: 'IconNotes',
-      isNullable: true,
-      createdAt,
-    },
-    standardFieldMetadataIdByObjectAndFieldName,
-  }),
-  body: createStandardFieldFlatMetadata({
-    objectName: 'note',
-    workspaceId,
-    options: {
-      fieldName: 'body',
-      type: FieldMetadataType.TEXT,
-      label: 'Body (deprecated)',
-      description: 'Note body (deprecated - use bodyV2)',
-      icon: 'IconFilePencil',
-      isNullable: true,
-      createdAt,
-    },
-    standardFieldMetadataIdByObjectAndFieldName,
-  }),
-  bodyV2: createStandardFieldFlatMetadata({
-    objectName: 'note',
-    workspaceId,
-    options: {
-      fieldName: 'bodyV2',
-      type: FieldMetadataType.RICH_TEXT_V2,
-      label: 'Body',
-      description: 'Note body',
-      icon: 'IconFilePencil',
-      isNullable: true,
-      createdAt,
-    },
-    standardFieldMetadataIdByObjectAndFieldName,
-  }),
   createdBy: createStandardFieldFlatMetadata({
-    objectName: 'note',
+    objectName: 'workflow',
     workspaceId,
     options: {
       fieldName: 'createdBy',
@@ -165,7 +168,7 @@ export const buildNoteStandardFlatFieldMetadatas = ({
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   searchVector: createStandardFieldFlatMetadata({
-    objectName: 'note',
+    objectName: 'workflow',
     workspaceId,
     options: {
       fieldName: 'searchVector',
@@ -179,71 +182,118 @@ export const buildNoteStandardFlatFieldMetadatas = ({
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-
-  // Relation fields
-  noteTargets: createStandardRelationFieldFlatMetadata({
-    objectName: 'note',
+  versions: createStandardRelationFieldFlatMetadata({
+    objectName: 'workflow',
     workspaceId,
     options: {
-      fieldName: 'noteTargets',
-      label: 'Relations',
-      description: 'Note targets',
-      icon: 'IconArrowUpRight',
-      isSystem: true,
-      isNullable: true,
+      fieldName: 'versions',
+      label: 'Versions',
+      description: 'Workflow versions linked to the workflow.',
+      icon: 'IconVersions',
+      isUIReadOnly: true,
+      isNullable: false,
       createdAt,
-      targetObjectName: 'noteTarget',
-      targetFieldName: 'note',
+      targetObjectName: 'workflowVersion',
+      targetFieldName: 'workflow',
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  attachments: createStandardRelationFieldFlatMetadata({
-    objectName: 'note',
+  runs: createStandardRelationFieldFlatMetadata({
+    objectName: 'workflow',
     workspaceId,
     options: {
-      fieldName: 'attachments',
-      label: 'Attachments',
-      description: 'Note attachments',
-      icon: 'IconFileImport',
-      isSystem: true,
-      isNullable: true,
+      fieldName: 'runs',
+      label: 'Runs',
+      description: 'Workflow runs linked to the workflow.',
+      icon: 'IconRun',
+      isUIReadOnly: true,
+      isNullable: false,
       createdAt,
-      targetObjectName: 'attachment',
-      targetFieldName: 'note',
+      targetObjectName: 'workflowRun',
+      targetFieldName: 'workflow',
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  timelineActivities: createStandardRelationFieldFlatMetadata({
-    objectName: 'note',
+  eventListeners: createStandardRelationFieldFlatMetadata({
+    objectName: 'workflow',
     workspaceId,
     options: {
-      fieldName: 'timelineActivities',
-      label: 'Timeline Activities',
-      description: 'Timeline Activities linked to the note.',
-      icon: 'IconTimelineEvent',
+      fieldName: 'eventListeners',
+      label: 'Event Listeners',
+      description: 'Workflow event listeners linked to the workflow.',
+      icon: 'IconSettingsAutomation',
       isSystem: true,
-      isNullable: true,
+      isUIReadOnly: true,
+      isNullable: false,
       createdAt,
-      targetObjectName: 'timelineActivity',
-      targetFieldName: 'note',
+      targetObjectName: 'workflowAutomatedTrigger',
+      targetFieldName: 'workflow',
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  automatedTriggers: createStandardRelationFieldFlatMetadata({
+    objectName: 'workflow',
+    workspaceId,
+    options: {
+      fieldName: 'automatedTriggers',
+      label: 'Automated Triggers',
+      description: 'Workflow automated triggers linked to the workflow.',
+      icon: 'IconSettingsAutomation',
+      isSystem: true,
+      isUIReadOnly: true,
+      isNullable: false,
+      createdAt,
+      targetObjectName: 'workflowAutomatedTrigger',
+      targetFieldName: 'workflow',
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   favorites: createStandardRelationFieldFlatMetadata({
-    objectName: 'note',
+    objectName: 'workflow',
     workspaceId,
     options: {
       fieldName: 'favorites',
       label: 'Favorites',
-      description: 'Favorites linked to the note',
+      description: 'Favorites linked to the workflow',
       icon: 'IconHeart',
       isSystem: true,
       isNullable: false,
       createdAt,
       targetObjectName: 'favorite',
-      targetFieldName: 'note',
+      targetFieldName: 'workflow',
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  timelineActivities: createStandardRelationFieldFlatMetadata({
+    objectName: 'workflow',
+    workspaceId,
+    options: {
+      fieldName: 'timelineActivities',
+      label: 'Timeline Activities',
+      description: 'Timeline activities linked to the workflow',
+      icon: 'IconTimelineEvent',
+      isSystem: true,
+      isNullable: false,
+      createdAt,
+      targetObjectName: 'timelineActivity',
+      targetFieldName: 'workflow',
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  attachments: createStandardRelationFieldFlatMetadata({
+    objectName: 'workflow',
+    workspaceId,
+    options: {
+      fieldName: 'attachments',
+      label: 'Attachments',
+      description: 'Attachments linked to the workflow',
+      icon: 'IconFileUpload',
+      isSystem: true,
+      isNullable: false,
+      createdAt,
+      targetObjectName: 'attachment',
+      targetFieldName: 'workflow',
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
 });
-

@@ -121,6 +121,20 @@ export const buildTaskStandardFlatFieldMetadatas = ({
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
+  body: createStandardFieldFlatMetadata({
+    objectName: 'task',
+    workspaceId,
+    options: {
+      fieldName: 'body',
+      type: FieldMetadataType.TEXT,
+      label: 'Body (deprecated)',
+      description: 'Task body (deprecated - use bodyV2)',
+      icon: 'IconFilePencil',
+      isNullable: true,
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
   bodyV2: createStandardFieldFlatMetadata({
     objectName: 'task',
     workspaceId,
