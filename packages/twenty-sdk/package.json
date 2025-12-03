@@ -26,8 +26,7 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
-    },
-    "./package.json": "./package.json"
+    }
   },
   "license": "AGPL-3.0",
   "dependencies": {
@@ -67,5 +66,5 @@
   "engines": {
     "node": "^24.5.0",
     "yarn": "^4.0.2"
-  },
+  }
 }

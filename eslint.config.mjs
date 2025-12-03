@@ -60,10 +60,6 @@ export default [
               onlyDependOnLibsWithTags: ['scope:apps', 'scope:sdk'],
             },
             {
-              sourceTag: 'scope:create-app',
-              onlyDependOnLibsWithTags: ['scope:sdk'],
-            },
-            {
               sourceTag: 'scope:sdk',
               onlyDependOnLibsWithTags: ['scope:sdk', 'scope:shared'],
             },

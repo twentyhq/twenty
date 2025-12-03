@@ -1,7 +1,6 @@
 import * as fs from 'fs-extra';
 import { join } from 'path';
 import { v4 } from 'uuid';
-import sdkPackageJson from 'twenty-sdk/package.json';
 
 export const copyBaseApplicationProject = async ({
   appName,
@@ -126,7 +125,7 @@ const createPackageJson = async ({
       auth: 'twenty auth login',
     },
     dependencies: {
-      'twenty-sdk': sdkPackageJson.version,
+      'twenty-sdk': '0.1.2',
     },
     devDependencies: {
       '@types/node': '^24.7.2',
