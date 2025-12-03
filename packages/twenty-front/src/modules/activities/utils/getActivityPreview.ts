@@ -1,36 +1,56 @@
-// TODO: merge with getFirstNonEmptyLineOfRichText (and one duplicate I saw and also added a note on)
+// Basic Rich-Text Node Types
+export interface BaseNode {
+  type: string;
+  content?: RichTextNode[];
+  [key: string]: unknown;
+}
 
-export const getActivityPreview = (activityBody: string | null) => {
-  const noteBody = activityBody ? JSON.parse(activityBody) : [];
+export interface TextNode extends BaseNode {
+  type: 'text';
+  text: string;
+}
 
-  const extractText = (node: any): string => {
+export interface LinkNode extends BaseNode {
+  type: 'link';
+  href?: string;
+  content?: RichTextNode[];
+}
+
+export type RichTextNode = TextNode | LinkNode | BaseNode;
+
+export const getActivityPreview = (activityBody: string | null): string => {
+  const noteBody: RichTextNode[] = activityBody
+    ? JSON.parse(activityBody)
+    : [];
+
+  const extractText = (node: RichTextNode | undefined | null): string => {
     if (!node) return '';
 
-    if (node.type === 'text') {
-        return node.text ?? '';
+    switch (node.type) {
+      case 'text':
+        return (node as TextNode).text ?? '';
+
+      case 'link': {
+        const linkNode = node as LinkNode;
+        const innerText = (linkNode.content ?? [])
+          .map(child => extractText(child))
+          .join('');
+        const href = linkNode.href ?? '';
+        return href ? `${innerText} (${href})` : innerText;
+      }
+
+      default:
+        if (Array.isArray(node.content)) {
+          return node.content.map(extractText).join(' ');
+        }
+        return '';
     }
-
-    if (node.type === 'link') {
-      const innerText = (node.content ?? [])
-        .map((child: any) => extractText(child))
-        .join('');
-
-      const href = node.href ?? '';
-
-      return href ? `${innerText} (${href})` : innerText;
-    }
-
-    if (Array.isArray(node.content)) {
-      return node.content.map(extractText).join(' ');
-    }
-
-    return '';
   };
 
   return noteBody.length
     ? noteBody
-        .map((x: any) => extractText(x))
-        .filter((x: string) => x)
+        .map(node => extractText(node))
+        .filter(Boolean)
         .join('\n')
     : '';
 };
