@@ -296,7 +296,7 @@ export class AgentService {
 
     if (!isDefined(agentToDelete)) {
       throw new AgentException(
-        `Agent ${id} not found`,
+        `Agent not found`,
         AgentExceptionCode.AGENT_NOT_FOUND,
       );
     }
