@@ -68,6 +68,7 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     ...new Set([
       ...Object.keys(flatViewGroupRecordByViewId),
       ...fromFlatFieldMetadata.calendarViewIds,
+      ...fromFlatFieldMetadata.mainGroupByFieldMetadataViewIds,
     ]),
   ];
 

@@ -91,10 +91,6 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
           foreignKey: 'fieldMetadataId',
         },
         {
-          entities: viewGroups,
-          foreignKey: 'fieldMetadataId',
-        },
-        {
           entities: views,
           foreignKey: 'calendarFieldMetadataId',
         },
