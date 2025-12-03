@@ -8,7 +8,7 @@ import { AuthCommand } from './commands/auth.command';
 import { ConfigService } from './services/config.service';
 
 const packageJson = JSON.parse(
-  readFileSync(join(__dirname, '../../package.json'), 'utf-8'),
+  readFileSync(join(__dirname, '../package.json'), 'utf-8'),
 );
 
 const program = new Command();
