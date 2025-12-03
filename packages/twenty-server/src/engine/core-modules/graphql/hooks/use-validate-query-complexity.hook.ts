@@ -1,13 +1,21 @@
 import { msg } from '@lingui/core/macro';
 import { type FieldNode, type ValidationContext } from 'graphql';
 import { type Plugin } from 'graphql-yoga';
+import { isDefined } from 'twenty-shared/utils';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
-export const useComputeComplexity = (
-  maximumAllowedFields: number,
-  maximumAllowedRootResolvers: number,
-): Plugin => ({
+export const useValidateQueryComplexity = ({
+  maximumAllowedFields,
+  maximumAllowedRootResolvers,
+  maximumAllowedNestedFields,
+  checkDuplicateRootResolvers = false,
+}: {
+  maximumAllowedFields?: number;
+  maximumAllowedRootResolvers?: number;
+  maximumAllowedNestedFields?: number;
+  checkDuplicateRootResolvers: boolean;
+}): Plugin => ({
   onValidate: ({ addValidationRule }) => {
     addValidationRule((context: ValidationContext) => {
       let requestedFieldsCount = 0;
@@ -36,7 +44,10 @@ export const useComputeComplexity = (
 
               const fieldName = node.name.value;
 
-              if (rootResolverNames.has(fieldName)) {
+              if (
+                checkDuplicateRootResolvers &&
+                rootResolverNames.has(fieldName)
+              ) {
                 context.reportError(
                   new UserInputError(
                     `Duplicate root resolver: "${fieldName}"`,
@@ -49,6 +60,17 @@ export const useComputeComplexity = (
                 rootResolverNames.add(fieldName);
               }
             }
+
+            if (
+              isDefined(maximumAllowedNestedFields) &&
+              depth > maximumAllowedNestedFields
+            ) {
+              context.reportError(
+                new UserInputError(
+                  `Query too complex - Too many nested fields requested: ${depth} - Maximum allowed nested fields: ${maximumAllowedNestedFields}`,
+                ),
+              );
+            }
           },
           leave() {
             depth--;
@@ -56,7 +78,10 @@ export const useComputeComplexity = (
         },
         Document: {
           leave() {
-            if (requestedFieldsCount > maximumAllowedFields) {
+            if (
+              isDefined(maximumAllowedFields) &&
+              requestedFieldsCount > maximumAllowedFields
+            ) {
               context.reportError(
                 new UserInputError(
                   `Query too complex - Too many fields requested : ${requestedFieldsCount} - Maximum allowed fields: ${maximumAllowedFields}`,
@@ -66,7 +91,10 @@ export const useComputeComplexity = (
                 ),
               );
             }
-            if (requestedRootResolversCount > maximumAllowedRootResolvers) {
+            if (
+              isDefined(maximumAllowedRootResolvers) &&
+              requestedRootResolversCount > maximumAllowedRootResolvers
+            ) {
               context.reportError(
                 new UserInputError(
                   `Query too complex - Too many root resolvers requested: ${requestedRootResolversCount} - Maximum allowed root resolvers: ${maximumAllowedRootResolvers}`,

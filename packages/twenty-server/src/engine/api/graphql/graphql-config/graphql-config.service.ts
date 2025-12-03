@@ -33,9 +33,9 @@ import {
 import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useSentryTracing } from 'src/engine/core-modules/exception-handler/hooks/use-sentry-tracing';
-import { useComputeComplexity } from 'src/engine/core-modules/graphql/hooks/use-compute-complexity.hook';
 import { useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers } from 'src/engine/core-modules/graphql/hooks/use-disable-introspection-and-suggestions-for-unauthenticated-users.hook';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
+import { useValidateQueryComplexity } from 'src/engine/core-modules/graphql/hooks/use-validate-query-complexity.hook';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -76,10 +76,14 @@ export class GraphQLConfigService
       useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers(
         this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION,
       ),
-      useComputeComplexity(
-        this.twentyConfigService.get('GRAPHQL_MAX_FIELDS'),
-        this.twentyConfigService.get('GRAPHQL_MAX_ROOT_RESOLVERS'),
-      ),
+      useValidateQueryComplexity({
+        maximumAllowedFields:
+          this.twentyConfigService.get('GRAPHQL_MAX_FIELDS'),
+        maximumAllowedRootResolvers: this.twentyConfigService.get(
+          'GRAPHQL_MAX_ROOT_RESOLVERS',
+        ),
+        checkDuplicateRootResolvers: true,
+      }),
     ];
 
     if (Sentry.isInitialized()) {
