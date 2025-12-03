@@ -1,7 +1,13 @@
+import { LineAnimatedAreaPath } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/LineAnimatedAreaPath';
 import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartEnrichedSeries';
 import { computeLineAreaPath } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/computeLineAreaPath';
 import { createAreaFillDef } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/createAreaFillDef';
-import { type ComputedSeries, type LineSeries } from '@nivo/line';
+import {
+  type ComputedSeries,
+  type LineCustomSvgLayerProps,
+  type LineSeries,
+} from '@nivo/line';
+import { isNumberOrNaN } from '@sniptt/guards';
 import { useMemo } from 'react';
 
 type CustomStackedAreasLayerProps = {
@@ -9,7 +15,7 @@ type CustomStackedAreasLayerProps = {
   innerHeight: number;
   enrichedSeries: LineChartEnrichedSeries[];
   enableArea: boolean;
-  yScale: (value: number | string | Date) => number | null | undefined;
+  yScale: LineCustomSvgLayerProps<LineSeries>['yScale'];
   isStacked: boolean;
 };
 
@@ -31,7 +37,7 @@ export const CustomStackedAreasLayer = ({
 
   const baseline = useMemo(() => {
     const scaled = yScale(0);
-    if (typeof scaled !== 'number' || Number.isNaN(scaled)) {
+    if (!isNumberOrNaN(scaled)) {
       return innerHeight;
     }
     if (scaled < 0) return 0;
@@ -109,7 +115,7 @@ export const CustomStackedAreasLayer = ({
         })}
       </defs>
       {paths.map(({ id, path, fillId }) => (
-        <path key={id} d={path} fill={`url(#${fillId})`} strokeWidth={0} />
+        <LineAnimatedAreaPath key={id} path={path} fillId={fillId} />
       ))}
     </g>
   );
