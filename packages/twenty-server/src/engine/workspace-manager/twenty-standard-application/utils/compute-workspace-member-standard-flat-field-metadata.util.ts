@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -348,6 +348,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'task',
       targetFieldName: 'assignee',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -363,6 +366,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'favorite',
       targetFieldName: 'forWorkspaceMember',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -378,6 +384,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'company',
       targetFieldName: 'accountOwner',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -394,6 +403,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'attachment',
       targetFieldName: 'author',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -409,6 +421,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'connectedAccount',
       targetFieldName: 'accountOwner',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -424,6 +439,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'messageParticipant',
       targetFieldName: 'workspaceMember',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -439,6 +457,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'blocklist',
       targetFieldName: 'workspaceMember',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -454,6 +475,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'calendarEventParticipant',
       targetFieldName: 'workspaceMember',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -470,6 +494,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'workspaceMember',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),

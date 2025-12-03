@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -195,6 +195,9 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'workflowVersion',
       targetFieldName: 'workflow',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -211,6 +214,9 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'workflowRun',
       targetFieldName: 'workflow',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -228,6 +234,9 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'workflowAutomatedTrigger',
       targetFieldName: 'workflow',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -245,6 +254,9 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'workflowAutomatedTrigger',
       targetFieldName: 'workflow',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -261,6 +273,9 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'favorite',
       targetFieldName: 'workflow',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -277,6 +292,9 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'workflow',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -293,6 +311,9 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'attachment',
       targetFieldName: 'workflow',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),

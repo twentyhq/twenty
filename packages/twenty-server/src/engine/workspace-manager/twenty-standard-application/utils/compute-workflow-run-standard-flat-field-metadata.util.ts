@@ -1,4 +1,8 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -266,6 +270,11 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'workflowVersion',
       targetFieldName: 'runs',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'workflowVersionId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -281,6 +290,11 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'workflow',
       targetFieldName: 'runs',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'workflowId',
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -297,6 +311,9 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'favorite',
       targetFieldName: 'workflowRun',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
@@ -313,6 +330,9 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       createdAt,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'workflowRun',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
