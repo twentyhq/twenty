@@ -6,15 +6,11 @@ import { useMemo } from 'react';
 type UseGaugeChartDataProps = {
   data: GaugeChartData;
   colorRegistry: GraphColorRegistry;
-  id: string;
-  instanceId: string;
 };
 
 export const useGaugeChartData = ({
   data,
   colorRegistry,
-  id,
-  instanceId,
 }: UseGaugeChartDataProps) => {
   const { value, min, max, color = 'blue' } = data;
 
@@ -50,13 +46,10 @@ export const useGaugeChartData = ({
     [clampedNormalizedValue],
   );
 
-  const gradientId = `gaugeGradient-${id}-${instanceId}`;
-
   return {
     colorScheme,
     normalizedValue,
     clampedNormalizedValue,
     chartData,
-    gradientId,
   };
 };

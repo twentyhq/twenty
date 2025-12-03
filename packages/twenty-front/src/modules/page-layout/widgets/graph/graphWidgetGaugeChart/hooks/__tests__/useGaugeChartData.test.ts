@@ -54,8 +54,6 @@ describe('useGaugeChartData', () => {
       useGaugeChartData({
         data,
         colorRegistry: mockColorRegistry,
-        id: 'test-gauge',
-        instanceId: 'instance-1',
       }),
     );
 
@@ -74,8 +72,6 @@ describe('useGaugeChartData', () => {
       useGaugeChartData({
         data,
         colorRegistry: mockColorRegistry,
-        id: 'test-gauge',
-        instanceId: 'instance-1',
       }),
     );
 
@@ -94,8 +90,6 @@ describe('useGaugeChartData', () => {
       useGaugeChartData({
         data,
         colorRegistry: mockColorRegistry,
-        id: 'test-gauge',
-        instanceId: 'instance-1',
       }),
     );
 
@@ -114,8 +108,6 @@ describe('useGaugeChartData', () => {
       useGaugeChartData({
         data,
         colorRegistry: mockColorRegistry,
-        id: 'test-gauge',
-        instanceId: 'instance-1',
       }),
     );
 
@@ -134,8 +126,6 @@ describe('useGaugeChartData', () => {
       useGaugeChartData({
         data,
         colorRegistry: mockColorRegistry,
-        id: 'test-gauge',
-        instanceId: 'instance-1',
       }),
     );
 
@@ -155,8 +145,6 @@ describe('useGaugeChartData', () => {
       useGaugeChartData({
         data,
         colorRegistry: mockColorRegistry,
-        id: 'test-gauge',
-        instanceId: 'instance-1',
       }),
     );
 
@@ -174,8 +162,6 @@ describe('useGaugeChartData', () => {
       useGaugeChartData({
         data,
         colorRegistry: mockColorRegistry,
-        id: 'test-gauge',
-        instanceId: 'instance-1',
       }),
     );
 
@@ -193,8 +179,6 @@ describe('useGaugeChartData', () => {
       useGaugeChartData({
         data,
         colorRegistry: mockColorRegistry,
-        id: 'test-gauge',
-        instanceId: 'instance-1',
       }),
     );
 
@@ -220,8 +204,6 @@ describe('useGaugeChartData', () => {
       useGaugeChartData({
         data,
         colorRegistry: mockColorRegistry,
-        id: 'test-gauge',
-        instanceId: 'instance-1',
       }),
     );
 
