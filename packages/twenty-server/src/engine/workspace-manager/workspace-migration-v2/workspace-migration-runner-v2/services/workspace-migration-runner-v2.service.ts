@@ -123,6 +123,7 @@ export class WorkspaceMigrationRunnerV2Service {
           'rolesPermissions',
           'userWorkspaceRoleMap',
           'apiKeyRoleMap',
+          'entityMetadatas',
         ]),
       );
     }
