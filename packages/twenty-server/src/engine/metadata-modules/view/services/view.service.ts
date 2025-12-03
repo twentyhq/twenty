@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,6 +30,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Injectable()
 export class ViewService {
   constructor(
+    @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,

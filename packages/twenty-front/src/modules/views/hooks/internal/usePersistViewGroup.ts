@@ -34,10 +34,8 @@ export const usePersistViewGroupRecords = () => {
   const createViewGroups = useCallback(
     async ({
       createCoreViewGroupInputs,
-      mainGroupByFieldMetadataId,
     }: {
       createCoreViewGroupInputs: CreateManyCoreViewGroupsMutationVariables;
-      mainGroupByFieldMetadataId: string;
     }): Promise<
       MetadataRequestResult<Awaited<
         ReturnType<typeof createManyCoreViewGroupsMutation>

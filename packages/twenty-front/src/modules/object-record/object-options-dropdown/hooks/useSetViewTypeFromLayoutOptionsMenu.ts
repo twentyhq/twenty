@@ -63,7 +63,6 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
             viewId: currentViewId,
           })),
         },
-        mainGroupByFieldMetadataId: randomFieldForKanban,
       });
 
       return viewGroupsToCreate;

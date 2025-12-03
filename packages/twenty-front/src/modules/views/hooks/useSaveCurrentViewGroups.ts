@@ -164,7 +164,6 @@ export const useSaveCurrentViewGroups = () => {
 
         await Promise.all([
           createViewGroups({
-            mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId,
             createCoreViewGroupInputs: {
               inputs: viewGroupsToCreate.map((viewGroupToCreate) => ({
                 ...viewGroupToCreate,
