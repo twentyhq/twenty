@@ -164,21 +164,18 @@ describe('View Group Resolver - Successful Create Many Operations - v2', () => {
   it('should successfully create multiple view groups in batch', async () => {
     const inputs: CreateViewGroupInput[] = [
       {
-        fieldMetadataId: testSetup.firstTestFieldMetadataId,
         viewId: testSetup.testViewId,
         position: 0,
         isVisible: true,
         fieldValue: 'Group A',
       },
       {
-        fieldMetadataId: testSetup.secondTestFieldMetadataId,
         viewId: testSetup.testViewId,
         position: 1,
         isVisible: false,
         fieldValue: 'Group B',
       },
       {
-        fieldMetadataId: testSetup.thirdTestFieldMetadataId,
         viewId: testSetup.testViewId,
         position: 2,
         isVisible: true,
@@ -200,7 +197,6 @@ describe('View Group Resolver - Successful Create Many Operations - v2', () => {
 
     createdViewGroups.forEach((viewGroup, index) => {
       expect(viewGroup).toMatchObject({
-        fieldMetadataId: inputs[index].fieldMetadataId,
         viewId: testSetup.testViewId,
         position: inputs[index].position,
         isVisible: inputs[index].isVisible,
@@ -214,7 +210,6 @@ describe('View Group Resolver - Successful Create Many Operations - v2', () => {
   it('should successfully create single view group using batch endpoint', async () => {
     const inputs: CreateViewGroupInput[] = [
       {
-        fieldMetadataId: testSetup.firstTestFieldMetadataId,
         viewId: testSetup.testViewId,
         position: 5,
         isVisible: true,

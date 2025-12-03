@@ -134,7 +134,6 @@ describe('view-group-field-deactivation-deletes-views', () => {
 
     await createOneCoreViewGroup({
       input: {
-        fieldMetadataId: groupByFieldMetadataId,
         fieldValue: 'OPTION_1',
         viewId: viewWithGroup.id,
       },
@@ -216,7 +215,6 @@ describe('view-group-field-deactivation-deletes-views', () => {
 
     await createOneCoreViewGroup({
       input: {
-        fieldMetadataId: testSetup.groupByFieldMetadataId,
         fieldValue: 'OPTION_2',
         viewId: secondViewWithGroup.id,
       },
@@ -280,7 +278,6 @@ describe('view-group-field-deactivation-deletes-views', () => {
 
     await createOneCoreViewGroup({
       input: {
-        fieldMetadataId: testSetup.groupByFieldMetadataId,
         fieldValue: 'OPTION_1',
         viewId: viewWithMultipleGroups.id,
       },
@@ -290,7 +287,6 @@ describe('view-group-field-deactivation-deletes-views', () => {
 
     await createOneCoreViewGroup({
       input: {
-        fieldMetadataId: anotherGroupByFieldMetadataId,
         fieldValue: 'STATUS_A',
         viewId: viewWithMultipleGroups.id,
       },

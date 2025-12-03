@@ -16,7 +16,7 @@ import { type CoreView } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useHandleRecordGroupField = () => {
-  const { createViewGroups, deleteViewGroups } = usePersistViewGroupRecords();
+  const { deleteViewGroups } = usePersistViewGroupRecords();
 
   const currentViewIdCallbackState = useRecoilComponentCallbackState(
     contextStoreCurrentViewIdComponentState,

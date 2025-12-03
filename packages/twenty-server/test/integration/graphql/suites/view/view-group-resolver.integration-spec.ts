@@ -103,7 +103,6 @@ describe('View Group Resolver', () => {
         expectToFail: false,
         input: {
           viewId: testViewId,
-          fieldMetadataId: testFieldMetadataId,
           isVisible: true,
           fieldValue: 'active',
           position: 0,
@@ -132,7 +131,6 @@ describe('View Group Resolver', () => {
         expectToFail: false,
         input: {
           viewId: testViewId,
-          fieldMetadataId: testFieldMetadataId,
           isVisible: false,
           fieldValue: 'inactive',
           position: 1,
@@ -153,7 +151,6 @@ describe('View Group Resolver', () => {
         expectToFail: false,
         input: {
           viewId: testViewId,
-          fieldMetadataId: testFieldMetadataId,
           isVisible: true,
           fieldValue: '',
           position: 2,
@@ -175,7 +172,6 @@ describe('View Group Resolver', () => {
         expectToFail: false,
         input: {
           viewId: testViewId,
-          fieldMetadataId: testFieldMetadataId,
           isVisible: true,
           fieldValue: 'original',
           position: 0,
@@ -224,7 +220,6 @@ describe('View Group Resolver', () => {
         expectToFail: false,
         input: {
           viewId: testViewId,
-          fieldMetadataId: testFieldMetadataId,
           isVisible: true,
           fieldValue: 'to delete',
           position: 0,
@@ -263,7 +258,6 @@ describe('View Group Resolver', () => {
         expectToFail: false,
         input: {
           viewId: testViewId,
-          fieldMetadataId: testFieldMetadataId,
           isVisible: true,
           fieldValue: 'to destroy',
           position: 0,

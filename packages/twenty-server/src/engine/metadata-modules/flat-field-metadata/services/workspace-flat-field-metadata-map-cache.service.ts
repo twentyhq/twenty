@@ -41,38 +41,32 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
   async computeForCache(
     workspaceId: string,
   ): Promise<FlatEntityMaps<FlatFieldMetadata>> {
-    const [fieldMetadatas, viewFields, viewFilters, viewGroups, views] =
-      await Promise.all([
-        this.fieldMetadataRepository.find({
-          where: { workspaceId },
-          withDeleted: true,
-        }),
-        this.viewFieldRepository.find({
-          where: { workspaceId },
-          select: ['id', 'fieldMetadataId'],
-          withDeleted: true,
-        }),
-        this.viewFilterRepository.find({
-          where: { workspaceId },
-          select: ['id', 'fieldMetadataId'],
-          withDeleted: true,
-        }),
-        this.viewGroupRepository.find({
-          where: { workspaceId },
-          select: ['id'],
-          withDeleted: true,
-        }),
-        this.viewRepository.find({
-          where: { workspaceId },
-          select: [
-            'id',
-            'kanbanAggregateOperationFieldMetadataId',
-            'calendarFieldMetadataId',
-            'mainGroupByFieldMetadataId',
-          ],
-          withDeleted: true,
-        }),
-      ]);
+    const [fieldMetadatas, viewFields, viewFilters, views] = await Promise.all([
+      this.fieldMetadataRepository.find({
+        where: { workspaceId },
+        withDeleted: true,
+      }),
+      this.viewFieldRepository.find({
+        where: { workspaceId },
+        select: ['id', 'fieldMetadataId'],
+        withDeleted: true,
+      }),
+      this.viewFilterRepository.find({
+        where: { workspaceId },
+        select: ['id', 'fieldMetadataId'],
+        withDeleted: true,
+      }),
+      this.viewRepository.find({
+        where: { workspaceId },
+        select: [
+          'id',
+          'kanbanAggregateOperationFieldMetadataId',
+          'calendarFieldMetadataId',
+          'mainGroupByFieldMetadataId',
+        ],
+        withDeleted: true,
+      }),
+    ]);
 
     const [
       viewFieldsByFieldId,
