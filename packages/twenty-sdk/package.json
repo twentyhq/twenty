@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -27,9 +27,6 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     }
-  },
-  "typesVersions": {
-    "*": {}
   },
   "license": "AGPL-3.0",
   "dependencies": {

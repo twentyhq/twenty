@@ -6,6 +6,7 @@
   "include": [
     "**/__mocks__/**/*",
     "vite.config.ts",
+    "scripts/generateBarrels.ts",
     "jest.config.mjs",
     "src/**/*.d.ts",
     "src/**/*.spec.ts",
