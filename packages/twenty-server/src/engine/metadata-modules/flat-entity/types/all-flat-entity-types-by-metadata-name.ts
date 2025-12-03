@@ -1,8 +1,10 @@
+import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { type CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { type FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { type DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -24,6 +26,11 @@ import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/ent
 import { type ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { type ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import {
+  type CreateAgentAction,
+  type DeleteAgentAction,
+  type UpdateAgentAction,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/agent/types/workspace-migration-v2-agent-action-builder.service';
 import {
   type CreateCronTriggerAction,
   type DeleteCronTriggerAction,
@@ -206,5 +213,14 @@ export type AllFlatEntityTypesByMetadataName = {
     };
     flatEntity: FlatRoleTarget;
     entity: RoleTargetEntity;
+  };
+  agent: {
+    actions: {
+      created: CreateAgentAction;
+      updated: UpdateAgentAction;
+      deleted: DeleteAgentAction;
+    };
+    flatEntity: FlatAgent;
+    entity: AgentEntity;
   };
 };
