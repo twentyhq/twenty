@@ -130,7 +130,6 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
         await createOneCoreViewGroup({
           input: {
             viewId,
-            fieldMetadataId,
             fieldValue: option.value,
             isVisible: true,
             position: index,
@@ -193,7 +192,6 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
       await createOneCoreViewGroup({
         input: {
           viewId,
-          fieldMetadataId,
           fieldValue: initialOptions[0].value,
           isVisible: true,
           position: 0,
@@ -242,7 +240,6 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
         await createOneCoreViewGroup({
           input: {
             viewId,
-            fieldMetadataId,
             fieldValue: option.value,
             isVisible: true,
             position: index,
@@ -297,7 +294,6 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
         await createOneCoreViewGroup({
           input: {
             viewId,
-            fieldMetadataId,
             fieldValue: option.value,
             isVisible: true,
             position: index,
@@ -353,7 +349,6 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
         await createOneCoreViewGroup({
           input: {
             viewId,
-            fieldMetadataId,
             fieldValue: option.value,
             isVisible: true,
             position: index,
@@ -404,7 +399,6 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
         await createOneCoreViewGroup({
           input: {
             viewId,
-            fieldMetadataId,
             fieldValue: option.value,
             isVisible: true,
             position: index,

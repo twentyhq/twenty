@@ -6,10 +6,12 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { computeFlatViewGroupsOnViewCreate } from 'src/engine/metadata-modules/flat-view-group/utils/compute-flat-view-groups-on-view-create.util';
 import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/metadata-modules/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
 import { fromDeleteViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util';
 import { fromDestroyViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util';
 import { fromUpdateViewInputToFlatViewToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util';
+import { handleFlatViewUpdateSideEffect } from 'src/engine/metadata-modules/flat-view/utils/handle-flat-view-update-side-effect.util';
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { DeleteViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/delete-view.input';
 import { DestroyViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/destroy-view.input';
@@ -46,6 +48,7 @@ export class ViewV2Service {
       flatObjectMetadataMaps,
       flatViewMaps: existingFlatViewMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      flatViewGroupMaps: existingFlatViewGroupMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -53,6 +56,7 @@ export class ViewV2Service {
           'flatObjectMetadataMaps',
           'flatViewMaps',
           'flatFieldMetadataMaps',
+          'flatViewGroupMaps',
         ],
       },
     );
@@ -64,6 +68,11 @@ export class ViewV2Service {
       workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
 
+    const flatViewGroupsToCreate = computeFlatViewGroupsOnViewCreate({
+      flatViewToCreate: flatViewFromCreateInput,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+    });
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -71,6 +80,12 @@ export class ViewV2Service {
             flatViewMaps: computeFlatEntityMapsFromTo({
               flatEntityMaps: existingFlatViewMaps,
               flatEntityToCreate: [flatViewFromCreateInput],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            }),
+            flatViewGroupMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewGroupMaps,
+              flatEntityToCreate: flatViewGroupsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             }),
@@ -119,13 +134,17 @@ export class ViewV2Service {
     const {
       flatViewMaps: existingFlatViewMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-    } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewMaps', 'flatFieldMetadataMaps'],
-        },
-      );
+      flatViewGroupMaps: existingFlatViewGroupMaps,
+    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatViewMaps',
+          'flatFieldMetadataMaps',
+          'flatViewGroupMaps',
+        ],
+      },
+    );
 
     const flatViewFromUpdateInput =
       fromUpdateViewInputToFlatViewToUpdateOrThrow({
@@ -148,6 +167,20 @@ export class ViewV2Service {
       flatViewFromUpdateInput.createdByUserWorkspaceId = userWorkspaceId;
     }
 
+    const { flatViewGroupsToDelete, flatViewGroupsToCreate } = isDefined(
+      existingFlatView,
+    )
+      ? handleFlatViewUpdateSideEffect({
+          fromFlatView: existingFlatView,
+          toFlatView: flatViewFromUpdateInput,
+          flatViewGroupMaps: existingFlatViewGroupMaps,
+          flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+        })
+      : {
+          flatViewGroupsToDelete: [],
+          flatViewGroupsToCreate: [],
+        };
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -157,6 +190,12 @@ export class ViewV2Service {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
               flatEntityToUpdate: [flatViewFromUpdateInput],
+            }),
+            flatViewGroupMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewGroupMaps,
+              flatEntityToCreate: flatViewGroupsToCreate,
+              flatEntityToDelete: flatViewGroupsToDelete,
+              flatEntityToUpdate: [],
             }),
           },
           dependencyAllFlatEntityMaps: {

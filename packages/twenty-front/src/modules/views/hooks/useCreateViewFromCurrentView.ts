@@ -11,9 +11,12 @@ import { usePersistView } from '@/views/hooks/internal/usePersistView';
 import { usePersistViewField } from '@/views/hooks/internal/usePersistViewField';
 import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilter';
 import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePersistViewFilterGroup';
-import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroup';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSort';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
+import {
+  useTriggerViewGroupOptimisticEffect,
+  type CoreViewGroupWithFieldMetadataId,
+} from '@/views/optimistic-effects/hooks/useTriggerViewGroupOptimisticEffect';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
@@ -47,7 +50,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
   const { createViewSorts } = usePersistViewSortRecords();
 
-  const { createViewGroups } = usePersistViewGroupRecords();
+  const { triggerViewGroupOptimisticEffect } =
+    useTriggerViewGroupOptimisticEffect();
 
   const { createViewFilters } = usePersistViewFilterRecords();
 
@@ -203,30 +207,33 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
                   }) satisfies ViewGroup,
               ) ?? [];
 
-          viewGroupsToCreate.push({
-            __typename: 'ViewGroup',
-            id: v4(),
-            fieldValue: '',
-            position: viewGroupsToCreate.length,
-            isVisible: true,
-          } satisfies ViewGroup);
+          if (
+            objectMetadataItem.fields.find(
+              (field) => field.id === mainGroupByFieldMetadataId,
+            )?.isNullable === true
+          ) {
+            viewGroupsToCreate.push({
+              __typename: 'ViewGroup',
+              id: v4(),
+              fieldValue: '',
+              position: viewGroupsToCreate.length,
+              isVisible: true,
+            } satisfies ViewGroup);
+          }
 
-          const groupResult = await createViewGroups({
-            createCoreViewGroupInputs: {
-              inputs: viewGroupsToCreate.map(
-                ({ __typename, ...viewGroup }) => ({
+          triggerViewGroupOptimisticEffect({
+            createdViewGroups: viewGroupsToCreate.map(
+              ({ __typename, ...viewGroup }) =>
+                ({
                   ...viewGroup,
                   viewId: newViewId,
-                }),
-              ),
-            },
-            mainGroupByFieldMetadataId,
+                  fieldMetadataId: mainGroupByFieldMetadataId,
+                  createdAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString(),
+                  deletedAt: null,
+                }) as Omit<CoreViewGroupWithFieldMetadataId, 'workspaceId'>,
+            ),
           });
-
-          if (groupResult.status === 'failed') {
-            set(isPersistingViewFieldsState, false);
-            return undefined;
-          }
         }
 
         if (shouldCopyFiltersAndSortsAndAggregate === true) {
@@ -298,7 +305,6 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       anyFieldFilterValue,
       objectMetadataItem.fields,
       objectMetadataItem.id,
-      createViewGroups,
       currentRecordFilterGroups,
       currentRecordFilters,
       currentRecordSorts,
@@ -306,6 +312,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       createViewFilters,
       createViewSorts,
       refreshCoreViewsByObjectMetadataId,
+      triggerViewGroupOptimisticEffect,
     ],
   );
 

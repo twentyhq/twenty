@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type CoreViewGroup } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-type CoreViewGroupWithFieldMetadataId = CoreViewGroup & {
+export type CoreViewGroupWithFieldMetadataId = CoreViewGroup & {
   fieldMetadataId: string;
 };
 
