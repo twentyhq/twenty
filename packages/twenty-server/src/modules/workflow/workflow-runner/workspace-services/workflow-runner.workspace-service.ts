@@ -304,7 +304,7 @@ export class WorkflowRunnerWorkspaceService {
       WorkflowRunEnqueueJob.name,
       {
         workspaceId,
-        workflowRunId: isManualTrigger ? workflowRunId : undefined,
+        priorityWorkflowRunId: isManualTrigger ? workflowRunId : undefined,
         isCacheMode: true,
       },
     );
