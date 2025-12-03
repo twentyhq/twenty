@@ -15,9 +15,6 @@ import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metada
 const TWENTY_STANDARD_APPLICATION_ID =
   TWENTY_STANDARD_APPLICATION.universalIdentifier;
 
-// Placeholder workspace ID for standard application constant
-const PLACEHOLDER_WORKSPACE_ID = '';
-
 export type CreateStandardRelationFieldOptions<
   O extends AllStandardObjectName,
   T extends AllStandardObjectName,
@@ -42,6 +39,7 @@ export type CreateStandardRelationFieldArgs<
   T extends AllStandardObjectName,
 > = {
   objectName: O;
+  workspaceId: string;
   options: CreateStandardRelationFieldOptions<O, T>;
   standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
 };
@@ -51,6 +49,7 @@ export const createStandardRelationFieldFlatMetadata = <
   T extends AllStandardObjectName,
 >({
   objectName,
+  workspaceId,
   options,
   standardFieldMetadataIdByObjectAndFieldName,
 }: CreateStandardRelationFieldArgs<O, T>): FlatFieldMetadata => {
@@ -83,7 +82,7 @@ export const createStandardRelationFieldFlatMetadata = <
     universalIdentifier: fieldDefinition.universalIdentifier,
     standardId: null,
     applicationId: TWENTY_STANDARD_APPLICATION_ID,
-    workspaceId: PLACEHOLDER_WORKSPACE_ID,
+    workspaceId,
     objectMetadataId:
       standardFieldMetadataIdByObjectAndFieldName[objectName].id,
     type: FieldMetadataType.RELATION,

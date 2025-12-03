@@ -8,14 +8,17 @@ import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metada
 
 export const buildPersonStandardFlatFieldMetadatas = ({
   createdAt,
+  workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
 }: {
   createdAt: Date;
+  workspaceId: string;
   standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
 }): Record<AllStandardObjectFieldName<'person'>, FlatFieldMetadata> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
@@ -32,6 +35,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   createdAt: createStandardFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
@@ -50,6 +54,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   updatedAt: createStandardFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
@@ -68,6 +73,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   deletedAt: createStandardFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
@@ -87,6 +93,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   // Person-specific fields
   name: createStandardFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'name',
       type: FieldMetadataType.FULL_NAME,
@@ -100,6 +107,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   email: createStandardFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'email',
       type: FieldMetadataType.TEXT,
@@ -113,6 +121,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   emails: createStandardFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'emails',
       type: FieldMetadataType.EMAILS,
@@ -130,6 +139,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   linkedinLink: createStandardFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'linkedinLink',
       type: FieldMetadataType.LINKS,
@@ -143,6 +153,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   xLink: createStandardFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'xLink',
       type: FieldMetadataType.LINKS,
@@ -156,6 +167,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   jobTitle: createStandardFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'jobTitle',
       type: FieldMetadataType.TEXT,
@@ -169,6 +181,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   phone: createStandardFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'phone',
       type: FieldMetadataType.TEXT,
@@ -182,6 +195,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   phones: createStandardFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'phones',
       type: FieldMetadataType.PHONES,
@@ -198,6 +212,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   city: createStandardFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'city',
       type: FieldMetadataType.TEXT,
@@ -211,6 +226,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   avatarUrl: createStandardFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'avatarUrl',
       type: FieldMetadataType.TEXT,
@@ -225,6 +241,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   position: createStandardFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
@@ -240,6 +257,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   createdBy: createStandardFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'createdBy',
       type: FieldMetadataType.ACTOR,
@@ -256,6 +274,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   // Relation fields
   company: createStandardRelationFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'company',
       label: 'Company',
@@ -270,6 +289,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   pointOfContactForOpportunities: createStandardRelationFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'pointOfContactForOpportunities',
       label: 'Opportunities',
@@ -285,6 +305,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   taskTargets: createStandardRelationFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'taskTargets',
       label: 'Tasks',
@@ -300,6 +321,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   noteTargets: createStandardRelationFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'noteTargets',
       label: 'Notes',
@@ -315,6 +337,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   favorites: createStandardRelationFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'favorites',
       label: 'Favorites',
@@ -330,6 +353,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   attachments: createStandardRelationFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'attachments',
       label: 'Attachments',
@@ -345,6 +369,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   messageParticipants: createStandardRelationFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'messageParticipants',
       label: 'Message Participants',
@@ -360,6 +385,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   calendarEventParticipants: createStandardRelationFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'calendarEventParticipants',
       label: 'Calendar Event Participants',
@@ -375,6 +401,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   timelineActivities: createStandardRelationFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'timelineActivities',
       label: 'Events',
@@ -390,6 +417,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   }),
   searchVector: createStandardFieldFlatMetadata({
     objectName: 'person',
+    workspaceId,
     options: {
       fieldName: 'searchVector',
       type: FieldMetadataType.TS_VECTOR,

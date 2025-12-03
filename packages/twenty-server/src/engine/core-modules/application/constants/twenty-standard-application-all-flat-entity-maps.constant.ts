@@ -7,20 +7,25 @@ import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/type
 import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
 import { buildStandardFlatObjectMetadatas } from './standard-flat-object-metadata.constant';
 
-type Prastoin = {
+type TwentyStandardApplicationAllFlatEntityMaps = {
   [P in keyof AllFlatEntityTypesByMetadataName as MetadataToFlatEntityMapsKey<P>]: Pick<
     FlatEntityMaps<MetadataFlatEntity<P>>,
     'byId'
   >;
 };
 
-export const buildTwentyStandardApplicationAllFlatEntityMaps = (
-  createdAt: Date,
-): Prastoin => {
+export const buildTwentyStandardApplicationAllFlatEntityMaps = ({
+  createdAt,
+  workspaceId,
+}: {
+  createdAt: Date;
+  workspaceId: string;
+}): TwentyStandardApplicationAllFlatEntityMaps => {
   const standardFieldMetadataIdByObjectAndFieldName =
     getStandardFieldMetadataIdByObjectAndFieldName();
   const standardFlatObjectMetadatas = buildStandardFlatObjectMetadatas({
     createdAt,
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   });
 

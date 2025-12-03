@@ -3,16 +3,12 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 
 import { AllStandardObjectFieldName } from 'src/engine/core-modules/application/types/all-standard-object-field-name.type';
 import { AllStandardObjectName } from 'src/engine/core-modules/application/types/all-standard-object-name.type';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 import { StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/core-modules/application/constants/get-standard-field-metadata-id-by-object-and-field-name.util';
 import { STANDARD_OBJECTS } from './standard-object.constant';
 
 const TWENTY_STANDARD_APPLICATION_ID =
   TWENTY_STANDARD_APPLICATION.universalIdentifier;
-
-// Placeholder workspace ID for standard application constant
-const PLACEHOLDER_WORKSPACE_ID = '';
 
 const createStandardObjectFlatMetadata = <T extends AllStandardObjectName>({
   options: {
@@ -32,6 +28,7 @@ const createStandardObjectFlatMetadata = <T extends AllStandardObjectName>({
     createdAt,
     labelIdentifierFieldMetadataName,
   },
+  workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
 }: {
   options: {
@@ -51,12 +48,13 @@ const createStandardObjectFlatMetadata = <T extends AllStandardObjectName>({
     createdAt: Date;
     labelIdentifierFieldMetadataName: AllStandardObjectFieldName<T>;
   };
+  workspaceId: string;
   standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
 }): FlatObjectMetadata => ({
   universalIdentifier,
   standardId,
   applicationId: TWENTY_STANDARD_APPLICATION_ID,
-  workspaceId: PLACEHOLDER_WORKSPACE_ID,
+  workspaceId,
   nameSingular,
   namePlural,
   labelSingular,
@@ -88,18 +86,13 @@ const createStandardObjectFlatMetadata = <T extends AllStandardObjectName>({
   id: standardFieldMetadataIdByObjectAndFieldName[nameSingular].id,
 });
 
-// Helper to create placeholder fields for now
-const createPlaceholderFields = <T extends AllStandardObjectName>(
-  _objectName: T,
-): Record<AllStandardObjectFieldName<T>, FlatFieldMetadata> => {
-  return {} as Record<AllStandardObjectFieldName<T>, FlatFieldMetadata>;
-};
-
 export const buildStandardFlatObjectMetadatas = ({
   createdAt,
+  workspaceId,
   standardFieldMetadataIdByObjectAndFieldName,
 }: {
   createdAt: Date;
+  workspaceId: string;
   standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
 }): Record<string, FlatObjectMetadata> => ({
   attachment: createStandardObjectFlatMetadata({
@@ -116,6 +109,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'name',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   blocklist: createStandardObjectFlatMetadata({
@@ -132,6 +126,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'handle',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   calendarChannelEventAssociation: createStandardObjectFlatMetadata({
@@ -151,6 +146,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'id',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   calendarChannel: createStandardObjectFlatMetadata({
@@ -168,6 +164,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'handle',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   calendarEventParticipant: createStandardObjectFlatMetadata({
@@ -186,6 +183,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'handle',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   calendarEvent: createStandardObjectFlatMetadata({
@@ -204,6 +202,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'title',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   company: createStandardObjectFlatMetadata({
@@ -221,6 +220,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'name',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   connectedAccount: createStandardObjectFlatMetadata({
@@ -239,6 +239,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'handle',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   dashboard: createStandardObjectFlatMetadata({
@@ -256,6 +257,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'title',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   favorite: createStandardObjectFlatMetadata({
@@ -272,6 +274,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'id',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   favoriteFolder: createStandardObjectFlatMetadata({
@@ -288,6 +291,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'id',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   messageChannelMessageAssociation: createStandardObjectFlatMetadata({
@@ -307,6 +311,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'id',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   messageChannel: createStandardObjectFlatMetadata({
@@ -324,6 +329,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'handle',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   messageFolder: createStandardObjectFlatMetadata({
@@ -341,6 +347,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'id',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   messageParticipant: createStandardObjectFlatMetadata({
@@ -359,6 +366,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'handle',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   messageThread: createStandardObjectFlatMetadata({
@@ -377,6 +385,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'id',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   message: createStandardObjectFlatMetadata({
@@ -395,6 +404,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'subject',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   note: createStandardObjectFlatMetadata({
@@ -412,6 +422,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'title',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   noteTarget: createStandardObjectFlatMetadata({
@@ -428,6 +439,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'id',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   opportunity: createStandardObjectFlatMetadata({
@@ -445,6 +457,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'name',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   person: createStandardObjectFlatMetadata({
@@ -462,6 +475,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'name',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   task: createStandardObjectFlatMetadata({
@@ -479,6 +493,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'title',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   taskTarget: createStandardObjectFlatMetadata({
@@ -495,6 +510,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'id',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   timelineActivity: createStandardObjectFlatMetadata({
@@ -513,6 +529,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'name',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   workflow: createStandardObjectFlatMetadata({
@@ -530,6 +547,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'name',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   workflowAutomatedTrigger: createStandardObjectFlatMetadata({
@@ -547,6 +565,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'id',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   workflowRun: createStandardObjectFlatMetadata({
@@ -563,6 +582,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'name',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   workflowVersion: createStandardObjectFlatMetadata({
@@ -579,6 +599,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'name',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
   workspaceMember: createStandardObjectFlatMetadata({
@@ -595,6 +616,7 @@ export const buildStandardFlatObjectMetadatas = ({
       createdAt,
       labelIdentifierFieldMetadataName: 'name',
     },
+    workspaceId,
     standardFieldMetadataIdByObjectAndFieldName,
   }),
 });
