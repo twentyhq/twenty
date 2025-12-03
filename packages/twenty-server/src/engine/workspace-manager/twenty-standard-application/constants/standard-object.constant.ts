@@ -805,10 +805,6 @@ export const STANDARD_OBJECTS = {
         universalIdentifier:
           MESSAGE_THREAD_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
       },
-      messageThreadSubscribers: {
-        universalIdentifier:
-          MESSAGE_THREAD_STANDARD_FIELD_IDS.messageThreadSubscribers,
-      },
     },
     views: {
       allMessageThreads: {
