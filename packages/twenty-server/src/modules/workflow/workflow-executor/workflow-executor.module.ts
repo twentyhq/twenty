@@ -16,24 +16,22 @@ import { IteratorActionModule } from 'src/modules/workflow/workflow-executor/wor
 import { RecordCRUDActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/record-crud-action.module';
 import { ToolExecutorWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/tool-executor-workflow-action';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
-import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 
 @Module({
   imports: [
     WorkflowCommonModule,
+    WorkflowRunModule,
     CodeActionModule,
     DelayActionModule,
     RecordCRUDActionModule,
     FormActionModule,
-    WorkflowRunModule,
     BillingModule,
     FilterActionModule,
     IteratorActionModule,
     AiAgentActionModule,
     EmptyActionModule,
     FeatureFlagModule,
-    WorkflowRunQueueModule,
     ToolModule,
   ],
   providers: [

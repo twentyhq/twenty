@@ -15,7 +15,6 @@ import {
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
-import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 jest.mock(
@@ -61,10 +60,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
     add: jest.fn(),
   };
 
-  const mockWorkflowRunQueueWorkspaceService = {
-    increaseWorkflowRunQueuedCount: jest.fn(),
-  };
-
   beforeEach(async () => {
     jest.clearAllMocks();
 
@@ -92,10 +87,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
         {
           provide: `MESSAGE_QUEUE_${MessageQueue.workflowQueue}`,
           useValue: mockMessageQueueService,
-        },
-        {
-          provide: WorkflowRunQueueWorkspaceService,
-          useValue: mockWorkflowRunQueueWorkspaceService,
         },
       ],
     }).compile();
@@ -382,10 +373,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
           lastExecutedStepId: 'step-1',
         },
       );
-
-      expect(
-        mockWorkflowRunQueueWorkspaceService.increaseWorkflowRunQueuedCount,
-      ).toHaveBeenCalledWith(mockWorkspaceId);
 
       // Should not execute the next step (step-2) in the same job
       expect(workflowActionFactory.get).toHaveBeenCalledTimes(1);
