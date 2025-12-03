@@ -13,8 +13,8 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { type PageLayoutWidget } from '~/generated/graphql';
+import { appendCopySuffix } from '../utils/appendCopySuffix';
 import { generateDuplicatedTimestamps } from '../utils/generateDuplicatedTimestamps';
-import { getDuplicatedTitle } from '../utils/getDuplicatedTitle';
 
 export const useDuplicatePageLayoutWidget = (
   pageLayoutIdFromProps?: string,
@@ -77,7 +77,7 @@ export const useDuplicatePageLayoutWidget = (
         const clonedWidget: PageLayoutWidget = {
           ...sourceWidget,
           id: newWidgetId,
-          title: getDuplicatedTitle(sourceWidget.title),
+          title: appendCopySuffix(sourceWidget.title),
           ...generateDuplicatedTimestamps(),
         };
 

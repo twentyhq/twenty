@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
+import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 import { DataSource, EntityManager } from 'typeorm';
 
 import { PageLayoutDuplicationService } from 'src/engine/core-modules/page-layout/services/page-layout-duplication.service';
@@ -126,9 +126,7 @@ export class DashboardDuplicationService {
       >
     >,
   ): Promise<DashboardWorkspaceEntity> {
-    const newTitle = originalDashboard.title
-      ? `${originalDashboard.title} (Copy)`
-      : '(Copy)';
+    const newTitle = appendCopySuffix(originalDashboard.title ?? '');
 
     const insertResult = await dashboardRepository.insert({
       title: newTitle,

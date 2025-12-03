@@ -16,8 +16,8 @@ import { pageLayoutCurrentLayoutsComponentState } from '../states/pageLayoutCurr
 import { pageLayoutDraftComponentState } from '../states/pageLayoutDraftComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '../states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutTab } from '../types/PageLayoutTab';
+import { appendCopySuffix } from '../utils/appendCopySuffix';
 import { generateDuplicatedTimestamps } from '../utils/generateDuplicatedTimestamps';
-import { getDuplicatedTitle } from '../utils/getDuplicatedTitle';
 
 export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -94,7 +94,7 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         const newTab: PageLayoutTab = {
           ...sourceTab,
           id: newTabId,
-          title: getDuplicatedTitle(sourceTab.title),
+          title: appendCopySuffix(sourceTab.title),
           position: newTabPosition,
           widgets: clonedWidgets,
           ...generateDuplicatedTimestamps(),
