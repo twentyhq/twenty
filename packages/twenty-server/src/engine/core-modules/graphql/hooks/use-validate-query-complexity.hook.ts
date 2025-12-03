@@ -10,7 +10,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
-type FragmentMetadata = {
+type RawFragmentMetadata = {
+  fieldsCount: number;
+  depth: number;
+  rootFieldNames: Set<string>;
+  nestedFragmentSpreads: Set<string>;
+};
+
+type ResolvedFragmentMetadata = {
   fieldsCount: number;
   depth: number;
   rootFieldNames: Set<string>;
@@ -29,7 +36,12 @@ export const useValidateQueryComplexity = ({
 }): Plugin => ({
   onValidate: ({ addValidationRule }) => {
     addValidationRule((context: ValidationContext) => {
-      const fragmentMetadata = new Map<string, FragmentMetadata>();
+      const rawFragmentMetadata = new Map<string, RawFragmentMetadata>();
+
+      const resolvedFragmentMetadata = new Map<
+        string,
+        ResolvedFragmentMetadata
+      >();
 
       let isInFragmentDefinition = false;
       let currentFragmentName: string | null = null;
@@ -37,11 +49,60 @@ export const useValidateQueryComplexity = ({
       let fragmentFieldsCount = 0;
       let fragmentDepth = 0;
       let fragmentRootFieldNames = new Set<string>();
+      let fragmentNestedSpreads = new Set<string>();
 
       let operationDepth = 0;
       let requestedFieldsCount = 0;
       let requestedRootResolversCount = 0;
       const rootResolverNames = new Set<string>();
+
+      const resolveFragmentMetadata = (
+        fragmentName: string,
+        visitedFragments: Set<string> = new Set(),
+      ): ResolvedFragmentMetadata | undefined => {
+        if (resolvedFragmentMetadata.has(fragmentName)) {
+          return resolvedFragmentMetadata.get(fragmentName);
+        }
+
+        // Detect circular references
+        if (visitedFragments.has(fragmentName)) {
+          return undefined;
+        }
+
+        const raw = rawFragmentMetadata.get(fragmentName);
+
+        if (!isDefined(raw)) {
+          return undefined;
+        }
+
+        visitedFragments.add(fragmentName);
+
+        let totalFieldsCount = raw.fieldsCount;
+        let maxDepth = raw.depth;
+        const allRootFieldNames = new Set(raw.rootFieldNames);
+
+        for (const nestedFragmentName of raw.nestedFragmentSpreads) {
+          const nestedMetadata = resolveFragmentMetadata(
+            nestedFragmentName,
+            visitedFragments,
+          );
+
+          if (isDefined(nestedMetadata)) {
+            totalFieldsCount += nestedMetadata.fieldsCount;
+            maxDepth = Math.max(maxDepth, 1 + nestedMetadata.depth);
+          }
+        }
+
+        const resolved: ResolvedFragmentMetadata = {
+          fieldsCount: totalFieldsCount,
+          depth: maxDepth,
+          rootFieldNames: allRootFieldNames,
+        };
+
+        resolvedFragmentMetadata.set(fragmentName, resolved);
+
+        return resolved;
+      };
 
       const checkAndAddRootResolver = (fieldName: string) => {
         requestedRootResolversCount++;
@@ -79,13 +140,15 @@ export const useValidateQueryComplexity = ({
             fragmentFieldsCount = 0;
             fragmentDepth = 0;
             fragmentRootFieldNames = new Set<string>();
+            fragmentNestedSpreads = new Set<string>();
           },
           leave() {
             if (isDefined(currentFragmentName)) {
-              fragmentMetadata.set(currentFragmentName, {
+              rawFragmentMetadata.set(currentFragmentName, {
                 fieldsCount: fragmentFieldsCount,
                 depth: fragmentDepth,
                 rootFieldNames: new Set(fragmentRootFieldNames),
+                nestedFragmentSpreads: new Set(fragmentNestedSpreads),
               });
             }
             isInFragmentDefinition = false;
@@ -102,7 +165,6 @@ export const useValidateQueryComplexity = ({
 
         Field: {
           enter(node: FieldNode) {
-            // Skip introspection fields entirely
             if (node.name.value.startsWith('__')) {
               return false;
             }
@@ -137,14 +199,15 @@ export const useValidateQueryComplexity = ({
 
         FragmentSpread: {
           enter(node: FragmentSpreadNode) {
-            // Skip fragment spreads inside fragment definitions for now
-            // (could be extended to handle nested fragments recursively)
+            const fragmentName = node.name.value;
+
             if (isInFragmentDefinition) {
+              fragmentNestedSpreads.add(fragmentName);
+
               return;
             }
 
-            const fragmentName = node.name.value;
-            const metadata = fragmentMetadata.get(fragmentName);
+            const metadata = resolveFragmentMetadata(fragmentName);
 
             if (!isDefined(metadata)) {
               return;
