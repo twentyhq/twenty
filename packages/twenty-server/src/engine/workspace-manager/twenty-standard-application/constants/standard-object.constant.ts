@@ -624,6 +624,9 @@ export const STANDARD_OBJECTS = {
         universalIdentifier:
           MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageThreadExternalId,
       },
+      direction: {
+        universalIdentifier: '75c9b0f7-9e76-44d4-a2f9-47051e61eec7',
+      },
     },
     views: {},
   },
