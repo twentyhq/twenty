@@ -6,6 +6,7 @@ import { DataSource, EntityManager } from 'typeorm';
 
 import { PageLayoutDuplicationService } from 'src/engine/core-modules/page-layout/services/page-layout-duplication.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { DashboardDTO } from 'src/modules/dashboard/dtos/dashboard.dto';
 import {
   DashboardException,
   DashboardExceptionCode,
@@ -28,14 +29,14 @@ export class DashboardDuplicationService {
   async duplicateDashboard(
     dashboardId: string,
     workspaceId: string,
-  ): Promise<DashboardWorkspaceEntity> {
+  ): Promise<DashboardDTO> {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const result = await this.duplicateDashboardWithinTransaction(
+      const newDashboard = await this.duplicateDashboardWithinTransaction(
         dashboardId,
         workspaceId,
         queryRunner.manager,
@@ -43,7 +44,14 @@ export class DashboardDuplicationService {
 
       await queryRunner.commitTransaction();
 
-      return result;
+      return {
+        id: newDashboard.id,
+        title: newDashboard.title,
+        pageLayoutId: newDashboard.pageLayoutId,
+        position: newDashboard.position,
+        createdAt: newDashboard.createdAt,
+        updatedAt: newDashboard.updatedAt,
+      };
     } catch (error) {
       await queryRunner.rollbackTransaction();
 

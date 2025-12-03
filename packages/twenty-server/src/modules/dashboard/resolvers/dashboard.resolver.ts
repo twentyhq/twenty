@@ -6,11 +6,11 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { DashboardDTO } from 'src/modules/dashboard/dtos/dashboard.dto';
 import { DashboardDuplicationService } from 'src/modules/dashboard/services/dashboard-duplication.service';
-import { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 import { DashboardGraphqlApiExceptionFilter } from 'src/modules/dashboard/utils/dashboard-graphql-api-exception.filter';
 
-@Resolver(() => DashboardWorkspaceEntity)
+@Resolver()
 @UseFilters(DashboardGraphqlApiExceptionFilter)
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
@@ -19,12 +19,12 @@ export class DashboardResolver {
     private readonly dashboardDuplicationService: DashboardDuplicationService,
   ) {}
 
-  @Mutation(() => DashboardWorkspaceEntity)
+  @Mutation(() => DashboardDTO)
   @UseGuards(NoPermissionGuard)
   async duplicateDashboard(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<DashboardWorkspaceEntity> {
+  ): Promise<DashboardDTO> {
     return this.dashboardDuplicationService.duplicateDashboard(
       id,
       workspace.id,
