@@ -4,8 +4,8 @@ import { type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/schemas';
+import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-workflow-related-object.util';
 import {
   type ToolHints,
