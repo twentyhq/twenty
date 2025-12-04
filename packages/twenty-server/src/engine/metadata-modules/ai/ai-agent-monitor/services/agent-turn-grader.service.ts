@@ -237,9 +237,7 @@ Respond ONLY with valid JSON in this exact format:
       .map((p) => p.textContent)
       .join('\n');
 
-    const toolParts = assistantParts.filter(
-      (p) => p.type.includes('tool-') && p.toolName,
-    );
+    const toolParts = assistantParts.filter((p) => p.type.includes('tool-'));
 
     let context = `**User Request:**\n${userText || '(no text)'}\n\n`;
 
