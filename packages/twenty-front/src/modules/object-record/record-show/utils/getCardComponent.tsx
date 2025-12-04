@@ -12,7 +12,7 @@ import {
 } from '@/object-record/record-show/types/CardConfiguration';
 import { CardType } from '@/object-record/record-show/types/CardType';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { RichTextCard } from '@/ui/layout/show-page/components/RichTextCard';
+import { FieldRichTextCard } from '@/ui/layout/show-page/components/FieldRichTextCard';
 import { WorkflowCard } from '@/workflow/workflow-diagram/components/WorkflowCard';
 import { WorkflowRunCard } from '@/workflow/workflow-diagram/components/WorkflowRunCard';
 import { WorkflowVersionCard } from '@/workflow/workflow-diagram/components/WorkflowVersionCard';
@@ -58,8 +58,8 @@ export const getCardComponent = <T extends CardType>(
         />
       );
 
-    case CardType.RichTextCard:
-      return <CardRenderer Component={RichTextCard} />;
+    case CardType.FieldRichTextCard:
+      return <CardRenderer Component={FieldRichTextCard} />;
 
     case CardType.TaskCard:
       return <CardRenderer Component={TasksCard} />;

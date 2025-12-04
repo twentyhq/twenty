@@ -1,4 +1,4 @@
-import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
+import { type FunctionConfig } from 'twenty-sdk';
 import { createClient } from '../../generated';
 
 export const main = async (params: { recipient?: string }) => {
@@ -10,6 +10,7 @@ export const main = async (params: { recipient?: string }) => {
         Authorization: `Bearer ${process.env.TWENTY_API_KEY}`,
       },
     });
+
     const createPostCard = await client.mutation({
       createPostCard: {
         __args: {
@@ -21,6 +22,9 @@ export const main = async (params: { recipient?: string }) => {
         id: true,
       },
     });
+
+    console.log('createPostCard result', createPostCard);
+
     return createPostCard;
   } catch (error) {
     console.error(error);
@@ -28,7 +32,7 @@ export const main = async (params: { recipient?: string }) => {
   }
 };
 
-export const config: ServerlessFunctionConfig = {
+export const config: FunctionConfig = {
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'create-new-post-card',
   timeoutSeconds: 2,

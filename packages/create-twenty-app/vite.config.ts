@@ -34,6 +34,20 @@ const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
   return `${moduleDirectory}.${extension}`;
 };
 
+const copyAssetPlugin = (targets: { src: string; dest: string }[]) => {
+  return {
+    name: 'copy-assets',
+    closeBundle: async () => {
+      for (const target of targets) {
+        await fs.copy(
+          path.resolve(__dirname, target.src),
+          path.resolve(__dirname, target.dest),
+        );
+      }
+    },
+  };
+};
+
 export default defineConfig(() => {
   const tsConfigPath = path.resolve(__dirname, './tsconfig.lib.json');
 
@@ -45,15 +59,12 @@ export default defineConfig(() => {
         root: __dirname,
       }),
       dts({ entryRoot: './src', tsconfigPath: tsConfigPath }),
-      {
-        name: 'copy-assets',
-        closeBundle: async () => {
-          await fs.copy(
-            path.resolve(__dirname, 'src/constants/base-application'),
-            path.resolve(__dirname, 'dist/constants/base-application'),
-          );
+      copyAssetPlugin([
+        {
+          src: 'src/constants/base-application',
+          dest: 'dist/constants/base-application',
         },
-      },
+      ]),
     ],
     build: {
       outDir: 'dist',

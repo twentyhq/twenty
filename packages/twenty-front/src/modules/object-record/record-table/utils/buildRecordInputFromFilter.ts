@@ -159,6 +159,8 @@ const computeValueFromFilterNumber = (
       return Number(value);
     case ViewFilterOperand.IS:
       return Number(value);
+    case ViewFilterOperand.IS_NOT:
+      return undefined;
     case ViewFilterOperand.IS_EMPTY:
       return undefined;
     default:

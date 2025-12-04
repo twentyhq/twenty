@@ -6,5 +6,4 @@ export type LineChartSeries = {
   label?: string;
   color?: GraphColor;
   data: LineChartDataPoint[];
-  enableArea?: boolean;
 };

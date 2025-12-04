@@ -10,7 +10,7 @@ export const transformEmailsValue = (
   }
 
   let additionalEmails: string | null = value?.additionalEmails;
-  const primaryEmail = value?.primaryEmail
+  const primaryEmail = isNonEmptyString(value?.primaryEmail)
     ? value.primaryEmail.toLowerCase()
     : null;
 

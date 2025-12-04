@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { DataSource, type EntityManager } from 'typeorm';
 
+import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { type UpdatePageLayoutWidgetWithIdInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget-with-id.input';
 import { type PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-tab.entity';
@@ -49,6 +50,9 @@ describe('PageLayoutUpdateService', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: null,
+    application: {} as ApplicationEntity,
+    applicationId: 'application-id',
+    universalIdentifier: 'universal-identifier',
   } as PageLayoutTabEntity;
 
   const mockWidget = {

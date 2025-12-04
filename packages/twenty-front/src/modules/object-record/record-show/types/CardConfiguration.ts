@@ -18,7 +18,7 @@ export type CardTypeToConfiguration = {
   [CardType.FileCard]: EmptyCardConfiguration;
   [CardType.EmailCard]: EmptyCardConfiguration;
   [CardType.CalendarCard]: EmptyCardConfiguration;
-  [CardType.RichTextCard]: EmptyCardConfiguration;
+  [CardType.FieldRichTextCard]: EmptyCardConfiguration;
   [CardType.WorkflowCard]: EmptyCardConfiguration;
   [CardType.WorkflowVersionCard]: EmptyCardConfiguration;
   [CardType.WorkflowRunCard]: EmptyCardConfiguration;

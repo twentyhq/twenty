@@ -17,7 +17,7 @@ export class WorkflowRunEnqueueCronJob {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly WorkflowRunEnqueueWorkspaceService: WorkflowRunEnqueueWorkspaceService,
+    private readonly workflowRunEnqueueWorkspaceService: WorkflowRunEnqueueWorkspaceService,
   ) {}
 
   @Process(WorkflowRunEnqueueCronJob.name)
@@ -32,7 +32,7 @@ export class WorkflowRunEnqueueCronJob {
       },
     });
 
-    await this.WorkflowRunEnqueueWorkspaceService.enqueueRuns({
+    await this.workflowRunEnqueueWorkspaceService.enqueueRuns({
       workspaceIds: activeWorkspaces.map((workspace) => workspace.id),
       isCacheMode: false,
     });

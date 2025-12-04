@@ -1,48 +1,44 @@
 import { Test } from '@nestjs/testing';
 
+import { FieldActorSource } from 'twenty-shared/types';
+
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
-import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
+import { PerObjectToolGeneratorService } from 'src/engine/core-modules/tool-generator/services/per-object-tool-generator.service';
+import { type ToolHints } from 'src/engine/metadata-modules/ai/ai-chat-router/types/tool-hints.interface';
 import { ToolService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool.service';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
-
-// Minimal mock repository type
-const createMockRepository = () => ({
-  find: jest.fn(),
-  findOne: jest.fn(),
-  save: jest.fn(),
-  update: jest.fn(),
-  softDelete: jest.fn(),
-  delete: jest.fn(),
-  remove: jest.fn(),
-});
 
 describe('ToolService', () => {
   const workspaceId = 'ws_1';
   const roleId = 'role_1';
 
   let service: ToolService;
-  let workspaceCacheService: WorkspaceCacheService;
+  let perObjectToolGenerator: PerObjectToolGeneratorService;
 
-  const testObject = getMockObjectMetadataEntity({
-    workspaceId: '',
-    id: 'obj_1',
-    nameSingular: 'testObject',
-    namePlural: 'testObjects',
-    labelSingular: 'Test Object',
-    labelPlural: 'Test Objects',
-    isActive: true,
-    isSystem: false,
-    fields: [],
-  });
-
-  const mockRepo = createMockRepository();
+  const mockTools = {
+    create_testObject: {
+      description: 'Create a test object',
+      inputSchema: {},
+      execute: jest.fn(),
+    },
+    update_testObject: {
+      description: 'Update a test object',
+      inputSchema: {},
+      execute: jest.fn(),
+    },
+    find_testObject: {
+      description: 'Find test objects',
+      inputSchema: {},
+      execute: jest.fn(),
+    },
+    soft_delete_testObject: {
+      description: 'Soft delete a test object',
+      inputSchema: {},
+      execute: jest.fn(),
+    },
+  };
 
   beforeEach(async () => {
     jest.resetAllMocks();
@@ -51,68 +47,9 @@ describe('ToolService', () => {
       providers: [
         ToolService,
         {
-          provide: TwentyORMGlobalManager,
+          provide: PerObjectToolGeneratorService,
           useValue: {
-            getRepositoryForWorkspace: jest.fn().mockResolvedValue(mockRepo),
-          },
-        },
-        {
-          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
-          useValue: {
-            getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
-              flatObjectMetadataMaps: {
-                byId: {
-                  [testObject.id]: {
-                    ...testObject,
-                    fieldMetadataIds: [],
-                  },
-                },
-              },
-              flatFieldMetadataMaps: {
-                byId: {},
-              },
-            }),
-          },
-        },
-        {
-          provide: WorkspaceCacheService,
-          useValue: {
-            getOrRecompute: jest.fn().mockResolvedValue({
-              rolesPermissions: {
-                [roleId]: {
-                  [testObject.id]: {
-                    canReadObjectRecords: true,
-                    canUpdateObjectRecords: true,
-                    canSoftDeleteObjectRecords: true,
-                    canDestroyObjectRecords: false,
-                    restrictedFields: {},
-                  },
-                },
-              },
-            }),
-          },
-        },
-        {
-          provide: RecordInputTransformerService,
-          useValue: {
-            process: jest.fn(async ({ recordInput }) => recordInput),
-          },
-        },
-        {
-          provide: WorkspaceCacheStorageService,
-          useValue: {
-            getObjectMetadataMapsOrThrow: jest.fn().mockResolvedValue({
-              byId: {
-                [testObject.id]: {
-                  ...testObject,
-                  fieldsById: {},
-                  fieldIdByJoinColumnName: {},
-                  fieldIdByName: {},
-                  indexMetadatas: [],
-                },
-              },
-              idByNameSingular: { [testObject.nameSingular]: testObject.id },
-            }),
+            generate: jest.fn().mockResolvedValue(mockTools),
           },
         },
         {
@@ -135,42 +72,66 @@ describe('ToolService', () => {
     }).compile();
 
     service = moduleRef.get(ToolService);
-    workspaceCacheService = moduleRef.get(WorkspaceCacheService);
+    perObjectToolGenerator = moduleRef.get(PerObjectToolGeneratorService);
   });
 
   describe('listTools', () => {
-    it('should return tools based on role permissions', async () => {
+    it('should call perObjectToolGenerator.generate with correct parameters', async () => {
       const tools = await service.listTools({ unionOf: [roleId] }, workspaceId);
 
-      expect(workspaceCacheService.getOrRecompute).toHaveBeenCalledWith(
-        workspaceId,
-        ['rolesPermissions'],
+      expect(perObjectToolGenerator.generate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspaceId,
+          rolePermissionConfig: { unionOf: [roleId] },
+        }),
+        expect.any(Array),
+        undefined,
       );
 
-      // Verify tool keys
-      expect(tools['create_testObject']).toBeDefined();
-      expect(tools['update_testObject']).toBeDefined();
-      expect(tools['find_testObject']).toBeDefined();
-      expect(tools['soft_delete_testObject']).toBeDefined();
-      expect(tools['soft_delete_many_testObject']).toBeDefined();
-
-      // Ensure the execute functions are wired
-      expect(typeof tools['create_testObject'].execute).toBe('function');
+      expect(tools).toBe(mockTools);
     });
-  });
 
-  describe('softDeleteManyRecords', () => {
-    it('should error when filter is invalid', async () => {
-      const result = await (service as any).softDeleteManyRecords(
-        'testObject',
-        {},
+    it('should pass toolHints to perObjectToolGenerator.generate', async () => {
+      const toolHints: ToolHints = {
+        relevantObjects: ['company', 'person'],
+        operations: ['create', 'find'],
+      };
+
+      await service.listTools(
+        { unionOf: [roleId] },
         workspaceId,
-        roleId,
+        undefined,
+        toolHints,
       );
 
-      expect(result.success).toBe(false);
-      expect(result.error).toBe(
-        'Filter with record IDs is required for bulk soft delete',
+      expect(perObjectToolGenerator.generate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspaceId,
+          rolePermissionConfig: { unionOf: [roleId] },
+        }),
+        expect.any(Array),
+        toolHints,
+      );
+    });
+
+    it('should pass actorContext to perObjectToolGenerator.generate', async () => {
+      const actorContext = {
+        source: FieldActorSource.API,
+        workspaceMemberId: 'member_1',
+        name: 'Test User',
+        context: {},
+      };
+
+      await service.listTools({ unionOf: [roleId] }, workspaceId, actorContext);
+
+      expect(perObjectToolGenerator.generate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspaceId,
+          rolePermissionConfig: { unionOf: [roleId] },
+          actorContext,
+        }),
+        expect.any(Array),
+        undefined,
       );
     });
   });
