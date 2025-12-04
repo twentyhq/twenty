@@ -142,7 +142,7 @@ Respond ONLY with valid JSON in this exact format:
   }
 
   private formatToolsForEvaluation(
-    tools: Record<string, { description?: string; parameters?: string[] }>,
+    tools: Record<string, { description?: string }>,
   ): string {
     if (!tools || Object.keys(tools).length === 0) {
       return '**Available Tools:** None';
@@ -155,10 +155,6 @@ Respond ONLY with valid JSON in this exact format:
 
       if (tool.description) {
         formatted += `: ${tool.description}`;
-      }
-
-      if (tool.parameters && tool.parameters.length > 0) {
-        formatted += ` (${tool.parameters.join(', ')})`;
       }
 
       formatted += '\n';
