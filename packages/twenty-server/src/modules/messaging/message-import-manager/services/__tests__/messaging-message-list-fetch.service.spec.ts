@@ -291,7 +291,7 @@ describe('MessagingMessageListFetchService', () => {
     });
     expect(
       messageChannelSyncStatusService.markAsMessagesListFetchOngoing,
-    ).toHaveBeenCalledWith([mockMicrosoftMessageChannel.id]);
+    ).toHaveBeenCalledWith([mockMicrosoftMessageChannel.id], workspaceId);
 
     expect(messagingGetMessageListService.getMessageLists).toHaveBeenCalledWith(
       {
@@ -350,7 +350,7 @@ describe('MessagingMessageListFetchService', () => {
     });
     expect(
       messageChannelSyncStatusService.markAsMessagesListFetchOngoing,
-    ).toHaveBeenCalledWith([mockGoogleMessageChannel.id]);
+    ).toHaveBeenCalledWith([mockGoogleMessageChannel.id], workspaceId);
 
     expect(messagingGetMessageListService.getMessageLists).toHaveBeenCalledWith(
       {
