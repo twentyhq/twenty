@@ -10,6 +10,7 @@ export const main = async (params: { recipient?: string }) => {
         Authorization: `Bearer ${process.env.TWENTY_API_KEY}`,
       },
     });
+
     const createPostCard = await client.mutation({
       createPostCard: {
         __args: {
@@ -21,6 +22,9 @@ export const main = async (params: { recipient?: string }) => {
         id: true,
       },
     });
+
+    console.log('createPostCard result', createPostCard);
+
     return createPostCard;
   } catch (error) {
     console.error(error);
