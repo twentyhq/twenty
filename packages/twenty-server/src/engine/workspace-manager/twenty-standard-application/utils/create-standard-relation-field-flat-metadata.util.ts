@@ -2,7 +2,7 @@ import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
   type FieldMetadataDefaultValueForAnyType,
-  FieldMetadataSettings,
+  type FieldMetadataSettings,
   FieldMetadataType,
 } from 'twenty-shared/types';
 

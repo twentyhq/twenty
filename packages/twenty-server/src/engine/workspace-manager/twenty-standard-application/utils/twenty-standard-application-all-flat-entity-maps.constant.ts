@@ -1,4 +1,4 @@
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { buildStandardFlatFieldMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/build-standard-flat-field-metadata-maps.util';
 import { buildStandardFlatObjectMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/build-standard-flat-object-metadata-maps.util';
 import { getStandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
@@ -20,7 +20,8 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
   };
 
   // Build object metadata maps using addFlatEntityToFlatEntityMapsOrThrow to prevent duplicate IDs
-  const flatObjectMetadataMaps = buildStandardFlatObjectMetadataMaps(builderArgs);
+  const flatObjectMetadataMaps =
+    buildStandardFlatObjectMetadataMaps(builderArgs);
 
   // Build field metadata maps using addFlatEntityToFlatEntityMapsOrThrow to prevent duplicate IDs
   const flatFieldMetadataMaps = buildStandardFlatFieldMetadataMaps(builderArgs);

@@ -7,7 +7,9 @@ import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/wor
 const TWENTY_STANDARD_APPLICATION_ID =
   TWENTY_STANDARD_APPLICATION.universalIdentifier;
 
-export const createStandardObjectFlatMetadata = <T extends AllStandardObjectName>({
+export const createStandardObjectFlatMetadata = <
+  T extends AllStandardObjectName,
+>({
   options: {
     universalIdentifier,
     standardId,
@@ -82,4 +84,3 @@ export const createStandardObjectFlatMetadata = <T extends AllStandardObjectName
   updatedAt: createdAt,
   id: standardFieldMetadataIdByObjectAndFieldName[nameSingular].id,
 });
-

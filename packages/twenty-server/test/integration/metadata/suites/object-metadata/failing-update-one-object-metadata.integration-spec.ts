@@ -9,9 +9,9 @@ import {
   type EachTestingContext,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 import { type UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
-import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 type TestingRuntimeContext = {
   objectMetadataId: string;

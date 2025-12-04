@@ -1,7 +1,7 @@
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { buildAttachmentStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/compute-attachment-standard-flat-field-metadata.util';
 import { buildBlocklistStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/compute-blocklist-standard-flat-field-metadata.util';
 import { buildCalendarChannelEventAssociationStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/compute-calendar-channel-event-association-standard-flat-field-metadata.util';
@@ -31,7 +31,7 @@ import { buildWorkflowRunStandardFlatFieldMetadatas } from 'src/engine/workspace
 import { buildWorkflowStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/compute-workflow-standard-flat-field-metadata.util';
 import { buildWorkflowVersionStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/compute-workflow-version-standard-flat-field-metadata.util';
 import { buildWorkspaceMemberStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/compute-workspace-member-standard-flat-field-metadata.util';
-import { StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
+import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
 type BuildStandardFlatFieldMetadataMapsArgs = {
   createdAt: Date;
@@ -79,11 +79,12 @@ const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   workspaceMember: buildWorkspaceMemberStandardFlatFieldMetadatas,
 } satisfies Record<AllStandardObjectName, StandardFlatFieldMetadataBuilder>;
 
-const createEmptyFlatFieldMetadataMaps = (): FlatEntityMaps<FlatFieldMetadata> => ({
-  byId: {},
-  idByUniversalIdentifier: {},
-  universalIdentifiersByApplicationId: {},
-});
+const createEmptyFlatFieldMetadataMaps =
+  (): FlatEntityMaps<FlatFieldMetadata> => ({
+    byId: {},
+    idByUniversalIdentifier: {},
+    universalIdentifiersByApplicationId: {},
+  });
 
 export const buildStandardFlatFieldMetadataMaps = ({
   createdAt,

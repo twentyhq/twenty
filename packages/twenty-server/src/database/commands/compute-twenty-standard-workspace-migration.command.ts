@@ -1,10 +1,11 @@
 import { Logger } from '@nestjs/common';
+
 import { writeFileSync } from 'fs';
 
 import { Command, CommandRunner } from 'nest-commander';
+
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
-
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 @Command({
@@ -32,6 +33,7 @@ export class ComputeTwentyStandardWorkspaceMigrationCommand extends CommandRunne
         createdAt: new Date(),
         workspaceId,
       });
+
     writeFileSync(
       `${Date.now()}-all-flat-entity-maps.json`,
       JSON.stringify(twentyStandardAllFlatEntityMaps, null, 2),

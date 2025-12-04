@@ -58,7 +58,9 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       standardFieldMetadataIdByObjectAndFieldName:
         args.standardFieldMetadataIdByObjectAndFieldName,
     }),
-  calendarChannelEventAssociation: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  calendarChannelEventAssociation: (
+    args: BuildStandardFlatObjectMetadatasArgs,
+  ) =>
     createStandardObjectFlatMetadata({
       options: {
         universalIdentifier:
@@ -83,7 +85,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
   calendarChannel: (args: BuildStandardFlatObjectMetadatasArgs) =>
     createStandardObjectFlatMetadata({
       options: {
-        universalIdentifier: STANDARD_OBJECTS.calendarChannel.universalIdentifier,
+        universalIdentifier:
+          STANDARD_OBJECTS.calendarChannel.universalIdentifier,
         standardId: STANDARD_OBJECTS.calendarChannel.universalIdentifier,
         nameSingular: 'calendarChannel',
         namePlural: 'calendarChannels',
@@ -105,7 +108,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       options: {
         universalIdentifier:
           STANDARD_OBJECTS.calendarEventParticipant.universalIdentifier,
-        standardId: STANDARD_OBJECTS.calendarEventParticipant.universalIdentifier,
+        standardId:
+          STANDARD_OBJECTS.calendarEventParticipant.universalIdentifier,
         nameSingular: 'calendarEventParticipant',
         namePlural: 'calendarEventParticipants',
         labelSingular: 'Calendar event participant',
@@ -225,7 +229,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
   favoriteFolder: (args: BuildStandardFlatObjectMetadatasArgs) =>
     createStandardObjectFlatMetadata({
       options: {
-        universalIdentifier: STANDARD_OBJECTS.favoriteFolder.universalIdentifier,
+        universalIdentifier:
+          STANDARD_OBJECTS.favoriteFolder.universalIdentifier,
         standardId: STANDARD_OBJECTS.favoriteFolder.universalIdentifier,
         nameSingular: 'favoriteFolder',
         namePlural: 'favoriteFolders',
@@ -241,7 +246,9 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       standardFieldMetadataIdByObjectAndFieldName:
         args.standardFieldMetadataIdByObjectAndFieldName,
     }),
-  messageChannelMessageAssociation: (args: BuildStandardFlatObjectMetadatasArgs) =>
+  messageChannelMessageAssociation: (
+    args: BuildStandardFlatObjectMetadatasArgs,
+  ) =>
     createStandardObjectFlatMetadata({
       options: {
         universalIdentifier:
@@ -266,7 +273,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
   messageChannel: (args: BuildStandardFlatObjectMetadatasArgs) =>
     createStandardObjectFlatMetadata({
       options: {
-        universalIdentifier: STANDARD_OBJECTS.messageChannel.universalIdentifier,
+        universalIdentifier:
+          STANDARD_OBJECTS.messageChannel.universalIdentifier,
         standardId: STANDARD_OBJECTS.messageChannel.universalIdentifier,
         nameSingular: 'messageChannel',
         namePlural: 'messageChannels',
@@ -530,7 +538,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       options: {
         universalIdentifier:
           STANDARD_OBJECTS.workflowAutomatedTrigger.universalIdentifier,
-        standardId: STANDARD_OBJECTS.workflowAutomatedTrigger.universalIdentifier,
+        standardId:
+          STANDARD_OBJECTS.workflowAutomatedTrigger.universalIdentifier,
         nameSingular: 'workflowAutomatedTrigger',
         namePlural: 'workflowAutomatedTriggers',
         labelSingular: 'Workflow Automated Trigger',
@@ -567,7 +576,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
   workflowVersion: (args: BuildStandardFlatObjectMetadatasArgs) =>
     createStandardObjectFlatMetadata({
       options: {
-        universalIdentifier: STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+        universalIdentifier:
+          STANDARD_OBJECTS.workflowVersion.universalIdentifier,
         standardId: STANDARD_OBJECTS.workflowVersion.universalIdentifier,
         nameSingular: 'workflowVersion',
         namePlural: 'workflowVersions',
@@ -586,7 +596,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
   workspaceMember: (args: BuildStandardFlatObjectMetadatasArgs) =>
     createStandardObjectFlatMetadata({
       options: {
-        universalIdentifier: STANDARD_OBJECTS.workspaceMember.universalIdentifier,
+        universalIdentifier:
+          STANDARD_OBJECTS.workspaceMember.universalIdentifier,
         standardId: STANDARD_OBJECTS.workspaceMember.universalIdentifier,
         nameSingular: 'workspaceMember',
         namePlural: 'workspaceMembers',
