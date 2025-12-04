@@ -4,6 +4,7 @@ import {
   AllMetadataName,
   WorkspaceMigrationV2ExceptionCode,
 } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-required-metadata-for-validation.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -18,7 +19,6 @@ import {
 import { InferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/infer-deletion-from-missing-entities.type';
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/services/workspace-migration-runner-v2.service';
 import { WorkspaceMigrationV2Exception } from 'src/engine/workspace-manager/workspace-migration.exception';
-import { isDefined } from 'twenty-shared/utils';
 
 type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
   workspaceId: string;
@@ -60,6 +60,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
 
     for (const metadataName of allObjectMetadataNames) {
       const tmp = allFlatEntities[metadataName];
+
       if (!isDefined(tmp)) {
         throw new Error('Should never occurs');
       }
@@ -88,6 +89,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       const metadataDependencyMetadatNames = Object.keys(
         ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION[metadataName],
       ) as AllMetadataName[];
+
       allDependencyMetadataName.push(...metadataDependencyMetadatNames);
     }
 
