@@ -439,7 +439,9 @@ describe('UserWorkspaceService', () => {
         workspace.id,
         user,
       );
-      expect(userRoleService.assignRoleToManyUserWorkspace).toHaveBeenCalledWith({
+      expect(
+        userRoleService.assignRoleToManyUserWorkspace,
+      ).toHaveBeenCalledWith({
         workspaceId: workspace.id,
         userWorkspaceIds: [userWorkspace.id],
         roleId: workspace.defaultRoleId,
