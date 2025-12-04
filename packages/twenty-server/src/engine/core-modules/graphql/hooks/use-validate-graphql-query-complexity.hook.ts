@@ -50,8 +50,6 @@ export const useValidateGraphqlQueryComplexity = ({
         checkDuplicateRootResolvers,
       );
 
-      console.log('analysis', analysis.maxNestedDepth);
-
       if (
         isDefined(maximumAllowedNestedFields) &&
         analysis.maxNestedDepth > maximumAllowedNestedFields
