@@ -7,8 +7,9 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-required-metadata-for-validation.constant';
+import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { ComputeFlatEntityMapsFromToArgs } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
+import { FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-build-orchestrator.service';
@@ -23,7 +24,7 @@ import { WorkspaceMigrationV2Exception } from 'src/engine/workspace-manager/work
 type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
   workspaceId: string;
   allFlatEntities: {
-    [P in AllMetadataName]?: ComputeFlatEntityMapsFromToArgs<P>;
+    [P in AllMetadataName]?: FlatEntityToCreateDeleteUpdate<P>;
   };
   isSystemBuild?: boolean;
 };
@@ -40,6 +41,52 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
+  private async computeAllRelatedFlatEntityMaps({
+    allFlatEntities,
+    workspaceId,
+  }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs) {
+    const allMetadataNameToCompare = Object.keys(
+      allFlatEntities,
+    ) as AllMetadataName[];
+    const allDependencyMetadataName = [
+      ...new Set(
+        allMetadataNameToCompare.flatMap(
+          (metadataName) =>
+            Object.keys(
+              ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION[metadataName],
+            ) as AllMetadataName[],
+        ),
+      ),
+    ];
+    const allMetadataNameCacheToCompute = [
+      ...new Set(...allMetadataNameToCompare, allDependencyMetadataName),
+    ];
+    const allRelatedFlatEntityMaps =
+      await this.workspaceCacheService.getOrRecompute(
+        workspaceId,
+        allMetadataNameCacheToCompute.map(getMetadataFlatEntityMapsKey),
+      );
+
+    const dependencyAllFlatEntityMaps = allDependencyMetadataName.reduce(
+      (allFlatEntityMaps, metadataName) => {
+        const metadataFlatEntityMapsKey =
+          getMetadataFlatEntityMapsKey(metadataName);
+        return {
+          ...allFlatEntityMaps,
+          [metadataFlatEntityMapsKey]:
+            allRelatedFlatEntityMaps[metadataFlatEntityMapsKey],
+        };
+      },
+      createEmptyAllFlatEntityMaps(),
+    );
+
+    return {
+      allRelatedFlatEntityMaps,
+      allMetadataNameToCompare,
+      dependencyAllFlatEntityMaps,
+    };
+  }
+
   private async computeFromToAllFlatEntityMapsAndBuildOptions({
     allFlatEntities,
     workspaceId,
@@ -48,29 +95,30 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     inferDeletionFromMissingEntities: InferDeletionFromMissingEntities;
     dependencyAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
   }> {
-    const allObjectMetadataNames = Object.keys(
-      allFlatEntities,
-    ) as AllMetadataName[];
+    const { allRelatedFlatEntityMaps, dependencyAllFlatEntityMaps } =
+      await this.computeAllRelatedFlatEntityMaps({
+        allFlatEntities,
+        workspaceId,
+      });
+
     const fromToAllFlatEntityMaps: WorkspaceMigrationOrchestratorBuildArgs['fromToAllFlatEntityMaps'] =
       {};
     const inferDeletionFromMissingEntities: InferDeletionFromMissingEntities =
       {};
+    const allMetadataNameToCompare = Object.keys(
+      allFlatEntities,
+    ) as AllMetadataName[];
 
-    const allDependencyMetadataName: AllMetadataName[] = [];
-
-    for (const metadataName of allObjectMetadataNames) {
+    for (const metadataName of allMetadataNameToCompare) {
       const tmp = allFlatEntities[metadataName];
 
       if (!isDefined(tmp)) {
         throw new Error('Should never occurs');
       }
-      const {
-        flatEntityMaps,
-        flatEntityToCreate,
-        flatEntityToDelete,
-        flatEntityToUpdate,
-      } = tmp;
+      const { flatEntityToCreate, flatEntityToDelete, flatEntityToUpdate } =
+        tmp;
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
+      const flatEntityMaps = allRelatedFlatEntityMaps[flatEntityMapsKey];
 
       // @ts-expect-error prastoin investigate
       fromToAllFlatEntityMaps[flatEntityMapsKey] = computeFlatEntityMapsFromTo<
@@ -85,21 +133,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       if (flatEntityToDelete.length > 0) {
         inferDeletionFromMissingEntities[metadataName] = true;
       }
-
-      const metadataDependencyMetadatNames = Object.keys(
-        ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION[metadataName],
-      ) as AllMetadataName[];
-
-      allDependencyMetadataName.push(...metadataDependencyMetadatNames);
     }
-
-    const dependencyAllFlatEntityMaps =
-      await this.workspaceCacheService.getOrRecompute(
-        workspaceId,
-        [...new Set(allDependencyMetadataName)].map(
-          getMetadataFlatEntityMapsKey,
-        ),
-      );
 
     return {
       fromToAllFlatEntityMaps,

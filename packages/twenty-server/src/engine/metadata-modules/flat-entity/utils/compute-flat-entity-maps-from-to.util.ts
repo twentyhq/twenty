@@ -1,7 +1,7 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
+import { FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
-import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { getSubFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-or-throw.util';
@@ -9,10 +9,7 @@ import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-mo
 
 export type ComputeFlatEntityMapsFromToArgs<T extends AllMetadataName> = {
   flatEntityMaps: MetadataFlatEntityMaps<T>;
-  flatEntityToUpdate: MetadataFlatEntity<T>[];
-  flatEntityToCreate: MetadataFlatEntity<T>[];
-  flatEntityToDelete: MetadataFlatEntity<T>[];
-};
+} & FlatEntityToCreateDeleteUpdate<T>;
 export const computeFlatEntityMapsFromTo = <T extends AllMetadataName>({
   flatEntityMaps,
   flatEntityToCreate,
