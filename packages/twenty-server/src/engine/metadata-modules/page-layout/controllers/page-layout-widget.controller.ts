@@ -13,6 +13,11 @@ import {
 
 import { isDefined } from 'class-validator';
 
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
 import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout-widget.dto';
@@ -24,11 +29,6 @@ import {
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception';
 import { PageLayoutWidgetRestApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/filters/page-layout-widget-rest-api-exception.filter';
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout/services/page-layout-widget.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 @Controller('rest/metadata/pageLayoutWidgets')
@@ -75,7 +75,10 @@ export class PageLayoutWidgetController {
     @Body() input: CreatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.create(input, workspace.id);
+    return this.pageLayoutWidgetService.createOne({
+      createPageLayoutWidgetInput: input,
+      workspaceId: workspace.id,
+    });
   }
 
   @Patch(':id')
@@ -85,7 +88,10 @@ export class PageLayoutWidgetController {
     @Body() input: UpdatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.update(id, workspace.id, input);
+    return this.pageLayoutWidgetService.updateOne({
+      updatePageLayoutWidgetInput: { id, update: input },
+      workspaceId: workspace.id,
+    });
   }
 
   @Delete(':id')
@@ -94,6 +100,9 @@ export class PageLayoutWidgetController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.delete(id, workspace.id);
+    return this.pageLayoutWidgetService.deleteOne({
+      deletePageLayoutWidgetInput: { id },
+      workspaceId: workspace.id,
+    });
   }
 }

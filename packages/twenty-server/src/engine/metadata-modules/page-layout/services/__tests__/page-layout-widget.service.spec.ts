@@ -1,47 +1,55 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { IsNull, type Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-widget.entity';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
 import {
-  PageLayoutTabException,
-  PageLayoutTabExceptionCode,
-} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception';
-import {
-  generatePageLayoutWidgetExceptionMessage,
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
-  PageLayoutWidgetExceptionMessageKey,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception';
-import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout/services/page-layout-widget.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 describe('PageLayoutWidgetService', () => {
-  let pageLayoutWidgetService: PageLayoutWidgetService;
-  let pageLayoutWidgetRepository: Repository<PageLayoutWidgetEntity>;
-  let pageLayoutTabService: PageLayoutTabService;
+  let service: PageLayoutWidgetService;
+  let repository: Repository<PageLayoutWidgetEntity>;
+  let workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService;
+  let workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService;
 
-  const mockPageLayoutWidget = {
-    id: 'page-layout-widget-id',
+  const workspaceId = 'workspace-id';
+
+  const mockWidget: PageLayoutWidgetEntity = {
+    id: 'widget-id',
     title: 'Test Widget',
     type: WidgetType.VIEW,
-    pageLayoutTabId: 'page-layout-tab-id',
-    pageLayoutTab: {} as any,
-    objectMetadataId: 'object-metadata-id',
-    objectMetadata: null,
+    pageLayoutTabId: 'tab-id',
+    workspaceId,
+    objectMetadataId: null,
     gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
     configuration: null,
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: null,
+    universalIdentifier: 'widget-id',
+    applicationId: null,
   } as PageLayoutWidgetEntity;
 
-  beforeEach(async () => {
-    jest.clearAllMocks();
+  const mockFlatPageLayoutWidgetMaps = {
+    byId: {
+      'widget-id': {
+        ...mockWidget,
+        universalIdentifier: 'widget-id',
+      },
+    },
+    byPageLayoutTabId: {
+      'tab-id': ['widget-id'],
+    },
+  };
 
+  beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PageLayoutWidgetService,
@@ -50,8 +58,6 @@ describe('PageLayoutWidgetService', () => {
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
-            create: jest.fn(),
-            save: jest.fn(),
             insert: jest.fn(),
             update: jest.fn(),
             softDelete: jest.fn(),
@@ -60,521 +66,343 @@ describe('PageLayoutWidgetService', () => {
           },
         },
         {
-          provide: PageLayoutTabService,
+          provide: WorkspaceMigrationValidateBuildAndRunService,
           useValue: {
-            findByIdOrThrow: jest.fn(),
+            validateBuildAndRunWorkspaceMigration: jest.fn(),
           },
         },
         {
-          provide: FeatureFlagService,
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
           useValue: {
-            isFeatureEnabled: jest.fn(),
+            getOrRecomputeManyOrAllFlatEntityMaps: jest.fn(),
           },
         },
       ],
     }).compile();
 
-    pageLayoutWidgetService = module.get<PageLayoutWidgetService>(
-      PageLayoutWidgetService,
-    );
-    pageLayoutWidgetRepository = module.get<Repository<PageLayoutWidgetEntity>>(
+    service = module.get<PageLayoutWidgetService>(PageLayoutWidgetService);
+    repository = module.get<Repository<PageLayoutWidgetEntity>>(
       getRepositoryToken(PageLayoutWidgetEntity),
     );
-    pageLayoutTabService =
-      module.get<PageLayoutTabService>(PageLayoutTabService);
+    workspaceMigrationValidateBuildAndRunService =
+      module.get<WorkspaceMigrationValidateBuildAndRunService>(
+        WorkspaceMigrationValidateBuildAndRunService,
+      );
+    workspaceManyOrAllFlatEntityMapsCacheService =
+      module.get<WorkspaceManyOrAllFlatEntityMapsCacheService>(
+        WorkspaceManyOrAllFlatEntityMapsCacheService,
+      );
   });
 
   it('should be defined', () => {
-    expect(pageLayoutWidgetService).toBeDefined();
+    expect(service).toBeDefined();
+  });
+
+  describe('findByWorkspaceId', () => {
+    it('should return widgets for workspace', async () => {
+      jest.spyOn(repository, 'find').mockResolvedValue([mockWidget]);
+
+      const result = await service.findByWorkspaceId(workspaceId);
+
+      expect(repository.find).toHaveBeenCalledWith({
+        where: {
+          workspaceId,
+          deletedAt: expect.anything(),
+        },
+        order: { createdAt: 'ASC' },
+      });
+      expect(result).toEqual([mockWidget]);
+    });
   });
 
   describe('findByPageLayoutTabId', () => {
-    it('should return page layout widgets for a page layout tab id', async () => {
-      const workspaceId = 'workspace-id';
-      const pageLayoutTabId = 'page-layout-tab-id';
-      const expectedWidgets = [mockPageLayoutWidget];
+    it('should return widgets for tab', async () => {
+      jest.spyOn(repository, 'find').mockResolvedValue([mockWidget]);
 
-      jest
-        .spyOn(pageLayoutWidgetRepository, 'find')
-        .mockResolvedValue(expectedWidgets);
-
-      const result = await pageLayoutWidgetService.findByPageLayoutTabId(
+      const result = await service.findByPageLayoutTabId(
         workspaceId,
-        pageLayoutTabId,
+        'tab-id',
+        false,
       );
 
-      expect(pageLayoutWidgetRepository.find).toHaveBeenCalledWith({
+      expect(repository.find).toHaveBeenCalledWith({
         where: {
-          pageLayoutTabId,
           workspaceId,
+          pageLayoutTabId: 'tab-id',
+          deletedAt: expect.anything(),
         },
         order: { createdAt: 'ASC' },
         withDeleted: false,
       });
-      expect(result).toEqual(expectedWidgets);
+      expect(result).toEqual([mockWidget]);
     });
 
-    it('should return empty array when no widgets are found', async () => {
-      const workspaceId = 'workspace-id';
-      const pageLayoutTabId = 'page-layout-tab-id';
+    it('should return widgets including deleted when withDeleted is true', async () => {
+      jest.spyOn(repository, 'find').mockResolvedValue([mockWidget]);
 
-      jest.spyOn(pageLayoutWidgetRepository, 'find').mockResolvedValue([]);
-
-      const result = await pageLayoutWidgetService.findByPageLayoutTabId(
+      const result = await service.findByPageLayoutTabId(
         workspaceId,
-        pageLayoutTabId,
+        'tab-id',
+        true,
       );
 
-      expect(result).toEqual([]);
+      expect(repository.find).toHaveBeenCalledWith({
+        where: {
+          workspaceId,
+          pageLayoutTabId: 'tab-id',
+        },
+        order: { createdAt: 'ASC' },
+        withDeleted: true,
+      });
+      expect(result).toEqual([mockWidget]);
+    });
+  });
+
+  describe('findById', () => {
+    it('should return widget when found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(mockWidget);
+
+      const result = await service.findById('widget-id', workspaceId);
+
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: {
+          id: 'widget-id',
+          workspaceId,
+          deletedAt: expect.anything(),
+        },
+      });
+      expect(result).toEqual(mockWidget);
+    });
+
+    it('should return null when widget not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      const result = await service.findById('non-existent-id', workspaceId);
+
+      expect(result).toBeNull();
     });
   });
 
   describe('findByIdOrThrow', () => {
-    it('should return page layout widget when found', async () => {
-      const id = 'page-layout-widget-id';
-      const workspaceId = 'workspace-id';
+    it('should return widget when found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(mockWidget);
 
-      jest
-        .spyOn(pageLayoutWidgetRepository, 'findOne')
-        .mockResolvedValue(mockPageLayoutWidget);
+      const result = await service.findByIdOrThrow('widget-id', workspaceId);
 
-      const result = await pageLayoutWidgetService.findByIdOrThrow(
-        id,
-        workspaceId,
-      );
-
-      expect(pageLayoutWidgetRepository.findOne).toHaveBeenCalledWith({
-        where: {
-          id,
-          workspaceId,
-          deletedAt: IsNull(),
-        },
-      });
-      expect(result).toEqual(mockPageLayoutWidget);
+      expect(result).toEqual(mockWidget);
     });
 
-    it('should throw exception when page layout widget is not found', async () => {
-      const id = 'non-existent-id';
-      const workspaceId = 'workspace-id';
-
-      jest.spyOn(pageLayoutWidgetRepository, 'findOne').mockResolvedValue(null);
+    it('should throw exception when widget not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       await expect(
-        pageLayoutWidgetService.findByIdOrThrow(id, workspaceId),
+        service.findByIdOrThrow('non-existent-id', workspaceId),
       ).rejects.toThrow(PageLayoutWidgetException);
+
       await expect(
-        pageLayoutWidgetService.findByIdOrThrow(id, workspaceId),
-      ).rejects.toHaveProperty(
-        'code',
-        PageLayoutWidgetExceptionCode.PAGE_LAYOUT_WIDGET_NOT_FOUND,
-      );
+        service.findByIdOrThrow('non-existent-id', workspaceId),
+      ).rejects.toMatchObject({
+        code: PageLayoutWidgetExceptionCode.PAGE_LAYOUT_WIDGET_NOT_FOUND,
+      });
     });
   });
 
-  describe('create', () => {
-    const validPageLayoutWidgetData = {
-      id: 'page-layout-widget-id',
-      title: 'New Widget',
-      pageLayoutTabId: 'page-layout-tab-id',
-      gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
-      type: WidgetType.VIEW,
-    };
+  describe('createOne', () => {
+    it('should create a widget successfully', async () => {
+      const input = {
+        title: 'New Widget',
+        type: WidgetType.VIEW,
+        pageLayoutTabId: 'tab-id',
+        gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
+      };
 
-    it('should create a new page layout widget successfully', async () => {
-      const workspaceId = 'workspace-id';
-
-      jest.spyOn(pageLayoutWidgetRepository, 'insert').mockResolvedValue({
-        identifiers: [{ id: 'page-layout-widget-id' }],
-        generatedMaps: [],
-        raw: [],
-      });
       jest
-        .spyOn(pageLayoutWidgetService, 'findByIdOrThrow')
-        .mockResolvedValue(mockPageLayoutWidget);
+        .spyOn(
+          workspaceManyOrAllFlatEntityMapsCacheService,
+          'getOrRecomputeManyOrAllFlatEntityMaps',
+        )
+        .mockResolvedValueOnce({
+          flatPageLayoutWidgetMaps: { byId: {} },
+        } as never)
+        .mockResolvedValueOnce({
+          flatPageLayoutWidgetMaps: mockFlatPageLayoutWidgetMaps,
+        } as never);
 
-      const result = await pageLayoutWidgetService.create(
-        validPageLayoutWidgetData,
+      jest
+        .spyOn(
+          workspaceMigrationValidateBuildAndRunService,
+          'validateBuildAndRunWorkspaceMigration',
+        )
+        .mockResolvedValue(undefined);
+
+      const result = await service.createOne({
+        createPageLayoutWidgetInput: input,
         workspaceId,
-      );
-
-      expect(pageLayoutWidgetRepository.insert).toHaveBeenCalledWith({
-        ...validPageLayoutWidgetData,
-        workspaceId,
       });
-      expect(result).toEqual(mockPageLayoutWidget);
-    });
 
-    it('should throw an exception when title is not provided', async () => {
-      const workspaceId = 'workspace-id';
-      const pageLayoutWidgetData = {
-        ...validPageLayoutWidgetData,
-        title: undefined,
-      };
-
-      await expect(
-        // @ts-expect-error - we are testing the exception
-        pageLayoutWidgetService.create(pageLayoutWidgetData, workspaceId),
-      ).rejects.toThrow(PageLayoutWidgetException);
-      await expect(
-        // @ts-expect-error - we are testing the exception
-        pageLayoutWidgetService.create(pageLayoutWidgetData, workspaceId),
-      ).rejects.toHaveProperty(
-        'code',
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
-    });
-
-    it('should throw an exception when pageLayoutTabId is not provided', async () => {
-      const workspaceId = 'workspace-id';
-      const pageLayoutWidgetData = {
-        ...validPageLayoutWidgetData,
-        pageLayoutTabId: undefined,
-      };
-
-      await expect(
-        // @ts-expect-error - we are testing the exception
-        pageLayoutWidgetService.create(pageLayoutWidgetData, workspaceId),
-      ).rejects.toThrow(PageLayoutWidgetException);
-      await expect(
-        // @ts-expect-error - we are testing the exception
-        pageLayoutWidgetService.create(pageLayoutWidgetData, workspaceId),
-      ).rejects.toHaveProperty(
-        'code',
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
-    });
-
-    it('should throw an exception when gridPosition is not provided', async () => {
-      const workspaceId = 'workspace-id';
-      const pageLayoutWidgetData = {
-        ...validPageLayoutWidgetData,
-        gridPosition: undefined,
-      };
-
-      await expect(
-        // @ts-expect-error - we are testing the exception
-        pageLayoutWidgetService.create(pageLayoutWidgetData, workspaceId),
-      ).rejects.toThrow(PageLayoutWidgetException);
-      await expect(
-        // @ts-expect-error - we are testing the exception
-        pageLayoutWidgetService.create(pageLayoutWidgetData, workspaceId),
-      ).rejects.toHaveProperty(
-        'code',
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
-    });
-
-    it('should throw an exception when page layout tab does not exist', async () => {
-      const workspaceId = 'workspace-id';
-
-      jest
-        .spyOn(pageLayoutTabService, 'findByIdOrThrow')
-        .mockRejectedValue(
-          new PageLayoutTabException(
-            'Page layout tab not found',
-            PageLayoutTabExceptionCode.PAGE_LAYOUT_TAB_NOT_FOUND,
-          ),
-        );
-
-      await expect(
-        pageLayoutWidgetService.create(validPageLayoutWidgetData, workspaceId),
-      ).rejects.toThrow(PageLayoutWidgetException);
-      await expect(
-        pageLayoutWidgetService.create(validPageLayoutWidgetData, workspaceId),
-      ).rejects.toHaveProperty(
-        'code',
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
-    });
-
-    it('should rethrow other errors', async () => {
-      const workspaceId = 'workspace-id';
-      const unexpectedError = new Error('Unexpected error');
-
-      jest
-        .spyOn(pageLayoutTabService, 'findByIdOrThrow')
-        .mockRejectedValue(unexpectedError);
-
-      await expect(
-        pageLayoutWidgetService.create(validPageLayoutWidgetData, workspaceId),
-      ).rejects.toThrow(unexpectedError);
+      expect(
+        workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration,
+      ).toHaveBeenCalled();
+      expect(result).toBeDefined();
     });
   });
 
-  describe('update', () => {
-    it('should update a page layout widget successfully', async () => {
-      const id = 'page-layout-widget-id';
-      const workspaceId = 'workspace-id';
-      const updateData = { title: 'Updated Widget' };
-      const updatedWidget = {
-        ...mockPageLayoutWidget,
-        title: 'Updated Widget',
+  describe('updateOne', () => {
+    it('should update a widget successfully', async () => {
+      const updateInput = {
+        id: 'widget-id',
+        update: { title: 'Updated Widget' },
       };
 
       jest
-        .spyOn(pageLayoutWidgetRepository, 'findOne')
-        .mockResolvedValueOnce(mockPageLayoutWidget)
-        .mockResolvedValueOnce(updatedWidget);
-      jest.spyOn(pageLayoutWidgetRepository, 'update').mockResolvedValue({
-        affected: 1,
-        generatedMaps: [],
-        raw: {},
-      });
+        .spyOn(
+          workspaceManyOrAllFlatEntityMapsCacheService,
+          'getOrRecomputeManyOrAllFlatEntityMaps',
+        )
+        .mockResolvedValueOnce({
+          flatPageLayoutWidgetMaps: mockFlatPageLayoutWidgetMaps,
+        } as never)
+        .mockResolvedValueOnce({
+          flatPageLayoutWidgetMaps: {
+            ...mockFlatPageLayoutWidgetMaps,
+            byId: {
+              'widget-id': {
+                ...mockFlatPageLayoutWidgetMaps.byId['widget-id'],
+                title: 'Updated Widget',
+              },
+            },
+          },
+        } as never);
 
-      const result = await pageLayoutWidgetService.update(
-        id,
+      jest
+        .spyOn(
+          workspaceMigrationValidateBuildAndRunService,
+          'validateBuildAndRunWorkspaceMigration',
+        )
+        .mockResolvedValue(undefined);
+
+      const result = await service.updateOne({
+        updatePageLayoutWidgetInput: updateInput,
         workspaceId,
-        updateData,
-      );
-
-      expect(pageLayoutWidgetRepository.findOne).toHaveBeenCalledTimes(2);
-      expect(pageLayoutWidgetRepository.findOne).toHaveBeenNthCalledWith(1, {
-        where: {
-          id,
-          workspaceId,
-          deletedAt: IsNull(),
-        },
       });
-      expect(pageLayoutWidgetRepository.findOne).toHaveBeenNthCalledWith(2, {
-        where: {
-          id,
-          workspaceId,
-          deletedAt: IsNull(),
-        },
-      });
-      expect(pageLayoutWidgetRepository.update).toHaveBeenCalledWith(
-        { id },
-        updateData,
-      );
-      expect(result).toEqual(updatedWidget);
-    });
 
-    it('should throw an exception when widget to update is not found', async () => {
-      const id = 'non-existent-id';
-      const workspaceId = 'workspace-id';
-      const updateData = { title: 'Updated Widget' };
-
-      jest.spyOn(pageLayoutWidgetRepository, 'findOne').mockResolvedValue(null);
-
-      await expect(
-        pageLayoutWidgetService.update(id, workspaceId, updateData),
-      ).rejects.toThrow(PageLayoutWidgetException);
-      await expect(
-        pageLayoutWidgetService.update(id, workspaceId, updateData),
-      ).rejects.toHaveProperty(
-        'code',
-        PageLayoutWidgetExceptionCode.PAGE_LAYOUT_WIDGET_NOT_FOUND,
-      );
+      expect(
+        workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration,
+      ).toHaveBeenCalled();
+      expect(result).toBeDefined();
     });
   });
 
-  describe('delete', () => {
-    it('should soft delete a page layout widget successfully', async () => {
-      const id = 'page-layout-widget-id';
-      const workspaceId = 'workspace-id';
+  describe('deleteOne', () => {
+    it('should soft delete a widget successfully', async () => {
+      jest
+        .spyOn(
+          workspaceManyOrAllFlatEntityMapsCacheService,
+          'getOrRecomputeManyOrAllFlatEntityMaps',
+        )
+        .mockResolvedValueOnce({
+          flatPageLayoutWidgetMaps: mockFlatPageLayoutWidgetMaps,
+        } as never)
+        .mockResolvedValueOnce({
+          flatPageLayoutWidgetMaps: {
+            ...mockFlatPageLayoutWidgetMaps,
+            byId: {
+              'widget-id': {
+                ...mockFlatPageLayoutWidgetMaps.byId['widget-id'],
+                deletedAt: new Date(),
+              },
+            },
+          },
+        } as never);
 
       jest
-        .spyOn(pageLayoutWidgetRepository, 'findOne')
-        .mockResolvedValue(mockPageLayoutWidget);
-      jest
-        .spyOn(pageLayoutWidgetRepository, 'softDelete')
-        .mockResolvedValue({ affected: 1, generatedMaps: [], raw: {} });
+        .spyOn(
+          workspaceMigrationValidateBuildAndRunService,
+          'validateBuildAndRunWorkspaceMigration',
+        )
+        .mockResolvedValue(undefined);
 
-      const result = await pageLayoutWidgetService.delete(id, workspaceId);
-
-      expect(pageLayoutWidgetRepository.findOne).toHaveBeenCalledWith({
-        where: {
-          id,
-          workspaceId,
-          deletedAt: IsNull(),
-        },
-      });
-      expect(pageLayoutWidgetRepository.softDelete).toHaveBeenCalledWith(id);
-      expect(result).toEqual(mockPageLayoutWidget);
-    });
-
-    it('should throw an exception when widget to delete is not found', async () => {
-      const id = 'non-existent-id';
-      const workspaceId = 'workspace-id';
-
-      jest.spyOn(pageLayoutWidgetRepository, 'findOne').mockResolvedValue(null);
-
-      await expect(
-        pageLayoutWidgetService.delete(id, workspaceId),
-      ).rejects.toThrow(PageLayoutWidgetException);
-      await expect(
-        pageLayoutWidgetService.delete(id, workspaceId),
-      ).rejects.toHaveProperty(
-        'code',
-        PageLayoutWidgetExceptionCode.PAGE_LAYOUT_WIDGET_NOT_FOUND,
-      );
-    });
-  });
-
-  describe('destroy', () => {
-    it('should permanently delete a page layout widget successfully', async () => {
-      const id = 'page-layout-widget-id';
-      const workspaceId = 'workspace-id';
-
-      jest
-        .spyOn(pageLayoutWidgetRepository, 'findOne')
-        .mockResolvedValue(mockPageLayoutWidget);
-      jest
-        .spyOn(pageLayoutWidgetRepository, 'delete')
-        .mockResolvedValue({ affected: 1, generatedMaps: [], raw: {} });
-
-      const result = await pageLayoutWidgetService.destroy(id, workspaceId);
-
-      expect(pageLayoutWidgetRepository.findOne).toHaveBeenCalledWith({
-        where: {
-          id,
-          workspaceId,
-        },
-        withDeleted: true,
-      });
-      expect(pageLayoutWidgetRepository.delete).toHaveBeenCalledWith(id);
-      expect(result).toBe(true);
-    });
-
-    it('should throw an exception when widget to destroy is not found', async () => {
-      const id = 'non-existent-id';
-      const workspaceId = 'workspace-id';
-
-      jest.spyOn(pageLayoutWidgetRepository, 'findOne').mockResolvedValue(null);
-
-      await expect(
-        pageLayoutWidgetService.destroy(id, workspaceId),
-      ).rejects.toThrow(PageLayoutWidgetException);
-      await expect(
-        pageLayoutWidgetService.destroy(id, workspaceId),
-      ).rejects.toHaveProperty(
-        'code',
-        PageLayoutWidgetExceptionCode.PAGE_LAYOUT_WIDGET_NOT_FOUND,
-      );
-    });
-  });
-
-  describe('restore', () => {
-    it('should restore a deleted page layout widget successfully', async () => {
-      const id = 'page-layout-widget-id';
-      const workspaceId = 'workspace-id';
-      const deletedWidget = { ...mockPageLayoutWidget, deletedAt: new Date() };
-
-      jest
-        .spyOn(pageLayoutWidgetRepository, 'findOne')
-        .mockResolvedValueOnce(deletedWidget) // First call in restore method to check if deleted
-        .mockResolvedValueOnce(mockPageLayoutWidget); // Second call in findByIdOrThrow
-      jest
-        .spyOn(pageLayoutWidgetRepository, 'restore')
-        .mockResolvedValue({ affected: 1, generatedMaps: [], raw: {} });
-
-      const result = await pageLayoutWidgetService.restore(id, workspaceId);
-
-      expect(pageLayoutWidgetRepository.findOne).toHaveBeenCalledTimes(2);
-      expect(pageLayoutWidgetRepository.findOne).toHaveBeenNthCalledWith(1, {
-        select: {
-          id: true,
-          deletedAt: true,
-          pageLayoutTabId: true,
-        },
-        where: {
-          id,
-          workspaceId,
-        },
-        withDeleted: true,
-      });
-      expect(pageLayoutWidgetRepository.findOne).toHaveBeenNthCalledWith(2, {
-        where: {
-          id,
-          workspaceId,
-          deletedAt: IsNull(),
-        },
-      });
-      expect(pageLayoutWidgetRepository.restore).toHaveBeenCalledWith(id);
-      expect(result).toEqual(mockPageLayoutWidget);
-    });
-
-    it('should throw an exception when widget to restore is not found', async () => {
-      const id = 'non-existent-id';
-      const workspaceId = 'workspace-id';
-
-      jest.spyOn(pageLayoutWidgetRepository, 'findOne').mockResolvedValue(null);
-
-      await expect(
-        pageLayoutWidgetService.restore(id, workspaceId),
-      ).rejects.toThrow(PageLayoutWidgetException);
-      await expect(
-        pageLayoutWidgetService.restore(id, workspaceId),
-      ).rejects.toHaveProperty(
-        'code',
-        PageLayoutWidgetExceptionCode.PAGE_LAYOUT_WIDGET_NOT_FOUND,
-      );
-    });
-
-    it('should throw an exception when widget is not deleted', async () => {
-      const id = 'page-layout-widget-id';
-      const workspaceId = 'workspace-id';
-      const notDeletedWidget = { ...mockPageLayoutWidget, deletedAt: null };
-
-      jest
-        .spyOn(pageLayoutWidgetRepository, 'findOne')
-        .mockResolvedValue(notDeletedWidget);
-
-      await expect(
-        pageLayoutWidgetService.restore(id, workspaceId),
-      ).rejects.toThrow(PageLayoutWidgetException);
-      await expect(
-        pageLayoutWidgetService.restore(id, workspaceId),
-      ).rejects.toHaveProperty(
-        'code',
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
-    });
-
-    it('should throw an exception when parent tab is not accessible', async () => {
-      const id = 'page-layout-widget-id';
-      const workspaceId = 'workspace-id';
-      const deletedWidget = {
-        ...mockPageLayoutWidget,
-        deletedAt: new Date(),
-        pageLayoutTabId: 'deleted-tab-id',
-      };
-
-      jest
-        .spyOn(pageLayoutWidgetRepository, 'findOne')
-        .mockResolvedValue(deletedWidget);
-      jest
-        .spyOn(pageLayoutTabService, 'findByIdOrThrow')
-        .mockRejectedValue(
-          new PageLayoutTabException(
-            'Page layout tab not found',
-            PageLayoutTabExceptionCode.PAGE_LAYOUT_TAB_NOT_FOUND,
-          ),
-        );
-
-      await expect(
-        pageLayoutWidgetService.restore(id, workspaceId),
-      ).rejects.toThrow(PageLayoutWidgetException);
-      await expect(
-        pageLayoutWidgetService.restore(id, workspaceId),
-      ).rejects.toHaveProperty(
-        'code',
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
-      await expect(
-        pageLayoutWidgetService.restore(id, workspaceId),
-      ).rejects.toHaveProperty(
-        'message',
-        generatePageLayoutWidgetExceptionMessage(
-          PageLayoutWidgetExceptionMessageKey.PAGE_LAYOUT_TAB_NOT_FOUND,
-        ),
-      );
-
-      expect(pageLayoutTabService.findByIdOrThrow).toHaveBeenCalledWith(
-        'deleted-tab-id',
+      const result = await service.deleteOne({
+        deletePageLayoutWidgetInput: { id: 'widget-id' },
         workspaceId,
-        undefined,
-      );
+      });
+
+      expect(
+        workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration,
+      ).toHaveBeenCalled();
+      expect(result).toBeDefined();
+    });
+  });
+
+  describe('destroyOne', () => {
+    it('should hard delete a widget successfully', async () => {
+      jest
+        .spyOn(
+          workspaceManyOrAllFlatEntityMapsCacheService,
+          'getOrRecomputeManyOrAllFlatEntityMaps',
+        )
+        .mockResolvedValue({
+          flatPageLayoutWidgetMaps: mockFlatPageLayoutWidgetMaps,
+        } as never);
+
+      jest
+        .spyOn(
+          workspaceMigrationValidateBuildAndRunService,
+          'validateBuildAndRunWorkspaceMigration',
+        )
+        .mockResolvedValue(undefined);
+
+      const result = await service.destroyOne({
+        destroyPageLayoutWidgetInput: { id: 'widget-id' },
+        workspaceId,
+      });
+
+      expect(
+        workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration,
+      ).toHaveBeenCalled();
+      expect(result).toBeDefined();
+    });
+  });
+
+  describe('restoreOne', () => {
+    it('should restore a deleted widget successfully', async () => {
+      const deletedWidget = { ...mockWidget, deletedAt: new Date() };
+
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(deletedWidget);
+      jest
+        .spyOn(repository, 'restore')
+        .mockResolvedValue({ affected: 1 } as never);
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(mockWidget);
+
+      const result = await service.restoreOne({
+        id: 'widget-id',
+        workspaceId,
+      });
+
+      expect(repository.restore).toHaveBeenCalledWith('widget-id');
+      expect(result).toEqual(mockWidget);
+    });
+
+    it('should throw exception when widget not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      await expect(
+        service.restoreOne({
+          id: 'non-existent-id',
+          workspaceId,
+        }),
+      ).rejects.toThrow(PageLayoutWidgetException);
+    });
+
+    it('should throw exception when widget is not deleted', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(mockWidget);
+
+      await expect(
+        service.restoreOne({
+          id: 'widget-id',
+          workspaceId,
+        }),
+      ).rejects.toThrow(PageLayoutWidgetException);
     });
   });
 });

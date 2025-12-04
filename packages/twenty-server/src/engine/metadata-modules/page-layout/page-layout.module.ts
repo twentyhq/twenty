@@ -14,7 +14,6 @@ import { PageLayoutWidgetResolver } from 'src/engine/metadata-modules/page-layou
 import { PageLayoutResolver } from 'src/engine/metadata-modules/page-layout/resolvers/page-layout.resolver';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutUpdateService } from 'src/engine/metadata-modules/page-layout/services/page-layout-update.service';
-import { PageLayoutWidgetV2Service } from 'src/engine/metadata-modules/page-layout/services/page-layout-widget-v2.service';
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -45,17 +44,11 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     PageLayoutService,
     PageLayoutTabService,
     PageLayoutWidgetService,
-    PageLayoutWidgetV2Service,
     PageLayoutResolver,
     PageLayoutTabResolver,
     PageLayoutWidgetResolver,
     PageLayoutUpdateService,
   ],
-  exports: [
-    PageLayoutService,
-    PageLayoutTabService,
-    PageLayoutWidgetService,
-    PageLayoutWidgetV2Service,
-  ],
+  exports: [PageLayoutService, PageLayoutTabService, PageLayoutWidgetService],
 })
 export class PageLayoutModule {}
