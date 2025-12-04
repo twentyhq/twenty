@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentExecutionSnapshot } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-snapshot.type';
 import { AgentTurnEvaluationEntity } from 'src/engine/metadata-modules/ai/ai-agent-monitor/entities/agent-turn-evaluation.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
@@ -45,12 +46,7 @@ export class AgentTurnEntity {
   evaluations: Relation<AgentTurnEvaluationEntity[]>;
 
   @Column({ type: 'jsonb', nullable: true })
-  executionSnapshot: {
-    agentName: string;
-    agentDescription: string | null;
-    systemPrompt: string;
-    availableTools: Record<string, unknown>;
-  } | null;
+  executionSnapshot: AgentExecutionSnapshot | null;
 
   @CreateDateColumn()
   createdAt: Date;

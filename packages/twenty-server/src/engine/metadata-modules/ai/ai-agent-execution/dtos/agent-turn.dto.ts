@@ -5,6 +5,7 @@ import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message.dto';
+import { AgentExecutionSnapshot } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-snapshot.type';
 import { AgentTurnEvaluationDTO } from 'src/engine/metadata-modules/ai/ai-agent-monitor/dtos/agent-turn-evaluation.dto';
 
 @ObjectType('AgentTurn')
@@ -25,12 +26,7 @@ export class AgentTurnDTO {
   messages: AgentMessageDTO[];
 
   @Field(() => GraphQLJSON, { nullable: true })
-  executionSnapshot: {
-    agentName: string;
-    agentDescription: string | null;
-    systemPrompt: string;
-    availableTools: Record<string, unknown>;
-  } | null;
+  executionSnapshot: AgentExecutionSnapshot | null;
 
   @IsDateString()
   @Field()
