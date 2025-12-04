@@ -19,6 +19,7 @@ import {
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout.exception';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 describe('PageLayoutTabService', () => {
   let pageLayoutTabService: PageLayoutTabService;
@@ -73,6 +74,14 @@ describe('PageLayoutTabService', () => {
             delete: jest.fn(),
             restore: jest.fn(),
             insert: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(WorkspaceEntity),
+          useValue: {
+            findOneOrFail: jest.fn().mockResolvedValue({
+              workspaceCustomApplicationId: 'application-id',
+            }),
           },
         },
         {
@@ -265,6 +274,8 @@ describe('PageLayoutTabService', () => {
       expect(pageLayoutTabRepository.insert).toHaveBeenCalledWith({
         ...pageLayoutTabData,
         workspaceId,
+        applicationId: 'application-id',
+        universalIdentifier: expect.any(String),
       });
       expect(result).toEqual(mockPageLayoutTab);
     });
