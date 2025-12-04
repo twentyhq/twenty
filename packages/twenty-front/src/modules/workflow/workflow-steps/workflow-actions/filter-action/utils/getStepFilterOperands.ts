@@ -28,6 +28,7 @@ export const FILTER_OPERANDS_MAP = {
   ],
   NUMBER: [
     ViewFilterOperand.IS,
+    ViewFilterOperand.IS_NOT,
     ViewFilterOperand.GREATER_THAN_OR_EQUAL,
     ViewFilterOperand.LESS_THAN_OR_EQUAL,
     ...emptyOperands,
@@ -64,6 +65,7 @@ export const FILTER_OPERANDS_MAP = {
   UUID: [ViewFilterOperand.IS, ViewFilterOperand.IS_NOT],
   NUMERIC: [
     ViewFilterOperand.IS,
+    ViewFilterOperand.IS_NOT,
     ViewFilterOperand.GREATER_THAN_OR_EQUAL,
     ViewFilterOperand.LESS_THAN_OR_EQUAL,
     ...emptyOperands,

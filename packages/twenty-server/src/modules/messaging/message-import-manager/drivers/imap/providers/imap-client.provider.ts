@@ -21,8 +21,6 @@ export class ImapClientProvider {
   private static readonly RETRY_DELAY_MS = 1000;
   private static readonly CONNECTION_TIMEOUT_MS = 30000;
 
-  constructor() {}
-
   async getClient(
     connectedAccount: ConnectedAccountIdentifier,
   ): Promise<ImapFlow> {

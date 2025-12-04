@@ -3768,6 +3768,12 @@ export type RevokeApiKeyInput = {
   id: Scalars['UUID'];
 };
 
+export type RichTextV2Body = {
+  __typename?: 'RichTextV2Body';
+  blocknote?: Maybe<Scalars['String']>;
+  markdown?: Maybe<Scalars['String']>;
+};
+
 export type Role = {
   __typename?: 'Role';
   agents: Array<Agent>;
@@ -3975,6 +3981,11 @@ export type SignedFile = {
   __typename?: 'SignedFile';
   path: Scalars['String'];
   token: Scalars['String'];
+};
+
+export type StandaloneRichTextConfiguration = {
+  __typename?: 'StandaloneRichTextConfiguration';
+  body: RichTextV2Body;
 };
 
 export type StandardOverrides = {
@@ -4702,17 +4713,18 @@ export type Webhook = {
   workspaceId: Scalars['UUID'];
 };
 
-export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | PieChartConfiguration;
+export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | PieChartConfiguration | StandaloneRichTextConfiguration;
 
 export enum WidgetType {
   CALENDAR = 'CALENDAR',
   EMAILS = 'EMAILS',
   FIELDS = 'FIELDS',
+  FIELD_RICH_TEXT = 'FIELD_RICH_TEXT',
   FILES = 'FILES',
   GRAPH = 'GRAPH',
   IFRAME = 'IFRAME',
   NOTES = 'NOTES',
-  RICH_TEXT = 'RICH_TEXT',
+  STANDALONE_RICH_TEXT = 'STANDALONE_RICH_TEXT',
   TASKS = 'TASKS',
   TIMELINE = 'TIMELINE',
   VIEW = 'VIEW',
