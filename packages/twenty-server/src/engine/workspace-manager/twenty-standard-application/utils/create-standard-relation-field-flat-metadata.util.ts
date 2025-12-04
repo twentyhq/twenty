@@ -108,7 +108,6 @@ export const createStandardRelationFieldFlatMetadata = <
     morphId: null,
     viewFieldIds: [],
     viewFilterIds: [],
-    viewGroupIds: [],
     kanbanAggregateOperationViewIds: [],
     calendarViewIds: [],
     mainGroupByFieldMetadataViewIds: [],
