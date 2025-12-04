@@ -38,6 +38,21 @@ describe('lowercaseUrlOriginAndRemoveTrailingSlash', () => {
       input: 'htTps://wwW.exAmple.coM/TEST#Hash',
       expected: 'https://www.example.com/TEST#Hash',
     },
+    {
+      title: 'should preserve special characters in path',
+      input: 'https://test.test/frédéric-destombes-22219837',
+      expected: 'https://test.test/frédéric-destombes-22219837',
+    },
+    {
+      title: 'should decode already encoded special characters in path',
+      input: 'https://test.test/fr%C3%A9d%C3%A9ric-destombes-22219837',
+      expected: 'https://test.test/frédéric-destombes-22219837',
+    },
+    {
+      title: 'should preserve special characters in query params',
+      input: 'https://example.com/path?name=José',
+      expected: 'https://example.com/path?name=José',
+    },
   ])('$title', ({ input, expected }) => {
     expect(lowercaseUrlOriginAndRemoveTrailingSlash(input)).toBe(expected);
   });
