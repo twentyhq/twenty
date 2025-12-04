@@ -71,6 +71,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       (allFlatEntityMaps, metadataName) => {
         const metadataFlatEntityMapsKey =
           getMetadataFlatEntityMapsKey(metadataName);
+
         return {
           ...allFlatEntityMaps,
           [metadataFlatEntityMapsKey]:
