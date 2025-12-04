@@ -54,4 +54,5 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     role: true,
   },
   agent: {},
+  pageLayoutWidget: {},
 } as const satisfies MetadataRequiredForValidation;
