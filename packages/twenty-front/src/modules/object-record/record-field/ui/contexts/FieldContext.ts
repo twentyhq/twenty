@@ -26,6 +26,7 @@ export type GenericFieldContextType = {
   fieldDefinition: FieldDefinition<FieldMetadata>;
   useUpdateRecord?: RecordUpdateHook;
   isLabelIdentifier: boolean;
+  isLabelIdentifierCompact?: boolean;
   clearable?: boolean;
   maxWidth?: number;
   isCentered?: boolean;

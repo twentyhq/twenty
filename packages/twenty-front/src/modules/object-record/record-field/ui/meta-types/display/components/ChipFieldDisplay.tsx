@@ -1,7 +1,5 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useChipFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useChipFieldDisplay';
-import { shouldCompactRecordIndexLabelIdentifierComponentState } from '@/object-record/record-index/states/shouldCompactRecordIndexLabelIdentifierComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipSize } from 'twenty-ui/components';
 
@@ -14,13 +12,8 @@ export const ChipFieldDisplay = () => {
     maxWidth,
     triggerEvent,
     onRecordChipClick,
+    isLabelIdentifierCompact,
   } = useChipFieldDisplay();
-
-  const shouldCompactRecordIndexLabelIdentifier = useRecoilComponentValue(
-    shouldCompactRecordIndexLabelIdentifierComponentState,
-  );
-
-  const isLabelIdentifierCompact = shouldCompactRecordIndexLabelIdentifier;
 
   if (!isDefined(recordValue)) {
     return null;
@@ -33,7 +26,7 @@ export const ChipFieldDisplay = () => {
       record={recordValue}
       size={ChipSize.Small}
       to={labelIdentifierLink}
-      isLabelHidden={isLabelIdentifierCompact}
+      isLabelHidden={isLabelIdentifierCompact ?? false}
       forceDisableClick={disableChipClick}
       triggerEvent={triggerEvent}
       onClick={onRecordChipClick}
