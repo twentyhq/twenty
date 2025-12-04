@@ -94,39 +94,30 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatObjectMetadataMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatObjectMetadataMaps,
+          allFlatEntities: {
+            objectMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
               flatEntityToUpdate: [flatObjectMetadataToUpdate],
-            }),
-            flatIndexMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatIndexMaps,
+            },
+            index: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
               flatEntityToUpdate: flatIndexMetadatasToUpdate,
-            }),
-            flatFieldMetadataMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatFieldMetadataMaps,
+            },
+            fieldMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
               flatEntityToUpdate: otherObjectFlatFieldMetadatasToUpdate,
-            }),
-            flatViewFieldMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatViewFieldMaps,
+            },
+            viewField: {
               flatEntityToCreate: flatViewFieldsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: flatViewFieldsToUpdate,
-            }),
-          },
-          dependencyAllFlatEntityMaps: {
-            flatViewMaps: existingFlatViewMaps,
-          },
-          buildOptions: {
-            isSystemBuild: false,
+            },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -279,35 +270,25 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatObjectMetadataMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: flatObjectMetadataMaps,
+          allFlatEntities: {
+            objectMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatObjectMetadatasToDelete,
               flatEntityToUpdate: [],
-            }),
-            flatIndexMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: flatIndexMaps,
+            },
+            index: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatIndexToDelete,
               flatEntityToUpdate: [],
-            }),
-            flatFieldMetadataMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: flatFieldMetadataMaps,
+            },
+            fieldMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatFieldMetadatasToDelete,
               flatEntityToUpdate: [],
-            }),
-          },
-          buildOptions: {
-            inferDeletionFromMissingEntities: {
-              objectMetadata: true,
-              fieldMetadata: true,
-              index: true,
             },
-            isSystemBuild,
           },
           workspaceId,
+          isSystemBuild,
         },
       );
 
@@ -407,37 +388,38 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatObjectMetadataMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatObjectMetadataMaps,
+          allFlatEntities: {
+            objectMetadata: {
               flatEntityToCreate: [flatObjectMetadataToCreate],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
-            flatViewMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatViewMaps,
+            },
+            view: {
               flatEntityToCreate: [flatDefaultViewToCreate],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
-            flatViewFieldMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatViewFieldMaps,
+            },
+            viewField: {
               flatEntityToCreate: flatDefaultViewFieldsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
-            flatFieldMetadataMaps: flatFieldMetadataMapsFromTo,
-            flatIndexMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatIndexMaps,
+            },
+            fieldMetadata: {
+              flatEntityToCreate: [
+                ...flatFieldMetadataToCreateOnObject,
+                ...relationTargetFlatFieldMetadataToCreate,
+              ],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+            index: {
               flatEntityToCreate: flatIndexMetadataToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
-          },
-          buildOptions: {
-            isSystemBuild: false,
+            },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 

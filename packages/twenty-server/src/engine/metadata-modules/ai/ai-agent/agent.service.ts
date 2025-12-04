@@ -10,7 +10,6 @@ import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/d
 import { fromCreateAgentInputToFlatAgent } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util';
 import { fromUpdateAgentInputToFlatAgentToUpdate } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util';
 import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
-import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -137,27 +136,22 @@ export class AgentService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatAgentMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatAgentMaps,
+          allFlatEntities: {
+            agent: {
               flatEntityToCreate: [flatAgentToCreate],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
-            flatRoleTargetMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatRoleTargetMaps,
+            },
+            roleTarget: {
               flatEntityToCreate: isDefined(flatRoleTargetToCreate)
                 ? [flatRoleTargetToCreate]
                 : [],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
-          },
-          dependencyAllFlatEntityMaps: { flatRoleMaps: existingFlatRoleMaps },
-          buildOptions: {
-            isSystemBuild: false,
+            },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -217,15 +211,13 @@ export class AgentService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatAgentMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatAgentMaps,
+          allFlatEntities: {
+            agent: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
               flatEntityToUpdate: [flatAgentToUpdate],
-            }),
-            flatRoleTargetMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatRoleTargetMaps,
+            },
+            roleTarget: {
               flatEntityToCreate: isDefined(flatRoleTargetToCreate)
                 ? [flatRoleTargetToCreate]
                 : [],
@@ -235,16 +227,10 @@ export class AgentService {
               flatEntityToUpdate: isDefined(flatRoleTargetToUpdate)
                 ? [flatRoleTargetToUpdate]
                 : [],
-            }),
-          },
-          dependencyAllFlatEntityMaps: { flatRoleMaps: existingFlatRoleMaps },
-          buildOptions: {
-            isSystemBuild: false,
-            inferDeletionFromMissingEntities: {
-              roleTarget: isDefined(flatRoleTargetToDelete),
             },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -306,21 +292,15 @@ export class AgentService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatAgentMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatAgentMaps,
+          allFlatEntities: {
+            agent: {
               flatEntityToCreate: [],
               flatEntityToDelete: [agentToDelete],
               flatEntityToUpdate: [],
-            }),
-          },
-          buildOptions: {
-            isSystemBuild: false,
-            inferDeletionFromMissingEntities: {
-              agent: true,
             },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 

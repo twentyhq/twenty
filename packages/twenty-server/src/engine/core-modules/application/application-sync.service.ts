@@ -26,7 +26,6 @@ import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/datab
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
-import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { getFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-application-id.util';
 import { getSubFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-or-throw.util';
@@ -1019,25 +1018,25 @@ export class ApplicationSyncService {
 
     await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
       {
-        fromToAllFlatEntityMaps: {
-          flatObjectMetadataMaps: {
-            from: fromFlatObjectMetadataMaps,
-            to: createEmptyFlatEntityMaps(),
+        allFlatEntities: {
+          objectMetadata: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatObjectMetadataMapsByApplicationId,
+            flatEntityToUpdate: [],
           },
-          flatIndexMaps: {
-            from: fromFlatIndexMetadataMaps,
-            to: createEmptyFlatEntityMaps(),
+          index: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatIndexMetadataMapsByApplicationId,
+            flatEntityToUpdate: [],
           },
-          flatFieldMetadataMaps: {
-            from: fromFlatFieldMetadataMaps,
-            to: createEmptyFlatEntityMaps(),
+          fieldMetadata: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatFieldMetadataMapsByApplicationId,
+            flatEntityToUpdate: [],
           },
         },
         workspaceId,
-        buildOptions: {
-          isSystemBuild: true,
-          inferDeletionFromMissingEntities: true,
-        },
+        isSystemBuild: true,
       },
     );
 
