@@ -656,7 +656,7 @@ msgid "Cannot have more than one active workflow version"
 msgstr "활성 워크플로우 버전이 두 개 이상 존재할 수 없습니다"
 
 #. js-lingui-id: PjZIyI
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
 msgstr "메시지 채널을 업데이트할 수 없습니다. 동기화가 진행 중입니다. 동기화가 완료될 때까지 기다려 주세요."
 
@@ -2027,7 +2027,7 @@ msgid "Message Channel Message Associations"
 msgstr "메시지 채널 메시지 연결"
 
 #. js-lingui-id: LOU3x5
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
 msgstr "메시지 채널을 찾을 수 없음"
 

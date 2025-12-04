@@ -656,7 +656,7 @@ msgid "Cannot have more than one active workflow version"
 msgstr "Không thể có nhiều hơn một phiên bản quy trình làm việc đang hoạt động"
 
 #. js-lingui-id: PjZIyI
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
 msgstr "Không thể cập nhật kênh tin nhắn khi đồng bộ đang diễn ra. Vui lòng đợi đồng bộ hoàn tất."
 
@@ -2027,7 +2027,7 @@ msgid "Message Channel Message Associations"
 msgstr "Liên kết tin nhắn Kênh Tin nhắn"
 
 #. js-lingui-id: LOU3x5
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
 msgstr "Không tìm thấy kênh tin nhắn"
 

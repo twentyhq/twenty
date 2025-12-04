@@ -656,7 +656,7 @@ msgid "Cannot have more than one active workflow version"
 msgstr "Δεν μπορεί να υπάρχει περισσότερη από μία ενεργή έκδοση ροής εργασίας"
 
 #. js-lingui-id: PjZIyI
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
 msgstr "Δεν είναι δυνατή η ενημέρωση του καναλιού μηνυμάτων ενώ ο συγχρονισμός είναι σε εξέλιξη. Παρακαλώ περιμένετε να ολοκληρωθεί ο συγχρονισμός."
 
@@ -2027,7 +2027,7 @@ msgid "Message Channel Message Associations"
 msgstr "Συσχετίσεις Μηνυμάτων Καναλιού Μηνυμάτων"
 
 #. js-lingui-id: LOU3x5
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
 msgstr "Δεν βρέθηκε το κανάλι μηνυμάτων"
 
