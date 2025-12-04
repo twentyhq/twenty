@@ -102,6 +102,7 @@ export class ServerlessFunctionService {
         },
         relations: [
           'serverlessFunctionLayer',
+          'application',
           'application.applicationVariables',
         ],
       });
