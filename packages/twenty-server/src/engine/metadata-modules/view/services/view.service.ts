@@ -182,6 +182,9 @@ export class ViewService {
           },
           buildOptions: {
             isSystemBuild: false,
+            inferDeletionFromMissingEntities: {
+              viewGroup: true,
+            },
           },
           workspaceId,
         },

@@ -120,6 +120,7 @@ describe('kanban-aggregate-field-deactivation-nullifies-kanban-properties', () =
     const { selectFieldMetadataId } =
       await createOneSelectFieldMetadataForIntegrationTests({
         input: {
+          name: 'selectField',
           objectMetadataId,
           options: [
             {

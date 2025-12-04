@@ -75,8 +75,8 @@ describe('Create core view', () => {
     assertViewStructure(data.createCoreView, {
       name: 'Kanban View',
       objectMetadataId: testObjectMetadataId,
-      type: ViewType.KANBAN,
       mainGroupByFieldMetadataId: testSelectFieldMetadataId,
+      type: ViewType.KANBAN,
       key: null,
       icon: 'IconDeal',
       position: 1,
@@ -103,6 +103,7 @@ describe('Create core view', () => {
       objectMetadataId: input.objectMetadataId,
       icon: input.icon,
       type: ViewType.TABLE,
+      mainGroupByFieldMetadataId: null,
       key: null,
       position: 0,
       isCompact: false,

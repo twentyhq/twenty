@@ -3,7 +3,6 @@ import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createOneCoreViewGroup } from 'test/integration/metadata/suites/view-group/utils/create-one-core-view-group.util';
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 import { findOneCoreView } from 'test/integration/metadata/suites/view/utils/find-one-core-view.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
@@ -29,7 +28,7 @@ type TestSetup = {
   viewWithoutGroupId: string;
 };
 
-describe('view-group-field-deactivation-deletes-views', () => {
+describe('field-for-group-by-deactivation-deletes-views', () => {
   let testSetup: TestSetup;
 
   const verifyViewExists = async (viewId: string, shouldExist: boolean) => {
@@ -126,18 +125,10 @@ describe('view-group-field-deactivation-deletes-views', () => {
         name: generateRecordName('View With Group'),
         objectMetadataId,
         type: ViewType.TABLE,
+        mainGroupByFieldMetadataId: groupByFieldMetadataId,
         icon: 'IconTable',
       },
       gqlFields: VIEW_FIELDS,
-      expectToFail: false,
-    });
-
-    await createOneCoreViewGroup({
-      input: {
-        fieldValue: 'OPTION_1',
-        viewId: viewWithGroup.id,
-      },
-      gqlFields: 'id',
       expectToFail: false,
     });
 
@@ -179,7 +170,7 @@ describe('view-group-field-deactivation-deletes-views', () => {
     });
   });
 
-  it('should delete view when field used in view group is deactivated', async () => {
+  it('should delete view when mainGroupByFieldMetadata is deactivated', async () => {
     await verifyViewExists(testSetup.viewWithGroupId, true);
     await verifyViewExists(testSetup.viewWithoutGroupId, true);
 
@@ -207,18 +198,10 @@ describe('view-group-field-deactivation-deletes-views', () => {
         name: generateRecordName('Second View With Group'),
         objectMetadataId: testSetup.objectMetadataId,
         type: ViewType.TABLE,
+        mainGroupByFieldMetadataId: testSetup.groupByFieldMetadataId,
         icon: 'IconTable',
       },
       gqlFields: VIEW_FIELDS,
-      expectToFail: false,
-    });
-
-    await createOneCoreViewGroup({
-      input: {
-        fieldValue: 'OPTION_2',
-        viewId: secondViewWithGroup.id,
-      },
-      gqlFields: 'id',
       expectToFail: false,
     });
 
@@ -231,69 +214,5 @@ describe('view-group-field-deactivation-deletes-views', () => {
     await verifyViewExists(testSetup.viewWithGroupId, false);
     await verifyViewExists(secondViewWithGroup.id, false);
     await verifyViewExists(testSetup.viewWithoutGroupId, true);
-  });
-
-  it('should handle deactivation when view has multiple view groups with different fields', async () => {
-    await createOneFieldMetadata({
-      expectToFail: false,
-      input: {
-        name: 'anotherGroupByField',
-        type: FieldMetadataType.SELECT,
-        label: 'Another Group By Field',
-        objectMetadataId: testSetup.objectMetadataId,
-        options: [
-          {
-            label: 'Status A',
-            value: 'STATUS_A',
-            color: 'purple',
-            position: 0,
-          },
-          {
-            label: 'Status B',
-            value: 'STATUS_B',
-            color: 'orange',
-            position: 1,
-          },
-        ],
-      },
-      gqlFields: 'id',
-    });
-
-    const {
-      data: { createCoreView: viewWithMultipleGroups },
-    } = await createOneCoreView({
-      input: {
-        name: generateRecordName('View With Multiple Groups'),
-        objectMetadataId: testSetup.objectMetadataId,
-        type: ViewType.TABLE,
-        icon: 'IconTable',
-      },
-      gqlFields: VIEW_FIELDS,
-      expectToFail: false,
-    });
-
-    await createOneCoreViewGroup({
-      input: {
-        fieldValue: 'OPTION_1',
-        viewId: viewWithMultipleGroups.id,
-      },
-      gqlFields: 'id',
-      expectToFail: false,
-    });
-
-    await createOneCoreViewGroup({
-      input: {
-        fieldValue: 'STATUS_A',
-        viewId: viewWithMultipleGroups.id,
-      },
-      gqlFields: 'id',
-      expectToFail: false,
-    });
-
-    await verifyViewExists(viewWithMultipleGroups.id, true);
-
-    await deactivateFieldAndVerify(testSetup.groupByFieldMetadataId);
-
-    await verifyViewExists(viewWithMultipleGroups.id, false);
   });
 });

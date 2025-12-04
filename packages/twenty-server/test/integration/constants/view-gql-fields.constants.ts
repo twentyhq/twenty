@@ -4,6 +4,7 @@ export const VIEW_GQL_FIELDS = `
     objectMetadataId
     type
     key
+    mainGroupByFieldMetadataId
     icon
     position
     isCompact

@@ -73,6 +73,8 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
         gqlFields: 'id options',
       });
 
+      const phaseFieldOptions = generateOptions(2);
+
       const {
         data: { createOneField: createOnePhaseField },
       } = await createOneFieldMetadata<typeof FieldMetadataType.SELECT>({
@@ -83,7 +85,7 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
           name: 'phaseField',
           label: 'Phase Field',
           isLabelSyncedWithName: true,
-          options: generateOptions(2),
+          options: phaseFieldOptions,
         },
         gqlFields: 'id options',
       });
@@ -125,6 +127,7 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
         statusFieldOptions: createOneStatusField.options ?? [],
         viewId: view.id,
         groupedTableViewId: groupedTableView.id,
+        phaseFieldOptions,
       };
     };
 
@@ -161,13 +164,13 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
         expectToFail: false,
       });
 
-      expect(initialViewGroups.length).toBe(3);
+      expect(initialViewGroups.length).toBe(4);
 
       await updateOneCoreView({
         viewId: groupedTableViewId,
         input: {
           id: groupedTableViewId,
-          mainGroupByFieldMetadataId: undefined,
+          mainGroupByFieldMetadataId: null,
         },
         gqlFields: 'id mainGroupByFieldMetadataId',
         expectToFail: false,
@@ -187,12 +190,7 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
     it('should delete and recreate view groups when mainGroupByFieldMetadataId changes', async () => {
       const initialOptions = generateOptions(3);
 
-      const {
-        statusFieldMetadataId,
-        statusFieldOptions,
-        phaseFieldMetadataId,
-        viewId,
-      } =
+      const { phaseFieldOptions, phaseFieldMetadataId, viewId } =
         await createObjectWithTwoSelectFieldsAndKanbanViewAndGroupedTableView(
           initialOptions,
         );
@@ -205,11 +203,7 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
         expectToFail: false,
       });
 
-      expect(
-        initialViewGroups.filter(
-          (viewGroup) => viewGroup.fieldMetadataId === statusFieldMetadataId,
-        ).length,
-      ).toBe(statusFieldOptions.length);
+      expect(initialViewGroups.length).toBe(initialOptions.length + 1); // null option
 
       await updateOneCoreView({
         viewId,
@@ -229,21 +223,12 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
         expectToFail: false,
       });
 
-      expect(
-        updatedViewGroups.filter(
-          (viewGroup) => viewGroup.fieldMetadataId === statusFieldMetadataId,
-        ).length,
-      ).toBe(0);
+      expect(updatedViewGroups.length).toBe(phaseFieldOptions.length + 1);
 
-      const phaseViewGroups = updatedViewGroups.filter(
-        (viewGroup) => viewGroup.fieldMetadataId === phaseFieldMetadataId,
-      );
-
-      expect(phaseViewGroups.length).toBe(2);
-      const actualFieldValues = phaseViewGroups
+      const actualFieldValues = updatedViewGroups
         .map((viewGroup) => viewGroup.fieldValue)
         .sort();
-      const expectedFieldValues = generateOptions(2)
+      const expectedFieldValues = [...phaseFieldOptions, { value: '' }]
         .map((option) => option.value)
         .sort();
 
@@ -266,11 +251,7 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
         expectToFail: false,
       });
 
-      const statusViewGroups = initialViewGroups.filter(
-        (viewGroup) => viewGroup.fieldMetadataId === statusFieldMetadataId,
-      );
-
-      expect(statusViewGroups.length).toBe(statusFieldOptions.length);
+      expect(initialViewGroups.length).toBe(statusFieldOptions.length + 1);
 
       await updateOneCoreView({
         viewId,
@@ -290,15 +271,11 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
         expectToFail: false,
       });
 
-      const updatedStatusViewGroups = updatedViewGroups.filter(
-        (viewGroup) => viewGroup.fieldMetadataId === statusFieldMetadataId,
-      );
-
-      expect(updatedStatusViewGroups.length).toBe(statusFieldOptions.length);
-      const actualFieldValues = updatedStatusViewGroups
+      expect(updatedViewGroups.length).toBe(statusFieldOptions.length + 1);
+      const actualFieldValues = updatedViewGroups
         .map((viewGroup) => viewGroup.fieldValue)
         .sort();
-      const expectedFieldValues = statusFieldOptions
+      const expectedFieldValues = [...statusFieldOptions, { value: '' }]
         .map((option) => option.value)
         .sort();
 
