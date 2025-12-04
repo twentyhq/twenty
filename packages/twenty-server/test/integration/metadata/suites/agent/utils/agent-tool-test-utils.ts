@@ -24,8 +24,9 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { PerObjectToolGeneratorService } from 'src/engine/core-modules/tool-generator/services/per-object-tool-generator.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 import { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
@@ -92,6 +93,12 @@ export const createAgentToolTestModule =
           provide: WorkspaceCacheService,
           useValue: {
             getOrRecompute: jest.fn(),
+          },
+        },
+        {
+          provide: PerObjectToolGeneratorService,
+          useValue: {
+            generate: jest.fn().mockResolvedValue({}),
           },
         },
         {
