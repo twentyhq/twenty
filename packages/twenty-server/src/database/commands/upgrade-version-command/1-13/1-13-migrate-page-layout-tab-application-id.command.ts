@@ -2,13 +2,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import {
-  WorkspacesMigrationCommandRunner,
-  type RunOnWorkspaceArgs,
+  type RunOnWorkspaceArgs
 } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-tab.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -20,7 +19,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
   description:
     'Migrate existing PageLayoutTab entities to set applicationId and universalIdentifier',
 })
-export class MigratePageLayoutTabApplicationIdCommand extends WorkspacesMigrationCommandRunner {
+export class MigratePageLayoutTabApplicationIdCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -29,13 +28,7 @@ export class MigratePageLayoutTabApplicationIdCommand extends WorkspacesMigratio
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     protected readonly dataSourceService: DataSourceService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager, dataSourceService, [
-      WorkspaceActivationStatus.ONGOING_CREATION,
-      WorkspaceActivationStatus.PENDING_CREATION,
-      WorkspaceActivationStatus.ACTIVE,
-      WorkspaceActivationStatus.INACTIVE,
-      WorkspaceActivationStatus.SUSPENDED,
-    ]);
+    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
 
   override async runOnWorkspace({
