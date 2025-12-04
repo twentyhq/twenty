@@ -6,8 +6,8 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { AgentExecutionService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-execution.service';
-import { AgentPlanExecutorService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-plan-executor.service';
+import { AgentExecutionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-execution.service';
+import { AgentPlanExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-plan-executor.service';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/ai/ai-agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { convertCentsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-cents-to-billing-credits.util';

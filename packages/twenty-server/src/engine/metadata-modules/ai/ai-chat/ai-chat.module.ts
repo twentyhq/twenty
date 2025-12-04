@@ -22,6 +22,7 @@ import { AgentChatResolver } from './resolvers/agent-chat.resolver';
 import { AgentChatRoutingService } from './services/agent-chat-routing.service';
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
 import { AgentChatService } from './services/agent-chat.service';
+import { AgentTitleGenerationService } from './services/agent-title-generation.service';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { AgentChatService } from './services/agent-chat.service';
     AgentChatService,
     AgentChatStreamingService,
     AgentChatRoutingService,
+    AgentTitleGenerationService,
   ],
   exports: [
     AgentChatService,

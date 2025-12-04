@@ -24,9 +24,6 @@ import {
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
-import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-actor-context.service';
-import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-model-config.service';
-import { AgentToolGeneratorService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-tool-generator.service';
 import { RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/ai/ai-agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
@@ -36,6 +33,10 @@ import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models
 import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+import { AgentActorContextService } from './agent-actor-context.service';
+import { AgentModelConfigService } from './agent-model-config.service';
+import { AgentToolGeneratorService } from './agent-tool-generator.service';
 
 export interface AgentExecutionResult {
   result: object;
@@ -63,8 +64,8 @@ export class AgentExecutionService {
     private readonly agentToolGeneratorService: AgentToolGeneratorService,
     private readonly agentModelConfigService: AgentModelConfigService,
     private readonly aiBillingService: AIBillingService,
-    public readonly agentActorContextService: AgentActorContextService,
-    public readonly agentService: AgentService,
+    private readonly agentActorContextService: AgentActorContextService,
+    private readonly agentService: AgentService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 

@@ -1,13 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import {
-  generateObject,
-  generateText,
-  jsonSchema,
-  stepCountIs,
-  ToolSet,
-} from 'ai';
+import { generateObject, generateText, jsonSchema, stepCountIs } from 'ai';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
@@ -18,34 +12,56 @@ import {
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-execution.service';
+import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { ToolAdapterService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool-adapter.service';
-import { ToolService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+
+import { AgentExecutionResult } from './agent-execution.service';
+import { AgentModelConfigService } from './agent-model-config.service';
+import { AgentToolGeneratorService } from './agent-tool-generator.service';
 
 @Injectable()
 export class AgentAsyncExecutorService {
   private readonly logger = new Logger(AgentAsyncExecutorService.name);
+
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly toolAdapterService: ToolAdapterService,
+    private readonly agentToolGeneratorService: AgentToolGeneratorService,
+    private readonly agentModelConfigService: AgentModelConfigService,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
-    private readonly toolService: ToolService,
   ) {}
 
-  private async getTools(
+  private extractRoleIds(
+    rolePermissionConfig?: RolePermissionConfig,
+  ): string[] {
+    if (!rolePermissionConfig) {
+      return [];
+    }
+
+    if ('intersectionOf' in rolePermissionConfig) {
+      return rolePermissionConfig.intersectionOf;
+    }
+
+    if ('unionOf' in rolePermissionConfig) {
+      return rolePermissionConfig.unionOf;
+    }
+
+    return [];
+  }
+
+  private async getRoleIdsForAgent(
     agentId: string,
     workspaceId: string,
-    actorContext?: ActorMetadata,
     rolePermissionConfig?: RolePermissionConfig,
-  ): Promise<ToolSet> {
+  ): Promise<string[]> {
+    const configRoleIds = this.extractRoleIds(rolePermissionConfig);
+
     const roleTarget = await this.roleTargetRepository.findOne({
       where: {
-        agentId: agentId,
+        agentId,
         workspaceId,
       },
       select: ['roleId'],
@@ -53,39 +69,11 @@ export class AgentAsyncExecutorService {
 
     const agentRoleId = roleTarget?.roleId;
 
-    if (!rolePermissionConfig && !agentRoleId) {
-      return await this.toolAdapterService.getTools();
+    if (agentRoleId && !configRoleIds.includes(agentRoleId)) {
+      return [...configRoleIds, agentRoleId];
     }
 
-    let effectiveRoleContext: RolePermissionConfig;
-
-    if (
-      rolePermissionConfig &&
-      ('intersectionOf' in rolePermissionConfig ||
-        'unionOf' in rolePermissionConfig)
-    ) {
-      effectiveRoleContext = rolePermissionConfig;
-    } else if (agentRoleId) {
-      effectiveRoleContext = { unionOf: [agentRoleId] };
-    } else {
-      return await this.toolAdapterService.getTools();
-    }
-
-    const actionTools = await this.toolAdapterService.getTools(
-      effectiveRoleContext,
-      workspaceId,
-    );
-
-    const databaseTools = await this.toolService.listTools(
-      effectiveRoleContext,
-      workspaceId,
-      actorContext,
-    );
-
-    return {
-      ...databaseTools,
-      ...actionTools,
-    };
+    return configRoleIds;
   }
 
   async executeAgent({
@@ -103,14 +91,42 @@ export class AgentAsyncExecutorService {
       const registeredModel =
         await this.aiModelRegistryService.resolveModelForAgent(agent);
 
-      const tools = agent
-        ? await this.getTools(
+      let tools = {};
+      let providerOptions = {};
+
+      if (agent) {
+        const roleIds = await this.getRoleIdsForAgent(
+          agent.id,
+          agent.workspaceId,
+          rolePermissionConfig,
+        );
+
+        const baseTools =
+          await this.agentToolGeneratorService.generateToolsForAgent(
             agent.id,
             agent.workspaceId,
             actorContext,
-            rolePermissionConfig,
-          )
-        : {};
+            roleIds.length > 0 ? roleIds : undefined,
+          );
+
+        // Add native model tools (web search, etc.) if configured
+        const nativeModelTools =
+          this.agentModelConfigService.getNativeModelTools(
+            registeredModel,
+            agent as unknown as Parameters<
+              typeof this.agentModelConfigService.getNativeModelTools
+            >[1],
+          );
+
+        tools = { ...baseTools, ...nativeModelTools };
+
+        providerOptions = this.agentModelConfigService.getProviderOptions(
+          registeredModel,
+          agent as unknown as Parameters<
+            typeof this.agentModelConfigService.getProviderOptions
+          >[1],
+        );
+      }
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
 
@@ -120,7 +136,22 @@ export class AgentAsyncExecutorService {
         model: registeredModel.model,
         prompt: userPrompt,
         stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
+        providerOptions,
         experimental_telemetry: AI_TELEMETRY_CONFIG,
+        experimental_repairToolCall: async ({
+          toolCall,
+          tools: toolsForRepair,
+          inputSchema,
+          error,
+        }) => {
+          return repairToolCall({
+            toolCall,
+            tools: toolsForRepair,
+            inputSchema,
+            error,
+            model: registeredModel.model,
+          });
+        },
       });
 
       const agentSchema =
