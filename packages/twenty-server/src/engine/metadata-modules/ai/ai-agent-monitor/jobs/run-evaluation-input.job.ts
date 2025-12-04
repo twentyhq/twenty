@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TextPart, ToolCallPart, ToolResultPart } from 'ai';
+import { type TextPart, type ToolUIPart } from 'ai';
 import { Repository } from 'typeorm';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -89,10 +89,14 @@ export class RunEvaluationInputJob {
       userPrompt: data.input,
     });
 
-    const messageParts: (TextPart | ToolCallPart | ToolResultPart)[] = [];
+    const messageParts: (TextPart | ToolUIPart)[] = [];
 
-    if (executionResult.toolCalls && executionResult.toolCalls.length > 0) {
+    if (executionResult.toolCalls && executionResult.toolResults) {
       for (const toolCall of executionResult.toolCalls) {
+        const toolResult = executionResult.toolResults.find(
+          (tr) => tr.toolCallId === toolCall.toolCallId,
+        );
+
         const toolInput =
           'args' in toolCall
             ? (toolCall as { args: unknown }).args
@@ -100,23 +104,35 @@ export class RunEvaluationInputJob {
               ? (toolCall as { input: unknown }).input
               : undefined;
 
-        messageParts.push({
-          type: 'tool-call',
-          toolName: toolCall.toolName,
+        const toolOutput =
+          toolResult && 'result' in toolResult
+            ? (toolResult as { result: unknown }).result
+            : toolResult && 'output' in toolResult
+              ? (toolResult as { output: unknown }).output
+              : undefined;
+
+        const isError =
+          toolResult && 'isError' in toolResult && toolResult.isError;
+
+        const basePart = {
+          type: `tool-${toolCall.toolName}` as `tool-${string}`,
           toolCallId: toolCall.toolCallId,
           input: toolInput,
-        });
-      }
-    }
+        };
 
-    if (executionResult.toolResults && executionResult.toolResults.length > 0) {
-      for (const toolResult of executionResult.toolResults) {
-        messageParts.push({
-          type: 'tool-result',
-          toolName: toolResult.toolName,
-          toolCallId: toolResult.toolCallId,
-          output: toolResult.output,
-        });
+        messageParts.push(
+          isError
+            ? {
+                ...basePart,
+                errorText: String(toolOutput),
+                state: 'output-error',
+              }
+            : {
+                ...basePart,
+                output: toolOutput,
+                state: 'output-available',
+              },
+        );
       }
     }
 
@@ -131,7 +147,7 @@ export class RunEvaluationInputJob {
       agentId: data.agentId,
       uiMessage: {
         role: 'assistant',
-        parts: messageParts as never,
+        parts: messageParts,
       },
     });
 

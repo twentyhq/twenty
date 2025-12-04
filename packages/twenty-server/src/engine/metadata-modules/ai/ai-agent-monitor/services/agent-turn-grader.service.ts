@@ -237,28 +237,25 @@ Respond ONLY with valid JSON in this exact format:
       .map((p) => p.textContent)
       .join('\n');
 
-    const toolCallParts = assistantParts.filter((p) => p.type === 'tool-call');
-    const toolResultParts = assistantParts.filter(
-      (p) => p.type === 'tool-result',
+    const toolParts = assistantParts.filter(
+      (p) => p.type.includes('tool-') && p.toolName,
     );
 
     let context = `**User Request:**\n${userText || '(no text)'}\n\n`;
 
-    if (toolCallParts.length > 0) {
+    if (toolParts.length > 0) {
       context += `**Tool Execution Details:**\n\n`;
 
-      toolCallParts.forEach((toolCall, idx) => {
-        const toolResult = toolResultParts.find(
-          (r) => r.toolCallId === toolCall.toolCallId,
-        );
-
+      toolParts.forEach((toolPart, idx) => {
         const status =
-          toolResult?.errorMessage || !toolResult ? 'FAILED' : 'SUCCESS';
+          toolPart.errorMessage || toolPart.state === 'output-error'
+            ? 'FAILED'
+            : 'SUCCESS';
 
-        context += `${idx + 1}. ${toolCall.toolName} (${status})\n`;
+        context += `${idx + 1}. ${toolPart.toolName} (${status})\n`;
 
-        if (toolCall.toolInput) {
-          const inputStr = JSON.stringify(toolCall.toolInput, null, 2);
+        if (toolPart.toolInput) {
+          const inputStr = JSON.stringify(toolPart.toolInput, null, 2);
           const truncatedInput =
             inputStr.length > 300
               ? inputStr.substring(0, 300) + '...'
@@ -267,8 +264,8 @@ Respond ONLY with valid JSON in this exact format:
           context += `   Input:\n${truncatedInput}\n`;
         }
 
-        if (toolResult?.toolOutput) {
-          const outputStr = JSON.stringify(toolResult.toolOutput, null, 2);
+        if (toolPart.toolOutput) {
+          const outputStr = JSON.stringify(toolPart.toolOutput, null, 2);
           const truncatedOutput =
             outputStr.length > 300
               ? outputStr.substring(0, 300) + '...'
@@ -277,8 +274,8 @@ Respond ONLY with valid JSON in this exact format:
           context += `   Output:\n${truncatedOutput}\n`;
         }
 
-        if (toolResult?.errorMessage) {
-          context += `   Error: ${toolResult.errorMessage}\n`;
+        if (toolPart.errorMessage) {
+          context += `   Error: ${toolPart.errorMessage}\n`;
         }
 
         context += '\n';
