@@ -127,6 +127,25 @@ describe('useInlineCell', () => {
       expect(result.current.focusStack).toEqual([]);
       expect(result.current.currentFocusId).toBeUndefined();
     });
+
+    it('should restore previous focus when closing inline cell with existing focus stack', async () => {
+      const { result } = renderUseInlineCellHook();
+
+      const sidePanelFocusId = 'side-panel-focus-id';
+
+      await act(async () => {
+        result.current.openInlineCell();
+      });
+
+      expect(result.current.currentFocusId).toEqual(expectedFocusId);
+
+      await act(async () => {
+        result.current.closeInlineCell();
+      });
+
+      expect(result.current.focusStack).toEqual([]);
+      expect(result.current.currentFocusId).toBeUndefined();
+    });
   });
 
   describe('focus stack integration', () => {
