@@ -4,8 +4,8 @@ import { QUOTED_STRING_REGEX } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
   type EnumFieldMetadataType,
-  type NonNullableRequired,
   type FieldMetadataOptions,
+  type NonNullableRequired,
 } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -25,7 +25,6 @@ import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
 const validateMetadataOptionId = (sanitizedId?: string) => {
   const errors: FlatFieldMetadataValidationError[] = [];
 
-  // Check if id is defined
   if (!isDefined(sanitizedId)) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -34,7 +33,6 @@ const validateMetadataOptionId = (sanitizedId?: string) => {
     });
   }
 
-  // Check if id is a valid UUID
   if (!z.string().uuid().safeParse(sanitizedId).success) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -52,7 +50,6 @@ const validateMetadataOptionLabel = (
 ): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
 
-  // Check if label is defined
   if (!isDefined(sanitizedLabel)) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -63,7 +60,6 @@ const validateMetadataOptionLabel = (
     return errors;
   }
 
-  // Check if label is a non-empty string
   if (!isNonEmptyString(sanitizedLabel)) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -75,7 +71,6 @@ const validateMetadataOptionLabel = (
     return errors;
   }
 
-  // Check if label exceeds maximum length
   if (sanitizedLabel.length > IDENTIFIER_MAX_CHAR_LENGTH) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -85,7 +80,6 @@ const validateMetadataOptionLabel = (
     });
   }
 
-  // Check if label is beneath minimum length
   if (sanitizedLabel.length < IDENTIFIER_MIN_CHAR_LENGTH) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -95,7 +89,6 @@ const validateMetadataOptionLabel = (
     });
   }
 
-  // Check if label contains a comma
   if (sanitizedLabel.includes(',')) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -105,7 +98,6 @@ const validateMetadataOptionLabel = (
     });
   }
 
-  // Check if label is empty or just a space
   if (!isNonEmptyString(sanitizedLabel) || sanitizedLabel === ' ') {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -123,7 +115,6 @@ const validateMetadataOptionValue = (
 ): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
 
-  // Check if value is defined
   if (!isDefined(sanitizedValue)) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -134,7 +125,6 @@ const validateMetadataOptionValue = (
     return errors;
   }
 
-  // Check if value is a non-empty string
   if (!isNonEmptyString(sanitizedValue)) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -146,7 +136,6 @@ const validateMetadataOptionValue = (
     return errors;
   }
 
-  // Check if value exceeds maximum length
   if (sanitizedValue.length > IDENTIFIER_MAX_CHAR_LENGTH) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -156,7 +145,6 @@ const validateMetadataOptionValue = (
     });
   }
 
-  // Check if value is beneath minimum length
   if (sanitizedValue.length < IDENTIFIER_MIN_CHAR_LENGTH) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -166,7 +154,6 @@ const validateMetadataOptionValue = (
     });
   }
 
-  // Check if value is in snake_case
   if (!isSnakeCaseString(sanitizedValue)) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -193,7 +180,6 @@ const validateDuplicates = (
     | FieldMetadataComplexOption[]
   )[number])[];
 
-  // Check for duplicates in each field
   for (const field of fieldsToCheckForDuplicates) {
     const hasDuplicates =
       new Set(options.map((option) => option[field])).size !== options.length;
@@ -249,7 +235,6 @@ const validateSelectDefaultValue = ({
 }): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
 
-  // Check if defaultValue is a string
   if (typeof defaultValue !== 'string') {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -261,7 +246,6 @@ const validateSelectDefaultValue = ({
     return errors;
   }
 
-  // Check if defaultValue is a quoted string
   if (!QUOTED_STRING_REGEX.test(defaultValue)) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -271,7 +255,6 @@ const validateSelectDefaultValue = ({
     });
   }
 
-  // Check if defaultValue matches one of the option values
   const matchesOptionValue = options.some(
     (option) =>
       option.value === defaultValue.replace(QUOTED_STRING_REGEX, '$1'),
@@ -298,7 +281,6 @@ const validateMultiSelectDefaultValue = ({
 }): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
 
-  // Check if multiSelectDefaultValue is an array
   if (!Array.isArray(multiSelectDefaultValue)) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -310,7 +292,6 @@ const validateMultiSelectDefaultValue = ({
     return errors;
   }
 
-  // Check if array is empty
   if (multiSelectDefaultValue.length === 0) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -320,7 +301,6 @@ const validateMultiSelectDefaultValue = ({
     });
   }
 
-  // Check if array has duplicates
   if (
     new Set(multiSelectDefaultValue).size !== multiSelectDefaultValue.length
   ) {
@@ -332,7 +312,6 @@ const validateMultiSelectDefaultValue = ({
     });
   }
 
-  // Validate each individual default value
   for (const defaultValue of multiSelectDefaultValue) {
     errors.push(
       ...validateSelectDefaultValue({
