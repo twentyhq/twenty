@@ -17,6 +17,7 @@ type GraphWidgetFloatingTooltipProps = {
   onGraphWidgetTooltipClick?: () => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
+  disablePointerEvents?: boolean;
 };
 
 export const GraphWidgetFloatingTooltip = ({
@@ -28,6 +29,7 @@ export const GraphWidgetFloatingTooltip = ({
   onGraphWidgetTooltipClick,
   onMouseEnter,
   onMouseLeave,
+  disablePointerEvents = false,
 }: GraphWidgetFloatingTooltipProps) => {
   const theme = useTheme();
 
@@ -44,7 +46,11 @@ export const GraphWidgetFloatingTooltip = ({
     <FloatingPortal root={boundary}>
       <div
         ref={refs.setFloating}
-        style={{ ...floatingStyles, zIndex: theme.lastLayerZIndex }}
+        style={{
+          ...floatingStyles,
+          zIndex: theme.lastLayerZIndex,
+          pointerEvents: disablePointerEvents ? 'none' : 'auto',
+        }}
         role="tooltip"
         aria-live="polite"
         onMouseEnter={onMouseEnter}
