@@ -24,7 +24,7 @@ import { IconArrowUpRight, IconCopy, IconPencil } from 'twenty-ui/display';
 export const RecordTableCellEditButton = () => {
   const { cellPosition } = useContext(RecordTableCellContext);
   const { fieldDefinition, recordId } = useContext(FieldContext);
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
   const { openTableCell } = useOpenRecordTableCellFromCell();
   const isFieldInputOnly = useIsFieldInputOnly();
@@ -120,10 +120,14 @@ export const RecordTableCellEditButton = () => {
           options: { duration: 2000 },
         });
       }
-    } catch {}
+    } catch {
+      enqueueErrorSnackBar({
+        message: t`Error copying to clipboard`,
+        options: { duration: 2000 },
+      });
+    }
   };
 
-  console.log('actionMode', actionMode);
   const isNavigatePrimary = actionMode === 'navigate';
   const secondaryClick = actionMode
     ? isNavigatePrimary
