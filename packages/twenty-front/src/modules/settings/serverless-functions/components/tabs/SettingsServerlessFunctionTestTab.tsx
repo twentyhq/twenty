@@ -67,13 +67,16 @@ export const SettingsServerlessFunctionTestTab = ({
           <CodeEditor
             value={JSON.stringify(serverlessFunctionTestData.input, null, 4)}
             language="json"
-            height={200}
+            height={100}
             onChange={onChange}
             variant="with-header"
           />
         </StyledCodeEditorContainer>
         <ServerlessFunctionExecutionResult
           serverlessFunctionTestData={serverlessFunctionTestData}
+          maxHeight={
+            serverlessFunctionTestData.output.logs.length > 0 ? 200 : undefined
+          }
           isTesting={isTesting}
         />
         {serverlessFunctionTestData.output.logs.length > 0 && (
