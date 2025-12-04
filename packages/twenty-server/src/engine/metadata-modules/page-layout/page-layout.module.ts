@@ -17,6 +17,7 @@ import { PageLayoutUpdateService } from 'src/engine/metadata-modules/page-layout
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
@@ -27,6 +28,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
       PageLayoutEntity,
       PageLayoutTabEntity,
       PageLayoutWidgetEntity,
+      WorkspaceEntity,
     ]),
     TwentyORMModule,
     PermissionsModule,
