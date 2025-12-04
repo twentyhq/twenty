@@ -11,6 +11,7 @@ import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
+import { v4 } from 'uuid';
 
 const TWENTY_STANDARD_APPLICATION_ID =
   TWENTY_STANDARD_APPLICATION.universalIdentifier;
@@ -92,7 +93,7 @@ export const createStandardFieldFlatMetadata = <
     standardOverrides: null,
     defaultValue,
     settings,
-    options: fieldOptions,
+    options: fieldOptions?.map((option) => ({ ...option, id: v4() })) ?? null,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     morphId: null,
