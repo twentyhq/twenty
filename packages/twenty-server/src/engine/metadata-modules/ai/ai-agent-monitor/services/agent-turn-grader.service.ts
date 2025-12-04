@@ -278,20 +278,28 @@ Respond ONLY with valid JSON in this exact format:
       .map((p) => p.textContent)
       .join('\n');
 
-    const toolParts = assistantParts.filter((p) => p.toolName);
+    const toolCallParts = assistantParts.filter((p) => p.type === 'tool-call');
+    const toolResultParts = assistantParts.filter(
+      (p) => p.type === 'tool-result',
+    );
 
     let context = `**User Request:**\n${userText || '(no text)'}\n\n`;
 
-    if (toolParts.length > 0) {
+    if (toolCallParts.length > 0) {
       context += `**Tool Execution Details:**\n\n`;
 
-      toolParts.forEach((part, idx) => {
-        const status = part.errorMessage ? 'FAILED' : 'SUCCESS';
+      toolCallParts.forEach((toolCall, idx) => {
+        const toolResult = toolResultParts.find(
+          (r) => r.toolCallId === toolCall.toolCallId,
+        );
 
-        context += `${idx + 1}. ${part.toolName} (${status})\n`;
+        const status =
+          toolResult?.errorMessage || !toolResult ? 'FAILED' : 'SUCCESS';
 
-        if (part.toolInput) {
-          const inputStr = JSON.stringify(part.toolInput, null, 2);
+        context += `${idx + 1}. ${toolCall.toolName} (${status})\n`;
+
+        if (toolCall.toolInput) {
+          const inputStr = JSON.stringify(toolCall.toolInput, null, 2);
           const truncatedInput =
             inputStr.length > 300
               ? inputStr.substring(0, 300) + '...'
@@ -300,8 +308,8 @@ Respond ONLY with valid JSON in this exact format:
           context += `   Input:\n${truncatedInput}\n`;
         }
 
-        if (part.toolOutput) {
-          const outputStr = JSON.stringify(part.toolOutput, null, 2);
+        if (toolResult?.toolOutput) {
+          const outputStr = JSON.stringify(toolResult.toolOutput, null, 2);
           const truncatedOutput =
             outputStr.length > 300
               ? outputStr.substring(0, 300) + '...'
@@ -310,8 +318,8 @@ Respond ONLY with valid JSON in this exact format:
           context += `   Output:\n${truncatedOutput}\n`;
         }
 
-        if (part.errorMessage) {
-          context += `   Error: ${part.errorMessage}\n`;
+        if (toolResult?.errorMessage) {
+          context += `   Error: ${toolResult.errorMessage}\n`;
         }
 
         context += '\n';

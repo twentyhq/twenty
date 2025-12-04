@@ -9,6 +9,8 @@ import {
   stepCountIs,
   streamText,
   ToolSet,
+  TypedToolCall,
+  TypedToolResult,
   UIDataTypes,
   UIMessage,
   UITools,
@@ -42,6 +44,8 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 export interface AgentExecutionResult {
   result: object;
+  toolCalls?: TypedToolCall<ToolSet>[];
+  toolResults?: TypedToolResult<ToolSet>[];
   usage: LanguageModelUsage;
 }
 
@@ -453,6 +457,13 @@ export class AgentExecutionService {
         experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 
+      const allToolCalls = textResponse.steps.flatMap(
+        (step) => step.toolCalls || [],
+      );
+      const allToolResults = textResponse.steps.flatMap(
+        (step) => step.toolResults || [],
+      );
+
       const agentSchema =
         agent?.responseFormat?.type === 'json'
           ? agent.responseFormat.schema
@@ -461,6 +472,8 @@ export class AgentExecutionService {
       if (!agentSchema) {
         return {
           result: { response: textResponse.text },
+          toolCalls: allToolCalls,
+          toolResults: allToolResults,
           usage: textResponse.usage,
         };
       }
@@ -479,6 +492,8 @@ export class AgentExecutionService {
 
       return {
         result: output.object as object,
+        toolCalls: allToolCalls,
+        toolResults: allToolResults,
         usage: {
           inputTokens:
             (textResponse.usage?.inputTokens ?? 0) +

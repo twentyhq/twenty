@@ -1,5 +1,7 @@
 import { Logger } from '@nestjs/common';
 
+import { TextPart, ToolCallPart, ToolResultPart } from 'ai';
+
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -46,18 +48,49 @@ export class RunEvaluationInputJob {
       userPrompt: data.input,
     });
 
+    const messageParts: (TextPart | ToolCallPart | ToolResultPart)[] = [];
+
+    if (executionResult.toolCalls && executionResult.toolCalls.length > 0) {
+      for (const toolCall of executionResult.toolCalls) {
+        const toolInput =
+          'args' in toolCall
+            ? (toolCall as { args: unknown }).args
+            : 'input' in toolCall
+              ? (toolCall as { input: unknown }).input
+              : undefined;
+
+        messageParts.push({
+          type: 'tool-call',
+          toolName: toolCall.toolName,
+          toolCallId: toolCall.toolCallId,
+          input: toolInput,
+        });
+      }
+    }
+
+    if (executionResult.toolResults && executionResult.toolResults.length > 0) {
+      for (const toolResult of executionResult.toolResults) {
+        messageParts.push({
+          type: 'tool-result',
+          toolName: toolResult.toolName,
+          toolCallId: toolResult.toolCallId,
+          output: toolResult.output,
+        });
+      }
+    }
+
+    messageParts.push({
+      type: 'text',
+      text: JSON.stringify(executionResult.result) || '',
+    });
+
     await this.agentChatService.addMessage({
       threadId: data.threadId,
       turnId: data.turnId,
       agentId: data.agentId,
       uiMessage: {
         role: 'assistant',
-        parts: [
-          {
-            type: 'text',
-            text: JSON.stringify(executionResult.result) || '',
-          },
-        ],
+        parts: messageParts as never,
       },
     });
 
