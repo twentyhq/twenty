@@ -18,6 +18,13 @@ export const createWorkflowVersionStepSchema = z.object({
     .string()
     .optional()
     .describe('Optional ID of the parent step this step should come after'),
+  parentStepConnectionOptions: z
+    .object({
+      type: z.string().optional(),
+      conditionGroupIndex: z.number().optional(),
+    })
+    .optional()
+    .describe('Optional parent step connection options'),
   nextStepId: z
     .string()
     .optional()
@@ -29,6 +36,7 @@ export const createWorkflowVersionStepSchema = z.object({
     })
     .optional()
     .describe('Optional position coordinates for the step'),
+  id: z.string().optional().describe('Optional step ID'),
 });
 
 export type CreateWorkflowVersionStepToolInput = z.infer<

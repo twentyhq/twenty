@@ -11,7 +11,7 @@ export const updateWorkflowVersionPositionsSchema = z.object({
   positions: z
     .array(
       z.object({
-        stepId: z.string(),
+        id: z.string().describe('Step or trigger ID'),
         position: z.object({
           x: z.number(),
           y: z.number(),
