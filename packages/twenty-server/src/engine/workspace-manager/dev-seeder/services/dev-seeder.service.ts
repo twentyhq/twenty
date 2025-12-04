@@ -86,7 +86,7 @@ export class DevSeederService {
       );
     }
 
-    const { twentyStandardFlatApplication } =
+    const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,
@@ -116,7 +116,12 @@ export class DevSeederService {
     });
 
     await seedPageLayouts(this.coreDataSource, 'core', workspaceId);
-    await seedPageLayoutTabs(this.coreDataSource, 'core', workspaceId);
+    await seedPageLayoutTabs({
+      applicationId: workspaceCustomFlatApplication.id,
+      workspaceId,
+      dataSource: this.coreDataSource,
+      schemaName: 'core',
+    });
 
     const objectMetadataRepository =
       this.coreDataSource.getRepository(ObjectMetadataEntity);
