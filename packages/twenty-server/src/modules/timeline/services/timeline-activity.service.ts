@@ -85,7 +85,7 @@ export class TimelineActivityService {
       );
 
     for (const objectSingularName in payloadsByObjectSingularName) {
-      this.timelineActivityRepository.upsertTimelineActivities({
+      await this.timelineActivityRepository.upsertTimelineActivities({
         objectSingularName,
         workspaceId,
         payloads: payloadsByObjectSingularName[objectSingularName],
