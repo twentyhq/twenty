@@ -164,18 +164,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     workspaceId,
   };
 
-  const targetFlatFieldMetadataSettingsRelation =
-    computeFieldMetadataRelationSettingsForRelationType({
-      joinColumnName: computeMorphOrRelationFieldJoinColumnName({
-        name: targetCreateFieldInput.name,
-      }),
-      relationType:
-        relationCreationPayload.type === RelationType.ONE_TO_MANY
-          ? RelationType.MANY_TO_ONE
-          : RelationType.ONE_TO_MANY,
-    });
-
-  const targetFlatFieldMetadataSettingsMorphRelation =
+  const targetFlatFieldMetadataSettings =
     computeFieldMetadataRelationSettingsForRelationType({
       joinColumnName: computeMorphOrRelationFieldJoinColumnName({
         name: targetCreateFieldInput.name,
@@ -201,10 +190,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
         : null,
     type: targetFlatFieldMetadataType,
     defaultValue: null,
-    settings:
-      targetFlatFieldMetadataType === FieldMetadataType.RELATION
-        ? targetFlatFieldMetadataSettingsRelation
-        : targetFlatFieldMetadataSettingsMorphRelation,
+    settings: targetFlatFieldMetadataSettings,
     options: null,
     relationTargetFieldMetadataId: sourceRelationTargetFieldMetadataId,
     relationTargetObjectMetadataId: sourceFlatObjectMetadata.id,
