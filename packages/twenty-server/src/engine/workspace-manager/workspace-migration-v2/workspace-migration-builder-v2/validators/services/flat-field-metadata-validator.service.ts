@@ -131,7 +131,10 @@ export class FlatFieldMetadataValidatorService {
 
     if (updates.some((update) => update.property === 'name')) {
       validationResult.errors.push(
-        ...validateFlatFieldMetadataName(flatFieldMetadataToValidate.name),
+        ...validateFlatFieldMetadataName({
+          name: flatFieldMetadataToValidate.name,
+          buildOptions,
+        }),
         ...validateFlatFieldMetadataNameAvailability({
           name: flatFieldMetadataToValidate.name,
           flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
@@ -326,7 +329,10 @@ export class FlatFieldMetadataValidatorService {
     }
 
     validationResult.errors.push(
-      ...validateFlatFieldMetadataName(flatFieldMetadataToValidate.name),
+      ...validateFlatFieldMetadataName({
+        name: flatFieldMetadataToValidate.name,
+        buildOptions,
+      }),
     );
 
     validationResult.errors.push(
