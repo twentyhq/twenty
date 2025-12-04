@@ -126,13 +126,16 @@ export abstract class CommonBaseQueryRunnerService<
       flatFieldMetadataMaps,
     );
 
-    const processedArgs = await this.processArgs(
-      args,
-      queryRunnerContext,
-      this.operationName,
+    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
+      args.selectedFields,
     );
 
     this.validateQueryComplexity(selectedFieldsResult, args);
+
+    const processedArgs = {
+      ...(await this.processArgs(args, queryRunnerContext, this.operationName)),
+      selectedFieldsResult,
+    } as CommonExtendedInput<Args>;
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       authContext,
