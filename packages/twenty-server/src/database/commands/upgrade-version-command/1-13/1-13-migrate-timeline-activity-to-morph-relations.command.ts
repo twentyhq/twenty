@@ -11,7 +11,10 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { TIMELINE_ACTIVITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
@@ -31,6 +34,9 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     protected readonly dataSourceService: DataSourceService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
@@ -233,8 +239,21 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
       workspaceId,
     );
 
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      // 'ORMEntityMetadatas',
+      // 'flatFieldMetadataMaps',
+      // 'flatObjectMetadataMaps',
+    ]);
+
+    await this.workspaceMetadataVersionService.incrementMetadataVersion(
+      workspaceId,
+    );
+
     this.logger.log(
       `Set IS_TIMELINE_ACTIVITY_MIGRATED feature flag for workspace ${workspaceId}`,
     );
+
+    this.logger.log(`Flush cache for workspace ${workspaceId}`);
+    await this.workspaceCacheStorageService.flush(workspaceId);
   }
 }

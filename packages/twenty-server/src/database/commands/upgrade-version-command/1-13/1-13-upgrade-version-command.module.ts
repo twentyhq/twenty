@@ -19,6 +19,7 @@ import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 @Module({
@@ -35,8 +36,9 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
     ]),
     DataSourceModule,
     WorkspaceSchemaManagerModule,
-    FeatureFlagModule,
     WorkspaceCacheStorageModule,
+    FeatureFlagModule,
+    WorkspaceCacheModule,
     ObjectMetadataModule,
     ApplicationModule,
   ],
