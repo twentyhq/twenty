@@ -28,8 +28,16 @@ export const TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL = {
 
 export const INVALID_STANDALONE_RICH_TEXT_CONFIG_MISSING_BODY = {};
 
-export const INVALID_STANDALONE_RICH_TEXT_CONFIG_EMPTY_BODY = {
-  body: {},
+export const INVALID_STANDALONE_RICH_TEXT_CONFIG_BODY_WRONG_TYPE = {
+  body: 'not an object',
+};
+
+export const INVALID_STANDALONE_RICH_TEXT_CONFIG_INVALID_SUBFIELDS = {
+  body: {
+    blocknote: 'valid',
+    markdown: 'valid',
+    invalidField: 'should not be here',
+  },
 };
 
 export const TEST_IFRAME_CONFIG_ALTERNATIVE = {

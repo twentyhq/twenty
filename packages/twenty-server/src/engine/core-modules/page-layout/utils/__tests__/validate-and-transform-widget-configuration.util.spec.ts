@@ -4,6 +4,8 @@ import {
   INVALID_IFRAME_CONFIG_EMPTY_URL,
   INVALID_NUMBER_CHART_CONFIG_BAD_UUID,
   INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
+  INVALID_STANDALONE_RICH_TEXT_CONFIG_BODY_WRONG_TYPE,
+  INVALID_STANDALONE_RICH_TEXT_CONFIG_INVALID_SUBFIELDS,
   INVALID_STANDALONE_RICH_TEXT_CONFIG_MISSING_BODY,
   INVALID_VERTICAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
   TEST_GAUGE_CHART_CONFIG,
@@ -85,6 +87,29 @@ describe('validateAndTransformWidgetConfiguration', () => {
           isDashboardV2Enabled: false,
         }),
       ).toThrow(/body/);
+    });
+
+    it('should throw error when body is wrong type', () => {
+      expect(() =>
+        validateAndTransformWidgetConfiguration({
+          type: WidgetType.STANDALONE_RICH_TEXT,
+          configuration: INVALID_STANDALONE_RICH_TEXT_CONFIG_BODY_WRONG_TYPE,
+          isDashboardV2Enabled: false,
+        }),
+      ).toThrow();
+    });
+
+    it('should strip invalid subfields from body', () => {
+      const result = validateAndTransformWidgetConfiguration({
+        type: WidgetType.STANDALONE_RICH_TEXT,
+        configuration: INVALID_STANDALONE_RICH_TEXT_CONFIG_INVALID_SUBFIELDS,
+        isDashboardV2Enabled: false,
+      });
+
+      expect(result).toBeDefined();
+      expect((result as any).body.blocknote).toBe('valid');
+      expect((result as any).body.markdown).toBe('valid');
+      expect((result as any).body.invalidField).toBeUndefined();
     });
   });
 
