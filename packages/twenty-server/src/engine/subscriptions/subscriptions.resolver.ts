@@ -11,6 +11,7 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { OnDbEventDTO } from 'src/engine/subscriptions/dtos/on-db-event.dto';
 import { OnDbEventInput } from 'src/engine/subscriptions/dtos/on-db-event.input';
+import { ON_DB_EVENT_TRIGGER } from 'src/engine/subscriptions/constants/on-db-event-trigger';
 
 @Resolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
@@ -43,6 +44,6 @@ export class SubscriptionsResolver {
     },
   })
   onDbEvent(@Args('input') _: OnDbEventInput) {
-    return this.pubSub.asyncIterator('onDbEvent');
+    return this.pubSub.asyncIterator(ON_DB_EVENT_TRIGGER);
   }
 }

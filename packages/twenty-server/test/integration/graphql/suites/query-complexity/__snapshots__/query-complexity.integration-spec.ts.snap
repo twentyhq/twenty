@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Query Complexity should fail to execute a query with duplicate root resolvers 1`] = `"Duplicate root resolver: "people""`;
+
+exports[`Query Complexity should fail to execute a query with too many fields 1`] = `"Query too complex - Too many fields requested : 2010 - Maximum allowed fields: 2000"`;
+
+exports[`Query Complexity should fail to execute a query with too many root resolvers 1`] = `"Query too complex - Too many root resolvers requested: 21 - Maximum allowed root resolvers: 20"`;
