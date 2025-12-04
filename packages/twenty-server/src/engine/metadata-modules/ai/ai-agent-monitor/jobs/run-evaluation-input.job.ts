@@ -12,6 +12,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { AgentExecutionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-execution.service';
 import { AgentToolGeneratorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-tool-generator.service';
+import { SimplifiedTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-snapshot.type';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -66,20 +67,30 @@ export class RunEvaluationInputJob {
     const roleId = flatRoleTargetByAgentIdMaps[data.agentId]?.roleId;
     const roleIds = roleId ? [roleId] : undefined;
 
-    const availableTools =
-      await this.agentToolGeneratorService.generateToolsForAgent(
-        data.agentId,
-        data.workspaceId,
-        undefined,
-        roleIds,
-      );
+    const toolSet = await this.agentToolGeneratorService.generateToolsForAgent(
+      data.agentId,
+      data.workspaceId,
+      undefined,
+      roleIds,
+    );
+
+    const simplifiedTools: Record<string, SimplifiedTool> = {};
+
+    for (const [name, tool] of Object.entries(toolSet)) {
+      const parameters = this.extractToolParameterNames(tool);
+
+      simplifiedTools[name] = {
+        description: tool.description,
+        parameters: parameters.length > 0 ? parameters : undefined,
+      };
+    }
 
     await this.turnRepository.update(data.turnId, {
       executionSnapshot: {
         agentName: agent.name,
         agentDescription: agent.description ?? null,
         systemPrompt: agent.prompt,
-        availableTools,
+        availableTools: simplifiedTools,
       },
     });
 
@@ -158,5 +169,29 @@ export class RunEvaluationInputJob {
       turnId: data.turnId,
       workspaceId: data.workspaceId,
     });
+  }
+
+  private extractToolParameterNames(tool: unknown): string[] {
+    if (!tool || typeof tool !== 'object') return [];
+
+    const toolObj = tool as Record<string, unknown>;
+
+    const inputSchema = toolObj.inputSchema as
+      | Record<string, unknown>
+      | undefined;
+
+    if (inputSchema?.properties && typeof inputSchema.properties === 'object') {
+      return Object.keys(inputSchema.properties);
+    }
+
+    const parameters = toolObj.parameters as
+      | Record<string, unknown>
+      | undefined;
+
+    if (parameters?.properties && typeof parameters.properties === 'object') {
+      return Object.keys(parameters.properties);
+    }
+
+    return [];
   }
 }

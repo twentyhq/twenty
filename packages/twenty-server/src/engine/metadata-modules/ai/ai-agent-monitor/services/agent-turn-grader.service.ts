@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { generateText, type ToolSet } from 'ai';
+import { generateText } from 'ai';
 import { Repository } from 'typeorm';
 
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
@@ -136,14 +136,14 @@ Respond ONLY with valid JSON in this exact format:
     context += `- System Prompt/Instructions:\n${promptPreview}\n`;
 
     context +=
-      '\n' +
-      this.formatToolsForEvaluation(snapshot.availableTools as ToolSet) +
-      '\n';
+      '\n' + this.formatToolsForEvaluation(snapshot.availableTools) + '\n';
 
     return context;
   }
 
-  private formatToolsForEvaluation(tools: ToolSet): string {
+  private formatToolsForEvaluation(
+    tools: Record<string, { description?: string; parameters?: string[] }>,
+  ): string {
     if (!tools || Object.keys(tools).length === 0) {
       return '**Available Tools:** None';
     }
@@ -157,59 +157,14 @@ Respond ONLY with valid JSON in this exact format:
         formatted += `: ${tool.description}`;
       }
 
-      try {
-        const paramNames = this.extractParameterNames(tool);
-
-        if (paramNames.length > 0) {
-          formatted += ` (${paramNames.join(', ')})`;
-        }
-      } catch {
-        // Silently skip parameter extraction if it fails
+      if (tool.parameters && tool.parameters.length > 0) {
+        formatted += ` (${tool.parameters.join(', ')})`;
       }
 
       formatted += '\n';
     });
 
     return formatted;
-  }
-
-  private extractParameterNames(tool: unknown): string[] {
-    if (!tool || typeof tool !== 'object') {
-      return [];
-    }
-
-    const toolObj = tool as Record<string, unknown>;
-
-    const inputSchema = toolObj.inputSchema as
-      | Record<string, unknown>
-      | undefined;
-
-    if (inputSchema?.properties && typeof inputSchema.properties === 'object') {
-      return Object.keys(inputSchema.properties);
-    }
-
-    const parameters = toolObj.parameters as
-      | Record<string, unknown>
-      | undefined;
-
-    if (parameters?.properties && typeof parameters.properties === 'object') {
-      return Object.keys(parameters.properties);
-    }
-
-    if (
-      parameters?.parameters &&
-      typeof parameters.parameters === 'object' &&
-      (parameters.parameters as Record<string, unknown>).properties
-    ) {
-      const nestedProps = (parameters.parameters as Record<string, unknown>)
-        .properties;
-
-      if (typeof nestedProps === 'object' && nestedProps !== null) {
-        return Object.keys(nestedProps);
-      }
-    }
-
-    return [];
   }
 
   private buildEvaluationContext(
