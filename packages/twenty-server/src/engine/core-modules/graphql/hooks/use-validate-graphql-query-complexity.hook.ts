@@ -33,7 +33,7 @@ export const useValidateGraphqlQueryComplexity = ({
   maximumAllowedFields?: number;
   maximumAllowedRootResolvers?: number;
   maximumAllowedNestedFields?: number;
-  checkDuplicateRootResolvers: boolean;
+  checkDuplicateRootResolvers?: boolean;
 }): Plugin => ({
   onParse: () => {
     return ({ result }) => {

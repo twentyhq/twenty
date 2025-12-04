@@ -1,4 +1,5 @@
 import { parse } from 'graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useValidateGraphqlQueryComplexity } from 'src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook';
 
@@ -9,7 +10,7 @@ describe('useValidateGraphqlQueryComplexity', () => {
   ): Error | null => {
     const plugin = useValidateGraphqlQueryComplexity(options);
 
-    if (!plugin.onParse) {
+    if (!isDefined(plugin.onParse)) {
       throw new Error('onParse hook not found');
     }
 
@@ -53,7 +54,6 @@ describe('useValidateGraphqlQueryComplexity', () => {
 
       const error = validateQuery(query, {
         maximumAllowedFields: 10,
-        checkDuplicateRootResolvers: false,
       });
 
       expect(error).toBeNull();
@@ -72,34 +72,11 @@ describe('useValidateGraphqlQueryComplexity', () => {
 
       const error = validateQuery(query, {
         maximumAllowedFields: 3,
-        checkDuplicateRootResolvers: false,
       });
 
       expect(error).not.toBeNull();
       expect(error?.message).toContain('Too many fields requested');
       expect(error?.message).toContain('Maximum allowed fields: 3');
-    });
-
-    it('should not enforce limit when maximumAllowedFields is undefined', () => {
-      const query = `
-        query {
-          user {
-            id
-            name
-            email
-            posts {
-              id
-              title
-            }
-          }
-        }
-      `;
-
-      const error = validateQuery(query, {
-        checkDuplicateRootResolvers: false,
-      });
-
-      expect(error).toBeNull();
     });
   });
 
@@ -118,7 +95,6 @@ describe('useValidateGraphqlQueryComplexity', () => {
 
       const error = validateQuery(query, {
         maximumAllowedRootResolvers: 3,
-        checkDuplicateRootResolvers: false,
       });
 
       expect(error).toBeNull();
@@ -141,7 +117,78 @@ describe('useValidateGraphqlQueryComplexity', () => {
 
       const error = validateQuery(query, {
         maximumAllowedRootResolvers: 2,
-        checkDuplicateRootResolvers: false,
+      });
+
+      expect(error).not.toBeNull();
+      expect(error?.message).toContain('Too many root resolvers requested');
+      expect(error?.message).toContain('Maximum allowed root resolvers: 2');
+    });
+
+    it('should fail when root resolvers count exceeds limit -  multiple queries', () => {
+      const query = `
+        query {
+          user {
+            id
+          }
+          posts {
+            id
+          }
+          comments {
+            id
+          }
+        }
+        query {
+          user {
+            id
+          }
+          posts {
+            id
+          }
+          comments {
+            id
+          }
+        }
+      `;
+
+      const error = validateQuery(query, {
+        maximumAllowedRootResolvers: 4,
+      });
+
+      expect(error).not.toBeNull();
+      expect(error?.message).toContain(
+        'Query too complex - Too many root resolvers requested: 6 - Maximum allowed root resolvers: 4',
+      );
+    });
+
+    it('should fail when root resolvers count exceeds limit -  fragment', () => {
+      const query = `
+        fragment UserFields on User {
+          id
+        }
+
+        fragment PostFields on Post {
+          id
+        }
+
+        fragment CommentFields on Comment {
+          id
+        }
+
+        query {
+          ...UserFields
+          ...PostFields
+          ...CommentFields
+        }
+
+        query {
+          ...UserFields
+          ...PostFields
+          ...CommentFields
+        }
+      `;
+
+      const error = validateQuery(query, {
+        maximumAllowedRootResolvers: 4,
       });
 
       expect(error).not.toBeNull();
@@ -194,6 +241,35 @@ describe('useValidateGraphqlQueryComplexity', () => {
       expect(error?.message).toContain('Too many nested fields requested');
       expect(error?.message).toContain('Maximum allowed nested fields: 3');
     });
+
+    it('should fail when depth exceeds limit - fragment', () => {
+      const query = `
+        fragment UserFields on User {
+          profile {
+            settings {
+              notifications {
+                email
+              }
+            }
+          }
+        }
+
+        query {
+          user {
+            nested {
+            ...UserFields
+            }
+          }
+        }
+      `;
+
+      const error = validateQuery(query, { maximumAllowedNestedFields: 1 });
+
+      expect(error).not.toBeNull();
+      expect(error?.message).toContain(
+        'Query too complex - Too many nested fields requested: 6 - Maximum allowed nested fields: 1',
+      );
+    });
   });
 
   describe('checkDuplicateRootResolvers', () => {
@@ -238,68 +314,28 @@ describe('useValidateGraphqlQueryComplexity', () => {
       expect(error?.message).toContain('Duplicate root resolver');
       expect(error?.message).toContain('user');
     });
-  });
 
-  describe('fragment handling', () => {
-    it('should handle nested fragment spreads', () => {
+    it('should fail when duplicate root resolvers are detected - multiple queries', () => {
       const query = `
-        fragment ProfileFields on Profile {
-          bio
-          avatar
-        }
-
-        fragment UserFields on User {
-          id
-          profile {
-            ...ProfileFields
-          }
-        }
-
         query {
           user {
-            ...UserFields
+            id
+          }
+        }
+        query {
+          user {
+            id
           }
         }
       `;
 
       const error = validateQuery(query, {
-        maximumAllowedFields: 10,
-        checkDuplicateRootResolvers: false,
-      });
-
-      expect(error).toBeNull();
-    });
-
-    it('should calculate depth correctly with fragments', () => {
-      const query = `
-        fragment DeepSettings on Settings {
-          notifications {
-            email
-          }
-        }
-
-        fragment ProfileWithSettings on Profile {
-          settings {
-            ...DeepSettings
-          }
-        }
-
-        query {
-          user {
-            profile {
-              ...ProfileWithSettings
-            }
-          }
-        }
-      `;
-
-      const error = validateQuery(query, {
-        maximumAllowedNestedFields: 3,
-        checkDuplicateRootResolvers: false,
+        checkDuplicateRootResolvers: true,
       });
 
       expect(error).not.toBeNull();
-      expect(error?.message).toContain('Too many nested fields requested');
+      expect(error?.message).toContain('Duplicate root resolver');
+      expect(error?.message).toContain('user');
     });
   });
 });
