@@ -12,9 +12,8 @@ import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pa
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { t } from '@lingui/core/macro';
-import { IconTextCaption } from '@tabler/icons-react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChartPie, IconFrame } from 'twenty-ui/display';
+import { IconAlignBoxLeftTop, IconChartPie, IconFrame } from 'twenty-ui/display';
 import { GraphType } from '~/generated-metadata/graphql';
 
 export const CommandMenuPageLayoutWidgetTypeSelect = () => {
@@ -118,7 +117,7 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
           onEnter={handleNavigateToRichTextSettings}
         >
           <CommandMenuItem
-            Icon={IconTextCaption}
+            Icon={IconAlignBoxLeftTop}
             label={t`Rich Text`}
             id="rich-text"
             onClick={handleNavigateToRichTextSettings}

@@ -6,6 +6,7 @@ import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconAlignBoxLeftTop,
   IconAppWindow,
   IconFrame,
   IconPlus,
@@ -155,6 +156,36 @@ export const usePageLayoutHeaderInfo = ({
         isReadonly: true,
         tab: undefined,
         widgetInEditMode: undefined,
+      };
+    }
+
+    case CommandMenuPages.PageLayoutStandaloneRichTextSettings: {
+      if (!isDefined(pageLayoutEditingWidgetId)) {
+        return null;
+      }
+
+      const widgetInEditMode = draftPageLayout.tabs
+        .flatMap((tab) => tab.widgets)
+        .find((widget) => widget.id === pageLayoutEditingWidgetId);
+
+      if (!isDefined(widgetInEditMode)) {
+        return null;
+      }
+
+      const title = isDefined(editedTitle)
+        ? editedTitle
+        : isDefined(widgetInEditMode.title) && widgetInEditMode.title !== ''
+          ? widgetInEditMode.title
+          : '';
+
+      return {
+        headerIcon: IconAlignBoxLeftTop,
+        headerIconColor: iconColor,
+        headerType: t`Rich Text Widget`,
+        title,
+        isReadonly: false,
+        tab: undefined,
+        widgetInEditMode,
       };
     }
 

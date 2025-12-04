@@ -22,12 +22,8 @@ export const CommandMenuPageLayoutIframeSettings = () => {
 
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
 
-  if (!isDefined(widgetInEditMode)) {
-    throw new Error('Widget ID must be present while editing the widget');
-  }
-
   const configUrl =
-    widgetInEditMode.configuration && 'url' in widgetInEditMode.configuration
+    widgetInEditMode?.configuration && 'url' in widgetInEditMode.configuration
       ? widgetInEditMode.configuration.url
       : null;
 
@@ -35,6 +31,10 @@ export const CommandMenuPageLayoutIframeSettings = () => {
     isString(configUrl) ? configUrl : null,
   );
   const [urlError, setUrlError] = useState('');
+
+  if (!isDefined(widgetInEditMode)) {
+    return null;
+  }
 
   const validateUrl = (urlString: string): boolean => {
     const trimmedUrl = urlString.trim();

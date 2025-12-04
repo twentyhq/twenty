@@ -19,12 +19,12 @@ import {
 } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
-  padding: ${({ theme }) => theme.spacing(4)};
-  box-sizing: border-box;
+  overflow: hidden;
 `;
 
 const StyledEmptyState = styled.div`
@@ -53,11 +53,9 @@ export const StandaloneRichTextWidget = ({
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget();
   const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
 
-  // For dashboards, targetRecordIdentifier.id is the dashboard ID
   const isDashboard = layoutType === PageLayoutType.DASHBOARD;
   const dashboardId = isDashboard ? targetRecordIdentifier?.id : undefined;
 
-  // Extract configuration
   const configuration = widget.configuration as
     | StandaloneRichTextConfiguration
     | undefined;
@@ -69,7 +67,6 @@ export const StandaloneRichTextWidget = ({
     return null;
   }, [configuration]);
 
-  // Fetch attachments linked to this dashboard (for file uploads in rich text)
   const { records: attachments } = useFindManyRecords<Attachment>({
     objectNameSingular: CoreObjectNameSingular.Attachment,
     filter: isDefined(dashboardId)
@@ -78,7 +75,6 @@ export const StandaloneRichTextWidget = ({
     skip: !isDefined(dashboardId),
   });
 
-  // Handle changes - update draft state (saved when user saves the page layout)
   const handleChange = useCallback(
     (blocknote: string) => {
       updatePageLayoutWidget(widget.id, {
@@ -93,14 +89,9 @@ export const StandaloneRichTextWidget = ({
     [updatePageLayoutWidget, widget.id],
   );
 
-  // Editor is editable ONLY when:
-  // 1. Page layout is in edit mode AND
-  // 2. This specific widget is selected for editing
   const isThisWidgetBeingEdited = editingWidgetId === widget.id;
   const isEditable = isPageLayoutInEditMode && isThisWidgetBeingEdited;
 
-  // If no dashboard context (shouldn't happen for standalone rich text on dashboards)
-  // show the editor in readonly mode without attachment support
   if (!isDefined(dashboardId)) {
     return (
       <StyledContainer>

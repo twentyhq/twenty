@@ -53,6 +53,7 @@ export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
         CommandMenuPages.PageLayoutGraphFilter,
         CommandMenuPages.PageLayoutIframeSettings,
         CommandMenuPages.PageLayoutTabSettings,
+        CommandMenuPages.PageLayoutStandaloneRichTextSettings,
       ].includes(pageChip.page?.page)
     : false;
 
