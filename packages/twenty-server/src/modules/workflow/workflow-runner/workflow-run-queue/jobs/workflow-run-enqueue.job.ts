@@ -8,7 +8,6 @@ import { WorkflowRunEnqueueWorkspaceService } from 'src/modules/workflow/workflo
 export type WorkflowRunEnqueueJobData = {
   workspaceId: string;
   isCacheMode: boolean;
-  priorityWorkflowRunId?: string;
 };
 
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
@@ -21,11 +20,9 @@ export class WorkflowRunEnqueueJob {
   async handle({
     workspaceId,
     isCacheMode,
-    priorityWorkflowRunId,
   }: WorkflowRunEnqueueJobData): Promise<void> {
     await this.WorkflowRunEnqueueWorkspaceService.enqueueRunsForWorkspace({
       workspaceId,
-      priorityWorkflowRunId,
       isCacheMode,
     });
   }
