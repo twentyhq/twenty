@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
 
+import { FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { PAGE_LAYOUT_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-seeds.constant';
 import { PAGE_LAYOUT_TAB_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-tab-seeds.constant';
 import { generateSeedId } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-seed-id.util';
@@ -10,9 +11,7 @@ type PageLayoutTabSeed = {
   position: number;
   pageLayoutId: string;
   workspaceId: string;
-  applicationId: string;
-  universalIdentifier: string;
-};
+} & Pick<FlatPageLayoutTab, 'applicationId' | 'universalIdentifier'>;
 
 export const getPageLayoutTabDataSeeds = ({
   applicationId,
