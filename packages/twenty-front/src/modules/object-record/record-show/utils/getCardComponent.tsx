@@ -58,7 +58,7 @@ export const getCardComponent = <T extends CardType>(
         />
       );
 
-    case CardType.RichTextCard:
+    case CardType.FieldRichTextCard:
       return <CardRenderer Component={FieldRichTextCard} />;
 
     case CardType.TaskCard:
