@@ -63,7 +63,6 @@ export const SettingsDataModelFieldPhonesSettingsFormCard = ({
           />
           <Separator />
           <SettingsDataModelFieldPrimaryActionModeForm
-            disabled={disabled}
             fieldType={FieldMetadataType.PHONES}
           />
         </>

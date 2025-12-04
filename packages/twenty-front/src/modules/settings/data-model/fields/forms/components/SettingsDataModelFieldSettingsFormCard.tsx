@@ -355,7 +355,6 @@ export const SettingsDataModelFieldSettingsFormCard = ({
               <Separator />
               <SettingsDataModelFieldPrimaryActionModeForm
                 fieldType={fieldType}
-                disabled={disabled}
               />
             </>
           )}
