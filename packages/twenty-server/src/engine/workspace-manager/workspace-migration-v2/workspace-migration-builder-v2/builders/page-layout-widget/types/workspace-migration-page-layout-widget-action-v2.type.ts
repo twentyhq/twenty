@@ -9,7 +9,7 @@ export type CreatePageLayoutWidgetAction = {
 export type UpdatePageLayoutWidgetAction = {
   type: 'update_page_layout_widget';
   pageLayoutWidgetId: string;
-  updates: FlatEntityPropertiesUpdates<FlatPageLayoutWidget>;
+  updates: FlatEntityPropertiesUpdates<'pageLayoutWidget'>;
 };
 
 export type DeletePageLayoutWidgetAction = {
