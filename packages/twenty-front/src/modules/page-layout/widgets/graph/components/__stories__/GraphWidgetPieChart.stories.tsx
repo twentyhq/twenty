@@ -1,8 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { GraphWidgetTestWrapper } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
+import { GRAPH_WIDGET_TEST_INSTANCE_ID } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
 import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphWidgetPieChart';
+import { GraphWidgetComponentInstanceContext } from '@/page-layout/widgets/graph/states/contexts/GraphWidgetComponentInstanceContext';
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 import {
   AggregateOperations,
@@ -36,9 +37,11 @@ const meta: Meta<typeof GraphWidgetPieChart> = {
   component: GraphWidgetPieChart,
   decorators: [
     (Story) => (
-      <GraphWidgetTestWrapper>
+      <GraphWidgetComponentInstanceContext.Provider
+        value={{ instanceId: GRAPH_WIDGET_TEST_INSTANCE_ID }}
+      >
         <Story />
-      </GraphWidgetTestWrapper>
+      </GraphWidgetComponentInstanceContext.Provider>
     ),
     ComponentDecorator,
     I18nFrontDecorator,
@@ -366,6 +369,13 @@ export const Storage: Story = {
 
 export const Catalog: Story = {
   decorators: [
+    (Story) => (
+      <GraphWidgetComponentInstanceContext.Provider
+        value={{ instanceId: GRAPH_WIDGET_TEST_INSTANCE_ID }}
+      >
+        <Story />
+      </GraphWidgetComponentInstanceContext.Provider>
+    ),
     CatalogDecorator,
     I18nFrontDecorator,
     ObjectMetadataItemsDecorator,
