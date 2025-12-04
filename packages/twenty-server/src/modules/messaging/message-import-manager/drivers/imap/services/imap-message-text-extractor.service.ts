@@ -5,8 +5,7 @@ import { convert } from 'html-to-text';
 import { JSDOM } from 'jsdom';
 import { type ParsedMail } from 'mailparser';
 import * as planer from 'planer';
-
-import { safeDecodeURIComponent } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/safe-decode-uri-component.util';
+import { safeDecodeURIComponent } from 'twenty-shared/utils';
 
 @Injectable()
 export class ImapMessageTextExtractorService {
