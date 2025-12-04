@@ -1,0 +1,222 @@
+import { Injectable } from '@nestjs/common';
+
+import { type ToolSet } from 'ai';
+import { z } from 'zod';
+
+import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+
+const GetObjectMetadataInputSchema = z.object({
+  loadingMessage: z
+    .string()
+    .optional()
+    .describe('A clear description of the action being performed.'),
+  input: z.object({
+    id: z
+      .string()
+      .uuid()
+      .optional()
+      .describe(
+        'Unique identifier for the object metadata. If provided, returns a single object.',
+      ),
+    limit: z
+      .number()
+      .int()
+      .min(1)
+      .max(100)
+      .default(100)
+      .describe('Maximum number of objects to return.'),
+  }),
+});
+
+const CreateObjectMetadataInputSchema = z.object({
+  loadingMessage: z
+    .string()
+    .optional()
+    .describe('A clear description of the action being performed.'),
+  input: z.object({
+    nameSingular: z
+      .string()
+      .describe('Singular name for the object (e.g., "company")'),
+    namePlural: z
+      .string()
+      .describe('Plural name for the object (e.g., "companies")'),
+    labelSingular: z
+      .string()
+      .describe('Display label in singular form (e.g., "Company")'),
+    labelPlural: z
+      .string()
+      .describe('Display label in plural form (e.g., "Companies")'),
+    description: z.string().optional().describe('Description of the object'),
+    icon: z.string().optional().describe('Icon identifier for the object'),
+    shortcut: z
+      .string()
+      .optional()
+      .describe('Keyboard shortcut for the object'),
+    isRemote: z
+      .boolean()
+      .optional()
+      .describe('Whether this is a remote object'),
+    isLabelSyncedWithName: z
+      .boolean()
+      .optional()
+      .describe('Whether label should sync with name changes'),
+  }),
+});
+
+const UpdateObjectMetadataInputSchema = z.object({
+  loadingMessage: z
+    .string()
+    .optional()
+    .describe('A clear description of the action being performed.'),
+  input: z.object({
+    id: z.string().uuid().describe('ID of the object to update'),
+    labelSingular: z
+      .string()
+      .optional()
+      .describe('Display label in singular form'),
+    labelPlural: z.string().optional().describe('Display label in plural form'),
+    nameSingular: z
+      .string()
+      .optional()
+      .describe('Singular name for the object'),
+    namePlural: z.string().optional().describe('Plural name for the object'),
+    description: z.string().optional().describe('Description of the object'),
+    icon: z.string().optional().describe('Icon identifier for the object'),
+    shortcut: z
+      .string()
+      .optional()
+      .describe('Keyboard shortcut for the object'),
+    isActive: z.boolean().optional().describe('Whether the object is active'),
+    labelIdentifierFieldMetadataId: z
+      .string()
+      .uuid()
+      .optional()
+      .describe('ID of the field used as label identifier'),
+    imageIdentifierFieldMetadataId: z
+      .string()
+      .uuid()
+      .optional()
+      .describe('ID of the field used as image identifier'),
+    isLabelSyncedWithName: z
+      .boolean()
+      .optional()
+      .describe('Whether label should sync with name changes'),
+  }),
+});
+
+const DeleteObjectMetadataInputSchema = z.object({
+  loadingMessage: z
+    .string()
+    .optional()
+    .describe('A clear description of the action being performed.'),
+  input: z.object({
+    id: z.string().uuid().describe('ID of the object to delete'),
+  }),
+});
+
+@Injectable()
+export class ObjectMetadataToolsFactory {
+  constructor(private readonly objectMetadataService: ObjectMetadataService) {}
+
+  generateTools(workspaceId: string): ToolSet {
+    return {
+      'get-object-metadata': {
+        description:
+          'Find objects metadata. Retrieve information about the data model objects in the workspace.',
+        inputSchema: GetObjectMetadataInputSchema,
+        execute: async (parameters: {
+          input: { id?: string; limit?: number };
+        }) => {
+          const flatObjectMetadatas =
+            await this.objectMetadataService.findManyWithinWorkspace(
+              workspaceId,
+              {
+                ...(parameters.input.id
+                  ? { where: { id: parameters.input.id } }
+                  : {}),
+                take: parameters.input.limit ?? 100,
+              },
+            );
+
+          return flatObjectMetadatas.map((flatObjectMetadata) =>
+            fromFlatObjectMetadataToObjectMetadataDto(flatObjectMetadata),
+          );
+        },
+      },
+      'create-object-metadata': {
+        description:
+          'Create a new object metadata in the workspace data model.',
+        inputSchema: CreateObjectMetadataInputSchema,
+        execute: async (parameters: {
+          input: {
+            nameSingular: string;
+            namePlural: string;
+            labelSingular: string;
+            labelPlural: string;
+            description?: string;
+            icon?: string;
+            shortcut?: string;
+            isRemote?: boolean;
+            isLabelSyncedWithName?: boolean;
+          };
+        }) => {
+          const flatObjectMetadata =
+            await this.objectMetadataService.createOneObject({
+              createObjectInput: parameters.input as Parameters<
+                typeof this.objectMetadataService.createOneObject
+              >[0]['createObjectInput'],
+              workspaceId,
+            });
+
+          return fromFlatObjectMetadataToObjectMetadataDto(flatObjectMetadata);
+        },
+      },
+      'update-object-metadata': {
+        description:
+          'Update an existing object metadata. Provide the object ID and the fields to update.',
+        inputSchema: UpdateObjectMetadataInputSchema,
+        execute: async (parameters: {
+          input: {
+            id: string;
+            labelSingular?: string;
+            labelPlural?: string;
+            nameSingular?: string;
+            namePlural?: string;
+            description?: string;
+            icon?: string;
+            shortcut?: string;
+            isActive?: boolean;
+            labelIdentifierFieldMetadataId?: string;
+            imageIdentifierFieldMetadataId?: string;
+            isLabelSyncedWithName?: boolean;
+          };
+        }) => {
+          const { id, ...update } = parameters.input;
+
+          const flatObjectMetadata =
+            await this.objectMetadataService.updateOneObject({
+              updateObjectInput: { id, update },
+              workspaceId,
+            });
+
+          return fromFlatObjectMetadataToObjectMetadataDto(flatObjectMetadata);
+        },
+      },
+      'delete-object-metadata': {
+        description:
+          'Delete an object metadata by its ID. This will also delete all associated fields.',
+        inputSchema: DeleteObjectMetadataInputSchema,
+        execute: async (parameters: { input: { id: string } }) => {
+          const flatObjectMetadata =
+            await this.objectMetadataService.deleteOneObject({
+              deleteObjectInput: { id: parameters.input.id },
+              workspaceId,
+            });
+
+          return fromFlatObjectMetadataToObjectMetadataDto(flatObjectMetadata);
+        },
+      },
+    };
+  }
+}
