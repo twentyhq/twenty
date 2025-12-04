@@ -149,7 +149,7 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect an upd
 exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect created, deleted and updated entities 1`] = `
 {
   "createdFlatEntityMaps": {
-    "byId": {
+    "byId": {flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect created, deleted and updated entities 1
       "field-id-3": {
         "applicationId": "application-id-1",
         "calendarViewIds": [],
@@ -228,7 +228,6 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
         "updatedAt": 2024-01-01T00:00:00.000Z,
         "viewFieldIds": [],
         "viewFilterIds": [],
-        "viewGroupIds": [],
         "workspaceId": "workspace-id-1",
       },
     },
