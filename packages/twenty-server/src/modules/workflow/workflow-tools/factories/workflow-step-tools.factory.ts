@@ -1,3 +1,4 @@
+import { type ToolSet } from 'ai';
 import {
   FieldMetadataType,
   RelationType,
@@ -5,7 +6,6 @@ import {
 } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
-import { type ToolSet } from 'ai';
 
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
 import { generateFieldFilterZodSchema } from 'src/engine/core-modules/record-crud/zod-schemas/field-filters.zod-schema';
