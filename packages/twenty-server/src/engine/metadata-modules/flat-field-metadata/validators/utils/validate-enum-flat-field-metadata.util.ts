@@ -59,6 +59,7 @@ const validateMetadataOptionLabel = (
       message: t`Option label is required`,
       userFriendlyMessage: msg`Option label is required`,
     });
+
     return errors;
   }
 
@@ -70,6 +71,7 @@ const validateMetadataOptionLabel = (
       userFriendlyMessage: msg`Option label format not supported`,
       value: sanitizedLabel,
     });
+
     return errors;
   }
 
@@ -128,6 +130,7 @@ const validateMetadataOptionValue = (
       message: t`Option value is required`,
       userFriendlyMessage: msg`Option value is required`,
     });
+
     return errors;
   }
 
@@ -139,6 +142,7 @@ const validateMetadataOptionValue = (
       userFriendlyMessage: msg`Option value format not supported`,
       value: sanitizedValue,
     });
+
     return errors;
   }
 
@@ -253,6 +257,7 @@ const validateSelectDefaultValue = ({
       userFriendlyMessage: msg`Default value must be a string`,
       value: defaultValue,
     });
+
     return errors;
   }
 
@@ -268,7 +273,8 @@ const validateSelectDefaultValue = ({
 
   // Check if defaultValue matches one of the option values
   const matchesOptionValue = options.some(
-    (option) => option.value === defaultValue.replace(QUOTED_STRING_REGEX, '$1'),
+    (option) =>
+      option.value === defaultValue.replace(QUOTED_STRING_REGEX, '$1'),
   );
 
   if (!matchesOptionValue) {
@@ -300,6 +306,7 @@ const validateMultiSelectDefaultValue = ({
       message: `Default value for multi-select must be an array got ${multiSelectDefaultValue}`,
       value: multiSelectDefaultValue,
     });
+
     return errors;
   }
 
@@ -314,7 +321,9 @@ const validateMultiSelectDefaultValue = ({
   }
 
   // Check if array has duplicates
-  if (new Set(multiSelectDefaultValue).size !== multiSelectDefaultValue.length) {
+  if (
+    new Set(multiSelectDefaultValue).size !== multiSelectDefaultValue.length
+  ) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       message: t`Default values must be unique`,
