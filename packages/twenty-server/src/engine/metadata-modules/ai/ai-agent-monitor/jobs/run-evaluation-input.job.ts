@@ -1,15 +1,11 @@
 import { Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
-import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AgentExecutionService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-execution.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 
 import { EvaluateAgentTurnJob } from './evaluate-agent-turn.job';
@@ -27,10 +23,8 @@ export class RunEvaluationInputJob {
   private readonly logger = new Logger(RunEvaluationInputJob.name);
 
   constructor(
-    @InjectRepository(AgentEntity)
-    private readonly agentRepository: Repository<AgentEntity>,
     private readonly agentChatService: AgentChatService,
-    private readonly aiAgentExecutorService: AgentAsyncExecutorService,
+    private readonly agentExecutionService: AgentExecutionService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -46,23 +40,16 @@ export class RunEvaluationInputJob {
       },
     });
 
-    const agent = await this.agentRepository.findOne({
-      where: { id: data.agentId },
-    });
-
-    if (!agent) {
-      throw new Error(`Agent ${data.agentId} not found`);
-    }
-
-    const executionResult = await this.aiAgentExecutorService.executeAgent({
-      agent,
+    const executionResult = await this.agentExecutionService.executeAgent({
+      agentId: data.agentId,
+      workspaceId: data.workspaceId,
       userPrompt: data.input,
     });
 
     await this.agentChatService.addMessage({
       threadId: data.threadId,
       turnId: data.turnId,
-      agentId: agent.id,
+      agentId: data.agentId,
       uiMessage: {
         role: 'assistant',
         parts: [

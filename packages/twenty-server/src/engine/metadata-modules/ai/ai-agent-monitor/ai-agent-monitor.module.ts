@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
-import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
@@ -22,7 +21,6 @@ import { AgentTurnGraderService } from './services/agent-turn-grader.service';
     TypeOrmModule.forFeature([
       AgentTurnEvaluationEntity,
       AgentTurnEntity,
-      AgentEntity,
       AgentChatThreadEntity,
     ]),
     AiAgentModule,

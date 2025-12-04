@@ -2,6 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   convertToModelMessages,
+  generateObject,
+  generateText,
+  jsonSchema,
   LanguageModelUsage,
   stepCountIs,
   streamText,
@@ -395,6 +398,105 @@ export class AgentExecutionService {
         error instanceof Error
           ? error.message
           : 'Failed to stream chat response',
+        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+      );
+    }
+  }
+
+  async executeAgent({
+    agentId,
+    userPrompt,
+    workspaceId,
+  }: {
+    workspaceId: string;
+    agentId: string;
+    userPrompt: string;
+    actorContext?: ActorMetadata;
+  }): Promise<AgentExecutionResult> {
+    try {
+      const agent = await this.agentService.findOneAgentById({
+        workspaceId,
+        id: agentId,
+      });
+
+      const registeredModel =
+        await this.aiModelRegistryService.resolveModelForAgent(agent);
+
+      let tools: ToolSet = {};
+
+      if (agent) {
+        const baseTools =
+          await this.agentToolGeneratorService.generateToolsForAgent(
+            agent.id,
+            agent.workspaceId,
+            undefined,
+            agent.roleId ? [agent.roleId] : undefined,
+          );
+
+        const nativeModelTools =
+          this.agentModelConfigService.getNativeModelTools(
+            registeredModel,
+            agent,
+          );
+
+        tools = { ...baseTools, ...nativeModelTools };
+      }
+
+      this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
+
+      const textResponse = await generateText({
+        system: `${AGENT_SYSTEM_PROMPTS.BASE}\n${AGENT_SYSTEM_PROMPTS.WORKFLOW_ADDITIONS}\n\n${agent ? agent.prompt : ''}`,
+        tools,
+        model: registeredModel.model,
+        prompt: userPrompt,
+        stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
+        experimental_telemetry: AI_TELEMETRY_CONFIG,
+      });
+
+      const agentSchema =
+        agent?.responseFormat?.type === 'json'
+          ? agent.responseFormat.schema
+          : undefined;
+
+      if (!agentSchema) {
+        return {
+          result: { response: textResponse.text },
+          usage: textResponse.usage,
+        };
+      }
+
+      const output = await generateObject({
+        system: AGENT_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
+        model: registeredModel.model,
+        prompt: `Based on the following execution results, generate the structured output according to the schema:
+
+                 Execution Results: ${textResponse.text}
+
+                 Please generate the structured output based on the execution results and context above.`,
+        schema: jsonSchema(agentSchema),
+        experimental_telemetry: AI_TELEMETRY_CONFIG,
+      });
+
+      return {
+        result: output.object as object,
+        usage: {
+          inputTokens:
+            (textResponse.usage?.inputTokens ?? 0) +
+            (output.usage?.inputTokens ?? 0),
+          outputTokens:
+            (textResponse.usage?.outputTokens ?? 0) +
+            (output.usage?.outputTokens ?? 0),
+          totalTokens:
+            (textResponse.usage?.totalTokens ?? 0) +
+            (output.usage?.totalTokens ?? 0),
+        },
+      };
+    } catch (error) {
+      if (error instanceof AgentException) {
+        throw error;
+      }
+      throw new AgentException(
+        error instanceof Error ? error.message : 'Agent execution failed',
         AgentExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
