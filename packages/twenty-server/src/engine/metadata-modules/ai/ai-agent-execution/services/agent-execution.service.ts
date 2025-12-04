@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-    convertToModelMessages,
-    stepCountIs,
-    streamText,
-    ToolSet,
-    UIDataTypes,
-    UIMessage,
-    UITools,
+  convertToModelMessages,
+  stepCountIs,
+  streamText,
+  ToolSet,
+  UIDataTypes,
+  UIMessage,
+  UITools,
 } from 'ai';
 import { AppPath, type ActorMetadata } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
@@ -17,8 +17,8 @@ import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-select
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
-    AgentException,
-    AgentExceptionCode,
+  AgentException,
+  AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
