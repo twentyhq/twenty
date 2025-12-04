@@ -136,6 +136,7 @@ export class FlatFieldMetadataValidatorService {
           name: flatFieldMetadataToValidate.name,
           flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
           flatObjectMetadata,
+          buildOptions,
         }),
       );
     }
@@ -307,6 +308,7 @@ export class FlatFieldMetadataValidatorService {
           name: flatFieldMetadataToValidate.name,
           flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
           flatObjectMetadata: parentFlatObjectMetadata,
+          buildOptions,
         }),
       );
     }
