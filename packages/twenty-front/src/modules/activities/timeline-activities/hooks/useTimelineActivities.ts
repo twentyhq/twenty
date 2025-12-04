@@ -1,9 +1,11 @@
+import { useLinkedObjectsTitle } from '@/activities/timeline-activities/hooks/useLinkedObjectsTitle';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { isDefined } from 'twenty-shared/utils';
 
 // do we need to test this?
 export const useTimelineActivities = (
@@ -39,9 +41,18 @@ export const useTimelineActivities = (
     fetchPolicy: 'cache-and-network',
   });
 
+  const activityIds = timelineActivities
+    .filter((timelineActivity) => timelineActivity.name.match(/note|task/i))
+    .map((timelineActivity) => timelineActivity.linkedRecordId)
+    .filter(isDefined);
+
+  useLinkedObjectsTitle(activityIds);
+
+  const loading = loadingTimelineActivities;
+
   return {
     timelineActivities,
-    loading: loadingTimelineActivities,
+    loading,
     fetchMoreRecords,
   };
 };
