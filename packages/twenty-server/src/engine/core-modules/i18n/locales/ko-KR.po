@@ -1663,6 +1663,11 @@ msgstr "같은 ID를 가진 색인이 이미 존재합니다"
 msgid "Index with same name already exists"
 msgstr "같은 이름을 가진 색인이 이미 존재합니다"
 
+#. js-lingui-id: mIrUSZ
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Invalid CALDAV credentials. Please check your username and password."
+msgstr ""
+
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid calling code {callingCode}"
@@ -1677,11 +1682,6 @@ msgstr "잘못된 캡차입니다. 다른 기기에서 다시 시도해 주세�
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
 msgstr "국가 코드 {countryCode}이(가) 유효하지 않습니다"
-
-#. js-lingui-id: AMeEDO
-#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
-msgid "Invalid credentials. Please check your username and password."
-msgstr "잘못된 자격 증명입니다. 사용자 이름과 비밀번호를 확인하십시오."
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
