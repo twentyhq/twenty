@@ -1,15 +1,15 @@
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
-import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 import { type UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 
@@ -94,20 +94,31 @@ describe('Object metadata update should fail', () => {
 
     numberFieldMetadataId = createOneField.id;
 
-    const { fields } = await findManyFieldsMetadata({
+    const { objects } = await findManyObjectMetadata({
       expectToFail: false,
       input: {
-        filter: {
-          objectMetadataId: { eq: objectMetadataId },
-          type: { eq: FieldMetadataType.UUID },
-        },
-        paging: { first: 1 },
+        filter: { isCustom: { is: true } },
+        paging: { first: 100 },
       },
-      gqlFields: 'id',
+      gqlFields: `
+        id
+        fieldsList {
+          id
+          type
+        }
+      `,
     });
 
-    uuidFieldMetadataId = fields[0].node.id;
-    jestExpectToBeDefined(uuidFieldMetadataId);
+    const createdObject = objects.find((obj) => obj.id === objectMetadataId);
+
+    jestExpectToBeDefined(createdObject);
+
+    const uuidField = createdObject.fieldsList?.find(
+      (field) => field.type === FieldMetadataType.UUID,
+    );
+
+    jestExpectToBeDefined(uuidField);
+    uuidFieldMetadataId = uuidField.id;
   });
 
   afterAll(async () => {
