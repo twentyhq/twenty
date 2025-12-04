@@ -6,7 +6,7 @@ import {
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
-export const updateWorkflowVersionPositionsSchema = z.object({
+const updateWorkflowVersionPositionsSchema = z.object({
   workflowVersionId: z.string().describe('The ID of the workflow version'),
   positions: z
     .array(
@@ -20,10 +20,6 @@ export const updateWorkflowVersionPositionsSchema = z.object({
     )
     .describe('Array of step positions to update'),
 });
-
-export type UpdateWorkflowVersionPositionsToolInput = z.infer<
-  typeof updateWorkflowVersionPositionsSchema
->;
 
 export const createUpdateWorkflowVersionPositionsTool = (
   deps: Pick<WorkflowToolDependencies, 'workflowVersionService'>,

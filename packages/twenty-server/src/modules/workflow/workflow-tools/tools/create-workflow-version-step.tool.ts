@@ -7,7 +7,7 @@ import {
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
-export const createWorkflowVersionStepSchema = z.object({
+const createWorkflowVersionStepSchema = z.object({
   workflowVersionId: z
     .string()
     .describe('The ID of the workflow version to add the step to'),
@@ -38,10 +38,6 @@ export const createWorkflowVersionStepSchema = z.object({
     .describe('Optional position coordinates for the step'),
   id: z.string().optional().describe('Optional step ID'),
 });
-
-export type CreateWorkflowVersionStepToolInput = z.infer<
-  typeof createWorkflowVersionStepSchema
->;
 
 export const createCreateWorkflowVersionStepTool = (
   deps: Pick<WorkflowToolDependencies, 'workflowVersionStepService'>,

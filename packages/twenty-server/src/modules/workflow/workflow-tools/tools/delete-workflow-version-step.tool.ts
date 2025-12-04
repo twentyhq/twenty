@@ -5,14 +5,14 @@ import {
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
-export const deleteWorkflowVersionStepSchema = z.object({
+const deleteWorkflowVersionStepSchema = z.object({
   workflowVersionId: z
     .string()
     .describe('The ID of the workflow version containing the step'),
   stepId: z.string().describe('The ID of the step to delete'),
 });
 
-export type DeleteWorkflowVersionStepInput = z.infer<
+type DeleteWorkflowVersionStepInput = z.infer<
   typeof deleteWorkflowVersionStepSchema
 >;
 

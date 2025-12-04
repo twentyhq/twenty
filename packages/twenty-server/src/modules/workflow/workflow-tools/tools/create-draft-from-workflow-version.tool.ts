@@ -5,14 +5,14 @@ import {
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
-export const createDraftFromWorkflowVersionSchema = z.object({
+const createDraftFromWorkflowVersionSchema = z.object({
   workflowId: z.string().describe('The ID of the workflow'),
   workflowVersionIdToCopy: z
     .string()
     .describe('The ID of the workflow version to create a draft from'),
 });
 
-export type CreateDraftFromWorkflowVersionInput = z.infer<
+type CreateDraftFromWorkflowVersionInput = z.infer<
   typeof createDraftFromWorkflowVersionSchema
 >;
 

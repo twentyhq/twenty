@@ -10,7 +10,7 @@ import {
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
-export const updateWorkflowVersionStepSchema = z.object({
+const updateWorkflowVersionStepSchema = z.object({
   workflowVersionId: z
     .string()
     .describe('The ID of the workflow version containing the step'),
@@ -18,10 +18,6 @@ export const updateWorkflowVersionStepSchema = z.object({
     .union([workflowTriggerSchema, workflowActionSchema])
     .describe('The updated step configuration'),
 });
-
-export type UpdateWorkflowVersionStepToolInput = z.infer<
-  typeof updateWorkflowVersionStepSchema
->;
 
 export const createUpdateWorkflowVersionStepTool = (
   deps: Pick<WorkflowToolDependencies, 'workflowVersionStepService'>,

@@ -11,16 +11,12 @@ import {
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
-export const computeStepOutputSchemaSchema = z.object({
+const computeStepOutputSchemaSchema = z.object({
   step: z
     .union([workflowTriggerSchema, workflowActionSchema])
     .describe('The workflow step configuration'),
   workflowVersionId: z.string().describe('The ID of the workflow version'),
 });
-
-export type ComputeStepOutputSchemaInput = z.infer<
-  typeof computeStepOutputSchemaSchema
->;
 
 export const createComputeStepOutputSchemaTool = (
   deps: Pick<WorkflowToolDependencies, 'workflowSchemaService'>,

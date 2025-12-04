@@ -2,13 +2,13 @@ import { z } from 'zod';
 
 import { type WorkflowToolDependencies } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
-export const deactivateWorkflowVersionSchema = z.object({
+const deactivateWorkflowVersionSchema = z.object({
   workflowVersionId: z
     .string()
     .describe('The ID of the workflow version to deactivate'),
 });
 
-export type DeactivateWorkflowVersionInput = z.infer<
+type DeactivateWorkflowVersionInput = z.infer<
   typeof deactivateWorkflowVersionSchema
 >;
 

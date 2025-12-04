@@ -2,13 +2,13 @@ import { z } from 'zod';
 
 import { type WorkflowToolDependencies } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
-export const activateWorkflowVersionSchema = z.object({
+const activateWorkflowVersionSchema = z.object({
   workflowVersionId: z
     .string()
     .describe('The ID of the workflow version to activate'),
 });
 
-export type ActivateWorkflowVersionInput = z.infer<
+type ActivateWorkflowVersionInput = z.infer<
   typeof activateWorkflowVersionSchema
 >;
 

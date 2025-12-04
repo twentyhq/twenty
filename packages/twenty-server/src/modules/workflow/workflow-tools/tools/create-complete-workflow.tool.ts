@@ -15,7 +15,7 @@ import {
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
-export const createCompleteWorkflowSchema = z.object({
+const createCompleteWorkflowSchema = z.object({
   name: z.string().describe('The name of the workflow'),
   description: z
     .string()
@@ -57,10 +57,6 @@ export const createCompleteWorkflowSchema = z.object({
     .optional()
     .describe('Whether to activate the workflow immediately (default: false)'),
 });
-
-export type CreateCompleteWorkflowInput = z.infer<
-  typeof createCompleteWorkflowSchema
->;
 
 type CreateCompleteWorkflowToolDeps = Pick<
   WorkflowToolDependencies,

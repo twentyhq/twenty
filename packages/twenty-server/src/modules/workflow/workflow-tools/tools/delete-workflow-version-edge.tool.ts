@@ -6,7 +6,7 @@ import {
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
-export const deleteWorkflowVersionEdgeSchema = z.object({
+const deleteWorkflowVersionEdgeSchema = z.object({
   workflowVersionId: z.string().describe('The ID of the workflow version'),
   source: z.string().describe('The ID of the source step'),
   target: z.string().describe('The ID of the target step'),
@@ -21,7 +21,7 @@ export const deleteWorkflowVersionEdgeSchema = z.object({
     .describe('Optional connection options for iterator steps'),
 });
 
-export type DeleteWorkflowVersionEdgeInput = z.infer<
+type DeleteWorkflowVersionEdgeInput = z.infer<
   typeof deleteWorkflowVersionEdgeSchema
 >;
 
