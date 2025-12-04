@@ -1,22 +1,17 @@
 import { z } from 'zod';
 
-export function deepMergeZod<T extends z.ZodTypeAny, U extends z.ZodTypeAny>(
-  schema1: T,
-  schema2: U,
-): z.ZodTypeAny {
-  // For non-object schemas, return schema2 (overwrites)
-  if (!(schema1 instanceof z.ZodObject) || !(schema2 instanceof z.ZodObject)) {
-    return schema2;
-  }
-
+export function deepMergeZod<
+  T extends z.ZodObject<any>,
+  U extends z.ZodObject<any>,
+>(schema1: T, schema2: U): z.ZodObject<any> {
   const shape1 = schema1.shape;
   const shape2 = schema2.shape;
-  const mergedShape = { ...shape1 };
+  const mergedShape: any = { ...shape1 };
 
   for (const key in shape2) {
-    if (key in shape1) {
+    if (key in shape1 && shape1[key] instanceof z.ZodObject && shape2[key] instanceof z.ZodObject) {
       // Recursively merge if both are objects
-      mergedShape[key] = deepMergeZod(shape1[key], shape2[key]);
+      mergedShape[key] = deepMergeZod(shape1[key] as z.ZodObject<any>, shape2[key] as z.ZodObject<any>);
     } else {
       mergedShape[key] = shape2[key];
     }
