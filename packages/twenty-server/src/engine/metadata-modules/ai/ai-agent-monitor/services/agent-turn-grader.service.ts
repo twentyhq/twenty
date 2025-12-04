@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
+import { AgentExecutionSnapshot } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-snapshot.type';
 import { AgentTurnEvaluationEntity } from 'src/engine/metadata-modules/ai/ai-agent-monitor/entities/agent-turn-evaluation.entity';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -58,12 +59,7 @@ export class AgentTurnGraderService {
       let agentContextString = '';
 
       if (turn.executionSnapshot) {
-        agentContextString = this.buildAgentContext({
-          name: turn.executionSnapshot.agentName,
-          description: turn.executionSnapshot.agentDescription,
-          prompt: turn.executionSnapshot.systemPrompt,
-          tools: turn.executionSnapshot.availableTools as ToolSet,
-        });
+        agentContextString = this.buildAgentContext(turn.executionSnapshot);
       }
 
       const evaluationContext = this.buildEvaluationContext(turn);
@@ -123,28 +119,24 @@ Respond ONLY with valid JSON in this exact format:
     }
   }
 
-  private buildAgentContext(agentContext: {
-    name: string;
-    description: string | null;
-    prompt: string;
-    tools: ToolSet;
-  }): string {
+  private buildAgentContext(snapshot: AgentExecutionSnapshot): string {
     let context = '**Agent Configuration:**\n';
 
-    context += `- Agent Name: ${agentContext.name}\n`;
+    context += `- Agent Name: ${snapshot.agentName}\n`;
 
-    if (agentContext.description) {
-      context += `- Agent Purpose: ${agentContext.description}\n`;
+    if (snapshot.agentDescription) {
+      context += `- Agent Purpose: ${snapshot.agentDescription}\n`;
     }
 
     const promptPreview =
-      agentContext.prompt.length > 500
-        ? agentContext.prompt.substring(0, 500) + '...'
-        : agentContext.prompt;
+      snapshot.systemPrompt.length > 500
+        ? snapshot.systemPrompt.substring(0, 500) + '...'
+        : snapshot.systemPrompt;
 
     context += `- System Prompt/Instructions:\n${promptPreview}\n`;
 
-    context += '\n' + this.formatToolsForEvaluation(agentContext.tools) + '\n';
+    context +=
+      '\n' + this.formatToolsForEvaluation(snapshot.availableTools) + '\n';
 
     return context;
   }
@@ -180,7 +172,9 @@ Respond ONLY with valid JSON in this exact format:
   }
 
   private extractParameterNames(tool: unknown): string[] {
-    if (!tool || typeof tool !== 'object') return [];
+    if (!tool || typeof tool !== 'object') {
+      return [];
+    }
 
     const toolObj = tool as Record<string, unknown>;
 
@@ -219,72 +213,83 @@ Respond ONLY with valid JSON in this exact format:
   private buildEvaluationContext(
     turn: AgentTurnEntity & { messages: AgentMessageEntity[] },
   ): string {
-    const userMessages = turn.messages.filter((m) => m.role === 'user');
-    const assistantMessages = turn.messages.filter(
-      (m) => m.role === 'assistant',
-    );
+    const userText = this.extractUserRequest(turn.messages);
+    const assistantParts = this.getAssistantParts(turn.messages);
+    const assistantText = this.extractAssistantText(assistantParts);
+    const toolExecutionDetails = this.buildToolExecutionSection(assistantParts);
 
-    const userText = userMessages
+    return [
+      `**User Request:**\n${userText || '(no text)'}\n`,
+      toolExecutionDetails,
+      `**Agent Response:**\n${assistantText || '(no text response)'}\n`,
+    ].join('\n');
+  }
+
+  private extractUserRequest(messages: AgentMessageEntity[]): string {
+    return messages
+      .filter((m) => m.role === 'user')
       .flatMap((m) => m.parts || [])
       .filter((p) => p.textContent)
       .map((p) => p.textContent)
       .join('\n');
+  }
 
-    const assistantParts = assistantMessages.flatMap((m) => m.parts || []);
+  private getAssistantParts(messages: AgentMessageEntity[]) {
+    return messages
+      .filter((m) => m.role === 'assistant')
+      .flatMap((m) => m.parts || []);
+  }
 
-    const assistantText = assistantParts
+  private extractAssistantText(parts: AgentMessageEntity['parts']): string {
+    return parts
       .filter((p) => p.textContent)
       .map((p) => p.textContent)
       .join('\n');
+  }
 
+  private buildToolExecutionSection(
+    assistantParts: AgentMessageEntity['parts'],
+  ): string {
     const toolParts = assistantParts.filter((p) => p.type.includes('tool-'));
 
-    let context = `**User Request:**\n${userText || '(no text)'}\n\n`;
-
-    if (toolParts.length > 0) {
-      context += `**Tool Execution Details:**\n\n`;
-
-      toolParts.forEach((toolPart, idx) => {
-        const status =
-          toolPart.errorMessage || toolPart.state === 'output-error'
-            ? 'FAILED'
-            : 'SUCCESS';
-
-        context += `${idx + 1}. ${toolPart.toolName} (${status})\n`;
-
-        if (toolPart.toolInput) {
-          const inputStr = JSON.stringify(toolPart.toolInput, null, 2);
-          const truncatedInput =
-            inputStr.length > 300
-              ? inputStr.substring(0, 300) + '...'
-              : inputStr;
-
-          context += `   Input:\n${truncatedInput}\n`;
-        }
-
-        if (toolPart.toolOutput) {
-          const outputStr = JSON.stringify(toolPart.toolOutput, null, 2);
-          const truncatedOutput =
-            outputStr.length > 300
-              ? outputStr.substring(0, 300) + '...'
-              : outputStr;
-
-          context += `   Output:\n${truncatedOutput}\n`;
-        }
-
-        if (toolPart.errorMessage) {
-          context += `   Error: ${toolPart.errorMessage}\n`;
-        }
-
-        context += '\n';
-      });
-    } else {
-      context += `**Tool Execution Details:**\nNo tools were called\n\n`;
+    if (toolParts.length === 0) {
+      return '**Tool Execution Details:**\nNo tools were called\n';
     }
 
-    context += `**Agent Response:**\n${assistantText || '(no text response)'}\n\n`;
+    let section = '**Tool Execution Details:**\n\n';
 
-    return context;
+    toolParts.forEach((toolPart, idx) => {
+      const status =
+        toolPart.errorMessage || toolPart.state === 'output-error'
+          ? 'FAILED'
+          : 'SUCCESS';
+
+      section += `${idx + 1}. ${toolPart.toolName} (${status})\n`;
+
+      if (toolPart.toolInput) {
+        section += this.formatJsonField('Input', toolPart.toolInput);
+      }
+
+      if (toolPart.toolOutput) {
+        section += this.formatJsonField('Output', toolPart.toolOutput);
+      }
+
+      if (toolPart.errorMessage) {
+        section += `   Error: ${toolPart.errorMessage}\n`;
+      }
+
+      section += '\n';
+    });
+
+    return section;
+  }
+
+  private formatJsonField(label: string, value: unknown): string {
+    const jsonStr = JSON.stringify(value, null, 2);
+    const truncated =
+      jsonStr.length > 300 ? jsonStr.substring(0, 300) + '...' : jsonStr;
+
+    return `   ${label}:\n${truncated}\n`;
   }
 
   private getFallbackEvaluation(
