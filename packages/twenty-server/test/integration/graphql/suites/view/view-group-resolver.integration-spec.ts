@@ -76,6 +76,7 @@ describe('View Group Resolver', () => {
     const view = await createTestViewWithGraphQL({
       name: 'Test View for Groups',
       objectMetadataId: testObjectMetadataId,
+      mainGroupByFieldMetadataId: testFieldMetadataId,
     });
 
     testViewId = view.id;

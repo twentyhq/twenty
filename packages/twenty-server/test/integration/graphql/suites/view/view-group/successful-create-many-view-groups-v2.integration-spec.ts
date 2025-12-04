@@ -1,4 +1,5 @@
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { createOneSelectFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-select-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
@@ -100,6 +101,12 @@ describe('View Group Resolver - Successful Create Many Operations - v2', () => {
         `,
     });
 
+    const { selectFieldMetadataId } = await createOneSelectFieldMetadata({
+      input: {
+        objectMetadataId,
+      },
+    });
+
     const {
       data: {
         createCoreView: { id: testViewId },
@@ -109,6 +116,7 @@ describe('View Group Resolver - Successful Create Many Operations - v2', () => {
         icon: 'icon123',
         objectMetadataId,
         name: 'TestViewForGroups',
+        mainGroupByFieldMetadataId: selectFieldMetadataId,
       },
       expectToFail: false,
     });
@@ -232,7 +240,6 @@ describe('View Group Resolver - Successful Create Many Operations - v2', () => {
     const viewGroup = createdViewGroups[0];
 
     expect(viewGroup).toMatchObject({
-      fieldMetadataId: testSetup.firstTestFieldMetadataId,
       viewId: testSetup.testViewId,
       position: 5,
       isVisible: true,
