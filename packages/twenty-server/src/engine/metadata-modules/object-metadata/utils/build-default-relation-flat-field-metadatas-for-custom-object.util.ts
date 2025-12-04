@@ -138,6 +138,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             workspaceId,
             workspaceCustomApplicationId,
             sourceFlatObjectMetadataJoinColumnName: joinColumnName,
+            targetFieldName: sourceFlatObjectMetadata.nameSingular,
             createFieldInput: {
               isCustom: false,
               isSystem: true,
