@@ -118,6 +118,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             },
           },
           workspaceId,
+          isSystemBuild,
         },
       );
 
