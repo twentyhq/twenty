@@ -408,10 +408,10 @@ export abstract class CommonBaseQueryRunnerService<
 
     if (selectedFieldsResult.hasAtLeastTwoNestedOneToManyRelations) {
       throw new CommonQueryRunnerException(
-        `Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation`,
+        `Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation.`,
         CommonQueryRunnerExceptionCode.TOO_COMPLEX_QUERY,
         {
-          userFriendlyMessage: msg`Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation`,
+          userFriendlyMessage: msg`Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation.`,
         },
       );
     }

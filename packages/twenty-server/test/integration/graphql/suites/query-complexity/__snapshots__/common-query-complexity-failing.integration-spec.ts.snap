@@ -2,6 +2,6 @@
 
 exports[`Query Complexity - Failing Scenarios should fail findMany query with too many relation fields 1`] = `"Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: 21. Maximum complexity: 10."`;
 
-exports[`Query Complexity - Failing Scenarios should fail findMany query with two nested one to many relations 1`] = `"One-to-Many relation cannot be nested in another One-to-Many relation. Please, remove pointOfContactForOpportunities from the query."`;
+exports[`Query Complexity - Failing Scenarios should fail findMany query with two nested one to many relations 1`] = `"Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation."`;
 
 exports[`Query Complexity - Failing Scenarios should fail groupBy query with too many relation fields 1`] = `"Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: 23. Maximum complexity: 10."`;
