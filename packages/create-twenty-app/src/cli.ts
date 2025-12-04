@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import chalk from 'chalk';
 import { Command, CommanderError } from 'commander';
-import { CreateAppCommand } from './create-app.command';
+import { CreateAppCommand } from '@/create-app.command';
 import packageJson from '../package.json';
 
 const program = new Command(packageJson.name)
