@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-tab.entity';
 import { type PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
@@ -36,6 +37,9 @@ describe('PageLayoutTabService', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: null,
+    application: {} as ApplicationEntity,
+    applicationId: 'application-id',
+    universalIdentifier: 'universal-identifier',
   } as PageLayoutTabEntity;
 
   const mockWidget = {
