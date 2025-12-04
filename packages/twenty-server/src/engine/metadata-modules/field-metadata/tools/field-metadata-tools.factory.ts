@@ -6,6 +6,7 @@ import { z } from 'zod';
 
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
+import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 
 const GetFieldMetadataInputSchema = z.object({
   loadingMessage: z
@@ -138,6 +139,33 @@ const DeleteFieldMetadataInputSchema = z.object({
   }),
 });
 
+const formatValidationErrors = (
+  error: WorkspaceMigrationBuilderExceptionV2,
+): string => {
+  const report = error.failedWorkspaceMigrationBuildResult.report;
+  const errorMessages: string[] = [];
+
+  for (const [entityType, failures] of Object.entries(report)) {
+    if (Array.isArray(failures) && failures.length > 0) {
+      for (const failure of failures) {
+        if (failure.errors && Array.isArray(failure.errors)) {
+          for (const validationError of failure.errors) {
+            const message = validationError.message || validationError.code;
+
+            errorMessages.push(`[${entityType}] ${message}`);
+          }
+        }
+      }
+    }
+  }
+
+  if (errorMessages.length === 0) {
+    return error.message;
+  }
+
+  return `Validation errors:\n${errorMessages.join('\n')}`;
+};
+
 @Injectable()
 export class FieldMetadataToolsFactory {
   constructor(private readonly fieldMetadataService: FieldMetadataService) {}
@@ -189,15 +217,22 @@ export class FieldMetadataToolsFactory {
             relationCreationPayload?: unknown;
           };
         }) => {
-          const flatFieldMetadata =
-            await this.fieldMetadataService.createOneField({
-              createFieldInput: parameters.input as Parameters<
-                typeof this.fieldMetadataService.createOneField
-              >[0]['createFieldInput'],
-              workspaceId,
-            });
+          try {
+            const flatFieldMetadata =
+              await this.fieldMetadataService.createOneField({
+                createFieldInput: parameters.input as Parameters<
+                  typeof this.fieldMetadataService.createOneField
+                >[0]['createFieldInput'],
+                workspaceId,
+              });
 
-          return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
+            return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
+          } catch (error) {
+            if (error instanceof WorkspaceMigrationBuilderExceptionV2) {
+              throw new Error(formatValidationErrors(error));
+            }
+            throw error;
+          }
         },
       },
       'update-field-metadata': {
@@ -220,30 +255,44 @@ export class FieldMetadataToolsFactory {
             isLabelSyncedWithName?: boolean;
           };
         }) => {
-          const { id, ...update } = parameters.input;
+          try {
+            const { id, ...update } = parameters.input;
 
-          const flatFieldMetadata =
-            await this.fieldMetadataService.updateOneField({
-              updateFieldInput: { id, ...update } as Parameters<
-                typeof this.fieldMetadataService.updateOneField
-              >[0]['updateFieldInput'],
-              workspaceId,
-            });
+            const flatFieldMetadata =
+              await this.fieldMetadataService.updateOneField({
+                updateFieldInput: { id, ...update } as Parameters<
+                  typeof this.fieldMetadataService.updateOneField
+                >[0]['updateFieldInput'],
+                workspaceId,
+              });
 
-          return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
+            return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
+          } catch (error) {
+            if (error instanceof WorkspaceMigrationBuilderExceptionV2) {
+              throw new Error(formatValidationErrors(error));
+            }
+            throw error;
+          }
         },
       },
       'delete-field-metadata': {
         description: 'Delete a field metadata by its ID.',
         inputSchema: DeleteFieldMetadataInputSchema,
         execute: async (parameters: { input: { id: string } }) => {
-          const flatFieldMetadata =
-            await this.fieldMetadataService.deleteOneField({
-              deleteOneFieldInput: { id: parameters.input.id },
-              workspaceId,
-            });
+          try {
+            const flatFieldMetadata =
+              await this.fieldMetadataService.deleteOneField({
+                deleteOneFieldInput: { id: parameters.input.id },
+                workspaceId,
+              });
 
-          return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
+            return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
+          } catch (error) {
+            if (error instanceof WorkspaceMigrationBuilderExceptionV2) {
+              throw new Error(formatValidationErrors(error));
+            }
+            throw error;
+          }
         },
       },
     };
