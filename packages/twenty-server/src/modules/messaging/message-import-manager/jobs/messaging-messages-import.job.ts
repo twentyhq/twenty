@@ -81,6 +81,7 @@ export class MessagingMessagesImportJob {
       await this.messageChannelSyncStatusService.scheduleMessagesImport(
         [messageChannel.id],
         workspaceId,
+        true,
       );
 
       return;
