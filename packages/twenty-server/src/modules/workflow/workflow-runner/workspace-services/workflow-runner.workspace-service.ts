@@ -90,13 +90,22 @@ export class WorkflowRunnerWorkspaceService {
       });
     }
 
-    return this.createNotStartedWorkflowRunAndTriggerEnqueue({
+    if (isManualTrigger) {
+      return this.enqueueWorkflowRun({
+        workspaceId,
+        workflowVersionId,
+        initialWorkflowRunId,
+        source,
+        payload,
+      });
+    }
+
+    return this.createNotStartedWorkflowRunAndTriggerEnqueueJob({
       workspaceId,
       workflowVersionId,
       initialWorkflowRunId,
       source,
       payload,
-      isManualTrigger,
     });
   }
 
@@ -272,20 +281,51 @@ export class WorkflowRunnerWorkspaceService {
     return { workflowRunId };
   }
 
-  private async createNotStartedWorkflowRunAndTriggerEnqueue({
+  private async enqueueWorkflowRun({
     workspaceId,
     workflowVersionId,
     initialWorkflowRunId,
     source,
     payload,
-    isManualTrigger,
   }: {
     workspaceId: string;
     workflowVersionId: string;
     initialWorkflowRunId?: string;
     source: ActorMetadata;
     payload: object;
-    isManualTrigger: boolean;
+  }) {
+    const workflowRunId =
+      await this.workflowRunWorkspaceService.createWorkflowRun({
+        workflowVersionId,
+        workflowRunId: initialWorkflowRunId,
+        createdBy: source,
+        status: WorkflowRunStatus.ENQUEUED,
+        triggerPayload: payload,
+      });
+
+    await this.messageQueueService.add<RunWorkflowJobData>(
+      RunWorkflowJob.name,
+      {
+        workspaceId,
+        workflowRunId,
+      },
+    );
+
+    return { workflowRunId };
+  }
+
+  private async createNotStartedWorkflowRunAndTriggerEnqueueJob({
+    workspaceId,
+    workflowVersionId,
+    initialWorkflowRunId,
+    source,
+    payload,
+  }: {
+    workspaceId: string;
+    workflowVersionId: string;
+    initialWorkflowRunId?: string;
+    source: ActorMetadata;
+    payload: object;
   }) {
     const workflowRunId =
       await this.workflowRunWorkspaceService.createWorkflowRun({
@@ -304,7 +344,6 @@ export class WorkflowRunnerWorkspaceService {
       WorkflowRunEnqueueJob.name,
       {
         workspaceId,
-        priorityWorkflowRunId: isManualTrigger ? workflowRunId : undefined,
         isCacheMode: true,
       },
     );

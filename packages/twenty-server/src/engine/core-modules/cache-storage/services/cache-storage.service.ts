@@ -208,6 +208,22 @@ export class CacheStorageService {
     await this.del(key);
   }
 
+  async incrBy(key: string, increment: number): Promise<number> {
+    if (this.isRedisCache()) {
+      return (this.cache as RedisCache).store.client.incrBy(
+        this.getKey(key),
+        increment,
+      );
+    }
+
+    const current = (await this.get<number>(key)) ?? 0;
+    const newValue = current + increment;
+
+    await this.set(key, newValue);
+
+    return newValue;
+  }
+
   private isRedisCache() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (this.cache.store as any)?.name === 'redis';
