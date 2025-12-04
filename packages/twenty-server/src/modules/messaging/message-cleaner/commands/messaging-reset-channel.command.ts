@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
+import { isDefined } from 'twenty-shared/utils';
 
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
@@ -46,7 +47,7 @@ export class MessagingResetChannelCommand extends CommandRunner {
 
     const messageChannels = await messageChannelRepository.find({
       where: {
-        ...(messageChannelId ? { id: messageChannelId } : {}),
+        ...(isDefined(messageChannelId) ? { id: messageChannelId } : {}),
       },
     });
 

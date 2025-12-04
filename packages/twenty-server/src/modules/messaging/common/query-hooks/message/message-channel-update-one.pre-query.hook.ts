@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Not } from 'typeorm';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
@@ -63,7 +63,7 @@ export class MessageChannelUpdateOnePreQueryHook
       where: { id: payload.id },
     });
 
-    if (!messageChannel) {
+    if (!isDefined(messageChannel)) {
       throw new WorkspaceQueryRunnerException(
         'Message channel not found',
         WorkspaceQueryRunnerExceptionCode.DATA_NOT_FOUND,
@@ -83,14 +83,15 @@ export class MessageChannelUpdateOnePreQueryHook
         'messageFolder',
       );
 
-    const folderWithPendingAction = await messageFolderRepository.findOne({
-      where: {
-        messageChannelId: messageChannel.id,
-        pendingSyncAction: Not(MessageFolderPendingSyncAction.NONE),
-      },
-    });
+    const messageFoldersWithPendingActionCount =
+      await messageFolderRepository.count({
+        where: {
+          messageChannelId: messageChannel.id,
+          pendingSyncAction: Not(MessageFolderPendingSyncAction.NONE),
+        },
+      });
 
-    const hasPendingFolderActions = !!folderWithPendingAction;
+    const hasPendingFolderActions = messageFoldersWithPendingActionCount > 0;
 
     const hasPendingGroupEmailsAction =
       messageChannel.pendingGroupEmailsAction !==
@@ -122,6 +123,7 @@ export class MessageChannelUpdateOnePreQueryHook
     }
 
     const excludeGroupEmailsChanged =
+      isDefined(payload.data.excludeGroupEmails) &&
       payload.data.excludeGroupEmails !== messageChannel.excludeGroupEmails;
 
     if (excludeGroupEmailsChanged) {
