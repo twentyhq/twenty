@@ -25,6 +25,7 @@ import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-mod
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationValidateBuildAndRunServiceFromMatriceService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service-from-matrice.service';
 
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
@@ -34,6 +35,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
+    private readonly validateBuildAndRunWorkspaceMigrationFromMatrice: WorkspaceMigrationValidateBuildAndRunServiceFromMatriceService,
   ) {
     super(fieldMetadataRepository);
   }
@@ -103,31 +105,21 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     });
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.validateBuildAndRunWorkspaceMigrationFromMatrice.validateBuildAndRunWorkspaceMigrationFromMatrice(
         {
-          dependencyAllFlatEntityMaps: {
-            flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-          },
-          buildOptions: {
-            isSystemBuild,
-            inferDeletionFromMissingEntities: {
-              fieldMetadata: true,
-              index: true,
-            },
-          },
-          fromToAllFlatEntityMaps: {
-            flatFieldMetadataMaps: computeFlatEntityMapsFromTo({
+          allFlatEntities: {
+            fieldMetadata: {
               flatEntityMaps: existingFlatFieldMetadataMaps,
               flatEntityToCreate: [],
               flatEntityToDelete: flatFieldMetadatasToDelete,
               flatEntityToUpdate: [],
-            }),
-            flatIndexMaps: computeFlatEntityMapsFromTo({
+            },
+            index: {
               flatEntityMaps: existingFlatIndexMaps,
               flatEntityToCreate: [],
               flatEntityToDelete: flatIndexesToDelete,
               flatEntityToUpdate: flatIndexesToUpdate,
-            }),
+            },
           },
           workspaceId,
         },
