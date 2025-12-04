@@ -19,4 +19,3 @@ export abstract class StrictSyncableEntity {
   @JoinColumn({ name: 'applicationId' })
   application: Relation<ApplicationEntity>;
 }
-

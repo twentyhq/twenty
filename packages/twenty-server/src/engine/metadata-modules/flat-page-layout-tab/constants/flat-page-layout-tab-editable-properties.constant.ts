@@ -4,4 +4,3 @@ export const FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES = [
   'title',
   'position',
 ] as const satisfies (keyof FlatPageLayoutTab)[];
-

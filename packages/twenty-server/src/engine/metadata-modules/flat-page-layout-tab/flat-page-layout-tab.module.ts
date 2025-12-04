@@ -14,4 +14,3 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
   exports: [WorkspaceFlatPageLayoutTabMapCacheService],
 })
 export class FlatPageLayoutTabModule {}
-

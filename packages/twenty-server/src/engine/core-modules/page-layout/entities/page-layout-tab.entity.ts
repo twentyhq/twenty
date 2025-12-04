@@ -14,10 +14,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { StrictSyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/strict-syncable-entity.interface';
+
 import { PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { StrictSyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/strict-syncable-entity.interface';
 
 @Entity({ name: 'pageLayoutTab', schema: 'core' })
 @ObjectType('PageLayoutTab')

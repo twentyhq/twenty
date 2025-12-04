@@ -72,4 +72,3 @@ export class UpdatePageLayoutTabActionHandlerService extends WorkspaceMigrationR
     return;
   }
 }
-

@@ -102,4 +102,3 @@ export class FlatPageLayoutTabValidatorService {
     return validationResult;
   }
 }
-

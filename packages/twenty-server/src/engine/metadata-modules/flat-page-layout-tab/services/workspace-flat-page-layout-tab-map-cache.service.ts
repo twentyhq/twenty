@@ -43,4 +43,3 @@ export class WorkspaceFlatPageLayoutTabMapCacheService extends WorkspaceCachePro
     return flatPageLayoutTabMaps;
   }
 }
-

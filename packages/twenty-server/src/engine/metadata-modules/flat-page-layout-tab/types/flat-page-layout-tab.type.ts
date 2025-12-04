@@ -1,5 +1,5 @@
 import { type PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-tab.entity';
-import { FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
+import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 
 export const pageLayoutTabEntityRelationProperties = [
   'workspace',
@@ -15,4 +15,3 @@ export type FlatPageLayoutTab = FlatEntityFrom<
   PageLayoutTabEntity,
   PageLayoutTabEntityRelationProperties
 >;
-

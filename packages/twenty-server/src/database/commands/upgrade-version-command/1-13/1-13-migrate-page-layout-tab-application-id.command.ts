@@ -66,9 +66,7 @@ export class MigratePageLayoutTabApplicationIdCommand extends WorkspacesMigratio
     });
 
     if (pageLayoutTabs.length === 0) {
-      this.logger.log(
-        `${workspaceId} no PageLayoutTab entities to migrate`,
-      );
+      this.logger.log(`${workspaceId} no PageLayoutTab entities to migrate`);
 
       return;
     }
@@ -88,4 +86,3 @@ export class MigratePageLayoutTabApplicationIdCommand extends WorkspacesMigratio
     );
   }
 }
-

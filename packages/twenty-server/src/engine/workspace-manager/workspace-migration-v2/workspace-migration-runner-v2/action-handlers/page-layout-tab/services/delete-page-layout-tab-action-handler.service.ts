@@ -57,4 +57,3 @@ export class DeletePageLayoutTabActionHandlerService extends WorkspaceMigrationR
     return;
   }
 }
-

@@ -111,4 +111,3 @@ export class WorkspaceMigrationV2PageLayoutTabActionsBuilderService extends Work
     };
   }
 }
-

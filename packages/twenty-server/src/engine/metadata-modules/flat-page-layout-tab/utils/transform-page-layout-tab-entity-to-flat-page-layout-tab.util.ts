@@ -17,4 +17,3 @@ export const transformPageLayoutTabEntityToFlatPageLayoutTab = (
     applicationId: pageLayoutTabEntity.applicationId,
   };
 };
-

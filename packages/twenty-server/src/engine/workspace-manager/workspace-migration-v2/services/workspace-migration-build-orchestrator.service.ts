@@ -612,10 +612,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
     }
 
     if (isDefined(flatPageLayoutTabMaps)) {
-      const {
-        from: fromFlatPageLayoutTabMaps,
-        to: toFlatPageLayoutTabMaps,
-      } = flatPageLayoutTabMaps;
+      const { from: fromFlatPageLayoutTabMaps, to: toFlatPageLayoutTabMaps } =
+        flatPageLayoutTabMaps;
 
       const pageLayoutTabResult =
         this.workspaceMigrationV2PageLayoutTabActionsBuilderService.validateAndBuild(

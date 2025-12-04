@@ -16,4 +16,3 @@ export type DeletePageLayoutTabAction = {
   type: 'delete_page_layout_tab';
   flatEntityId: string;
 };
-
