@@ -124,6 +124,8 @@ export class ServerlessFunctionService {
         name: functionToExecute.name,
         universalIdentifier: functionToExecute.universalIdentifier,
         applicationId: functionToExecute.applicationId,
+        applicationUniversalIdentifier:
+          functionToExecute.application?.universalIdentifier,
       },
     });
 

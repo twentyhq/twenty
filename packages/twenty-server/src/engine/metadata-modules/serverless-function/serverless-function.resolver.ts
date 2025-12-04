@@ -4,8 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import graphqlTypeJson from 'graphql-type-json';
 import { Repository } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { isDefined } from 'twenty-shared/utils';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -198,33 +198,35 @@ export class ServerlessFunctionResolver {
       variables: { input: ServerlessFunctionLogsInput },
     ) => {
       const { serverlessFunctionLogs } = payload;
-      const { id, universalIdentifier, applicationId, name } =
-        serverlessFunctionLogs;
+      const {
+        id,
+        universalIdentifier,
+        applicationId,
+        applicationUniversalIdentifier,
+        name,
+      } = serverlessFunctionLogs;
       const {
         id: inputId,
         universalIdentifier: inputUniversalIdentifier,
-        applicationId: inputApplicationId,
         name: inputName,
+        applicationId: inputApplicationId,
+        applicationUniversalIdentifier: inputApplicationUniversalIdentifier,
       } = variables.input;
 
       return (
-        !isDefined(inputId) &&
-        inputId === id &&
-        !isDefined(inputUniversalIdentifier) &&
-        inputUniversalIdentifier === universalIdentifier &&
-        !isDefined(inputApplicationId) &&
-        inputApplicationId === applicationId &&
-        !isDefined(inputName) &&
-        inputName === name
+        (!isDefined(inputId) || inputId === id) &&
+        (!isDefined(inputUniversalIdentifier) ||
+          inputUniversalIdentifier === universalIdentifier) &&
+        (!isDefined(inputName) || inputName === name) &&
+        (!isDefined(inputApplicationId) ||
+          inputApplicationId === applicationId) &&
+        (!isDefined(inputApplicationUniversalIdentifier) ||
+          inputApplicationUniversalIdentifier ===
+            applicationUniversalIdentifier)
       );
     },
-    resolve: (payload: {
-      serverlessFunctionLogs: ServerlessFunctionLogsDTO;
-    }) => {
-      return payload.serverlessFunctionLogs;
-    },
   })
-  serverlessFunctionLogs() {
+  serverlessFunctionLogs(@Args('input') _: ServerlessFunctionLogsInput) {
     return this.pubSub.asyncIterator(SERVERLESS_FUNCTION_LOGS_TRIGGER);
   }
 }

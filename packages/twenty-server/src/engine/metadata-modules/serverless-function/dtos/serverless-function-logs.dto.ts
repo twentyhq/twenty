@@ -6,6 +6,9 @@ export class ServerlessFunctionLogsDTO {
   logs: string;
 
   @HideField()
+  applicationUniversalIdentifier?: string;
+
+  @HideField()
   applicationId?: string;
 
   @HideField()

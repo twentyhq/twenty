@@ -56104,6 +56104,7 @@ __metadata:
     dotenv: "npm:^16.4.0"
     fs-extra: "npm:^11.2.0"
     graphql: "npm:^16.8.1"
+    graphql-sse: "npm:^2.5.4"
     inquirer: "npm:^10.0.0"
     jest: "npm:^29.5.0"
     jsonc-parser: "npm:^3.2.0"
