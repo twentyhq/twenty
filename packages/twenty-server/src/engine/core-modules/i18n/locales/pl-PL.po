@@ -1663,6 +1663,11 @@ msgstr "Indeks z tym samym identyfikatorem już istnieje"
 msgid "Index with same name already exists"
 msgstr "Indeks o tej samej nazwie już istnieje"
 
+#. js-lingui-id: mIrUSZ
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Invalid CALDAV credentials. Please check your username and password."
+msgstr ""
+
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid calling code {callingCode}"
@@ -1677,11 +1682,6 @@ msgstr "Nieprawidłowa Captcha, spróbuj użyć innego urządzenia"
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
 msgstr "Nieprawidłowy kod kraju {countryCode}"
-
-#. js-lingui-id: AMeEDO
-#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
-msgid "Invalid credentials. Please check your username and password."
-msgstr "Błędne dane uwierzytelniające. Sprawdź swoją nazwę użytkownika i hasło."
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
