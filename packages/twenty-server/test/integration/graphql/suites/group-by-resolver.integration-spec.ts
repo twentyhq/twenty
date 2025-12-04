@@ -402,6 +402,7 @@ describe('group-by resolver (integration)', () => {
               }
             `,
             filter: filter2025,
+            limit: 10,
           }),
         );
 
@@ -481,6 +482,7 @@ describe('group-by resolver (integration)', () => {
               }
             `,
             filter: filter2025,
+            limit: 10,
           }),
         );
 
@@ -564,6 +566,7 @@ describe('group-by resolver (integration)', () => {
               }
             `,
             filter: filter2025,
+            limit: 10,
           }),
         );
 
@@ -1146,6 +1149,7 @@ describe('group-by resolver (integration)', () => {
               },
             ],
             filter: filter2025,
+            limit: 10,
           }),
         );
 

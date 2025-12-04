@@ -17,26 +17,30 @@ export const seedPageLayoutWidgets = async ({
   objectMetadataItems: ObjectMetadataEntity[];
   isDashboardV2Enabled: boolean;
 }) => {
-  const pageLayoutWidgets = getPageLayoutWidgetDataSeeds(
+  const widgetSeeds = getPageLayoutWidgetDataSeeds(
     workspaceId,
     objectMetadataItems,
     isDashboardV2Enabled,
-  ).map((widget) => {
-    const validatedConfiguration = widget.configuration
-      ? validateAndTransformWidgetConfiguration({
-          type: widget.type,
-          configuration: widget.configuration,
-          isDashboardV2Enabled,
-        })
-      : null;
+  );
 
-    return {
-      ...widget,
-      workspaceId,
-      gridPosition: widget.gridPosition,
-      configuration: validatedConfiguration,
-    };
-  });
+  const pageLayoutWidgets = await Promise.all(
+    widgetSeeds.map(async (widget) => {
+      const validatedConfiguration = widget.configuration
+        ? await validateAndTransformWidgetConfiguration({
+            type: widget.type,
+            configuration: widget.configuration,
+            isDashboardV2Enabled,
+          })
+        : null;
+
+      return {
+        ...widget,
+        workspaceId,
+        gridPosition: widget.gridPosition,
+        configuration: validatedConfiguration,
+      };
+    }),
+  );
 
   if (pageLayoutWidgets.length > 0) {
     await dataSource

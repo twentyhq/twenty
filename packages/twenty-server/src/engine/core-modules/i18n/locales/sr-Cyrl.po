@@ -656,7 +656,7 @@ msgid "Cannot have more than one active workflow version"
 msgstr "Не може имати више од једне активне верзије тока рада"
 
 #. js-lingui-id: PjZIyI
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
 msgstr "Не могу ажурирати канал порука док је синхронизација у току. Молимо вас да сачекате да се синхронизација заврши."
 
@@ -1663,6 +1663,11 @@ msgstr "Индекс са истим идентификатором већ по�
 msgid "Index with same name already exists"
 msgstr "Индекс са истим именом већ постоји"
 
+#. js-lingui-id: mIrUSZ
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Invalid CALDAV credentials. Please check your username and password."
+msgstr ""
+
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid calling code {callingCode}"
@@ -1677,11 +1682,6 @@ msgstr "Неважећа капча, покушајте са другим уре
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
 msgstr "Неважећи код земље {countryCode}"
-
-#. js-lingui-id: AMeEDO
-#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
-msgid "Invalid credentials. Please check your username and password."
-msgstr "Неисправни подаци за пријаву. Молимо проверите ваше корисничко име и лозинку."
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2027,7 +2027,7 @@ msgid "Message Channel Message Associations"
 msgstr "Асоцијације порука канала порука"
 
 #. js-lingui-id: LOU3x5
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
 msgstr "Канал порука није пронађен"
 

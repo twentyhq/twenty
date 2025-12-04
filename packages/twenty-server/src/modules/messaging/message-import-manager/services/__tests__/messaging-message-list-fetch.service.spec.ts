@@ -291,7 +291,7 @@ describe('MessagingMessageListFetchService', () => {
     });
     expect(
       messageChannelSyncStatusService.markAsMessagesListFetchOngoing,
-    ).toHaveBeenCalledWith([mockMicrosoftMessageChannel.id]);
+    ).toHaveBeenCalledWith([mockMicrosoftMessageChannel.id], workspaceId);
 
     expect(messagingGetMessageListService.getMessageLists).toHaveBeenCalledWith(
       {
@@ -332,7 +332,7 @@ describe('MessagingMessageListFetchService', () => {
 
     expect(
       messageChannelSyncStatusService.scheduleMessagesImport,
-    ).toHaveBeenCalledWith([mockMicrosoftMessageChannel.id]);
+    ).toHaveBeenCalledWith([mockMicrosoftMessageChannel.id], workspaceId);
   });
 
   it('should process Google message list fetch correctly', async () => {
@@ -350,7 +350,7 @@ describe('MessagingMessageListFetchService', () => {
     });
     expect(
       messageChannelSyncStatusService.markAsMessagesListFetchOngoing,
-    ).toHaveBeenCalledWith([mockGoogleMessageChannel.id]);
+    ).toHaveBeenCalledWith([mockGoogleMessageChannel.id], workspaceId);
 
     expect(messagingGetMessageListService.getMessageLists).toHaveBeenCalledWith(
       {
@@ -391,6 +391,6 @@ describe('MessagingMessageListFetchService', () => {
 
     expect(
       messageChannelSyncStatusService.scheduleMessagesImport,
-    ).toHaveBeenCalledWith([mockGoogleMessageChannel.id]);
+    ).toHaveBeenCalledWith([mockGoogleMessageChannel.id], workspaceId);
   });
 });
