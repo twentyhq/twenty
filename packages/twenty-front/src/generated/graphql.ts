@@ -1820,7 +1820,7 @@ export type Mutation = {
   destroyCoreViewSort: Scalars['Boolean'];
   destroyPageLayout: Scalars['Boolean'];
   destroyPageLayoutTab: Scalars['Boolean'];
-  destroyPageLayoutWidget: Scalars['Boolean'];
+  destroyPageLayoutWidget: PageLayoutWidget;
   disablePostgresProxy: PostgresCredentials;
   dismissReconnectAccountBanner: Scalars['Boolean'];
   duplicateWorkflow: WorkflowVersionDto;

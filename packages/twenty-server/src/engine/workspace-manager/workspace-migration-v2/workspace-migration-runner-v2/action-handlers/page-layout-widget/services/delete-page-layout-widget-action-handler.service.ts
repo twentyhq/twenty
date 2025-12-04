@@ -28,7 +28,7 @@ export class DeletePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
 
     const updatedFlatPageLayoutWidgetMaps =
       deleteFlatEntityFromFlatEntityMapsOrThrow({
-        flatEntityId: pageLayoutWidgetId,
+        entityToDeleteId: pageLayoutWidgetId,
         flatEntityMaps: flatPageLayoutWidgetMaps,
       });
 

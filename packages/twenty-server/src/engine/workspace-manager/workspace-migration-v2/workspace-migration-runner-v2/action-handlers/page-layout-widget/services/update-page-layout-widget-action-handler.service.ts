@@ -6,7 +6,8 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { updateFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/update-flat-entity-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-widget.entity';
 import { UpdatePageLayoutWidgetAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/page-layout-widget/types/workspace-migration-page-layout-widget-action-v2.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
@@ -27,16 +28,22 @@ export class UpdatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
     const { flatPageLayoutWidgetMaps } = allFlatEntityMaps;
     const { pageLayoutWidgetId, updates } = action;
 
-    const partialFlatPageLayoutWidget =
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
+    const existingPageLayoutWidget = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: pageLayoutWidgetId,
+      flatEntityMaps: flatPageLayoutWidgetMaps,
+    });
+
+    const updatedPageLayoutWidget = {
+      ...existingPageLayoutWidget,
+      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
         updates,
-      });
+      }),
+    };
 
     const updatedFlatPageLayoutWidgetMaps =
-      updateFlatEntityInFlatEntityMapsOrThrow({
-        flatEntityId: pageLayoutWidgetId,
+      replaceFlatEntityInFlatEntityMapsOrThrow({
+        flatEntity: updatedPageLayoutWidget,
         flatEntityMaps: flatPageLayoutWidgetMaps,
-        partialFlatEntity: partialFlatPageLayoutWidget,
       });
 
     return {
