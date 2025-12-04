@@ -6,6 +6,7 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
+import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { generateDuplicatedTimestamps } from '@/page-layout/utils/generateDuplicatedTimestamps';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
@@ -16,7 +17,6 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { useRecoilCallback } from 'recoil';
 import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-import { type PageLayoutTab } from '../types/PageLayoutTab';
 
 export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
