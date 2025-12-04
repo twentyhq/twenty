@@ -1,7 +1,7 @@
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
-import { recordIndexGroupFieldMetadataIdComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexGroupFieldMetadataIdComponentSelector';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
@@ -19,8 +19,8 @@ export const RecordTableRecordGroupSectionAddNew = () => {
     recordGroupDefinitionFamilyState(currentRecordGroupId),
   );
 
-  const mainGroupByFieldMetadataId = useRecoilComponentValue(
-    recordIndexGroupFieldMetadataIdComponentSelector,
+  const mainGroupByFieldMetadata = useRecoilComponentValue(
+    recordIndexGroupFieldMetadataItemComponentState,
   );
 
   const { createNewIndexRecord } = useCreateNewIndexRecord({
@@ -28,7 +28,7 @@ export const RecordTableRecordGroupSectionAddNew = () => {
   });
 
   const fieldMetadataItem = objectMetadataItem.fields.find(
-    (field) => field.id === mainGroupByFieldMetadataId,
+    (field) => field.id === mainGroupByFieldMetadata?.id,
   );
 
   const objectPermissions = useObjectPermissionsForObject(

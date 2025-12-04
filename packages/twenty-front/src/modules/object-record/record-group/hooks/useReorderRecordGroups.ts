@@ -3,7 +3,7 @@ import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRec
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { recordIndexGroupFieldMetadataIdComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexGroupFieldMetadataIdComponentSelector';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
@@ -39,8 +39,8 @@ export const useReorderRecordGroups = ({
 
   const { saveViewGroups } = useSaveCurrentViewGroups();
 
-  const groupFieldMetadataId = useRecoilComponentValue(
-    recordIndexGroupFieldMetadataIdComponentSelector,
+  const groupFieldMetadata = useRecoilComponentValue(
+    recordIndexGroupFieldMetadataItemComponentState,
   );
 
   const reorderRecordGroups = useRecoilCallback(
@@ -86,12 +86,12 @@ export const useReorderRecordGroups = ({
           ];
         }, []);
 
-        if (!isDefined(groupFieldMetadataId)) {
+        if (!isDefined(groupFieldMetadata?.id)) {
           throw new Error('mainGroupByFieldMetadataId is required');
         }
 
         setRecordGroups({
-          mainGroupByFieldMetadataId: groupFieldMetadataId,
+          mainGroupByFieldMetadataId: groupFieldMetadata?.id,
           recordGroups: updatedRecordGroups,
           recordIndexId,
           objectMetadataItemId: objectMetadataItem.id,
@@ -102,7 +102,7 @@ export const useReorderRecordGroups = ({
       },
     [
       objectMetadataItem.id,
-      groupFieldMetadataId,
+      groupFieldMetadata?.id,
       recordIndexId,
       saveViewGroups,
       setRecordGroups,

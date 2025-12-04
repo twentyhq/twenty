@@ -238,7 +238,7 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
     it('should preserve view groups when mainGroupByFieldMetadataId does not change', async () => {
       const initialOptions = generateOptions(3);
 
-      const { statusFieldMetadataId, statusFieldOptions, viewId } =
+      const { statusFieldOptions, viewId } =
         await createObjectWithTwoSelectFieldsAndKanbanViewAndGroupedTableView(
           initialOptions,
         );
