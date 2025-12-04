@@ -30,6 +30,7 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatAgentMaps: 'flat-maps:agent',
   flatRoleTargetByAgentIdMaps: 'flat-maps:flatRoleTargetByAgentId',
   flatPageLayoutWidgetMaps: 'flat-maps:page-layout-widget',
+  flatPageLayoutTabMaps: 'flat-maps:flatPageLayoutTabMaps',
 } as const satisfies Record<WorkspaceCacheKeyName, string>;
 
 type AdditionalCacheDataMap = {

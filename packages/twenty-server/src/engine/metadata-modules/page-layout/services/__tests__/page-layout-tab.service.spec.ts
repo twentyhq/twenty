@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
+import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-tab.entity';
 import { type PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-widget.entity';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
@@ -18,6 +19,7 @@ import {
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 
 describe('PageLayoutTabService', () => {
   let pageLayoutTabService: PageLayoutTabService;
@@ -36,6 +38,9 @@ describe('PageLayoutTabService', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: null,
+    application: {} as ApplicationEntity,
+    applicationId: 'application-id',
+    universalIdentifier: 'universal-identifier',
   } as PageLayoutTabEntity;
 
   const mockWidget = {
@@ -69,6 +74,14 @@ describe('PageLayoutTabService', () => {
             delete: jest.fn(),
             restore: jest.fn(),
             insert: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(WorkspaceEntity),
+          useValue: {
+            findOneOrFail: jest.fn().mockResolvedValue({
+              workspaceCustomApplicationId: 'application-id',
+            }),
           },
         },
         {
@@ -261,6 +274,8 @@ describe('PageLayoutTabService', () => {
       expect(pageLayoutTabRepository.insert).toHaveBeenCalledWith({
         ...pageLayoutTabData,
         workspaceId,
+        applicationId: 'application-id',
+        universalIdentifier: expect.any(String),
       });
       expect(result).toEqual(mockPageLayoutTab);
     });

@@ -15,6 +15,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { aggregateOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/utils/aggregate-orchestrator-actions-report.util';
 import { WorkspaceMigrationV2AgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/agent/workspace-migration-v2-agent-actions-builder.service';
+import { WorkspaceMigrationV2PageLayoutTabActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/page-layout-tab/workspace-migration-v2-page-layout-tab-actions-builder.service';
 import { WorkspaceMigrationV2CronTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/workspace-migration-v2-cron-trigger-action-builder.service';
 import { WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/workspace-migration-v2-database-event-trigger-actions-builder.service';
 import { WorkspaceMigrationV2FieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/workspace-migration-v2-field-actions-builder.service';
@@ -46,6 +47,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationV2FieldActionsBuilderService: WorkspaceMigrationV2FieldActionsBuilderService,
     private readonly workspaceMigrationV2RoleActionsBuilderService: WorkspaceMigrationV2RoleActionsBuilderService,
     private readonly workspaceMigrationV2AgentActionsBuilderService: WorkspaceMigrationV2AgentActionsBuilderService,
+    private readonly workspaceMigrationV2PageLayoutTabActionsBuilderService: WorkspaceMigrationV2PageLayoutTabActionsBuilderService,
   ) {}
 
   private setupOptimisticCache({
@@ -134,6 +136,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatRoleMaps,
       flatRoleTargetMaps,
       flatAgentMaps,
+      flatPageLayoutTabMaps,
     } = fromToAllFlatEntityMaps;
 
     if (isDefined(flatObjectMetadataMaps)) {
@@ -608,6 +611,38 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatPageLayoutTabMaps)) {
+      const { from: fromFlatPageLayoutTabMaps, to: toFlatPageLayoutTabMaps } =
+        flatPageLayoutTabMaps;
+
+      const pageLayoutTabResult =
+        this.workspaceMigrationV2PageLayoutTabActionsBuilderService.validateAndBuild(
+          {
+            from: fromFlatPageLayoutTabMaps,
+            to: toFlatPageLayoutTabMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: undefined,
+            workspaceId,
+          },
+        );
+
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            pageLayoutTabResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
+
+      if (pageLayoutTabResult.status === 'fail') {
+        orchestratorFailureReport.pageLayoutTab.push(
+          ...pageLayoutTabResult.errors,
+        );
+      } else {
+        orchestratorActionsReport.pageLayoutTab = pageLayoutTabResult.actions;
+      }
+    }
+
     const allErrors = Object.values(orchestratorFailureReport);
 
     if (allErrors.some((report) => report.length > 0)) {
@@ -701,6 +736,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.agent.deleted,
           ...aggregatedOrchestratorActionsReport.agent.created,
           ...aggregatedOrchestratorActionsReport.agent.updated,
+          ///
+
+          // Page layout tabs
+          ...aggregatedOrchestratorActionsReport.pageLayoutTab.deleted,
+          ...aggregatedOrchestratorActionsReport.pageLayoutTab.created,
+          ...aggregatedOrchestratorActionsReport.pageLayoutTab.updated,
           ///
         ],
         workspaceId,

@@ -4,7 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { EntityManager, IsNull, Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { v4 } from 'uuid';
 
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout-tab.input';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-tab.entity';
 import {
@@ -24,6 +26,8 @@ export class PageLayoutTabService {
   constructor(
     @InjectRepository(PageLayoutTabEntity)
     private readonly pageLayoutTabRepository: Repository<PageLayoutTabEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly pageLayoutService: PageLayoutService,
   ) {}
 
@@ -113,11 +117,18 @@ export class PageLayoutTabService {
         transactionManager,
       );
 
+      const workspace = await this.workspaceRepository.findOneOrFail({
+        where: { id: workspaceId },
+        select: ['workspaceCustomApplicationId'],
+      });
+
       const repository = this.getPageLayoutTabRepository(transactionManager);
 
       const insertResult = await repository.insert({
         ...pageLayoutTabData,
         workspaceId,
+        universalIdentifier: v4(),
+        applicationId: workspace.workspaceCustomApplicationId,
       });
 
       return this.findByIdOrThrow(

@@ -25,12 +25,6 @@ import {
   TASK_STANDARD_FIELD_IDS,
   TASK_TARGET_STANDARD_FIELD_IDS,
   TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
-  VIEW_FIELD_STANDARD_FIELD_IDS,
-  VIEW_FILTER_GROUP_STANDARD_FIELD_IDS,
-  VIEW_FILTER_STANDARD_FIELD_IDS,
-  VIEW_GROUP_STANDARD_FIELD_IDS,
-  VIEW_SORT_STANDARD_FIELD_IDS,
-  VIEW_STANDARD_FIELD_IDS,
   WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS,
   WORKFLOW_RUN_STANDARD_FIELD_IDS,
   WORKFLOW_STANDARD_FIELD_IDS,
@@ -630,6 +624,9 @@ export const STANDARD_OBJECTS = {
         universalIdentifier:
           MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.messageThreadExternalId,
       },
+      direction: {
+        universalIdentifier: '75c9b0f7-9e76-44d4-a2f9-47051e61eec7',
+      },
     },
     views: {},
   },
@@ -807,10 +804,6 @@ export const STANDARD_OBJECTS = {
       messageChannelMessageAssociations: {
         universalIdentifier:
           MESSAGE_THREAD_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
-      },
-      messageThreadSubscribers: {
-        universalIdentifier:
-          MESSAGE_THREAD_STANDARD_FIELD_IDS.messageThreadSubscribers,
       },
     },
     views: {
@@ -1351,7 +1344,6 @@ export const STANDARD_OBJECTS = {
       happensAt: {
         universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.happensAt,
       },
-      type: { universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.type },
       name: { universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.name },
       properties: {
         universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.properties,
@@ -1422,140 +1414,6 @@ export const STANDARD_OBJECTS = {
         },
       },
     },
-  },
-  view: {
-    universalIdentifier: STANDARD_OBJECT_IDS.view,
-    fields: {
-      name: { universalIdentifier: VIEW_STANDARD_FIELD_IDS.name },
-      objectMetadataId: {
-        universalIdentifier: VIEW_STANDARD_FIELD_IDS.objectMetadataId,
-      },
-      type: { universalIdentifier: VIEW_STANDARD_FIELD_IDS.type },
-      key: { universalIdentifier: VIEW_STANDARD_FIELD_IDS.key },
-      icon: { universalIdentifier: VIEW_STANDARD_FIELD_IDS.icon },
-      kanbanFieldMetadataId: {
-        universalIdentifier: VIEW_STANDARD_FIELD_IDS.kanbanFieldMetadataId,
-      },
-      kanbanAggregateOperation: {
-        universalIdentifier: VIEW_STANDARD_FIELD_IDS.kanbanAggregateOperation,
-      },
-      kanbanAggregateOperationFieldMetadataId: {
-        universalIdentifier:
-          VIEW_STANDARD_FIELD_IDS.kanbanAggregateOperationFieldMetadataId,
-      },
-      mainGroupByFieldMetadataId: {
-        universalIdentifier: VIEW_STANDARD_FIELD_IDS.mainGroupByFieldMetadataId,
-      },
-      position: { universalIdentifier: VIEW_STANDARD_FIELD_IDS.position },
-      isCompact: { universalIdentifier: VIEW_STANDARD_FIELD_IDS.isCompact },
-      openRecordIn: {
-        universalIdentifier: VIEW_STANDARD_FIELD_IDS.openRecordIn,
-      },
-      viewFields: { universalIdentifier: VIEW_STANDARD_FIELD_IDS.viewFields },
-      viewGroups: { universalIdentifier: VIEW_STANDARD_FIELD_IDS.viewGroups },
-      viewFilters: { universalIdentifier: VIEW_STANDARD_FIELD_IDS.viewFilters },
-      viewFilterGroups: {
-        universalIdentifier: VIEW_STANDARD_FIELD_IDS.viewFilterGroups,
-      },
-      viewSorts: { universalIdentifier: VIEW_STANDARD_FIELD_IDS.viewSorts },
-      favorites: { universalIdentifier: VIEW_STANDARD_FIELD_IDS.favorites },
-      anyFieldFilterValue: {
-        universalIdentifier: VIEW_STANDARD_FIELD_IDS.anyFieldFilterValue,
-      },
-    },
-    views: {},
-  },
-  viewField: {
-    universalIdentifier: STANDARD_OBJECT_IDS.viewField,
-    fields: {
-      fieldMetadataId: {
-        universalIdentifier: VIEW_FIELD_STANDARD_FIELD_IDS.fieldMetadataId,
-      },
-      isVisible: {
-        universalIdentifier: VIEW_FIELD_STANDARD_FIELD_IDS.isVisible,
-      },
-      size: { universalIdentifier: VIEW_FIELD_STANDARD_FIELD_IDS.size },
-      position: { universalIdentifier: VIEW_FIELD_STANDARD_FIELD_IDS.position },
-      view: { universalIdentifier: VIEW_FIELD_STANDARD_FIELD_IDS.view },
-      aggregateOperation: {
-        universalIdentifier: VIEW_FIELD_STANDARD_FIELD_IDS.aggregateOperation,
-      },
-    },
-    views: {},
-  },
-  viewFilter: {
-    universalIdentifier: STANDARD_OBJECT_IDS.viewFilter,
-    fields: {
-      fieldMetadataId: {
-        universalIdentifier: VIEW_FILTER_STANDARD_FIELD_IDS.fieldMetadataId,
-      },
-      operand: { universalIdentifier: VIEW_FILTER_STANDARD_FIELD_IDS.operand },
-      value: { universalIdentifier: VIEW_FILTER_STANDARD_FIELD_IDS.value },
-      displayValue: {
-        universalIdentifier: VIEW_FILTER_STANDARD_FIELD_IDS.displayValue,
-      },
-      view: { universalIdentifier: VIEW_FILTER_STANDARD_FIELD_IDS.view },
-      viewFilterGroupId: {
-        universalIdentifier: VIEW_FILTER_STANDARD_FIELD_IDS.viewFilterGroupId,
-      },
-      positionInViewFilterGroup: {
-        universalIdentifier:
-          VIEW_FILTER_STANDARD_FIELD_IDS.positionInViewFilterGroup,
-      },
-      subFieldName: {
-        universalIdentifier: VIEW_FILTER_STANDARD_FIELD_IDS.subFieldName,
-      },
-    },
-    views: {},
-  },
-  viewFilterGroup: {
-    universalIdentifier: STANDARD_OBJECT_IDS.viewFilterGroup,
-    fields: {
-      view: { universalIdentifier: VIEW_FILTER_GROUP_STANDARD_FIELD_IDS.view },
-      parentViewFilterGroupId: {
-        universalIdentifier:
-          VIEW_FILTER_GROUP_STANDARD_FIELD_IDS.parentViewFilterGroupId,
-      },
-      logicalOperator: {
-        universalIdentifier:
-          VIEW_FILTER_GROUP_STANDARD_FIELD_IDS.logicalOperator,
-      },
-      positionInViewFilterGroup: {
-        universalIdentifier:
-          VIEW_FILTER_GROUP_STANDARD_FIELD_IDS.positionInViewFilterGroup,
-      },
-    },
-    views: {},
-  },
-  viewGroup: {
-    universalIdentifier: STANDARD_OBJECT_IDS.viewGroup,
-    fields: {
-      fieldMetadataId: {
-        universalIdentifier: VIEW_GROUP_STANDARD_FIELD_IDS.fieldMetadataId,
-      },
-      fieldValue: {
-        universalIdentifier: VIEW_GROUP_STANDARD_FIELD_IDS.fieldValue,
-      },
-      isVisible: {
-        universalIdentifier: VIEW_GROUP_STANDARD_FIELD_IDS.isVisible,
-      },
-      position: { universalIdentifier: VIEW_GROUP_STANDARD_FIELD_IDS.position },
-      view: { universalIdentifier: VIEW_GROUP_STANDARD_FIELD_IDS.view },
-    },
-    views: {},
-  },
-  viewSort: {
-    universalIdentifier: STANDARD_OBJECT_IDS.viewSort,
-    fields: {
-      fieldMetadataId: {
-        universalIdentifier: VIEW_SORT_STANDARD_FIELD_IDS.fieldMetadataId,
-      },
-      direction: {
-        universalIdentifier: VIEW_SORT_STANDARD_FIELD_IDS.direction,
-      },
-      view: { universalIdentifier: VIEW_SORT_STANDARD_FIELD_IDS.view },
-    },
-    views: {},
   },
   workflow: {
     universalIdentifier: STANDARD_OBJECT_IDS.workflow,
@@ -1818,14 +1676,6 @@ export const STANDARD_OBJECTS = {
       userId: {
         universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userId,
       },
-      authoredActivities: {
-        universalIdentifier:
-          WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredActivities,
-      },
-      assignedActivities: {
-        universalIdentifier:
-          WORKSPACE_MEMBER_STANDARD_FIELD_IDS.assignedActivities,
-      },
       assignedTasks: {
         universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.assignedTasks,
       },
@@ -1839,10 +1689,6 @@ export const STANDARD_OBJECTS = {
       authoredAttachments: {
         universalIdentifier:
           WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredAttachments,
-      },
-      authoredComments: {
-        universalIdentifier:
-          WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredComments,
       },
       connectedAccounts: {
         universalIdentifier:
@@ -1862,13 +1708,6 @@ export const STANDARD_OBJECTS = {
       timelineActivities: {
         universalIdentifier:
           WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timelineActivities,
-      },
-      auditLogs: {
-        universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.auditLogs,
-      },
-      messageThreadSubscribers: {
-        universalIdentifier:
-          WORKSPACE_MEMBER_STANDARD_FIELD_IDS.messageThreadSubscribers,
       },
       timeZone: {
         universalIdentifier: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeZone,

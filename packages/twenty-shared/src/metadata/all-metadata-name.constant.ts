@@ -14,4 +14,5 @@ export const ALL_METADATA_NAME = {
   roleTarget: 'roleTarget',
   agent: 'agent',
   pageLayoutWidget: 'pageLayoutWidget',
+  pageLayoutTab: 'pageLayoutTab',
 } as const;

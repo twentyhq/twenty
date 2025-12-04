@@ -1021,6 +1021,11 @@ msgstr "Alan Adı"
 msgid "Due Date"
 msgstr "Bitiş Tarihi"
 
+#. js-lingui-id: UrzTjS
+#: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
+msgid "Duplicate root resolver found. Each root resolver can only be called once per document."
+msgstr ""
+
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Duplicated option {field}"
@@ -2803,6 +2808,16 @@ msgstr "Genel alan adı zaten kayıtlı."
 msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
 msgstr "Genel alan adı URL tanımlı değil. Lütfen PUBLIC_DOMAIN_URL ortam değişkenini ayarlayın."
 
+#. js-lingui-id: uzWClp
+#: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
+msgid "Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation."
+msgstr ""
+
+#. js-lingui-id: XkHjXW
+#: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
+msgid "Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: {queryComplexity}. Maximum complexity: {maximumComplexity}."
+msgstr ""
+
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Received At"
@@ -3388,9 +3403,14 @@ msgstr "İzin ayarlamaya çalıştığınız nesne bulunamadı. Silinmiş olabil
 msgid "The opportunity name"
 msgstr "Fırsat adı"
 
-#. js-lingui-id: lk5nUN
-#: src/engine/core-modules/graphql/hooks/use-compute-complexity.hook.ts
-msgid "The request is too complex to process. Please try reducing the amount of data requested."
+#. js-lingui-id: pv+BoZ
+#: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
+msgid "The request is too complex to process. Please try reducing the amount of requested fields."
+msgstr ""
+
+#. js-lingui-id: 4LVaa7
+#: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
+msgid "The request is too complex to process. Please try reducing the amount of requested root resolvers."
 msgstr ""
 
 #. js-lingui-id: Zi9X+u

@@ -18,6 +18,9 @@ import { DeleteIndexActionHandlerService } from 'src/engine/workspace-manager/wo
 import { CreateObjectActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/object/services/create-object-action-handler.service';
 import { DeleteObjectActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/object/services/delete-object-action-handler.service';
 import { UpdateObjectActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/object/services/update-object-action-handler.service';
+import { CreatePageLayoutTabActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/page-layout-tab/services/create-page-layout-tab-action-handler.service';
+import { DeletePageLayoutTabActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/page-layout-tab/services/delete-page-layout-tab-action-handler.service';
+import { UpdatePageLayoutTabActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/page-layout-tab/services/update-page-layout-tab-action-handler.service';
 import { CreatePageLayoutWidgetActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/page-layout-widget/services/create-page-layout-widget-action-handler.service';
 import { DeletePageLayoutWidgetActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/page-layout-widget/services/delete-page-layout-widget-action-handler.service';
 import { UpdatePageLayoutWidgetActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/page-layout-widget/services/update-page-layout-widget-action-handler.service';
@@ -107,6 +110,10 @@ import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/wor
     CreatePageLayoutWidgetActionHandlerService,
     UpdatePageLayoutWidgetActionHandlerService,
     DeletePageLayoutWidgetActionHandlerService,
+
+    CreatePageLayoutTabActionHandlerService,
+    UpdatePageLayoutTabActionHandlerService,
+    DeletePageLayoutTabActionHandlerService,
   ],
 })
 export class WorkspaceSchemaMigrationRunnerActionHandlersModule {}
