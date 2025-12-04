@@ -47,12 +47,12 @@ export class AppLogsCommand {
     functionName?: string;
   }): void {
     const appPath = appName ?? 'Twenty Application';
+
     const functionIdentifier =
       functionUniversalIdentifier || functionName
         ? `function "${functionUniversalIdentifier || functionName}"`
         : 'functions';
-    if (functionUniversalIdentifier || functionName) {
-    }
+
     console.log(
       chalk.blue(`🚀 Watching ${appPath} ${functionIdentifier} logs:`),
     );
