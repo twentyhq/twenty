@@ -42,6 +42,7 @@ export class CalendarFetchEventsService {
   ): Promise<void> {
     await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchOngoing(
       [calendarChannel.id],
+      workspaceId,
     );
 
     try {
@@ -98,6 +99,7 @@ export class CalendarFetchEventsService {
 
         await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
           [calendarChannel.id],
+          workspaceId,
         );
       }
 
@@ -128,6 +130,7 @@ export class CalendarFetchEventsService {
 
         await this.calendarChannelSyncStatusService.scheduleCalendarEventsImport(
           [calendarChannel.id],
+          workspaceId,
         );
       } else {
         throw new CalendarEventImportDriverException(
