@@ -1,22 +1,25 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
-import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
+import { GraphPieChartTooltip } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphPieChartTooltip';
 import { PieChartCenterMetric } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer';
 import { PIE_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartHoverBrightness';
 import { PIE_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMargins';
 import { usePieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartData';
 import { usePieChartTooltip } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartTooltip';
+import { graphWidgetPieTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetPieChart/states/graphWidgetPieTooltipComponentState';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { ResponsivePie, type ComputedDatum } from '@nivo/pie';
 import {
-  ResponsivePie,
-  type ComputedDatum,
-  type PieTooltipProps,
-} from '@nivo/pie';
-import { useMemo } from 'react';
+  useCallback,
+  useMemo,
+  useRef,
+  type MouseEvent as ReactMouseEvent,
+} from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type PieChartConfiguration } from '~/generated/graphql';
 
@@ -75,6 +78,10 @@ export const GraphWidgetPieChart = ({
 }: GraphWidgetPieChartProps) => {
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const setActivePieTooltip = useSetRecoilComponentState(
+    graphWidgetPieTooltipComponentState,
+  );
 
   const formatOptions: GraphValueFormatOptions = {
     displayType,
@@ -101,21 +108,32 @@ export const GraphWidgetPieChart = ({
     }
   };
 
-  const renderTooltip = ({ datum }: PieTooltipProps<PieChartDataItem>) => {
-    const tooltipData = createTooltipData(datum);
-    if (!isDefined(tooltipData)) return null;
+  const handleTooltipClick:
+    | ((datum: ComputedDatum<PieChartDataItem>) => void)
+    | undefined = isDefined(onSliceClick)
+    ? (datum: ComputedDatum<PieChartDataItem>) => handleSliceClick(datum)
+    : undefined;
 
-    const handleTooltipClick: (() => void) | undefined = isDefined(onSliceClick)
-      ? () => handleSliceClick(datum)
-      : undefined;
+  const handleSliceMove = useCallback(
+    (
+      datum: ComputedDatum<PieChartDataItem>,
+      event: ReactMouseEvent<SVGPathElement>,
+    ) => {
+      if (!isDefined(containerRef.current)) return;
 
-    return (
-      <GraphWidgetTooltip
-        items={[tooltipData.tooltipItem]}
-        onGraphWidgetTooltipClick={handleTooltipClick}
-      />
-    );
-  };
+      const containerRect = containerRef.current.getBoundingClientRect();
+      setActivePieTooltip({
+        datum,
+        offsetLeft: event.clientX - containerRect.left,
+        offsetTop: event.clientY - containerRect.top,
+      });
+    },
+    [setActivePieTooltip],
+  );
+
+  const handleSliceLeave = useCallback(() => {
+    setActivePieTooltip(null);
+  }, [setActivePieTooltip]);
 
   const hasNoData = useMemo(
     () => data.length === 0 || data.every((item) => item.value === 0),
@@ -130,6 +148,7 @@ export const GraphWidgetPieChart = ({
   return (
     <StyledContainer id={id}>
       <GraphWidgetChartContainer
+        ref={containerRef}
         $isClickable={!hasNoData && isDefined(onSliceClick)}
         $cursorSelector="svg g path"
       >
@@ -143,8 +162,10 @@ export const GraphWidgetPieChart = ({
             borderWidth={0}
             enableArcLinkLabels={showDataLabels && !hasNoData}
             enableArcLabels={false}
-            tooltip={hasNoData ? () => null : renderTooltip}
+            tooltip={() => null}
             onClick={hasNoData ? undefined : (datum) => handleSliceClick(datum)}
+            onMouseMove={hasNoData ? undefined : handleSliceMove}
+            onMouseLeave={hasNoData ? undefined : handleSliceLeave}
             layers={['arcs', 'arcLinkLabels']}
             arcLinkLabel={(datum: ComputedDatum<PieChartDataItem>) => {
               const tooltipData = createTooltipData(datum);
@@ -173,6 +194,13 @@ export const GraphWidgetPieChart = ({
           />
         </StyledPieChartWrapper>
       </GraphWidgetChartContainer>
+      <GraphPieChartTooltip
+        containerId={id}
+        enrichedData={enrichedData}
+        formatOptions={formatOptions}
+        displayType={displayType}
+        onSliceClick={handleTooltipClick}
+      />
       <GraphWidgetLegend
         show={showLegend && !hasNoData}
         items={enrichedData.map((item) => ({
