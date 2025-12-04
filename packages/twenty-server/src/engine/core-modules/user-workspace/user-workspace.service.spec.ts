@@ -110,7 +110,7 @@ describe('UserWorkspaceService', () => {
         {
           provide: UserRoleService,
           useValue: {
-            assignRoleToUserWorkspace: jest.fn(),
+            assignRoleToManyUserWorkspace: jest.fn(),
           },
         },
         {
@@ -417,7 +417,7 @@ describe('UserWorkspaceService', () => {
       jest.spyOn(service, 'create').mockResolvedValue(userWorkspace);
       jest.spyOn(service, 'createWorkspaceMember').mockResolvedValue(undefined);
       jest
-        .spyOn(userRoleService, 'assignRoleToUserWorkspace')
+        .spyOn(userRoleService, 'assignRoleToManyUserWorkspace')
         .mockResolvedValue(undefined);
       jest
         .spyOn(workspaceInvitationService, 'invalidateWorkspaceInvitation')
@@ -439,9 +439,9 @@ describe('UserWorkspaceService', () => {
         workspace.id,
         user,
       );
-      expect(userRoleService.assignRoleToUserWorkspace).toHaveBeenCalledWith({
+      expect(userRoleService.assignRoleToManyUserWorkspace).toHaveBeenCalledWith({
         workspaceId: workspace.id,
-        userWorkspaceId: userWorkspace.id,
+        userWorkspaceIds: [userWorkspace.id],
         roleId: workspace.defaultRoleId,
       });
       expect(
