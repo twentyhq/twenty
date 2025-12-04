@@ -3086,6 +3086,11 @@ msgstr "Sağlanan bilgilerin bir kısmı geçersiz. Lütfen girdinizi kontrol ed
 msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
 msgstr "Seçilen izinlerin bir kısmı geçerli değil. Lütfen geçerli izin ayarlarıyla tekrar deneyin."
 
+#. js-lingui-id: aPJopM
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
+msgstr ""
+
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Source object cannot be the target object"
@@ -4406,8 +4411,3 @@ msgstr "Şirket hesabını yönetmekten sorumlu ekip üyeniz"
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "Your workspace has been updated with a new data model. Please refresh the page."
 msgstr "Çalışma alanınız yeni bir veri modeli ile güncellendi. Lütfen sayfayı yenileyin."
-
-#. js-lingui-id: ZukXiD
-#: src/engine/metadata-modules/user-role/user-role.service.ts
-msgid "Your workspace membership could not be found. You may no longer have access to this workspace."
-msgstr "Çalışma alanı üyeliğiniz bulunamadı. Bu çalışma alanına artık erişiminiz olmayabilir."

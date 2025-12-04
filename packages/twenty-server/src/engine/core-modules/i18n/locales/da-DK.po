@@ -3086,6 +3086,11 @@ msgstr "Nogle af de oplysninger, der er angivet, er ugyldige. Kontroller venligs
 msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
 msgstr "Nogle af de tilladelser du har valgt er ugyldige. Prøv venligst igen med gyldige tilladelsesindstillinger."
 
+#. js-lingui-id: aPJopM
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
+msgstr ""
+
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Source object cannot be the target object"
@@ -4406,8 +4411,3 @@ msgstr "Dit teammedlem ansvarlig for at forvalte virksomhedens konto"
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "Your workspace has been updated with a new data model. Please refresh the page."
 msgstr "Dit arbejdsområde er blevet opdateret med en ny datamodel. Opdater venligst siden."
-
-#. js-lingui-id: ZukXiD
-#: src/engine/metadata-modules/user-role/user-role.service.ts
-msgid "Your workspace membership could not be found. You may no longer have access to this workspace."
-msgstr "Din workspace medlemsskab kunne ikke findes. Du har muligvis ikke længere adgang til denne workspace."

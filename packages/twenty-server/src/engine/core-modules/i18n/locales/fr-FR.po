@@ -3086,6 +3086,11 @@ msgstr "Certaines informations fournies sont invalides. Veuillez vérifier votre
 msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
 msgstr "Certaines des permissions que vous avez sélectionnées ne sont pas valides. Veuillez réessayer avec des paramètres de permission valides."
 
+#. js-lingui-id: aPJopM
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
+msgstr ""
+
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Source object cannot be the target object"
@@ -4406,8 +4411,3 @@ msgstr "Le membre de votre équipe responsable de la gestion du compte entrepris
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "Your workspace has been updated with a new data model. Please refresh the page."
 msgstr "Votre espace de travail a été mis à jour avec un nouveau modèle de données. Veuillez actualiser la page."
-
-#. js-lingui-id: ZukXiD
-#: src/engine/metadata-modules/user-role/user-role.service.ts
-msgid "Your workspace membership could not be found. You may no longer have access to this workspace."
-msgstr "Votre appartenance à l'espace de travail n'a pas pu être trouvée. Vous n'avez peut-être plus accès à cet espace de travail."

@@ -3086,6 +3086,11 @@ msgstr "提供的信息中有些无效。请检查您的输入并重试。"
 msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
 msgstr "您选择的某些权限无效。请尝试使用有效的权限设置。"
 
+#. js-lingui-id: aPJopM
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
+msgstr ""
+
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 msgid "Source object cannot be the target object"
@@ -4406,8 +4411,3 @@ msgstr "负责管理公司账户的团队成员"
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "Your workspace has been updated with a new data model. Please refresh the page."
 msgstr "您的工作空间已更新为新的数据模型。请刷新页面。"
-
-#. js-lingui-id: ZukXiD
-#: src/engine/metadata-modules/user-role/user-role.service.ts
-msgid "Your workspace membership could not be found. You may no longer have access to this workspace."
-msgstr "找不到您的工作区成员资格。您可能无法再访问此工作区。"
