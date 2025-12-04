@@ -1,10 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { generateObject, generateText, jsonSchema, stepCountIs } from 'ai';
+import {
+  generateObject,
+  generateText,
+  jsonSchema,
+  stepCountIs,
+  ToolSet,
+} from 'ai';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
+import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import {
   AgentException,
   AgentExceptionCode,
@@ -15,21 +22,25 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { ToolAdapterService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool-adapter.service';
+import { ToolService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
-import { AgentExecutionResult } from './agent-execution.service';
 import { AgentModelConfigService } from './agent-model-config.service';
-import { AgentToolGeneratorService } from './agent-tool-generator.service';
 
+// Agent execution within workflows uses database and action tools only.
+// Workflow tools are intentionally excluded to avoid circular dependencies
+// and recursive workflow execution.
 @Injectable()
 export class AgentAsyncExecutorService {
   private readonly logger = new Logger(AgentAsyncExecutorService.name);
 
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly agentToolGeneratorService: AgentToolGeneratorService,
     private readonly agentModelConfigService: AgentModelConfigService,
+    private readonly toolAdapterService: ToolAdapterService,
+    private readonly toolService: ToolService,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
   ) {}
@@ -52,13 +63,12 @@ export class AgentAsyncExecutorService {
     return [];
   }
 
-  private async getRoleIdsForAgent(
+  private async getToolsForWorkflowExecution(
     agentId: string,
     workspaceId: string,
+    actorContext?: ActorMetadata,
     rolePermissionConfig?: RolePermissionConfig,
-  ): Promise<string[]> {
-    const configRoleIds = this.extractRoleIds(rolePermissionConfig);
-
+  ): Promise<ToolSet> {
     const roleTarget = await this.roleTargetRepository.findOne({
       where: {
         agentId,
@@ -68,12 +78,39 @@ export class AgentAsyncExecutorService {
     });
 
     const agentRoleId = roleTarget?.roleId;
+    const configRoleIds = this.extractRoleIds(rolePermissionConfig);
 
-    if (agentRoleId && !configRoleIds.includes(agentRoleId)) {
-      return [...configRoleIds, agentRoleId];
+    // Combine role IDs from config and agent
+    const allRoleIds = agentRoleId
+      ? [...new Set([...configRoleIds, agentRoleId])]
+      : configRoleIds;
+
+    if (allRoleIds.length === 0) {
+      // No role context - return basic action tools only
+      return this.toolAdapterService.getTools();
     }
 
-    return configRoleIds;
+    const effectiveRoleContext: RolePermissionConfig = {
+      intersectionOf: allRoleIds,
+    };
+
+    // Get database CRUD tools
+    const databaseTools = await this.toolService.listTools(
+      effectiveRoleContext,
+      workspaceId,
+      actorContext,
+    );
+
+    // Get action tools (send email, http request, etc.)
+    const actionTools = await this.toolAdapterService.getTools(
+      effectiveRoleContext,
+      workspaceId,
+    );
+
+    return {
+      ...databaseTools,
+      ...actionTools,
+    };
   }
 
   async executeAgent({
@@ -91,23 +128,16 @@ export class AgentAsyncExecutorService {
       const registeredModel =
         await this.aiModelRegistryService.resolveModelForAgent(agent);
 
-      let tools = {};
+      let tools: ToolSet = {};
       let providerOptions = {};
 
       if (agent) {
-        const roleIds = await this.getRoleIdsForAgent(
+        tools = await this.getToolsForWorkflowExecution(
           agent.id,
           agent.workspaceId,
+          actorContext,
           rolePermissionConfig,
         );
-
-        const baseTools =
-          await this.agentToolGeneratorService.generateToolsForAgent(
-            agent.id,
-            agent.workspaceId,
-            actorContext,
-            roleIds.length > 0 ? roleIds : undefined,
-          );
 
         // Add native model tools (web search, etc.) if configured
         const nativeModelTools =
@@ -118,7 +148,7 @@ export class AgentAsyncExecutorService {
             >[1],
           );
 
-        tools = { ...baseTools, ...nativeModelTools };
+        tools = { ...tools, ...nativeModelTools };
 
         providerOptions = this.agentModelConfigService.getProviderOptions(
           registeredModel,

@@ -12,6 +12,7 @@ import { AgentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { FlatAgentModule } from 'src/engine/metadata-modules/flat-agent/flat-agent.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -35,6 +36,7 @@ import { AgentEntity } from './entities/agent.entity';
     FileUploadModule,
     FileModule,
     ObjectMetadataModule,
+    PermissionsModule,
     WorkspaceCacheStorageModule,
     WorkspaceMigrationV2Module,
     ApplicationModule,

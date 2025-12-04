@@ -1,14 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-  convertToModelMessages,
-  LanguageModelUsage,
-  stepCountIs,
-  streamText,
-  ToolSet,
-  UIDataTypes,
-  UIMessage,
-  UITools,
+    convertToModelMessages,
+    stepCountIs,
+    streamText,
+    ToolSet,
+    UIDataTypes,
+    UIMessage,
+    UITools,
 } from 'ai';
 import { AppPath, type ActorMetadata } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
@@ -18,8 +17,8 @@ import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-select
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
-  AgentException,
-  AgentExceptionCode,
+    AgentException,
+    AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
@@ -38,10 +37,8 @@ import { AgentActorContextService } from './agent-actor-context.service';
 import { AgentModelConfigService } from './agent-model-config.service';
 import { AgentToolGeneratorService } from './agent-tool-generator.service';
 
-export interface AgentExecutionResult {
-  result: object;
-  usage: LanguageModelUsage;
-}
+// Re-export for backward compatibility
+export { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 
 export interface StreamChatResponseResult {
   stream: ReturnType<typeof streamText>;

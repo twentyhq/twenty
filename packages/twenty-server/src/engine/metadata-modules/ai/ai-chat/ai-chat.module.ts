@@ -15,6 +15,7 @@ import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-bi
 import { AiChatRouterModule } from 'src/engine/metadata-modules/ai/ai-chat-router/ai-chat-router.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
 import { AgentChatController } from './controllers/agent-chat.controller';
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
@@ -43,6 +44,8 @@ import { AgentTitleGenerationService } from './services/agent-title-generation.s
     TokenModule,
     UserWorkspaceModule,
     AiBillingModule,
+    // Provides WorkflowToolWorkspaceService for AgentToolGeneratorService
+    WorkflowToolsModule,
   ],
   controllers: [AgentChatController],
   providers: [

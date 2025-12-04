@@ -12,7 +12,7 @@ import { ObjectRecordOrderBySchema } from 'src/engine/core-modules/record-crud/z
 import { type ToolGeneratorContext } from 'src/engine/core-modules/tool-generator/types/tool-generator.types';
 import { shouldExcludeFieldFromAgentToolSchema } from 'src/engine/metadata-modules/field-metadata/utils/should-exclude-field-from-agent-tool-schema.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
-import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-type.enum';
 
 import {
   createAndConfigureStep,

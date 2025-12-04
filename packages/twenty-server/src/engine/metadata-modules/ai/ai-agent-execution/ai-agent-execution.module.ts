@@ -12,7 +12,6 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
 import { AgentMessagePartEntity } from './entities/agent-message-part.entity';
 import { AgentMessageEntity } from './entities/agent-message.entity';
@@ -34,7 +33,6 @@ import { AgentToolGeneratorService } from './services/agent-tool-generator.servi
     UserWorkspaceModule,
     UserRoleModule,
     PermissionsModule,
-    WorkflowToolsModule,
     WorkspaceCacheModule,
     TypeOrmModule.forFeature([
       AgentEntity,
