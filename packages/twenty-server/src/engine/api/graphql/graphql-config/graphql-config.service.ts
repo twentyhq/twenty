@@ -35,7 +35,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { useSentryTracing } from 'src/engine/core-modules/exception-handler/hooks/use-sentry-tracing';
 import { useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers } from 'src/engine/core-modules/graphql/hooks/use-disable-introspection-and-suggestions-for-unauthenticated-users.hook';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
-import { useValidateQueryComplexity } from 'src/engine/core-modules/graphql/hooks/use-validate-query-complexity.hook';
+import { useValidateGraphqlQueryComplexity } from 'src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -76,7 +76,7 @@ export class GraphQLConfigService
       useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers(
         this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION,
       ),
-      useValidateQueryComplexity({
+      useValidateGraphqlQueryComplexity({
         maximumAllowedFields:
           this.twentyConfigService.get('GRAPHQL_MAX_FIELDS'),
         maximumAllowedRootResolvers: this.twentyConfigService.get(
