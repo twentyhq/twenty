@@ -192,8 +192,9 @@ describe('useValidateGraphqlQueryComplexity', () => {
       });
 
       expect(error).not.toBeNull();
-      expect(error?.message).toContain('Too many root resolvers requested');
-      expect(error?.message).toContain('Maximum allowed root resolvers: 2');
+      expect(error?.message).toContain(
+        'Query too complex - Too many root resolvers requested: 6 - Maximum allowed root resolvers: 4',
+      );
     });
   });
 

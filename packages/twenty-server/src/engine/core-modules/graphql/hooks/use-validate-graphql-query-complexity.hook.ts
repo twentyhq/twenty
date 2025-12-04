@@ -43,14 +43,14 @@ export const useValidateGraphqlQueryComplexity = ({
 
       const document = result as DocumentNode;
       const fragmentMap = buildFragmentMap(document);
-      const resolvedFragments = new Map<string, FragmentMetadata>();
 
       const analysis = analyzeDocument(
         document,
         fragmentMap,
-        resolvedFragments,
         checkDuplicateRootResolvers,
       );
+
+      console.log('analysis', analysis.maxNestedDepth);
 
       if (
         isDefined(maximumAllowedNestedFields) &&
@@ -105,31 +105,16 @@ const buildFragmentMap = (
 const resolveFragmentMetadata = (
   fragmentName: string,
   fragmentMap: Map<string, FragmentDefinitionNode>,
-  resolvedFragments: Map<string, FragmentMetadata>,
-  visitedFragments: Set<string> = new Set(),
 ): FragmentMetadata | undefined => {
-  if (resolvedFragments.has(fragmentName)) {
-    return resolvedFragments.get(fragmentName);
-  }
-
-  // Detect circular references
-  if (visitedFragments.has(fragmentName)) {
-    return undefined;
-  }
-
   const fragment = fragmentMap.get(fragmentName);
 
   if (!isDefined(fragment)) {
     return undefined;
   }
 
-  visitedFragments.add(fragmentName);
-
   const metadata = analyzeSelectionSet(
     fragment.selectionSet.selections,
     fragmentMap,
-    resolvedFragments,
-    visitedFragments,
     0,
   );
 
@@ -139,16 +124,12 @@ const resolveFragmentMetadata = (
     rootFieldNames: new Set(metadata.rootFieldNames),
   };
 
-  resolvedFragments.set(fragmentName, result);
-
   return result;
 };
 
 const analyzeSelectionSet = (
   selections: readonly SelectionNode[],
   fragmentMap: Map<string, FragmentDefinitionNode>,
-  resolvedFragments: Map<string, FragmentMetadata>,
-  visitedFragments: Set<string>,
   currentDepth: number,
 ): {
   fieldsCount: number;
@@ -182,8 +163,6 @@ const analyzeSelectionSet = (
           const nestedResult = analyzeSelectionSet(
             fieldNode.selectionSet.selections,
             fragmentMap,
-            resolvedFragments,
-            visitedFragments,
             fieldDepth,
           );
 
@@ -198,8 +177,6 @@ const analyzeSelectionSet = (
           const nestedResult = analyzeSelectionSet(
             selection.selectionSet.selections,
             fragmentMap,
-            resolvedFragments,
-            visitedFragments,
             currentDepth,
           );
 
@@ -215,12 +192,7 @@ const analyzeSelectionSet = (
 
       case Kind.FRAGMENT_SPREAD: {
         const fragmentName = selection.name.value;
-        const metadata = resolveFragmentMetadata(
-          fragmentName,
-          fragmentMap,
-          resolvedFragments,
-          new Set(visitedFragments),
-        );
+        const metadata = resolveFragmentMetadata(fragmentName, fragmentMap);
 
         if (isDefined(metadata)) {
           fieldsCount += metadata.fieldsCount;
@@ -243,7 +215,6 @@ const analyzeSelectionSet = (
 const analyzeDocument = (
   document: DocumentNode,
   fragmentMap: Map<string, FragmentDefinitionNode>,
-  resolvedFragments: Map<string, FragmentMetadata>,
   checkDuplicateRootResolvers: boolean,
 ): AnalysisResult => {
   let requestedFieldsCount = 0;
@@ -259,8 +230,6 @@ const analyzeDocument = (
       const result = analyzeSelectionSet(
         definition.selectionSet.selections,
         fragmentMap,
-        resolvedFragments,
-        new Set(),
         0,
       );
 
