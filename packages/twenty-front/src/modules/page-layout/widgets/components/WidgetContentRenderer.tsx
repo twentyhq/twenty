@@ -6,6 +6,7 @@ import { FileWidget } from '@/page-layout/widgets/files/components/FileWidget';
 import { GraphWidgetRenderer } from '@/page-layout/widgets/graph/components/GraphWidgetRenderer';
 import { IframeWidget } from '@/page-layout/widgets/iframe/components/IframeWidget';
 import { NoteWidget } from '@/page-layout/widgets/notes/components/NoteWidget';
+import { StandaloneRichTextWidget } from '@/page-layout/widgets/standalone-rich-text/components/StandaloneRichTextWidget';
 import { TaskWidget } from '@/page-layout/widgets/tasks/components/TaskWidget';
 import { TimelineWidget } from '@/page-layout/widgets/timeline/components/TimelineWidget';
 import { WorkflowRunWidget } from '@/page-layout/widgets/workflow/components/WorkflowRunWidget';
@@ -62,6 +63,9 @@ export const WidgetContentRenderer = ({
 
     case WidgetType.WORKFLOW_RUN:
       return <WorkflowRunWidget />;
+
+    case WidgetType.STANDALONE_RICH_TEXT:
+      return <StandaloneRichTextWidget widget={widget} />;
 
     default:
       return null;

@@ -7,10 +7,12 @@ import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useCompanyDefaultChartConfig } from '@/page-layout/hooks/useCompanyDefaultChartConfig';
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
 import { useCreatePageLayoutIframeWidget } from '@/page-layout/hooks/useCreatePageLayoutIframeWidget';
+import { useCreatePageLayoutStandaloneRichTextWidget } from '@/page-layout/hooks/useCreatePageLayoutStandaloneRichTextWidget';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { t } from '@lingui/core/macro';
+import { IconTextCaption } from '@tabler/icons-react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChartPie, IconFrame } from 'twenty-ui/display';
 import { GraphType } from '~/generated-metadata/graphql';
@@ -27,6 +29,9 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
 
   const { createPageLayoutIframeWidget } =
     useCreatePageLayoutIframeWidget(pageLayoutId);
+
+  const { createPageLayoutStandaloneRichTextWidget } =
+    useCreatePageLayoutStandaloneRichTextWidget(pageLayoutId);
 
   const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
     useRecoilComponentState(
@@ -64,8 +69,26 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
     });
   };
 
+  const handleNavigateToRichTextSettings = () => {
+    if (!isDefined(pageLayoutEditingWidgetId)) {
+      const newWidget = createPageLayoutStandaloneRichTextWidget({
+        blocknote: '',
+        markdown: null,
+      });
+      setPageLayoutEditingWidgetId(newWidget.id);
+    }
+
+    navigatePageLayoutCommandMenu({
+      commandMenuPage: CommandMenuPages.PageLayoutStandaloneRichTextSettings,
+      focusTitleInput: true,
+    });
+  };
+
   return (
-    <CommandMenuList commandGroups={[]} selectableItemIds={['chart', 'iframe']}>
+    <CommandMenuList
+      commandGroups={[]}
+      selectableItemIds={['chart', 'iframe', 'rich-text']}
+    >
       <CommandGroup heading={t`Widget type`}>
         <SelectableListItem
           itemId="chart"
@@ -87,6 +110,18 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
             label={t`iFrame`}
             id="iframe"
             onClick={handleNavigateToIframeSettings}
+          />
+        </SelectableListItem>
+
+        <SelectableListItem
+          itemId="rich-text"
+          onEnter={handleNavigateToRichTextSettings}
+        >
+          <CommandMenuItem
+            Icon={IconTextCaption}
+            label={t`Rich Text`}
+            id="rich-text"
+            onClick={handleNavigateToRichTextSettings}
           />
         </SelectableListItem>
       </CommandGroup>
