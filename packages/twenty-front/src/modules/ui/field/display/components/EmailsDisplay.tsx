@@ -10,6 +10,7 @@ import { THEME_COMMON } from 'twenty-ui/theme';
 type EmailsDisplayProps = {
   value?: FieldEmailsValue;
   isFocused?: boolean;
+  onClick?: (email: string, event: React.MouseEvent<HTMLElement>) => void;
 };
 
 const themeSpacing = THEME_COMMON.spacingMultiplicator;
@@ -27,7 +28,11 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-export const EmailsDisplay = ({ value, isFocused }: EmailsDisplayProps) => {
+export const EmailsDisplay = ({
+  value,
+  isFocused,
+  onClick,
+}: EmailsDisplayProps) => {
   const emails = useMemo(
     () =>
       [
@@ -40,13 +45,23 @@ export const EmailsDisplay = ({ value, isFocused }: EmailsDisplayProps) => {
   return isFocused ? (
     <ExpandableList isChipCountDisplayed>
       {emails.map((email, index) => (
-        <RoundedLink key={index} label={email} href={`mailto:${email}`} />
+        <RoundedLink
+          key={index}
+          label={email}
+          href={`mailto:${email}`}
+          onClick={onClick ? (event) => onClick(email, event) : undefined}
+        />
       ))}
     </ExpandableList>
   ) : (
     <StyledContainer>
       {emails.map((email, index) => (
-        <RoundedLink key={index} label={email} href={`mailto:${email}`} />
+        <RoundedLink
+          key={index}
+          label={email}
+          href={`mailto:${email}`}
+          onClick={onClick ? (event) => onClick(email, event) : undefined}
+        />
       ))}
     </StyledContainer>
   );

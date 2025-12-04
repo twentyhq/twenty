@@ -29,10 +29,13 @@ import { settingsDataModelFieldMaxValuesSchema } from '@/settings/data-model/fie
 import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 
 import { Separator } from '@/settings/components/Separator';
+import { SettingsDataModelFieldPrimaryActionModeForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldPrimaryActionModeForm';
 import { SettingsDataModelFieldRelationFormCard } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationFormCard';
+import { settingsDataModelFieldActionModeSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldActionModeSchema';
 import { useFormContext } from 'react-hook-form';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
+import { deepMergeZod } from '@/settings/data-model/fields/forms/utils/zodSchemaDeepMerge';
 
 const isUniqueFieldFormSchema = z.object({
   isUnique: z.boolean().nullable().default(false),
@@ -86,17 +89,32 @@ const addressFieldFormSchema = z
 
 const phonesFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.PHONES) })
-  .extend(settingsDataModelFieldPhonesFormSchema.shape)
+  .extend(
+    deepMergeZod(
+      settingsDataModelFieldPhonesFormSchema,
+      settingsDataModelFieldActionModeSchema,
+    ).shape,
+  )
   .extend(isUniqueFieldFormSchema.shape);
 
 const emailsFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.EMAILS) })
-  .extend(settingsDataModelFieldMaxValuesSchema.shape)
+  .extend(
+    deepMergeZod(
+      settingsDataModelFieldMaxValuesSchema,
+      settingsDataModelFieldActionModeSchema,
+    ).shape,
+  )
   .extend(isUniqueFieldFormSchema.shape);
 
 const linksFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.LINKS) })
-  .extend(settingsDataModelFieldMaxValuesSchema.shape)
+  .extend(
+    deepMergeZod(
+      settingsDataModelFieldMaxValuesSchema,
+      settingsDataModelFieldActionModeSchema,
+    ).shape,
+  )
   .extend(isUniqueFieldFormSchema.shape);
 
 const arrayFieldFormSchema = z
@@ -328,6 +346,19 @@ export const SettingsDataModelFieldSettingsFormCard = ({
             objectNameSingular={objectNameSingular}
             disabled={disabled}
           />
+          {[
+            FieldMetadataType.EMAILS,
+            FieldMetadataType.LINKS,
+            FieldMetadataType.PHONES,
+          ].includes(fieldType) && (
+            <>
+              <Separator />
+              <SettingsDataModelFieldPrimaryActionModeForm
+                fieldType={fieldType}
+                disabled={disabled}
+              />
+            </>
+          )}
         </>
       }
     />

@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
-import { AnimatedContainer } from 'twenty-ui/utilities';
-import { FloatingIconButton } from 'twenty-ui/input';
 import { type IconComponent } from 'twenty-ui/display';
+import { FloatingIconButtonGroup, LightIconButtonGroup } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { AnimatedContainer } from 'twenty-ui/utilities';
 
 const StyledButtonContainer = styled.div`
   margin: ${({ theme }) => theme.spacing(1)};
@@ -10,20 +10,42 @@ const StyledButtonContainer = styled.div`
     position: relative;
     right: 7px;
   }
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border: 1px solid ${({ theme }) => theme.border.color.strong};
 `;
 
 type RecordTableCellButtonProps = {
   onClick?: () => void;
   Icon: IconComponent;
+  onSecondaryClick?: () => void;
+  SecondaryIcon?: IconComponent;
 };
 
 export const RecordTableCellButton = ({
   onClick,
   Icon,
-}: RecordTableCellButtonProps) => (
-  <AnimatedContainer>
-    <StyledButtonContainer>
-      <FloatingIconButton size="small" onClick={onClick} Icon={Icon} />
-    </StyledButtonContainer>
-  </AnimatedContainer>
-);
+  onSecondaryClick,
+  SecondaryIcon,
+}: RecordTableCellButtonProps) => {
+  const iconButtons = [];
+
+  if (SecondaryIcon && onSecondaryClick) {
+    iconButtons.push({
+      Icon: SecondaryIcon,
+      onClick: onSecondaryClick,
+    });
+  }
+
+  iconButtons.push({
+    Icon,
+    onClick,
+  });
+
+  return (
+    <AnimatedContainer>
+      <StyledButtonContainer>
+        <LightIconButtonGroup size="small" iconButtons={iconButtons} />
+      </StyledButtonContainer>
+    </AnimatedContainer>
+  );
+};

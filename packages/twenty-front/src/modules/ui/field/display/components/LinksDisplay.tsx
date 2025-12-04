@@ -13,9 +13,10 @@ import { checkUrlType } from '~/utils/checkUrlType';
 
 type LinksDisplayProps = {
   value?: FieldLinksValue;
+  onClick?: (link: string, event: React.MouseEvent<HTMLElement>) => void;
 };
 
-export const LinksDisplay = ({ value }: LinksDisplayProps) => {
+export const LinksDisplay = ({ value, onClick }: LinksDisplayProps) => {
   const links = useMemo(() => {
     if (!isDefined(value)) {
       return [];
@@ -43,9 +44,20 @@ export const LinksDisplay = ({ value }: LinksDisplayProps) => {
     <ExpandableList>
       {links.map(({ url, label, type }, index) =>
         type === LinkType.LinkedIn || type === LinkType.Twitter ? (
-          <SocialLink key={index} href={url} type={type} label={label} />
+          <SocialLink
+            key={index}
+            href={url}
+            type={type}
+            label={label}
+            onClick={onClick ? (event) => onClick(url, event) : undefined}
+          />
         ) : (
-          <RoundedLink key={index} href={url} label={label} />
+          <RoundedLink
+            key={index}
+            href={url}
+            label={label}
+            onClick={onClick ? (event) => onClick(url, event) : undefined}
+          />
         ),
       )}
     </ExpandableList>

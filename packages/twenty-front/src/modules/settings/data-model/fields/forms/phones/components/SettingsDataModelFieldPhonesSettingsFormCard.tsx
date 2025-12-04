@@ -1,6 +1,7 @@
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
+import { SettingsDataModelFieldPrimaryActionModeForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldPrimaryActionModeForm';
 import { SettingsDataModelFieldMaxValuesForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm';
 import {
   SettingsDataModelFieldPhonesForm,
@@ -59,6 +60,11 @@ export const SettingsDataModelFieldPhonesSettingsFormCard = ({
             existingFieldMetadataId={existingFieldMetadataId}
             objectNameSingular={objectNameSingular}
             disabled={disabled}
+          />
+          <Separator />
+          <SettingsDataModelFieldPrimaryActionModeForm
+            disabled={disabled}
+            fieldType={FieldMetadataType.PHONES}
           />
         </>
       }
