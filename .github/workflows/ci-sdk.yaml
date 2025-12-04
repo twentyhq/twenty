@@ -20,7 +20,6 @@ jobs:
     with:
       files: |
         packages/twenty-sdk/**
-        packages/twenty-server/**
   sdk-test:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'

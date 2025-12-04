@@ -5,9 +5,9 @@ export type RecordGqlConnection = {
   __typename?: string;
   edges: RecordGqlEdge[];
   pageInfo: {
-    __typename?: string;
-    hasNextPage?: boolean;
-    hasPreviousPage?: boolean;
+    __typename?: Nullable<string>;
+    hasNextPage?: Nullable<boolean>;
+    hasPreviousPage?: Nullable<boolean>;
     startCursor?: Nullable<string>;
     endCursor?: Nullable<string>;
     totalCount?: number;

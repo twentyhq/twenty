@@ -87,4 +87,9 @@ export class UpdateViewInput {
   @IsEnum(ViewVisibility)
   @Field(() => ViewVisibility, { nullable: true })
   visibility?: ViewVisibility;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  mainGroupByFieldMetadataId?: string;
 }

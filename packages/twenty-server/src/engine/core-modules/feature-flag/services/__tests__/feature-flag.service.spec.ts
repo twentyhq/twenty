@@ -10,7 +10,6 @@ import {
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 jest.mock(
@@ -36,10 +35,6 @@ describe('FeatureFlagService', () => {
     invalidateAndRecompute: jest.fn(),
   };
 
-  const mockWorkspacePermissionsCacheService = {
-    recomputeRolesPermissionsCache: jest.fn(),
-  };
-
   const workspaceId = 'workspace-id';
   const featureFlag = FeatureFlagKey.IS_AI_ENABLED;
 
@@ -61,10 +56,6 @@ describe('FeatureFlagService', () => {
         {
           provide: WorkspaceCacheService,
           useValue: mockWorkspaceCacheService,
-        },
-        {
-          provide: WorkspacePermissionsCacheService,
-          useValue: mockWorkspacePermissionsCacheService,
         },
       ],
     }).compile();

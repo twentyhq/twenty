@@ -42,7 +42,6 @@ export const calendarEventsAllView = ({
     key: 'INDEX',
     position: 0,
     icon: 'IconCalendar',
-    kanbanFieldMetadataId: '',
     calendarFieldMetadataId:
       calendarEventObjectMetadata.fields.find(
         (field) =>

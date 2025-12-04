@@ -24,7 +24,6 @@ import {
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
-import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-actor-context.service';
 import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-model-config.service';
 import { AgentToolGeneratorService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-tool-generator.service';
@@ -34,8 +33,9 @@ import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/serv
 import { ToolHints } from 'src/engine/metadata-modules/ai/ai-chat-router/types/tool-hints.interface';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export interface AgentExecutionResult {
   result: object;
@@ -59,13 +59,13 @@ export class AgentExecutionService {
   constructor(
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly agentToolGeneratorService: AgentToolGeneratorService,
     private readonly agentModelConfigService: AgentModelConfigService,
     private readonly aiBillingService: AIBillingService,
     public readonly agentActorContextService: AgentActorContextService,
     public readonly agentService: AgentService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async prepareAIRequestConfig({
@@ -77,7 +77,7 @@ export class AgentExecutionService {
     toolHints,
   }: {
     system: string;
-    agent: AgentEntity | null;
+    agent: FlatAgentWithRoleId | null;
     messages: UIMessage<unknown, UIDataTypes, UITools>[];
     actorContext?: ActorMetadata;
     roleIds?: string[];
@@ -169,11 +169,12 @@ export class AgentExecutionService {
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType,
     userWorkspaceId: string,
   ) {
-    const roleId =
-      await this.workspacePermissionsCacheService.getRoleIdFromUserWorkspaceId({
-        workspaceId: workspace.id,
-        userWorkspaceId,
-      });
+    const { userWorkspaceRoleMap } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'userWorkspaceRoleMap',
+      ]);
+
+    const roleId = userWorkspaceRoleMap[userWorkspaceId];
 
     if (!roleId) {
       throw new AgentException(
@@ -299,7 +300,8 @@ export class AgentExecutionService {
     };
   }> {
     try {
-      const agent = await this.agentService.findOneAgent(workspace.id, {
+      const agent = await this.agentService.findOneAgentById({
+        workspaceId: workspace.id,
         id: agentId,
       });
 

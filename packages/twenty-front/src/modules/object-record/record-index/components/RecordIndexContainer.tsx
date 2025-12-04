@@ -2,9 +2,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { ObjectOptionsDropdown } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdown';
-import { RecordIndexBoardContainer } from '@/object-record/record-index/components/RecordIndexBoardContainer';
-import { RecordIndexBoardDataLoader } from '@/object-record/record-index/components/RecordIndexBoardDataLoader';
-import { RecordIndexBoardDataLoaderEffect } from '@/object-record/record-index/components/RecordIndexBoardDataLoaderEffect';
+import { RecordBoardContainer } from '@/object-record/record-board/components/RecordBoardContainer';
 import { RecordIndexTableContainer } from '@/object-record/record-index/components/RecordIndexTableContainer';
 import { RecordIndexViewBarEffect } from '@/object-record/record-index/components/RecordIndexViewBarEffect';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
@@ -15,7 +13,6 @@ import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/compone
 
 import { RecordIndexCalendarContainer } from '@/object-record/record-index/components/RecordIndexCalendarContainer';
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
-import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewType } from '@/views/types/ViewType';
 
@@ -68,21 +65,15 @@ export const RecordIndexContainer = () => {
         {recordIndexViewType === ViewType.Table && (
           <>
             <RecordIndexTableContainer recordTableId={recordIndexId} />
-            <RecordIndexTableContainerEffect />
           </>
         )}
         {recordIndexViewType === ViewType.Kanban && (
           <StyledContainerWithPadding>
-            <RecordIndexBoardContainer
+            <RecordBoardContainer
               recordBoardId={recordIndexId}
               viewBarId={recordIndexId}
               objectNameSingular={objectNameSingular}
             />
-            <RecordIndexBoardDataLoader
-              objectNameSingular={objectNameSingular}
-              recordBoardId={recordIndexId}
-            />
-            <RecordIndexBoardDataLoaderEffect recordBoardId={recordIndexId} />
           </StyledContainerWithPadding>
         )}
         {recordIndexViewType === ViewType.Calendar && (

@@ -224,6 +224,8 @@ export const useChartSettingsValues = ({
         return configuration.__typename === 'LineChartConfiguration'
           ? configuration.isStacked !== false
           : true;
+      case CHART_CONFIGURATION_SETTING_IDS.CUMULATIVE:
+        return isBarOrLineChart ? (configuration.isCumulative ?? false) : false;
       case CHART_CONFIGURATION_SETTING_IDS.OMIT_NULL_VALUES:
         return isBarOrLineChart
           ? (configuration.omitNullValues ?? false)

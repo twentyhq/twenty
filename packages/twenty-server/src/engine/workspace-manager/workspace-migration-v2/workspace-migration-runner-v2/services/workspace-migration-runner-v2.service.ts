@@ -122,7 +122,10 @@ export class WorkspaceMigrationRunnerV2Service {
         this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
           'rolesPermissions',
           'userWorkspaceRoleMap',
+          'flatRoleTargetMaps',
           'apiKeyRoleMap',
+          'ORMEntityMetadatas',
+          'flatRoleTargetByAgentIdMaps',
         ]),
       );
     }

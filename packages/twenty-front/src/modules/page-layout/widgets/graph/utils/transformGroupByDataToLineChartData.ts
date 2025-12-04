@@ -7,9 +7,10 @@ import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLin
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGroupByResults';
+import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { transformOneDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/utils/transformOneDimensionalGroupByToLineChartData';
 import { transformTwoDimensionalGroupByToLineChartData } from '@/page-layout/widgets/graph/utils/transformTwoDimensionalGroupByToLineChartData';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import {
   AxisNameDisplay,
   type LineChartConfiguration,
@@ -18,6 +19,7 @@ import {
 type TransformGroupByDataToLineChartDataParams = {
   groupByData: Record<string, GroupByRawResult[]> | null | undefined;
   objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItems: ObjectMetadataItem[];
   configuration: LineChartConfiguration;
   aggregateOperation: string;
 };
@@ -45,6 +47,7 @@ const EMPTY_LINE_CHART_RESULT: TransformGroupByDataToLineChartDataResult = {
 export const transformGroupByDataToLineChartData = ({
   groupByData,
   objectMetadataItem,
+  objectMetadataItems,
   configuration,
   aggregateOperation,
 }: TransformGroupByDataToLineChartDataParams): TransformGroupByDataToLineChartDataResult => {
@@ -77,6 +80,8 @@ export const transformGroupByDataToLineChartData = ({
 
   const primaryAxisSubFieldName =
     configuration.primaryAxisGroupBySubFieldName ?? undefined;
+  const secondaryAxisSubFieldName =
+    configuration.secondaryAxisGroupBySubFieldName ?? undefined;
 
   const queryResultGqlFieldName =
     getGroupByQueryResultGqlFieldName(objectMetadataItem);
@@ -89,8 +94,12 @@ export const transformGroupByDataToLineChartData = ({
   const filteredResults = filterGroupByResults({
     rawResults,
     filterOptions: {
-      rangeMin: configuration.rangeMin ?? undefined,
-      rangeMax: configuration.rangeMax ?? undefined,
+      rangeMin: configuration.isCumulative
+        ? undefined
+        : (configuration.rangeMin ?? undefined),
+      rangeMax: configuration.isCumulative
+        ? undefined
+        : (configuration.rangeMax ?? undefined),
       omitNullValues: configuration.omitNullValues ?? false,
     },
     aggregateField,
@@ -117,13 +126,49 @@ export const transformGroupByDataToLineChartData = ({
   const showDataLabels = configuration.displayDataLabel ?? false;
   const showLegend = configuration.displayLegend ?? true;
 
+  const isDateField = isFieldMetadataDateKind(groupByFieldX.type);
+  const isNestedDateField = isRelationNestedFieldDateKind({
+    relationField: groupByFieldX,
+    relationNestedFieldName: primaryAxisSubFieldName,
+    objectMetadataItems,
+  });
+
+  const primaryAxisDateGranularity =
+    isDateField || isNestedDateField
+      ? configuration.primaryAxisDateGranularity
+      : undefined;
+
+  const isSecondaryDateField = isDefined(groupByFieldY)
+    ? isFieldMetadataDateKind(groupByFieldY.type)
+    : false;
+
+  const isSecondaryNestedDateField =
+    isDefined(groupByFieldY) &&
+    isRelationNestedFieldDateKind({
+      relationField: groupByFieldY,
+      relationNestedFieldName: secondaryAxisSubFieldName,
+      objectMetadataItems,
+    });
+
+  const secondaryAxisDateGranularity =
+    isSecondaryDateField || isSecondaryNestedDateField
+      ? configuration.secondaryAxisGroupByDateGranularity
+      : undefined;
+
+  const sanitizedConfiguration: LineChartConfiguration = {
+    ...configuration,
+    primaryAxisDateGranularity: primaryAxisDateGranularity ?? undefined,
+    secondaryAxisGroupByDateGranularity:
+      secondaryAxisDateGranularity ?? undefined,
+  };
+
   const baseResult = isDefined(groupByFieldY)
     ? transformTwoDimensionalGroupByToLineChartData({
         rawResults: filteredResults,
         groupByFieldX,
         groupByFieldY,
         aggregateField,
-        configuration,
+        configuration: sanitizedConfiguration,
         aggregateOperation,
         objectMetadataItem,
         primaryAxisSubFieldName,
@@ -132,7 +177,7 @@ export const transformGroupByDataToLineChartData = ({
         rawResults: filteredResults,
         groupByFieldX,
         aggregateField,
-        configuration,
+        configuration: sanitizedConfiguration,
         aggregateOperation,
         objectMetadataItem,
         primaryAxisSubFieldName,

@@ -28,9 +28,8 @@ import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -48,9 +47,9 @@ import {
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export abstract class CommonBaseQueryRunnerService<
@@ -132,32 +131,15 @@ export abstract class CommonBaseQueryRunnerService<
       commonQueryParser,
     );
 
-    const isGlobalDatasourceEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED,
-        authContext.workspace.id,
-      );
-
-    if (isGlobalDatasourceEnabled) {
-      return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
-        async () =>
-          this.executeQueryAndEnrichResults(
-            processedArgs,
-            authContext,
-            queryRunnerContext,
-            commonQueryParser,
-            isGlobalDatasourceEnabled,
-          ),
-      );
-    }
-
-    return this.executeQueryAndEnrichResults(
-      processedArgs,
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       authContext,
-      queryRunnerContext,
-      commonQueryParser,
-      isGlobalDatasourceEnabled,
+      async () =>
+        this.executeQueryAndEnrichResults(
+          processedArgs,
+          authContext,
+          queryRunnerContext,
+          commonQueryParser,
+        ),
     );
   }
 
@@ -217,17 +199,12 @@ export abstract class CommonBaseQueryRunnerService<
     authContext: WorkspaceAuthContext,
     queryRunnerContext: CommonBaseQueryRunnerContext,
     commonQueryParser: GraphqlQueryParser,
-    isGlobalDatasourceEnabled: boolean,
   ): Promise<Output> {
-    const extendedQueryRunnerContext = isGlobalDatasourceEnabled
-      ? await this.prepareExtendedQueryRunnerContextWithGlobalDatasource(
-          authContext,
-          queryRunnerContext,
-        )
-      : await this.prepareExtendedQueryRunnerContext(
-          authContext,
-          queryRunnerContext,
-        );
+    const extendedQueryRunnerContext =
+      await this.prepareExtendedQueryRunnerContextWithGlobalDatasource(
+        authContext,
+        queryRunnerContext,
+      );
 
     const results = await this.run(processedArgs, {
       ...extendedQueryRunnerContext,
@@ -312,81 +289,28 @@ export abstract class CommonBaseQueryRunnerService<
     }
   }
 
-  private async getRoleIdAndObjectsPermissions(
+  private async getRoleIdOrThrow(
     authContext: AuthContext,
     workspaceId: string,
-  ) {
-    let roleId: string;
-
-    if (
-      !isDefined(authContext.apiKey) &&
-      !isDefined(authContext.userWorkspaceId)
-    ) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
-        PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
-      );
-    }
-
+  ): Promise<string> {
     if (isDefined(authContext.apiKey)) {
-      roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+      return this.apiKeyRoleService.getRoleIdForApiKey(
         authContext.apiKey.id,
         workspaceId,
       );
-    } else {
-      const userWorkspaceRoleId =
-        await this.userRoleService.getRoleIdForUserWorkspace({
-          userWorkspaceId: authContext.userWorkspaceId,
-          workspaceId,
-        });
-
-      if (!isDefined(userWorkspaceRoleId)) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
-          PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
-        );
-      }
-
-      roleId = userWorkspaceRoleId;
     }
 
-    const { rolesPermissions } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'rolesPermissions',
-      ]);
+    if (!isDefined(authContext.userWorkspaceId)) {
+      throw new CommonQueryRunnerException(
+        'Invalid auth context',
+        CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
+      );
+    }
 
-    return { roleId, objectsPermissions: rolesPermissions[roleId] };
-  }
-
-  private async prepareExtendedQueryRunnerContext(
-    authContext: WorkspaceAuthContext,
-    queryRunnerContext: CommonBaseQueryRunnerContext,
-  ): Promise<Omit<CommonExtendedQueryRunnerContext, 'commonQueryParser'>> {
-    const workspaceDataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-        workspaceId: authContext.workspace.id,
-      });
-
-    const { roleId } = await this.getRoleIdAndObjectsPermissions(
-      authContext,
-      authContext.workspace.id,
-    );
-
-    const rolePermissionConfig = { unionOf: [roleId] };
-
-    const repository = workspaceDataSource.getRepository(
-      queryRunnerContext.flatObjectMetadata.nameSingular,
-      rolePermissionConfig,
-      authContext,
-    );
-
-    return {
-      ...queryRunnerContext,
-      authContext,
-      workspaceDataSource,
-      rolePermissionConfig,
-      repository,
-    };
+    return this.userRoleService.getRoleIdForUserWorkspace({
+      userWorkspaceId: authContext.userWorkspaceId,
+      workspaceId,
+    });
   }
 
   private async prepareExtendedQueryRunnerContextWithGlobalDatasource(
@@ -395,10 +319,7 @@ export abstract class CommonBaseQueryRunnerService<
   ): Promise<Omit<CommonExtendedQueryRunnerContext, 'commonQueryParser'>> {
     const workspaceId = authContext.workspace.id;
 
-    const { roleId } = await this.getRoleIdAndObjectsPermissions(
-      authContext,
-      workspaceId,
-    );
+    const roleId = await this.getRoleIdOrThrow(authContext, workspaceId);
 
     const rolePermissionConfig = { unionOf: [roleId] };
 

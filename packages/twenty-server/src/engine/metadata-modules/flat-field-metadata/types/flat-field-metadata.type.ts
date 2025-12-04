@@ -11,9 +11,10 @@ export const FIELD_METADATA_RELATION_PROPERTIES = [
   'viewFields',
   'application',
   'viewFilters',
-  'viewGroups',
   'kanbanAggregateOperationViews',
   'calendarViews',
+  'mainGroupByFieldMetadataViews',
+  'viewGroups',
 ] as const satisfies (keyof FieldMetadataEntity)[];
 
 export type FieldMetadataEntityRelationProperties =
@@ -24,7 +25,8 @@ export type FlatFieldMetadata<T extends FieldMetadataType = FieldMetadataType> =
     universalIdentifier: string;
     viewFieldIds: string[];
     viewFilterIds: string[];
-    viewGroupIds: string[];
     kanbanAggregateOperationViewIds: string[];
     calendarViewIds: string[];
+    mainGroupByFieldMetadataViewIds: string[];
+    viewGroupIds: string[];
   };

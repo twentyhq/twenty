@@ -15,7 +15,7 @@ import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entiti
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-flat-map-cache/utils/regroup-entities-by-related-entity-id';
+import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
@@ -68,6 +68,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
             'id',
             'kanbanAggregateOperationFieldMetadataId',
             'calendarFieldMetadataId',
+            'mainGroupByFieldMetadataId',
           ],
           withDeleted: true,
         }),
@@ -79,6 +80,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
       viewGroupsByFieldId,
       calendarViewsByFieldId,
       kanbanViewsByFieldId,
+      mainGroupByFieldMetadataViewsByFieldId,
     ] = (
       [
         {
@@ -101,6 +103,10 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
           entities: views,
           foreignKey: 'kanbanAggregateOperationFieldMetadataId',
         },
+        {
+          entities: views,
+          foreignKey: 'mainGroupByFieldMetadataId',
+        },
       ] as const
     ).map(regroupEntitiesByRelatedEntityId);
 
@@ -115,6 +121,9 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
         kanbanAggregateOperationViews:
           kanbanViewsByFieldId.get(fieldMetadataEntity.id) || [],
         calendarViews: calendarViewsByFieldId.get(fieldMetadataEntity.id) || [],
+        mainGroupByFieldMetadataViews:
+          mainGroupByFieldMetadataViewsByFieldId.get(fieldMetadataEntity.id) ||
+          [],
       } as FieldMetadataEntity);
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

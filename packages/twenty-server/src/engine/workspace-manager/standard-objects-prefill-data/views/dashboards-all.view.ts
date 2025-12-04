@@ -42,7 +42,6 @@ export const dashboardsAllView = ({
     key: 'INDEX',
     position: 0,
     icon: 'IconLayoutDashboard',
-    kanbanFieldMetadataId: '',
     openRecordIn: ViewOpenRecordInType.RECORD_PAGE,
     filters: [],
     fields: [

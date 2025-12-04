@@ -1,36 +1,26 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "moduleResolution": "bundler",
-    "strict": true,
-    "noEmit": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
+    "allowJs": false,
+    "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "declaration": true,
-    "declarationMap": true,
-    "rootDir": "src"
+    "strictNullChecks": true,
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": false,
+    "noEmit": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "files": [],
+  "include": [],
   "references": [
     {
-      "path": "./tsconfig.cli.json"
+      "path": "./tsconfig.lib.json"
     },
     {
-      "path": "./tsconfig.e2e.json"
+      "path": "./tsconfig.spec.json"
     }
   ],
-  "include": ["src/**/*.ts", "vite.config.ts"],
-  "exclude": [
-    "src/cli/**",
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.spec.ts",
-    "**/*.e2e-spec.ts",
-    "**/__tests__/**"
-  ]
+  "extends": "../../tsconfig.base.json",
 }

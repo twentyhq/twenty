@@ -10,7 +10,7 @@ import {
   Relation,
   RelationType,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-} from 'twenty-sdk/application';
+} from 'twenty-sdk';
 
 enum PostCardStatus {
   DRAFT = 'DRAFT',

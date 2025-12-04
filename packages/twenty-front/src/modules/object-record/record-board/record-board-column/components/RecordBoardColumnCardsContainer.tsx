@@ -1,17 +1,18 @@
 import styled from '@emotion/styled';
 import { Draggable, type DroppableProvided } from '@hello-pangea/dnd';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { RecordBoardCardDraggableContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardDraggableContainer';
-import { RecordBoardColumnCardContainerSkeletonLoader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardContainerSkeletonLoader';
-import { RecordBoardColumnFetchMoreLoader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnFetchMoreLoader';
+
 import { RecordBoardColumnNewRecordButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { getNumberOfCardsPerColumnForSkeletonLoading } from '@/object-record/record-board/record-board-column/utils/getNumberOfCardsPerColumnForSkeletonLoading';
+
+import { RecordBoardColumnLoadingSkeletonCards } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnLoadingSkeletonCards';
+import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
+import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupsAreInInitialLoadingComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { isRecordIndexBoardColumnLoadingFamilyState } from '@/object-record/states/isRecordBoardColumnLoadingFamilyState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 const StyledColumnCardsContainer = styled.div`
   display: flex;
@@ -21,17 +22,6 @@ const StyledColumnCardsContainer = styled.div`
 
 const StyledNewButtonContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(4)};
-`;
-// eslint-disable-next-line @nx/workspace-no-hardcoded-colors
-const StyledSkeletonCardContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.background.quaternary};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow:
-    0px 4px 8px 0px rgba(0, 0, 0, 0.08),
-    0px 0px 4px 0px rgba(0, 0, 0, 0.08);
-  color: ${({ theme }) => theme.font.color.primary};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 type RecordBoardColumnCardsContainerProps = {
@@ -45,15 +35,18 @@ export const RecordBoardColumnCardsContainer = ({
 }: RecordBoardColumnCardsContainerProps) => {
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
-  const columnId = columnDefinition.id;
-
   const recordIds = useRecoilComponentFamilyValue(
     recordIndexRecordIdsByGroupComponentFamilyState,
     recordBoardColumnId,
   );
 
-  const isRecordIndexBoardColumnLoading = useRecoilValue(
-    isRecordIndexBoardColumnLoadingFamilyState(columnId),
+  const recordIndexRecordGroupsAreInInitialLoading = useRecoilComponentValue(
+    recordIndexRecordGroupsAreInInitialLoadingComponentState,
+  );
+
+  const recordBoardShouldFetchMoreInColumn = useRecoilComponentFamilyValue(
+    recordBoardShouldFetchMoreInColumnComponentFamilyState,
+    recordBoardColumnId,
   );
 
   return (
@@ -62,29 +55,20 @@ export const RecordBoardColumnCardsContainer = ({
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...droppableProvided?.droppableProps}
     >
-      {isRecordIndexBoardColumnLoading
-        ? Array.from(
-            {
-              length: getNumberOfCardsPerColumnForSkeletonLoading(
-                columnDefinition.position,
-              ),
-            },
-            (_, index) => (
-              <StyledSkeletonCardContainer
-                key={`${columnDefinition.id}-${index}`}
-              >
-                <RecordBoardColumnCardContainerSkeletonLoader />
-              </StyledSkeletonCardContainer>
-            ),
-          )
-        : recordIds.map((recordId, index) => (
-            <RecordBoardCardDraggableContainer
-              key={recordId}
-              recordId={recordId}
-              rowIndex={index}
-            />
-          ))}
-      <RecordBoardColumnFetchMoreLoader />
+      {recordIndexRecordGroupsAreInInitialLoading ? (
+        <RecordBoardColumnLoadingSkeletonCards />
+      ) : (
+        recordIds.map((recordId, index) => (
+          <RecordBoardCardDraggableContainer
+            key={recordId}
+            recordId={recordId}
+            rowIndex={index}
+          />
+        ))
+      )}
+      {recordBoardShouldFetchMoreInColumn ? (
+        <RecordBoardColumnLoadingSkeletonCards />
+      ) : null}
       <Draggable
         draggableId={`new-${columnDefinition.id}-bottom`}
         index={recordIds.length}

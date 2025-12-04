@@ -1,8 +1,8 @@
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
-import { type RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { type RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 
 export const fromRoleTargetsEntityToFlatRoleTarget = (
-  roleTarget: RoleTargetsEntity,
+  roleTarget: RoleTargetEntity,
 ): FlatRoleTarget => {
   return {
     id: roleTarget.id,
