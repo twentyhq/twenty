@@ -163,16 +163,18 @@ export class MessageImportExceptionHandlerService {
 
     switch (syncStep) {
       case MessageImportSyncStep.MESSAGE_LIST_FETCH:
-        await this.messageChannelSyncStatusService.scheduleMessageListFetch([
-          messageChannel.id,
-        ]);
+        await this.messageChannelSyncStatusService.scheduleMessageListFetch(
+          [messageChannel.id],
+          workspaceId,
+        );
         break;
 
       case MessageImportSyncStep.MESSAGES_IMPORT_PENDING:
       case MessageImportSyncStep.MESSAGES_IMPORT_ONGOING:
-        await this.messageChannelSyncStatusService.scheduleMessagesImport([
-          messageChannel.id,
-        ]);
+        await this.messageChannelSyncStatusService.scheduleMessagesImport(
+          [messageChannel.id],
+          workspaceId,
+        );
         break;
 
       default:
