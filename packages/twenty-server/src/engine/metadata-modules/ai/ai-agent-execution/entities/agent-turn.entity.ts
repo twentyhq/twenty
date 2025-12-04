@@ -44,6 +44,14 @@ export class AgentTurnEntity {
   @OneToMany(() => AgentTurnEvaluationEntity, (evaluation) => evaluation.turn)
   evaluations: Relation<AgentTurnEvaluationEntity[]>;
 
+  @Column({ type: 'jsonb', nullable: true })
+  executionSnapshot: {
+    agentName: string;
+    agentDescription: string | null;
+    systemPrompt: string;
+    availableTools: Record<string, unknown>;
+  } | null;
+
   @CreateDateColumn()
   createdAt: Date;
 }

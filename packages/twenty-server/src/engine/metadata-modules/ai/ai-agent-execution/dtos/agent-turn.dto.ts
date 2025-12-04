@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IsDateString } from 'class-validator';
+import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message.dto';
@@ -22,6 +23,14 @@ export class AgentTurnDTO {
 
   @Field(() => [AgentMessageDTO])
   messages: AgentMessageDTO[];
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  executionSnapshot: {
+    agentName: string;
+    agentDescription: string | null;
+    systemPrompt: string;
+    availableTools: Record<string, unknown>;
+  } | null;
 
   @IsDateString()
   @Field()

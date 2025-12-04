@@ -7,11 +7,8 @@ import { Repository } from 'typeorm';
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { AgentTurnEvaluationEntity } from 'src/engine/metadata-modules/ai/ai-agent-monitor/entities/agent-turn-evaluation.entity';
-import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { AgentToolGeneratorService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-tool-generator.service';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class AgentTurnGraderService {
@@ -23,8 +20,6 @@ export class AgentTurnGraderService {
     @InjectRepository(AgentTurnEvaluationEntity)
     private readonly evaluationRepository: Repository<AgentTurnEvaluationEntity>,
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly agentToolGeneratorService: AgentToolGeneratorService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async evaluateTurn(turnId: string): Promise<AgentTurnEvaluationEntity> {
@@ -37,34 +32,7 @@ export class AgentTurnGraderService {
       throw new Error(`Turn ${turnId} not found`);
     }
 
-    let availableTools: ToolSet = {};
-
-    if (turn.agent) {
-      try {
-        const { flatRoleTargetByAgentIdMaps } =
-          await this.workspaceCacheService.getOrRecompute(
-            turn.agent.workspaceId,
-            ['flatRoleTargetByAgentIdMaps'],
-          );
-
-        const roleId = flatRoleTargetByAgentIdMaps[turn.agent.id]?.roleId;
-        const roleIds = roleId ? [roleId] : undefined;
-
-        availableTools =
-          await this.agentToolGeneratorService.generateToolsForAgent(
-            turn.agent.id,
-            turn.agent.workspaceId,
-            undefined,
-            roleIds,
-          );
-      } catch (error) {
-        this.logger.warn(
-          `Failed to generate tools for evaluation: ${error.message}`,
-        );
-      }
-    }
-
-    const { score, comment } = await this.evaluateWithAI(turn, availableTools);
+    const { score, comment } = await this.evaluateWithAI(turn);
 
     const evaluation = this.evaluationRepository.create({
       turnId,
@@ -77,7 +45,6 @@ export class AgentTurnGraderService {
 
   private async evaluateWithAI(
     turn: AgentTurnEntity & { messages: AgentMessageEntity[] },
-    availableTools: ToolSet,
   ): Promise<{ score: number; comment: string }> {
     try {
       const defaultModel = this.aiModelRegistryService.getDefaultSpeedModel();
@@ -88,12 +55,22 @@ export class AgentTurnGraderService {
         return this.getFallbackEvaluation(turn);
       }
 
-      const agentContext = this.buildAgentContext(turn.agent, availableTools);
+      let agentContextString = '';
+
+      if (turn.executionSnapshot) {
+        agentContextString = this.buildAgentContext({
+          name: turn.executionSnapshot.agentName,
+          description: turn.executionSnapshot.agentDescription,
+          prompt: turn.executionSnapshot.systemPrompt,
+          tools: turn.executionSnapshot.availableTools as ToolSet,
+        });
+      }
+
       const evaluationContext = this.buildEvaluationContext(turn);
 
       const prompt = `You are evaluating an AI agent's performance on a single turn (user request + agent response).
 
-${agentContext}
+${agentContextString}
 
 ${evaluationContext}
 
@@ -146,46 +123,28 @@ Respond ONLY with valid JSON in this exact format:
     }
   }
 
-  private buildAgentContext(
-    agent: AgentEntity | null,
-    availableTools: ToolSet,
-  ): string {
-    if (!agent) {
-      return '**Agent Configuration:** No agent configuration available\n';
-    }
-
+  private buildAgentContext(agentContext: {
+    name: string;
+    description: string | null;
+    prompt: string;
+    tools: ToolSet;
+  }): string {
     let context = '**Agent Configuration:**\n';
 
-    if (agent.name) {
-      context += `- Agent Name: ${agent.name}\n`;
+    context += `- Agent Name: ${agentContext.name}\n`;
+
+    if (agentContext.description) {
+      context += `- Agent Purpose: ${agentContext.description}\n`;
     }
 
-    if (agent.description) {
-      context += `- Agent Purpose: ${agent.description}\n`;
-    }
+    const promptPreview =
+      agentContext.prompt.length > 500
+        ? agentContext.prompt.substring(0, 500) + '...'
+        : agentContext.prompt;
 
-    if (agent.prompt) {
-      const promptPreview =
-        agent.prompt.length > 500
-          ? agent.prompt.substring(0, 500) + '...'
-          : agent.prompt;
+    context += `- System Prompt/Instructions:\n${promptPreview}\n`;
 
-      context += `- System Prompt/Instructions:\n${promptPreview}\n`;
-    }
-
-    if (agent.modelConfiguration) {
-      const configDetails = [];
-
-      if (agent.modelConfiguration.webSearch?.enabled) {
-        configDetails.push('Web Search');
-      }
-
-      if (configDetails.length > 0) {
-        context += `- Native Tools Enabled: ${configDetails.join(', ')}\n`;
-      }
-    }
-
-    context += '\n' + this.formatToolsForEvaluation(availableTools) + '\n';
+    context += '\n' + this.formatToolsForEvaluation(agentContext.tools) + '\n';
 
     return context;
   }

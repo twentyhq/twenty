@@ -1,14 +1,20 @@
 import { Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { TextPart, ToolCallPart, ToolResultPart } from 'ai';
+import { Repository } from 'typeorm';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
+import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AgentExecutionService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-execution.service';
+import { AgentToolGeneratorService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-tool-generator.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 import { EvaluateAgentTurnJob } from './evaluate-agent-turn.job';
 
@@ -25,8 +31,13 @@ export class RunEvaluationInputJob {
   private readonly logger = new Logger(RunEvaluationInputJob.name);
 
   constructor(
+    @InjectRepository(AgentTurnEntity)
+    private readonly turnRepository: Repository<AgentTurnEntity>,
     private readonly agentChatService: AgentChatService,
     private readonly agentExecutionService: AgentExecutionService,
+    private readonly agentService: AgentService,
+    private readonly agentToolGeneratorService: AgentToolGeneratorService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -39,6 +50,36 @@ export class RunEvaluationInputJob {
       uiMessage: {
         role: 'user',
         parts: [{ type: 'text', text: data.input }],
+      },
+    });
+
+    const agent = await this.agentService.findOneAgentById({
+      id: data.agentId,
+      workspaceId: data.workspaceId,
+    });
+
+    const { flatRoleTargetByAgentIdMaps } =
+      await this.workspaceCacheService.getOrRecompute(data.workspaceId, [
+        'flatRoleTargetByAgentIdMaps',
+      ]);
+
+    const roleId = flatRoleTargetByAgentIdMaps[data.agentId]?.roleId;
+    const roleIds = roleId ? [roleId] : undefined;
+
+    const availableTools =
+      await this.agentToolGeneratorService.generateToolsForAgent(
+        data.agentId,
+        data.workspaceId,
+        undefined,
+        roleIds,
+      );
+
+    await this.turnRepository.update(data.turnId, {
+      executionSnapshot: {
+        agentName: agent.name,
+        agentDescription: agent.description ?? null,
+        systemPrompt: agent.prompt,
+        availableTools,
       },
     });
 
