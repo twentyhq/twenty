@@ -6,6 +6,7 @@ import { GaugeChartConfigurationDTO } from 'src/engine/metadata-modules/page-lay
 import { IframeConfigurationDTO } from 'src/engine/metadata-modules/page-layout/dtos/iframe-configuration.dto';
 import { LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout/dtos/line-chart-configuration.dto';
 import { PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout/dtos/pie-chart-configuration.dto';
+import { StandaloneRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout/dtos/standalone-rich-text-configuration.dto';
 import { GraphType } from 'src/engine/metadata-modules/page-layout/enums/graph-type.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout/enums/widget-configuration-type.enum';
 
@@ -18,6 +19,7 @@ export const WidgetConfiguration = createUnionType({
     AggregateChartConfigurationDTO,
     GaugeChartConfigurationDTO,
     IframeConfigurationDTO,
+    StandaloneRichTextConfigurationDTO,
   ],
   resolveType(configuration: Record<string, unknown>) {
     if (!('configurationType' in configuration)) {
@@ -52,6 +54,13 @@ export const WidgetConfiguration = createUnionType({
       return IframeConfigurationDTO;
     }
 
+    if (
+      configuration.configurationType ===
+      WidgetConfigurationType.STANDALONE_RICH_TEXT_CONFIG
+    ) {
+      return StandaloneRichTextConfigurationDTO;
+    }
+
     throw new Error(
       `Unknown widget configuration type: ${configuration.configurationType}`,
     );
@@ -64,4 +73,5 @@ export type WidgetConfigurationInterface =
   | PieChartConfigurationDTO
   | AggregateChartConfigurationDTO
   | GaugeChartConfigurationDTO
-  | IframeConfigurationDTO;
+  | IframeConfigurationDTO
+  | StandaloneRichTextConfigurationDTO;

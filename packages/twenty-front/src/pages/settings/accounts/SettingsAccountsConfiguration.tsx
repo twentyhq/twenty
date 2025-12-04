@@ -99,31 +99,32 @@ export const SettingsAccountsConfiguration = () => {
     });
   };
 
-  switch (currentStep) {
-    case SettingsAccountsConfigurationStep.Email:
-      if (!isDefined(messageChannel)) {
-        return null;
-      }
-      return (
-        <SettingsAccountsConfigurationStepEmail
-          messageChannel={messageChannel}
-          hasNextStep={isDefined(calendarChannel)}
-          isSubmitting={isSubmitting}
-          onNext={handleNext}
-          onAddAccount={handleAddAccount}
-        />
-      );
-    case SettingsAccountsConfigurationStep.Calendar:
-      if (!isDefined(calendarChannel)) {
-        return null;
-      }
-      return (
-        <SettingsAccountsConfigurationStepCalendar
-          calendarChannel={calendarChannel}
-          messageChannel={messageChannel}
-          isSubmitting={isSubmitting}
-          onAddAccount={handleAddAccount}
-        />
-      );
+  const showEmailStep =
+    currentStep === SettingsAccountsConfigurationStep.Email &&
+    isDefined(messageChannel);
+
+  if (showEmailStep) {
+    return (
+      <SettingsAccountsConfigurationStepEmail
+        messageChannel={messageChannel}
+        hasNextStep={isDefined(calendarChannel)}
+        isSubmitting={isSubmitting}
+        onNext={handleNext}
+        onAddAccount={handleAddAccount}
+      />
+    );
   }
+
+  if (!isDefined(calendarChannel)) {
+    return null;
+  }
+
+  return (
+    <SettingsAccountsConfigurationStepCalendar
+      calendarChannel={calendarChannel}
+      messageChannel={messageChannel}
+      isSubmitting={isSubmitting}
+      onAddAccount={handleAddAccount}
+    />
+  );
 };

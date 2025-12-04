@@ -113,6 +113,12 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       ... on IframeConfiguration {
         url
       }
+      ... on StandaloneRichTextConfiguration {
+        body {
+          blocknote
+          markdown
+        }
+      }
     }
     pageLayoutTabId
   }
