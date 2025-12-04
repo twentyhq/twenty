@@ -23,12 +23,12 @@ export const EmailsFieldDisplay = () => {
     event: React.MouseEvent<HTMLElement>,
   ) => {
     event.preventDefault();
-    // copy and navigate to be implemented here
+
     if (actionMode === 'copy') {
       try {
         await navigator.clipboard.writeText(email);
         enqueueSuccessSnackBar({
-          message: t`Email copied to clipboard`,
+          message: t`Email address copied to clipboard`,
           options: {
             icon: <IconCircleCheck size={16} color="green" />,
             duration: 2000,

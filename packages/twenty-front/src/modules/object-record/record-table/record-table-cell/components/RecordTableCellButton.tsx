@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { type IconComponent } from 'twenty-ui/display';
-import { FloatingIconButtonGroup, LightIconButtonGroup } from 'twenty-ui/input';
+import { LightIconButtonGroup } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { AnimatedContainer } from 'twenty-ui/utilities';
 

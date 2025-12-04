@@ -24,7 +24,6 @@ export const LinksFieldDisplay = () => {
     event: React.MouseEvent<HTMLElement>,
   ) => {
     event.preventDefault();
-    // copy and navigate to be implemented here
     if (actionMode === 'copy') {
       try {
         await navigator.clipboard.writeText(link);

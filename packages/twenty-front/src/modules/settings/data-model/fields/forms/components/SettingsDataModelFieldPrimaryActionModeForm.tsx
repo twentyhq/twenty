@@ -12,7 +12,7 @@ type SettingsDataModelFieldPrimaryActionModeFormValues = {
   };
 };
 
-type SettingsDataModelFielPrimaryActionModeFormProps = {
+type SettingsDataModelFieldPrimaryActionModeFormProps = {
   disabled?: boolean;
   fieldType: string;
 };
@@ -22,7 +22,7 @@ const ACTIONABLE_FIELD_TYPES = ['PHONES', 'EMAILS', 'LINKS'];
 export const SettingsDataModelFieldPrimaryActionModeForm = ({
   disabled = false,
   fieldType,
-}: SettingsDataModelFielPrimaryActionModeFormProps) => {
+}: SettingsDataModelFieldPrimaryActionModeFormProps) => {
   const { control, watch } =
     useFormContext<SettingsDataModelFieldPrimaryActionModeFormValues>();
 
@@ -47,7 +47,6 @@ export const SettingsDataModelFieldPrimaryActionModeForm = ({
           >
             <Select
               dropdownId="field-action-mode-select"
-              disabled={false}
               label="Select an option"
               options={[
                 { value: 'copy', label: t`Copy to Clipboard`, Icon: IconCopy },
@@ -57,7 +56,7 @@ export const SettingsDataModelFieldPrimaryActionModeForm = ({
                   Icon: IconClick,
                 },
               ]}
-              value={(value as FieldActionMode) ?? 'navigate'}
+              value={(value as FieldActionMode) ?? 'copy'}
               onChange={(newValue) => onChange(newValue as FieldActionMode)}
             />
           </SettingsOptionCardContentSelect>

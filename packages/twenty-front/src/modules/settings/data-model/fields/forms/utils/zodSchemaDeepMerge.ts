@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-export function deepMergeZod(schema1: any, schema2: any) {
+export function deepMergeZod<T extends z.ZodTypeAny, U extends z.ZodTypeAny>(
+  schema1: T,
+  schema2: U,
+): z.ZodTypeAny {
   // For non-object schemas, return schema2 (overwrites)
   if (!(schema1 instanceof z.ZodObject) || !(schema2 instanceof z.ZodObject)) {
     return schema2;
