@@ -9,13 +9,15 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { MetadataToolsFactory } from 'src/engine/metadata-modules/metadata-tools/services/metadata-tools.factory';
+import { FieldMetadataToolsFactory } from 'src/engine/metadata-modules/field-metadata/tools/field-metadata-tools.factory';
+import { ObjectMetadataToolsFactory } from 'src/engine/metadata-modules/object-metadata/tools/object-metadata-tools.factory';
 
 @Injectable()
 export class MCPMetadataService {
   constructor(
     private readonly featureFlagService: FeatureFlagService,
-    private readonly metadataToolsFactory: MetadataToolsFactory,
+    private readonly objectMetadataToolsFactory: ObjectMetadataToolsFactory,
+    private readonly fieldMetadataToolsFactory: FieldMetadataToolsFactory,
     private readonly metricsService: MetricsService,
   ) {}
 
@@ -49,7 +51,10 @@ export class MCPMetadataService {
   }
 
   getTools(workspaceId: string): ToolSet {
-    return this.metadataToolsFactory.generateTools({ workspaceId });
+    return {
+      ...this.objectMetadataToolsFactory.generateTools(workspaceId),
+      ...this.fieldMetadataToolsFactory.generateTools(workspaceId),
+    };
   }
 
   async handleToolCall(

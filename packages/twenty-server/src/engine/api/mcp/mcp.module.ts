@@ -10,7 +10,8 @@ import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { AiToolsModule } from 'src/engine/metadata-modules/ai/ai-tools/ai-tools.module';
-import { MetadataToolsModule } from 'src/engine/metadata-modules/metadata-tools/metadata-tools.module';
+import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
+import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -24,7 +25,8 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     FeatureFlagModule,
     MetricsModule,
     UserRoleModule,
-    MetadataToolsModule,
+    ObjectMetadataModule,
+    FieldMetadataModule,
   ],
   controllers: [McpCoreController, McpMetadataController],
   exports: [McpProtocolService],
