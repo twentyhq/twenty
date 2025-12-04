@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { Any } from 'typeorm';
+import { Any, In } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -16,6 +16,7 @@ import {
   MessageChannelSyncStatus,
   type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 
 @Injectable()
 export class MessageChannelSyncStatusService {
@@ -76,11 +77,23 @@ export class MessageChannelSyncStatusService {
         'messageChannel',
       );
 
+    const messageFolderRepository =
+      await this.twentyORMManager.getRepository<MessageFolderWorkspaceEntity>(
+        'messageFolder',
+      );
+
     await messageChannelRepository.update(messageChannelIds, {
       syncCursor: '',
       syncStageStartedAt: null,
       throttleFailureCount: 0,
     });
+
+    await messageFolderRepository.update(
+      { messageChannelId: In(messageChannelIds) },
+      {
+        syncCursor: '',
+      },
+    );
 
     await this.scheduleMessageListFetch(messageChannelIds);
   }

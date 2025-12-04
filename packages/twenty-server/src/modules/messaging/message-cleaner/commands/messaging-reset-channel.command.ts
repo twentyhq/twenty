@@ -114,29 +114,6 @@ export class MessagingResetChannelCommand extends CommandRunner {
         'messageChannelMessageAssociation',
       );
 
-    const associations = await messageChannelMessageAssociationRepository.find({
-      where: { messageChannelId },
-      select: ['messageExternalId'],
-    });
-
-    const messageExternalIds = associations
-      .map((association) => association.messageExternalId)
-      .filter((id): id is string => id !== null);
-
-    if (messageExternalIds.length > 0) {
-      this.logger.log(
-        `Deleting ${messageExternalIds.length} message associations for channel ${messageChannelId}`,
-      );
-
-      await this.messagingMessageCleanerService.deleteMessagesChannelMessageAssociationsAndRelatedOrphans(
-        {
-          workspaceId,
-          messageExternalIds,
-          messageChannelId,
-        },
-      );
-    }
-
     this.logger.log(`Clearing cache for message channel ${messageChannelId}`);
 
     await this.cacheStorage.del(
