@@ -33,5 +33,6 @@ export type FlatView = FlatEntityFrom<
 > & {
   viewFieldIds: string[];
   viewFilterIds: string[];
+  viewFilterGroupIds: string[];
   viewGroupIds: string[];
 };

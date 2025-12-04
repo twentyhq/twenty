@@ -13,6 +13,7 @@ import { FlatRoleValidatorService } from 'src/engine/workspace-manager/workspace
 import { FlatRouteTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service';
 import { FlatServerlessFunctionValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service';
 import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service';
+import { FlatViewFilterGroupValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-group-validator.service';
 import { FlatViewFilterValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service';
 import { FlatViewGroupValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service';
 import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service';
@@ -23,6 +24,7 @@ import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace
     FlatViewValidatorService,
     FlatViewFieldValidatorService,
     FlatViewFilterValidatorService,
+    FlatViewFilterGroupValidatorService,
     FlatViewGroupValidatorService,
     FlatIndexValidatorService,
     FlatFieldMetadataValidatorService,
@@ -40,6 +42,7 @@ import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace
     FlatViewValidatorService,
     FlatViewFieldValidatorService,
     FlatViewFilterValidatorService,
+    FlatViewFilterGroupValidatorService,
     FlatViewGroupValidatorService,
     FlatIndexValidatorService,
     FlatFieldMetadataValidatorService,
