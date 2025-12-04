@@ -3,11 +3,13 @@ import { validateSync, type ValidationError } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AggregateChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/aggregate-chart-configuration.dto';
+import { transformRichTextV2Value } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text-v2.util';
 import { BarChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/bar-chart-configuration.dto';
 import { GaugeChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/gauge-chart-configuration.dto';
 import { IframeConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/iframe-configuration.dto';
 import { LineChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/line-chart-configuration.dto';
 import { PieChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/pie-chart-configuration.dto';
+import { StandaloneRichTextConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/standalone-rich-text-configuration.dto';
 import { type WidgetConfigurationInterface } from 'src/engine/core-modules/page-layout/dtos/widget-configuration.interface';
 import { BarChartGroupMode } from 'src/engine/core-modules/page-layout/enums/bar-chart-group-mode.enum';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
@@ -161,7 +163,31 @@ const validateIframeConfiguration = (
   return instance;
 };
 
-export const validateAndTransformWidgetConfiguration = ({
+const validateStandaloneRichTextConfiguration = async (
+  configuration: unknown,
+): Promise<WidgetConfigurationInterface | null> => {
+  const instance = plainToInstance(
+    StandaloneRichTextConfigurationDTO,
+    configuration,
+  );
+
+  const errors = validateSync(instance, {
+    whitelist: true,
+    forbidUnknownValues: true,
+  });
+
+  if (errors.length > 0) {
+    throw errors;
+  }
+
+  if (instance.body) {
+    instance.body = await transformRichTextV2Value(instance.body);
+  }
+
+  return instance;
+};
+
+export const validateAndTransformWidgetConfiguration = async ({
   type,
   configuration,
   isDashboardV2Enabled,
@@ -169,7 +195,7 @@ export const validateAndTransformWidgetConfiguration = ({
   type: WidgetType;
   configuration: unknown;
   isDashboardV2Enabled: boolean;
-}): WidgetConfigurationInterface | null => {
+}): Promise<WidgetConfigurationInterface | null> => {
   if (!configuration || typeof configuration !== 'object') {
     throw new Error('Invalid configuration: not an object');
   }
@@ -183,6 +209,8 @@ export const validateAndTransformWidgetConfiguration = ({
         });
       case WidgetType.IFRAME:
         return validateIframeConfiguration(configuration);
+      case WidgetType.STANDALONE_RICH_TEXT:
+        return await validateStandaloneRichTextConfiguration(configuration);
       default:
         return null;
     }

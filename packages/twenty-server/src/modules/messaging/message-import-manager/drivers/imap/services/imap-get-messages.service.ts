@@ -1,22 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type AddressObject, type ParsedMail } from 'mailparser';
-import { isDefined } from 'twenty-shared/utils';
+import { type ImapFlow } from 'imapflow';
+import { Address, type Email as ParsedMail } from 'postal-mime';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
-import { ImapFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-fetch-by-batch.service';
-import { type MessageFetchResult } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-processor.service';
+import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
+import { ImapMessageParserService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-parser.service';
 import { ImapMessageTextExtractorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-text-extractor.service';
+import { ImapMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-messages-import-error-handler.service';
 import { parseMessageId } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-message-id.util';
 import { type EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
 
-type AddressType = 'from' | 'to' | 'cc' | 'bcc';
-
-type ConnectedAccountType = Pick<
+type ConnectedAccount = Pick<
   ConnectedAccountWorkspaceEntity,
   'id' | 'provider' | 'handle' | 'handleAliases' | 'connectionParameters'
 >;
@@ -26,221 +25,214 @@ export class ImapGetMessagesService {
   private readonly logger = new Logger(ImapGetMessagesService.name);
 
   constructor(
-    private readonly fetchByBatchService: ImapFetchByBatchService,
-    private readonly messageTextExtractor: ImapMessageTextExtractorService,
+    private readonly imapClientProvider: ImapClientProvider,
+    private readonly messageParser: ImapMessageParserService,
+    private readonly textExtractor: ImapMessageTextExtractorService,
+    private readonly errorHandler: ImapMessagesImportErrorHandler,
   ) {}
 
   async getMessages(
-    messageIds: string[],
-    connectedAccount: ConnectedAccountType,
+    messageExternalIds: string[],
+    connectedAccount: ConnectedAccount,
   ): Promise<MessageWithParticipants[]> {
-    if (!messageIds.length) {
+    if (!messageExternalIds.length) {
       return [];
     }
 
-    const folderToUidsMap = this.groupMessageIdsByFolder(messageIds);
+    const messagesByFolder = this.groupByFolder(messageExternalIds);
+    const client = await this.imapClientProvider.getClient(connectedAccount);
 
-    const allMessages: MessageWithParticipants[] = [];
+    try {
+      const messages = await this.fetchFromAllFolders(
+        messagesByFolder,
+        client,
+        connectedAccount,
+      );
 
-    for (const [folder, uids] of folderToUidsMap.entries()) {
-      if (!uids.length) {
+      return messages;
+    } finally {
+      await this.imapClientProvider.closeClient(client);
+    }
+  }
+
+  private groupByFolder(messageExternalIds: string[]): Map<string, number[]> {
+    const messagesByFolder = new Map<string, number[]>();
+
+    for (const externalId of messageExternalIds) {
+      const parsed = parseMessageId(externalId);
+
+      if (!parsed) {
+        this.logger.warn(`Invalid message external ID format: ${externalId}`);
         continue;
       }
 
-      const { results } = await this.fetchByBatchService.fetchAllByBatches(
-        uids,
+      const uids = messagesByFolder.get(parsed.folder) ?? [];
+
+      uids.push(parsed.uid);
+      messagesByFolder.set(parsed.folder, uids);
+    }
+
+    return messagesByFolder;
+  }
+
+  private async fetchFromAllFolders(
+    messagesByFolder: Map<string, number[]>,
+    client: ImapFlow,
+    connectedAccount: ConnectedAccount,
+  ): Promise<MessageWithParticipants[]> {
+    const allMessages: MessageWithParticipants[] = [];
+
+    for (const [folderPath, messageUids] of messagesByFolder) {
+      if (!messageUids.length) {
+        continue;
+      }
+
+      const folderMessages = await this.fetchFromFolder(
+        folderPath,
+        messageUids,
+        client,
         connectedAccount,
-        folder,
       );
 
-      this.logger.log(`IMAP fetch completed for folder: ${folder}`);
-
-      const messages = this.formatBatchResponseAsMessages(
-        results,
-        connectedAccount,
-        folder,
-      );
-
-      allMessages.push(...messages);
+      allMessages.push(...folderMessages);
     }
 
     return allMessages;
   }
 
-  private groupMessageIdsByFolder(messageIds: string[]): Map<string, number[]> {
-    const folderToUidsMap = new Map<string, number[]>();
+  private async fetchFromFolder(
+    folderPath: string,
+    messageUids: number[],
+    client: ImapFlow,
+    connectedAccount: ConnectedAccount,
+  ): Promise<MessageWithParticipants[]> {
+    this.logger.log(
+      `Fetching ${messageUids.length} messages from ${folderPath}`,
+    );
+    const startTime = Date.now();
 
-    for (const messageId of messageIds) {
-      const parsedMessageId = parseMessageId(messageId);
+    const results = await this.messageParser.parseMessagesFromFolder(
+      messageUids,
+      folderPath,
+      client,
+    );
 
-      if (!parsedMessageId) {
-        this.logger.warn(`Invalid messageId format: ${messageId}`);
+    const messages: MessageWithParticipants[] = [];
+
+    for (const result of results) {
+      if (result.error) {
+        this.errorHandler.handleError(
+          result.error,
+          `${folderPath}:${result.uid}`,
+        );
         continue;
       }
 
-      const { folder, uid } = parsedMessageId;
-
-      if (!folderToUidsMap.has(folder)) {
-        folderToUidsMap.set(folder, []);
-      }
-      folderToUidsMap.get(folder)!.push(uid);
-    }
-
-    return folderToUidsMap;
-  }
-
-  private formatBatchResponseAsMessages(
-    batchResults: MessageFetchResult[],
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'handle' | 'handleAliases'
-    >,
-    folder: string,
-  ): MessageWithParticipants[] {
-    const messages = batchResults.map((result) => {
       if (!result.parsed) {
         this.logger.warn(
-          `Message UID ${result.uid} could not be parsed - likely not found in current folders`,
+          `Message UID ${result.uid} could not be parsed - likely deleted`,
         );
-
-        return undefined;
+        continue;
       }
 
-      return this.createMessageFromParsedMail(
-        result.parsed,
-        result.uid.toString(),
-        connectedAccount,
-        folder,
+      messages.push(
+        this.buildMessage(
+          result.parsed,
+          result.uid,
+          folderPath,
+          connectedAccount,
+        ),
       );
-    });
-
-    const validMessages = messages.filter(isDefined);
+    }
 
     this.logger.log(
-      `Successfully parsed ${validMessages.length} out of ${batchResults.length} messages`,
+      `Parsed ${messages.length}/${results.length} messages from ${folderPath} in ${Date.now() - startTime}ms`,
     );
 
-    return validMessages;
+    return messages;
   }
 
-  private createMessageFromParsedMail(
+  private buildMessage(
     parsed: ParsedMail,
-    uid: string,
+    uid: number,
+    folderPath: string,
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
       'handle' | 'handleAliases'
     >,
-    folder: string,
   ): MessageWithParticipants {
-    const participants = this.extractAllParticipants(parsed);
-    const attachments = this.extractAttachments(parsed);
-    const threadId = this.extractThreadId(parsed);
+    const fromAddresses = this.extractAddresses(parsed.from);
+    const senderAddress = fromAddresses[0]?.address ?? '';
 
-    const fromAddresses = this.extractAddresses(
-      parsed.from as AddressObject | undefined,
-      'from',
+    const text = sanitizeString(
+      this.textExtractor.extractTextWithoutReplyQuotations(parsed),
     );
 
-    const fromHandle = fromAddresses.length > 0 ? fromAddresses[0].address : '';
-
-    const textWithoutReplyQuotations =
-      this.messageTextExtractor.extractTextWithoutReplyQuotations(parsed);
-
-    const direction = computeMessageDirection(fromHandle, connectedAccount);
-    const text = sanitizeString(textWithoutReplyQuotations);
-    const subject = sanitizeString(parsed.subject || '');
-
     return {
-      externalId: `${folder}:${uid}`,
-      messageThreadExternalId: threadId || parsed.messageId || uid,
-      headerMessageId: parsed.messageId || uid,
-      subject: subject,
-      text: text,
-      receivedAt: parsed.date || new Date(),
-      direction: direction,
-      attachments,
-      participants,
+      externalId: `${folderPath}:${uid}`,
+      messageThreadExternalId: this.extractThreadId(parsed),
+      headerMessageId: parsed.messageId || String(uid),
+      subject: sanitizeString(parsed.subject || ''),
+      text,
+      receivedAt: parsed.date ? new Date(parsed.date) : null,
+      direction: computeMessageDirection(senderAddress, connectedAccount),
+      attachments: this.extractAttachments(parsed),
+      participants: this.extractParticipants(parsed),
     };
   }
 
-  private extractThreadId(parsed: ParsedMail): string | null {
-    const { messageId, references, inReplyTo } = parsed;
+  private extractThreadId(parsed: ParsedMail): string {
+    if (Array.isArray(parsed.references) && parsed.references[0]?.trim()) {
+      return parsed.references[0].trim();
+    }
 
-    if (references && Array.isArray(references) && references.length > 0) {
-      const threadRoot = references[0].trim();
+    if (parsed.inReplyTo) {
+      const inReplyTo = String(parsed.inReplyTo).trim();
 
-      if (threadRoot && threadRoot.length > 0) {
-        return threadRoot;
+      if (inReplyTo) {
+        return inReplyTo;
       }
     }
 
-    if (inReplyTo) {
-      const cleanInReplyTo =
-        typeof inReplyTo === 'string'
-          ? inReplyTo.trim()
-          : String(inReplyTo).trim();
-
-      if (cleanInReplyTo && cleanInReplyTo.length > 0) {
-        return cleanInReplyTo;
-      }
+    if (parsed.messageId?.trim()) {
+      return parsed.messageId.trim();
     }
 
-    if (messageId) {
-      return messageId.trim();
-    }
-
-    const timestamp = Date.now();
-    const randomSuffix = Math.random().toString(36).substring(2, 11);
-
-    return `thread-${timestamp}-${randomSuffix}`;
+    return `thread-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
   }
 
-  private extractAllParticipants(parsed: ParsedMail) {
-    const fromAddresses = this.extractAddresses(
-      parsed.from as AddressObject | undefined,
-      'from',
-    );
-    const toAddresses = this.extractAddresses(
-      parsed.to as AddressObject | undefined,
-      'to',
-    );
-    const ccAddresses = this.extractAddresses(
-      parsed.cc as AddressObject | undefined,
-      'cc',
-    );
-    const bccAddresses = this.extractAddresses(
-      parsed.bcc as AddressObject | undefined,
-      'bcc',
-    );
-
-    return [
-      ...formatAddressObjectAsParticipants(fromAddresses, 'from'),
-      ...formatAddressObjectAsParticipants(toAddresses, 'to'),
-      ...formatAddressObjectAsParticipants(ccAddresses, 'cc'),
-      ...formatAddressObjectAsParticipants(bccAddresses, 'bcc'),
+  private extractParticipants(parsed: ParsedMail) {
+    const addressFields = [
+      { field: parsed.from, role: 'from' as const },
+      { field: parsed.to, role: 'to' as const },
+      { field: parsed.cc, role: 'cc' as const },
+      { field: parsed.bcc, role: 'bcc' as const },
     ];
+
+    return addressFields.flatMap(({ field, role }) =>
+      formatAddressObjectAsParticipants(this.extractAddresses(field), role),
+    );
   }
 
   private extractAddresses(
-    addressObject: AddressObject | undefined,
-    _type: AddressType,
+    address: Address | Address[] | undefined,
   ): EmailAddress[] {
-    const addresses: EmailAddress[] = [];
-
-    if (addressObject && 'value' in addressObject) {
-      for (const addr of addressObject.value) {
-        if (addr.address) {
-          const name = sanitizeString(addr.name);
-
-          addresses.push({
-            address: addr.address,
-            name: name,
-          });
-        }
-      }
+    if (!address) {
+      return [];
     }
 
-    return addresses;
+    const addresses = Array.isArray(address) ? address : [address];
+
+    const mailboxes = addresses.flatMap((addr) =>
+      addr.address ? [addr] : (addr.group ?? []),
+    );
+
+    return mailboxes
+      .filter((mailbox) => mailbox.address)
+      .map((mailbox) => ({
+        address: mailbox.address,
+        name: sanitizeString(mailbox.name || ''),
+      }));
   }
 
   private extractAttachments(parsed: ParsedMail) {

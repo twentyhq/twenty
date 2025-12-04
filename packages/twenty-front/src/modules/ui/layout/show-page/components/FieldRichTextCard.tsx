@@ -46,7 +46,7 @@ const LoadingSkeleton = () => {
   );
 };
 
-export const RichTextCard = () => {
+export const FieldRichTextCard = () => {
   const targetRecord = useTargetRecord();
   const activityBodyV2 = useRecoilValue(
     recordStoreFamilySelector({

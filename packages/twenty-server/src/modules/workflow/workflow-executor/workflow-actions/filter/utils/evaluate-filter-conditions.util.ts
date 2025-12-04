@@ -349,6 +349,9 @@ function evaluateNumberFilter(filter: ResolvedFilter): boolean {
     case ViewFilterOperand.IS:
       return Number(leftValue) === Number(rightValue);
 
+    case ViewFilterOperand.IS_NOT:
+      return Number(leftValue) !== Number(rightValue);
+
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for number filter`,

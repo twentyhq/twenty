@@ -10,6 +10,7 @@ import { AppDevCommand } from './app-dev.command';
 import { AppSyncCommand } from './app-sync.command';
 import { formatPath } from '../utils/format-path';
 import { AppGenerateCommand } from './app-generate.command';
+import { AppLogsCommand } from '@/cli/commands/app-logs.command';
 
 export class AppCommand {
   private devCommand = new AppDevCommand();
@@ -17,6 +18,7 @@ export class AppCommand {
   private uninstallCommand = new AppUninstallCommand();
   private addCommand = new AppAddCommand();
   private generateCommand = new AppGenerateCommand();
+  private logsCommand = new AppLogsCommand();
 
   getCommand(): Command {
     const appCommand = new Command('app');
@@ -109,6 +111,32 @@ export class AppCommand {
       .action(async (appPath?: string) => {
         await this.generateCommand.execute(formatPath(appPath));
       });
+
+    appCommand
+      .command('logs [appPath]')
+      .option(
+        '-u, --functionUniversalIdentifier <functionUniversalIdentifier>',
+        'Only show logs for the function with this universal ID',
+      )
+      .option(
+        '-n, --functionName <functionName>',
+        'Only show logs for the function with this name',
+      )
+      .description('Watch application function logs')
+      .action(
+        async (
+          appPath?: string,
+          options?: {
+            functionUniversalIdentifier?: string;
+            functionName?: string;
+          },
+        ) => {
+          await this.logsCommand.execute({
+            ...options,
+            appPath: formatPath(appPath),
+          });
+        },
+      );
 
     return appCommand;
   }

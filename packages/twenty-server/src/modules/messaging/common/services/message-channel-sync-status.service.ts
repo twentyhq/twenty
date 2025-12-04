@@ -1,39 +1,48 @@
 import { Injectable } from '@nestjs/common';
 
-import { Any } from 'typeorm';
+import { Any, In } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import {
+  MessageChannelPendingGroupEmailsAction,
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
   type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageFolderPendingSyncAction,
+  MessageFolderWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 
 @Injectable()
 export class MessageChannelSyncStatusService {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly accountsToReconnectService: AccountsToReconnectService,
     private readonly metricsService: MetricsService,
   ) {}
 
-  public async scheduleMessageListFetch(messageChannelIds: string[]) {
+  public async scheduleMessageListFetch(
+    messageChannelIds: string[],
+    workspaceId: string,
+  ) {
     if (!messageChannelIds.length) {
       return;
     }
 
     const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
         'messageChannel',
       );
 
@@ -42,13 +51,17 @@ export class MessageChannelSyncStatusService {
     });
   }
 
-  public async scheduleMessagesImport(messageChannelIds: string[]) {
+  public async scheduleMessagesImport(
+    messageChannelIds: string[],
+    workspaceId: string,
+  ) {
     if (!messageChannelIds.length) {
       return;
     }
 
     const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
         'messageChannel',
       );
 
@@ -72,26 +85,46 @@ export class MessageChannelSyncStatusService {
     }
 
     const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
         'messageChannel',
+      );
+
+    const messageFolderRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageFolderWorkspaceEntity>(
+        workspaceId,
+        'messageFolder',
       );
 
     await messageChannelRepository.update(messageChannelIds, {
       syncCursor: '',
       syncStageStartedAt: null,
       throttleFailureCount: 0,
+      pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
     });
 
-    await this.scheduleMessageListFetch(messageChannelIds);
+    await messageFolderRepository.update(
+      { messageChannelId: In(messageChannelIds) },
+      {
+        syncCursor: '',
+        pendingSyncAction: MessageFolderPendingSyncAction.NONE,
+      },
+    );
+
+    await this.scheduleMessageListFetch(messageChannelIds, workspaceId);
   }
 
-  public async resetSyncStageStartedAt(messageChannelIds: string[]) {
+  public async resetSyncStageStartedAt(
+    messageChannelIds: string[],
+    workspaceId: string,
+  ) {
     if (!messageChannelIds.length) {
       return;
     }
 
     const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
         'messageChannel',
       );
 
@@ -100,32 +133,58 @@ export class MessageChannelSyncStatusService {
     });
   }
 
-  public async markAsMessagesListFetchOngoing(messageChannelIds: string[]) {
-    if (!messageChannelIds.length) {
-      return;
-    }
-
-    const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
-        'messageChannel',
-      );
-
-    await messageChannelRepository.update(messageChannelIds, {
-      syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
-      syncStatus: MessageChannelSyncStatus.ONGOING,
-      syncStageStartedAt: new Date().toISOString(),
-    });
-  }
-
-  public async markAsCompletedAndScheduleMessageListFetch(
+  public async markAsMessagesListFetchScheduled(
     messageChannelIds: string[],
+    workspaceId: string,
   ) {
     if (!messageChannelIds.length) {
       return;
     }
 
     const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
+        'messageChannel',
+      );
+
+    await messageChannelRepository.update(messageChannelIds, {
+      syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
+      syncStatus: MessageChannelSyncStatus.ONGOING,
+      syncStageStartedAt: new Date().toISOString(),
+    });
+  }
+
+  public async markAsMessagesListFetchOngoing(
+    messageChannelIds: string[],
+    workspaceId: string,
+  ) {
+    if (!messageChannelIds.length) {
+      return;
+    }
+
+    const messageChannelRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
+        'messageChannel',
+      );
+
+    await messageChannelRepository.update(messageChannelIds, {
+      syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
+      syncStatus: MessageChannelSyncStatus.ONGOING,
+    });
+  }
+
+  public async markAsCompletedAndScheduleMessageListFetch(
+    messageChannelIds: string[],
+    workspaceId: string,
+  ) {
+    if (!messageChannelIds.length) {
+      return;
+    }
+
+    const messageChannelRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
         'messageChannel',
       );
 
@@ -143,13 +202,36 @@ export class MessageChannelSyncStatusService {
     });
   }
 
-  public async markAsMessagesImportOngoing(messageChannelIds: string[]) {
+  public async markAsMessagesImportScheduled(
+    messageChannelIds: string[],
+    workspaceId: string,
+  ) {
     if (!messageChannelIds.length) {
       return;
     }
 
     const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
+        'messageChannel',
+      );
+
+    await messageChannelRepository.update(messageChannelIds, {
+      syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
+    });
+  }
+
+  public async markAsMessagesImportOngoing(
+    messageChannelIds: string[],
+    workspaceId: string,
+  ) {
+    if (!messageChannelIds.length) {
+      return;
+    }
+
+    const messageChannelRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
         'messageChannel',
       );
 
@@ -171,7 +253,8 @@ export class MessageChannelSyncStatusService {
     }
 
     const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
         'messageChannel',
       );
 
@@ -194,7 +277,8 @@ export class MessageChannelSyncStatusService {
       syncStatus === MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS
     ) {
       const connectedAccountRepository =
-        await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
+          workspaceId,
           'connectedAccount',
         );
 
@@ -230,7 +314,8 @@ export class MessageChannelSyncStatusService {
     }
 
     const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
         'messageChannel',
       );
 
