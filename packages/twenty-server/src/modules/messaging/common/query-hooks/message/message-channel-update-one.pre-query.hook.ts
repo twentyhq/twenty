@@ -28,7 +28,6 @@ import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/
 
 const ONGOING_SYNC_STAGES = [
   MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
-  MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
 ];
 
 @WorkspaceQueryHook(`messageChannel.updateOne`)
