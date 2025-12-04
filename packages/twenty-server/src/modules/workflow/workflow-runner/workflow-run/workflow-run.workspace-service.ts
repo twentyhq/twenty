@@ -151,16 +151,6 @@ export class WorkflowRunWorkspaceService {
     });
 
     if (
-      workflowRunToUpdate.status === WorkflowRunStatus.COMPLETED ||
-      workflowRunToUpdate.status === WorkflowRunStatus.FAILED
-    ) {
-      throw new WorkflowRunException(
-        'Cannot start a workflow run already ended',
-        WorkflowRunExceptionCode.INVALID_OPERATION,
-      );
-    }
-
-    if (
       workflowRunToUpdate.status !== WorkflowRunStatus.ENQUEUED &&
       workflowRunToUpdate.status !== WorkflowRunStatus.NOT_STARTED
     ) {

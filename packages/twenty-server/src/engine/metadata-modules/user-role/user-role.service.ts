@@ -63,18 +63,23 @@ export class UserRoleService {
     userWorkspaceId,
   }: {
     workspaceId: string;
-    userWorkspaceId?: string;
-  }): Promise<string | undefined> {
-    if (!isDefined(userWorkspaceId)) {
-      return;
-    }
-
+    userWorkspaceId: string;
+  }): Promise<string> {
     const { userWorkspaceRoleMap } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'userWorkspaceRoleMap',
       ]);
 
-    return userWorkspaceRoleMap[userWorkspaceId];
+    const roleId = userWorkspaceRoleMap[userWorkspaceId];
+
+    if (!isDefined(roleId)) {
+      throw new PermissionsException(
+        `User workspace ${userWorkspaceId} has no role assigned`,
+        PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+      );
+    }
+
+    return roleId;
   }
 
   public async getRolesByUserWorkspaces({
