@@ -42,16 +42,6 @@ export class CronTriggerV2Service {
         },
       );
 
-    const flatEntityMaps =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatCronTriggerMaps', 'flatServerlessFunctionMaps'],
-        },
-      );
-
-    const existingFlatCronTriggerMaps = flatEntityMaps.flatCronTriggerMaps;
-
     const flatCronTriggerToCreate = fromCreateCronTriggerInputToFlatCronTrigger(
       {
         createCronTriggerInput: cronTriggerInput,
@@ -101,19 +91,17 @@ export class CronTriggerV2Service {
     cronTriggerInput: UpdateCronTriggerInput,
     workspaceId: string,
   ) {
-    const flatEntityMaps =
+    const { flatCronTriggerMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatCronTriggerMaps', 'flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatCronTriggerMaps'],
         },
       );
 
-    const existingFlatCronTriggerMaps = flatEntityMaps.flatCronTriggerMaps;
-
     const optimisticallyUpdatedFlatCronTrigger =
       fromUpdateCronTriggerInputToFlatCronTriggerToUpdateOrThrow({
-        flatCronTriggerMaps: existingFlatCronTriggerMaps,
+        flatCronTriggerMaps,
         updateCronTriggerInput: cronTriggerInput,
       });
 
@@ -160,19 +148,16 @@ export class CronTriggerV2Service {
     destroyCronTriggerInput: CronTriggerIdInput;
     workspaceId: string;
   }): Promise<FlatCronTrigger> {
-    const {
-      flatCronTriggerMaps: existingFlatCronTriggerMaps,
-      flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,
-    } =
+    const { flatCronTriggerMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatCronTriggerMaps', 'flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatCronTriggerMaps'],
         },
       );
 
     const existingFlatCronTrigger =
-      existingFlatCronTriggerMaps.byId[destroyCronTriggerInput.id];
+      flatCronTriggerMaps.byId[destroyCronTriggerInput.id];
 
     if (!isDefined(existingFlatCronTrigger)) {
       throw new CronTriggerException(

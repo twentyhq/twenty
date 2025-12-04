@@ -48,17 +48,6 @@ export class ServerlessFunctionV2Service {
         },
       );
 
-    const flatEntityMaps =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatServerlessFunctionMaps'],
-        },
-      );
-
-    const existingFlatServerlessFunctionMaps =
-      flatEntityMaps.flatServerlessFunctionMaps;
-
     const flatServerlessFunctionToCreate =
       fromCreateServerlessFunctionInputToFlatServerlessFunction({
         createServerlessFunctionInput,
@@ -109,7 +98,7 @@ export class ServerlessFunctionV2Service {
     serverlessFunctionInput: UpdateServerlessFunctionInput,
     workspaceId: string,
   ) {
-    const flatEntityMaps =
+    const { flatServerlessFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
@@ -117,12 +106,9 @@ export class ServerlessFunctionV2Service {
         },
       );
 
-    const existingFlatServerlessFunctionMaps =
-      flatEntityMaps.flatServerlessFunctionMaps;
-
     const optimisticallyUpdatedFlatServerlessFunction =
       fromUpdateServerlessFunctionInputToFlatServerlessFunctionToUpdateOrThrow({
-        flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,
+        flatServerlessFunctionMaps,
         updateServerlessFunctionInput: serverlessFunctionInput,
       });
 

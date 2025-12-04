@@ -79,14 +79,6 @@ export class RoleService {
     workspaceId: string;
     applicationId: string;
   }): Promise<RoleDTO> {
-    const { flatRoleMaps: existingFlatRoleMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRoleMaps'],
-        },
-      );
-
     const flatRoleToCreate = fromCreateRoleInputToFlatRoleToCreate({
       createRoleInput: input,
       workspaceId,

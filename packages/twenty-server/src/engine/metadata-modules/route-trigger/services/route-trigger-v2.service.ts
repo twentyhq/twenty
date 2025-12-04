@@ -42,16 +42,6 @@ export class RouteTriggerV2Service {
         },
       );
 
-    const flatEntityMaps =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRouteTriggerMaps', 'flatServerlessFunctionMaps'],
-        },
-      );
-
-    const existingFlatRouteMaps = flatEntityMaps.flatRouteTriggerMaps;
-
     const flatRouteTriggerToCreate =
       fromCreateRouteTriggerInputToFlatRouteTrigger({
         createRouteTriggerInput: routeTriggerInput,
@@ -100,19 +90,17 @@ export class RouteTriggerV2Service {
     routeTriggerInput: UpdateRouteTriggerInput,
     workspaceId: string,
   ) {
-    const flatEntityMaps =
+    const { flatRouteTriggerMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatRouteTriggerMaps', 'flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatRouteTriggerMaps'],
         },
       );
 
-    const existingFlatRouteMaps = flatEntityMaps.flatRouteTriggerMaps;
-
     const optimisticallyUpdatedFlatRouteTrigger =
       fromUpdateRouteTriggerInputToFlatRouteTriggerToUpdateOrThrow({
-        flatRouteTriggerMaps: existingFlatRouteMaps,
+        flatRouteTriggerMaps,
         updateRouteTriggerInput: routeTriggerInput,
       });
 
@@ -159,19 +147,16 @@ export class RouteTriggerV2Service {
     destroyRouteTriggerInput: RouteTriggerIdInput;
     workspaceId: string;
   }): Promise<FlatRouteTrigger> {
-    const {
-      flatRouteTriggerMaps: existingFlatRouteMaps,
-      flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,
-    } =
+    const { flatRouteTriggerMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatRouteTriggerMaps', 'flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatRouteTriggerMaps'],
         },
       );
 
     const existingFlatRoute =
-      existingFlatRouteMaps.byId[destroyRouteTriggerInput.id];
+      flatRouteTriggerMaps.byId[destroyRouteTriggerInput.id];
 
     if (!isDefined(existingFlatRoute)) {
       throw new RouteTriggerException(

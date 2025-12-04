@@ -321,24 +321,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           workspaceId,
         },
       );
-    const {
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      flatViewMaps: existingFlatViewMaps,
-      flatViewFieldMaps: existingFlatViewFieldMaps,
-      flatIndexMaps: existingFlatIndexMaps,
-      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatObjectMetadataMaps',
-          'flatViewMaps',
-          'flatViewFieldMaps',
-          'flatIndexMaps',
-          'flatFieldMetadataMaps',
-        ],
-      },
-    );
+    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
 
     const {
       flatObjectMetadataToCreate,
@@ -353,16 +342,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
     });
 
-    const flatFieldMetadataMapsFromTo = computeFlatEntityMapsFromTo({
-      flatEntityMaps: existingFlatFieldMetadataMaps,
-      flatEntityToCreate: [
-        ...flatFieldMetadataToCreateOnObject,
-        ...relationTargetFlatFieldMetadataToCreate,
-      ],
-      flatEntityToDelete: [],
-      flatEntityToUpdate: [],
-    });
-
     const flatDefaultViewToCreate = await this.computeFlatViewToCreate({
       objectMetadata: flatObjectMetadataToCreate,
       workspaceId,
@@ -373,14 +352,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const flatDefaultViewFieldsToCreate =
       await this.computeFlatViewFieldsToCreate({
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
-        objectFlatFieldMetadatas: findManyFlatEntityByIdInFlatEntityMapsOrThrow(
-          {
-            flatEntityMaps: flatFieldMetadataMapsFromTo.to,
-            flatEntityIds: flatFieldMetadataToCreateOnObject.map(
-              ({ id }) => id,
-            ),
-          },
-        ),
+        objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
         viewId: flatDefaultViewToCreate.id,
         workspaceId,
       });

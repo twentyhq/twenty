@@ -42,20 +42,6 @@ export class DatabaseEventTriggerV2Service {
         },
       );
 
-    const flatEntityMaps =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: [
-            'flatDatabaseEventTriggerMaps',
-            'flatServerlessFunctionMaps',
-          ],
-        },
-      );
-
-    const existingFlatDatabaseEventTriggerMaps =
-      flatEntityMaps.flatDatabaseEventTriggerMaps;
-
     const flatDatabaseEventTriggerToCreate =
       fromCreateDatabaseEventTriggerInputToFlatDatabaseEventTrigger({
         createDatabaseEventTriggerInput: databaseEventTriggerInput,
@@ -107,24 +93,18 @@ export class DatabaseEventTriggerV2Service {
     databaseEventTriggerInput: UpdateDatabaseEventTriggerInput,
     workspaceId: string,
   ) {
-    const flatEntityMaps =
+    const { flatDatabaseEventTriggerMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: [
-            'flatDatabaseEventTriggerMaps',
-            'flatServerlessFunctionMaps',
-          ],
+          flatMapsKeys: ['flatDatabaseEventTriggerMaps'],
         },
       );
-
-    const existingFlatDatabaseEventTriggerMaps =
-      flatEntityMaps.flatDatabaseEventTriggerMaps;
 
     const optimisticallyUpdatedFlatDatabaseEventTrigger =
       fromUpdateDatabaseEventTriggerInputToFlatDatabaseEventTriggerToUpdateOrThrow(
         {
-          flatDatabaseEventTriggerMaps: existingFlatDatabaseEventTriggerMaps,
+          flatDatabaseEventTriggerMaps,
           updateDatabaseEventTriggerInput: databaseEventTriggerInput,
         },
       );
@@ -177,24 +157,16 @@ export class DatabaseEventTriggerV2Service {
     destroyDatabaseEventTriggerInput: DatabaseEventTriggerIdInput;
     workspaceId: string;
   }): Promise<FlatDatabaseEventTrigger> {
-    const {
-      flatDatabaseEventTriggerMaps: existingFlatDatabaseEventTriggerMaps,
-      flatServerlessFunctionMaps: existingFlatServerlessFunctionMaps,
-    } =
+    const { flatDatabaseEventTriggerMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: [
-            'flatDatabaseEventTriggerMaps',
-            'flatServerlessFunctionMaps',
-          ],
+          flatMapsKeys: ['flatDatabaseEventTriggerMaps'],
         },
       );
 
     const existingFlatDatabaseEventTrigger =
-      existingFlatDatabaseEventTriggerMaps.byId[
-        destroyDatabaseEventTriggerInput.id
-      ];
+      flatDatabaseEventTriggerMaps.byId[destroyDatabaseEventTriggerInput.id];
 
     if (!isDefined(existingFlatDatabaseEventTrigger)) {
       throw new DatabaseEventTriggerException(

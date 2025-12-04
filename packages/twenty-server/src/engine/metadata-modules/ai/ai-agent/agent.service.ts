@@ -106,15 +106,6 @@ export class AgentService {
     input: CreateAgentInput & { isCustom: boolean },
     workspaceId: string,
   ): Promise<FlatAgentWithRoleId> {
-    const {
-      flatAgentMaps: existingFlatAgentMaps,
-      flatRoleTargetMaps: existingFlatRoleTargetMaps,
-      flatRoleMaps: existingFlatRoleMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatAgentMaps',
-      'flatRoleTargetMaps',
-      'flatRoleMaps',
-    ]);
 
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -185,17 +176,10 @@ export class AgentService {
     input: UpdateAgentInput;
     workspaceId: string;
   }): Promise<FlatAgentWithRoleId> {
-    const {
-      flatAgentMaps: existingFlatAgentMaps,
-      flatRoleTargetMaps: existingFlatRoleTargetMaps,
-      flatRoleMaps: existingFlatRoleMaps,
-      flatRoleTargetByAgentIdMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatAgentMaps',
-      'flatRoleTargetMaps',
-      'flatRoleMaps',
-      'flatRoleTargetByAgentIdMaps',
-    ]);
+    const { flatRoleTargetByAgentIdMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatRoleTargetByAgentIdMaps',
+      ]);
 
     const {
       flatAgentToUpdate,

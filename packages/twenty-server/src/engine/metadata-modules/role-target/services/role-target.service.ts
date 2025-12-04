@@ -55,11 +55,11 @@ export class RoleTargetService {
       return [];
     }
 
-    const { flatRoleTargetMaps, flatRoleMaps } =
+    const { flatRoleTargetMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatRoleTargetMaps', 'flatRoleMaps'],
+          flatMapsKeys: ['flatRoleTargetMaps'],
         },
       );
 
