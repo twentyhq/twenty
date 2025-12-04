@@ -13,7 +13,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
+import { StrictSyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/strict-syncable-entity.interface';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -30,7 +30,7 @@ import { GridPosition } from 'src/engine/metadata-modules/page-layout/types/grid
   { where: '"deletedAt" IS NULL' },
 )
 export class PageLayoutWidgetEntity
-  extends SyncableEntity
+  extends StrictSyncableEntity
   implements Required<PageLayoutWidgetEntity>
 {
   @PrimaryGeneratedColumn('uuid')
