@@ -6,7 +6,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
-import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/schemas';
+import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
 import { generateFieldFilterZodSchema } from 'src/engine/core-modules/record-crud/zod-schemas/field-filters.zod-schema';
 import { ObjectRecordOrderBySchema } from 'src/engine/core-modules/record-crud/zod-schemas/order-by.zod-schema';
 import { shouldExcludeFieldFromAgentToolSchema } from 'src/engine/metadata-modules/field-metadata/utils/should-exclude-field-from-agent-tool-schema.util';

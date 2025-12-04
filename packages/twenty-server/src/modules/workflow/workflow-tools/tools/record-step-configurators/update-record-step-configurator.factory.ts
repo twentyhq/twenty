@@ -2,10 +2,8 @@ import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
-import {
-  generateRecordPropertiesZodSchema,
-  type ObjectMetadataForToolSchema,
-} from 'src/engine/core-modules/record-crud/schemas';
+import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
+import { generateRecordPropertiesZodSchema } from 'src/engine/core-modules/record-crud/zod-schemas/record-properties.zod-schema';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowToolContext } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
