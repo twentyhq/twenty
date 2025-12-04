@@ -5,7 +5,6 @@ import { convert } from 'html-to-text';
 import { JSDOM } from 'jsdom';
 import { type ParsedMail } from 'mailparser';
 import * as planer from 'planer';
-
 import { safeDecodeURIComponent } from 'twenty-shared/utils';
 
 @Injectable()
