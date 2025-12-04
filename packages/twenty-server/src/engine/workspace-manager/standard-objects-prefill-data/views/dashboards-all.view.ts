@@ -2,11 +2,11 @@ import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { v4 } from 'uuid';
 
-import { STANDARD_OBJECTS } from 'src/engine/core-modules/application/constants/standard-object.constant';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewOpenRecordInType } from 'src/engine/metadata-modules/view/types/view-open-record-in-type.type';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   DASHBOARD_STANDARD_FIELD_IDS,
