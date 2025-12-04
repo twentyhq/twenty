@@ -35,6 +35,7 @@ export class MessageChannelSyncStatusService {
   public async scheduleMessageListFetch(
     messageChannelIds: string[],
     workspaceId: string,
+    preserveSyncStageStartedAt: boolean = false,
   ) {
     if (!messageChannelIds.length) {
       return;
@@ -48,12 +49,14 @@ export class MessageChannelSyncStatusService {
 
     await messageChannelRepository.update(messageChannelIds, {
       syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+      ...(!preserveSyncStageStartedAt ? { syncStageStartedAt: null } : {}),
     });
   }
 
   public async scheduleMessagesImport(
     messageChannelIds: string[],
     workspaceId: string,
+    preserveSyncStageStartedAt: boolean = false,
   ) {
     if (!messageChannelIds.length) {
       return;
@@ -67,6 +70,7 @@ export class MessageChannelSyncStatusService {
 
     await messageChannelRepository.update(messageChannelIds, {
       syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+      ...(!preserveSyncStageStartedAt ? { syncStageStartedAt: null } : {}),
     });
   }
 
