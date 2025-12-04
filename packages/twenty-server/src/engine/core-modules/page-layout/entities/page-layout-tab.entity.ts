@@ -17,6 +17,7 @@ import {
 import { PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
 @Entity({ name: 'pageLayoutTab', schema: 'core' })
 @ObjectType('PageLayoutTab')
@@ -25,7 +26,10 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
   ['workspaceId', 'pageLayoutId'],
   { where: '"deletedAt" IS NULL' },
 )
-export class PageLayoutTabEntity implements Required<PageLayoutTabEntity> {
+export class PageLayoutTabEntity
+  extends SyncableEntity
+  implements Required<PageLayoutTabEntity>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
