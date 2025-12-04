@@ -72,11 +72,9 @@ export class WorkflowRunEnqueueWorkspaceService {
           );
 
       if (notStartedRunsCount <= 0) {
-        if (!isCacheMode) {
-          await this.workflowThrottlingWorkspaceService.recomputeWorkflowRunNotStartedCount(
-            workspaceId,
-          );
-        }
+        await this.workflowThrottlingWorkspaceService.recomputeWorkflowRunNotStartedCount(
+          workspaceId,
+        );
 
         return;
       }
