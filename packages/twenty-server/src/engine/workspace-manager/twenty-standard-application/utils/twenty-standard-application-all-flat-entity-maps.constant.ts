@@ -27,6 +27,11 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
   const flatFieldMetadataMaps = buildStandardFlatFieldMetadataMaps(builderArgs);
 
   return {
+    flatPageLayoutTabMaps: {
+      byId: {},
+      idByUniversalIdentifier: {},
+      universalIdentifiersByApplicationId: {},
+    },
     flatAgentMaps: {
       byId: {},
       idByUniversalIdentifier: {},
