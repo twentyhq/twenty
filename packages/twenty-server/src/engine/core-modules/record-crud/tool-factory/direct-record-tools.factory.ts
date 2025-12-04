@@ -22,7 +22,6 @@ export type DirectRecordToolsDeps = {
   findRecordsService: FindRecordsService;
 };
 
-// Creates the factory function with injected dependencies
 export const createDirectRecordToolsFactory = (deps: DirectRecordToolsDeps) => {
   return (
     {
