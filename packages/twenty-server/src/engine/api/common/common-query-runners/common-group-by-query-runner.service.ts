@@ -34,7 +34,7 @@ import {
   CommonQueryNames,
   GroupByQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
+import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.type';
 import { GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
@@ -322,7 +322,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   }: {
     queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     groupByDefinitions: GroupByDefinition[];
-    selectedFieldsResult: GraphqlQuerySelectedFieldsResult;
+    selectedFieldsResult: CommonSelectedFieldsResult;
     groupLimit?: number;
   }): Promise<CommonGroupByOutputItem[]> {
     const effectiveGroupLimit = getGroupLimit(groupLimit);
@@ -402,11 +402,17 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   }
 
   protected override computeQueryComplexity(
-    selectedFieldsComplexityCost: number,
+    selectedFieldsResult: CommonSelectedFieldsResult,
     args: CommonInput<GroupByQueryArgs>,
   ): number {
+    const groupByQueryComplexity = 1;
+    const simpleFieldsComplexity = 1;
+    const selectedFieldsComplexity =
+      simpleFieldsComplexity + (selectedFieldsResult.relationFieldsCount ?? 0);
+
     return (args.includeRecords ?? false)
-      ? selectedFieldsComplexityCost * getGroupLimit(args.limit)
-      : 1;
+      ? groupByQueryComplexity +
+          selectedFieldsComplexity * getGroupLimit(args.limit)
+      : groupByQueryComplexity;
   }
 }

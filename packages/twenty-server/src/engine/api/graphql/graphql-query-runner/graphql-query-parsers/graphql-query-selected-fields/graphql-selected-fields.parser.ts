@@ -21,6 +21,8 @@ export type GraphqlQuerySelectedFieldsResult = {
   relations: Record<string, any>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   aggregate: Record<string, any>;
+  relationFieldsCount: number;
+  hasAtLeastTwoNestedOneToManyRelations: boolean;
 };
 
 export class GraphqlQuerySelectedFieldsParser {
@@ -53,6 +55,8 @@ export class GraphqlQuerySelectedFieldsParser {
       select: {},
       relations: {},
       aggregate: {},
+      relationFieldsCount: 0,
+      hasAtLeastTwoNestedOneToManyRelations: false,
     };
 
     if (this.isRootConnection(graphqlSelectedFields)) {
@@ -123,6 +127,8 @@ export class GraphqlQuerySelectedFieldsParser {
           isFromOneToManyRelation,
         );
 
+        accumulator.relationFieldsCount++;
+
         continue;
       }
 
@@ -167,6 +173,8 @@ export class GraphqlQuerySelectedFieldsParser {
           accumulator,
           isFromOneToManyRelation,
         );
+
+        accumulator.relationFieldsCount++;
 
         continue;
       }

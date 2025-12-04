@@ -1,11 +1,6 @@
-import { msg } from '@lingui/core/macro';
 import { RelationType, type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  CommonQueryRunnerException,
-  CommonQueryRunnerExceptionCode,
-} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import {
   GraphqlQuerySelectedFieldsParser,
   type GraphqlQuerySelectedFieldsResult,
@@ -45,15 +40,7 @@ export class GraphqlQuerySelectedFieldsRelationParser {
       fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY;
 
     if (isFromOneToManyRelation && isOneToManyRelation) {
-      const fieldName = fieldMetadata.name;
-
-      throw new CommonQueryRunnerException(
-        `One-to-Many relation cannot be nested in another One-to-Many relation. Please, remove ${fieldName} from the query.`,
-        CommonQueryRunnerExceptionCode.TOO_COMPLEX_QUERY,
-        {
-          userFriendlyMessage: msg`One-to-Many relation cannot be nested in another One-to-Many relation. Please, remove ${fieldName} from the query.`,
-        },
-      );
+      accumulator.hasAtLeastTwoNestedOneToManyRelations = true;
     }
 
     accumulator.relations[fieldKey] = true;
@@ -76,7 +63,7 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     const relationAccumulator = fieldParser.parse(
       fieldValue,
       targetObjectMetadata,
-      isOneToManyRelation,
+      isFromOneToManyRelation || isOneToManyRelation,
     );
 
     accumulator.select[fieldKey] = {

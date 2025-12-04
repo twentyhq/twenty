@@ -13,7 +13,6 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { countRelationInSelectedFields } from 'src/engine/api/common/common-query-runners/utils/count-relation-in-selected-fields.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
@@ -171,9 +170,13 @@ export abstract class CommonBaseQueryRunnerService<
   ): Promise<Output>;
 
   protected computeQueryComplexity(
-    selectedFieldsComplexity: number,
+    selectedFieldsResult: CommonSelectedFieldsResult,
     _args: CommonInput<Args>,
   ): number {
+    const simpleFieldsComplexity = 1;
+    const selectedFieldsComplexity =
+      simpleFieldsComplexity + (selectedFieldsResult.relationFieldsCount ?? 0);
+
     return selectedFieldsComplexity;
   }
 
@@ -396,18 +399,23 @@ export abstract class CommonBaseQueryRunnerService<
     selectedFieldsResult: CommonSelectedFieldsResult,
     args: CommonInput<Args>,
   ) {
-    const simpleFieldsComplexity = 1;
-    const selectedFieldsComplexity =
-      simpleFieldsComplexity +
-      countRelationInSelectedFields(selectedFieldsResult.relations);
-
-    const queryComplexity = this.computeQueryComplexity(
-      selectedFieldsComplexity,
-      args,
-    );
-
     const maximumComplexity = this.twentyConfigService.get(
       'COMMON_QUERY_COMPLEXITY_LIMIT',
+    );
+
+    if (selectedFieldsResult.hasAtLeastTwoNestedOneToManyRelations) {
+      throw new CommonQueryRunnerException(
+        `Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation`,
+        CommonQueryRunnerExceptionCode.TOO_COMPLEX_QUERY,
+        {
+          userFriendlyMessage: msg`Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation`,
+        },
+      );
+    }
+
+    const queryComplexity = this.computeQueryComplexity(
+      selectedFieldsResult,
+      args,
     );
 
     if (queryComplexity > maximumComplexity) {

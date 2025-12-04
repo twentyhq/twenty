@@ -4,7 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
 import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type ObjectLiteral } from 'typeorm';
+import { FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
 import { ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -12,7 +12,7 @@ import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
-import { type GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
+import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { type GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.type';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
@@ -50,7 +50,7 @@ export class GroupByWithRecordsService {
     queryBuilderWithGroupBy: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     queryBuilderWithFiltersAndWithoutGroupBy: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     groupByDefinitions: GroupByDefinition[];
-    selectedFieldsResult: GraphqlQuerySelectedFieldsResult;
+    selectedFieldsResult: CommonSelectedFieldsResult;
     queryRunnerContext: CommonExtendedQueryRunnerContext;
     orderByForRecords: ObjectRecordOrderBy;
     groupLimit?: number;
@@ -110,7 +110,10 @@ export class GroupByWithRecordsService {
         parentObjectMetadataItem: flatObjectMetadata,
         parentObjectRecords: allRecords,
         parentObjectRecordsAggregatedValues: {},
-        relations: selectedFieldsResult.relations,
+        relations: selectedFieldsResult.relations as Record<
+          string,
+          FindOptionsRelations<ObjectLiteral>
+        >,
         aggregate: selectedFieldsResult.aggregate,
         limit: RELATIONS_PER_RECORD_LIMIT,
         authContext,
