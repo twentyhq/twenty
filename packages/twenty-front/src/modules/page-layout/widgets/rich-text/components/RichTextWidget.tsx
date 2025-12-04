@@ -8,13 +8,11 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-type FieldRichTextWidgetProps = {
+type RichTextWidgetProps = {
   widget: PageLayoutWidget;
 };
 
-export const FieldRichTextWidget = ({
-  widget: _widget,
-}: FieldRichTextWidgetProps) => {
+export const RichTextWidget = ({ widget: _widget }: RichTextWidgetProps) => {
   return (
     <StyledContainer>
       <FieldRichTextCard />

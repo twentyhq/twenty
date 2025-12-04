@@ -3,6 +3,7 @@ import { validateSync, type ValidationError } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AggregateChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/aggregate-chart-configuration.dto';
+import { transformRichTextV2Value } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text-v2.util';
 import { BarChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/bar-chart-configuration.dto';
 import { GaugeChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/gauge-chart-configuration.dto';
 import { IframeConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/iframe-configuration.dto';
@@ -162,9 +163,9 @@ const validateIframeConfiguration = (
   return instance;
 };
 
-const validateStandaloneRichTextConfiguration = (
+const validateStandaloneRichTextConfiguration = async (
   configuration: unknown,
-): WidgetConfigurationInterface | null => {
+): Promise<WidgetConfigurationInterface | null> => {
   const instance = plainToInstance(
     StandaloneRichTextConfigurationDTO,
     configuration,
@@ -179,10 +180,14 @@ const validateStandaloneRichTextConfiguration = (
     throw errors;
   }
 
+  if (instance.body) {
+    instance.body = await transformRichTextV2Value(instance.body);
+  }
+
   return instance;
 };
 
-export const validateAndTransformWidgetConfiguration = ({
+export const validateAndTransformWidgetConfiguration = async ({
   type,
   configuration,
   isDashboardV2Enabled,
@@ -190,7 +195,7 @@ export const validateAndTransformWidgetConfiguration = ({
   type: WidgetType;
   configuration: unknown;
   isDashboardV2Enabled: boolean;
-}): WidgetConfigurationInterface | null => {
+}): Promise<WidgetConfigurationInterface | null> => {
   if (!configuration || typeof configuration !== 'object') {
     throw new Error('Invalid configuration: not an object');
   }
@@ -205,7 +210,7 @@ export const validateAndTransformWidgetConfiguration = ({
       case WidgetType.IFRAME:
         return validateIframeConfiguration(configuration);
       case WidgetType.STANDALONE_RICH_TEXT:
-        return validateStandaloneRichTextConfiguration(configuration);
+        return await validateStandaloneRichTextConfiguration(configuration);
       default:
         return null;
     }

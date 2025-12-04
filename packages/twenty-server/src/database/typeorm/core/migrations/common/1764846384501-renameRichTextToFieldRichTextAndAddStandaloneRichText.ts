@@ -1,9 +1,9 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddStandaloneRichTextWidget1764784199882
+export class RenameRichTextToFieldRichTextAndAddStandaloneRichText1764846384501
   implements MigrationInterface
 {
-  name = 'AddStandaloneRichTextWidget1764784199882';
+  name = 'RenameRichTextToFieldRichTextAndAddStandaloneRichText1764846384501';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -28,7 +28,7 @@ export class AddStandaloneRichTextWidget1764784199882
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TYPE "core"."pageLayoutWidget_type_enum_old" AS ENUM('VIEW', 'IFRAME', 'FIELDS', 'GRAPH', 'TIMELINE', 'TASKS', 'NOTES', 'FILES', 'EMAILS', 'CALENDAR', 'FIELD_RICH_TEXT', 'WORKFLOW', 'WORKFLOW_VERSION', 'WORKFLOW_RUN')`,
+      `CREATE TYPE "core"."pageLayoutWidget_type_enum_old" AS ENUM('VIEW', 'IFRAME', 'FIELDS', 'GRAPH', 'TIMELINE', 'TASKS', 'NOTES', 'FILES', 'EMAILS', 'CALENDAR', 'RICH_TEXT', 'WORKFLOW', 'WORKFLOW_VERSION', 'WORKFLOW_RUN')`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."pageLayoutWidget" ALTER COLUMN "type" DROP DEFAULT`,

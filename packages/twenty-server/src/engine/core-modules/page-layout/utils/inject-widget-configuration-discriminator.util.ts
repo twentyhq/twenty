@@ -18,21 +18,21 @@ export const injectWidgetConfigurationDiscriminator = (
     return {
       ...configuration,
       configurationType: WidgetConfigurationType.IFRAME_CONFIG,
-    } as ConfigurationWithDiscriminator;
+    } satisfies ConfigurationWithDiscriminator;
   }
 
   if (widgetType === WidgetType.GRAPH && 'graphType' in configuration) {
     return {
       ...configuration,
       configurationType: WidgetConfigurationType.CHART_CONFIG,
-    } as ConfigurationWithDiscriminator;
+    } satisfies ConfigurationWithDiscriminator;
   }
 
   if (widgetType === WidgetType.STANDALONE_RICH_TEXT) {
     return {
       ...configuration,
       configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT_CONFIG,
-    } as ConfigurationWithDiscriminator;
+    } satisfies ConfigurationWithDiscriminator;
   }
 
   return configuration as ConfigurationWithDiscriminator;
