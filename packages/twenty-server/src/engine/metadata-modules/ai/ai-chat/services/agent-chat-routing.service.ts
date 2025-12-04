@@ -6,6 +6,7 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentExecutionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-execution.service';
 import { AgentPlanExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-plan-executor.service';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/ai/ai-agent/types/recordIdsByObjectMetadataNameSingular.type';
@@ -13,6 +14,8 @@ import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/serv
 import { convertCentsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-cents-to-billing-credits.util';
 import { AiChatRouterService } from 'src/engine/metadata-modules/ai/ai-chat-router/ai-chat-router.service';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+
+import { ChatToolsProviderService } from './chat-tools-provider.service';
 
 export type TokenUsage = {
   promptTokens: number;
@@ -53,6 +56,8 @@ export class AgentChatRoutingService {
     private readonly agentPlanExecutorService: AgentPlanExecutorService,
     private readonly aiChatRouterService: AiChatRouterService,
     private readonly aiBillingService: AIBillingService,
+    private readonly chatToolsProviderService: ChatToolsProviderService,
+    private readonly agentActorContextService: AgentActorContextService,
   ) {}
 
   async streamAgentExecution({
@@ -234,6 +239,23 @@ export class AgentChatRoutingService {
 
           const agentExecutionStart = Date.now();
 
+          // Get workflow tools for chat context (these are NOT available in workflow executor)
+          // Use user's role for determining workflow tool permissions
+          const { roleId } =
+            await this.agentActorContextService.buildUserAndAgentActorContext(
+              userWorkspaceId,
+              workspace.id,
+            );
+
+          const roleIds = [roleId];
+
+          const workflowTools =
+            await this.chatToolsProviderService.getWorkflowToolsForChat(
+              workspace.id,
+              roleIds,
+              toolHints,
+            );
+
           const {
             stream: result,
             timings,
@@ -245,6 +267,7 @@ export class AgentChatRoutingService {
             messages,
             recordIdsByObjectMetadataNameSingular,
             toolHints,
+            additionalTools: workflowTools,
           });
 
           const routedStatusPart = {

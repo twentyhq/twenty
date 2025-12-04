@@ -73,6 +73,7 @@ export class AgentExecutionService {
     actorContext,
     roleIds,
     toolHints,
+    additionalTools,
   }: {
     system: string;
     agent: FlatAgentWithRoleId | null;
@@ -80,6 +81,7 @@ export class AgentExecutionService {
     actorContext?: ActorMetadata;
     roleIds?: string[];
     toolHints?: ToolHints;
+    additionalTools?: ToolSet;
   }) {
     try {
       if (agent) {
@@ -110,7 +112,11 @@ export class AgentExecutionService {
             agent,
           );
 
-        tools = { ...baseTools, ...nativeModelTools };
+        tools = {
+          ...baseTools,
+          ...nativeModelTools,
+          ...(additionalTools || {}),
+        };
 
         providerOptions = this.agentModelConfigService.getProviderOptions(
           registeredModel,
@@ -118,7 +124,9 @@ export class AgentExecutionService {
         );
       }
 
-      this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
+      this.logger.log(
+        `Generated ${Object.keys(tools).length} tools for agent (including ${Object.keys(additionalTools || {}).length} additional tools)`,
+      );
 
       return {
         system,
@@ -276,6 +284,7 @@ export class AgentExecutionService {
     messages,
     recordIdsByObjectMetadataNameSingular,
     toolHints,
+    additionalTools,
   }: {
     workspace: WorkspaceEntity;
     userWorkspaceId: string;
@@ -283,6 +292,7 @@ export class AgentExecutionService {
     messages: UIMessage<unknown, UIDataTypes, UITools>[];
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
     toolHints?: ToolHints;
+    additionalTools?: ToolSet;
   }): Promise<{
     stream: ReturnType<typeof streamText>;
     timings: {
@@ -343,6 +353,7 @@ export class AgentExecutionService {
         actorContext,
         roleIds: [roleId, ...(agent?.roleId ? [agent?.roleId] : [])],
         toolHints,
+        additionalTools,
       });
 
       const aiRequestPrepTime = Date.now() - aiRequestPrepStart;

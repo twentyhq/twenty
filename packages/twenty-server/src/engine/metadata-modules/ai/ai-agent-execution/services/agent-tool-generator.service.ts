@@ -1,4 +1,4 @@
-import { Injectable, Logger, Optional } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ToolSet } from 'ai';
@@ -11,11 +11,7 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import type { ToolHints } from 'src/engine/metadata-modules/ai/ai-chat-router/types/tool-hints.interface';
 import { ToolAdapterService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool-adapter.service';
 import { ToolService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool.service';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { HELPER_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/helper-agent';
-// Type import only to avoid circular dependency - service is optionally injected
-import type { WorkflowToolWorkspaceService as WorkflowToolService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 
 @Injectable()
 export class AgentToolGeneratorService {
@@ -26,12 +22,7 @@ export class AgentToolGeneratorService {
     private readonly agentRepository: Repository<AgentEntity>,
     private readonly toolAdapterService: ToolAdapterService,
     private readonly toolService: ToolService,
-    private readonly permissionsService: PermissionsService,
     private readonly searchArticlesTool: SearchArticlesTool,
-    // Workflow tools are optional - only available when WorkflowToolsModule is imported
-    // This prevents circular dependency when used from workflow-executor
-    @Optional()
-    private readonly workflowToolService?: WorkflowToolService,
   ) {}
 
   async generateToolsForAgent(
@@ -60,33 +51,8 @@ export class AgentToolGeneratorService {
         return this.wrapToolsWithErrorContext(tools);
       }
 
-      // Only add workflow tools if the service is available (not in workflow executor context)
-      if (this.workflowToolService) {
-        const hasWorkflowPermission =
-          await this.permissionsService.checkRolesPermissions(
-            { intersectionOf: roleIds },
-            workspaceId,
-            PermissionFlagType.WORKFLOWS,
-          );
-
-        if (hasWorkflowPermission) {
-          const workflowTools = this.workflowToolService.generateWorkflowTools(
-            workspaceId,
-            { intersectionOf: roleIds },
-          );
-
-          tools = { ...tools, ...workflowTools };
-
-          const recordStepTools =
-            await this.workflowToolService.generateRecordStepConfiguratorTools(
-              workspaceId,
-              { intersectionOf: roleIds },
-              toolHints,
-            );
-
-          tools = { ...tools, ...recordStepTools };
-        }
-      }
+      // Workflow tools are NOT generated here to avoid circular dependencies
+      // They are provided via additionalTools from ChatToolsProviderService in the chat context
 
       const databaseTools = await this.toolService.listTools(
         { intersectionOf: roleIds },

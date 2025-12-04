@@ -24,6 +24,7 @@ import { AgentChatRoutingService } from './services/agent-chat-routing.service';
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
 import { AgentChatService } from './services/agent-chat.service';
 import { AgentTitleGenerationService } from './services/agent-title-generation.service';
+import { ChatToolsProviderService } from './services/chat-tools-provider.service';
 
 @Module({
   imports: [
@@ -44,7 +45,8 @@ import { AgentTitleGenerationService } from './services/agent-title-generation.s
     TokenModule,
     UserWorkspaceModule,
     AiBillingModule,
-    // Provides WorkflowToolWorkspaceService for AgentToolGeneratorService
+    // Provides WorkflowToolWorkspaceService for ChatToolsProviderService
+    // Workflow tools are only available in chat context, not in workflow executor (to avoid circular deps)
     WorkflowToolsModule,
   ],
   controllers: [AgentChatController],
@@ -54,6 +56,7 @@ import { AgentTitleGenerationService } from './services/agent-title-generation.s
     AgentChatStreamingService,
     AgentChatRoutingService,
     AgentTitleGenerationService,
+    ChatToolsProviderService,
   ],
   exports: [
     AgentChatService,
