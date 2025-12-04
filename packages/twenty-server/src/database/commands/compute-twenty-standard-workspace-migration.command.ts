@@ -6,7 +6,9 @@ import { Command, CommandRunner } from 'nest-commander';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-build-orchestrator.service';
+import { WorkspaceMigrationV2Exception } from 'src/engine/workspace-manager/workspace-migration.exception';
+import { WorkspaceMigrationV2ExceptionCode } from 'twenty-shared/metadata';
 
 @Command({
   name: 'workspace:compute-twenty-standard-migration',
@@ -18,7 +20,7 @@ export class ComputeTwentyStandardWorkspaceMigrationCommand extends CommandRunne
   );
 
   constructor(
-    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly workspaceMigrationBuildOrchestratorService: WorkspaceMigrationBuildOrchestratorService,
   ) {
     super();
   }
@@ -39,23 +41,35 @@ export class ComputeTwentyStandardWorkspaceMigrationCommand extends CommandRunne
       JSON.stringify(twentyStandardAllFlatEntityMaps, null, 2),
     );
 
-    await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-      {
-        buildOptions: {
-          isSystemBuild: true,
-        },
-        fromToAllFlatEntityMaps: {
-          flatObjectMetadataMaps: {
-            from: createEmptyFlatEntityMaps(),
-            to: twentyStandardAllFlatEntityMaps.flatObjectMetadataMaps,
+    const validateAndBuildResult =
+      await this.workspaceMigrationBuildOrchestratorService
+        .buildWorkspaceMigration({
+          buildOptions: {
+            isSystemBuild: true,
           },
-          flatFieldMetadataMaps: {
-            from: createEmptyFlatEntityMaps(),
-            to: twentyStandardAllFlatEntityMaps.flatFieldMetadataMaps,
+          fromToAllFlatEntityMaps: {
+            flatObjectMetadataMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatObjectMetadataMaps,
+            },
+            flatFieldMetadataMaps: {
+              from: createEmptyFlatEntityMaps(),
+              to: twentyStandardAllFlatEntityMaps.flatFieldMetadataMaps,
+            },
           },
-        },
-        workspaceId,
-      },
+          workspaceId,
+        })
+        .catch((error) => {
+          this.logger.error(error);
+          throw new WorkspaceMigrationV2Exception(
+            WorkspaceMigrationV2ExceptionCode.BUILDER_INTERNAL_SERVER_ERROR,
+            error.message,
+          );
+        });
+
+    writeFileSync(
+      `${Date.now()}validate-and-build-result.json`,
+      JSON.stringify(validateAndBuildResult, null, 2),
     );
 
     this.logger.log(
