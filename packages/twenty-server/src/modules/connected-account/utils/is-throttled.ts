@@ -8,6 +8,10 @@ export const isThrottled = (
     return false;
   }
 
+  if (throttleFailureCount === 0) {
+    return false;
+  }
+
   return (
     computeThrottlePauseUntil(syncStageStartedAt, throttleFailureCount) >
     new Date()
