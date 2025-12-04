@@ -6,6 +6,8 @@ import { useRecoilState } from 'recoil';
 import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
 import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { InputLabel } from '@/ui/input/components/InputLabel';
+import { TextArea } from '@/ui/input/components/TextArea';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -37,6 +39,8 @@ export const SettingsServerlessFunctionTestTab = ({
       input: JSON.parse(newInput),
     }));
   };
+
+  const testLogsTextAreaId = `${serverlessFunctionId}-test-logs`;
 
   return (
     <Section>
@@ -72,6 +76,17 @@ export const SettingsServerlessFunctionTestTab = ({
           serverlessFunctionTestData={serverlessFunctionTestData}
           isTesting={isTesting}
         />
+        {serverlessFunctionTestData.output.logs.length > 0 && (
+          <StyledCodeEditorContainer>
+            <InputLabel>Logs</InputLabel>
+            <TextArea
+              textAreaId={testLogsTextAreaId}
+              value={isTesting ? '' : serverlessFunctionTestData.output.logs}
+              maxRows={20}
+              disabled
+            />
+          </StyledCodeEditorContainer>
+        )}
       </StyledInputsContainer>
     </Section>
   );
