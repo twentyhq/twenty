@@ -2,7 +2,7 @@ import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsO
 import { Select } from '@/ui/input/components/Select';
 import { t } from '@lingui/core/macro';
 import { Controller, useFormContext } from 'react-hook-form';
-import { IconClick, IconCopy } from 'twenty-ui/display';
+import { IconArrowUpRight, IconClick, IconCopy } from 'twenty-ui/display';
 
 export type FieldActionMode = 'copy' | 'navigate';
 
@@ -47,11 +47,11 @@ export const SettingsDataModelFieldPrimaryActionModeForm = ({
               dropdownId="field-action-mode-select"
               label="Select an option"
               options={[
-                { value: 'copy', label: t`Copy to Clipboard`, Icon: IconCopy },
+                { value: 'copy', label: t`Copy to clipboard`, Icon: IconCopy },
                 {
                   value: 'navigate',
-                  label: t`Navigate to Value`,
-                  Icon: IconClick,
+                  label: t`Open link`,
+                  Icon: IconArrowUpRight,
                 },
               ]}
               value={(value as FieldActionMode) ?? 'copy'}
