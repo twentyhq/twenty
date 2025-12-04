@@ -29,3 +29,4 @@ export type ToolFactory = (
   objectWithPermission: ObjectWithPermission,
   context: ToolGeneratorContext,
 ) => ToolSet;
+

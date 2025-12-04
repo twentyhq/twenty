@@ -38,6 +38,7 @@ export interface AgentToolTestContext {
   objectMetadataService: ObjectMetadataService;
   roleRepository: Repository<RoleEntity>;
   workspaceCacheService: WorkspaceCacheService;
+  perObjectToolGeneratorService: PerObjectToolGeneratorService;
   twentyORMGlobalManager: TwentyORMGlobalManager;
   testAgent: AgentEntity & { roleId: string | null };
   testRole: RoleEntity;
@@ -321,6 +322,9 @@ export const createAgentToolTestModule =
       WorkspaceCacheService,
     );
 
+    const perObjectToolGeneratorService =
+      module.get<PerObjectToolGeneratorService>(PerObjectToolGeneratorService);
+
     return {
       module,
       agentToolService,
@@ -328,6 +332,7 @@ export const createAgentToolTestModule =
       objectMetadataService,
       roleRepository,
       workspaceCacheService,
+      perObjectToolGeneratorService,
       twentyORMGlobalManager,
       testAgent,
       testRole,
