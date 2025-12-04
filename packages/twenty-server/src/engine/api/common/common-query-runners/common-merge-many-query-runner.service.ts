@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   MUTATION_MAX_MERGE_RECORDS,
-  QUERY_MAX_RECORDS,
+  QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
 import {
   FieldMetadataRelationSettings,
@@ -157,7 +157,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
           string,
           FindOptionsRelations<ObjectLiteral>
         >,
-        limit: QUERY_MAX_RECORDS,
+        limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext: context.authContext,
         workspaceDataSource: context.workspaceDataSource,
         rolePermissionConfig: context.rolePermissionConfig,
@@ -444,7 +444,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
           string,
           FindOptionsRelations<ObjectLiteral>
         >,
-        limit: QUERY_MAX_RECORDS,
+        limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
         workspaceDataSource,
         rolePermissionConfig,

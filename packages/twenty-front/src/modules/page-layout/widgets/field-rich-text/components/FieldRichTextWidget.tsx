@@ -1,4 +1,4 @@
-import { RichTextCard } from '@/ui/layout/show-page/components/RichTextCard';
+import { FieldRichTextCard } from '@/ui/layout/show-page/components/FieldRichTextCard';
 import styled from '@emotion/styled';
 import { type PageLayoutWidget } from '~/generated/graphql';
 
@@ -8,14 +8,16 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-type RichTextWidgetProps = {
+type FieldRichTextWidgetProps = {
   widget: PageLayoutWidget;
 };
 
-export const RichTextWidget = ({ widget: _widget }: RichTextWidgetProps) => {
+export const FieldRichTextWidget = ({
+  widget: _widget,
+}: FieldRichTextWidgetProps) => {
   return (
     <StyledContainer>
-      <RichTextCard />
+      <FieldRichTextCard />
     </StyledContainer>
   );
 };

@@ -656,7 +656,7 @@ msgid "Cannot have more than one active workflow version"
 msgstr "Kan ikke ha mer enn én aktiv arbeidsflytversjon"
 
 #. js-lingui-id: PjZIyI
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
 msgstr "Kan ikke oppdatere meldingskanal mens synkroniseringen pågår. Vennligst vent til synkroniseringen er fullført."
 
@@ -1663,6 +1663,11 @@ msgstr "Indeks med samme id eksisterer allerede"
 msgid "Index with same name already exists"
 msgstr "Indeks med samme navn eksisterer allerede"
 
+#. js-lingui-id: mIrUSZ
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Invalid CALDAV credentials. Please check your username and password."
+msgstr ""
+
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid calling code {callingCode}"
@@ -1677,11 +1682,6 @@ msgstr "Ugyldig CAPTCHA, prøv en annen enhet"
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
 msgstr "Ugyldig landskode {countryCode}"
-
-#. js-lingui-id: AMeEDO
-#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
-msgid "Invalid credentials. Please check your username and password."
-msgstr "Ugyldige legitimasjoner. Vennligst sjekk brukernavnet og passordet ditt."
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2027,7 +2027,7 @@ msgid "Message Channel Message Associations"
 msgstr "Meldingskanalmeldingstilknytninger"
 
 #. js-lingui-id: LOU3x5
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
 msgstr "Meldingskanal ikke funnet"
 

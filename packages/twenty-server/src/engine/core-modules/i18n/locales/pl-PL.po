@@ -656,7 +656,7 @@ msgid "Cannot have more than one active workflow version"
 msgstr "Nie można mieć więcej niż jednej aktywnej wersji workflow"
 
 #. js-lingui-id: PjZIyI
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
 msgstr "Nie można zaktualizować kanału wiadomości, gdy synchronizacja nadal trwa. Proszę poczekać na zakończenie synchronizacji."
 
@@ -1663,6 +1663,11 @@ msgstr "Indeks z tym samym identyfikatorem już istnieje"
 msgid "Index with same name already exists"
 msgstr "Indeks o tej samej nazwie już istnieje"
 
+#. js-lingui-id: mIrUSZ
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Invalid CALDAV credentials. Please check your username and password."
+msgstr ""
+
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid calling code {callingCode}"
@@ -1677,11 +1682,6 @@ msgstr "Nieprawidłowa Captcha, spróbuj użyć innego urządzenia"
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
 msgstr "Nieprawidłowy kod kraju {countryCode}"
-
-#. js-lingui-id: AMeEDO
-#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
-msgid "Invalid credentials. Please check your username and password."
-msgstr "Błędne dane uwierzytelniające. Sprawdź swoją nazwę użytkownika i hasło."
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2027,7 +2027,7 @@ msgid "Message Channel Message Associations"
 msgstr "Skojarzenia wiadomości kanału wiadomości"
 
 #. js-lingui-id: LOU3x5
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
 msgstr "Kanał wiadomości nie został znaleziony"
 

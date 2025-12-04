@@ -8,7 +8,7 @@ import {
   MessageChannelPendingGroupEmailsAction,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessagingClearCursorsService } from 'src/modules/messaging/message-import-manager/services/messaging-clear-cursors.service';
+import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingDeleteGroupEmailMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-group-email-messages.service';
 
 @Injectable()
@@ -20,7 +20,6 @@ export class MessagingProcessGroupEmailActionsService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly messagingDeleteGroupEmailMessagesService: MessagingDeleteGroupEmailMessagesService,
-    private readonly messagingClearCursorsService: MessagingClearCursorsService,
   ) {}
 
   async markMessageChannelAsPendingGroupEmailsAction(
@@ -120,10 +119,10 @@ export class MessagingProcessGroupEmailActionsService {
       messageChannelId,
     );
 
-    await this.messagingClearCursorsService.clearAllMessageChannelCursors(
+    await this.resetCursors({
       messageChannelId,
       transactionManager,
-    );
+    });
 
     this.logger.log(
       `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannelId} - Completed GROUP_EMAILS_DELETION action`,
@@ -135,13 +134,45 @@ export class MessagingProcessGroupEmailActionsService {
     messageChannelId: string,
     transactionManager: WorkspaceEntityManager,
   ): Promise<void> {
-    await this.messagingClearCursorsService.clearAllMessageChannelCursors(
+    await this.resetCursors({
       messageChannelId,
       transactionManager,
-    );
+    });
 
     this.logger.log(
       `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannelId} - Completed GROUP_EMAILS_IMPORT action`,
+    );
+  }
+
+  private async resetCursors({
+    messageChannelId,
+    transactionManager,
+  }: {
+    messageChannelId: string;
+    transactionManager: WorkspaceEntityManager;
+  }) {
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
+
+    await messageChannelRepository.update(
+      messageChannelId,
+      {
+        syncCursor: '',
+      },
+      transactionManager,
+    );
+
+    const messageFolderRepository =
+      await this.twentyORMManager.getRepository<MessageFolderWorkspaceEntity>(
+        'messageFolder',
+      );
+
+    await messageFolderRepository.update(
+      { messageChannelId },
+      { syncCursor: '' },
+      transactionManager,
     );
   }
 }

@@ -656,7 +656,7 @@ msgid "Cannot have more than one active workflow version"
 msgstr "לא ניתן להחזיק ביותר מגרסת תהליך עבודה פעילה אחת"
 
 #. js-lingui-id: PjZIyI
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
 msgstr "לא ניתן לעדכן את ערוץ ההודעות בזמן שסינכרון מתבצע. אנא המתן להשלמת הסינכרון."
 
@@ -1663,6 +1663,11 @@ msgstr "אינדקס עם אותו מזהה כבר קיים"
 msgid "Index with same name already exists"
 msgstr "אינדקס עם אותו שם כבר קיים"
 
+#. js-lingui-id: mIrUSZ
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Invalid CALDAV credentials. Please check your username and password."
+msgstr ""
+
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid calling code {callingCode}"
@@ -1677,11 +1682,6 @@ msgstr "קפצ'ה לא חוקית, נסה מכשיר אחר"
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
 msgstr "קוד מדינה אינו חוקי {countryCode}."
-
-#. js-lingui-id: AMeEDO
-#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
-msgid "Invalid credentials. Please check your username and password."
-msgstr "פרטי התחברות לא חוקיים. אנא בדוק את שם המשתמש והסיסמה שלך."
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2027,7 +2027,7 @@ msgid "Message Channel Message Associations"
 msgstr "שיוכי הודעות לערוצי הודעות"
 
 #. js-lingui-id: LOU3x5
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
 msgstr "ערוץ הודעות לא נמצא"
 
