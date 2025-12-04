@@ -1,5 +1,6 @@
 import { getURLSafely } from '@/utils/getURLSafely';
 import { isDefined } from '@/utils/validation';
+import { safeDecodeURIComponent } from './safeDecodeURIComponent';
 
 export const lowercaseUrlOriginAndRemoveTrailingSlash = (rawUrl: string) => {
   const url = getURLSafely(rawUrl);
@@ -10,7 +11,7 @@ export const lowercaseUrlOriginAndRemoveTrailingSlash = (rawUrl: string) => {
 
   const lowercaseOrigin = url.origin.toLowerCase();
   const path =
-    decodeURIComponent(url.pathname) + decodeURIComponent(url.search) + url.hash;
+    safeDecodeURIComponent(url.pathname) + safeDecodeURIComponent(url.search) + url.hash;
 
   return (lowercaseOrigin + path).replace(/\/$/, '');
 };
