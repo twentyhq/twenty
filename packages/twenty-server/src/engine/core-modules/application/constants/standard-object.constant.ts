@@ -1446,6 +1446,9 @@ export const STANDARD_OBJECTS = {
         universalIdentifier:
           VIEW_STANDARD_FIELD_IDS.kanbanAggregateOperationFieldMetadataId,
       },
+      mainGroupByFieldMetadataId: {
+        universalIdentifier: VIEW_STANDARD_FIELD_IDS.mainGroupByFieldMetadataId,
+      },
       position: { universalIdentifier: VIEW_STANDARD_FIELD_IDS.position },
       isCompact: { universalIdentifier: VIEW_STANDARD_FIELD_IDS.isCompact },
       openRecordIn: {

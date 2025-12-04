@@ -69,7 +69,7 @@ export class ViewFilterService {
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
       });
 
-    const validateAndBuildResult =
+    const buildAndRunResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
@@ -92,12 +92,17 @@ export class ViewFilterService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (isDefined(buildAndRunResult)) {
       throw new WorkspaceMigrationBuilderExceptionV2(
-        validateAndBuildResult,
+        buildAndRunResult,
         'Multiple validation errors occurred while creating view filter',
       );
     }
+
+    this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+      workspaceId,
+      flatMapsKeys: ['flatViewFilterMaps'],
+    });
 
     const { flatViewFilterMaps: recomputedExistingFlatViewFilterMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(

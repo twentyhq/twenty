@@ -1,7 +1,6 @@
 import { type QueryRunner } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const tableName = 'featureFlag';
 
@@ -56,11 +55,6 @@ export const seedFeatureFlags = async ({
         key: FeatureFlagKey.IS_IMAP_SMTP_CALDAV_ENABLED,
         workspaceId: workspaceId,
         value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspaceId: workspaceId,
-        value: workspaceId === SEED_APPLE_WORKSPACE_ID,
       },
       {
         key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,

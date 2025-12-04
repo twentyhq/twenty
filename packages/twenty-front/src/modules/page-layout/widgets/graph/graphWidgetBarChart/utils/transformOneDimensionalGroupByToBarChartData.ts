@@ -7,6 +7,7 @@ import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { applyCumulativeTransformToBarChartData } from '@/page-layout/widgets/graph/utils/applyCumulativeTransformToBarChartData';
 import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
@@ -104,8 +105,17 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     },
   ];
 
+  const finalData = configuration.isCumulative
+    ? applyCumulativeTransformToBarChartData({
+        data,
+        aggregateKey: aggregateValueKey,
+        rangeMin: configuration.rangeMin ?? undefined,
+        rangeMax: configuration.rangeMax ?? undefined,
+      })
+    : data;
+
   return {
-    data,
+    data: finalData,
     indexBy: indexByKey,
     keys: [aggregateValueKey],
     series,

@@ -26,6 +26,7 @@ export const getDefaultFlatFieldMetadata = ({
 
   return {
     calendarViewIds: [],
+    mainGroupByFieldMetadataViewIds: [],
     viewFieldIds: [],
     description: createFieldInput.description ?? null,
     id: fieldMetadataId,

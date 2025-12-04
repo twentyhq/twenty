@@ -156,7 +156,9 @@ describe('McpProtocolService', () => {
     });
 
     it('should throw when role ID is missing', async () => {
-      userRoleService.getRoleIdForUserWorkspace.mockResolvedValue(undefined);
+      userRoleService.getRoleIdForUserWorkspace.mockResolvedValue(
+        undefined as unknown as string,
+      );
 
       await expect(
         service.getRoleId('workspace-1', 'user-workspace-1'),

@@ -3,7 +3,6 @@ import { type GraphColorScheme } from '@/page-layout/widgets/graph/types/GraphCo
 
 export type LineChartEnrichedSeries = LineChartSeries & {
   colorScheme: GraphColorScheme;
-  gradientId: string;
-  shouldEnableArea: boolean;
+  areaFillId: string;
   label: string;
 };

@@ -17,6 +17,7 @@ exports[`Role update should fail updating role with existing write permissions s
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
@@ -48,6 +49,7 @@ exports[`Role update should fail updating role with existing write permissions s
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
@@ -75,6 +77,7 @@ exports[`Role update should fail when updating a non-editable system role 1`] = 
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
@@ -106,6 +109,7 @@ exports[`Role update should fail when updating a non-editable system role 1`] = 
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
@@ -133,6 +137,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
@@ -164,6 +169,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
@@ -191,6 +197,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
@@ -222,6 +229,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
@@ -249,6 +257,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
@@ -280,6 +289,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
@@ -307,6 +317,7 @@ exports[`Role update should fail when updating label to one that already exists 
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
@@ -338,6 +349,7 @@ exports[`Role update should fail when updating label to one that already exists 
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
@@ -365,6 +377,7 @@ exports[`Role update should fail when updating to enable write permissions witho
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
@@ -396,6 +409,7 @@ exports[`Role update should fail when updating to enable write permissions witho
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,

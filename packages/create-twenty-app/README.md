@@ -19,7 +19,7 @@ Create Twenty App is the official scaffolding CLI for building apps on top of [T
 - Strong TypeScript support and typed client generation
 
 ## Prerequisites
-- Node.js 18+ (recommended) and Yarn 4
+- Node.js 24+ (recommended) and Yarn 4
 - A Twenty workspace and an API key (create one at https://app.twenty.com/settings/api-webhooks)
 
 ## Quick start

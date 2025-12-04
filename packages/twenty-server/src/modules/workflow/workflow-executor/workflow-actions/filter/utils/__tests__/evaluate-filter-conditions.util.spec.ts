@@ -484,6 +484,31 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
         expect(evaluateFilterConditions({ filters: [filter3] })).toBe(false);
       });
+
+      it('should handle IsNot operand correctly', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.IS_NOT,
+          25,
+          25,
+          'NUMBER',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.IS_NOT,
+          20,
+          25,
+          'NUMBER',
+        );
+        const filter3 = createFilter(
+          ViewFilterOperand.IS_NOT,
+          30,
+          25,
+          'NUMBER',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(false);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter3] })).toBe(true);
+      });
     });
 
     describe('string and array operands', () => {

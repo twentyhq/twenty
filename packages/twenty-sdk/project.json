@@ -23,7 +23,7 @@
       ],
       "options": {
         "cwd": "packages/twenty-sdk",
-        "command": "node dist/cli/cli.js"
+        "command": "node dist/cli.cjs"
       }
     },
     "generateBarrels": {

@@ -33,7 +33,7 @@ import { viewPickerCalendarFieldMetadataIdComponentState } from '@/views/view-pi
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
-import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
+import { viewPickerMainGroupByFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerMainGroupByFieldMetadataIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { useLingui } from '@lingui/react/macro';
@@ -74,8 +74,12 @@ export const ViewPickerContentCreateMode = () => {
     viewPickerIsDirtyComponentState,
   );
 
-  const [viewPickerKanbanFieldMetadataId, setViewPickerKanbanFieldMetadataId] =
-    useRecoilComponentState(viewPickerKanbanFieldMetadataIdComponentState);
+  const [
+    viewPickerMainGroupByFieldMetadataId,
+    setViewPickerMainGroupByFieldMetadataId,
+  ] = useRecoilComponentState(
+    viewPickerMainGroupByFieldMetadataIdComponentState,
+  );
 
   const [
     viewPickerCalendarFieldMetadataId,
@@ -188,10 +192,10 @@ export const ViewPickerContentCreateMode = () => {
               <Select
                 label={t`Stages`}
                 fullWidth
-                value={viewPickerKanbanFieldMetadataId}
+                value={viewPickerMainGroupByFieldMetadataId}
                 onChange={(value) => {
                   setViewPickerIsDirty(true);
-                  setViewPickerKanbanFieldMetadataId(value);
+                  setViewPickerMainGroupByFieldMetadataId(value);
                 }}
                 options={
                   availableFieldsForKanban.length > 0

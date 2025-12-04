@@ -5,7 +5,7 @@ import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDele
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
-import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
+import { viewPickerMainGroupByFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerMainGroupByFieldMetadataIdComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { t } from '@lingui/core/macro';
 import { Button } from 'twenty-ui/input';
@@ -19,8 +19,8 @@ export const ViewPickerEditButton = () => {
   const viewPickerIsPersisting = useRecoilComponentValue(
     viewPickerIsPersistingComponentState,
   );
-  const viewPickerKanbanFieldMetadataId = useRecoilComponentValue(
-    viewPickerKanbanFieldMetadataIdComponentState,
+  const viewPickerMainGroupByFieldMetadataId = useRecoilComponentValue(
+    viewPickerMainGroupByFieldMetadataIdComponentState,
   );
 
   const { createViewFromCurrentState } = useCreateViewFromCurrentState();
@@ -60,7 +60,7 @@ export const ViewPickerEditButton = () => {
 
   if (
     viewPickerType === ViewType.Table ||
-    viewPickerKanbanFieldMetadataId !== ''
+    viewPickerMainGroupByFieldMetadataId !== ''
   ) {
     return (
       <Button
@@ -73,7 +73,7 @@ export const ViewPickerEditButton = () => {
         disabled={
           viewPickerIsPersisting ||
           (viewPickerType === ViewType.Kanban &&
-            viewPickerKanbanFieldMetadataId === '')
+            viewPickerMainGroupByFieldMetadataId === '')
         }
       />
     );

@@ -1,6 +1,6 @@
 import { type EachTestingContext } from 'twenty-shared/testing';
 
-import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
+import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import {
   InvalidMetadataException,
   InvalidMetadataExceptionCode,
@@ -124,7 +124,7 @@ describe('computeMetadataNameFromLabel', () => {
 
   describe('successful cases', () => {
     it.each(successfulTestCases)('$title', ({ context }) => {
-      const result = computeMetadataNameFromLabel(context.input);
+      const result = computeMetadataNameFromLabelOrThrow(context.input);
 
       expect(result).toBe(context.expected);
     });
@@ -132,7 +132,7 @@ describe('computeMetadataNameFromLabel', () => {
 
   describe('failing cases', () => {
     it.each(failingTestCases)('$title', ({ context }) => {
-      expect(() => computeMetadataNameFromLabel(context.input)).toThrow(
+      expect(() => computeMetadataNameFromLabelOrThrow(context.input)).toThrow(
         context.expectToThrow?.error,
       );
     });

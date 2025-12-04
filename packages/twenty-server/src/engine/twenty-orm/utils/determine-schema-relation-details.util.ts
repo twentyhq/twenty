@@ -1,13 +1,15 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { type RelationType } from 'typeorm/metadata/types/RelationTypes';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   RelationException,
   RelationExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/relation.exception';
+import {
+  type EntitySchemaFieldMetadata,
+  type EntitySchemaFieldMetadataMaps,
+  type EntitySchemaObjectMetadataMaps,
+} from 'src/engine/twenty-orm/global-workspace-datasource/types/entity-schema-metadata.type';
 import { converRelationTypeToTypeORMRelationType } from 'src/engine/twenty-orm/utils/convert-relation-type-to-typeorm-relation-type.util';
 
 interface RelationDetails {
@@ -18,11 +20,11 @@ interface RelationDetails {
 }
 
 export function determineSchemaRelationDetails(
-  fieldMetadata: FlatFieldMetadata<
+  fieldMetadata: EntitySchemaFieldMetadata<
     FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
   >,
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  objectMetadataMaps: EntitySchemaObjectMetadataMaps,
+  fieldMetadataMaps: EntitySchemaFieldMetadataMaps,
 ): RelationDetails {
   if (!fieldMetadata.settings) {
     throw new Error('Field metadata settings are missing');
@@ -39,12 +41,10 @@ export function determineSchemaRelationDetails(
     );
   }
 
-  const sourceObjectMetadata =
-    flatObjectMetadataMaps.byId[fieldMetadata.objectMetadataId];
   const targetObjectMetadata =
-    flatObjectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
+    objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
 
-  if (!sourceObjectMetadata || !targetObjectMetadata) {
+  if (!targetObjectMetadata) {
     throw new RelationException(
       `Object metadata not found for field ${fieldMetadata.id}`,
       RelationExceptionCode.RELATION_OBJECT_METADATA_NOT_FOUND,
@@ -59,7 +59,7 @@ export function determineSchemaRelationDetails(
   }
 
   const targetFieldMetadata =
-    flatFieldMetadataMaps.byId[fieldMetadata.relationTargetFieldMetadataId];
+    fieldMetadataMaps.byId[fieldMetadata.relationTargetFieldMetadataId];
 
   if (!targetFieldMetadata) {
     throw new Error('Target field metadata not found');

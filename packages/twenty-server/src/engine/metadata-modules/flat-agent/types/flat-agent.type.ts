@@ -11,5 +11,7 @@ export type AgentEntityRelationProperties =
 
 export type FlatAgent = FlatEntityFrom<
   AgentEntity,
-  AgentEntityRelationProperties | 'createdAt' | 'updatedAt' | 'deletedAt'
+  AgentEntityRelationProperties
 >;
+
+export type FlatAgentWithRoleId = FlatAgent & { roleId: string | null };
