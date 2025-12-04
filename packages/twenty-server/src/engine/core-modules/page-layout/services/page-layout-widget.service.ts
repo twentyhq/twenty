@@ -142,7 +142,7 @@ export class PageLayoutWidgetService {
           );
 
         try {
-          validatedConfig = validateAndTransformWidgetConfiguration({
+          validatedConfig = await validateAndTransformWidgetConfiguration({
             type: pageLayoutWidgetData.type,
             configuration: pageLayoutWidgetData.configuration,
             isDashboardV2Enabled,
@@ -246,7 +246,7 @@ export class PageLayoutWidgetService {
           );
 
         try {
-          validatedConfig = validateAndTransformWidgetConfiguration({
+          validatedConfig = await validateAndTransformWidgetConfiguration({
             type: typeForValidation,
             configuration: updateData.configuration,
             isDashboardV2Enabled,

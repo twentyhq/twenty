@@ -71,9 +71,10 @@ export class MessagingMessagesImportService {
         messageChannelId: messageChannel.id,
       });
 
-      await this.messageChannelSyncStatusService.markAsMessagesImportOngoing([
-        messageChannel.id,
-      ]);
+      await this.messageChannelSyncStatusService.markAsMessagesImportOngoing(
+        [messageChannel.id],
+        workspaceId,
+      );
 
       const { accessToken, refreshToken } =
         await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
@@ -102,6 +103,7 @@ export class MessagingMessagesImportService {
       if (!messageIdsToFetch?.length) {
         await this.messageChannelSyncStatusService.markAsCompletedAndScheduleMessageListFetch(
           [messageChannel.id],
+          workspaceId,
         );
 
         return await this.trackMessageImportCompleted(
@@ -158,11 +160,13 @@ export class MessagingMessagesImportService {
       ) {
         await this.messageChannelSyncStatusService.markAsCompletedAndScheduleMessageListFetch(
           [messageChannel.id],
+          workspaceId,
         );
       } else {
-        await this.messageChannelSyncStatusService.scheduleMessagesImport([
-          messageChannel.id,
-        ]);
+        await this.messageChannelSyncStatusService.scheduleMessagesImport(
+          [messageChannel.id],
+          workspaceId,
+        );
       }
 
       const messageChannelRepository =

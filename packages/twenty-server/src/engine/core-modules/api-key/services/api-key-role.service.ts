@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -69,7 +70,7 @@ export class ApiKeyRoleService {
 
     const roleId = apiKeyRoleMap[apiKeyId];
 
-    if (!roleId) {
+    if (!isDefined(roleId)) {
       throw new ApiKeyException(
         `API key ${apiKeyId} has no role assigned`,
         ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED,

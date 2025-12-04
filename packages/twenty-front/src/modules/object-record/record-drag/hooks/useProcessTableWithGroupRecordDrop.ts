@@ -8,8 +8,8 @@ import { originalDragSelectionComponentState } from '@/object-record/record-drag
 import { processGroupDrop } from '@/object-record/record-drag/utils/processGroupDrop';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { recordIndexGroupFieldMetadataIdComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexGroupFieldMetadataIdComponentSelector';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
@@ -49,8 +49,8 @@ export const useProcessTableWithGroupRecordDrop = () => {
     originalDragSelectionComponentState,
   );
 
-  const groupFieldMetadataId = useRecoilComponentValue(
-    recordIndexGroupFieldMetadataIdComponentSelector,
+  const groupFieldMetadata = useRecoilComponentValue(
+    recordIndexGroupFieldMetadataItemComponentState,
   );
 
   const processTableWithGroupRecordDrop = useRecoilCallback(
@@ -69,7 +69,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
         }
 
         const fieldMetadata = objectMetadataItem.fields.find(
-          (field) => field.id === groupFieldMetadataId,
+          (field) => field.id === groupFieldMetadata?.id,
         );
 
         if (!isDefined(fieldMetadata)) {
@@ -122,7 +122,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
       selectedRowIdsSelector,
       currentRecordSortsCallbackState,
       recordIdsByGroupFamilyState,
-      groupFieldMetadataId,
+      groupFieldMetadata?.id,
       openModal,
       updateOneRow,
     ],

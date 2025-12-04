@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
 import { WorkspaceMigrationV2AgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/agent/workspace-migration-v2-agent-actions-builder.service';
+import { WorkspaceMigrationV2PageLayoutTabActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/page-layout-tab/workspace-migration-v2-page-layout-tab-actions-builder.service';
 import { WorkspaceMigrationV2CronTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/workspace-migration-v2-cron-trigger-action-builder.service';
 import { WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/workspace-migration-v2-database-event-trigger-actions-builder.service';
 import { WorkspaceMigrationV2FieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/workspace-migration-v2-field-actions-builder.service';
@@ -36,6 +37,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationV2RoleActionsBuilderService,
     WorkspaceMigrationV2RoleTargetActionsBuilderService,
     WorkspaceMigrationV2AgentActionsBuilderService,
+    WorkspaceMigrationV2PageLayoutTabActionsBuilderService,
   ],
   exports: [
     WorkspaceMigrationV2ViewActionsBuilderService,
@@ -52,6 +54,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationV2RoleActionsBuilderService,
     WorkspaceMigrationV2RoleTargetActionsBuilderService,
     WorkspaceMigrationV2AgentActionsBuilderService,
+    WorkspaceMigrationV2PageLayoutTabActionsBuilderService,
     FlatFieldMetadataTypeValidatorService,
   ],
 })

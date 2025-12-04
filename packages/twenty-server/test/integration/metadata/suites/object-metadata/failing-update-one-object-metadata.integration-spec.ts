@@ -1,8 +1,10 @@
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
@@ -14,6 +16,7 @@ import { type UpdateObjectPayload } from 'src/engine/metadata-modules/object-met
 type TestingRuntimeContext = {
   objectMetadataId: string;
   numberFieldMetadataId: string;
+  uuidFieldMetadataId: string;
 };
 
 type CreateOneObjectMetadataItemTestingContext = EachTestingContext<
@@ -47,6 +50,13 @@ const labelIdentifierFailingTestsUseCase: CreateOneObjectMetadataItemTestingCont
         labelIdentifierFieldMetadataId: numberFieldMetadataId,
       }),
     },
+    {
+      title:
+        'when labelIdentifier is a UUID field (reserved for system objects)',
+      context: ({ uuidFieldMetadataId }) => ({
+        labelIdentifierFieldMetadataId: uuidFieldMetadataId,
+      }),
+    },
   ];
 
 const allTestsUseCases = [...labelIdentifierFailingTestsUseCase];
@@ -54,6 +64,7 @@ const allTestsUseCases = [...labelIdentifierFailingTestsUseCase];
 describe('Object metadata update should fail', () => {
   let objectMetadataId: string;
   let numberFieldMetadataId: string;
+  let uuidFieldMetadataId: string;
 
   beforeAll(async () => {
     const { data } = await createOneObjectMetadata({
@@ -82,6 +93,32 @@ describe('Object metadata update should fail', () => {
     });
 
     numberFieldMetadataId = createOneField.id;
+
+    const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
+      input: {
+        filter: { isCustom: { is: true } },
+        paging: { first: 100 },
+      },
+      gqlFields: `
+        id
+        fieldsList {
+          id
+          type
+        }
+      `,
+    });
+
+    const createdObject = objects.find((obj) => obj.id === objectMetadataId);
+
+    jestExpectToBeDefined(createdObject);
+
+    const uuidField = createdObject.fieldsList?.find(
+      (field) => field.type === FieldMetadataType.UUID,
+    );
+
+    jestExpectToBeDefined(uuidField);
+    uuidFieldMetadataId = uuidField.id;
   });
 
   afterAll(async () => {
@@ -106,7 +143,11 @@ describe('Object metadata update should fail', () => {
     async ({ context }) => {
       const updatePayload =
         typeof context === 'function'
-          ? context({ numberFieldMetadataId, objectMetadataId })
+          ? context({
+              numberFieldMetadataId,
+              objectMetadataId,
+              uuidFieldMetadataId,
+            })
           : context;
 
       const { errors } = await updateOneObjectMetadata({

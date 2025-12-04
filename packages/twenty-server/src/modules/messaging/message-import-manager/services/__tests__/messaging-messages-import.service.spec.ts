@@ -213,7 +213,7 @@ describe('MessagingMessagesImportService', () => {
     );
     expect(
       messageChannelSyncStatusService.markAsMessagesImportOngoing,
-    ).toHaveBeenCalledWith([mockMessageChannel.id]);
+    ).toHaveBeenCalledWith([mockMessageChannel.id], workspaceId);
 
     expect(
       connectedAccountRefreshTokensService.refreshAndSaveTokens,

@@ -3766,6 +3766,12 @@ export type RevokeApiKeyInput = {
   id: Scalars['UUID'];
 };
 
+export type RichTextV2Body = {
+  __typename?: 'RichTextV2Body';
+  blocknote?: Maybe<Scalars['String']>;
+  markdown?: Maybe<Scalars['String']>;
+};
+
 export type Role = {
   __typename?: 'Role';
   agents: Array<Agent>;
@@ -3938,6 +3944,20 @@ export type ServerlessFunctionLayer = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type ServerlessFunctionLogs = {
+  __typename?: 'ServerlessFunctionLogs';
+  /** Execution Logs */
+  logs: Scalars['String'];
+};
+
+export type ServerlessFunctionLogsInput = {
+  applicationId?: InputMaybe<Scalars['UUID']>;
+  applicationUniversalIdentifier?: InputMaybe<Scalars['UUID']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  name?: InputMaybe<Scalars['String']>;
+  universalIdentifier?: InputMaybe<Scalars['UUID']>;
+};
+
 export type SetupOidcSsoInput = {
   clientID: Scalars['String'];
   clientSecret: Scalars['String'];
@@ -3975,6 +3995,11 @@ export type SignedFile = {
   token: Scalars['String'];
 };
 
+export type StandaloneRichTextConfiguration = {
+  __typename?: 'StandaloneRichTextConfiguration';
+  body: RichTextV2Body;
+};
+
 export type StandardOverrides = {
   __typename?: 'StandardOverrides';
   description?: Maybe<Scalars['String']>;
@@ -3995,11 +4020,17 @@ export type SubmitFormStepInput = {
 export type Subscription = {
   __typename?: 'Subscription';
   onDbEvent: OnDbEvent;
+  serverlessFunctionLogs: ServerlessFunctionLogs;
 };
 
 
 export type SubscriptionOnDbEventArgs = {
   input: OnDbEventInput;
+};
+
+
+export type SubscriptionServerlessFunctionLogsArgs = {
+  input: ServerlessFunctionLogsInput;
 };
 
 export enum SubscriptionInterval {
@@ -4700,17 +4731,18 @@ export type Webhook = {
   workspaceId: Scalars['UUID'];
 };
 
-export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | PieChartConfiguration;
+export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | PieChartConfiguration | StandaloneRichTextConfiguration;
 
 export enum WidgetType {
   CALENDAR = 'CALENDAR',
   EMAILS = 'EMAILS',
   FIELDS = 'FIELDS',
+  FIELD_RICH_TEXT = 'FIELD_RICH_TEXT',
   FILES = 'FILES',
   GRAPH = 'GRAPH',
   IFRAME = 'IFRAME',
   NOTES = 'NOTES',
-  RICH_TEXT = 'RICH_TEXT',
+  STANDALONE_RICH_TEXT = 'STANDALONE_RICH_TEXT',
   TASKS = 'TASKS',
   TIMELINE = 'TIMELINE',
   VIEW = 'VIEW',
