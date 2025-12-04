@@ -4,8 +4,8 @@ import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFi
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { EmailsDisplay } from '@/ui/field/display/components/EmailsDisplay';
 import { useLingui } from '@lingui/react/macro';
-import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { IconCopy, IconExclamationCircle } from 'twenty-ui/display';
 
 export const EmailsFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useEmailsFieldDisplay();
@@ -30,7 +30,7 @@ export const EmailsFieldDisplay = () => {
         enqueueSuccessSnackBar({
           message: t`Email address copied to clipboard`,
           options: {
-            icon: <IconCircleCheck size={16} color="green" />,
+            icon: <IconCopy size={16} color="green" />,
             duration: 2000,
           },
         });

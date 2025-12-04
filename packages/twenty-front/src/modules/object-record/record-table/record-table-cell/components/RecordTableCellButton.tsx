@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 import { LightIconButtonGroup } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
@@ -29,7 +30,7 @@ export const RecordTableCellButton = ({
 }: RecordTableCellButtonProps) => {
   const iconButtons = [];
 
-  if (SecondaryIcon && onSecondaryClick) {
+  if (isDefined(SecondaryIcon) && isDefined(onSecondaryClick)) {
     iconButtons.push({
       Icon: SecondaryIcon,
       onClick: onSecondaryClick,

@@ -4,7 +4,7 @@ import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFie
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { LinksDisplay } from '@/ui/field/display/components/LinksDisplay';
 import { useLingui } from '@lingui/react/macro';
-import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
+import { IconCopy, IconExclamationCircle } from 'twenty-ui/display';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 export const LinksFieldDisplay = () => {
@@ -30,7 +30,7 @@ export const LinksFieldDisplay = () => {
         enqueueSuccessSnackBar({
           message: t`Link copied to clipboard`,
           options: {
-            icon: <IconCircleCheck size={16} color="green" />,
+            icon: <IconCopy size={16} color="green" />,
             duration: 2000,
           },
         });

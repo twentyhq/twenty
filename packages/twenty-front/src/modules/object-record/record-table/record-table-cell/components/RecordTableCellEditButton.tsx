@@ -113,7 +113,7 @@ export const RecordTableCellEditButton = () => {
         : isFieldEmails(fieldDefinition)
           ? t`Email address copied to clipboard`
           : t`Link copied to clipboard`;
-      if (textToCopy) {
+      if (isDefined(textToCopy)) {
         await navigator.clipboard.writeText(textToCopy);
         enqueueSuccessSnackBar({
           message: textMessage,
