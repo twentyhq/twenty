@@ -239,8 +239,8 @@ export class AgentChatRoutingService {
 
           const agentExecutionStart = Date.now();
 
-          // Get workflow tools for chat context (these are NOT available in workflow executor)
-          // Use user's role for determining workflow tool permissions
+          // Get permission-based tools for chat context (workflow, metadata, etc.)
+          // These tools are NOT available in workflow executor to prevent circular dependencies
           const { roleId } =
             await this.agentActorContextService.buildUserAndAgentActorContext(
               userWorkspaceId,
@@ -249,12 +249,11 @@ export class AgentChatRoutingService {
 
           const roleIds = [roleId];
 
-          const workflowTools =
-            await this.chatToolsProviderService.getWorkflowToolsForChat(
-              workspace.id,
-              roleIds,
-              toolHints,
-            );
+          const chatTools = await this.chatToolsProviderService.getChatTools(
+            workspace.id,
+            roleIds,
+            toolHints,
+          );
 
           const {
             stream: result,
@@ -267,7 +266,7 @@ export class AgentChatRoutingService {
             messages,
             recordIdsByObjectMetadataNameSingular,
             toolHints,
-            additionalTools: workflowTools,
+            additionalTools: chatTools,
           });
 
           const routedStatusPart = {

@@ -4,7 +4,7 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/ai/ai-agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { type PlanStep } from 'src/engine/metadata-modules/ai/ai-chat-router/types/router-result.interface';
-import { standardAgentDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents';
+import { STANDARD_AGENT_DEFINITIONS } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/standard-agent-definitions';
 
 import { AgentExecutionService } from './agent-execution.service';
 
@@ -229,7 +229,7 @@ export class AgentPlanExecutorService {
     );
 
     if (lastStepDefinition) {
-      const agentDefinition = standardAgentDefinitions.find(
+      const agentDefinition = STANDARD_AGENT_DEFINITIONS.find(
         (def) => def.name === lastStepDefinition.agentName,
       );
 
