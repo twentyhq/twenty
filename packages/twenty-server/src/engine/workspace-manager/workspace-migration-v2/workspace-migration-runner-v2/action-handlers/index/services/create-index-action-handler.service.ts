@@ -116,13 +116,19 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
       flatFieldMetadataMaps,
     });
 
+    const whereClause = this.computeWhereClauseForUniqueIndex({
+      isUnique: flatIndexMetadata.isUnique,
+      existingWhereClause: flatIndexMetadata.indexWhereClause,
+      columns: quotedColumns,
+    });
+
     await this.workspaceSchemaManagerService.indexManager.createIndex({
       index: {
         columns: quotedColumns,
         name: flatIndexMetadata.name,
         isUnique: flatIndexMetadata.isUnique,
         type: flatIndexMetadata.indexType,
-        where: flatIndexMetadata.indexWhereClause ?? undefined,
+        where: whereClause,
       },
       queryRunner,
       schemaName,
@@ -184,5 +190,29 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
 
       return flatFieldMetadata.name;
     });
+  }
+
+  private computeWhereClauseForUniqueIndex({
+    isUnique,
+    existingWhereClause,
+    columns,
+  }: {
+    isUnique: boolean;
+    existingWhereClause: string | null;
+    columns: string[];
+  }): string | undefined {
+    if (existingWhereClause) {
+      return existingWhereClause;
+    }
+
+    if (!isUnique) {
+      return undefined;
+    }
+
+    const nonEmptyConditions = columns.map(
+      (column) => `"${column}" IS NOT NULL AND "${column}" <> ''`,
+    );
+
+    return nonEmptyConditions.join(' AND ');
   }
 }
