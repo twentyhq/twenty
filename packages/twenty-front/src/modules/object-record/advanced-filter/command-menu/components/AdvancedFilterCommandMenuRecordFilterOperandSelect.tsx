@@ -2,7 +2,6 @@ import { AdvancedFilterRecordFilterOperandSelectContent } from '@/object-record/
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -33,7 +32,7 @@ export const AdvancedFilterCommandMenuRecordFilterOperandSelect = ({
     ? getRecordFilterOperands({
         filterType,
         subFieldName: filter?.subFieldName,
-      }).filter((operand) => operand !== RecordFilterOperand.IS_RELATIVE)
+      })
     : [];
 
   if (isDisabled === true) {
