@@ -32,6 +32,7 @@ export const fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseE
         invalidRole: 0,
         invalidRoleTarget: 0,
         totalErrors: 0,
+        invalidPageLayoutTab: 0,
       },
       errors: translatedReport,
     };

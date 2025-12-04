@@ -113,4 +113,5 @@ export const ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY = {
     },
   },
   agent: {},
+  pageLayoutTab: {},
 } as const satisfies MetadataNameAndRelations;
