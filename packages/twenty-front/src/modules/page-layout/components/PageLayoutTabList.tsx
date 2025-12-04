@@ -79,7 +79,6 @@ type PageLayoutTabListProps = Omit<TabListProps, 'tabs'> & {
 export const PageLayoutTabList = ({
   tabs,
   loading,
-  behaveAsLinks = true,
   isInRightDrawer,
   className,
   componentInstanceId,
@@ -88,6 +87,8 @@ export const PageLayoutTabList = ({
   isReorderEnabled,
   onReorder,
 }: PageLayoutTabListProps) => {
+  const behaveAsLinks = !isInRightDrawer;
+
   const { getIcon } = useIcons();
 
   const tabsWithIcons: SingleTabProps[] = tabs.map((tab) => ({
