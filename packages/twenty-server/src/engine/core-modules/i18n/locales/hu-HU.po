@@ -656,7 +656,7 @@ msgid "Cannot have more than one active workflow version"
 msgstr "Nem lehet egynél több aktív munkafolyamat verzió"
 
 #. js-lingui-id: PjZIyI
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
 msgstr "Nem lehet frissíteni az üzenetcsatornát, amíg a szinkronizálás folyamatban van. Kérjük, várja meg, amíg a szinkronizálás befejeződik."
 
@@ -1663,6 +1663,11 @@ msgstr "Azonosítóval rendelkező index már létezik"
 msgid "Index with same name already exists"
 msgstr "Az azonos nevű index már létezik"
 
+#. js-lingui-id: mIrUSZ
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Invalid CALDAV credentials. Please check your username and password."
+msgstr ""
+
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid calling code {callingCode}"
@@ -1677,11 +1682,6 @@ msgstr "Érvénytelen Captcha, próbáljon meg másik eszközt"
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
 msgstr "Érvénytelen országkód {countryCode}"
-
-#. js-lingui-id: AMeEDO
-#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
-msgid "Invalid credentials. Please check your username and password."
-msgstr "Érvénytelen hitelesítési adatok. Kérjük, ellenőrizze a felhasználónevet és a jelszót."
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2027,7 +2027,7 @@ msgid "Message Channel Message Associations"
 msgstr "Üzenetcsatorna üzenet-társítások"
 
 #. js-lingui-id: LOU3x5
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
 msgstr "Üzenetcsatorna nem található"
 

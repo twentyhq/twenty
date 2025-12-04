@@ -67,20 +67,7 @@ export class CacheStorageService {
   async mset<T = unknown>(
     entries: Array<{ key: string; value: T; ttl?: Milliseconds }>,
   ): Promise<void> {
-    if (this.isRedisCache()) {
-      const pipeline = (this.cache as RedisCache).store.client.multi();
-
-      entries.forEach(({ key, value, ttl }) => {
-        const prefixedKey = this.getKey(key);
-
-        pipeline.set(prefixedKey, JSON.stringify(value));
-        if (ttl) {
-          pipeline.expire(prefixedKey, Math.floor(ttl / 1000));
-        }
-      });
-
-      await pipeline.exec();
-
+    if (entries.length === 0) {
       return;
     }
 

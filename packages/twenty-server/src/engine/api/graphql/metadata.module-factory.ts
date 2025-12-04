@@ -8,7 +8,7 @@ import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphq
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useComputeComplexity } from 'src/engine/core-modules/graphql/hooks/use-compute-complexity.hook';
-import { useDisableIntrospectionForUnauthenticatedUsers } from 'src/engine/core-modules/graphql/hooks/use-disable-introspection-for-unauthenticated-users.hook';
+import { useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers } from 'src/engine/core-modules/graphql/hooks/use-disable-introspection-and-suggestions-for-unauthenticated-users.hook';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
 import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -43,7 +43,7 @@ export const metadataModuleFactory = async (
         cacheSetter: cacheStorageService.set.bind(cacheStorageService),
         operationsToCache: ['ObjectMetadataItems', 'FindAllCoreViews'],
       }),
-      useDisableIntrospectionForUnauthenticatedUsers(
+      useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers(
         twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION,
       ),
       useComputeComplexity(twentyConfigService.get('GRAPHQL_MAX_COMPLEXITY')),

@@ -656,7 +656,7 @@ msgid "Cannot have more than one active workflow version"
 msgstr "No pot haver-hi més d'una versió activa de fluxe de treball"
 
 #. js-lingui-id: PjZIyI
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
 msgstr "No es pot actualitzar el canal de missatges mentre la sincronització està en procés. Espereu que finalitze la sincronització."
 
@@ -1663,6 +1663,11 @@ msgstr "L'índex amb el mateix ID ja existeix"
 msgid "Index with same name already exists"
 msgstr "L'índex amb el mateix nom ja existeix"
 
+#. js-lingui-id: mIrUSZ
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Invalid CALDAV credentials. Please check your username and password."
+msgstr ""
+
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid calling code {callingCode}"
@@ -1677,11 +1682,6 @@ msgstr "Captcha invàlid, si us plau prova amb un altre dispositiu"
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
 msgstr "El codi de país {countryCode} no és vàlid"
-
-#. js-lingui-id: AMeEDO
-#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
-msgid "Invalid credentials. Please check your username and password."
-msgstr "Credencials invàlides. Comprova el teu nom d'usuari i contrasenya."
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2027,7 +2027,7 @@ msgid "Message Channel Message Associations"
 msgstr "Associacions de missatge del canal de missatges"
 
 #. js-lingui-id: LOU3x5
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
 msgstr "Canal de missatges no trobat"
 

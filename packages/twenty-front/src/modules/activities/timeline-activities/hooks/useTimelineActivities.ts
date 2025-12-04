@@ -46,10 +46,9 @@ export const useTimelineActivities = (
     .map((timelineActivity) => timelineActivity.linkedRecordId)
     .filter(isDefined);
 
-  const { loading: loadingLinkedObjectsTitle } =
-    useLinkedObjectsTitle(activityIds);
+  useLinkedObjectsTitle(activityIds);
 
-  const loading = loadingTimelineActivities || loadingLinkedObjectsTitle;
+  const loading = loadingTimelineActivities;
 
   return {
     timelineActivities,
