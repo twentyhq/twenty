@@ -126,6 +126,7 @@ export type AgentTurn = {
   agentId?: Maybe<Scalars['UUID']>;
   createdAt: Scalars['DateTime'];
   evaluations: Array<AgentTurnEvaluation>;
+  executionSnapshot?: Maybe<Scalars['JSON']>;
   id: Scalars['UUID'];
   messages: Array<AgentMessage>;
   threadId: Scalars['UUID'];
