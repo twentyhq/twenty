@@ -1,4 +1,8 @@
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  NumberDataType,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -190,6 +194,9 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       isSystem: true,
       isNullable: false,
       defaultValue: 7,
+      settings: {
+        dataType: NumberDataType.INT,
+      },
       createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
