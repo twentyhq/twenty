@@ -35,7 +35,6 @@ const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
 `;
 
 const StyledTabsAndDashboardContainer = styled.div`
-  background: ${({ theme }) => theme.background.primary};
   display: flex;
   flex-direction: column;
   overflow: hidden;
