@@ -49,6 +49,15 @@ export class WorkflowRunEnqueueWorkspaceService {
     priorityWorkflowRunId?: string;
     isCacheMode: boolean;
   }) {
+    const lockAcquired =
+      await this.workflowThrottlingWorkspaceService.acquireWorkflowEnqueueLock(
+        workspaceId,
+      );
+
+    if (!lockAcquired) {
+      return;
+    }
+
     try {
       const workflowRunRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
@@ -172,6 +181,10 @@ export class WorkflowRunEnqueueWorkspaceService {
       this.logger.error(
         `Failed to enqueue workflow runs for workspace: ${workspaceId}`,
         error,
+      );
+    } finally {
+      await this.workflowThrottlingWorkspaceService.releaseWorkflowEnqueueLock(
+        workspaceId,
       );
     }
   }

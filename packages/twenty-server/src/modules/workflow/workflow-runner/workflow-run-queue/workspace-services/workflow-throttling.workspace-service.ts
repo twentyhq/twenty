@@ -12,7 +12,6 @@ import {
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { getWorkflowRunNotStartedCountCacheKey } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-workflow-run-not-started-count-cache-key.util';
 
 @Injectable()
 export class WorkflowThrottlingWorkspaceService {
@@ -61,7 +60,7 @@ export class WorkflowThrottlingWorkspaceService {
       await this.getCurrentWorkflowRunNotStartedCount(workspaceId);
 
     await this.cacheStorage.set(
-      getWorkflowRunNotStartedCountCacheKey(workspaceId),
+      this.getWorkflowRunNotStartedCountCacheKey(workspaceId),
       currentCount + newlyEnqueuedCount,
     );
   }
@@ -74,7 +73,7 @@ export class WorkflowThrottlingWorkspaceService {
       await this.getCurrentWorkflowRunNotStartedCount(workspaceId);
 
     await this.cacheStorage.set(
-      getWorkflowRunNotStartedCountCacheKey(workspaceId),
+      this.getWorkflowRunNotStartedCountCacheKey(workspaceId),
       currentCount - removedFromQueueCount,
     );
   }
@@ -123,12 +122,27 @@ export class WorkflowThrottlingWorkspaceService {
     });
   }
 
+  async acquireWorkflowEnqueueLock(
+    workspaceId: string,
+    ttlMs = 60_000,
+  ): Promise<boolean> {
+    const key = this.getWorkflowEnqueueRunningCacheKey(workspaceId);
+
+    return this.cacheStorage.acquireLock(key, ttlMs);
+  }
+
+  async releaseWorkflowEnqueueLock(workspaceId: string): Promise<void> {
+    const key = this.getWorkflowEnqueueRunningCacheKey(workspaceId);
+
+    await this.cacheStorage.releaseLock(key);
+  }
+
   private async setWorkflowRunNotStartedCount(
     workspaceId: string,
     count: number,
   ): Promise<void> {
     await this.cacheStorage.set(
-      getWorkflowRunNotStartedCountCacheKey(workspaceId),
+      this.getWorkflowRunNotStartedCountCacheKey(workspaceId),
       count,
     );
   }
@@ -136,10 +150,18 @@ export class WorkflowThrottlingWorkspaceService {
   private async getCurrentWorkflowRunNotStartedCount(
     workspaceId: string,
   ): Promise<number> {
-    const key = getWorkflowRunNotStartedCountCacheKey(workspaceId);
+    const key = this.getWorkflowRunNotStartedCountCacheKey(workspaceId);
 
     const currentCount = (await this.cacheStorage.get<number>(key)) ?? 0;
 
     return Math.max(0, currentCount);
+  }
+
+  private getWorkflowRunNotStartedCountCacheKey(workspaceId: string): string {
+    return `workflow-run-not-started-count:${workspaceId}`;
+  }
+
+  private getWorkflowEnqueueRunningCacheKey(workspaceId: string): string {
+    return `workflow-enqueue-running:${workspaceId}`;
   }
 }
