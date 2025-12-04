@@ -1,4 +1,4 @@
-import { Scope } from '@nestjs/common';
+import { Logger, Scope } from '@nestjs/common';
 
 import { In } from 'typeorm';
 
@@ -22,6 +22,7 @@ export type CalendarOngoingStaleJobData = {
   scope: Scope.REQUEST,
 })
 export class CalendarOngoingStaleJob {
+  private readonly logger = new Logger(CalendarOngoingStaleJob.name);
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
