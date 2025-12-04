@@ -206,15 +206,16 @@ const createWorkflow = async ({
       context.rolePermissionConfig,
     );
 
-  const workflowPosition =
-    await deps.recordPositionService.buildRecordPosition({
+  const workflowPosition = await deps.recordPositionService.buildRecordPosition(
+    {
       value: 'first',
       objectMetadata: {
         isCustom: false,
         nameSingular: 'workflow',
       },
       workspaceId: context.workspaceId,
-    });
+    },
+  );
 
   const workflow = {
     id: uuidv4(),
@@ -248,15 +249,14 @@ const createWorkflowVersion = async ({
       context.rolePermissionConfig,
     );
 
-  const versionPosition =
-    await deps.recordPositionService.buildRecordPosition({
-      value: 'first',
-      objectMetadata: {
-        isCustom: false,
-        nameSingular: 'workflowVersion',
-      },
-      workspaceId: context.workspaceId,
-    });
+  const versionPosition = await deps.recordPositionService.buildRecordPosition({
+    value: 'first',
+    objectMetadata: {
+      isCustom: false,
+      nameSingular: 'workflowVersion',
+    },
+    workspaceId: context.workspaceId,
+  });
 
   const workflowVersion = {
     id: uuidv4(),
