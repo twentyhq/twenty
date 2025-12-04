@@ -101,17 +101,15 @@ describe('PageLayoutUpdateService', () => {
             create: jest.fn(),
             update: jest.fn(),
             delete: jest.fn(),
-            restore: jest.fn(),
           },
         },
         {
           provide: PageLayoutWidgetService,
           useValue: {
             findByPageLayoutTabId: jest.fn(),
-            createOne: jest.fn(),
-            updateOne: jest.fn(),
-            deleteOne: jest.fn(),
-            restoreOne: jest.fn(),
+            create: jest.fn(),
+            update: jest.fn(),
+            delete: jest.fn(),
           },
         },
         {
@@ -182,7 +180,7 @@ describe('PageLayoutUpdateService', () => {
       jest
         .spyOn(pageLayoutWidgetService, 'findByPageLayoutTabId')
         .mockResolvedValue([mockWidget]);
-      jest.spyOn(pageLayoutWidgetService, 'updateOne').mockResolvedValue({
+      jest.spyOn(pageLayoutWidgetService, 'update').mockResolvedValue({
         ...mockWidget,
         title: 'Updated Widget',
       });
@@ -453,7 +451,7 @@ describe('PageLayoutUpdateService', () => {
       jest
         .spyOn(pageLayoutWidgetService, 'findByPageLayoutTabId')
         .mockResolvedValue([]);
-      jest.spyOn(pageLayoutWidgetService, 'createOne').mockResolvedValue({
+      jest.spyOn(pageLayoutWidgetService, 'create').mockResolvedValue({
         ...mockWidget,
         id: 'new-widget-id',
         title: 'New Widget',
@@ -467,10 +465,11 @@ describe('PageLayoutUpdateService', () => {
         tabId,
         widgets,
         workspaceId,
+        transactionManager: mockTransactionManager,
       });
 
-      expect(pageLayoutWidgetService.createOne).toHaveBeenCalledWith({
-        createPageLayoutWidgetInput: {
+      expect(pageLayoutWidgetService.create).toHaveBeenCalledWith(
+        {
           id: 'new-widget-id',
           pageLayoutTabId: tabId,
           objectMetadataId: null,
@@ -480,7 +479,8 @@ describe('PageLayoutUpdateService', () => {
           gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
         },
         workspaceId,
-      });
+        mockTransactionManager,
+      );
     });
 
     it('should update existing widgets', async () => {
@@ -501,7 +501,7 @@ describe('PageLayoutUpdateService', () => {
       jest
         .spyOn(pageLayoutWidgetService, 'findByPageLayoutTabId')
         .mockResolvedValue([mockWidget]);
-      jest.spyOn(pageLayoutWidgetService, 'updateOne').mockResolvedValue({
+      jest.spyOn(pageLayoutWidgetService, 'update').mockResolvedValue({
         ...mockWidget,
         title: 'Updated Widget',
         gridPosition: { row: 1, column: 1, rowSpan: 2, columnSpan: 2 },
@@ -511,23 +511,23 @@ describe('PageLayoutUpdateService', () => {
         tabId,
         widgets,
         workspaceId,
+        transactionManager: mockTransactionManager,
       });
 
-      expect(pageLayoutWidgetService.updateOne).toHaveBeenCalledWith({
-        updatePageLayoutWidgetInput: {
-          id: 'widget-1',
-          update: {
-            id: 'widget-1',
-            title: 'Updated Widget',
-            type: WidgetType.VIEW,
-            pageLayoutTabId: tabId,
-            objectMetadataId: null,
-            configuration: null,
-            gridPosition: { row: 1, column: 1, rowSpan: 2, columnSpan: 2 },
-          },
-        },
+      expect(pageLayoutWidgetService.update).toHaveBeenCalledWith(
+        'widget-1',
         workspaceId,
-      });
+        {
+          id: 'widget-1',
+          title: 'Updated Widget',
+          type: WidgetType.VIEW,
+          pageLayoutTabId: tabId,
+          objectMetadataId: null,
+          configuration: null,
+          gridPosition: { row: 1, column: 1, rowSpan: 2, columnSpan: 2 },
+        },
+        mockTransactionManager,
+      );
     });
 
     it('should delete removed widgets', async () => {
@@ -539,21 +539,22 @@ describe('PageLayoutUpdateService', () => {
       jest
         .spyOn(pageLayoutWidgetService, 'findByPageLayoutTabId')
         .mockResolvedValue(existingWidgets);
-      jest.spyOn(pageLayoutWidgetService, 'deleteOne').mockResolvedValue({
-        ...mockWidget,
-        deletedAt: new Date(),
-      });
+      jest
+        .spyOn(pageLayoutWidgetService, 'delete')
+        .mockResolvedValue(mockWidget);
 
       await pageLayoutUpdateService['updateWidgetsForTab']({
         tabId,
         widgets,
         workspaceId,
+        transactionManager: mockTransactionManager,
       });
 
-      expect(pageLayoutWidgetService.deleteOne).toHaveBeenCalledWith({
-        deletePageLayoutWidgetInput: { id: 'widget-1' },
+      expect(pageLayoutWidgetService.delete).toHaveBeenCalledWith(
+        'widget-1',
         workspaceId,
-      });
+        mockTransactionManager,
+      );
     });
 
     it('should handle widgets with mixed operations (create, update, delete)', async () => {
@@ -591,51 +592,51 @@ describe('PageLayoutUpdateService', () => {
       jest
         .spyOn(pageLayoutWidgetService, 'findByPageLayoutTabId')
         .mockResolvedValue(existingWidgets);
-      jest.spyOn(pageLayoutWidgetService, 'updateOne').mockResolvedValue({
+      jest.spyOn(pageLayoutWidgetService, 'update').mockResolvedValue({
         ...mockWidget,
         title: 'Updated Widget',
       });
-      jest.spyOn(pageLayoutWidgetService, 'createOne').mockResolvedValue({
+      jest.spyOn(pageLayoutWidgetService, 'create').mockResolvedValue({
         ...mockWidget,
         id: 'new-widget-id',
         title: 'New Widget',
         type: WidgetType.FIELDS,
         gridPosition: { row: 0, column: 4, rowSpan: 2, columnSpan: 2 },
       });
-      jest.spyOn(pageLayoutWidgetService, 'deleteOne').mockResolvedValue({
+      jest.spyOn(pageLayoutWidgetService, 'delete').mockResolvedValue({
         ...mockWidget,
         id: 'widget-to-delete',
         title: 'Widget to Delete',
-        deletedAt: new Date(),
       });
 
       await pageLayoutUpdateService['updateWidgetsForTab']({
         tabId,
         widgets,
         workspaceId,
+        transactionManager: mockTransactionManager,
       });
 
-      expect(pageLayoutWidgetService.deleteOne).toHaveBeenCalledWith({
-        deletePageLayoutWidgetInput: { id: 'widget-to-delete' },
+      expect(pageLayoutWidgetService.delete).toHaveBeenCalledWith(
+        'widget-to-delete',
         workspaceId,
-      });
-      expect(pageLayoutWidgetService.updateOne).toHaveBeenCalledWith({
-        updatePageLayoutWidgetInput: {
+        mockTransactionManager,
+      );
+      expect(pageLayoutWidgetService.update).toHaveBeenCalledWith(
+        'widget-1',
+        workspaceId,
+        {
           id: 'widget-1',
-          update: {
-            id: 'widget-1',
-            title: 'Updated Widget',
-            type: WidgetType.VIEW,
-            pageLayoutTabId: tabId,
-            objectMetadataId: null,
-            configuration: null,
-            gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
-          },
+          title: 'Updated Widget',
+          type: WidgetType.VIEW,
+          pageLayoutTabId: tabId,
+          objectMetadataId: null,
+          configuration: null,
+          gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
         },
-        workspaceId,
-      });
-      expect(pageLayoutWidgetService.createOne).toHaveBeenCalledWith({
-        createPageLayoutWidgetInput: {
+        mockTransactionManager,
+      );
+      expect(pageLayoutWidgetService.create).toHaveBeenCalledWith(
+        {
           id: 'new-widget-id',
           title: 'New Widget',
           type: WidgetType.FIELDS,
@@ -645,7 +646,8 @@ describe('PageLayoutUpdateService', () => {
           gridPosition: { row: 0, column: 4, rowSpan: 2, columnSpan: 2 },
         },
         workspaceId,
-      });
+        mockTransactionManager,
+      );
     });
   });
 
@@ -719,12 +721,12 @@ describe('PageLayoutUpdateService', () => {
       jest
         .spyOn(pageLayoutWidgetService, 'findByPageLayoutTabId')
         .mockResolvedValue(existingWidgets);
-      jest.spyOn(pageLayoutWidgetService, 'updateOne').mockResolvedValue({
+      jest.spyOn(pageLayoutWidgetService, 'update').mockResolvedValue({
         ...mockWidget,
         id: 'widget-1',
         title: 'Widget 1',
       });
-      jest.spyOn(pageLayoutWidgetService, 'createOne').mockResolvedValue({
+      jest.spyOn(pageLayoutWidgetService, 'create').mockResolvedValue({
         ...mockWidget,
         id: 'widget-2',
         title: 'Widget 2',
@@ -751,8 +753,8 @@ describe('PageLayoutUpdateService', () => {
       );
       expect(pageLayoutTabService.update).toHaveBeenCalled();
       expect(pageLayoutTabService.create).toHaveBeenCalled();
-      expect(pageLayoutWidgetService.updateOne).toHaveBeenCalled();
-      expect(pageLayoutWidgetService.createOne).toHaveBeenCalled();
+      expect(pageLayoutWidgetService.update).toHaveBeenCalled();
+      expect(pageLayoutWidgetService.create).toHaveBeenCalled();
       expect(result).toEqual(completeLayout);
     });
   });

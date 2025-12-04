@@ -32,6 +32,7 @@ type UpdateWidgetsForTabParams = {
   tabId: string;
   widgets: UpdatePageLayoutWidgetWithIdInput[];
   workspaceId: string;
+  transactionManager: EntityManager;
 };
 
 @Injectable()
@@ -198,6 +199,7 @@ export class PageLayoutUpdateService {
         tabId: tabInput.id,
         widgets: tabInput.widgets,
         workspaceId,
+        transactionManager,
       });
     }
   }
@@ -206,11 +208,13 @@ export class PageLayoutUpdateService {
     tabId,
     widgets,
     workspaceId,
+    transactionManager,
   }: UpdateWidgetsForTabParams): Promise<void> {
     const existingWidgets =
       await this.pageLayoutWidgetService.findByPageLayoutTabId(
         workspaceId,
         tabId,
+        transactionManager,
         true,
       );
 
@@ -236,43 +240,43 @@ export class PageLayoutUpdateService {
     });
 
     for (const widgetId of idsToDelete) {
-      await this.pageLayoutWidgetService.deleteOne({
-        deletePageLayoutWidgetInput: { id: widgetId },
+      await this.pageLayoutWidgetService.delete(
+        widgetId,
         workspaceId,
-      });
+        transactionManager,
+      );
     }
 
     for (const widgetUpdate of entitiesToUpdate) {
-      await this.pageLayoutWidgetService.updateOne({
-        updatePageLayoutWidgetInput: {
-          id: widgetUpdate.id,
-          update: widgetUpdate,
-        },
+      await this.pageLayoutWidgetService.update(
+        widgetUpdate.id,
         workspaceId,
-      });
+        widgetUpdate,
+        transactionManager,
+      );
     }
 
     for (const widgetToRestoreAndUpdate of entitiesToRestoreAndUpdate) {
-      await this.pageLayoutWidgetService.restoreOne({
-        id: widgetToRestoreAndUpdate.id,
+      await this.pageLayoutWidgetService.restore(
+        widgetToRestoreAndUpdate.id,
         workspaceId,
-      });
+        transactionManager,
+      );
 
-      await this.pageLayoutWidgetService.updateOne({
-        updatePageLayoutWidgetInput: {
-          id: widgetToRestoreAndUpdate.id,
-          update: widgetToRestoreAndUpdate,
-        },
+      await this.pageLayoutWidgetService.update(
+        widgetToRestoreAndUpdate.id,
         workspaceId,
-      });
+        widgetToRestoreAndUpdate,
+        transactionManager,
+      );
     }
 
     for (const widgetToCreate of entitiesToCreate) {
-      await this.pageLayoutWidgetService.createOne({
-        createPageLayoutWidgetInput:
-          widgetToCreate as CreatePageLayoutWidgetInput,
+      await this.pageLayoutWidgetService.create(
+        widgetToCreate as CreatePageLayoutWidgetInput,
         workspaceId,
-      });
+        transactionManager,
+      );
     }
   }
 }
