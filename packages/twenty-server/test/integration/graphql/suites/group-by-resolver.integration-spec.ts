@@ -406,8 +406,6 @@ describe('group-by resolver (integration)', () => {
           }),
         );
 
-        console.log(JSON.stringify(response));
-
         const groups = response.body.data.peopleGroupBy;
 
         expect(groups).toBeDefined();
