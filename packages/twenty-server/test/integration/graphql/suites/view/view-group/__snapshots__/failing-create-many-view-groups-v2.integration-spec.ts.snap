@@ -23,8 +23,8 @@ exports[`View Group Resolver - Failing Create Many Operations - v2 should accumu
           "errors": [
             {
               "code": "INVALID_VIEW_DATA",
-              "message": "Field value is required",
-              "userFriendlyMessage": "Field value is required",
+              "message": "Field value is required.",
+              "userFriendlyMessage": "Field value is required.",
             },
           ],
           "flatEntityMinimalInformation": {

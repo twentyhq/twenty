@@ -6,13 +6,14 @@ import {
 
 import { type CreateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 
-export const createOneSelectFieldMetadata = async ({
+export const createOneSelectFieldMetadataForIntegrationTests = async ({
   input,
   expectToFail = false,
 }: {
   input: Partial<CreateOneFieldMetadataInput> & {
     objectMetadataId: string;
     options?: FieldMetadataComplexOption[];
+    name?: string;
   };
   expectToFail?: boolean;
 }) => {

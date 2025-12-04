@@ -1,5 +1,5 @@
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
-import { createOneSelectFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-select-field-metadata.util';
+import { createOneSelectFieldMetadataForIntegrationTests } from 'test/integration/metadata/suites/field-metadata/utils/create-one-select-field-metadata-for-integration-tests.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -117,16 +117,27 @@ describe('kanban-aggregate-field-deactivation-nullifies-kanban-properties', () =
       gqlFields: 'id',
     });
 
-    const { selectFieldMetadataId } = await createOneSelectFieldMetadata({
-      input: {
-        objectMetadataId,
-        options: [
-          { label: 'Option 1', value: 'OPTION_1', color: 'blue', position: 0 },
-          { label: 'Option 2', value: 'OPTION_2', color: 'red', position: 1 },
-          { label: 'Option 3', value: 'OPTION_3', color: 'green', position: 2 },
-        ],
-      },
-    });
+    const { selectFieldMetadataId } =
+      await createOneSelectFieldMetadataForIntegrationTests({
+        input: {
+          objectMetadataId,
+          options: [
+            {
+              label: 'Option 1',
+              value: 'OPTION_1',
+              color: 'blue',
+              position: 0,
+            },
+            { label: 'Option 2', value: 'OPTION_2', color: 'red', position: 1 },
+            {
+              label: 'Option 3',
+              value: 'OPTION_3',
+              color: 'green',
+              position: 2,
+            },
+          ],
+        },
+      });
 
     const {
       data: { createCoreView: viewWithAggregate },

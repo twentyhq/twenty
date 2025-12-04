@@ -1,3 +1,4 @@
+import { createOneSelectFieldMetadataForIntegrationTests } from 'test/integration/metadata/suites/field-metadata/utils/create-one-select-field-metadata-for-integration-tests.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
@@ -17,6 +18,7 @@ import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum'
 
 describe('View REST API', () => {
   let testObjectMetadataId: string;
+  let testSelectFieldMetadataId: string;
   let testViewId: string | undefined;
 
   beforeAll(async () => {
@@ -35,6 +37,15 @@ describe('View REST API', () => {
     });
 
     testObjectMetadataId = objectMetadataId;
+
+    const { selectFieldMetadataId } =
+      await createOneSelectFieldMetadataForIntegrationTests({
+        input: {
+          objectMetadataId,
+        },
+      });
+
+    testSelectFieldMetadataId = selectFieldMetadataId;
   });
 
   afterAll(async () => {
@@ -129,6 +140,7 @@ describe('View REST API', () => {
         isCompact: true,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
         objectMetadataId: testObjectMetadataId,
+        mainGroupByFieldMetadataId: testSelectFieldMetadataId,
       });
 
       testViewId = kanbanView.id;
@@ -206,6 +218,7 @@ describe('View REST API', () => {
         type: ViewType.KANBAN,
         isCompact: true,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
+        mainGroupByFieldMetadataId: testSelectFieldMetadataId,
       };
 
       const response = await makeRestAPIRequest({

@@ -1,3 +1,4 @@
+import { createOneSelectFieldMetadataForIntegrationTests } from 'test/integration/metadata/suites/field-metadata/utils/create-one-select-field-metadata-for-integration-tests.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
@@ -9,6 +10,7 @@ import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum'
 
 describe('Create core view', () => {
   let testObjectMetadataId: string;
+  let testSelectFieldMetadataId: string;
 
   beforeAll(async () => {
     const {
@@ -27,6 +29,15 @@ describe('Create core view', () => {
     });
 
     testObjectMetadataId = objectMetadataId;
+
+    const { selectFieldMetadataId } =
+      await createOneSelectFieldMetadataForIntegrationTests({
+        input: {
+          objectMetadataId,
+        },
+      });
+
+    testSelectFieldMetadataId = selectFieldMetadataId;
   });
 
   afterAll(async () => {
@@ -52,6 +63,7 @@ describe('Create core view', () => {
         objectMetadataId: testObjectMetadataId,
         icon: 'IconDeal',
         type: ViewType.KANBAN,
+        mainGroupByFieldMetadataId: testSelectFieldMetadataId,
         position: 1,
         isCompact: true,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
@@ -64,6 +76,7 @@ describe('Create core view', () => {
       name: 'Kanban View',
       objectMetadataId: testObjectMetadataId,
       type: ViewType.KANBAN,
+      mainGroupByFieldMetadataId: testSelectFieldMetadataId,
       key: null,
       icon: 'IconDeal',
       position: 1,

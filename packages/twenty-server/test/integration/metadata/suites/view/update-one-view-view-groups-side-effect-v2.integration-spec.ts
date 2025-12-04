@@ -38,80 +38,95 @@ const testFieldMetadataTypes: EnumFieldMetadataType[] = [
 describe('update-one-view-view-groups-side-effect-v2', () => {
   let objectMetadataIdToDelete: string;
 
-  const createObjectWithTwoSelectFieldsAndKanbanView = async (
-    initialOptions: Option[],
-  ) => {
-    const singular = 'viewSideEffect';
-    const plural = 'viewSideEffects';
+  const createObjectWithTwoSelectFieldsAndKanbanViewAndGroupedTableView =
+    async (initialOptions: Option[]) => {
+      const singular = 'viewSideEffect';
+      const plural = 'viewSideEffects';
 
-    const {
-      data: { createOneObject },
-    } = await createOneObjectMetadata({
-      expectToFail: false,
-      input: getMockCreateObjectInput({
-        labelSingular: singular,
-        labelPlural: plural,
-        nameSingular: singular,
-        namePlural: plural,
-        isLabelSyncedWithName: false,
-      }),
-    });
+      const {
+        data: { createOneObject },
+      } = await createOneObjectMetadata({
+        expectToFail: false,
+        input: getMockCreateObjectInput({
+          labelSingular: singular,
+          labelPlural: plural,
+          nameSingular: singular,
+          namePlural: plural,
+          isLabelSyncedWithName: false,
+        }),
+      });
 
-    objectMetadataIdToDelete = createOneObject.id;
+      objectMetadataIdToDelete = createOneObject.id;
 
-    const {
-      data: { createOneField: createOneStatusField },
-    } = await createOneFieldMetadata<typeof FieldMetadataType.SELECT>({
-      expectToFail: false,
-      input: {
+      const {
+        data: { createOneField: createOneStatusField },
+      } = await createOneFieldMetadata<typeof FieldMetadataType.SELECT>({
+        expectToFail: false,
+        input: {
+          objectMetadataId: createOneObject.id,
+          type: FieldMetadataType.SELECT,
+          name: 'statusField',
+          label: 'Status Field',
+          isLabelSyncedWithName: true,
+          options: initialOptions,
+        },
+        gqlFields: 'id options',
+      });
+
+      const {
+        data: { createOneField: createOnePhaseField },
+      } = await createOneFieldMetadata<typeof FieldMetadataType.SELECT>({
+        expectToFail: false,
+        input: {
+          objectMetadataId: createOneObject.id,
+          type: FieldMetadataType.SELECT,
+          name: 'phaseField',
+          label: 'Phase Field',
+          isLabelSyncedWithName: true,
+          options: generateOptions(2),
+        },
+        gqlFields: 'id options',
+      });
+
+      const {
+        data: { createCoreView: view },
+      } = await createOneCoreView({
+        input: {
+          id: faker.string.uuid(),
+          icon: 'IconKanban',
+          name: 'Kanban View',
+          objectMetadataId: createOneObject.id,
+          type: ViewType.KANBAN,
+          mainGroupByFieldMetadataId: createOneStatusField.id,
+        },
+        expectToFail: false,
+        gqlFields: 'id',
+      });
+
+      const {
+        data: { createCoreView: groupedTableView },
+      } = await createOneCoreView({
+        input: {
+          id: faker.string.uuid(),
+          icon: 'IconKanban',
+          name: 'Grouped Table View',
+          objectMetadataId: createOneObject.id,
+          type: ViewType.TABLE,
+          mainGroupByFieldMetadataId: createOneStatusField.id,
+        },
+        expectToFail: false,
+        gqlFields: 'id',
+      });
+
+      return {
         objectMetadataId: createOneObject.id,
-        type: FieldMetadataType.SELECT,
-        name: 'statusField',
-        label: 'Status Field',
-        isLabelSyncedWithName: true,
-        options: initialOptions,
-      },
-      gqlFields: 'id options',
-    });
-
-    const {
-      data: { createOneField: createOnePhaseField },
-    } = await createOneFieldMetadata<typeof FieldMetadataType.SELECT>({
-      expectToFail: false,
-      input: {
-        objectMetadataId: createOneObject.id,
-        type: FieldMetadataType.SELECT,
-        name: 'phaseField',
-        label: 'Phase Field',
-        isLabelSyncedWithName: true,
-        options: generateOptions(2),
-      },
-      gqlFields: 'id options',
-    });
-
-    const {
-      data: { createCoreView: view },
-    } = await createOneCoreView({
-      input: {
-        id: faker.string.uuid(),
-        icon: 'IconKanban',
-        name: 'Kanban View',
-        objectMetadataId: createOneObject.id,
-        type: ViewType.KANBAN,
-        mainGroupByFieldMetadataId: createOneStatusField.id,
-      },
-      expectToFail: false,
-      gqlFields: 'id',
-    });
-
-    return {
-      objectMetadataId: createOneObject.id,
-      statusFieldMetadataId: createOneStatusField.id,
-      phaseFieldMetadataId: createOnePhaseField.id,
-      statusFieldOptions: createOneStatusField.options ?? [],
-      viewId: view.id,
+        statusFieldMetadataId: createOneStatusField.id,
+        phaseFieldMetadataId: createOnePhaseField.id,
+        statusFieldOptions: createOneStatusField.options ?? [],
+        viewId: view.id,
+        groupedTableViewId: groupedTableView.id,
+      };
     };
-  };
 
   afterEach(async () => {
     await updateOneObjectMetadata({
@@ -133,27 +148,25 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
     it('should delete all view groups when mainGroupByFieldMetadataId is removed', async () => {
       const initialOptions = generateOptions(3);
 
-      const { statusFieldMetadataId, viewId } =
-        await createObjectWithTwoSelectFieldsAndKanbanView(initialOptions);
+      const { groupedTableViewId } =
+        await createObjectWithTwoSelectFieldsAndKanbanViewAndGroupedTableView(
+          initialOptions,
+        );
 
       const {
         data: { getCoreViewGroups: initialViewGroups },
       } = await findCoreViewGroups({
-        viewId,
-        gqlFields: 'id fieldValue fieldMetadataId',
+        viewId: groupedTableViewId,
+        gqlFields: 'id fieldValue',
         expectToFail: false,
       });
 
-      expect(
-        initialViewGroups.filter(
-          (viewGroup) => viewGroup.fieldMetadataId === statusFieldMetadataId,
-        ).length,
-      ).toBe(3);
+      expect(initialViewGroups.length).toBe(3);
 
       await updateOneCoreView({
-        viewId,
+        viewId: groupedTableViewId,
         input: {
-          id: viewId,
+          id: groupedTableViewId,
           mainGroupByFieldMetadataId: undefined,
         },
         gqlFields: 'id mainGroupByFieldMetadataId',
@@ -163,16 +176,12 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
       const {
         data: { getCoreViewGroups: updatedViewGroups },
       } = await findCoreViewGroups({
-        viewId,
-        gqlFields: 'id fieldValue fieldMetadataId',
+        viewId: groupedTableViewId,
+        gqlFields: 'id fieldValue',
         expectToFail: false,
       });
 
-      expect(
-        updatedViewGroups.filter(
-          (viewGroup) => viewGroup.fieldMetadataId === statusFieldMetadataId,
-        ).length,
-      ).toBe(0);
+      expect(updatedViewGroups.length).toBe(0);
     });
 
     it('should delete and recreate view groups when mainGroupByFieldMetadataId changes', async () => {
@@ -183,13 +192,16 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
         statusFieldOptions,
         phaseFieldMetadataId,
         viewId,
-      } = await createObjectWithTwoSelectFieldsAndKanbanView(initialOptions);
+      } =
+        await createObjectWithTwoSelectFieldsAndKanbanViewAndGroupedTableView(
+          initialOptions,
+        );
 
       const {
         data: { getCoreViewGroups: initialViewGroups },
       } = await findCoreViewGroups({
         viewId,
-        gqlFields: 'id fieldValue fieldMetadataId',
+        gqlFields: 'id fieldValue',
         expectToFail: false,
       });
 
@@ -213,7 +225,7 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
         data: { getCoreViewGroups: updatedViewGroups },
       } = await findCoreViewGroups({
         viewId,
-        gqlFields: 'id fieldValue fieldMetadataId',
+        gqlFields: 'id fieldValue',
         expectToFail: false,
       });
 
@@ -242,13 +254,15 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
       const initialOptions = generateOptions(3);
 
       const { statusFieldMetadataId, statusFieldOptions, viewId } =
-        await createObjectWithTwoSelectFieldsAndKanbanView(initialOptions);
+        await createObjectWithTwoSelectFieldsAndKanbanViewAndGroupedTableView(
+          initialOptions,
+        );
 
       const {
         data: { getCoreViewGroups: initialViewGroups },
       } = await findCoreViewGroups({
         viewId,
-        gqlFields: 'id fieldValue fieldMetadataId',
+        gqlFields: 'id fieldValue',
         expectToFail: false,
       });
 
@@ -272,7 +286,7 @@ describe('update-one-view-view-groups-side-effect-v2', () => {
         data: { getCoreViewGroups: updatedViewGroups },
       } = await findCoreViewGroups({
         viewId,
-        gqlFields: 'id fieldValue fieldMetadataId',
+        gqlFields: 'id fieldValue',
         expectToFail: false,
       });
 
