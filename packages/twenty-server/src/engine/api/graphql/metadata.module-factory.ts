@@ -7,9 +7,9 @@ import { useCachedMetadata } from 'src/engine/api/graphql/graphql-config/hooks/u
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { useComputeComplexity } from 'src/engine/core-modules/graphql/hooks/use-compute-complexity.hook';
 import { useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers } from 'src/engine/core-modules/graphql/hooks/use-disable-introspection-and-suggestions-for-unauthenticated-users.hook';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
+import { useValidateGraphqlQueryComplexity } from 'src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook';
 import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -46,7 +46,12 @@ export const metadataModuleFactory = async (
       useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers(
         twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION,
       ),
-      useComputeComplexity(twentyConfigService.get('GRAPHQL_MAX_COMPLEXITY')),
+      useValidateGraphqlQueryComplexity({
+        maximumAllowedFields: twentyConfigService.get('GRAPHQL_MAX_FIELDS'),
+        maximumAllowedRootResolvers: 10,
+        maximumAllowedNestedFields: 7,
+        checkDuplicateRootResolvers: true,
+      }),
     ],
     path: '/metadata',
     context: () => ({
