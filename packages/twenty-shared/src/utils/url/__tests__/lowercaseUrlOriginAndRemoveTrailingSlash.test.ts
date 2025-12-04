@@ -53,6 +53,33 @@ describe('lowercaseUrlOriginAndRemoveTrailingSlash', () => {
       input: 'https://example.com/path?name=José',
       expected: 'https://example.com/path?name=José',
     },
+    {
+      title:
+        'should handle malformed percent-encoding gracefully (incomplete sequence)',
+      input: 'https://example.com/test%E0%A4%A',
+      expected: 'https://example.com/test%E0%A4%A',
+    },
+    {
+      title:
+        'should preserve double-encoded URLs (encoded percent signs stay encoded once)',
+      input: 'https://example.com/test%2520name',
+      expected: 'https://example.com/test%20name',
+    },
+    {
+      title: 'should preserve special characters in hash fragments',
+      input: 'https://example.com/path#frédéric',
+      expected: 'https://example.com/path#fr%C3%A9d%C3%A9ric',
+    },
+    {
+      title: 'should keep encoded characters in hash fragments as-is',
+      input: 'https://example.com/path#fr%C3%A9d%C3%A9ric',
+      expected: 'https://example.com/path#fr%C3%A9d%C3%A9ric',
+    },
+    {
+      title: 'should handle mixed encoded and non-encoded in same URL',
+      input: 'https://example.com/path%2Fwith%2Fslashes?query=hello%20world',
+      expected: 'https://example.com/path/with/slashes?query=hello world',
+    },
   ])('$title', ({ input, expected }) => {
     expect(lowercaseUrlOriginAndRemoveTrailingSlash(input)).toBe(expected);
   });
