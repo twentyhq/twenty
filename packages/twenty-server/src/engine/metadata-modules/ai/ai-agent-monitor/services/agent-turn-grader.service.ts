@@ -136,7 +136,9 @@ Respond ONLY with valid JSON in this exact format:
     context += `- System Prompt/Instructions:\n${promptPreview}\n`;
 
     context +=
-      '\n' + this.formatToolsForEvaluation(snapshot.availableTools) + '\n';
+      '\n' +
+      this.formatToolsForEvaluation(snapshot.availableTools as ToolSet) +
+      '\n';
 
     return context;
   }
