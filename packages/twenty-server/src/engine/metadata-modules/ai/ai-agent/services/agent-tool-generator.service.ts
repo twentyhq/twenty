@@ -70,6 +70,16 @@ export class AgentToolGeneratorService {
         );
 
         tools = { ...tools, ...workflowTools };
+
+        // Generate per-object step configurator tools (configure_create_company_step, etc.)
+        const recordStepTools =
+          await this.workflowToolService.generateRecordStepConfiguratorTools(
+            workspaceId,
+            { intersectionOf: roleIds },
+            toolHints,
+          );
+
+        tools = { ...tools, ...recordStepTools };
       }
 
       const databaseTools = await this.toolService.listTools(
