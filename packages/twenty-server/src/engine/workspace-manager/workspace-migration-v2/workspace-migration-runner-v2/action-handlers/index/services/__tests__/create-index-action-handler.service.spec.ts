@@ -1,4 +1,4 @@
-import { CreateIndexActionHandlerService } from '../create-index-action-handler.service';
+import { CreateIndexActionHandlerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/index/services/create-index-action-handler.service';
 
 describe('CreateIndexActionHandlerService', () => {
   let service: CreateIndexActionHandlerService;

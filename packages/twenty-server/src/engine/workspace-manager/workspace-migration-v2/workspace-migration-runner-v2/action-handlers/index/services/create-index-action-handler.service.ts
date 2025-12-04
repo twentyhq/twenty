@@ -13,6 +13,7 @@ import {
   WorkspaceQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import {
   FlatEntityMapsException,
@@ -210,7 +211,8 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     }
 
     const nonEmptyConditions = columns.map(
-      (column) => `"${column}" IS NOT NULL AND "${column}" <> ''`,
+      (column) =>
+        `"${removeSqlDDLInjection(column)}" IS NOT NULL AND "${removeSqlDDLInjection(column)}" <> ''`,
     );
 
     return nonEmptyConditions.join(' AND ');
