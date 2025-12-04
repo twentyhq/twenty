@@ -402,8 +402,11 @@ describe('group-by resolver (integration)', () => {
               }
             `,
             filter: filter2025,
+            limit: 10,
           }),
         );
+
+        console.log(JSON.stringify(response));
 
         const groups = response.body.data.peopleGroupBy;
 
@@ -481,6 +484,7 @@ describe('group-by resolver (integration)', () => {
               }
             `,
             filter: filter2025,
+            limit: 10,
           }),
         );
 
@@ -564,6 +568,7 @@ describe('group-by resolver (integration)', () => {
               }
             `,
             filter: filter2025,
+            limit: 10,
           }),
         );
 
@@ -1146,6 +1151,7 @@ describe('group-by resolver (integration)', () => {
               },
             ],
             filter: filter2025,
+            limit: 10,
           }),
         );
 

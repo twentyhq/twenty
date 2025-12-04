@@ -301,8 +301,13 @@ describe('basic group-by with records', () => {
         query OpportunitiesGroupBy(
           $groupBy: [OpportunityGroupByInput!]!
           $filter: OpportunityFilterInput
+          $limit: Int
         ) {
-          opportunitiesGroupBy(groupBy: $groupBy, filter: $filter) {
+          opportunitiesGroupBy(
+            groupBy: $groupBy
+            filter: $filter
+            limit: $limit
+          ) {
             minCloseDate
             groupByDimensionValues
             sumAmountAmountMicros
@@ -340,6 +345,7 @@ describe('basic group-by with records', () => {
             },
           ],
         },
+        limit: 2,
       },
     });
 
@@ -475,11 +481,13 @@ describe('basic group-by with records', () => {
             $groupBy: [OpportunityGroupByInput!]!
             $filter: OpportunityFilterInput
             $orderByForRecords: [OpportunityOrderByInput!]
+            $limit: Int
           ) {
             opportunitiesGroupBy(
               groupBy: $groupBy
               filter: $filter
               orderByForRecords: $orderByForRecords
+              limit: $limit
             ) {
               groupByDimensionValues
               __typename
@@ -509,6 +517,7 @@ describe('basic group-by with records', () => {
             },
           ],
           filter: FILTER_2020,
+          limit: 20,
         },
       };
     };

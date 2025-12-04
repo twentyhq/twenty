@@ -127,8 +127,6 @@ export class GraphqlQuerySelectedFieldsParser {
           isFromOneToManyRelation,
         );
 
-        accumulator.relationFieldsCount++;
-
         continue;
       }
 
@@ -173,8 +171,6 @@ export class GraphqlQuerySelectedFieldsParser {
           accumulator,
           isFromOneToManyRelation,
         );
-
-        accumulator.relationFieldsCount++;
 
         continue;
       }

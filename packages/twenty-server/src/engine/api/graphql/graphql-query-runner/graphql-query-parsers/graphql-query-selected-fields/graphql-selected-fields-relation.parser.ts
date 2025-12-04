@@ -72,5 +72,12 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     };
     accumulator.relations[fieldKey] = relationAccumulator.relations;
     accumulator.aggregate[fieldKey] = relationAccumulator.aggregate;
+    accumulator.relationFieldsCount =
+      accumulator.relationFieldsCount +
+      relationAccumulator.relationFieldsCount +
+      1;
+    accumulator.hasAtLeastTwoNestedOneToManyRelations =
+      accumulator.hasAtLeastTwoNestedOneToManyRelations ||
+      relationAccumulator.hasAtLeastTwoNestedOneToManyRelations;
   }
 }
