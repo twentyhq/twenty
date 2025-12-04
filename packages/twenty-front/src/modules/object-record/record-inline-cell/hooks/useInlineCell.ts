@@ -8,6 +8,9 @@ import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/c
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 
 export const useInlineCell = (
@@ -27,11 +30,22 @@ export const useInlineCell = (
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
+
   const initFieldInputDraftValue = useInitDraftValue();
 
   const closeInlineCell = () => {
     onCloseEditMode?.();
 
+    const focusId = getDropdownFocusIdForRecordField(
+      recordId,
+      fieldDefinition.fieldMetadataId,
+      'inline-cell',
+    );
+
+    removeFocusItemFromFocusStackById({ focusId });
     goBackToPreviousDropdownFocusId();
   };
 
@@ -43,13 +57,24 @@ export const useInlineCell = (
       fieldComponentInstanceId: recordFieldComponentInstanceId,
     });
 
-    setActiveDropdownFocusIdAndMemorizePrevious(
-      getDropdownFocusIdForRecordField(
-        recordId,
-        fieldDefinition.fieldMetadataId,
-        'inline-cell',
-      ),
+    const focusId = getDropdownFocusIdForRecordField(
+      recordId,
+      fieldDefinition.fieldMetadataId,
+      'inline-cell',
     );
+
+    pushFocusItemToFocusStack({
+      focusId,
+      component: {
+        type: FocusComponentType.OPENED_FIELD_INPUT,
+        instanceId: focusId,
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
+    });
+
+    setActiveDropdownFocusIdAndMemorizePrevious(focusId);
   };
 
   return {
