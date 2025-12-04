@@ -47,7 +47,7 @@ export class CreatePageLayoutTabActionHandlerService extends WorkspaceMigrationR
         PageLayoutTabEntity,
       );
 
-    await pageLayoutTabRepository.save({
+    await pageLayoutTabRepository.insert({
       ...flatEntity,
       workspaceId,
     });
@@ -59,4 +59,3 @@ export class CreatePageLayoutTabActionHandlerService extends WorkspaceMigrationR
     return;
   }
 }
-
