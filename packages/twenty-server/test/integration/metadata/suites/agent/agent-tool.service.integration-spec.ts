@@ -1,3 +1,5 @@
+import { type ToolSet } from 'ai';
+
 import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
 
 import {
@@ -14,7 +16,7 @@ const createMockTools = (
     canUpdate?: boolean;
     canDelete?: boolean;
   },
-) => {
+): ToolSet => {
   const tools: Record<string, { description: string; execute: jest.Mock }> = {};
 
   if (options.canRead) {
@@ -50,7 +52,7 @@ const createMockTools = (
     };
   }
 
-  return tools;
+  return tools as unknown as ToolSet;
 };
 
 describe('AgentToolGeneratorService Integration', () => {
