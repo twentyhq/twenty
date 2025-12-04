@@ -17,6 +17,11 @@ export class AppLogsCommand {
   }): Promise<void> {
     try {
       const { manifest } = await loadManifest(appPath);
+      this.logWatchInfo({
+        appName: manifest.application.displayName,
+        functionUniversalIdentifier,
+        functionName,
+      });
       await this.apiService.subscribeToLogs({
         applicationUniversalIdentifier:
           manifest.application.universalIdentifier,
@@ -30,5 +35,28 @@ export class AppLogsCommand {
       );
       process.exit(1);
     }
+  }
+
+  private logWatchInfo({
+    appName,
+    functionUniversalIdentifier,
+    functionName,
+  }: {
+    appName?: string;
+    functionUniversalIdentifier?: string;
+    functionName?: string;
+  }): void {
+    const appPath = appName ?? 'Twenty Application';
+    const functionIdentifier =
+      functionUniversalIdentifier || functionName
+        ? `function "${functionUniversalIdentifier || functionName}"`
+        : 'functions';
+    if (functionUniversalIdentifier || functionName) {
+    }
+    console.log(
+      chalk.blue(`🚀 Watching ${appPath} ${functionIdentifier} logs:`),
+    );
+
+    console.log('');
   }
 }
