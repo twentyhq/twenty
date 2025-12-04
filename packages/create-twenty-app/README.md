@@ -42,8 +42,14 @@ yarn dev
 # Or run a one‑time sync
 yarn sync
 
+# Watch your application's functions logs
+yarn logs
+
 # Uninstall the application from the current workspace
 yarn uninstall
+
+# Display commands' help
+yarn help
 ```
 
 ## What gets scaffolded
