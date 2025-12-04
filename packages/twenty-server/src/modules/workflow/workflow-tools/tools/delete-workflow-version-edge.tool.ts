@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
@@ -9,6 +10,15 @@ export const deleteWorkflowVersionEdgeSchema = z.object({
   workflowVersionId: z.string().describe('The ID of the workflow version'),
   source: z.string().describe('The ID of the source step'),
   target: z.string().describe('The ID of the target step'),
+  sourceConnectionOptions: z
+    .object({
+      connectedStepType: z.literal(WorkflowActionType.ITERATOR),
+      settings: z.object({
+        isConnectedToLoop: z.boolean(),
+      }),
+    })
+    .optional()
+    .describe('Optional connection options for iterator steps'),
 });
 
 export type DeleteWorkflowVersionEdgeInput = z.infer<
@@ -29,6 +39,7 @@ export const createDeleteWorkflowVersionEdgeTool = (
         target: parameters.target,
         workflowVersionId: parameters.workflowVersionId,
         workspaceId: context.workspaceId,
+        sourceConnectionOptions: parameters.sourceConnectionOptions,
       });
     } catch (error) {
       return {
