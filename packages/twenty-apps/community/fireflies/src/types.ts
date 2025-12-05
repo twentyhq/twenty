@@ -49,6 +49,15 @@ export type SummaryFetchConfig = {
   maxPolls: number;
 };
 
+export const FIREFLIES_PLANS = {
+  FREE: 'free',
+  PRO: 'pro',
+  BUSINESS: 'business',
+  ENTERPRISE: 'enterprise',
+} as const;
+
+export type FirefliesPlan = typeof FIREFLIES_PLANS[keyof typeof FIREFLIES_PLANS];
+
 export type WebhookConfig = {
   secret: string;
   apiUrl: string;
@@ -109,7 +118,7 @@ export type Contact = {
 
 export type MeetingCreateInput = {
   name: string;
-  noteId?: string | null; // This is the relation field
+  noteId?: string | null;
   meetingDate: string;
   duration: number;
   meetingType?: string | null;

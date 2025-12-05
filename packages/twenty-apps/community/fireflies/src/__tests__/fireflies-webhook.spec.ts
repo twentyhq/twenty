@@ -4,7 +4,7 @@ import {
   main,
   type FirefliesMeetingData,
   type FirefliesWebhookPayload,
-} from '../actions/receive-fireflies-notes';
+} from '../';
 
 // Helper to generate HMAC signature
 const generateHMACSignature = (body: string, secret: string): string => {
@@ -39,10 +39,12 @@ const mockFirefliesApiResponseWithSummary = {
     meeting_type: 'Sales Call',
     bullet_gist: '• Demonstrated core product features\n• Discussed enterprise pricing\n• Addressed integration questions',
   },
-  sentiments: {  // Note: Raw API has sentiments at top level, not in analytics
-    positive_pct: 75,
-    negative_pct: 10,
-    neutral_pct: 15,
+  analytics: {
+    sentiments: {
+      positive_pct: 75,
+      negative_pct: 10,
+      neutral_pct: 15,
+    },
   },
   transcript_url: 'https://app.fireflies.ai/transcript/test-001',
   video_url: 'https://app.fireflies.ai/recording/test-001',
@@ -565,7 +567,7 @@ describe('Fireflies Webhook Integration v2', () => {
 
       const createNoteMock = jest.fn();
 
-      global.fetch = jest.fn().mockImplementation((url: string, options?: any) => {
+      global.fetch = jest.fn().mockImplementation((url: string, options?: RequestInit) => {
         if (url === 'https://api.fireflies.ai/graphql') {
           return Promise.resolve({
             ok: true,
@@ -576,9 +578,9 @@ describe('Fireflies Webhook Integration v2', () => {
         }
 
         // Twenty API
-        const body = options?.body ? JSON.parse(options.body) : {};
-        if (body.query?.includes('createNote')) {
-          createNoteMock(body.variables);
+        const requestBody = options?.body ? JSON.parse(options.body as string) : {};
+        if (requestBody.query?.includes('createNote')) {
+          createNoteMock(requestBody.variables);
           return Promise.resolve({
             ok: true,
             json: () => Promise.resolve({
@@ -624,7 +626,7 @@ describe('Fireflies Webhook Integration v2', () => {
 
       const createMeetingMock = jest.fn();
 
-      global.fetch = jest.fn().mockImplementation((url: string, options?: any) => {
+      global.fetch = jest.fn().mockImplementation((url: string, options?: RequestInit) => {
         if (url === 'https://api.fireflies.ai/graphql') {
           return Promise.resolve({
             ok: true,
@@ -635,9 +637,9 @@ describe('Fireflies Webhook Integration v2', () => {
         }
 
         // Twenty API
-        const body = options?.body ? JSON.parse(options.body) : {};
-        if (body.query?.includes('createMeeting')) {
-          createMeetingMock(body.variables);
+        const requestBody = options?.body ? JSON.parse(options.body as string) : {};
+        if (requestBody.query?.includes('createMeeting')) {
+          createMeetingMock(requestBody.variables);
           return Promise.resolve({
             ok: true,
             json: () => Promise.resolve({
@@ -645,7 +647,7 @@ describe('Fireflies Webhook Integration v2', () => {
             }),
           });
         }
-        if (body.query?.includes('createNote')) {
+        if (requestBody.query?.includes('createNote')) {
           return Promise.resolve({
             ok: true,
             json: () => Promise.resolve({
@@ -694,7 +696,7 @@ describe('Fireflies Webhook Integration v2', () => {
     });
 
     it('should handle missing payload gracefully', async () => {
-      const result = await main(null as any, {});
+      const result = await main(null as unknown, {});
 
       expect(result.success).toBe(false);
       expect(result.errors).toBeDefined();
@@ -703,10 +705,10 @@ describe('Fireflies Webhook Integration v2', () => {
     it('should handle invalid payload structure', async () => {
       const invalidPayload = { invalid: 'data' };
 
-      const result = await main(invalidPayload as any, {});
+      const result = await main(invalidPayload as unknown, {});
 
-    expect(result.success).toBe(false);
-    expect(result.errors).toBeDefined();
+      expect(result.success).toBe(false);
+      expect(result.errors).toBeDefined();
   });
 });
 });
