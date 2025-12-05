@@ -57,7 +57,7 @@ export const generateCombinedFindManyRecordsQueryVariables = ({
         }
       } else if (hasLimit) {
         limit = {
-          [`first${capitalizedName}`]: variables.limit,
+          [`limit${capitalizedName}`]: variables.limit,
         };
       }
 
