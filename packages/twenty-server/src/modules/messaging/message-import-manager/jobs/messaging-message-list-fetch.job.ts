@@ -81,7 +81,7 @@ export class MessagingMessageListFetchJob {
           messageChannel.throttleFailureCount,
         )
       ) {
-        await this.messageChannelSyncStatusService.scheduleMessageListFetch(
+        await this.messageChannelSyncStatusService.markAsMessagesListFetchPending(
           [messageChannel.id],
           workspaceId,
           true,
