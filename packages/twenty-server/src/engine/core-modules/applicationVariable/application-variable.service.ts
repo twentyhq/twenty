@@ -2,9 +2,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { In, Not, Repository } from 'typeorm';
+import { ApplicationVariables } from 'twenty-shared/application';
 
 import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
-import { AppManifest } from 'src/engine/core-modules/application/types/application.types';
 
 export class ApplicationVariableEntityService {
   constructor(
@@ -31,7 +31,7 @@ export class ApplicationVariableEntityService {
     applicationVariables,
     applicationId,
   }: {
-    applicationVariables?: AppManifest['application']['applicationVariables'];
+    applicationVariables?: ApplicationVariables;
     applicationId: string;
   }) {
     if (!isDefined(applicationVariables)) {

@@ -1,5 +1,5 @@
 // IA Generated
-import { type Sources } from '@/serverless-functions/types/sources.type';
+
 import { flattenSources } from '@/serverless-functions/utils/flattenSources';
 
 describe('flattenSources', () => {
