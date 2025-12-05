@@ -138,10 +138,10 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Channel Type',
       icon: 'IconMessage',
       isNullable: false,
-      defaultValue: "'email'",
+      defaultValue: "'EMAIL'",
       options: [
-        { value: 'email', label: 'Email', position: 0, color: 'green' },
-        { value: 'sms', label: 'SMS', position: 1, color: 'blue' },
+        { value: 'EMAIL', label: 'Email', position: 0, color: 'green' },
+        { value: 'SMS', label: 'SMS', position: 1, color: 'blue' },
       ],
       createdAt,
     },
