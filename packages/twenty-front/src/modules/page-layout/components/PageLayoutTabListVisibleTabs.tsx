@@ -80,7 +80,9 @@ export const PageLayoutTabListVisibleTabs = ({
                 index={index}
                 isActive={tab.id === activeTabId}
                 disabled={tab.disabled ?? loading}
+                behaveAsLinks={behaveAsLinks}
                 onSelect={() => onSelectTab(tab.id)}
+                onChangeTab={onChangeTab}
               />
             ))}
             {provided.placeholder}

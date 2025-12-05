@@ -18,12 +18,12 @@ import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledTabsAndDashboardContainer = styled.div`
   display: flex;
@@ -124,7 +124,7 @@ export const PageLayoutRendererContent = () => {
           {(sortedTabs.length > 1 || isPageLayoutInEditMode) && (
             <StyledPageLayoutTabList
               tabs={sortedTabs}
-              behaveAsLinks={false}
+              behaveAsLinks={!isInRightDrawer && !isPageLayoutInEditMode}
               componentInstanceId={tabListInstanceId}
               onAddTab={handleAddTab}
               isReorderEnabled={isPageLayoutInEditMode}

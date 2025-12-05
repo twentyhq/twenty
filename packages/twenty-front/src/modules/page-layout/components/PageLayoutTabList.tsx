@@ -15,7 +15,6 @@ import { IconButton } from 'twenty-ui/input';
 import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
@@ -30,6 +29,7 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
+import { PageLayoutTabListFromUrlOptionalEffect } from '@/page-layout/components/PageLayoutTabListFromUrlOptionalEffect';
 import { PageLayoutTabListReorderableOverflowDropdown } from '@/page-layout/components/PageLayoutTabListReorderableOverflowDropdown';
 import { PageLayoutTabListStaticOverflowDropdown } from '@/page-layout/components/PageLayoutTabListStaticOverflowDropdown';
 import { PageLayoutTabListVisibleTabs } from '@/page-layout/components/PageLayoutTabListVisibleTabs';
@@ -74,11 +74,13 @@ type PageLayoutTabListProps = Omit<TabListProps, 'tabs'> & {
   isReorderEnabled: boolean;
   onAddTab?: () => void;
   onReorder?: (result: DropResult, provided: ResponderProvided) => boolean;
+  behaveAsLinks: boolean;
 };
 
 export const PageLayoutTabList = ({
   tabs,
   loading,
+  behaveAsLinks,
   isInRightDrawer,
   className,
   componentInstanceId,
@@ -87,8 +89,6 @@ export const PageLayoutTabList = ({
   isReorderEnabled,
   onReorder,
 }: PageLayoutTabListProps) => {
-  const behaveAsLinks = !isInRightDrawer;
-
   const { getIcon } = useIcons();
 
   const tabsWithIcons: SingleTabProps[] = tabs.map((tab) => ({
@@ -283,7 +283,7 @@ export const PageLayoutTabList = ({
     <TabListComponentInstanceContext.Provider
       value={{ instanceId: componentInstanceId }}
     >
-      <TabListFromUrlOptionalEffect
+      <PageLayoutTabListFromUrlOptionalEffect
         isInRightDrawer={!!isInRightDrawer}
         tabListIds={tabsWithIcons.map((tab) => tab.id)}
       />
