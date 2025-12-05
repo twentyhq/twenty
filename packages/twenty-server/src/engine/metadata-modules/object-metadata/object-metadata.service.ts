@@ -325,12 +325,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      flatFieldMetadataMaps,
     } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+          flatMapsKeys: ['flatObjectMetadataMaps'],
         },
       );
 
