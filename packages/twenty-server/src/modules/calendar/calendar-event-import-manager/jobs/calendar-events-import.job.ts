@@ -61,7 +61,7 @@ export class CalendarEventsImportJob {
         calendarChannel.throttleFailureCount,
       )
     ) {
-      await this.calendarChannelSyncStatusService.scheduleCalendarEventsImport(
+      await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
         [calendarChannel.id],
         workspaceId,
         true,

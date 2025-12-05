@@ -52,7 +52,7 @@ export class BlocklistReimportMessagesJob {
         },
       });
 
-      await this.messagingChannelSyncStatusService.resetAndScheduleMessageListFetch(
+      await this.messagingChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending(
         messageChannels.map((messageChannel) => messageChannel.id),
         workspaceId,
       );

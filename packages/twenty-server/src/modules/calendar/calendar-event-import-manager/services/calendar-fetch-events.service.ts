@@ -97,7 +97,7 @@ export class CalendarFetchEventsService {
           },
         );
 
-        await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
+        await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
           [calendarChannel.id],
           workspaceId,
         );
@@ -128,7 +128,7 @@ export class CalendarFetchEventsService {
           calendarEventIds,
         );
 
-        await this.calendarChannelSyncStatusService.scheduleCalendarEventsImport(
+        await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
           [calendarChannel.id],
           workspaceId,
         );

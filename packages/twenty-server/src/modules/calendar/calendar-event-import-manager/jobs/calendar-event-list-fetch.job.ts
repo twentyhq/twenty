@@ -62,7 +62,7 @@ export class CalendarEventListFetchJob {
         calendarChannel.throttleFailureCount,
       )
     ) {
-      await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
+      await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
         [calendarChannel.id],
         workspaceId,
         true,
