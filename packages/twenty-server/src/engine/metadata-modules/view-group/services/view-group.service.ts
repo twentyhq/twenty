@@ -75,16 +75,13 @@ export class ViewGroupService {
         },
       );
 
-    const {
-      flatViewMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewMaps',
-        ],
-      },
-    );
+    const { flatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewMaps'],
+        },
+      );
 
     const flatViewGroupsToCreate = createViewGroupInputs.map(
       (createViewGroupInput) => {
