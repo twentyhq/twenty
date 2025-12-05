@@ -5,11 +5,13 @@ import { CustomException } from 'src/utils/custom-exception';
 export enum PageLayoutExceptionCode {
   PAGE_LAYOUT_NOT_FOUND = 'PAGE_LAYOUT_NOT_FOUND',
   INVALID_PAGE_LAYOUT_DATA = 'INVALID_PAGE_LAYOUT_DATA',
+  TAB_NOT_FOUND_FOR_WIDGET_DUPLICATION = 'TAB_NOT_FOUND_FOR_WIDGET_DUPLICATION',
 }
 
 export enum PageLayoutExceptionMessageKey {
   PAGE_LAYOUT_NOT_FOUND = 'PAGE_LAYOUT_NOT_FOUND',
   NAME_REQUIRED = 'NAME_REQUIRED',
+  TAB_NOT_FOUND_FOR_WIDGET_DUPLICATION = 'TAB_NOT_FOUND_FOR_WIDGET_DUPLICATION',
 }
 
 export class PageLayoutException extends CustomException<PageLayoutExceptionCode> {}
@@ -23,6 +25,8 @@ export const generatePageLayoutExceptionMessage = (
       return `Page layout with ID "${value}" not found`;
     case PageLayoutExceptionMessageKey.NAME_REQUIRED:
       return 'Page layout name is required';
+    case PageLayoutExceptionMessageKey.TAB_NOT_FOUND_FOR_WIDGET_DUPLICATION:
+      return `Failed to duplicate widget: no matching tab found for original tab ID "${value}"`;
     default:
       assertUnreachable(key);
   }
