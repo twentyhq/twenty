@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { IsNull, type Repository } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-widget.entity';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
 import {
@@ -57,6 +58,15 @@ describe('PageLayoutWidgetService', () => {
             softDelete: jest.fn(),
             delete: jest.fn(),
             restore: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(WorkspaceEntity),
+          useValue: {
+            findOne: jest.fn(),
+            findOneOrFail: jest.fn().mockResolvedValue({
+              workspaceCustomApplicationId: 'application-id',
+            }),
           },
         },
         {
@@ -200,6 +210,8 @@ describe('PageLayoutWidgetService', () => {
       expect(pageLayoutWidgetRepository.insert).toHaveBeenCalledWith({
         ...validPageLayoutWidgetData,
         workspaceId,
+        applicationId: 'application-id',
+        universalIdentifier: expect.any(String),
       });
       expect(result).toEqual(mockPageLayoutWidget);
     });
