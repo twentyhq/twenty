@@ -3,6 +3,7 @@ import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { useRecoilValue } from 'recoil';
+import { useResetLocationHash } from 'twenty-ui/utilities';
 
 export const EditDashboardSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
@@ -14,8 +15,11 @@ export const EditDashboardSingleRecordAction = () => {
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
 
+  const { resetLocationHash } = useResetLocationHash();
+
   const handleClick = () => {
     setIsPageLayoutInEditMode(true);
+    resetLocationHash();
   };
 
   return <Action onClick={handleClick} />;

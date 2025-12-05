@@ -26,6 +26,7 @@ export { getOsShortcutSeparator } from './device/getOsShortcutSeparator';
 export { getUserDevice } from './device/getUserDevice';
 export { AutogrowWrapper } from './dimensions/components/AutogrowWrapper';
 export { useMouseDownNavigation } from './navigation/hooks/useMouseDownNavigation';
+export { useResetLocationHash } from './navigation/hooks/useResetLocationHash';
 export { isNavigationModifierPressed } from './navigation/isNavigationModifierPressed';
 export type { TriggerEventType } from './navigation/types/trigger-event.type';
 export { useIsMobile } from './responsive/hooks/useIsMobile';
