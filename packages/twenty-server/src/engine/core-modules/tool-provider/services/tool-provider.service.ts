@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 
@@ -8,6 +8,7 @@ import { FindRecordsService } from 'src/engine/core-modules/record-crud/services
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { createDirectRecordToolsFactory } from 'src/engine/core-modules/record-crud/tool-factory/direct-record-tools.factory';
 import { PerObjectToolGeneratorService } from 'src/engine/core-modules/tool-generator/services/per-object-tool-generator.service';
+import { WORKFLOW_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/workflow-tool-service.token';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { type ToolSpecification } from 'src/engine/core-modules/tool-provider/types/tool-specification.type';
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
@@ -22,7 +23,8 @@ import { FieldMetadataToolsFactory } from 'src/engine/metadata-modules/field-met
 import { ObjectMetadataToolsFactory } from 'src/engine/metadata-modules/object-metadata/tools/object-metadata-tools.factory';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
+// Type-only import to avoid circular dependency at file level
+import type { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 
 // Tool definition with optional permission flag
 type ActionTool = {
@@ -31,7 +33,6 @@ type ActionTool = {
 };
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class ToolProviderService {
   private readonly logger = new Logger(ToolProviderService.name);
   private readonly actionTools: Map<ToolType, ActionTool>;
@@ -47,8 +48,13 @@ export class ToolProviderService {
     private readonly updateRecordService: UpdateRecordService,
     private readonly deleteRecordService: DeleteRecordService,
     private readonly findRecordsService: FindRecordsService,
-    // Workflow tools
-    private readonly workflowToolService: WorkflowToolWorkspaceService,
+    // Workflow tools - optional to avoid circular dependency with WorkflowExecutorModule.
+    // When used from workflow context, this will be null (and workflow tools aren't
+    // needed anyway since agents in workflows shouldn't create other workflows).
+    // When used from chat context, WorkflowToolsModule provides this service.
+    @Optional()
+    @Inject(WORKFLOW_TOOL_SERVICE_TOKEN)
+    private readonly workflowToolService: WorkflowToolWorkspaceService | null,
     // Metadata tools
     private readonly objectMetadataToolsFactory: ObjectMetadataToolsFactory,
     private readonly fieldMetadataToolsFactory: FieldMetadataToolsFactory,
@@ -191,6 +197,12 @@ export class ToolProviderService {
   }
 
   private async getWorkflowTools(spec: ToolSpecification): Promise<ToolSet> {
+    // Workflow tools are optional - not available when called from workflow context
+    // to avoid circular dependencies (agents in workflows shouldn't create workflows)
+    if (!this.workflowToolService) {
+      return {};
+    }
+
     if (!spec.rolePermissionConfig) {
       return {};
     }

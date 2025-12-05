@@ -8,9 +8,16 @@ import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-mode
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
 import { ToolProviderService } from './services/tool-provider.service';
+
+// NOTE: This module does NOT import WorkflowToolsModule to avoid circular dependency:
+// ToolProviderModule -> WorkflowToolsModule -> WorkflowTriggerModule
+// -> WorkflowRunnerModule -> WorkflowExecutorModule -> AiAgentActionModule
+// -> AiAgentExecutionModule -> ToolProviderModule
+//
+// Instead, WorkflowToolWorkspaceService is an optional dependency that must be
+// provided by the importing module (e.g., AiChatModule imports WorkflowToolsModule).
 
 @Module({
   imports: [
@@ -23,7 +30,6 @@ import { ToolProviderService } from './services/tool-provider.service';
     ObjectMetadataModule,
     FieldMetadataModule,
     PermissionsModule,
-    WorkflowToolsModule,
   ],
   providers: [ToolProviderService],
   exports: [ToolProviderService],

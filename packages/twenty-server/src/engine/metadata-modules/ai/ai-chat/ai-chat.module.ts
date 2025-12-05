@@ -7,6 +7,7 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
+import { WORKFLOW_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/workflow-tool-service.token';
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
@@ -16,6 +17,8 @@ import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-bi
 import { AiChatRouterModule } from 'src/engine/metadata-modules/ai/ai-chat-router/ai-chat-router.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
+import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
 import { AgentChatController } from './controllers/agent-chat.controller';
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
@@ -45,8 +48,9 @@ import { ChatToolsProviderService } from './services/chat-tools-provider.service
     TokenModule,
     UserWorkspaceModule,
     AiBillingModule,
-    // Provides UnifiedToolProviderService for ChatToolsProviderService
     ToolProviderModule,
+    // WorkflowToolsModule provides workflow tools for chat context
+    WorkflowToolsModule,
   ],
   controllers: [AgentChatController],
   providers: [
@@ -56,6 +60,11 @@ import { ChatToolsProviderService } from './services/chat-tools-provider.service
     AgentChatRoutingService,
     AgentTitleGenerationService,
     ChatToolsProviderService,
+    // Provide WorkflowToolWorkspaceService via token for ToolProviderService
+    {
+      provide: WORKFLOW_TOOL_SERVICE_TOKEN,
+      useExisting: WorkflowToolWorkspaceService,
+    },
   ],
   exports: [
     AgentChatService,
