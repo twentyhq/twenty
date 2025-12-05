@@ -17,11 +17,11 @@ import {
   cleanupPageLayoutRecords,
 } from 'test/integration/utils/page-layout-test.util';
 
-import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
+import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
   PageLayoutExceptionMessageKey,
   generatePageLayoutExceptionMessage,
-} from 'src/engine/core-modules/page-layout/exceptions/page-layout.exception';
+} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 
 describe('Page Layout REST API', () => {
   let testObjectMetadataId: string;

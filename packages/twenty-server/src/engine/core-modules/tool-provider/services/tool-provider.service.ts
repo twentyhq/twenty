@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 
@@ -47,10 +47,7 @@ export class ToolProviderService {
     private readonly updateRecordService: UpdateRecordService,
     private readonly deleteRecordService: DeleteRecordService,
     private readonly findRecordsService: FindRecordsService,
-    // Workflow tools - uses forwardRef to break circular dependency with WorkflowExecutorModule
-    // This is needed because: ToolProviderModule -> WorkflowToolsModule -> ... -> WorkflowExecutorModule -> ToolProviderModule
-    // Future improvement: Use optional provider injection pattern to avoid this
-    @Inject(forwardRef(() => WorkflowToolWorkspaceService))
+    // Workflow tools
     private readonly workflowToolService: WorkflowToolWorkspaceService,
     // Metadata tools
     private readonly objectMetadataToolsFactory: ObjectMetadataToolsFactory,

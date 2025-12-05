@@ -1008,7 +1008,7 @@ export class ConfigVariables {
     description: 'Maximum complexity allowed for Common API queries',
     type: ConfigVariableType.NUMBER,
   })
-  COMMON_QUERY_COMPLEXITY_LIMIT = 50;
+  COMMON_QUERY_COMPLEXITY_LIMIT = 2000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,

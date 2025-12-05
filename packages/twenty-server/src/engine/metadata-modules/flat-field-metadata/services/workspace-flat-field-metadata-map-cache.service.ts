@@ -41,43 +41,36 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
   async computeForCache(
     workspaceId: string,
   ): Promise<FlatEntityMaps<FlatFieldMetadata>> {
-    const [fieldMetadatas, viewFields, viewFilters, viewGroups, views] =
-      await Promise.all([
-        this.fieldMetadataRepository.find({
-          where: { workspaceId },
-          withDeleted: true,
-        }),
-        this.viewFieldRepository.find({
-          where: { workspaceId },
-          select: ['id', 'fieldMetadataId'],
-          withDeleted: true,
-        }),
-        this.viewFilterRepository.find({
-          where: { workspaceId },
-          select: ['id', 'fieldMetadataId'],
-          withDeleted: true,
-        }),
-        this.viewGroupRepository.find({
-          where: { workspaceId },
-          select: ['id', 'fieldMetadataId'],
-          withDeleted: true,
-        }),
-        this.viewRepository.find({
-          where: { workspaceId },
-          select: [
-            'id',
-            'kanbanAggregateOperationFieldMetadataId',
-            'calendarFieldMetadataId',
-            'mainGroupByFieldMetadataId',
-          ],
-          withDeleted: true,
-        }),
-      ]);
+    const [fieldMetadatas, viewFields, viewFilters, views] = await Promise.all([
+      this.fieldMetadataRepository.find({
+        where: { workspaceId },
+        withDeleted: true,
+      }),
+      this.viewFieldRepository.find({
+        where: { workspaceId },
+        select: ['id', 'fieldMetadataId'],
+        withDeleted: true,
+      }),
+      this.viewFilterRepository.find({
+        where: { workspaceId },
+        select: ['id', 'fieldMetadataId'],
+        withDeleted: true,
+      }),
+      this.viewRepository.find({
+        where: { workspaceId },
+        select: [
+          'id',
+          'kanbanAggregateOperationFieldMetadataId',
+          'calendarFieldMetadataId',
+          'mainGroupByFieldMetadataId',
+        ],
+        withDeleted: true,
+      }),
+    ]);
 
     const [
       viewFieldsByFieldId,
       viewFiltersByFieldId,
-      viewGroupsByFieldId,
       calendarViewsByFieldId,
       kanbanViewsByFieldId,
       mainGroupByFieldMetadataViewsByFieldId,
@@ -89,10 +82,6 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
         },
         {
           entities: viewFilters,
-          foreignKey: 'fieldMetadataId',
-        },
-        {
-          entities: viewGroups,
           foreignKey: 'fieldMetadataId',
         },
         {
@@ -117,7 +106,6 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
         ...fieldMetadataEntity,
         viewFields: viewFieldsByFieldId.get(fieldMetadataEntity.id) || [],
         viewFilters: viewFiltersByFieldId.get(fieldMetadataEntity.id) || [],
-        viewGroups: viewGroupsByFieldId.get(fieldMetadataEntity.id) || [],
         kanbanAggregateOperationViews:
           kanbanViewsByFieldId.get(fieldMetadataEntity.id) || [],
         calendarViews: calendarViewsByFieldId.get(fieldMetadataEntity.id) || [],

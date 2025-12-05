@@ -42,7 +42,6 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
               ({
                 id: v4(),
                 __typename: 'ViewGroup',
-                fieldMetadataId: randomFieldForKanban,
                 fieldValue: option.value,
                 isVisible: true,
                 position: index,
@@ -55,14 +54,15 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
         fieldValue: '',
         position: viewGroupsToCreate.length,
         isVisible: true,
-        fieldMetadataId: randomFieldForKanban,
       } satisfies ViewGroup);
 
       await createViewGroups({
-        inputs: viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
-          ...viewGroup,
-          viewId: currentViewId,
-        })),
+        createCoreViewGroupInputs: {
+          inputs: viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
+            ...viewGroup,
+            viewId: currentViewId,
+          })),
+        },
       });
 
       return viewGroupsToCreate;
