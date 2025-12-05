@@ -49,18 +49,14 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     const allMetadataNameToCompare = Object.keys(
       allFlatEntities,
     ) as AllMetadataName[];
-    const allDependencyMetadataName = [
-      ...new Set(
-        allMetadataNameToCompare.flatMap(
-          (metadataName) =>
-            Object.keys(
-              ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION[metadataName],
-            ) as AllMetadataName[],
-        ),
-      ),
-    ];
+    const allDependencyMetadataName = allMetadataNameToCompare.flatMap(
+      (metadataName) =>
+        Object.keys(
+          ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION[metadataName],
+        ) as AllMetadataName[],
+    );
     const allMetadataNameCacheToCompute = [
-      ...new Set(...allMetadataNameToCompare, ...allDependencyMetadataName),
+      ...new Set([...allMetadataNameToCompare, ...allDependencyMetadataName]),
     ];
     const allRelatedFlatEntityMaps =
       await this.workspaceCacheService.getOrRecompute(
