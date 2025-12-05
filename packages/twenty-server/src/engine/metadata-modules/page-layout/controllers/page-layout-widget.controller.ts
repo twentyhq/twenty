@@ -75,10 +75,7 @@ export class PageLayoutWidgetController {
     @Body() input: CreatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.createOne({
-      createPageLayoutWidgetInput: input,
-      workspaceId: workspace.id,
-    });
+    return this.pageLayoutWidgetService.create(input, workspace.id);
   }
 
   @Patch(':id')
@@ -88,10 +85,7 @@ export class PageLayoutWidgetController {
     @Body() input: UpdatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.updateOne({
-      updatePageLayoutWidgetInput: { id, update: input },
-      workspaceId: workspace.id,
-    });
+    return this.pageLayoutWidgetService.update(id, workspace.id, input);
   }
 
   @Delete(':id')
@@ -100,9 +94,6 @@ export class PageLayoutWidgetController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.deleteOne({
-      deletePageLayoutWidgetInput: { id },
-      workspaceId: workspace.id,
-    });
+    return this.pageLayoutWidgetService.delete(id, workspace.id);
   }
 }

@@ -59,10 +59,7 @@ export class PageLayoutWidgetResolver {
     @Args('input') input: CreatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.createOne({
-      createPageLayoutWidgetInput: input,
-      workspaceId: workspace.id,
-    });
+    return this.pageLayoutWidgetService.create(input, workspace.id);
   }
 
   @Mutation(() => PageLayoutWidgetDTO)
@@ -72,10 +69,7 @@ export class PageLayoutWidgetResolver {
     @Args('input') input: UpdatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.updateOne({
-      updatePageLayoutWidgetInput: { id, update: input },
-      workspaceId: workspace.id,
-    });
+    return this.pageLayoutWidgetService.update(id, workspace.id, input);
   }
 
   @Mutation(() => PageLayoutWidgetDTO)
@@ -84,22 +78,16 @@ export class PageLayoutWidgetResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.deleteOne({
-      deletePageLayoutWidgetInput: { id },
-      workspaceId: workspace.id,
-    });
+    return this.pageLayoutWidgetService.delete(id, workspace.id);
   }
 
-  @Mutation(() => PageLayoutWidgetDTO)
+  @Mutation(() => Boolean)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async destroyPageLayoutWidget(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.destroyOne({
-      destroyPageLayoutWidgetInput: { id },
-      workspaceId: workspace.id,
-    });
+  ): Promise<boolean> {
+    return this.pageLayoutWidgetService.destroy(id, workspace.id);
   }
 
   @Mutation(() => PageLayoutWidgetDTO)
@@ -108,10 +96,7 @@ export class PageLayoutWidgetResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.restoreOne({
-      id,
-      workspaceId: workspace.id,
-    });
+    return this.pageLayoutWidgetService.restore(id, workspace.id);
   }
 
   @ResolveField(() => WidgetConfiguration, { nullable: true })
