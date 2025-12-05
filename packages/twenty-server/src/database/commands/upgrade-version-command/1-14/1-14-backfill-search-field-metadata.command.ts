@@ -11,6 +11,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
+import { SEARCH_FIELDS_FOR_CUSTOM_OBJECT } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { SEARCH_FIELDS_FOR_COMPANY } from 'src/modules/company/standard-objects/company.workspace-entity';
@@ -117,38 +118,6 @@ export class BackfillSearchFieldMetadataCommand extends ActiveOrSuspendedWorkspa
     workspaceId: string,
     options: MigrationCommandOptions,
   ): Promise<'backfilled' | 'skipped'> {
-    if (!objectMetadata.standardId) {
-      this.logger.log(
-        `Skipping ${objectMetadata.nameSingular} - not a standard object`,
-      );
-
-      return 'skipped';
-    }
-
-    const searchFields =
-      STANDARD_OBJECT_SEARCH_FIELDS_MAP[objectMetadata.standardId];
-
-    if (!searchFields || searchFields.length === 0) {
-      this.logger.log(
-        `Skipping ${objectMetadata.nameSingular} - no hardcoded search fields found`,
-      );
-
-      return 'skipped';
-    }
-
-    const fieldNames = searchFields.map((field) => field.name);
-    const matchingFields = objectMetadata.fields.filter((field) =>
-      fieldNames.includes(field.name),
-    );
-
-    if (matchingFields.length === 0) {
-      this.logger.log(
-        `Skipping ${objectMetadata.nameSingular} - no matching fields found`,
-      );
-
-      return 'skipped';
-    }
-
     const existingSearchFieldMetadata =
       await this.searchFieldMetadataRepository.find({
         where: {
@@ -160,6 +129,45 @@ export class BackfillSearchFieldMetadataCommand extends ActiveOrSuspendedWorkspa
     if (existingSearchFieldMetadata.length > 0) {
       this.logger.log(
         `Skipping ${objectMetadata.nameSingular} - searchFieldMetadata already exists`,
+      );
+
+      return 'skipped';
+    }
+
+    let matchingFields: typeof objectMetadata.fields = [];
+
+    if (objectMetadata.standardId) {
+      // Handle standard objects
+      const searchFields =
+        STANDARD_OBJECT_SEARCH_FIELDS_MAP[objectMetadata.standardId];
+
+      if (!searchFields || searchFields.length === 0) {
+        this.logger.log(
+          `Skipping ${objectMetadata.nameSingular} - no hardcoded search fields found`,
+        );
+
+        return 'skipped';
+      }
+
+      const fieldNames = searchFields.map((field) => field.name);
+
+      matchingFields = objectMetadata.fields.filter((field) =>
+        fieldNames.includes(field.name),
+      );
+    } else {
+      // Handle custom objects - use SEARCH_FIELDS_FOR_CUSTOM_OBJECT
+      const fieldNames = SEARCH_FIELDS_FOR_CUSTOM_OBJECT.map(
+        (field) => field.name,
+      );
+
+      matchingFields = objectMetadata.fields.filter((field) =>
+        fieldNames.includes(field.name),
+      );
+    }
+
+    if (matchingFields.length === 0) {
+      this.logger.log(
+        `Skipping ${objectMetadata.nameSingular} - no matching fields found`,
       );
 
       return 'skipped';
