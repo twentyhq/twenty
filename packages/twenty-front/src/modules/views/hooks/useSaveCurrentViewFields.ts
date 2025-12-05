@@ -5,7 +5,6 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { usePersistViewField } from '@/views/hooks/internal/usePersistViewField';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
-import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { type ViewField } from '@/views/types/ViewField';
 import {
   type CreateViewFieldInput,
@@ -39,7 +38,7 @@ export const useSaveCurrentViewFields = () => {
           return;
         }
 
-        set(isPersistingViewFieldsState, true);
+        // set(isPersistingViewFieldsState, true);
 
         const view = getViewFromPrefetchState(currentViewId);
 
@@ -128,7 +127,7 @@ export const useSaveCurrentViewFields = () => {
           updateViewFields(viewFieldsToUpdate),
         ]);
 
-        set(isPersistingViewFieldsState, false);
+        // set(isPersistingViewFieldsState, false);
       },
     [
       canPersistChanges,

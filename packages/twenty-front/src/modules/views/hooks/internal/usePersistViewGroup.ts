@@ -8,11 +8,9 @@ import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type CreateManyCoreViewGroupsMutationVariables,
   type DeleteCoreViewGroupMutationVariables,
   type DestroyCoreViewGroupMutationVariables,
   type UpdateCoreViewGroupMutationVariables,
-  useCreateManyCoreViewGroupsMutation,
   useDeleteCoreViewGroupMutation,
   useDestroyCoreViewGroupMutation,
   useUpdateCoreViewGroupMutation,
@@ -22,76 +20,12 @@ export const usePersistViewGroupRecords = () => {
   const { triggerViewGroupOptimisticEffect } =
     useTriggerViewGroupOptimisticEffect();
 
-  const [createManyCoreViewGroupsMutation] =
-    useCreateManyCoreViewGroupsMutation();
   const [updateCoreViewGroupMutation] = useUpdateCoreViewGroupMutation();
   const [deleteCoreViewGroupMutation] = useDeleteCoreViewGroupMutation();
   const [destroyCoreViewGroupMutation] = useDestroyCoreViewGroupMutation();
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
-
-  const createViewGroups = useCallback(
-    async ({
-      createCoreViewGroupInputs,
-    }: {
-      createCoreViewGroupInputs: CreateManyCoreViewGroupsMutationVariables;
-    }): Promise<
-      MetadataRequestResult<Awaited<
-        ReturnType<typeof createManyCoreViewGroupsMutation>
-      > | null>
-    > => {
-      if (
-        !Array.isArray(createCoreViewGroupInputs.inputs) ||
-        createCoreViewGroupInputs.inputs.length === 0
-      ) {
-        return {
-          status: 'successful',
-          response: null,
-        };
-      }
-
-      try {
-        const result = await createManyCoreViewGroupsMutation({
-          variables: createCoreViewGroupInputs,
-          update: (_cache, { data }) => {
-            const createdViewGroups = data?.createManyCoreViewGroups;
-            if (!isDefined(createdViewGroups)) {
-              return;
-            }
-
-            triggerViewGroupOptimisticEffect({
-              createdViewGroups,
-            });
-          },
-        });
-
-        return {
-          status: 'successful',
-          response: result,
-        };
-      } catch (error) {
-        if (error instanceof ApolloError) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'viewGroup',
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
-    },
-    [
-      triggerViewGroupOptimisticEffect,
-      createManyCoreViewGroupsMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-    ],
-  );
 
   const updateViewGroups = useCallback(
     async (
@@ -262,7 +196,6 @@ export const usePersistViewGroupRecords = () => {
   );
 
   return {
-    createViewGroups,
     updateViewGroups,
     deleteViewGroups,
     destroyViewGroups,

@@ -4,20 +4,16 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
-import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroup';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type GraphQLView } from '@/views/types/GraphQLView';
-import { type ViewGroup } from '@/views/types/ViewGroup';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { convertViewTypeToCore } from '@/views/utils/convertViewTypeToCore';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
-import { useCallback } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 import { ViewCalendarLayout } from '~/generated/graphql';
 
 export const useSetViewTypeFromLayoutOptionsMenu = () => {
@@ -28,47 +24,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
-  const { createViewGroups } = usePersistViewGroupRecords();
-
   const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
-
-  const createViewGroupAssociatedWithKanbanField = useCallback(
-    async (randomFieldForKanban: string, currentViewId: string) => {
-      const viewGroupsToCreate =
-        objectMetadataItem.fields
-          ?.find((field) => field.id === randomFieldForKanban)
-          ?.options?.map(
-            (option, index) =>
-              ({
-                id: v4(),
-                __typename: 'ViewGroup',
-                fieldValue: option.value,
-                isVisible: true,
-                position: index,
-              }) satisfies ViewGroup,
-          ) ?? [];
-
-      viewGroupsToCreate.push({
-        __typename: 'ViewGroup',
-        id: v4(),
-        fieldValue: '',
-        position: viewGroupsToCreate.length,
-        isVisible: true,
-      } satisfies ViewGroup);
-
-      await createViewGroups({
-        createCoreViewGroupInputs: {
-          inputs: viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
-            ...viewGroup,
-            viewId: currentViewId,
-          })),
-        },
-      });
-
-      return viewGroupsToCreate;
-    },
-    [objectMetadataItem, createViewGroups],
-  );
 
   const setAndPersistViewType = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -108,16 +64,16 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
               throw new Error('No fields for kanban - should not happen');
             }
 
-            if (currentView.viewGroups.length === 0) {
-              const viewGroups = await createViewGroupAssociatedWithKanbanField(
-                availableFieldsForKanban[0].id,
-                currentView.id,
-              );
-              loadRecordIndexStates(
-                { ...currentView, viewGroups },
-                objectMetadataItem,
-              );
+            const mainGroupByFieldMetadataId = availableFieldsForKanban[0].id;
+            updateCurrentViewParams.mainGroupByFieldMetadataId =
+              mainGroupByFieldMetadataId;
+
+            if (shouldChangeIcon(currentView.icon, currentView.type)) {
+              updateCurrentViewParams.icon =
+                viewTypeIconMapping(viewType).displayName;
             }
+            await updateCurrentView(updateCurrentViewParams);
+
             setRecordIndexViewType(viewType);
             set(coreViewsState, [
               ...existingCoreViews.filter(
@@ -126,16 +82,18 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
               {
                 ...currentCoreView,
                 type: convertViewTypeToCore(viewType),
+                mainGroupByFieldMetadataId,
               },
             ]);
-
-            if (shouldChangeIcon(currentView.icon, currentView.type)) {
-              updateCurrentViewParams.icon =
-                viewTypeIconMapping(viewType).displayName;
-            }
-            return await updateCurrentView(updateCurrentViewParams);
+            return;
           }
           case ViewType.Table: {
+            if (shouldChangeIcon(currentView.icon, currentView.type)) {
+              updateCurrentViewParams.icon =
+                viewTypeIconMapping(viewType).displayName;
+            }
+            updateCurrentViewParams.mainGroupByFieldMetadataId = null;
+            await updateCurrentView(updateCurrentViewParams);
             setRecordIndexViewType(viewType);
             set(coreViewsState, [
               ...existingCoreViews.filter(
@@ -143,15 +101,11 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
               ),
               {
                 ...currentCoreView,
+                mainGroupByFieldMetadataId: null,
                 type: convertViewTypeToCore(viewType),
               },
             ]);
-
-            if (shouldChangeIcon(currentView.icon, currentView.type)) {
-              updateCurrentViewParams.icon =
-                viewTypeIconMapping(viewType).displayName;
-            }
-            return await updateCurrentView(updateCurrentViewParams);
+            return;
           }
           case ViewType.Calendar: {
             if (availableFieldsForCalendar.length === 0) {
@@ -199,12 +153,11 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       },
     [
       availableFieldsForKanban,
-      objectMetadataItem,
-      updateCurrentView,
       setRecordIndexViewType,
-      createViewGroupAssociatedWithKanbanField,
-      loadRecordIndexStates,
+      updateCurrentView,
+      objectMetadataItem,
       availableFieldsForCalendar,
+      loadRecordIndexStates,
     ],
   );
 
