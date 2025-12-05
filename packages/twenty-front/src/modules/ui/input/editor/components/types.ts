@@ -1,4 +1,3 @@
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import type {
   DefaultReactSuggestionItem,
   SuggestionMenuProps,
@@ -13,8 +12,7 @@ export type SuggestionItem = DefaultReactSuggestionItem & {
 export type CustomSlashMenuProps = SuggestionMenuProps<SuggestionItem>;
 
 export type MentionItem = DefaultReactSuggestionItem & {
-  record?: ObjectRecord;
-  name?: string;
+  recordId?: string;
   objectNameSingular?: string;
 };
 

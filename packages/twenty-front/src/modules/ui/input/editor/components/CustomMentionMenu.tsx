@@ -8,8 +8,8 @@ import { MENTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/Men
 import { MENTION_MENU_LIST_ID } from '@/ui/input/constants/MentionMenuListId';
 import { CustomMentionMenuListItem } from '@/ui/input/editor/components/CustomMentionMenuListItem';
 import {
-  type MentionItem,
   type CustomMentionMenuProps,
+  type MentionItem,
 } from '@/ui/input/editor/components/types';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -41,8 +41,8 @@ export const CustomMentionMenu = ({
 
     const selectedItem = items[selectedIndex];
 
-    if (isDefined(selectedItem) && isDefined(selectedItem.record)) {
-      setSelectedItemId(selectedItem.record.id);
+    if (isDefined(selectedItem) && isDefined(selectedItem.recordId)) {
+      setSelectedItemId(selectedItem.recordId);
     }
   }, [items, selectedIndex, setSelectedItemId]);
 
@@ -77,22 +77,21 @@ export const CustomMentionMenu = ({
                     selectableItemIdArray={items
                       .filter(
                         (item) =>
-                          isDefined(item.record) &&
+                          isDefined(item.recordId) &&
                           isDefined(item.objectNameSingular),
                       )
-                      .map((item) => item.record!.id)}
+                      .map((item) => item.recordId!)}
                   >
                     {items
                       .filter(
                         (item) =>
-                          isDefined(item.record) &&
+                          isDefined(item.recordId) &&
                           isDefined(item.objectNameSingular),
                       )
                       .map((item) => (
                         <CustomMentionMenuListItem
-                          key={item.record!.id}
-                          record={item.record!}
-                          recordId={item.record!.id}
+                          key={item.recordId!}
+                          recordId={item.recordId!}
                           onClick={() => item.onItemClick()}
                           objectNameSingular={item.objectNameSingular!}
                         />

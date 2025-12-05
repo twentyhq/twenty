@@ -1,24 +1,24 @@
 import { type MouseEvent } from 'react';
 
-import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
+import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { MENTION_MENU_LIST_ID } from '@/ui/input/constants/MentionMenuListId';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemSuggestion } from 'twenty-ui/navigation';
 
 type CustomMentionMenuListItemProps = {
-  record: ObjectRecord;
   recordId: string;
   onClick: () => void;
   objectNameSingular: string;
 };
 
 export const CustomMentionMenuListItem = ({
-  record,
   recordId,
   onClick,
   objectNameSingular,
@@ -30,10 +30,8 @@ export const CustomMentionMenuListItem = ({
     recordId,
   );
 
-  const { recordChipData } = useRecordChipData({
-    objectNameSingular,
-    record,
-  });
+  // Get the search record from the store (same pattern as SingleRecordPickerMenuItem)
+  const searchRecord = useRecoilValue(searchRecordStoreFamilyState(recordId));
 
   const handleClick = (event?: MouseEvent) => {
     event?.preventDefault();
@@ -42,18 +40,22 @@ export const CustomMentionMenuListItem = ({
     onClick();
   };
 
+  if (!isDefined(searchRecord)) {
+    return null;
+  }
+
   return (
     <SelectableListItem itemId={recordId} onEnter={handleClick}>
       <MenuItemSuggestion
         selected={isSelectedItem}
         onClick={handleClick}
-        text={recordChipData.name}
+        text={searchRecord.label}
         LeftIcon={() => (
           <Avatar
-            placeholder={recordChipData.name}
-            placeholderColorSeed={record.id}
-            avatarUrl={recordChipData.avatarUrl}
-            type={recordChipData.avatarType}
+            placeholder={searchRecord.label}
+            placeholderColorSeed={recordId}
+            avatarUrl={searchRecord.imageUrl}
+            type={getAvatarType(objectNameSingular) ?? 'rounded'}
             size="sm"
           />
         )}
