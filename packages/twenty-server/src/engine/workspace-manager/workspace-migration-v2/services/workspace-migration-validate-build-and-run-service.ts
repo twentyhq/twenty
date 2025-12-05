@@ -122,7 +122,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
       const flatEntityMaps = allRelatedFlatEntityMaps[flatEntityMapsKey];
 
-      // @ts-expect-error prastoin investigate
+      // @ts-expect-error Metadata flat entity maps cache key and metadataName colliding
       fromToAllFlatEntityMaps[flatEntityMapsKey] = computeFlatEntityMapsFromTo({
         flatEntityMaps,
         flatEntityToCreate,
