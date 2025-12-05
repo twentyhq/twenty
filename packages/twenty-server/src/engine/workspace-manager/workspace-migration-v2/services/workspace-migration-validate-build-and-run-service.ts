@@ -10,6 +10,7 @@ import { ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION } from 'src/engine/metada
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
+import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-build-orchestrator.service';
@@ -122,9 +123,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       const flatEntityMaps = allRelatedFlatEntityMaps[flatEntityMapsKey];
 
       // @ts-expect-error prastoin investigate
-      fromToAllFlatEntityMaps[flatEntityMapsKey] = computeFlatEntityMapsFromTo<
-        typeof metadataName
-      >({
+      fromToAllFlatEntityMaps[flatEntityMapsKey] = computeFlatEntityMapsFromTo({
         flatEntityMaps,
         flatEntityToCreate,
         flatEntityToDelete,
