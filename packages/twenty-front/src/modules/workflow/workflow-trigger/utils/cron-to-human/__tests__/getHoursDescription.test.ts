@@ -23,52 +23,52 @@ describe('getHoursDescription', () => {
 
     it('should handle range with step', () => {
       expect(getHoursDescription('9-17/2', '0', options24)).toBe(
-        'every 2 hours, between 09:00 and 17:00',
+        'every 2 hours, between 09:00 UTC and 17:00 UTC',
       );
     });
 
     it('should handle ranges', () => {
       expect(getHoursDescription('9-17', '0', options24)).toBe(
-        'between 09:00 and 17:00',
+        'between 09:00 UTC and 17:00 UTC',
       );
     });
 
     it('should handle lists', () => {
       expect(getHoursDescription('9,12', '0', options24)).toBe(
-        'at 09:00 and 12:00',
+        'at 09:00 UTC and 12:00 UTC',
       );
       expect(getHoursDescription('9,12,15,18', '30', options24)).toBe(
-        'at 09:30, 12:30, 15:30 and 18:30',
+        'at 09:30 UTC, 12:30 UTC, 15:30 UTC and 18:30 UTC',
       );
     });
 
     it('should handle single values', () => {
-      expect(getHoursDescription('9', '30', options24)).toBe('at 09:30');
-      expect(getHoursDescription('0', '0', options24)).toBe('at 00:00');
-      expect(getHoursDescription('23', '59', options24)).toBe('at 23:59');
+      expect(getHoursDescription('9', '30', options24)).toBe('at 09:30 UTC');
+      expect(getHoursDescription('0', '0', options24)).toBe('at 00:00 UTC');
+      expect(getHoursDescription('23', '59', options24)).toBe('at 23:59 UTC');
     });
   });
 
   describe('12-hour format', () => {
     it('should format morning times', () => {
-      expect(getHoursDescription('9', '30', options12)).toBe('at 9:30 AM');
-      expect(getHoursDescription('0', '0', options12)).toBe('at 12:00 AM');
+      expect(getHoursDescription('9', '30', options12)).toBe('at 9:30 AM UTC');
+      expect(getHoursDescription('0', '0', options12)).toBe('at 12:00 AM UTC');
     });
 
     it('should format afternoon times', () => {
-      expect(getHoursDescription('14', '30', options12)).toBe('at 2:30 PM');
-      expect(getHoursDescription('12', '0', options12)).toBe('at 12:00 PM');
+      expect(getHoursDescription('14', '30', options12)).toBe('at 2:30 PM UTC');
+      expect(getHoursDescription('12', '0', options12)).toBe('at 12:00 PM UTC');
     });
 
     it('should format lists in 12-hour', () => {
       expect(getHoursDescription('9,14', '0', options12)).toBe(
-        'at 9:00 AM and 2:00 PM',
+        'at 9:00 AM UTC and 2:00 PM UTC',
       );
     });
 
     it('should format ranges in 12-hour', () => {
       expect(getHoursDescription('9-17', '0', options12)).toBe(
-        'between 9:00 AM and 5:00 PM',
+        'between 9:00 AM UTC and 5:00 PM UTC',
       );
     });
   });

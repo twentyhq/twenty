@@ -1,6 +1,7 @@
 import { type CronExpressionParts } from '@/workflow/workflow-trigger/utils/cron-to-human/types/cronExpressionParts';
 import { CronExpressionParser } from 'cron-parser';
 import { isDefined } from 'twenty-shared/utils';
+import { normalizeWhitespace } from './normalizeWhitespace';
 
 export const parseCronExpression = (
   expression: string,
@@ -9,16 +10,20 @@ export const parseCronExpression = (
     throw new Error('Cron expression is required');
   }
 
-  const parts = expression.trim().split(/\s+/);
+  let normalized = normalizeWhitespace(expression);
+
+  normalized = normalized.replace(/(^|\s)\/(\d+)/g, '$1*/$2');
+
+  const parts = normalized.split(/\s+/);
 
   if (parts.length < 4 || parts.length > 6) {
     throw new Error(
-      `Invalid cron expression format. Expected 4, 5, or 6 fields, got ${parts.length}`,
+      `Invalid cron expression. Expected 4-6 fields, got ${parts.length}`,
     );
   }
 
   try {
-    CronExpressionParser.parse(expression, { tz: 'UTC' });
+    CronExpressionParser.parse(normalized, { tz: 'UTC' });
 
     // Handle different cron formats that cron-parser accepts
     if (parts.length === 4) {

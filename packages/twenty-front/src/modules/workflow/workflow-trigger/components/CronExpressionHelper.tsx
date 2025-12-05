@@ -2,6 +2,7 @@ import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { InputHint } from '@/ui/input/components/InputHint';
 import type { WorkflowCronTrigger } from '@/workflow/types/Workflow';
 import { convertScheduleToCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/convertScheduleToCronExpression';
+import { normalizeCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/normalizeCronExpression';
 import { getTriggerScheduleDescription } from '@/workflow/workflow-trigger/utils/getTriggerScheduleDescription';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -12,7 +13,8 @@ import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
 const getNextExecutions = (cronExpression: string): Date[] => {
   try {
-    const interval = CronExpressionParser.parse(cronExpression, {
+    const normalized = normalizeCronExpression(cronExpression);
+    const interval = CronExpressionParser.parse(normalized, {
       tz: 'UTC',
     });
     return interval.take(3).map((date) => date.toDate());
@@ -93,7 +95,8 @@ export const CronExpressionHelper = ({
   let errorMessage = '';
 
   try {
-    CronExpressionParser.parse(cronExpression);
+    const normalized = normalizeCronExpression(cronExpression);
+    CronExpressionParser.parse(normalized);
   } catch (error) {
     isValid = false;
     errorMessage = error instanceof Error ? error.message : t`Unknown error`;
