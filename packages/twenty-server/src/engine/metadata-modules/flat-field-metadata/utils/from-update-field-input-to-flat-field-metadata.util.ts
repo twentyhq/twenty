@@ -66,11 +66,13 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   if (!isDefined(existingFlatFieldMetadataToUpdate)) {
     return {
       status: 'fail',
-      error: {
-        code: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
-        message: 'Field metadata to update not found',
-        userFriendlyMessage: msg`Field metadata to update not found`,
-      },
+      errors: [
+        {
+          code: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+          message: 'Field metadata to update not found',
+          userFriendlyMessage: msg`Field metadata to update not found`,
+        },
+      ],
     };
   }
 
