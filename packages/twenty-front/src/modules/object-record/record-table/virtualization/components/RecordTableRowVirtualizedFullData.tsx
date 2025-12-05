@@ -66,11 +66,6 @@ export const RecordTableRowVirtualizedFullData = ({
       <RecordTableFieldsCells />
       <RecordTablePlusButtonCellPlaceholder />
       <RecordTableLastEmptyCell />
-      {/* <ListenRecordUpdatesEffect
-        objectNameSingular={objectNameSingular}
-        recordId={recordId}
-        listenedFields={listenedFields}
-      /> */}
     </RecordTableDraggableTr>
   );
 };
