@@ -39,11 +39,6 @@ msgstr "{fieldType} alanları varsayılan bir değere sahip olamaz."
 msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
 msgstr "'{domainName}' alan adı için {hostnameCount} hostname bulundu. 1 bekleniyor"
 
-#. js-lingui-id: 8haj+G
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
-msgid "{name} should be in camelCase"
-msgstr "{name} camelCase olmalı"
-
 #. js-lingui-id: kZR6+h
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "A company"
@@ -105,7 +100,7 @@ msgid "A person"
 msgstr "Bir kişi"
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-label-uniqueness.util.ts
 msgid "A role with this label already exists."
 msgstr "Bu etiketle bir rol zaten mevcut."
 
@@ -181,17 +176,6 @@ msgstr "Şifreyi sıfırlamak için eylem gerekli"
 msgid "Action Needed to Set Password"
 msgstr "Şifre Oluşturmak için Eylem Gerekli"
 
-#. js-lingui-id: 52fA3U
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
-msgid "Active fields cannot be deleted"
-msgstr "Aktif alanlar silinemez"
-
-#. js-lingui-id: 0N5kF6
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
-msgid "Active objects cannot be deleted"
-msgstr "Aktif nesneler silinemez"
-
 #. js-lingui-id: Du6bPw
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
@@ -212,6 +196,19 @@ msgstr "Şirketin adresi"
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "Yeni adres alanı lehine tercih edilen şirketin adresi - kullanımdan kalkmış"
 
+#. js-lingui-id: mDXkHu
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+msgid "Agent not found"
+msgstr ""
+
+#. js-lingui-id: EisfDV
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util.ts
+msgid "Agent with name \"{name}\" already exists"
+msgstr ""
+
 #. js-lingui-id: W58PBh
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Aggregated / filtered event to be displayed on the timeline"
@@ -222,6 +219,7 @@ msgstr "Zaman çizelgesinde gösterilecek toplanmış/filtrelenmiş olay"
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/timeline-activities-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
@@ -238,6 +236,11 @@ msgstr "Tüm {objectLabelPlural}"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Amount"
 msgstr "Miktar"
+
+#. js-lingui-id: pZEIPj
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-name-uniqueness.util.ts
+msgid "An agent with this name already exists"
+msgstr ""
 
 #. js-lingui-id: MjyFvC
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -626,6 +629,12 @@ msgstr "Taslak dışında bir durumla iş akışı sürümü oluşturulamaz."
 msgid "Cannot delete account: you are the only admin. Assign another admin or delete the workspace(s) first."
 msgstr "Hesap silinemiyor: tek yöneticisiniz. Başka bir yönetici atayın veya önce çalışma alan(lar)ını silin."
 
+#. js-lingui-id: RYRFbW
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+msgid "Cannot delete standard agent"
+msgstr ""
+
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Cannot delete, please update the label identifier field first"
@@ -647,9 +656,15 @@ msgid "Cannot have more than one active workflow version"
 msgstr "Birden fazla aktif iş akışı sürümü olamaz."
 
 #. js-lingui-id: PjZIyI
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
 msgstr "Mesaj kanalı, eşzamanlama devam ederken güncellenemez. Lütfen eşzamanlamanın tamamlanmasını bekleyin."
+
+#. js-lingui-id: fpzw+t
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-agent-validator.service.ts
+msgid "Cannot update standard agent"
+msgstr ""
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -939,7 +954,7 @@ msgstr "Aralık"
 
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Varsayılan değer \"{defaultValue}\", seçenek değerlerinden biri olmalıdır"
 
@@ -950,13 +965,13 @@ msgstr "Varsayılan değer bir dize olmalıdır"
 
 #. js-lingui-id: sv9P4Q
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value should be as quoted string"
 msgstr "Varsayılan değer, tırnak içine alınmış bir dize olmalıdır"
 
 #. js-lingui-id: 6pJV03
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default values must be unique"
 msgstr "Varsayılan değerler benzersiz olmalıdır"
 
@@ -1009,9 +1024,14 @@ msgstr "Alan Adı"
 msgid "Due Date"
 msgstr "Bitiş Tarihi"
 
+#. js-lingui-id: UrzTjS
+#: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
+msgid "Duplicate root resolver found. Each root resolver can only be called once per document."
+msgstr ""
+
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Duplicated option {field}"
 msgstr "Çift seçenek {field}"
 
@@ -1192,6 +1212,11 @@ msgstr "{connectFieldName} için tüm işlemlerde aynı kısıtlama alanlarını
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "External ID"
 msgstr "Dış ID"
+
+#. js-lingui-id: E7Dsiq
+#: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
+msgid "Failed to create evaluation. Please try again."
+msgstr ""
 
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -1378,6 +1403,7 @@ msgstr "Alan farklı bir nesneye ait olduğu için indekslenemez"
 
 #. js-lingui-id: Hg95ys
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field cannot be used as label identifier"
 msgstr "Alan, etiket tanımlayıcısı olarak kullanılamaz"
 
@@ -1453,8 +1479,23 @@ msgstr "İlişkili nesne oluşturulacak alan bulunamadı"
 msgid "Field to update not found"
 msgstr "Güncellenecek alan bulunamadı"
 
+#. js-lingui-id: stY5BO
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
+msgid "Field type NUMERIC is not supported. Use Number instead."
+msgstr ""
+
+#. js-lingui-id: q2XPsD
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
+msgid "Field type POSITION is a system type and cannot be created manually."
+msgstr ""
+
+#. js-lingui-id: FDPb27
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
+msgid "Field type TS_VECTOR is a system type and cannot be created manually."
+msgstr ""
+
 #. js-lingui-id: J4hC2m
-#: src/engine/metadata-modules/constants/search-vector-field.constants.ts
+#: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
 msgid "Field used for full-text search"
 msgstr "Tam Metin Araması için Kullanılan Alan"
 
@@ -1582,7 +1623,7 @@ msgstr "Ideal Müşteri Profili: Şirketin sizin için en uygun ve değerli mü�
 
 #. js-lingui-id: YcVn4w
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "If defined default value must contain at least one value"
 msgstr "Tanımlanmışsa, varsayılan değer en az bir değer içermelidir"
 
@@ -1633,10 +1674,10 @@ msgstr "Aynı ID'ye sahip dizin zaten mevcut"
 msgid "Index with same name already exists"
 msgstr "Aynı ada sahip dizin zaten mevcut"
 
-#. js-lingui-id: 71VJzG
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
-msgid "Input is too short: \"{name}\""
-msgstr "Girdi çok kısa: \"{name}\""
+#. js-lingui-id: mIrUSZ
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Invalid CALDAV credentials. Please check your username and password."
+msgstr ""
 
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -1653,11 +1694,6 @@ msgstr "Geçersiz Captcha, lütfen başka bir cihaz deneyin"
 msgid "Invalid country code {countryCode}"
 msgstr "Ülke kodu {countryCode} geçersiz"
 
-#. js-lingui-id: AMeEDO
-#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
-msgid "Invalid credentials. Please check your username and password."
-msgstr "Geçersiz kimlik bilgileri. Lütfen kullanıcı adınızı ve şifrenizi kontrol edin."
-
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid day value. Should be integer greater than 1"
@@ -1673,11 +1709,6 @@ msgstr "Geçersiz saat değeri. 0 ile 23 arasında bir tamsayı olmalıdır"
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid hour value. Should be integer greater than 1"
 msgstr "Geçersiz saat değeri. 1'den büyük bir tamsayı olmalıdır"
-
-#. js-lingui-id: FSunWx
-#: src/engine/metadata-modules/utils/compute-metadata-name-from-label.util.ts
-msgid "Invalid label: \"{label}\""
-msgstr "Geçersiz etiket: \"{label}\""
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1696,19 +1727,20 @@ msgstr "Geçersiz dakika değeri. 1'den büyük bir tamsayı olmalıdır"
 msgid "Invalid morph relation input"
 msgstr "Geçersiz morph ilişki girişi"
 
-#. js-lingui-id: VvhAS2
-#: src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util.ts
-msgid "Invalid object metadata input"
-msgstr "Geçersiz nesne meta verisi girişi."
-
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
 msgid "Invalid relation creation payload"
 msgstr "Geçersiz ilişki oluşturma yükü"
 
 #. js-lingui-id: iWv3nK
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid relation field target"
+msgstr ""
+
+#. js-lingui-id: m4y7mj
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Invalid response format type"
 msgstr ""
 
 #. js-lingui-id: ApP70c
@@ -1807,6 +1839,11 @@ msgstr "Adımlar sağlamak için Json nesnesi"
 msgid "Json object to provide trigger"
 msgstr "Tetikleyici sağlamak için Json nesnesi"
 
+#. js-lingui-id: eCBMag
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "JSON response format requires a schema"
+msgstr ""
+
 #. js-lingui-id: TVc0/Q
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Json value for event details"
@@ -1821,6 +1858,12 @@ msgstr "Temmuz"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "June"
 msgstr "Haziran"
+
+#. js-lingui-id: 6sFS+I
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+msgid "Label cannot be empty"
+msgstr ""
 
 #. js-lingui-id: ljUvzm
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -1847,20 +1890,15 @@ msgstr "Etiket tanımlayıcı görünüm alanı en alttaki pozisyonda olmalı"
 msgid "Label identifier view field has to be visible"
 msgstr "Etiket tanımlayıcı görünüm alanı görünür olmalı"
 
-#. js-lingui-id: w8Rv8T
-#: src/engine/metadata-modules/utils/compute-metadata-name-from-label.util.ts
-msgid "Label is required"
-msgstr "Etiket gerekli"
-
 #. js-lingui-id: 4EGmy6
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Label must not be empty"
 msgstr "Etiket boş olamaz"
 
 #. js-lingui-id: k731jp
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Label must not contain a comma"
 msgstr "Etiket virgül içeremez"
 
@@ -2002,7 +2040,7 @@ msgid "Message Channel Message Associations"
 msgstr "Mesaj Kanalı Mesaj İlişkilendirmeleri"
 
 #. js-lingui-id: LOU3x5
-#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
 msgstr "Mesaj kanalı bulunamadı"
 
@@ -2133,6 +2171,12 @@ msgstr "Mesaj sağlayıcı yenileme tokeni"
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "Gerekli alanlar eksik: '{connectFieldName}' için en az bir benzersiz kısıtlamanın tam olarak doldurulması gerekir."
 
+#. js-lingui-id: AHuHeg
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+msgid "Model ID cannot be empty"
+msgstr ""
+
 #. js-lingui-id: hty0d5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Monday"
@@ -2179,11 +2223,6 @@ msgstr "{conflictingFieldsValues} için aynı benzersiz alan değerlerine sahip 
 msgid "Name"
 msgstr "İsim"
 
-#. js-lingui-id: aD053i
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service.ts
-msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
-msgstr "İlişkinin her iki tarafında da Ad \"{computedMetadataNameFromLabel}\" aynı olamaz"
-
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
@@ -2199,28 +2238,24 @@ msgstr "İsim \"{name}\" başka bir alan tarafından kullanıldığından mevcut
 msgid "Name \"{name}\" is not available as it is already used by join column name"
 msgstr ""
 
-#. js-lingui-id: RGz1nY
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
-msgid "Name is not available, it may be duplicating another field's name."
-msgstr "İsim mevcut değil, başka bir alanın ismi ile çakışıyor olabilir."
-
 #. js-lingui-id: Ny5wFU
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters"
 msgstr "\"\" ismi geçerli değil: küçük harfle başlamalı ve yalnızca alfanümerik harfler içermelidir"
 
 #. js-lingui-id: zjh2SJ
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "Name is too long"
 msgstr "İsim çok uzun"
 
-#. js-lingui-id: 0MobB1
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils.ts
-msgid "Name is too long: it exceeds the 63 characters limit."
-msgstr "İsim çok uzun: 63 karakter sınırını aşıyor."
-
 #. js-lingui-id: go/Vg1
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "Name is too short"
 msgstr "İsim çok kısa"
 
@@ -2235,7 +2270,9 @@ msgid "Name of the workflow run"
 msgstr "İş Akışı çalışmasının adı"
 
 #. js-lingui-id: P+jdmX
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
 msgid "Name should be in camelCase"
 msgstr "İsim camelCase olmalı"
 
@@ -2404,7 +2441,6 @@ msgid "Number of employees in the company"
 msgstr "Şirkette çalışanların sayısı"
 
 #. js-lingui-id: ECRKYR
-#: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Object already exists"
 msgstr "Nesne zaten mevcut"
@@ -2537,25 +2573,25 @@ msgstr "Fırsat aşaması"
 
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is invalid"
 msgstr "Seçenek kimliği geçersiz"
 
 #. js-lingui-id: MniXaX
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is required"
 msgstr "Seçenek kimliği gerekli"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
 msgstr "Seçenek etiketi \"{sanitizedLabel}\" 1 karakter altındadır"
 
 #. js-lingui-id: mTFS0z
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label exceeds 63 characters"
 msgstr "Seçenek etiketi 63 karakteri aşıyor"
 
@@ -2567,7 +2603,6 @@ msgstr "Seçenek etiket formatı desteklenmiyor"
 #. js-lingui-id: +E9N4m
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label is required"
 msgstr "Seçenek etiketi gerekli"
 
@@ -2578,13 +2613,13 @@ msgstr "Seçenek etiketi en az bir karakter uzunluğunda bir dize olmalıdır"
 
 #. js-lingui-id: nQqNzE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Seçenek değeri \"{sanitizedValue}\" 1 karakter altındadır"
 
 #. js-lingui-id: 5m/1Hh
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value exceeds 63 characters"
 msgstr "Seçenek değeri 63 karakteri aşıyor"
 
@@ -2596,7 +2631,6 @@ msgstr "Seçenek değeri formatı desteklenmiyor"
 #. js-lingui-id: /wsRPd
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value is required"
 msgstr "Seçenek değeri gerekli"
 
@@ -2614,6 +2648,14 @@ msgstr "Enum alanlar için seçenekler gereklidir"
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Page Layout ID"
 msgstr "Sayfa Düzeni Kimliği"
+
+#. js-lingui-id: qJ9V6q
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-page-layout-tab-validator.service.ts
+msgid "Page layout tab not found"
+msgstr ""
 
 #. js-lingui-id: G1fWNt
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2750,6 +2792,17 @@ msgstr "Tercih edilen dil"
 msgid "Probability"
 msgstr "Olasılık"
 
+#. js-lingui-id: t/0e9D
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-required-properties.util.ts
+msgid "Prompt cannot be empty"
+msgstr ""
+
+#. js-lingui-id: OTJNm9
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
+msgid "Property {property} is required for role"
+msgstr ""
+
 #. js-lingui-id: dtGxRz
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Provided and inferred calling code are conflicting"
@@ -2784,6 +2837,16 @@ msgstr "Genel alan adı zaten kayıtlı."
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
 msgstr "Genel alan adı URL tanımlı değil. Lütfen PUBLIC_DOMAIN_URL ortam değişkenini ayarlayın."
+
+#. js-lingui-id: uzWClp
+#: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
+msgid "Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation."
+msgstr ""
+
+#. js-lingui-id: XkHjXW
+#: src/engine/api/common/common-query-runners/common-base-query-runner.service.ts
+msgid "Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: {queryComplexity}. Maximum complexity: {maximumComplexity}."
+msgstr ""
 
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -2841,6 +2904,21 @@ msgstr "Uzaktan nesneler henüz desteklenmiyor"
 msgid "Request has expired, please try again."
 msgstr "Talep süresi doldu, lütfen tekrar deneyin."
 
+#. js-lingui-id: KPIUoa
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Response format type must be either \"text\" or \"json\""
+msgstr ""
+
+#. js-lingui-id: 6Plp3x
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Response format with type \"json\" must include a schema"
+msgstr ""
+
+#. js-lingui-id: JCqfz6
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Response format with type \"text\" should not include a schema"
+msgstr ""
+
 #. js-lingui-id: rnCndp
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
@@ -2852,6 +2930,56 @@ msgstr "Yanıt Durumu"
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Role"
 msgstr "Rol"
+
+#. js-lingui-id: QbW1ho
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to agents"
+msgstr ""
+
+#. js-lingui-id: u1Fm8i
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to API keys"
+msgstr ""
+
+#. js-lingui-id: 9ZQkou
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to users"
+msgstr ""
+
+#. js-lingui-id: MvTCyk
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+msgid "Role not found"
+msgstr ""
+
+#. js-lingui-id: oCyyzG
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
+msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentId"
+msgstr ""
+
+#. js-lingui-id: oNYUjk
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+msgid "Role target not found"
+msgstr ""
+
+#. js-lingui-id: alYNOd
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-role-target-validator.service.ts
+msgid "Role target with this id already exists"
+msgstr ""
 
 #. js-lingui-id: MFW30/
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
@@ -2899,7 +3027,7 @@ msgid "Scopes"
 msgstr "Kapsamlar"
 
 #. js-lingui-id: PdVIJC
-#: src/engine/metadata-modules/constants/search-vector-field.constants.ts
+#: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
 msgid "Search vector"
 msgstr "Arama vektörü"
 
@@ -2949,7 +3077,7 @@ msgid "Settings"
 msgstr "Ayarlar"
 
 #. js-lingui-id: RyE+Of
-#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-required-properties-are-defined.util.ts
 msgid "Some of the information provided is invalid. Please check your input and try again."
 msgstr "Sağlanan bilgilerin bir kısmı geçersiz. Lütfen girdinizi kontrol edin ve tekrar deneyin."
 
@@ -2957,6 +3085,16 @@ msgstr "Sağlanan bilgilerin bir kısmı geçersiz. Lütfen girdinizi kontrol ed
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
 msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
 msgstr "Seçilen izinlerin bir kısmı geçerli değil. Lütfen geçerli izin ayarlarıyla tekrar deneyin."
+
+#. js-lingui-id: aPJopM
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
+msgstr ""
+
+#. js-lingui-id: OmgwCE
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
+msgid "Source object cannot be the target object"
+msgstr ""
 
 #. js-lingui-id: 3PRxO3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -3014,11 +3152,6 @@ msgstr "Durumlar manuel olarak ayarlanamaz."
 #: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "Step is not a form"
 msgstr "Adım bir form değil"
-
-#. js-lingui-id: YFMPch
-#: src/engine/metadata-modules/utils/validate-metadata-name-start-with-lowercase-letter-and-contain-digits-nor-letters.utils.ts
-msgid "String \"{name}\" is not valid: must start with lowercase letter and contain only alphanumeric letters"
-msgstr "\"{name}\" dizisi geçerli değil: küçük harfle başlamalı ve yalnızca alfanümerik harfler içermelidir"
 
 #. js-lingui-id: UJmAAK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -3191,6 +3324,11 @@ msgstr "Görev hedefi görev"
 msgid "Text"
 msgstr "Metin"
 
+#. js-lingui-id: mQj02P
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-agent-response-format.util.ts
+msgid "Text response format should not have a schema"
+msgstr ""
+
 #. js-lingui-id: 6PJbR2
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "The account handle (email, username, phone number, etc.)"
@@ -3200,6 +3338,11 @@ msgstr "Hesap tanıtıcı (e-posta, kullanıcı adı, telefon numarası vb.)"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "The account provider"
 msgstr "Hesap sağlayıcısı"
+
+#. js-lingui-id: GekZDw
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
+msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
+msgstr ""
 
 #. js-lingui-id: eC8p5b
 #: src/engine/metadata-modules/permissions/permissions.service.ts
@@ -3284,11 +3427,6 @@ msgstr "Bu favorinin dahil olduğu klasör"
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Bir iş akışının ilk sürümü silinemez"
 
-#. js-lingui-id: YTftFF
-#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
-msgid "The name is not available"
-msgstr "Bu isim mevcut değil"
-
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -3300,15 +3438,21 @@ msgstr "İzin ayarlamaya çalıştığınız nesne bulunamadı. Silinmiş olabil
 msgid "The opportunity name"
 msgstr "Fırsat adı"
 
+#. js-lingui-id: pv+BoZ
+#: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
+msgid "The request is too complex to process. Please try reducing the amount of requested fields."
+msgstr ""
+
+#. js-lingui-id: 4LVaa7
+#: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
+msgid "The request is too complex to process. Please try reducing the amount of requested root resolvers."
+msgstr ""
+
 #. js-lingui-id: Zi9X+u
-#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util.ts
+#: src/engine/metadata-modules/flat-role/utils/from-delete-role-input-to-flat-role-or-throw.util.ts
 msgid "The role you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "Aradığınız rol bulunamadı. Silinmiş olabilir ya da erişiminiz olmayabilir."
-
-#. js-lingui-id: 5h4Nxe
-#: src/engine/metadata-modules/user-role/user-role.service.ts
-msgid "The role you are trying to assign could not be found. It may have been deleted."
-msgstr "Atamaya çalıştığınız rol bulunamadı. Silinmiş olabilir."
 
 #. js-lingui-id: HRcugS
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
@@ -3363,41 +3507,22 @@ msgstr "İş akışı sürüm durumu"
 msgid "There was an issue with your connection settings. Please try again."
 msgstr "Bağlantı ayarlarınızda bir sorun vardı. Lütfen tekrar deneyin."
 
-#. js-lingui-id: Bm40Ow
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} is already taken. Please choose a different value."
-msgstr "Bu {fieldName} zaten alınmış. Lütfen farklı bir değer seçin."
-
-#. js-lingui-id: CYyoPc
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldName} with value {duplicatedValues} is already taken. Please choose a different value."
-msgstr "Değeri {duplicatedValues} olan bu {fieldName} zaten alınmış. Lütfen farklı bir değer seçin."
-
 #. js-lingui-id: Izdz+Y
-#: src/engine/core-modules/api-key/api-key.service.ts
+#: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "Bu API Anahtarı iptal edilmiştir ve artık kullanılamaz."
 
 #. js-lingui-id: Jmzgho
-#: src/engine/core-modules/api-key/api-key.service.ts
+#: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has expired. Please create a new one."
 msgstr "Bu API Anahtarı süresi dolmuştur. Yeni bir tane oluşturun."
 
-#. js-lingui-id: r/Z8XK
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This combination of {fieldNames} already exists. Please use different values."
-msgstr "Bu {fieldNames} kombinasyonu zaten mevcut. Lütfen farklı değerler kullanın."
-
-#. js-lingui-id: mAs70Y
-#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field."
-msgstr "Bu isim başka bir alan tarafından kullanılmaktadır ve kullanılamaz."
-
-#. js-lingui-id: yIUmAs
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
-#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available."
-msgstr "Bu isim mevcut değil."
+#. js-lingui-id: gPBck6
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
+msgid "This name is reserved. Use a different name or the system will add \"Custom\" suffix."
+msgstr ""
 
 #. js-lingui-id: eitC3W
 #: src/engine/workspace-datasource/workspace-datasource.service.ts
@@ -3409,13 +3534,8 @@ msgstr "Bu işlem izin verilmez. Farklı bir yol deneyin veya yardıma ihtiyacı
 msgid "This record already exists. Please check your data and try again."
 msgstr "Bu kayıt zaten mevcut. Lütfen verilerinizi kontrol edin ve tekrar deneyin."
 
-#. js-lingui-id: +L9yxk
-#: src/engine/metadata-modules/user-role/user-role.service.ts
-msgid "This role cannot be assigned to users. Please select a different role."
-msgstr "Bu rol kullanıcılara atanamaz. Lütfen farklı bir rol seçin."
-
 #. js-lingui-id: KoDdqN
-#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-is-editable.util.ts
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -3527,6 +3647,11 @@ msgstr "Zaman Çizelgesi Aktivitesi"
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Title"
 msgstr "Başlık"
+
+#. js-lingui-id: mfqtz7
+#: src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts
+msgid "Too many workspace invitations sent. Please try again later."
+msgstr ""
 
 #. js-lingui-id: G3myU+
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -3649,7 +3774,7 @@ msgstr "0 nesne(ler) ve 0 alan(lar) için doğrulama başarısız oldu"
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "Değer \"{sanitizedValue}\" UPPER_CASE olmalı ve snake_case kurallarına uymalıdır."
 
@@ -4200,7 +4325,7 @@ msgid "You cannot change your own role. Please ask another administrator to upda
 msgstr "Kendi rolünüzü değiştiremezsiniz. Lütfen başka bir yöneticiden rolünüzü güncellemesini isteyin."
 
 #. js-lingui-id: y5haJ4
-#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-role-read-write-permissions-consistency.util.ts
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "You cannot grant edit permissions without also granting read permissions. Please enable read access first."
 msgstr "Okuma izinlerini vermeden düzenleme izinlerini veremezsiniz. Lütfen önce okuma erişimini etkinleştirin."
@@ -4286,8 +4411,3 @@ msgstr "Şirket hesabını yönetmekten sorumlu ekip üyeniz"
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "Your workspace has been updated with a new data model. Please refresh the page."
 msgstr "Çalışma alanınız yeni bir veri modeli ile güncellendi. Lütfen sayfayı yenileyin."
-
-#. js-lingui-id: ZukXiD
-#: src/engine/metadata-modules/user-role/user-role.service.ts
-msgid "Your workspace membership could not be found. You may no longer have access to this workspace."
-msgstr "Çalışma alanı üyeliğiniz bulunamadı. Bu çalışma alanına artık erişiminiz olmayabilir."

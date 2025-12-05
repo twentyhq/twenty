@@ -10,4 +10,9 @@ export const ALL_METADATA_NAME = {
   databaseEventTrigger: 'databaseEventTrigger',
   routeTrigger: 'routeTrigger',
   viewFilter: 'viewFilter',
+  role: 'role',
+  roleTarget: 'roleTarget',
+  agent: 'agent',
+  pageLayoutWidget: 'pageLayoutWidget',
+  pageLayoutTab: 'pageLayoutTab',
 } as const;

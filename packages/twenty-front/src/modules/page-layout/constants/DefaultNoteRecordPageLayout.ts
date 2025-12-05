@@ -48,7 +48,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
           id: 'note-widget-note',
           pageLayoutTabId: 'note-tab-fields',
           title: 'Note',
-          type: WidgetType.RICH_TEXT,
+          type: WidgetType.FIELD_RICH_TEXT,
           objectMetadataId: null,
           gridPosition: {
             __typename: 'GridPosition',
@@ -87,7 +87,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
           id: 'note-widget-note',
           pageLayoutTabId: 'note-tab-note',
           title: 'Note',
-          type: WidgetType.RICH_TEXT,
+          type: WidgetType.FIELD_RICH_TEXT,
           objectMetadataId: null,
           gridPosition: {
             __typename: 'GridPosition',

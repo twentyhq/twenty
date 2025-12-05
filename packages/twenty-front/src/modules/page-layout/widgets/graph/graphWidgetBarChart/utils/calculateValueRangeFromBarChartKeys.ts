@@ -1,9 +1,9 @@
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
-import { calculateValueRangeFromValues } from '@/page-layout/widgets/graph/utils/calculateValueRangeFromValues';
 import { type ChartValueRange } from '@/page-layout/widgets/graph/types/ChartValueRange';
+import { calculateValueRangeFromValues } from '@/page-layout/widgets/graph/utils/calculateValueRangeFromValues';
+import { type BarDatum } from '@nivo/bar';
 
 export const calculateValueRangeFromBarChartKeys = (
-  data: BarChartDataItem[],
+  data: BarDatum[],
   keys: string[],
 ): ChartValueRange => {
   const values: number[] = [];

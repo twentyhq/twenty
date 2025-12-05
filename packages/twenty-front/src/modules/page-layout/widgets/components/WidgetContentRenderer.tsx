@@ -1,11 +1,11 @@
 import { CalendarWidget } from '@/page-layout/widgets/calendar/components/CalendarWidget';
 import { EmailWidget } from '@/page-layout/widgets/emails/components/EmailWidget';
+import { FieldRichTextWidget } from '@/page-layout/widgets/field-rich-text/components/FieldRichTextWidget';
 import { FieldsWidget } from '@/page-layout/widgets/fields/components/FieldsWidget';
 import { FileWidget } from '@/page-layout/widgets/files/components/FileWidget';
 import { GraphWidgetRenderer } from '@/page-layout/widgets/graph/components/GraphWidgetRenderer';
 import { IframeWidget } from '@/page-layout/widgets/iframe/components/IframeWidget';
 import { NoteWidget } from '@/page-layout/widgets/notes/components/NoteWidget';
-import { RichTextWidget } from '@/page-layout/widgets/rich-text/components/RichTextWidget';
 import { TaskWidget } from '@/page-layout/widgets/tasks/components/TaskWidget';
 import { TimelineWidget } from '@/page-layout/widgets/timeline/components/TimelineWidget';
 import { WorkflowRunWidget } from '@/page-layout/widgets/workflow/components/WorkflowRunWidget';
@@ -42,8 +42,8 @@ export const WidgetContentRenderer = ({
     case WidgetType.NOTES:
       return <NoteWidget widget={widget} />;
 
-    case WidgetType.RICH_TEXT:
-      return <RichTextWidget widget={widget} />;
+    case WidgetType.FIELD_RICH_TEXT:
+      return <FieldRichTextWidget widget={widget} />;
 
     case WidgetType.FILES:
       return <FileWidget widget={widget} />;

@@ -10,7 +10,6 @@ import { type FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 
 import { useRecoilCallback } from 'recoil';
-import { computeRecordGqlOperationFilter } from 'twenty-shared/utils';
 
 export const WorkflowFindRecordsFilters = ({
   objectMetadataItem,
@@ -41,25 +40,16 @@ export const WorkflowFindRecordsFilters = ({
           currentRecordFiltersCallbackState,
         );
 
-        const gqlOperationFilter = computeRecordGqlOperationFilter({
-          fields: objectMetadataItem.fields,
-          filterValueDependencies: {},
-          recordFilters: currentRecordFilters,
-          recordFilterGroups: currentRecordFilterGroups,
-        });
-
         const newFilter = {
           recordFilterGroups: currentRecordFilterGroups,
           recordFilters: currentRecordFilters,
-          gqlOperationFilter,
-        } as FindRecordsActionFilter;
+        } satisfies FindRecordsActionFilter;
 
         onChange(newFilter);
       },
     [
       currentRecordFilterGroupsCallbackState,
       currentRecordFiltersCallbackState,
-      objectMetadataItem.fields,
       onChange,
     ],
   );

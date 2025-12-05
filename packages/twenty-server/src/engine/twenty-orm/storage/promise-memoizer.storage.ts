@@ -1,8 +1,6 @@
 import { type Milliseconds } from 'cache-manager';
 import { isDefined } from 'twenty-shared/utils';
 
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
-
 import { type CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
 
 type AsyncFactoryCallback<T> = () => Promise<T | null>;
@@ -37,13 +35,6 @@ export class PromiseMemoizer<T> {
 
     if (existingPromise) {
       return existingPromise;
-    }
-
-    if (process.env.NODE_ENV !== NodeEnvironment.TEST) {
-      // eslint-disable-next-line no-console
-      console.log(
-        `Computing new Datasource for cacheKey: ${cacheKey} out of ${this.cache.size}`,
-      );
     }
 
     const newPromise = (async () => {
@@ -94,6 +85,12 @@ export class PromiseMemoizer<T> {
     for (const cacheKey of [...this.cache.keys()]) {
       if (cacheKey.startsWith(cacheKeyPrefix)) {
         await this.clearKey(cacheKey, onDelete);
+      }
+    }
+
+    for (const cacheKey of [...this.pending.keys()]) {
+      if (cacheKey.startsWith(cacheKeyPrefix)) {
+        this.pending.delete(cacheKey);
       }
     }
   }

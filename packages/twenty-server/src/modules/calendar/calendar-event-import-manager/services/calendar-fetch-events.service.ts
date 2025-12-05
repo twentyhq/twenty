@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -40,6 +42,7 @@ export class CalendarFetchEventsService {
   ): Promise<void> {
     await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchOngoing(
       [calendarChannel.id],
+      workspaceId,
     );
 
     try {
@@ -57,6 +60,13 @@ export class CalendarFetchEventsService {
         accessToken,
         refreshToken,
       };
+
+      if (!isDefined(calendarChannel.syncCursor)) {
+        throw new CalendarEventImportDriverException(
+          'Sync cursor is required',
+          CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+        );
+      }
 
       const getCalendarEventsResponse =
         await this.getCalendarEventsService.getCalendarEvents(
@@ -87,8 +97,9 @@ export class CalendarFetchEventsService {
           },
         );
 
-        await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
+        await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
           [calendarChannel.id],
+          workspaceId,
         );
       }
 
@@ -117,8 +128,9 @@ export class CalendarFetchEventsService {
           calendarEventIds,
         );
 
-        await this.calendarChannelSyncStatusService.scheduleCalendarEventsImport(
+        await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
           [calendarChannel.id],
+          workspaceId,
         );
       } else {
         throw new CalendarEventImportDriverException(

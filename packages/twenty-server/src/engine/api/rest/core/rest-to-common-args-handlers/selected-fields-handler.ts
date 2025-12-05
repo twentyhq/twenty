@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType, ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -7,9 +7,11 @@ import { CommonSelectedFields } from 'src/engine/api/common/types/common-selecte
 import { getAllSelectableFields } from 'src/engine/api/rest/core/rest-to-common-args-handlers/utils/get-all-selectable-fields.util';
 import { MAX_DEPTH } from 'src/engine/api/rest/input-request-parsers/constants/max-depth.constant';
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type SelectFields = {
   [key: string]: boolean | SelectFields;
@@ -19,30 +21,32 @@ type SelectFields = {
 export class RestToCommonSelectedFieldsHandler {
   computeFromDepth = ({
     objectsPermissions,
-    objectMetadataMaps,
-    objectMetadataMapItem,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    flatObjectMetadata,
     depth,
   }: {
     objectsPermissions: ObjectsPermissions;
-    objectMetadataMaps: ObjectMetadataMaps;
-    objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatObjectMetadata: FlatObjectMetadata;
     depth: Depth | undefined;
   }): CommonSelectedFields => {
     const restrictedFields =
-      objectsPermissions[objectMetadataMapItem.id].restrictedFields;
+      objectsPermissions[flatObjectMetadata.id].restrictedFields;
 
     const relationsSelectFields = this.getRelationsAndRelationsSelectFields({
-      objectMetadataMaps,
-      objectMetadataMapItem,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
       objectsPermissions,
       depth,
     });
 
     const selectableFields = getAllSelectableFields({
       restrictedFields,
-      objectMetadata: {
-        objectMetadataMapItem,
-      },
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
     });
 
     return {
@@ -52,13 +56,15 @@ export class RestToCommonSelectedFieldsHandler {
   };
 
   private getRelationsAndRelationsSelectFields({
-    objectMetadataMaps,
-    objectMetadataMapItem,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    flatObjectMetadata,
     objectsPermissions,
     depth,
   }: {
-    objectMetadataMaps: ObjectMetadataMaps;
-    objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatObjectMetadata: FlatObjectMetadata;
     objectsPermissions: ObjectsPermissions;
     depth: Depth | undefined;
   }) {
@@ -66,46 +72,49 @@ export class RestToCommonSelectedFieldsHandler {
 
     let relationsSelectFields: SelectFields = {};
 
-    for (const field of Object.values(objectMetadataMapItem.fieldsById)) {
-      if (!isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION))
+    for (const fieldId of flatObjectMetadata.fieldMetadataIds) {
+      const flatField = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityMaps: flatFieldMetadataMaps,
+        flatEntityId: fieldId,
+      });
+
+      if (!isFlatFieldMetadataOfType(flatField, FieldMetadataType.RELATION))
         continue;
 
       const relationTargetObjectMetadata =
-        objectMetadataMaps.byId[field.relationTargetObjectMetadataId];
+        findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityMaps: flatObjectMetadataMaps,
+          flatEntityId: flatField.relationTargetObjectMetadataId,
+        });
 
-      if (!isDefined(relationTargetObjectMetadata)) {
-        throw new BadRequestException(
-          `Object metadata relation target not found for relation creation payload`,
-        );
-      }
       const relationFieldSelectFields = getAllSelectableFields({
         restrictedFields:
           objectsPermissions[relationTargetObjectMetadata.id].restrictedFields,
-        objectMetadata: {
-          objectMetadataMapItem: relationTargetObjectMetadata,
-        },
+        flatObjectMetadata: relationTargetObjectMetadata,
+        flatFieldMetadataMaps,
       });
 
       if (Object.keys(relationFieldSelectFields).length === 0) continue;
 
       if (
         depth === MAX_DEPTH &&
-        isDefined(field.relationTargetObjectMetadataId)
+        isDefined(flatField.relationTargetObjectMetadataId)
       ) {
         const depth2RelationsSelectFields =
           this.getRelationsAndRelationsSelectFields({
-            objectMetadataMaps,
-            objectMetadataMapItem: relationTargetObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            flatObjectMetadata: relationTargetObjectMetadata,
             objectsPermissions,
             depth: 1,
           });
 
-        relationsSelectFields[field.name] = {
+        relationsSelectFields[flatField.name] = {
           ...relationFieldSelectFields,
           ...depth2RelationsSelectFields,
         };
       } else {
-        relationsSelectFields[field.name] = relationFieldSelectFields;
+        relationsSelectFields[flatField.name] = relationFieldSelectFields;
       }
     }
 

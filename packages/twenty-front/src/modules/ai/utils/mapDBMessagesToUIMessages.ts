@@ -1,9 +1,9 @@
 import { mapDBPartToUIMessagePart } from '@/ai/utils/mapDBPartToUIMessagePart';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { type AgentChatMessage } from '~/generated/graphql';
+import { type AgentMessage } from '~/generated/graphql';
 
 export const mapDBMessagesToUIMessages = (
-  dbMessages: AgentChatMessage[],
+  dbMessages: AgentMessage[],
 ): ExtendedUIMessage[] => {
   return dbMessages.map((dbMessage) => ({
     id: dbMessage.id,

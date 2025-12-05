@@ -1,36 +1,25 @@
 import { type WorkflowAiAgentActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-settings.type';
 import { type WorkflowCodeActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-settings.type';
+import { type WorkflowDelayActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/types/workflow-delay-action-settings.type';
 import { type WorkflowFilterActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/types/workflow-filter-action-settings.type';
 import { type WorkflowFormActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
 import { type WorkflowHttpRequestActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/types/workflow-http-request-action-settings.type';
 import { type WorkflowIteratorActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
 import { type WorkflowSendEmailActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-settings.type';
 import {
-  type WorkflowUpsertRecordActionSettings,
   type WorkflowCreateRecordActionSettings,
   type WorkflowDeleteRecordActionSettings,
   type WorkflowFindRecordsActionSettings,
   type WorkflowUpdateRecordActionSettings,
+  type WorkflowUpsertRecordActionSettings,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-settings.type';
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
-import { type WorkflowDelayActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/delay/types/workflow-delay-action-settings.type';
 
-export enum WorkflowActionType {
-  CODE = 'CODE',
-  SEND_EMAIL = 'SEND_EMAIL',
-  CREATE_RECORD = 'CREATE_RECORD',
-  UPDATE_RECORD = 'UPDATE_RECORD',
-  DELETE_RECORD = 'DELETE_RECORD',
-  UPSERT_RECORD = 'UPSERT_RECORD',
-  FIND_RECORDS = 'FIND_RECORDS',
-  FORM = 'FORM',
-  FILTER = 'FILTER',
-  HTTP_REQUEST = 'HTTP_REQUEST',
-  AI_AGENT = 'AI_AGENT',
-  ITERATOR = 'ITERATOR',
-  EMPTY = 'EMPTY',
-  DELAY = 'DELAY',
-}
+// Import the enum from its dedicated file to avoid circular dependencies
+import { WorkflowActionType } from './workflow-action-type.enum';
+
+// Re-export for consumers
+export { WorkflowActionType };
 
 type BaseWorkflowAction = {
   id: string;

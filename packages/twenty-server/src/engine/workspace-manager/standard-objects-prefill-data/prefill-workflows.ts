@@ -1,9 +1,11 @@
+import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
-import { FieldActorSource } from 'twenty-shared/types';
 
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields';
 
 const QUICK_LEAD_WORKFLOW_ID = '8b213cac-a68b-4ffe-817a-3ec994e9932d';
@@ -12,13 +14,15 @@ const QUICK_LEAD_WORKFLOW_VERSION_ID = 'ac67974f-c524-4288-9d88-af8515400b68';
 export const prefillWorkflows = async (
   entityManager: EntityManager,
   schemaName: string,
-  objectMetadataItems: ObjectMetadataEntity[],
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
 ) => {
-  const objectMetadataMaps = generateObjectMetadataMaps(objectMetadataItems);
-  const companyObjectMetadataId =
-    objectMetadataMaps.idByNameSingular['company'];
+  const { idByNameSingular: objectIdByNameSingular } = buildObjectIdByNameMaps(
+    flatObjectMetadataMaps,
+  );
 
-  const personObjectMetadataId = objectMetadataMaps.idByNameSingular['person'];
+  const companyObjectMetadataId = objectIdByNameSingular['company'];
+  const personObjectMetadataId = objectIdByNameSingular['person'];
 
   if (
     !isDefined(companyObjectMetadataId) ||
@@ -28,9 +32,10 @@ export const prefillWorkflows = async (
   }
 
   const companyObjectMetadata =
-    objectMetadataMaps.byId[companyObjectMetadataId];
+    flatObjectMetadataMaps.byId[companyObjectMetadataId];
 
-  const personObjectMetadata = objectMetadataMaps.byId[personObjectMetadataId];
+  const personObjectMetadata =
+    flatObjectMetadataMaps.byId[personObjectMetadataId];
 
   if (!isDefined(companyObjectMetadata) || !isDefined(personObjectMetadata)) {
     throw new Error('Company or person object metadata not found');
@@ -220,8 +225,9 @@ export const prefillWorkflows = async (
                 _outputSchemaType: 'RECORD',
                 fields: generateObjectRecordFields({
                   objectMetadataInfo: {
-                    objectMetadataItemWithFieldsMaps: companyObjectMetadata,
-                    objectMetadataMaps,
+                    flatObjectMetadata: companyObjectMetadata,
+                    flatObjectMetadataMaps,
+                    flatFieldMetadataMaps,
                   },
                   depth: 0,
                 }),
@@ -262,8 +268,9 @@ export const prefillWorkflows = async (
               outputSchema: {
                 fields: generateObjectRecordFields({
                   objectMetadataInfo: {
-                    objectMetadataItemWithFieldsMaps: personObjectMetadata,
-                    objectMetadataMaps,
+                    flatObjectMetadata: personObjectMetadata,
+                    flatObjectMetadataMaps,
+                    flatFieldMetadataMaps,
                   },
                   depth: 0,
                 }),

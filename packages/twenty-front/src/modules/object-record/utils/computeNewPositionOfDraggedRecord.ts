@@ -10,10 +10,12 @@ export const computeNewPositionOfDraggedRecord = ({
   arrayOfRecordsWithPosition,
   idOfItemToMove,
   idOfTargetItem,
+  isDroppedAfterList,
 }: {
   arrayOfRecordsWithPosition: RecordWithPosition[];
   idOfItemToMove: string;
   idOfTargetItem: string;
+  isDroppedAfterList: boolean;
 }) => {
   const targetItem = arrayOfRecordsWithPosition.find(
     (recordToFind) => recordToFind.id === idOfTargetItem,
@@ -29,6 +31,10 @@ export const computeNewPositionOfDraggedRecord = ({
 
   const targetPosition = targetItem.position;
 
+  if (isDroppedAfterList) {
+    return targetPosition + 1;
+  }
+
   const sortedRecordsByAscendingPosition = arrayOfRecordsWithPosition.toSorted(
     sortByProperty('position'),
   );
@@ -43,16 +49,10 @@ export const computeNewPositionOfDraggedRecord = ({
     (recordToFind) => recordToFind.id === idOfTargetItem,
   );
 
-  const lastIndex = sortedRecordsByAscendingPosition.length - 1;
-
   const shouldGoToFirstPosition = indexOfTargetItem === 0;
-
-  const shouldGoToLastPosition = indexOfTargetItem === lastIndex;
 
   if (shouldGoToFirstPosition) {
     return targetPosition - 1;
-  } else if (shouldGoToLastPosition) {
-    return targetPosition + 1;
   } else {
     if (itemToMoveIsNotInTable) {
       const itemBeforeTargetItem =

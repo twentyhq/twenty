@@ -13,6 +13,7 @@ const generateFakeObjectRecordEventWithPrefix = ({
   objectMetadataInfo: ObjectMetadataInfo;
   prefix: string;
 }): RecordOutputSchema => {
+  const { flatObjectMetadata } = objectMetadataInfo;
   const recordFields = generateObjectRecordFields({ objectMetadataInfo });
   const prefixedRecordFields = Object.entries(recordFields).reduce(
     (acc, [key, value]) => {
@@ -26,12 +27,11 @@ const generateFakeObjectRecordEventWithPrefix = ({
   return {
     object: {
       isLeaf: true,
-      icon:
-        objectMetadataInfo.objectMetadataItemWithFieldsMaps.icon ?? undefined,
-      label: objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelSingular,
-      value: objectMetadataInfo.objectMetadataItemWithFieldsMaps.description,
+      icon: flatObjectMetadata.icon ?? undefined,
+      label: flatObjectMetadata.labelSingular,
+      value: flatObjectMetadata.description,
       fieldIdName: `${prefix}.id`,
-      objectMetadataId: objectMetadataInfo.objectMetadataItemWithFieldsMaps.id,
+      objectMetadataId: flatObjectMetadata.id,
     },
     fields: prefixedRecordFields,
     _outputSchemaType: 'RECORD',

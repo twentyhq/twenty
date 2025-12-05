@@ -7,8 +7,12 @@ import { type LineChartDataPoint } from '@/page-layout/widgets/graph/graphWidget
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { applyCumulativeTransformToLineChartData } from '@/page-layout/widgets/graph/utils/applyCumulativeTransformToLineChartData';
+import { buildFormattedToRawLookup } from '@/page-layout/widgets/graph/utils/buildFormattedToRawLookup';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
+import { formatPrimaryDimensionValues } from '@/page-layout/widgets/graph/utils/formatPrimaryDimensionValues';
 import { isDefined } from 'twenty-shared/utils';
 import { type LineChartConfiguration } from '~/generated/graphql';
 
@@ -25,6 +29,7 @@ type TransformOneDimensionalGroupByToLineChartDataParams = {
 type TransformOneDimensionalGroupByToLineChartDataResult = {
   series: LineChartSeries[];
   hasTooManyGroups: boolean;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
 export const transformOneDimensionalGroupByToLineChartData = ({
@@ -41,6 +46,16 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     0,
     LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
   );
+
+  const formattedValues = formatPrimaryDimensionValues({
+    groupByRawResults: limitedResults,
+    primaryAxisGroupByField: groupByFieldX,
+    primaryAxisDateGranularity:
+      configuration.primaryAxisDateGranularity ?? undefined,
+    primaryAxisGroupBySubFieldName: primaryAxisSubFieldName ?? undefined,
+  });
+
+  const formattedToRawLookup = buildFormattedToRawLookup(formattedValues);
 
   const data: LineChartDataPoint[] = limitedResults
     .map((result) => {
@@ -77,12 +92,20 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     })
     .filter((point) => isDefined(point));
 
+  const transformedData = configuration.isCumulative
+    ? applyCumulativeTransformToLineChartData({
+        data,
+        rangeMin: configuration.rangeMin ?? undefined,
+        rangeMax: configuration.rangeMax ?? undefined,
+      })
+    : data;
+
   const series: LineChartSeries[] = [
     {
       id: aggregateField.name,
       label: aggregateField.label,
       color: (configuration.color ?? GRAPH_DEFAULT_COLOR) as GraphColor,
-      data,
+      data: transformedData,
     },
   ];
 
@@ -90,5 +113,6 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     series,
     hasTooManyGroups:
       rawResults.length > LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
+    formattedToRawLookup,
   };
 };

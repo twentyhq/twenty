@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { join } from 'path';
@@ -6,6 +6,7 @@ import { join } from 'path';
 import deepEqual from 'deep-equal';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Repository } from 'typeorm';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { type ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
@@ -31,6 +32,7 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
+import { SERVERLESS_FUNCTION_LOGS_TRIGGER } from 'src/engine/metadata-modules/serverless-function/constants/serverless-function-logs-trigger';
 
 @Injectable()
 export class ServerlessFunctionService {
@@ -43,6 +45,8 @@ export class ServerlessFunctionService {
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly auditService: AuditService,
+    @Inject('PUB_SUB')
+    private readonly pubSub: RedisPubSub,
   ) {}
 
   async hasServerlessFunctionPublishedVersion(serverlessFunctionId: string) {
@@ -98,6 +102,7 @@ export class ServerlessFunctionService {
         },
         relations: [
           'serverlessFunctionLayer',
+          'application',
           'application.applicationVariables',
         ],
       });
@@ -112,6 +117,18 @@ export class ServerlessFunctionService {
       /* eslint-disable no-console */
       console.log(resultServerlessFunction.logs);
     }
+
+    await this.pubSub.publish(SERVERLESS_FUNCTION_LOGS_TRIGGER, {
+      serverlessFunctionLogs: {
+        logs: resultServerlessFunction.logs,
+        id: functionToExecute.id,
+        name: functionToExecute.name,
+        universalIdentifier: functionToExecute.universalIdentifier,
+        applicationId: functionToExecute.applicationId,
+        applicationUniversalIdentifier:
+          functionToExecute.application?.universalIdentifier,
+      },
+    });
 
     this.auditService
       .createContext({

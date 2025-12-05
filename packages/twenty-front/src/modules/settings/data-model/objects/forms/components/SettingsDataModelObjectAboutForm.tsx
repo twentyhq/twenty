@@ -11,6 +11,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
 import { Controller, useFormContext } from 'react-hook-form';
+import { SettingsPath } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
@@ -18,14 +19,17 @@ import {
   IconRefresh,
   TooltipDelay,
 } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { Card } from 'twenty-ui/layout';
 import { type StringKeyOf } from 'type-fest';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 
 type SettingsDataModelObjectAboutFormProps = {
   disableEdition?: boolean;
   objectMetadataItem?: ObjectMetadataItem;
   onNewDirtyField?: () => void;
+  conflictingObjectMetadataItem?: ObjectMetadataItem;
 };
 
 const StyledInputsContainer = styled.div`
@@ -66,25 +70,59 @@ const StyledLabel = styled.span`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledConflictBanner = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.accent.secondary};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  box-sizing: border-box;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledBannerContent = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+  flex: 1;
+`;
+
+const StyledBannerText = styled.span`
+  color: ${({ theme }) => theme.color.blue};
+  flex: 1;
+`;
+
+const StyledConflictButton = styled(Button)`
+  border-color: ${({ theme }) => theme.color.blue};
+  color: ${({ theme }) => theme.color.blue};
+  &:hover {
+    background: ${({ theme }) => theme.accent.secondary};
+  }
+  &:focus-visible {
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.accent.tertiary};
+  }
+`;
+
 const infoCircleElementId = 'info-circle-id';
 
 export const SettingsDataModelObjectAboutForm = ({
   disableEdition = false,
   onNewDirtyField,
   objectMetadataItem,
+  conflictingObjectMetadataItem,
 }: SettingsDataModelObjectAboutFormProps) => {
   const { control, watch, setValue } =
     useFormContext<SettingsDataModelObjectAboutFormValues>();
   const { t } = useLingui();
   const theme = useTheme();
+  const navigateSettings = useNavigateSettings();
 
   const isLabelSyncedWithName = watch('isLabelSyncedWithName');
   const labelSingular = watch('labelSingular');
   const labelPlural = watch('labelPlural');
   const isStandardObject =
     isDefined(objectMetadataItem?.isCustom) && !objectMetadataItem.isCustom;
-  watch('nameSingular');
-  watch('namePlural');
   watch('description');
   watch('icon');
 
@@ -101,6 +139,7 @@ export const SettingsDataModelObjectAboutForm = ({
     const labelPluralFromSingularLabel = plural(labelSingular);
     setValue('labelPlural', labelPluralFromSingularLabel, {
       shouldDirty: true,
+      shouldValidate: true,
     });
     if (isLabelSyncedWithName) {
       fillNamePluralFromLabelPlural(labelPluralFromSingularLabel);
@@ -114,6 +153,7 @@ export const SettingsDataModelObjectAboutForm = ({
 
     setValue('nameSingular', computeMetadataNameFromLabel(labelSingular), {
       shouldDirty: true,
+      shouldValidate: true,
     });
   };
 
@@ -122,6 +162,7 @@ export const SettingsDataModelObjectAboutForm = ({
 
     setValue('namePlural', computeMetadataNameFromLabel(labelPlural), {
       shouldDirty: true,
+      shouldValidate: true,
     });
   };
 
@@ -227,6 +268,31 @@ export const SettingsDataModelObjectAboutForm = ({
       <StyledAdvancedSettingsOuterContainer>
         <StyledAdvancedSettingsContainer>
           <StyledAdvancedSettingsSectionInputWrapper>
+            {isDefined(conflictingObjectMetadataItem) && (
+              <StyledConflictBanner>
+                <StyledBannerContent>
+                  <IconInfoCircle
+                    color={theme.color.blue}
+                    size={theme.icon.size.md}
+                  />
+                  <StyledBannerText>
+                    {t`An object with this name already exists`}
+                  </StyledBannerText>
+                </StyledBannerContent>
+                <StyledConflictButton
+                  size="small"
+                  variant="secondary"
+                  accent="blue"
+                  title={t`Open`}
+                  onClick={() =>
+                    navigateSettings(SettingsPath.ObjectDetail, {
+                      objectNamePlural:
+                        conflictingObjectMetadataItem.namePlural,
+                    })
+                  }
+                />
+              </StyledConflictBanner>
+            )}
             {[
               {
                 label: t`API Name (Singular)`,

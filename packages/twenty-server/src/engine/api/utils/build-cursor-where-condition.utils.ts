@@ -16,14 +16,19 @@ import { computeOperator } from 'src/engine/api/utils/compute-operator.utils';
 import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
 import { validateAndGetOrderByForScalarField } from 'src/engine/api/utils/validate-and-get-order-by.utils';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type BuildCursorWhereConditionParams = {
   cursorKey: keyof ObjectRecord;
   cursorValue:
     | ObjectRecordCursorLeafScalarValue
     | ObjectRecordCursorLeafCompositeValue;
-  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+  flatObjectMetadata: FlatObjectMetadata;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   orderBy: ObjectRecordOrderBy;
   isForwardPagination: boolean;
   isEqualityCondition?: boolean;
@@ -32,15 +37,23 @@ type BuildCursorWhereConditionParams = {
 export const buildCursorWhereCondition = ({
   cursorKey,
   cursorValue,
-  objectMetadataItemWithFieldMaps,
+  flatObjectMetadata,
+  flatFieldMetadataMaps,
   orderBy,
   isForwardPagination,
   isEqualityCondition = false,
 }: BuildCursorWhereConditionParams): Record<string, unknown> => {
-  const fieldMetadataId =
-    objectMetadataItemWithFieldMaps.fieldIdByName[cursorKey];
-  const fieldMetadata =
-    objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
+  const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+    flatFieldMetadataMaps,
+    flatObjectMetadata,
+  );
+
+  const fieldMetadataId = fieldIdByName[cursorKey];
+
+  const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityMaps: flatFieldMetadataMaps,
+    flatEntityId: fieldMetadataId,
+  });
 
   if (!fieldMetadata) {
     throw new GraphqlQueryRunnerException(

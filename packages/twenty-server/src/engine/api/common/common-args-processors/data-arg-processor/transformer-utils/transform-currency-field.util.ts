@@ -8,7 +8,6 @@ export const transformCurrencyField = (
     amountMicros?: number | string | null;
     currencyCode?: string | null;
   } | null,
-  isNullEquivalenceEnabled: boolean = false,
 ): {
   amountMicros?: number | null;
   currencyCode?: string | null;
@@ -21,6 +20,6 @@ export const transformCurrencyField = (
       : transformNumericField(value.amountMicros),
     currencyCode: isUndefined(value.currencyCode)
       ? undefined
-      : transformTextField(value.currencyCode, isNullEquivalenceEnabled),
+      : transformTextField(value.currencyCode),
   };
 };

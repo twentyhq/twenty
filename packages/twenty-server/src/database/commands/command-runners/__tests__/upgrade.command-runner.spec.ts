@@ -11,6 +11,7 @@ import { UpgradeCommandRunner } from 'src/database/commands/command-runners/upgr
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
@@ -72,9 +73,37 @@ const buildUpgradeCommandModule = async ({
   appVersion,
   commandRunner,
 }: BuildUpgradeCommandModuleArgs) => {
+  const mockDataSourceService = {
+    getLastDataSourceMetadataFromWorkspaceId: jest.fn(),
+  };
+
   const module: TestingModule = await Test.createTestingModule({
     providers: [
-      commandRunner,
+      {
+        provide: commandRunner,
+        useFactory: (
+          workspaceRepository: Repository<WorkspaceEntity>,
+          twentyConfigService: TwentyConfigService,
+          twentyORMGlobalManager: TwentyORMGlobalManager,
+          dataSourceService: DataSourceService,
+          syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
+        ) => {
+          return new commandRunner(
+            workspaceRepository,
+            twentyConfigService,
+            twentyORMGlobalManager,
+            dataSourceService,
+            syncWorkspaceMetadataCommand,
+          );
+        },
+        inject: [
+          getRepositoryToken(WorkspaceEntity),
+          TwentyConfigService,
+          TwentyORMGlobalManager,
+          DataSourceService,
+          SyncWorkspaceMetadataCommand,
+        ],
+      },
       {
         provide: getRepositoryToken(WorkspaceEntity),
         useValue: {
@@ -109,6 +138,10 @@ const buildUpgradeCommandModule = async ({
           destroyDataSourceForWorkspace: jest.fn(),
           getDataSourceForWorkspace: jest.fn(),
         },
+      },
+      {
+        provide: DataSourceService,
+        useValue: mockDataSourceService,
       },
       {
         provide: SyncWorkspaceMetadataCommand,

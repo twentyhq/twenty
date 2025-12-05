@@ -5,6 +5,10 @@ import { type gmail_v1 as gmailV1 } from 'googleapis';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { GmailFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-fetch-by-batch.service';
 import { GmailMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-messages-import-error-handler.service';
 import { parseAndFormatGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util';
@@ -24,6 +28,12 @@ export class GmailGetMessagesService {
       'accessToken' | 'id' | 'handle' | 'handleAliases'
     >,
   ): Promise<MessageWithParticipants[]> {
+    if (!isDefined(connectedAccount.accessToken)) {
+      throw new MessageImportDriverException(
+        'Access token is required',
+        MessageImportDriverExceptionCode.ACCESS_TOKEN_MISSING,
+      );
+    }
     const { messageIdsByBatch, batchResponses } =
       await this.fetchByBatchesService.fetchAllByBatches(
         messageIds,

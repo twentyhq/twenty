@@ -10,7 +10,7 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { validateMorphOrRelationFlatFieldJoinColumName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/find-flat-entity-property-update.util';
 
-export const validateMorphOrRelationFlatFieldMetadata = async ({
+export const validateMorphOrRelationFlatFieldMetadata = ({
   flatEntityToValidate: flatFieldMetadataToValidate,
   optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
     flatFieldMetadataMaps,
@@ -18,9 +18,8 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
   },
   updates,
   remainingFlatEntityMapsToValidate,
-}: FlatFieldMetadataTypeValidationArgs<MorphOrRelationFieldMetadataType>): Promise<
-  FlatFieldMetadataValidationError[]
-> => {
+  buildOptions,
+}: FlatFieldMetadataTypeValidationArgs<MorphOrRelationFieldMetadataType>): FlatFieldMetadataValidationError[] => {
   const { relationTargetFieldMetadataId, relationTargetObjectMetadataId } =
     flatFieldMetadataToValidate;
 
@@ -94,6 +93,7 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
   )
     errors.push(
       ...validateMorphOrRelationFlatFieldJoinColumName({
+        buildOptions,
         flatFieldMetadata: flatFieldMetadataToValidate,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
           flatFieldMetadataMaps,

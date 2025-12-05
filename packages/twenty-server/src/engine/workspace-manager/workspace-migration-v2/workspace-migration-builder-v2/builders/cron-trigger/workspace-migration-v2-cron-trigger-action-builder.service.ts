@@ -19,16 +19,14 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     super(ALL_METADATA_NAME.cronTrigger);
   }
 
-  protected async validateFlatEntityCreation(
+  protected validateFlatEntityCreation(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.cronTrigger>,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      typeof ALL_METADATA_NAME.cronTrigger,
-      'created'
-    >
+  ): FlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.cronTrigger,
+    'created'
   > {
     const validationResult =
-      await this.flatCronTriggerValidatorService.validateFlatCronTriggerCreation(
+      this.flatCronTriggerValidatorService.validateFlatCronTriggerCreation(
         args,
       );
 
@@ -50,13 +48,11 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     };
   }
 
-  protected async validateFlatEntityDeletion(
+  protected validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.cronTrigger>,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      typeof ALL_METADATA_NAME.cronTrigger,
-      'deleted'
-    >
+  ): FlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.cronTrigger,
+    'deleted'
   > {
     const validationResult =
       this.flatCronTriggerValidatorService.validateFlatCronTriggerDeletion(
@@ -81,13 +77,11 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     };
   }
 
-  protected async validateFlatEntityUpdate(
+  protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.cronTrigger>,
-  ): Promise<
-    FlatEntityValidationReturnType<
-      typeof ALL_METADATA_NAME.cronTrigger,
-      'updated'
-    >
+  ): FlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.cronTrigger,
+    'updated'
   > {
     const validationResult =
       this.flatCronTriggerValidatorService.validateFlatCronTriggerUpdate(args);

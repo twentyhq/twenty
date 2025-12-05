@@ -1,7 +1,9 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
+import { getLineChartQueryLimit } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartQueryLimit';
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
+import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { transformGroupByDataToLineChartData } from '@/page-layout/widgets/graph/utils/transformGroupByDataToLineChartData';
 import { useMemo } from 'react';
 import { type LineChartConfiguration } from '~/generated/graphql';
@@ -16,10 +18,14 @@ type UseGraphLineChartWidgetDataResult = {
   xAxisLabel?: string;
   yAxisLabel?: string;
   showDataLabels: boolean;
+  showLegend: boolean;
   hasTooManyGroups: boolean;
+  formattedToRawLookup: Map<string, RawDimensionValue>;
   loading: boolean;
   error?: Error;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: ReturnType<
+    typeof useObjectMetadataItemById
+  >['objectMetadataItem'];
 };
 
 export const useGraphLineChartWidgetData = ({
@@ -29,6 +35,9 @@ export const useGraphLineChartWidgetData = ({
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
   });
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const limit = getLineChartQueryLimit(configuration);
 
   const {
     data: groupByData,
@@ -38,6 +47,7 @@ export const useGraphLineChartWidgetData = ({
   } = useGraphWidgetGroupByQuery({
     objectMetadataItemId,
     configuration,
+    limit,
   });
 
   const transformedData = useMemo(
@@ -45,10 +55,17 @@ export const useGraphLineChartWidgetData = ({
       transformGroupByDataToLineChartData({
         groupByData,
         objectMetadataItem,
+        objectMetadataItems: objectMetadataItems ?? [],
         configuration,
         aggregateOperation,
       }),
-    [groupByData, objectMetadataItem, configuration, aggregateOperation],
+    [
+      groupByData,
+      objectMetadataItem,
+      objectMetadataItems,
+      configuration,
+      aggregateOperation,
+    ],
   );
 
   return {

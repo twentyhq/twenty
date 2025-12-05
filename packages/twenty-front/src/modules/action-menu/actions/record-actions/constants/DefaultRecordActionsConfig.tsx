@@ -5,7 +5,7 @@ import { ExportMultipleRecordsAction } from '@/action-menu/actions/record-action
 import { MergeMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/MergeMultipleRecordsAction';
 import { RestoreMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
-import { CreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/CreateNewTableRecordNoSelectionRecordAction';
+import { CreateNewIndexRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/CreateNewIndexRecordNoSelectionRecordAction';
 import { CreateNewViewNoSelectionRecord } from '@/action-menu/actions/record-actions/no-selection/components/CreateNewViewNoSelectionRecord';
 import { HideDeletedRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/HideDeletedRecordsNoSelectionRecordAction';
 import { ImportRecordsNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/ImportRecordsNoSelectionRecordAction';
@@ -103,7 +103,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
         !hasAnySoftDeleteFilterOnView) ??
       false,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
-    component: <CreateNewTableRecordNoSelectionRecordAction />,
+    component: <CreateNewIndexRecordNoSelectionRecordAction />,
   },
   [SingleRecordActionKeys.DELETE]: {
     type: ActionType.Standard,

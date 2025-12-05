@@ -102,7 +102,12 @@ export class UpdateWorkspaceInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  routerModel?: string;
+  fastModel?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  smartModel?: string;
 
   @Field(() => [String], { nullable: true })
   @IsArray()

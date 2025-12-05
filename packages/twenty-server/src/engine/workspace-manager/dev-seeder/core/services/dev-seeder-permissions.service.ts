@@ -9,10 +9,11 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
+import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
@@ -36,8 +37,9 @@ export class DevSeederPermissionsService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
-    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fieldPermissionService: FieldPermissionService,
+    private readonly roleTargetService: RoleTargetService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {}
@@ -63,28 +65,15 @@ export class DevSeederPermissionsService {
     }
 
     try {
-      await this.coreDataSource
-        .createQueryBuilder()
-        .insert()
-        .into('core.roleTargets', ['roleId', 'apiKeyId', 'workspaceId'])
-        .orIgnore()
-        .values([
-          {
-            roleId: adminRole.id,
-            apiKeyId: API_KEY_DATA_SEED_IDS.ID_1,
-            workspaceId: workspaceId,
-          },
-        ])
-        .execute();
-
-      await this.workspacePermissionsCacheService.recomputeApiKeyRoleMapCache({
+      await this.roleTargetService.create({
+        createRoleTargetInput: {
+          roleId: adminRole.id,
+          targetId: API_KEY_DATA_SEED_IDS.ID_1,
+          targetMetadataForeignKey: 'apiKeyId',
+          applicationId: twentyStandardApplication.id,
+        },
         workspaceId,
       });
-      await this.workspacePermissionsCacheService.recomputeUserWorkspaceRoleMapCache(
-        {
-          workspaceId,
-        },
-      );
     } catch (error) {
       this.logger.error(
         `Could not assign role to test API key: ${error.message}`,
@@ -110,18 +99,20 @@ export class DevSeederPermissionsService {
         applicationId: twentyStandardApplication.id,
       });
 
-      await this.userRoleService.assignRoleToUserWorkspace({
+      await this.userRoleService.assignRoleToManyUserWorkspace({
         workspaceId,
-        userWorkspaceId: guestUserWorkspaceId,
+        userWorkspaceIds: [guestUserWorkspaceId],
         roleId: guestRole.id,
       });
 
-      const limitedRole =
-        await this.createLimitedRoleForSeedWorkspace(workspaceId);
-
-      await this.userRoleService.assignRoleToUserWorkspace({
+      const limitedRole = await this.createLimitedRoleForSeedWorkspace({
         workspaceId,
-        userWorkspaceId: limitedUserWorkspaceId,
+        applicationId: twentyStandardApplication.id,
+      });
+
+      await this.userRoleService.assignRoleToManyUserWorkspace({
+        workspaceId,
+        userWorkspaceIds: [limitedUserWorkspaceId],
         roleId: limitedRole.id,
       });
     } else if (workspaceId === SEED_YCOMBINATOR_WORKSPACE_ID) {
@@ -134,9 +125,9 @@ export class DevSeederPermissionsService {
     }
 
     if (adminUserWorkspaceId) {
-      await this.userRoleService.assignRoleToUserWorkspace({
+      await this.userRoleService.assignRoleToManyUserWorkspace({
         workspaceId,
-        userWorkspaceId: adminUserWorkspaceId,
+        userWorkspaceIds: [adminUserWorkspaceId],
         roleId: adminRole.id,
       });
     }
@@ -153,19 +144,24 @@ export class DevSeederPermissionsService {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       });
 
-    if (memberUserWorkspaceIds) {
-      for (const memberUserWorkspaceId of memberUserWorkspaceIds) {
-        await this.userRoleService.assignRoleToUserWorkspace({
-          workspaceId,
-          userWorkspaceId: memberUserWorkspaceId,
-          roleId: memberRole.id,
-        });
-      }
+    if (memberUserWorkspaceIds.length > 0) {
+      await this.userRoleService.assignRoleToManyUserWorkspace({
+        workspaceId,
+        userWorkspaceIds: memberUserWorkspaceIds,
+        roleId: memberRole.id,
+      });
     }
   }
 
-  private async createLimitedRoleForSeedWorkspace(workspaceId: string) {
+  private async createLimitedRoleForSeedWorkspace({
+    applicationId,
+    workspaceId,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+  }) {
     const customRole = await this.roleService.createRole({
+      applicationId,
       workspaceId,
       input: {
         label: 'Object-restricted',

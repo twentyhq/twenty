@@ -17,6 +17,8 @@
     "babel-plugin-inline-react-svg": "^2.0.2",
     "babel-plugin-module-resolver": "^5.0.2",
     "tsx": "^4.19.3",
+    "vite-plugin-checker": "^0.10.2",
+    "vite-plugin-dts": "3.8.1",
     "vite-plugin-svgr": "^4.3.0"
   },
   "dependencies": {

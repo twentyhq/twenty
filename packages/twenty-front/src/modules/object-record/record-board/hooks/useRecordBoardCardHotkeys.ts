@@ -4,6 +4,7 @@ import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/use
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { useRecordBoardSelectAllHotkeys } from '@/object-record/record-board/hooks/useRecordBoardSelectAllHotkeys';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
+import { useResetRecordBoardSelection } from '@/object-record/record-board/hooks/useResetRecordBoardSelection';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
@@ -21,8 +22,9 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
   const { activateBoardCard } = useActiveRecordBoardCard();
-  const { setRecordAsSelected, resetRecordSelection } =
-    useRecordBoardSelection();
+  const { setRecordAsSelected } = useRecordBoardSelection();
+
+  const { resetRecordBoardSelection } = useResetRecordBoardSelection();
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
   const isRecordBoardCardSelected = useRecoilComponentFamilyValue(
@@ -56,8 +58,9 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
 
   const handleEscape = () => {
     unfocusBoardCard();
+
     if (isAtLeastOneRecordSelected) {
-      resetRecordSelection();
+      resetRecordBoardSelection();
     }
   };
 

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
+import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
-import { type ActorMetadata } from 'twenty-shared/types';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -41,12 +41,17 @@ export class WorkflowRunWorkspaceService {
     workflowRunId,
     status,
     triggerPayload,
+    error,
   }: {
     workflowVersionId: string;
     createdBy: ActorMetadata;
-    status: WorkflowRunStatus.NOT_STARTED | WorkflowRunStatus.ENQUEUED;
+    status:
+      | WorkflowRunStatus.NOT_STARTED
+      | WorkflowRunStatus.ENQUEUED
+      | WorkflowRunStatus.FAILED;
     triggerPayload: object;
     workflowRunId?: string;
+    error?: string;
   }) {
     const workspaceId =
       this.scopedWorkspaceContextFactory.create()?.workspaceId;
@@ -100,7 +105,7 @@ export class WorkflowRunWorkspaceService {
       workspaceId,
     });
 
-    const initState = this.getInitState(workflowVersion, triggerPayload);
+    const initState = this.getInitState(workflowVersion, triggerPayload, error);
 
     const lastWorkflowRun = await workflowRunRepository.findOne({
       where: {
@@ -109,7 +114,7 @@ export class WorkflowRunWorkspaceService {
       order: { createdAt: 'desc' },
     });
 
-    const workflowRunCountMatch = lastWorkflowRun?.name.match(/#(\d+)/);
+    const workflowRunCountMatch = lastWorkflowRun?.name?.match(/#(\d+)/);
 
     const workflowRunCount = workflowRunCountMatch
       ? parseInt(workflowRunCountMatch[1], 10)
@@ -144,16 +149,6 @@ export class WorkflowRunWorkspaceService {
       workflowRunId,
       workspaceId,
     });
-
-    if (
-      workflowRunToUpdate.status === WorkflowRunStatus.COMPLETED ||
-      workflowRunToUpdate.status === WorkflowRunStatus.FAILED
-    ) {
-      throw new WorkflowRunException(
-        'Cannot start a workflow run already ended',
-        WorkflowRunExceptionCode.INVALID_OPERATION,
-      );
-    }
 
     if (
       workflowRunToUpdate.status !== WorkflowRunStatus.ENQUEUED &&
@@ -415,6 +410,7 @@ export class WorkflowRunWorkspaceService {
   private getInitState(
     workflowVersion: WorkflowVersionWorkspaceEntity,
     triggerPayload: object,
+    error?: string,
   ): WorkflowRunState | undefined {
     if (
       !isDefined(workflowVersion.trigger) ||
@@ -437,6 +433,7 @@ export class WorkflowRunWorkspaceService {
           ]),
         ),
       },
+      workflowRunError: error,
     };
   }
 

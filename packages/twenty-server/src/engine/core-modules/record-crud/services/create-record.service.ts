@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
-import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 import { FieldActorSource } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 
 import {
   RecordCrudException,
@@ -13,11 +13,11 @@ import { getSelectedColumnsFromRestrictedFields } from 'src/engine/core-modules/
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class CreateRecordService {
   private readonly logger = new Logger(CreateRecordService.name);
 
@@ -25,7 +25,6 @@ export class CreateRecordService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly recordPositionService: RecordPositionService,
     private readonly recordInputTransformerService: RecordInputTransformerService,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
   async execute(params: CreateRecordParams): Promise<ToolOutput> {
@@ -48,16 +47,30 @@ export class CreateRecordService {
           rolePermissionConfig,
         );
 
-      const { objectMetadataItemWithFieldsMaps } =
-        await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-          objectName,
-          workspaceId,
+      const {
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        objectIdByNameSingular,
+      } = repository.internalContext;
+
+      const objectId = objectIdByNameSingular[objectName];
+
+      if (!isDefined(objectId)) {
+        throw new RecordCrudException(
+          `Object ${objectName} not found`,
+          RecordCrudExceptionCode.INVALID_REQUEST,
         );
+      }
+
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityMaps: flatObjectMetadataMaps,
+        flatEntityId: objectId,
+      });
 
       if (
         !canObjectBeManagedByWorkflow({
-          nameSingular: objectMetadataItemWithFieldsMaps.nameSingular,
-          isSystem: objectMetadataItemWithFieldsMaps.isSystem,
+          nameSingular: flatObjectMetadata.nameSingular,
+          isSystem: flatObjectMetadata.isSystem,
         })
       ) {
         throw new RecordCrudException(
@@ -68,34 +81,39 @@ export class CreateRecordService {
 
       const position = await this.recordPositionService.buildRecordPosition({
         value: 'first',
-        objectMetadata: objectMetadataItemWithFieldsMaps,
+        objectMetadata: flatObjectMetadata,
         workspaceId,
       });
+
+      const { fieldIdByName, fieldIdByJoinColumnName } =
+        buildFieldMapsFromFlatObjectMetadata(
+          flatFieldMetadataMaps,
+          flatObjectMetadata,
+        );
 
       const validObjectRecord = Object.fromEntries(
         Object.entries(objectRecord).filter(
           ([key]) =>
-            isDefined(objectMetadataItemWithFieldsMaps.fieldIdByName[key]) ||
-            isDefined(
-              objectMetadataItemWithFieldsMaps.fieldIdByJoinColumnName[key],
-            ),
+            isDefined(fieldIdByName[key]) ||
+            isDefined(fieldIdByJoinColumnName[key]),
         ),
       );
 
       const transformedObjectRecord =
         await this.recordInputTransformerService.process({
           recordInput: validObjectRecord,
-          objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
         });
 
       const restrictedFields =
-        repository.objectRecordsPermissions?.[
-          objectMetadataItemWithFieldsMaps.id
-        ]?.restrictedFields;
+        repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+          ?.restrictedFields;
 
       const selectedColumns = getSelectedColumnsFromRestrictedFields(
         restrictedFields,
-        objectMetadataItemWithFieldsMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
       );
 
       const insertResult = await repository.insert(

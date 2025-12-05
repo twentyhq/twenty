@@ -5,6 +5,8 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
+
+import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
@@ -56,8 +58,8 @@ const StyledColumn = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
   display: flex;
   flex-direction: column;
-  max-width: 200px;
-  min-width: 200px;
+  max-width: ${RECORD_BOARD_COLUMN_WIDTH}px;
+  min-width: ${RECORD_BOARD_COLUMN_WIDTH}px;
 
   padding: ${({ theme }) => theme.spacing(2)};
 
@@ -103,6 +105,13 @@ export const RecordBoardColumnHeader = () => {
   const { toggleDropdown } = useToggleDropdown();
 
   const dropdownId = `record-board-column-dropdown-${columnDefinition.id}`;
+
+  const handleCreateNewRecordClick = async () => {
+    await createNewIndexRecord({
+      position: 'first',
+      [selectFieldMetadataItem.name]: columnDefinition.value,
+    });
+  };
 
   return (
     <StyledColumn>
@@ -166,13 +175,7 @@ export const RecordBoardColumnHeader = () => {
                     <LightIconButton
                       accent="tertiary"
                       Icon={IconPlus}
-                      onClick={() => {
-                        createNewIndexRecord({
-                          position: 'first',
-                          [selectFieldMetadataItem.name]:
-                            columnDefinition.value,
-                        });
-                      }}
+                      onClick={handleCreateNewRecordClick}
                     />
                   )}
               </StyledHeaderActions>

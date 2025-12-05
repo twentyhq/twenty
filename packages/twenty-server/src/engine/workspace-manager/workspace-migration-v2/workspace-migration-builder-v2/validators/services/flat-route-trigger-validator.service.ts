@@ -99,15 +99,15 @@ export class FlatRouteTriggerValidatorService {
     return validationResult;
   }
 
-  public async validateFlatRouteTriggerCreation({
+  public validateFlatRouteTriggerCreation({
     flatEntityToValidate: flatRouteTriggerToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRouteTriggerMaps: optimisticFlatRouteTriggerMaps,
       flatServerlessFunctionMaps,
     },
-  }: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>): Promise<
-    FailedFlatEntityValidation<FlatRouteTrigger>
-  > {
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.routeTrigger
+  >): FailedFlatEntityValidation<FlatRouteTrigger> {
     const validationResult: FailedFlatEntityValidation<FlatRouteTrigger> = {
       type: 'create_route_trigger',
       errors: [],

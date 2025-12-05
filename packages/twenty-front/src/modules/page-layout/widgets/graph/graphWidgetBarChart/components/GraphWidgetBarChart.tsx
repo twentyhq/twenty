@@ -3,16 +3,16 @@ import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphW
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
 import { GraphBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphBarChartTooltip';
-import { BAR_CHART_MINIMUM_INNER_PADDING } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumInnerPadding';
+import { BAR_CHART_OUTER_PADDING_RATIO } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartOuterPaddingRatio';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
 import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateValueRangeFromBarChartKeys';
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
+import { getBarChartInnerPadding } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartInnerPadding';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
@@ -25,6 +25,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   ResponsiveBar,
+  type BarDatum,
   type BarItemProps,
   type ComputedBarDatum,
   type ComputedDatum,
@@ -33,12 +34,11 @@ import { useCallback, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { CHART_LEGEND_ITEM_THRESHOLD } from '@/page-layout/widgets/graph/constants/ChartLegendItemThreshold';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 type GraphWidgetBarChartProps = {
-  data: BarChartDataItem[];
+  data: BarDatum[];
   indexBy: string;
   keys: string[];
   series?: BarChartSeries[];
@@ -54,7 +54,7 @@ type GraphWidgetBarChartProps = {
   rangeMin?: number;
   rangeMax?: number;
   omitNullValues?: boolean;
-  onBarClick?: (datum: ComputedDatum<BarChartDataItem>) => void;
+  onBarClick?: (datum: ComputedDatum<BarDatum>) => void;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -93,7 +93,6 @@ export const GraphWidgetBarChart = ({
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
 
-  // Chart dimensions
   const [chartWidth, setChartWidth] = useState<number>(0);
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -133,10 +132,7 @@ export const GraphWidgetBarChart = ({
   const handleTooltipMouseLeave = debouncedHideTooltip;
 
   const handleBarEnter = useCallback(
-    (
-      datum: ComputedDatum<BarChartDataItem>,
-      event: MouseEvent<SVGRectElement>,
-    ) => {
+    (datum: ComputedDatum<BarDatum>, event: MouseEvent<SVGRectElement>) => {
       debouncedHideTooltip.cancel();
       setActiveBarTooltip({
         datum,
@@ -149,10 +145,6 @@ export const GraphWidgetBarChart = ({
   const handleBarLeave = useCallback(() => {
     debouncedHideTooltip();
   }, [debouncedHideTooltip]);
-
-  const areThereTooManyKeys = keys.length > CHART_LEGEND_ITEM_THRESHOLD;
-
-  const shouldShowLegend = showLegend && !areThereTooManyKeys;
 
   const { axisBottom: axisBottomConfig, axisLeft: axisLeftConfig } =
     getBarChartAxisConfigs({
@@ -168,7 +160,7 @@ export const GraphWidgetBarChart = ({
     });
 
   const BarItemWithContext = useMemo(
-    () => (props: BarItemProps<BarChartDataItem>) => (
+    () => (props: BarItemProps<BarDatum>) => (
       <CustomBarItem
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
@@ -186,7 +178,7 @@ export const GraphWidgetBarChart = ({
   const TotalsLayer = ({
     bars,
   }: {
-    bars: readonly ComputedBarDatum<BarChartDataItem>[];
+    bars: readonly ComputedBarDatum<BarDatum>[];
   }) => (
     <CustomTotalsLayer
       bars={bars}
@@ -242,7 +234,7 @@ export const GraphWidgetBarChart = ({
           keys={keys}
           indexBy={indexBy}
           margin={margins}
-          padding={0.3}
+          padding={BAR_CHART_OUTER_PADDING_RATIO}
           groupMode={groupMode}
           layout={layout}
           valueScale={{
@@ -265,9 +257,15 @@ export const GraphWidgetBarChart = ({
           gridYValues={layout === BarChartLayout.VERTICAL ? 5 : undefined}
           enableLabel={false}
           labelSkipWidth={12}
-          innerPadding={
-            groupMode === 'grouped' ? BAR_CHART_MINIMUM_INNER_PADDING : 0
-          }
+          innerPadding={getBarChartInnerPadding({
+            chartWidth,
+            chartHeight,
+            dataLength: data.length,
+            keysLength: keys.length,
+            layout,
+            margins,
+            groupMode,
+          })}
           labelSkipHeight={12}
           valueFormat={(value) =>
             formatGraphValue(Number(value), formatOptions)
@@ -296,7 +294,7 @@ export const GraphWidgetBarChart = ({
         onMouseLeave={handleTooltipMouseLeave}
       />
       <GraphWidgetLegend
-        show={shouldShowLegend}
+        show={showLegend}
         items={enrichedKeys.map((item) => {
           return {
             id: item.key,

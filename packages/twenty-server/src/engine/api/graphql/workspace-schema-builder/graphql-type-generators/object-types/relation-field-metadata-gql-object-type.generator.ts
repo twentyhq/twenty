@@ -8,7 +8,7 @@ import {
   TypeOptions,
 } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { extractGraphQLRelationFieldNames } from 'src/engine/api/graphql/workspace-schema-builder/utils/extract-graphql-relation-field-names.util';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 @Injectable()
 export class RelationFieldMetadataGqlObjectTypeGenerator {
@@ -22,7 +22,7 @@ export class RelationFieldMetadataGqlObjectTypeGenerator {
     fieldMetadata,
     typeOptions,
   }: {
-    fieldMetadata: FieldMetadataEntity<
+    fieldMetadata: FlatFieldMetadata<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >;
     typeOptions: TypeOptions;

@@ -49,4 +49,11 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     fieldMetadata: true,
     view: true,
   },
+  role: {},
+  roleTarget: {
+    role: true,
+  },
+  agent: {},
+  pageLayoutWidget: {},
+  pageLayoutTab: {},
 } as const satisfies MetadataRequiredForValidation;

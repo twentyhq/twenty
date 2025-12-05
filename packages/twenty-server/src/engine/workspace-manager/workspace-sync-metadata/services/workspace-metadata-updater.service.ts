@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
   compositeTypeDefinitions,
@@ -15,7 +16,6 @@ import {
 } from 'typeorm';
 import { type DeepPartial } from 'typeorm/common/DeepPartial';
 import { v4 as uuidV4 } from 'uuid';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import { type PartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { type PartialIndexMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-index-metadata.interface';

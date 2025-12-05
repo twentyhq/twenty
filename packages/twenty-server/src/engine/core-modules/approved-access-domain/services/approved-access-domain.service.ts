@@ -7,10 +7,10 @@ import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { SendApprovedAccessDomainValidation } from 'twenty-emails';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ApprovedAccessDomainEntity as ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
+import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import {
   ApprovedAccessDomainException,
   ApprovedAccessDomainExceptionCode,
@@ -69,6 +69,10 @@ export class ApprovedAccessDomainService {
         validationToken: this.generateUniqueHash(approvedAccessDomain),
       },
     });
+
+    if (!isDefined(sender.userEmail)) {
+      throw new Error(`Sender ${sender.id} has an empty userEmail`);
+    }
 
     const emailTemplate = SendApprovedAccessDomainValidation({
       link: link.toString(),

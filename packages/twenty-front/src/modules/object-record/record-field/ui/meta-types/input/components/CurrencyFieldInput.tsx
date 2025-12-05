@@ -28,7 +28,7 @@ export const CurrencyFieldInput = () => {
 
   const defaultCurrencyCodeWithoutSQLQuotes = (
     defaultValue as FieldCurrencyValue
-  ).currencyCode.replace(/'/g, '') as CurrencyCode;
+  )?.currencyCode?.replace(/'/g, '') as CurrencyCode;
 
   const defaultCurrencyCodeIsNotEmpty = isNonEmptyString(
     defaultCurrencyCodeWithoutSQLQuotes,

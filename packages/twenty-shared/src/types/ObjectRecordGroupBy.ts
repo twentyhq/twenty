@@ -25,6 +25,7 @@ export type OrderByWithGroupBy = Array<
   | ObjectRecordOrderByForScalarField
   | ObjectRecordOrderByForCompositeField
   | ObjectRecordOrderByWithGroupByDateField
+  | ObjectRecordOrderByForRelationField
   | AggregateOrderByWithGroupByField
 >;
 
@@ -34,4 +35,11 @@ export type ObjectRecordOrderByForScalarField = {
 
 export type ObjectRecordOrderByForCompositeField = {
   [Property in keyof ObjectRecord]?: Record<string, OrderByDirection>;
+};
+
+export type ObjectRecordOrderByForRelationField = {
+  [Property in keyof ObjectRecord]?:
+    | ObjectRecordOrderByForCompositeField
+    | ObjectRecordOrderByWithGroupByDateField
+    | ObjectRecordOrderByForScalarField;
 };

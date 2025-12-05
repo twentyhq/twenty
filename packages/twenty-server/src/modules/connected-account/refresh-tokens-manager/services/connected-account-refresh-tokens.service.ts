@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
@@ -11,7 +11,7 @@ import {
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { isAxiosTemporaryError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-axios-gaxios-error.util';
+import { isGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-network-error.util';
 
 export type ConnectedAccountTokens = {
   accessToken: string;
@@ -52,6 +52,12 @@ export class ConnectedAccountRefreshTokensService {
       this.logger.debug(
         `Reusing valid access token for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}`,
       );
+      if (!isDefined(accessToken)) {
+        throw new ConnectedAccountRefreshAccessTokenException(
+          `Access token is required for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
+          ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND,
+        );
+      }
 
       return {
         accessToken,
@@ -142,7 +148,7 @@ export class ConnectedAccountRefreshTokensService {
           );
       }
     } catch (error) {
-      if (isAxiosTemporaryError(error)) {
+      if (isGmailNetworkError(error)) {
         throw new ConnectedAccountRefreshAccessTokenException(
           `Error refreshing tokens for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}: ${error.code}`,
           ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR,

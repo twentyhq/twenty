@@ -1,10 +1,7 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CalendarStartDay } from 'twenty-shared';
 
-import {
-  detectCalendarStartDay,
-  type NonSystemCalendarStartDay,
-} from '@/localization/utils/detection/detectCalendarStartDay';
+import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
@@ -15,7 +12,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { ViewFilterOperand } from 'twenty-shared/types';
+import { type FirstDayOfTheWeek, ViewFilterOperand } from 'twenty-shared/types';
 import {
   isDefined,
   type RelativeDateFilter,
@@ -24,7 +21,13 @@ import {
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateString } from '~/utils/string/formatDateString';
 
-export const ObjectFilterDropdownDateInput = () => {
+type ObjectFilterDropdownDateInputProps = {
+  instanceId: string;
+};
+
+export const ObjectFilterDropdownDateInput = ({
+  instanceId,
+}: ObjectFilterDropdownDateInputProps) => {
   const { dateFormat, timeZone } = useContext(UserContext);
   const dateLocale = useRecoilValue(dateLocaleState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
@@ -68,7 +71,7 @@ export const ObjectFilterDropdownDateInput = () => {
       userDefinedCalendarStartDay === CalendarStartDay[CalendarStartDay.SYSTEM]
         ? defaultSystemCalendarStartDay
         : userDefinedCalendarStartDay
-    ) as NonSystemCalendarStartDay;
+    ) as FirstDayOfTheWeek;
 
     const newFilterValue = relativeDate
       ? stringifyRelativeDateFilter({
@@ -109,6 +112,7 @@ export const ObjectFilterDropdownDateInput = () => {
 
   return (
     <DatePicker
+      instanceId={instanceId}
       relativeDate={relativeDate}
       isRelative={isRelativeOperand}
       date={plainDateValue ?? null}

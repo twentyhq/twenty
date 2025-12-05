@@ -1,0 +1,56 @@
+{
+  "name": "create-twenty-app",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "tags": ["scope:create-app"],
+  "targets": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/create-twenty-app",
+        "command": "tsx src/cli.ts"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/create-twenty-app",
+        "command": "node dist/cli.cjs"
+      }
+    },
+    "typecheck": {},
+    "lint": {
+      "options": {
+        "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
+        "maxWarnings": 0
+      },
+      "configurations": {
+        "ci": {
+          "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
+          "maxWarnings": 0
+        },
+        "fix": {}
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "{projectRoot}/jest.config.mjs"
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true,
+          "watchAll": false
+        }
+      }
+    }
+  }
+}

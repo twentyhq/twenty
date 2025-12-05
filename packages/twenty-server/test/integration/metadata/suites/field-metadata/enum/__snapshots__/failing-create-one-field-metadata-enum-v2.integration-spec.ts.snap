@@ -6,6 +6,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -29,6 +30,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -38,11 +43,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -65,6 +75,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -88,6 +99,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -97,11 +112,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -124,6 +144,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -132,6 +153,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Label must not contain a comma",
+                "userFriendlyMessage": "Label must not contain a comma",
                 "value": "Option ,1",
               },
             ],
@@ -146,6 +168,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -155,11 +181,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -182,6 +213,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -190,6 +222,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Duplicated option id",
+                "userFriendlyMessage": "Duplicated option id",
                 "value": [
                   {
                     "color": "green",
@@ -219,6 +252,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -228,11 +265,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -255,6 +297,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -263,6 +306,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Duplicated option position",
+                "userFriendlyMessage": "Duplicated option position",
                 "value": [
                   {
                     "color": "green",
@@ -292,6 +336,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -301,11 +349,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -328,6 +381,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -336,6 +390,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Duplicated option value",
+                "userFriendlyMessage": "Duplicated option value",
                 "value": [
                   {
                     "color": "green",
@@ -365,6 +420,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -374,11 +433,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -401,6 +465,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -409,6 +474,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Duplicated option value",
+                "userFriendlyMessage": "Duplicated option value",
                 "value": [
                   {
                     "color": "green",
@@ -438,6 +504,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -447,11 +517,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -474,6 +549,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -482,6 +558,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "If defined default value must contain at least one value",
+                "userFriendlyMessage": "If defined default value must contain at least one value",
                 "value": [],
               },
             ],
@@ -496,6 +573,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -505,11 +586,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -532,6 +618,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -555,6 +642,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -564,11 +655,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -591,6 +687,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -599,11 +696,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
+                "userFriendlyMessage": "Default value should be as quoted string",
                 "value": "",
               },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value "" must be one of the option values",
+                "userFriendlyMessage": "Default value "" must be one of the option values",
                 "value": "",
               },
             ],
@@ -618,6 +717,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -627,11 +730,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -654,6 +762,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -662,6 +771,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option id is invalid",
+                "userFriendlyMessage": "Option id is invalid",
                 "value": "",
               },
             ],
@@ -676,6 +786,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -685,11 +799,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -712,6 +831,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -735,6 +855,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -744,11 +868,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -771,6 +900,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -780,6 +910,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option value must be a string of at least one character",
                 "userFriendlyMessage": "Option value format not supported",
+                "value": "",
               },
             ],
             "flatEntityMinimalInformation": {
@@ -793,6 +924,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -802,11 +937,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -829,6 +969,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -837,21 +978,25 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
+                "userFriendlyMessage": "Default value should be as quoted string",
                 "value": "invalid",
               },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value "invalid" must be one of the option values",
+                "userFriendlyMessage": "Default value "invalid" must be one of the option values",
                 "value": "invalid",
               },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
+                "userFriendlyMessage": "Default value should be as quoted string",
                 "value": "format",
               },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value "format" must be one of the option values",
+                "userFriendlyMessage": "Default value "format" must be one of the option values",
                 "value": "format",
               },
             ],
@@ -866,6 +1011,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -875,11 +1024,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -902,6 +1056,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -910,6 +1065,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option id is invalid",
+                "userFriendlyMessage": "Option id is invalid",
                 "value": "not a uuid",
               },
             ],
@@ -924,6 +1080,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -933,11 +1093,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -960,6 +1125,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -968,6 +1134,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
+                "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
                 "value": "Option 1 and some other things, /",
               },
             ],
@@ -982,6 +1149,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -991,11 +1162,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1018,6 +1194,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -1041,6 +1218,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1050,11 +1231,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1077,6 +1263,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -1100,6 +1287,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1109,11 +1300,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1136,6 +1332,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -1144,6 +1341,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option id is invalid",
+                "userFriendlyMessage": "Option id is invalid",
                 "value": 22222,
               },
             ],
@@ -1158,6 +1356,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1167,11 +1369,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1194,6 +1401,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -1217,6 +1425,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1226,11 +1438,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1253,6 +1470,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -1262,6 +1480,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option value must be a string of at least one character",
                 "userFriendlyMessage": "Option value format not supported",
+                "value": 22222,
               },
             ],
             "flatEntityMinimalInformation": {
@@ -1275,6 +1494,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1284,11 +1507,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1311,6 +1539,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -1319,11 +1548,12 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option id is required",
-                "value": null,
+                "userFriendlyMessage": "Option id is required",
               },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option id is invalid",
+                "userFriendlyMessage": "Option id is invalid",
                 "value": null,
               },
             ],
@@ -1338,6 +1568,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1347,11 +1581,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1374,6 +1613,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -1396,6 +1636,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1405,11 +1649,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1432,6 +1681,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -1455,6 +1705,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1464,11 +1718,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1491,6 +1750,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -1513,6 +1773,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1522,11 +1786,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1549,6 +1818,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -1557,11 +1827,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
+                "userFriendlyMessage": "Default value should be as quoted string",
                 "value": "",
               },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value "" must be one of the option values",
+                "userFriendlyMessage": "Default value "" must be one of the option values",
                 "value": "",
               },
             ],
@@ -1576,6 +1848,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1585,11 +1861,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1612,6 +1893,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -1620,6 +1902,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option id is invalid",
+                "userFriendlyMessage": "Option id is invalid",
                 "value": "",
               },
             ],
@@ -1634,6 +1917,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1643,11 +1930,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1670,6 +1962,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -1693,6 +1986,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1702,11 +1999,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1729,6 +2031,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -1738,6 +2041,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option value must be a string of at least one character",
                 "userFriendlyMessage": "Option value format not supported",
+                "value": "",
               },
             ],
             "flatEntityMinimalInformation": {
@@ -1751,6 +2055,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1760,11 +2068,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1787,6 +2100,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -1795,11 +2109,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
+                "userFriendlyMessage": "Default value should be as quoted string",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" must be one of the option values",
+                "userFriendlyMessage": "Default value "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" must be one of the option values",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
@@ -1814,6 +2130,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1823,11 +2143,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1850,6 +2175,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -1858,6 +2184,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option id is invalid",
+                "userFriendlyMessage": "Option id is invalid",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
@@ -1872,6 +2199,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1881,11 +2212,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1908,6 +2244,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -1916,6 +2253,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option label exceeds 63 characters",
+                "userFriendlyMessage": "Option label exceeds 63 characters",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
@@ -1930,6 +2268,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1939,11 +2281,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1966,6 +2313,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -1974,11 +2322,13 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option value exceeds 63 characters",
+                "userFriendlyMessage": "Option value exceeds 63 characters",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Value must be in UPPER_CASE and follow snake_case "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"",
+                "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
@@ -1993,6 +2343,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -2002,11 +2356,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -2029,6 +2388,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -2051,6 +2411,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -2060,11 +2424,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -2087,6 +2456,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -2109,6 +2479,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -2118,11 +2492,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -2145,6 +2524,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -2168,6 +2548,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -2177,11 +2561,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -2204,6 +2593,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -2212,6 +2602,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value "'UNKNOWN_OPTION'" must be one of the option values",
+                "userFriendlyMessage": "Default value "'UNKNOWN_OPTION'" must be one of the option values",
                 "value": "'UNKNOWN_OPTION'",
               },
             ],
@@ -2226,6 +2617,10 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -2235,11 +2630,16 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -2262,6 +2662,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -2270,11 +2671,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
+                "userFriendlyMessage": "Default value should be as quoted string",
                 "value": "invalid",
               },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value "invalid" must be one of the option values",
+                "userFriendlyMessage": "Default value "invalid" must be one of the option values",
                 "value": "invalid",
               },
             ],
@@ -2289,6 +2692,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -2298,11 +2705,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -2325,6 +2737,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -2333,6 +2746,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value "'OPTION_424242'" must be one of the option values",
+                "userFriendlyMessage": "Default value "'OPTION_424242'" must be one of the option values",
                 "value": "'OPTION_424242'",
               },
             ],
@@ -2347,6 +2761,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -2356,11 +2774,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -2383,6 +2806,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -2391,6 +2815,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Label must not contain a comma",
+                "userFriendlyMessage": "Label must not contain a comma",
                 "value": "Option ,1",
               },
             ],
@@ -2405,6 +2830,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -2414,11 +2843,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -2441,6 +2875,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -2449,6 +2884,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Duplicated option id",
+                "userFriendlyMessage": "Duplicated option id",
                 "value": [
                   {
                     "color": "green",
@@ -2478,6 +2914,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -2487,11 +2927,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -2514,6 +2959,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -2522,6 +2968,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Duplicated option position",
+                "userFriendlyMessage": "Duplicated option position",
                 "value": [
                   {
                     "color": "green",
@@ -2551,6 +2998,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -2560,11 +3011,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -2587,6 +3043,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -2595,6 +3052,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Duplicated option value",
+                "userFriendlyMessage": "Duplicated option value",
                 "value": [
                   {
                     "color": "green",
@@ -2624,6 +3082,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -2633,11 +3095,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -2660,6 +3127,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -2668,6 +3136,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Duplicated option value",
+                "userFriendlyMessage": "Duplicated option value",
                 "value": [
                   {
                     "color": "green",
@@ -2697,6 +3166,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -2706,11 +3179,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -2733,6 +3211,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -2756,6 +3235,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -2765,11 +3248,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -2792,6 +3280,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -2800,11 +3289,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
+                "userFriendlyMessage": "Default value should be as quoted string",
                 "value": "",
               },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value "" must be one of the option values",
+                "userFriendlyMessage": "Default value "" must be one of the option values",
                 "value": "",
               },
             ],
@@ -2819,6 +3310,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -2828,11 +3323,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -2855,6 +3355,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -2863,6 +3364,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option id is invalid",
+                "userFriendlyMessage": "Option id is invalid",
                 "value": "",
               },
             ],
@@ -2877,6 +3379,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -2886,11 +3392,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -2913,6 +3424,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -2936,6 +3448,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -2945,11 +3461,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -2972,6 +3493,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -2981,6 +3503,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option value must be a string of at least one character",
                 "userFriendlyMessage": "Option value format not supported",
+                "value": "",
               },
             ],
             "flatEntityMinimalInformation": {
@@ -2994,6 +3517,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -3003,11 +3530,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -3030,6 +3562,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -3038,6 +3571,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option id is invalid",
+                "userFriendlyMessage": "Option id is invalid",
                 "value": "not a uuid",
               },
             ],
@@ -3052,6 +3586,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -3061,11 +3599,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -3088,6 +3631,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -3096,6 +3640,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
+                "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
                 "value": "Option 1 and some other things, /",
               },
             ],
@@ -3110,6 +3655,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -3119,11 +3668,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -3146,6 +3700,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -3169,6 +3724,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -3178,11 +3737,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -3205,6 +3769,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -3213,6 +3778,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option id is invalid",
+                "userFriendlyMessage": "Option id is invalid",
                 "value": 22222,
               },
             ],
@@ -3227,6 +3793,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -3236,11 +3806,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -3263,6 +3838,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -3286,6 +3862,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -3295,11 +3875,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -3322,6 +3907,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -3331,6 +3917,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option value must be a string of at least one character",
                 "userFriendlyMessage": "Option value format not supported",
+                "value": 22222,
               },
             ],
             "flatEntityMinimalInformation": {
@@ -3344,6 +3931,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -3353,11 +3944,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -3380,6 +3976,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -3388,11 +3985,12 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option id is required",
-                "value": null,
+                "userFriendlyMessage": "Option id is required",
               },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option id is invalid",
+                "userFriendlyMessage": "Option id is invalid",
                 "value": null,
               },
             ],
@@ -3407,6 +4005,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -3416,11 +4018,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -3443,6 +4050,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -3465,6 +4073,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -3474,11 +4086,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -3501,6 +4118,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -3524,6 +4142,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -3533,11 +4155,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -3560,6 +4187,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -3582,6 +4210,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -3591,11 +4223,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -3618,6 +4255,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -3626,11 +4264,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
+                "userFriendlyMessage": "Default value should be as quoted string",
                 "value": "",
               },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value "" must be one of the option values",
+                "userFriendlyMessage": "Default value "" must be one of the option values",
                 "value": "",
               },
             ],
@@ -3645,6 +4285,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -3654,11 +4298,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -3681,6 +4330,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -3689,6 +4339,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option id is invalid",
+                "userFriendlyMessage": "Option id is invalid",
                 "value": "",
               },
             ],
@@ -3703,6 +4354,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -3712,11 +4367,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -3739,6 +4399,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -3762,6 +4423,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -3771,11 +4436,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -3798,6 +4468,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -3807,6 +4478,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option value must be a string of at least one character",
                 "userFriendlyMessage": "Option value format not supported",
+                "value": "",
               },
             ],
             "flatEntityMinimalInformation": {
@@ -3820,6 +4492,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -3829,11 +4505,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -3856,6 +4537,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -3864,11 +4546,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
+                "userFriendlyMessage": "Default value should be as quoted string",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" must be one of the option values",
+                "userFriendlyMessage": "Default value "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" must be one of the option values",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
@@ -3883,6 +4567,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -3892,11 +4580,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -3919,6 +4612,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -3927,6 +4621,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option id is invalid",
+                "userFriendlyMessage": "Option id is invalid",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
@@ -3941,6 +4636,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -3950,11 +4649,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -3977,6 +4681,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -3985,6 +4690,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option label exceeds 63 characters",
+                "userFriendlyMessage": "Option label exceeds 63 characters",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
@@ -3999,6 +4705,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -4008,11 +4718,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -4035,6 +4750,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -4043,11 +4759,13 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option value exceeds 63 characters",
+                "userFriendlyMessage": "Option value exceeds 63 characters",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Value must be in UPPER_CASE and follow snake_case "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"",
+                "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
@@ -4062,6 +4780,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -4071,11 +4793,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -4098,6 +4825,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -4120,6 +4848,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -4129,11 +4861,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -4156,6 +4893,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -4178,6 +4916,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -4187,11 +4929,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -4214,6 +4961,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -4237,6 +4985,10 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
         ],
         "index": [],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "pageLayoutWidget": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -4246,11 +4998,16 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidPageLayoutWidget": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,

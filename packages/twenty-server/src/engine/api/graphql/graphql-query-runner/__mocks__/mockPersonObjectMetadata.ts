@@ -1,24 +1,151 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
-import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
-import { getMockObjectMetadataItemWithFieldsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 const workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+const objectMetadataId = 'person-object-id';
 
-export const mockPersonObjectMetadataWithFieldMaps = (
+const mockFieldMetadatas: FlatFieldMetadata[] = [
+  {
+    id: 'name-id',
+    type: FieldMetadataType.FULL_NAME,
+    name: 'name',
+    label: 'Name',
+    defaultValue: {
+      lastName: "''",
+      firstName: "''",
+    },
+    objectMetadataId,
+    isNullable: true,
+    isLabelSyncedWithName: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    universalIdentifier: 'name-id',
+    viewFieldIds: [],
+    viewFilterIds: [],
+    viewGroupIds: [],
+    kanbanAggregateOperationViewIds: [],
+    calendarViewIds: [],
+    applicationId: null,
+  } as unknown as FlatFieldMetadata,
+  {
+    id: 'emails-id',
+    type: FieldMetadataType.EMAILS,
+    name: 'emails',
+    label: 'Emails',
+    defaultValue: {
+      primaryEmail: "''",
+      additionalEmails: null,
+    },
+    objectMetadataId,
+    isNullable: true,
+    isLabelSyncedWithName: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    universalIdentifier: 'emails-id',
+    viewFieldIds: [],
+    viewFilterIds: [],
+    viewGroupIds: [],
+    kanbanAggregateOperationViewIds: [],
+    calendarViewIds: [],
+    applicationId: null,
+  } as unknown as FlatFieldMetadata,
+  {
+    id: 'linkedinLink-id',
+    type: FieldMetadataType.LINKS,
+    name: 'linkedinLink',
+    label: 'Linkedin',
+    defaultValue: {
+      primaryLinkUrl: "''",
+      secondaryLinks: [],
+      primaryLinkLabel: "''",
+    },
+    objectMetadataId,
+    isNullable: true,
+    isLabelSyncedWithName: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    universalIdentifier: 'linkedinLink-id',
+    viewFieldIds: [],
+    viewFilterIds: [],
+    viewGroupIds: [],
+    kanbanAggregateOperationViewIds: [],
+    calendarViewIds: [],
+    applicationId: null,
+  } as unknown as FlatFieldMetadata,
+  {
+    id: 'jobTitle-id',
+    type: FieldMetadataType.TEXT,
+    name: 'jobTitle',
+    label: 'Job Title',
+    defaultValue: "''",
+    objectMetadataId,
+    isNullable: false,
+    isLabelSyncedWithName: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    universalIdentifier: 'jobTitle-id',
+    viewFieldIds: [],
+    viewFilterIds: [],
+    viewGroupIds: [],
+    kanbanAggregateOperationViewIds: [],
+    calendarViewIds: [],
+    applicationId: null,
+  } as unknown as FlatFieldMetadata,
+];
+
+export const mockPersonFlatFieldMetadataMaps =
+  (): FlatEntityMaps<FlatFieldMetadata> => ({
+    byId: mockFieldMetadatas.reduce(
+      (acc, field) => {
+        acc[field.id] = field;
+
+        return acc;
+      },
+      {} as Record<string, FlatFieldMetadata>,
+    ),
+    idByUniversalIdentifier: mockFieldMetadatas.reduce(
+      (acc, field) => {
+        acc[field.universalIdentifier] = field.id;
+
+        return acc;
+      },
+      {} as Record<string, string>,
+    ),
+    universalIdentifiersByApplicationId: {},
+  });
+
+export const mockPersonFlatObjectMetadataMaps = (
   duplicateCriteria: WorkspaceEntityDuplicateCriteria[],
-) =>
-  getMockObjectMetadataItemWithFieldsMaps({
-    id: '',
+): FlatEntityMaps<FlatObjectMetadata> => {
+  const flatObjectMetadata = mockPersonFlatObjectMetadata(duplicateCriteria);
+
+  return {
+    byId: {
+      [flatObjectMetadata.id]: flatObjectMetadata,
+    },
+    idByUniversalIdentifier: {
+      [flatObjectMetadata.universalIdentifier as string]: flatObjectMetadata.id,
+    },
+    universalIdentifiersByApplicationId: {},
+  };
+};
+
+export const mockPersonFlatObjectMetadata = (
+  duplicateCriteria: WorkspaceEntityDuplicateCriteria[],
+): FlatObjectMetadata =>
+  ({
+    id: objectMetadataId,
     icon: 'Icon123',
     standardId: '',
     nameSingular: 'person',
     namePlural: 'people',
     labelSingular: 'Person',
     labelPlural: 'People',
-    description: 'A person',
-    targetTableName: 'DEPRECATED',
+    targetTableName: 'person',
     isCustom: false,
     isRemote: false,
     isActive: true,
@@ -29,87 +156,16 @@ export const mockPersonObjectMetadataWithFieldMaps = (
     labelIdentifierFieldMetadataId: '',
     imageIdentifierFieldMetadataId: '',
     workspaceId,
-    indexMetadatas: [],
-    fieldIdByName: {
-      name: 'name-id',
-      emails: 'emails-id',
-      linkedinLink: 'linkedinLink-id',
-      jobTitle: 'jobTitle-id',
-    },
-    fieldIdByJoinColumnName: {},
-    fieldsById: {
-      'name-id': getMockFieldMetadataEntity({
-        workspaceId,
-        objectMetadataId: '',
-        id: 'name-id',
-        type: FieldMetadataType.FULL_NAME,
-        name: 'name',
-        label: 'Name',
-        defaultValue: {
-          lastName: "''",
-          firstName: "''",
-        },
-        description: "Contact's name",
-        isCustom: false,
-        isNullable: true,
-        isUnique: false,
-        isLabelSyncedWithName: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }),
-      'emails-id': getMockFieldMetadataEntity({
-        workspaceId,
-        objectMetadataId: '',
-        id: 'emails-id',
-        type: FieldMetadataType.EMAILS,
-        name: 'emails',
-        label: 'Emails',
-        defaultValue: {
-          primaryEmail: "''",
-          additionalEmails: null,
-        },
-        description: "Contact's Emails",
-        isCustom: false,
-        isNullable: true,
-        isLabelSyncedWithName: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }),
-      'linkedinLink-id': getMockFieldMetadataEntity({
-        workspaceId,
-        objectMetadataId: '',
-        id: 'linkedinLink-id',
-        type: FieldMetadataType.LINKS,
-        name: 'linkedinLink',
-        label: 'Linkedin',
-        defaultValue: {
-          primaryLinkUrl: "''",
-          secondaryLinks: [],
-          primaryLinkLabel: "''",
-        },
-        description: "Contact's Linkedin account",
-        isCustom: false,
-        isNullable: true,
-        isUnique: false,
-        isLabelSyncedWithName: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }),
-      'jobTitle-id': getMockFieldMetadataEntity({
-        workspaceId,
-        objectMetadataId: '',
-        id: 'jobTitle-id',
-        type: FieldMetadataType.TEXT,
-        name: 'jobTitle',
-        label: 'Job Title',
-        defaultValue: "''",
-        description: "Contact's job title",
-        isCustom: false,
-        isNullable: false,
-        isUnique: false,
-        isLabelSyncedWithName: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }),
-    },
-  });
+    universalIdentifier: objectMetadataId,
+    indexMetadataIds: [],
+    fieldMetadataIds: mockFieldMetadatas.map((field) => field.id),
+    viewIds: [],
+    applicationId: null,
+    isLabelSyncedWithName: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    shortcut: null,
+    description: null,
+    standardOverrides: null,
+    isUIReadOnly: false,
+  }) as FlatObjectMetadata;

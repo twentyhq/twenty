@@ -45,7 +45,9 @@ export const useSaveCurrentViewGroups = () => {
 
         const existingField = currentViewGroups.find(
           (currentViewGroup) =>
-            currentViewGroup.fieldValue === viewGroupToSave.fieldValue,
+            currentViewGroup.fieldValue === viewGroupToSave.fieldValue &&
+            currentViewGroup.fieldMetadataId ===
+              viewGroupToSave.fieldMetadataId,
         );
 
         if (isUndefinedOrNull(existingField)) {
@@ -116,7 +118,9 @@ export const useSaveCurrentViewGroups = () => {
           .map((viewGroupToSave) => {
             const existingField = currentViewGroups.find(
               (currentViewGroup) =>
-                currentViewGroup.fieldValue === viewGroupToSave.fieldValue,
+                currentViewGroup.fieldValue === viewGroupToSave.fieldValue &&
+                currentViewGroup.fieldMetadataId ===
+                  viewGroupToSave.fieldMetadataId,
             );
 
             if (isUndefinedOrNull(existingField)) {
@@ -156,7 +160,9 @@ export const useSaveCurrentViewGroups = () => {
           (viewFieldToSave) =>
             !currentViewGroups.some(
               (currentViewGroup) =>
-                currentViewGroup.fieldValue === viewFieldToSave.fieldValue,
+                currentViewGroup.fieldValue === viewFieldToSave.fieldValue &&
+                currentViewGroup.fieldMetadataId ===
+                  viewFieldToSave.fieldMetadataId,
             ),
         );
 

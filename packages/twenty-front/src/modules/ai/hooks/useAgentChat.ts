@@ -110,6 +110,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
     }),
     messages: uiMessages,
     id: `${currentAIChatThread}-${uiMessages.length}`,
+    experimental_throttle: 100,
   });
 
   const isStreaming = status === 'streaming';
@@ -156,9 +157,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   };
 
   return {
-    handleInputChange: (value: string) => setAgentChatInput(value),
     messages,
-    input: agentChatInput,
     handleSendMessage,
     isLoading,
     isStreaming,

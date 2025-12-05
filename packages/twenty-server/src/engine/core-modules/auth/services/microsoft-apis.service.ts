@@ -6,9 +6,6 @@ import { v4 } from 'uuid';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
-import { ResetCalendarChannelService } from 'src/engine/core-modules/auth/services/reset-calendar-channel.service';
-import { ResetMessageChannelService } from 'src/engine/core-modules/auth/services/reset-message-channel.service';
-import { ResetMessageFolderService } from 'src/engine/core-modules/auth/services/reset-message-folder.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
 import { getMicrosoftApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -21,6 +18,7 @@ import {
   CalendarEventListFetchJob,
   type CalendarEventListFetchJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
+import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import {
   CalendarChannelSyncStage,
   type CalendarChannelVisibility,
@@ -28,6 +26,7 @@ import {
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStage,
   type MessageChannelVisibility,
@@ -48,9 +47,8 @@ export class MicrosoftAPIsService {
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
     private readonly accountsToReconnectService: AccountsToReconnectService,
-    private readonly resetMessageChannelService: ResetMessageChannelService,
-    private readonly resetMessageFolderService: ResetMessageFolderService,
-    private readonly resetCalendarChannelService: ResetCalendarChannelService,
+    private readonly messagingChannelSyncStatusService: MessageChannelSyncStatusService,
+    private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
     private readonly createMessageChannelService: CreateMessageChannelService,
     private readonly createCalendarChannelService: CreateCalendarChannelService,
     private readonly createConnectedAccountService: CreateConnectedAccountService,
@@ -175,23 +173,20 @@ export class MicrosoftAPIsService {
             newOrExistingConnectedAccountId,
           );
 
-          await this.resetMessageChannelService.resetMessageChannels({
+          await this.messagingChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending(
+            [newOrExistingConnectedAccountId],
             workspaceId,
-            connectedAccountId: newOrExistingConnectedAccountId,
-            manager,
-          });
+          );
 
-          await this.resetMessageFolderService.resetMessageFolders({
+          await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
+            [newOrExistingConnectedAccountId],
             workspaceId,
-            connectedAccountId: newOrExistingConnectedAccountId,
-            manager,
-          });
+          );
 
-          await this.resetCalendarChannelService.resetCalendarChannels({
+          await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
+            [newOrExistingConnectedAccountId],
             workspaceId,
-            connectedAccountId: newOrExistingConnectedAccountId,
-            manager,
-          });
+          );
         }
       },
     );

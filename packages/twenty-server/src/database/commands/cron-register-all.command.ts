@@ -38,12 +38,14 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly calendarEventsImportCronCommand: CalendarEventsImportCronCommand,
     private readonly calendarOngoingStaleCronCommand: CalendarOngoingStaleCronCommand,
     private readonly calendarRelaunchFailedCalendarChannelsCronCommand: CalendarRelaunchFailedCalendarChannelsCronCommand,
+
     private readonly workflowCronTriggerCronCommand: WorkflowCronTriggerCronCommand,
-    private readonly checkCustomDomainValidRecordsCronCommand: CheckCustomDomainValidRecordsCronCommand,
-    private readonly checkPublicDomainsValidRecordsCronCommand: CheckPublicDomainsValidRecordsCronCommand,
     private readonly workflowRunEnqueueCronCommand: WorkflowRunEnqueueCronCommand,
     private readonly workflowHandleStaledRunsCronCommand: WorkflowHandleStaledRunsCronCommand,
     private readonly workflowCleanWorkflowRunsCronCommand: WorkflowCleanWorkflowRunsCronCommand,
+
+    private readonly checkCustomDomainValidRecordsCronCommand: CheckCustomDomainValidRecordsCronCommand,
+    private readonly checkPublicDomainsValidRecordsCronCommand: CheckPublicDomainsValidRecordsCronCommand,
     private readonly cronTriggerCronCommand: CronTriggerCronCommand,
     private readonly cleanSuspendedWorkspacesCronCommand: CleanSuspendedWorkspacesCronCommand,
     private readonly cleanOnboardingWorkspacesCronCommand: CleanOnboardingWorkspacesCronCommand,

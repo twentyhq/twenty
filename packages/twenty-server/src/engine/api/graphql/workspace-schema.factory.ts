@@ -14,16 +14,14 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
-  WorkspaceMetadataCacheException,
-  WorkspaceMetadataCacheExceptionCode,
-} from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
-import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
 
 @Injectable()
 export class WorkspaceSchemaFactory {
@@ -33,8 +31,7 @@ export class WorkspaceSchemaFactory {
     private readonly workspaceGraphQLSchemaGenerator: WorkspaceGraphQLSchemaGenerator,
     private readonly workspaceResolverFactory: WorkspaceResolverFactory,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
-    private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   async createGraphQLSchema(authContext: AuthContext): Promise<GraphQLSchema> {
@@ -51,20 +48,6 @@ export class WorkspaceSchemaFactory {
       return new GraphQLSchema({});
     }
 
-    const { objectMetadataMaps, metadataVersion } =
-      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-        {
-          workspaceId: authContext.workspace.id,
-        },
-      );
-
-    if (!objectMetadataMaps) {
-      throw new WorkspaceMetadataCacheException(
-        'Object metadata collection not found',
-        WorkspaceMetadataCacheExceptionCode.OBJECT_METADATA_COLLECTION_NOT_FOUND,
-      );
-    }
-
     const workspaceId = authContext.workspace.id;
 
     if (!workspaceId) {
@@ -74,25 +57,47 @@ export class WorkspaceSchemaFactory {
       );
     }
 
-    const workspaceFeatureFlagsMap =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatObjectMetadataMaps',
+            'flatFieldMetadataMaps',
+            'flatIndexMaps',
+          ],
+        },
+      );
 
-    const objectMetadataCollection = Object.values(objectMetadataMaps.byId)
-      .filter(isDefined)
-      .map((objectMetadataItem) => ({
-        ...objectMetadataItem,
-        fields: Object.values(objectMetadataItem.fieldsById),
-        indexes: objectMetadataItem.indexMetadatas,
-      }))
-      .filter((objectMetadata) => {
-        return !shouldExcludeFromWorkspaceApi(
-          objectMetadata,
-          standardObjectMetadataDefinitions,
-          workspaceFeatureFlagsMap,
-        );
-      });
+    if (!isDefined(flatObjectMetadataMaps)) {
+      throw new FlatEntityMapsException(
+        'Object metadata collection not found',
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
 
-    // Get typeDefs from cache
+    if (!isDefined(flatFieldMetadataMaps)) {
+      throw new FlatEntityMapsException(
+        'Field metadata collection not found',
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+
+    let metadataVersion =
+      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
+
+    if (!isDefined(metadataVersion)) {
+      metadataVersion = authContext.workspace.metadataVersion ?? 0;
+      await this.workspaceCacheStorageService.setMetadataVersion(
+        workspaceId,
+        metadataVersion,
+      );
+    }
+
+    const { idByNameSingular } = buildObjectIdByNameMaps(
+      flatObjectMetadataMaps,
+    );
+
     let typeDefs = await this.workspaceCacheStorageService.getGraphQLTypeDefs(
       authContext.workspace.id,
       metadataVersion,
@@ -103,12 +108,13 @@ export class WorkspaceSchemaFactory {
         metadataVersion,
       );
 
-    // If typeDefs are not cached, generate them
     if (!typeDefs || !usedScalarNames) {
       const autoGeneratedSchema =
-        await this.workspaceGraphQLSchemaGenerator.generateSchema(
-          objectMetadataCollection,
-        );
+        await this.workspaceGraphQLSchemaGenerator.generateSchema({
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          flatIndexMaps,
+        });
 
       usedScalarNames =
         this.scalarsExplorerService.getUsedScalarNames(autoGeneratedSchema);
@@ -128,7 +134,9 @@ export class WorkspaceSchemaFactory {
 
     const autoGeneratedResolvers = await this.workspaceResolverFactory.create(
       authContext,
-      objectMetadataMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      idByNameSingular,
       workspaceResolverBuilderMethodNames,
     );
     const scalarsResolvers =

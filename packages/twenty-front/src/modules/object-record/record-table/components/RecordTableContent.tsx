@@ -4,7 +4,6 @@ import { RecordTableStyleWrapper } from '@/object-record/record-table/components
 import { RecordTableWidthEffect } from '@/object-record/record-table/components/RecordTableWidthEffect';
 import { RECORD_TABLE_HTML_ID } from '@/object-record/record-table/constants/RecordTableHtmlId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useRecordTableLastColumnWidthToFill } from '@/object-record/record-table/hooks/useRecordTableLastColumnWidthToFill';
 import { RecordTableNoRecordGroupBody } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBody';
 import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupsBody';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
@@ -72,8 +71,6 @@ export const RecordTableContent = ({
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const { lastColumnWidth } = useRecordTableLastColumnWidthToFill();
-
   const setRecordTableHoverPosition = useSetRecoilComponentState(
     recordTableHoverPositionComponentState,
   );
@@ -103,7 +100,6 @@ export const RecordTableContent = ({
         ref={tableBodyRef}
         isDragging={isDragging}
         visibleRecordFields={visibleRecordFields}
-        lastColumnWidth={lastColumnWidth}
         id={RECORD_TABLE_HTML_ID}
         onMouseLeave={handleMouseLeave}
         hasRecordGroups={hasRecordGroups}

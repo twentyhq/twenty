@@ -1,10 +1,9 @@
-import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartLabelData } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLabelData';
-import { type ComputedBarDatum } from '@nivo/bar';
+import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
 import { isDefined } from 'twenty-shared/utils';
 
 export const computeBarChartStackedLabels = (
-  bars: readonly ComputedBarDatum<BarChartDataItem>[],
+  bars: readonly ComputedBarDatum<BarDatum>[],
 ): BarChartLabelData[] => {
   const stackData = new Map<
     string,
@@ -13,7 +12,7 @@ export const computeBarChartStackedLabels = (
       minimumYPosition: number;
       maximumBottomYPosition: number;
       maximumXPosition: number;
-      bars: ComputedBarDatum<BarChartDataItem>[];
+      bars: ComputedBarDatum<BarDatum>[];
     }
   >();
 
