@@ -11,10 +11,7 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import type { ToolHints } from 'src/engine/metadata-modules/ai/ai-chat-router/types/tool-hints.interface';
 import { ToolAdapterService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool-adapter.service';
 import { ToolService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool.service';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { HELPER_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/helper-agent';
-import { WorkflowToolWorkspaceService as WorkflowToolService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 
 @Injectable()
 export class AgentToolGeneratorService {
@@ -25,8 +22,6 @@ export class AgentToolGeneratorService {
     private readonly agentRepository: Repository<AgentEntity>,
     private readonly toolAdapterService: ToolAdapterService,
     private readonly toolService: ToolService,
-    private readonly workflowToolService: WorkflowToolService,
-    private readonly permissionsService: PermissionsService,
     private readonly searchArticlesTool: SearchArticlesTool,
   ) {}
 
@@ -56,21 +51,8 @@ export class AgentToolGeneratorService {
         return this.wrapToolsWithErrorContext(tools);
       }
 
-      const hasWorkflowPermission =
-        await this.permissionsService.checkRolesPermissions(
-          { intersectionOf: roleIds },
-          workspaceId,
-          PermissionFlagType.WORKFLOWS,
-        );
-
-      if (hasWorkflowPermission) {
-        const workflowTools = this.workflowToolService.generateWorkflowTools(
-          workspaceId,
-          { intersectionOf: roleIds },
-        );
-
-        tools = { ...tools, ...workflowTools };
-      }
+      // Workflow tools are NOT generated here to avoid circular dependencies
+      // They are provided via additionalTools from ChatToolsProviderService in the chat context
 
       const databaseTools = await this.toolService.listTools(
         { intersectionOf: roleIds },

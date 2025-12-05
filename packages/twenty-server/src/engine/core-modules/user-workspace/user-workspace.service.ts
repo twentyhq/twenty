@@ -157,9 +157,9 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         );
       }
 
-      await this.userRoleService.assignRoleToUserWorkspace({
+      await this.userRoleService.assignRoleToManyUserWorkspace({
         workspaceId: workspace.id,
-        userWorkspaceId: userWorkspace.id,
+        userWorkspaceIds: [userWorkspace.id],
         roleId: defaultRoleId,
       });
 
