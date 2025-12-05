@@ -67,4 +67,9 @@ export class CreateRoleInput {
   @IsOptional()
   @Field({ nullable: true })
   canBeAssignedToApiKeys?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  canBeAssignedToApplications?: boolean;
 }

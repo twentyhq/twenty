@@ -33,6 +33,9 @@ export class RoleDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   standardId?: string;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  universalIdentifier?: string;
+
   @Field({ nullable: false })
   label: string;
 

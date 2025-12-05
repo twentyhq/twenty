@@ -25,6 +25,7 @@ import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fr
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { getFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-universal-identifier.util';
 
 @Injectable()
 export class RoleService {
@@ -68,6 +69,31 @@ export class RoleService {
         fieldPermissions: true,
       },
     });
+  }
+
+  public async getRoleByUniversalIdentifier({
+    universalIdentifier,
+    workspaceId,
+  }: {
+    universalIdentifier: string;
+    workspaceId: string;
+  }): Promise<RoleDTO | null> {
+    const { flatRoleMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatRoleMaps'],
+        },
+      );
+
+    const flatRoleEntity = getFlatEntityByUniversalIdentifier(
+      flatRoleMaps,
+      universalIdentifier,
+    );
+
+    return isDefined(flatRoleEntity)
+      ? fromFlatRoleToRoleDto(flatRoleEntity)
+      : null;
   }
 
   public async createRole({

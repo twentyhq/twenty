@@ -73,6 +73,7 @@ export const fromCreateAgentInputToFlatAgent = ({
         userWorkspaceId: null,
         agentId,
         apiKeyId: null,
+        targetApplicationId: null,
         createdAt,
         updatedAt: createdAt,
         universalIdentifier: v4(),
