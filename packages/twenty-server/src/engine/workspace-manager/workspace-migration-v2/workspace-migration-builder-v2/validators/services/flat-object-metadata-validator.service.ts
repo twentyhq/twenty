@@ -19,6 +19,7 @@ export class FlatObjectMetadataValidatorService {
   public validateFlatObjectMetadataUpdate({
     flatEntityId,
     flatEntityUpdates,
+    buildOptions,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -85,6 +86,7 @@ export class FlatObjectMetadataValidatorService {
         ...validateFlatObjectMetadataIdentifiers({
           flatObjectMetadata: updatedFlatObjectMetadata,
           flatFieldMetadataMaps,
+          buildOptions,
         }),
       );
     }
@@ -154,6 +156,7 @@ export class FlatObjectMetadataValidatorService {
       flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
       flatFieldMetadataMaps,
     },
+    buildOptions,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
   >): FailedFlatEntityValidation<FlatObjectMetadata> {
@@ -192,6 +195,7 @@ export class FlatObjectMetadataValidatorService {
       ...validateFlatObjectMetadataIdentifiers({
         flatObjectMetadata: flatObjectMetadataToValidate,
         flatFieldMetadataMaps,
+        buildOptions,
       }),
     );
     objectValidationResult.errors.push(

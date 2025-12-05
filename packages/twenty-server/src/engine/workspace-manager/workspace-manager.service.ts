@@ -201,9 +201,9 @@ export class WorkspaceManagerService {
         where: { workspaceId, userId },
       });
 
-      await this.userRoleService.assignRoleToUserWorkspace({
+      await this.userRoleService.assignRoleToManyUserWorkspace({
         workspaceId,
-        userWorkspaceId: userWorkspace.id,
+        userWorkspaceIds: [userWorkspace.id],
         roleId: adminRole.id,
       });
     }

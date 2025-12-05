@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
-import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
@@ -85,7 +85,7 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
           string,
           FindOptionsRelations<ObjectLiteral>
         >,
-        limit: QUERY_MAX_RECORDS,
+        limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
         workspaceDataSource,
         rolePermissionConfig,

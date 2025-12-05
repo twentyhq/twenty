@@ -66,10 +66,10 @@ describe('MessagingMessagesImportService', () => {
         provide: MessageChannelSyncStatusService,
         useValue: {
           markAsMessagesImportOngoing: jest.fn().mockResolvedValue(undefined),
-          markAsCompletedAndScheduleMessageListFetch: jest
+          markAsCompletedAndMarkAsMessagesListFetchPending: jest
             .fn()
             .mockResolvedValue(undefined),
-          scheduleMessagesImport: jest.fn().mockResolvedValue(undefined),
+          markAsMessagesImportPending: jest.fn().mockResolvedValue(undefined),
         },
       },
       {
@@ -213,7 +213,7 @@ describe('MessagingMessagesImportService', () => {
     );
     expect(
       messageChannelSyncStatusService.markAsMessagesImportOngoing,
-    ).toHaveBeenCalledWith([mockMessageChannel.id]);
+    ).toHaveBeenCalledWith([mockMessageChannel.id], workspaceId);
 
     expect(
       connectedAccountRefreshTokensService.refreshAndSaveTokens,
@@ -236,7 +236,7 @@ describe('MessagingMessagesImportService', () => {
       saveMessagesService.saveMessagesAndEnqueueContactCreation,
     ).toHaveBeenCalled();
     expect(
-      messageChannelSyncStatusService.scheduleMessagesImport,
+      messageChannelSyncStatusService.markAsMessagesImportPending,
     ).toHaveBeenCalledTimes(0);
   });
 
@@ -293,7 +293,7 @@ describe('MessagingMessagesImportService', () => {
     );
 
     expect(
-      messageChannelSyncStatusService.scheduleMessagesImport,
+      messageChannelSyncStatusService.markAsMessagesImportPending,
     ).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,8 +1,8 @@
 import { type GraphQLResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
-import { type PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
-import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
+import { type PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
+import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 
 import { createPageLayoutOperationFactory } from './create-page-layout-operation-factory.util';
 import { destroyPageLayoutOperationFactory } from './destroy-page-layout-operation-factory.util';

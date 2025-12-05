@@ -32,9 +32,10 @@ export class MessageChannelSyncStatusService {
     private readonly metricsService: MetricsService,
   ) {}
 
-  public async scheduleMessageListFetch(
+  public async markAsMessagesListFetchPending(
     messageChannelIds: string[],
     workspaceId: string,
+    preserveSyncStageStartedAt: boolean = false,
   ) {
     if (!messageChannelIds.length) {
       return;
@@ -48,12 +49,14 @@ export class MessageChannelSyncStatusService {
 
     await messageChannelRepository.update(messageChannelIds, {
       syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+      ...(!preserveSyncStageStartedAt ? { syncStageStartedAt: null } : {}),
     });
   }
 
-  public async scheduleMessagesImport(
+  public async markAsMessagesImportPending(
     messageChannelIds: string[],
     workspaceId: string,
+    preserveSyncStageStartedAt: boolean = false,
   ) {
     if (!messageChannelIds.length) {
       return;
@@ -67,10 +70,11 @@ export class MessageChannelSyncStatusService {
 
     await messageChannelRepository.update(messageChannelIds, {
       syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+      ...(!preserveSyncStageStartedAt ? { syncStageStartedAt: null } : {}),
     });
   }
 
-  public async resetAndScheduleMessageListFetch(
+  public async resetAndMarkAsMessagesListFetchPending(
     messageChannelIds: string[],
     workspaceId: string,
   ) {
@@ -111,7 +115,7 @@ export class MessageChannelSyncStatusService {
       },
     );
 
-    await this.scheduleMessageListFetch(messageChannelIds, workspaceId);
+    await this.markAsMessagesListFetchPending(messageChannelIds, workspaceId);
   }
 
   public async resetSyncStageStartedAt(
@@ -133,6 +137,27 @@ export class MessageChannelSyncStatusService {
     });
   }
 
+  public async markAsMessagesListFetchScheduled(
+    messageChannelIds: string[],
+    workspaceId: string,
+  ) {
+    if (!messageChannelIds.length) {
+      return;
+    }
+
+    const messageChannelRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
+        'messageChannel',
+      );
+
+    await messageChannelRepository.update(messageChannelIds, {
+      syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
+      syncStatus: MessageChannelSyncStatus.ONGOING,
+      syncStageStartedAt: new Date().toISOString(),
+    });
+  }
+
   public async markAsMessagesListFetchOngoing(
     messageChannelIds: string[],
     workspaceId: string,
@@ -150,11 +175,10 @@ export class MessageChannelSyncStatusService {
     await messageChannelRepository.update(messageChannelIds, {
       syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
       syncStatus: MessageChannelSyncStatus.ONGOING,
-      syncStageStartedAt: new Date().toISOString(),
     });
   }
 
-  public async markAsCompletedAndScheduleMessageListFetch(
+  public async markAsCompletedAndMarkAsMessagesListFetchPending(
     messageChannelIds: string[],
     workspaceId: string,
   ) {
@@ -179,6 +203,25 @@ export class MessageChannelSyncStatusService {
     await this.metricsService.batchIncrementCounter({
       key: MetricsKeys.MessageChannelSyncJobActive,
       eventIds: messageChannelIds,
+    });
+  }
+
+  public async markAsMessagesImportScheduled(
+    messageChannelIds: string[],
+    workspaceId: string,
+  ) {
+    if (!messageChannelIds.length) {
+      return;
+    }
+
+    const messageChannelRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
+        'messageChannel',
+      );
+
+    await messageChannelRepository.update(messageChannelIds, {
+      syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
     });
   }
 

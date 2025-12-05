@@ -189,7 +189,10 @@ describe('MessagingMessageListFetchService', () => {
             markAsMessagesListFetchOngoing: jest
               .fn()
               .mockResolvedValue(undefined),
-            scheduleMessagesImport: jest.fn().mockResolvedValue(undefined),
+            markAsMessagesImportPending: jest.fn().mockResolvedValue(undefined),
+            markAsMessagesImportScheduled: jest
+              .fn()
+              .mockResolvedValue(undefined),
           },
         },
         {
@@ -291,7 +294,7 @@ describe('MessagingMessageListFetchService', () => {
     });
     expect(
       messageChannelSyncStatusService.markAsMessagesListFetchOngoing,
-    ).toHaveBeenCalledWith([mockMicrosoftMessageChannel.id]);
+    ).toHaveBeenCalledWith([mockMicrosoftMessageChannel.id], workspaceId);
 
     expect(messagingGetMessageListService.getMessageLists).toHaveBeenCalledWith(
       {
@@ -331,8 +334,8 @@ describe('MessagingMessageListFetchService', () => {
     );
 
     expect(
-      messageChannelSyncStatusService.scheduleMessagesImport,
-    ).toHaveBeenCalledWith([mockMicrosoftMessageChannel.id]);
+      messageChannelSyncStatusService.markAsMessagesImportScheduled,
+    ).toHaveBeenCalledWith([mockMicrosoftMessageChannel.id], workspaceId);
   });
 
   it('should process Google message list fetch correctly', async () => {
@@ -350,7 +353,7 @@ describe('MessagingMessageListFetchService', () => {
     });
     expect(
       messageChannelSyncStatusService.markAsMessagesListFetchOngoing,
-    ).toHaveBeenCalledWith([mockGoogleMessageChannel.id]);
+    ).toHaveBeenCalledWith([mockGoogleMessageChannel.id], workspaceId);
 
     expect(messagingGetMessageListService.getMessageLists).toHaveBeenCalledWith(
       {
@@ -390,7 +393,7 @@ describe('MessagingMessageListFetchService', () => {
     );
 
     expect(
-      messageChannelSyncStatusService.scheduleMessagesImport,
-    ).toHaveBeenCalledWith([mockGoogleMessageChannel.id]);
+      messageChannelSyncStatusService.markAsMessagesImportScheduled,
+    ).toHaveBeenCalledWith([mockGoogleMessageChannel.id], workspaceId);
   });
 });

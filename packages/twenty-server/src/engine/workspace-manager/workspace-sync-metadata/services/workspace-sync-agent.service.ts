@@ -12,7 +12,7 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceAgentComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-agent.comparator';
 import { StandardAgentFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-agent.factory';
-import { standardAgentDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents';
+import { STANDARD_AGENT_DEFINITIONS } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/standard-agent-definitions';
 
 @Injectable()
 export class WorkspaceSyncAgentService {
@@ -39,7 +39,7 @@ export class WorkspaceSyncAgentService {
     });
 
     const targetStandardAgents = this.standardAgentFactory.create(
-      standardAgentDefinitions,
+      STANDARD_AGENT_DEFINITIONS,
       context,
       existingStandardAgentEntities,
     );
@@ -66,7 +66,7 @@ export class WorkspaceSyncAgentService {
             workspaceId: context.workspaceId,
           });
 
-          const agentDefinition = standardAgentDefinitions.find(
+          const agentDefinition = STANDARD_AGENT_DEFINITIONS.find(
             (def) => def.standardId === createdAgent.standardId,
           );
 
@@ -117,7 +117,7 @@ export class WorkspaceSyncAgentService {
 
           await agentRepository.update({ id: agentToUpdate.id }, flatAgentData);
 
-          const agentDefinition = standardAgentDefinitions.find(
+          const agentDefinition = STANDARD_AGENT_DEFINITIONS.find(
             (def) => def.standardId === agentToUpdate.standardId,
           );
 

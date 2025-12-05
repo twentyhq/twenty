@@ -5,6 +5,7 @@ import {
   getIntrospectionQuery,
   printSchema,
 } from 'graphql/index';
+import { createClient } from 'graphql-sse';
 import {
   type ApiResponse,
   type AppManifest,
@@ -234,5 +235,54 @@ export class ApiService {
       }
       throw error;
     }
+  }
+
+  async subscribeToLogs({
+    applicationUniversalIdentifier,
+    functionUniversalIdentifier,
+    functionName,
+  }: {
+    applicationUniversalIdentifier: string;
+    functionUniversalIdentifier?: string;
+    functionName?: string;
+  }) {
+    const twentyConfig = await this.configService.getConfig();
+
+    const wsClient = createClient({
+      url: twentyConfig.apiUrl + '/graphql',
+      headers: {
+        Authorization: `Bearer ${twentyConfig.apiKey}`,
+        'Content-Type': 'application/json',
+        Accept: 'text/event-stream',
+      },
+    });
+
+    const query = `
+        subscription SubscribeToLogs($input: ServerlessFunctionLogsInput!) {
+          serverlessFunctionLogs(input: $input) {
+            logs
+          }
+        }
+      `;
+
+    const variables = {
+      input: {
+        applicationUniversalIdentifier,
+        universalIdentifier: functionUniversalIdentifier,
+        name: functionName,
+      },
+    };
+
+    wsClient.subscribe<{ serverlessFunctionLogs: { logs: string } }>(
+      {
+        query,
+        variables,
+      },
+      {
+        next: ({ data }) => console.log(data?.serverlessFunctionLogs.logs),
+        error: (err: unknown) => console.error(err),
+        complete: () => console.log('Completed'),
+      },
+    );
   }
 }
