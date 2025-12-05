@@ -75,23 +75,6 @@ export class ViewFieldV2Service {
         },
       );
 
-    const {
-      flatViewFieldMaps: existingFlatViewFieldMaps,
-      flatViewMaps,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewFieldMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-          'flatObjectMetadataMaps',
-        ],
-      },
-    );
-
     const flatViewFieldsToCreate = createViewFieldInputs.map(
       (createViewFieldInput) =>
         fromCreateViewFieldInputToFlatViewFieldToCreate({

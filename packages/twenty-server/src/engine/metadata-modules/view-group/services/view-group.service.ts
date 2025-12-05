@@ -75,21 +75,6 @@ export class ViewGroupService {
         },
       );
 
-    const {
-      flatViewGroupMaps: existingFlatViewGroupMaps,
-      flatViewMaps,
-      flatFieldMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewGroupMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-        ],
-      },
-    );
-
     const flatViewGroupsToCreate = createViewGroupInputs.map(
       (createViewGroupInput) => {
         const mainGroupByFieldMetadataId =

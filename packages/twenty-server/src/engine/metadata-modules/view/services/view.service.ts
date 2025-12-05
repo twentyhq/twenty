@@ -51,22 +51,13 @@ export class ViewService {
         },
       );
 
-    const {
-      flatObjectMetadataMaps,
-      flatViewMaps: existingFlatViewMaps,
-      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-      flatViewGroupMaps: existingFlatViewGroupMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatObjectMetadataMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-          'flatViewGroupMaps',
-        ],
-      },
-    );
+    const { flatFieldMetadataMaps: existingFlatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatFieldMetadataMaps'],
+        },
+      );
 
     const { flatViewToCreate, flatViewGroupsToCreate } =
       fromCreateViewInputToFlatViewToCreate({

@@ -106,7 +106,6 @@ export class AgentService {
     input: CreateAgentInput & { isCustom: boolean },
     workspaceId: string,
   ): Promise<FlatAgentWithRoleId> {
-
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
