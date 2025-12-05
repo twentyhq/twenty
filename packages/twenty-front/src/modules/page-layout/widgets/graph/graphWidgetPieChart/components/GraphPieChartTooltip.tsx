@@ -1,4 +1,5 @@
 import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
+import { PIE_CHART_TOOLTIP_OFFSET_PX } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartTooltipOffsetPx';
 import { graphWidgetPieTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetPieChart/states/graphWidgetPieTooltipComponentState';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type PieChartEnrichedData } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartEnrichedData';
@@ -27,41 +28,44 @@ export const GraphPieChartTooltip = ({
     graphWidgetPieTooltipComponentState,
   );
 
-  if (!isDefined(tooltipState)) {
-    return null;
-  }
-
-  const containerElement = document.getElementById(containerId);
+  const containerElement =
+    typeof document !== 'undefined'
+      ? document.getElementById(containerId)
+      : null;
   if (!isDefined(containerElement)) {
     return null;
   }
 
-  const tooltipData = getPieChartTooltipData({
-    datum: tooltipState.datum,
-    enrichedData,
-    formatOptions,
-    displayType,
-  });
+  const isVisible = isDefined(tooltipState);
 
-  const handleTooltipClick: (() => void) | undefined = isDefined(onSliceClick)
-    ? () => onSliceClick(tooltipState.datum.data)
-    : undefined;
+  const tooltipData = isVisible
+    ? getPieChartTooltipData({
+        datum: tooltipState.datum,
+        enrichedData,
+        formatOptions,
+        displayType,
+      })
+    : null;
 
-  if (!isDefined(tooltipData)) {
-    return null;
-  }
+  const handleTooltipClick: (() => void) | undefined =
+    isDefined(onSliceClick) && isVisible
+      ? () => onSliceClick(tooltipState.datum.data)
+      : undefined;
 
-  const reference = createVirtualElementFromContainerOffset(
-    containerElement,
-    tooltipState.offsetLeft,
-    tooltipState.offsetTop,
-  );
+  const reference = isVisible
+    ? createVirtualElementFromContainerOffset(
+        containerElement,
+        tooltipState.offsetLeft,
+        tooltipState.offsetTop,
+      )
+    : null;
 
   return (
     <GraphWidgetFloatingTooltip
       reference={reference}
       boundary={containerElement}
-      items={[tooltipData.tooltipItem]}
+      tooltipOffsetFromAnchorInPx={PIE_CHART_TOOLTIP_OFFSET_PX}
+      items={tooltipData?.tooltipItem ? [tooltipData.tooltipItem] : []}
       disablePointerEvents
       onGraphWidgetTooltipClick={handleTooltipClick}
     />

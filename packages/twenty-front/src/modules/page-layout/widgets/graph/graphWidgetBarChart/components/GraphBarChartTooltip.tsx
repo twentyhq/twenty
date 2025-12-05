@@ -1,4 +1,5 @@
 import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
+import { BAR_CHART_TOOLTIP_OFFSET_PX } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartTooltipOffsetPx';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { getBarChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTooltipData';
@@ -33,56 +34,53 @@ export const GraphBarChartTooltip = ({
     graphWidgetBarTooltipComponentState,
   );
 
-  const handleTooltipClick: (() => void) | undefined = isDefined(onBarClick)
-    ? () => {
-        if (isDefined(tooltipState)) {
-          onBarClick(tooltipState.datum);
-        }
-      }
-    : undefined;
+  const containerElement =
+    typeof document !== 'undefined'
+      ? document.getElementById(containerId)
+      : null;
+  if (!isDefined(containerElement)) {
+    return null;
+  }
 
-  const tooltipData = !isDefined(tooltipState)
-    ? null
-    : getBarChartTooltipData({
+  const isVisible = isDefined(tooltipState);
+
+  const handleTooltipClick: (() => void) | undefined =
+    isDefined(onBarClick) && isVisible
+      ? () => onBarClick(tooltipState.datum)
+      : undefined;
+
+  const tooltipData = isVisible
+    ? getBarChartTooltipData({
         datum: tooltipState.datum,
         enrichedKeys,
         formatOptions,
         enableGroupTooltip,
         layout,
-      });
+      })
+    : null;
 
   let reference = null;
-  let boundary = null;
 
-  if (isDefined(tooltipState)) {
+  if (isVisible) {
     try {
       const positioning = getTooltipReferenceFromBarChartElementAnchor(
         tooltipState.anchorElement,
         containerId,
       );
       reference = positioning.reference;
-      boundary = positioning.boundary;
     } catch {
       reference = null;
-      boundary = null;
     }
-  }
-
-  if (
-    !isDefined(tooltipData) ||
-    !isDefined(reference) ||
-    !isDefined(boundary)
-  ) {
-    return null;
   }
 
   return (
     <GraphWidgetFloatingTooltip
       reference={reference}
-      boundary={boundary}
-      items={tooltipData.tooltipItems}
-      indexLabel={tooltipData.indexLabel}
-      highlightedKey={tooltipData.hoveredKey}
+      boundary={containerElement}
+      tooltipOffsetFromAnchorInPx={BAR_CHART_TOOLTIP_OFFSET_PX}
+      items={tooltipData?.tooltipItems ?? []}
+      indexLabel={tooltipData?.indexLabel}
+      highlightedKey={tooltipData?.hoveredKey}
       onGraphWidgetTooltipClick={handleTooltipClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
