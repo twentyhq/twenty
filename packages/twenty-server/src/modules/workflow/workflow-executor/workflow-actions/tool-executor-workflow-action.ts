@@ -4,8 +4,8 @@ import { resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
-import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
@@ -13,7 +13,7 @@ import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workf
 
 @Injectable()
 export class ToolExecutorWorkflowAction implements WorkflowAction {
-  constructor(private readonly toolRegistry: ToolRegistryService) {}
+  constructor(private readonly toolProvider: ToolProviderService) {}
 
   async execute({
     currentStepId,
@@ -34,7 +34,7 @@ export class ToolExecutorWorkflowAction implements WorkflowAction {
       );
     }
 
-    const tool = this.toolRegistry.getTool(toolType);
+    const tool = this.toolProvider.getToolByType(toolType);
 
     if (!tool) {
       throw new Error(
