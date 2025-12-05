@@ -6,7 +6,6 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromCreateViewFilterInputToFlatViewFilterToCreate } from 'src/engine/metadata-modules/flat-view-filter/utils/from-create-view-filter-input-to-flat-view-filter-to-create.util';
 import { fromDeleteViewFilterInputToFlatViewFilterOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-delete-view-filter-input-to-flat-view-filter-or-throw.util';
@@ -45,23 +44,6 @@ export class ViewFilterService {
         },
       );
 
-    const {
-      flatViewFilterMaps: existingFlatViewFilterMaps,
-      flatViewMaps,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewFilterMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-          'flatObjectMetadataMaps',
-        ],
-      },
-    );
-
     const flatViewFilterToCreate =
       fromCreateViewFilterInputToFlatViewFilterToCreate({
         createViewFilterInput,
@@ -72,23 +54,15 @@ export class ViewFilterService {
     const buildAndRunResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatViewFilterMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatViewFilterMaps,
+          allFlatEntityOperationByMetadataName: {
+            viewFilter: {
               flatEntityToCreate: [flatViewFilterToCreate],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
-          },
-          dependencyAllFlatEntityMaps: {
-            flatFieldMetadataMaps,
-            flatViewMaps,
-            flatObjectMetadataMaps,
-          },
-          buildOptions: {
-            isSystemBuild: false,
+            },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -125,20 +99,13 @@ export class ViewFilterService {
     workspaceId: string;
     updateViewFilterInput: UpdateViewFilterInput;
   }): Promise<ViewFilterDTO> {
-    const {
-      flatViewFilterMaps: existingFlatViewFilterMaps,
-      flatViewMaps,
-      flatFieldMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewFilterMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-        ],
-      },
-    );
+    const { flatViewFilterMaps: existingFlatViewFilterMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFilterMaps'],
+        },
+      );
 
     const optimisticallyUpdatedFlatViewFilter =
       fromUpdateViewFilterInputToFlatViewFilterToUpdateOrThrow({
@@ -149,22 +116,15 @@ export class ViewFilterService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatViewFilterMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatViewFilterMaps,
+          allFlatEntityOperationByMetadataName: {
+            viewFilter: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
               flatEntityToUpdate: [optimisticallyUpdatedFlatViewFilter],
-            }),
-          },
-          dependencyAllFlatEntityMaps: {
-            flatViewMaps,
-            flatFieldMetadataMaps,
-          },
-          buildOptions: {
-            isSystemBuild: false,
+            },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -196,20 +156,13 @@ export class ViewFilterService {
     deleteViewFilterInput: DeleteViewFilterInput;
     workspaceId: string;
   }): Promise<ViewFilterDTO> {
-    const {
-      flatViewFilterMaps: existingFlatViewFilterMaps,
-      flatViewMaps,
-      flatFieldMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewFilterMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-        ],
-      },
-    );
+    const { flatViewFilterMaps: existingFlatViewFilterMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFilterMaps'],
+        },
+      );
 
     const optimisticallyUpdatedFlatViewFilterWithDeletedAt =
       fromDeleteViewFilterInputToFlatViewFilterOrThrow({
@@ -220,24 +173,17 @@ export class ViewFilterService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatViewFilterMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatViewFilterMaps,
+          allFlatEntityOperationByMetadataName: {
+            viewFilter: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
               flatEntityToUpdate: [
                 optimisticallyUpdatedFlatViewFilterWithDeletedAt,
               ],
-            }),
-          },
-          dependencyAllFlatEntityMaps: {
-            flatFieldMetadataMaps,
-            flatViewMaps,
-          },
-          buildOptions: {
-            isSystemBuild: false,
+            },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -269,20 +215,13 @@ export class ViewFilterService {
     destroyViewFilterInput: DestroyViewFilterInput;
     workspaceId: string;
   }): Promise<ViewFilterDTO> {
-    const {
-      flatViewFilterMaps: existingFlatViewFilterMaps,
-      flatViewMaps: existingFlatViewMaps,
-      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewFilterMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-        ],
-      },
-    );
+    const { flatViewFilterMaps: existingFlatViewFilterMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFilterMaps'],
+        },
+      );
 
     const existingViewFilterToDelete =
       fromDestroyViewFilterInputToFlatViewFilterOrThrow({
@@ -293,25 +232,15 @@ export class ViewFilterService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatViewFilterMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatViewFilterMaps,
+          allFlatEntityOperationByMetadataName: {
+            viewFilter: {
               flatEntityToCreate: [],
               flatEntityToDelete: [existingViewFilterToDelete],
               flatEntityToUpdate: [],
-            }),
-          },
-          dependencyAllFlatEntityMaps: {
-            flatViewMaps: existingFlatViewMaps,
-            flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-          },
-          buildOptions: {
-            isSystemBuild: false,
-            inferDeletionFromMissingEntities: {
-              viewFilter: true,
             },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 

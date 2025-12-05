@@ -6,6 +6,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
+import { ToolGeneratorModule } from 'src/engine/core-modules/tool-generator/tool-generator.module';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { SearchArticlesTool } from 'src/engine/core-modules/tool/tools/search-articles-tool/search-articles-tool';
 import { ToolAdapterService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool-adapter.service';
@@ -27,6 +28,7 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
     TokenModule,
     FeatureFlagModule,
     RecordCrudModule,
+    ToolGeneratorModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceCacheStorageModule,
     UserRoleModule,

@@ -3,7 +3,9 @@ import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRec
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
 import { type ViewType } from '@/views/types/ViewType';
@@ -36,6 +38,10 @@ export const useReorderRecordGroups = ({
   );
 
   const { saveViewGroups } = useSaveCurrentViewGroups();
+
+  const groupFieldMetadata = useRecoilComponentValue(
+    recordIndexGroupFieldMetadataItemComponentState,
+  );
 
   const reorderRecordGroups = useRecoilCallback(
     ({ snapshot }) =>
@@ -80,17 +86,23 @@ export const useReorderRecordGroups = ({
           ];
         }, []);
 
-        setRecordGroups(
-          updatedRecordGroups,
+        if (!isDefined(groupFieldMetadata?.id)) {
+          throw new Error('mainGroupByFieldMetadataId is required');
+        }
+
+        setRecordGroups({
+          mainGroupByFieldMetadataId: groupFieldMetadata?.id,
+          recordGroups: updatedRecordGroups,
           recordIndexId,
-          objectMetadataItem.id,
-        );
+          objectMetadataItemId: objectMetadataItem.id,
+        });
         saveViewGroups(
           mapRecordGroupDefinitionsToViewGroups(updatedRecordGroups),
         );
       },
     [
       objectMetadataItem.id,
+      groupFieldMetadata?.id,
       recordIndexId,
       saveViewGroups,
       setRecordGroups,

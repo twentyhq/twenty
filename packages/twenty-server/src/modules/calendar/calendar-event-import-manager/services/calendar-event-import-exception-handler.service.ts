@@ -88,7 +88,7 @@ export class CalendarEventImportErrorHandlerService {
       `CalendarChannelId: ${calendarChannel.id} - Sync cursor error, resetting and rescheduling`,
     );
 
-    await this.calendarChannelSyncStatusService.resetAndScheduleCalendarEventListFetch(
+    await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
       [calendarChannel.id],
       workspaceId,
     );
@@ -147,14 +147,18 @@ export class CalendarEventImportErrorHandlerService {
 
     switch (syncStep) {
       case CalendarEventImportSyncStep.CALENDAR_EVENT_LIST_FETCH:
-        await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
+        await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
           [calendarChannel.id],
+          workspaceId,
+          true,
         );
         break;
 
       case CalendarEventImportSyncStep.CALENDAR_EVENTS_IMPORT:
-        await this.calendarChannelSyncStatusService.scheduleCalendarEventsImport(
+        await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
           [calendarChannel.id],
+          workspaceId,
+          true,
         );
         break;
 
@@ -214,7 +218,7 @@ export class CalendarEventImportErrorHandlerService {
       return;
     }
 
-    await this.calendarChannelSyncStatusService.resetAndScheduleCalendarEventListFetch(
+    await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
       [calendarChannel.id],
       workspaceId,
     );

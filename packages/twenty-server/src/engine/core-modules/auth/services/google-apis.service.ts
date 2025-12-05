@@ -190,12 +190,12 @@ export class GoogleAPIsService {
             newOrExistingConnectedAccountId,
           );
 
-          await this.messagingChannelSyncStatusService.resetAndScheduleMessageListFetch(
+          await this.messagingChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending(
             [newOrExistingConnectedAccountId],
             workspaceId,
           );
 
-          await this.calendarChannelSyncStatusService.resetAndScheduleCalendarEventListFetch(
+          await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
             [newOrExistingConnectedAccountId],
             workspaceId,
           );

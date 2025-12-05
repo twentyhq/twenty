@@ -6,7 +6,6 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromCreateViewGroupInputToFlatViewGroupToCreate } from 'src/engine/metadata-modules/flat-view-group/utils/from-create-view-group-input-to-flat-view-group-to-create.util';
@@ -76,49 +75,48 @@ export class ViewGroupService {
         },
       );
 
-    const {
-      flatViewGroupMaps: existingFlatViewGroupMaps,
-      flatViewMaps,
-      flatFieldMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewGroupMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-        ],
-      },
-    );
+    const { flatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewMaps'],
+        },
+      );
 
     const flatViewGroupsToCreate = createViewGroupInputs.map(
-      (createViewGroupInput) =>
-        fromCreateViewGroupInputToFlatViewGroupToCreate({
+      (createViewGroupInput) => {
+        const mainGroupByFieldMetadataId =
+          flatViewMaps.byId[createViewGroupInput.viewId]
+            ?.mainGroupByFieldMetadataId;
+
+        if (!isDefined(mainGroupByFieldMetadataId)) {
+          throw new ViewGroupException(
+            'The associated view is not a grouped view: mainGroupByFieldMetadataId is missing.',
+            ViewGroupExceptionCode.MISSING_MAIN_GROUP_BY_FIELD_METADATA_ID,
+          );
+        }
+
+        return fromCreateViewGroupInputToFlatViewGroupToCreate({
           createViewGroupInput,
           workspaceId,
           workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
-        }),
+          mainGroupByFieldMetadataId,
+        });
+      },
     );
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatViewGroupMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatViewGroupMaps,
+          allFlatEntityOperationByMetadataName: {
+            viewGroup: {
               flatEntityToCreate: flatViewGroupsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
-            }),
-          },
-          dependencyAllFlatEntityMaps: {
-            flatFieldMetadataMaps,
-            flatViewMaps,
-          },
-          buildOptions: {
-            isSystemBuild: false,
+            },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -150,20 +148,13 @@ export class ViewGroupService {
     workspaceId: string;
     updateViewGroupInput: UpdateViewGroupInput;
   }): Promise<ViewGroupDTO> {
-    const {
-      flatViewGroupMaps: existingFlatViewGroupMaps,
-      flatViewMaps,
-      flatFieldMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewGroupMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-        ],
-      },
-    );
+    const { flatViewGroupMaps: existingFlatViewGroupMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewGroupMaps'],
+        },
+      );
 
     const optimisticallyUpdatedFlatViewGroup =
       fromUpdateViewGroupInputToFlatViewGroupToUpdateOrThrow({
@@ -174,22 +165,15 @@ export class ViewGroupService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatViewGroupMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatViewGroupMaps,
+          allFlatEntityOperationByMetadataName: {
+            viewGroup: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
               flatEntityToUpdate: [optimisticallyUpdatedFlatViewGroup],
-            }),
-          },
-          dependencyAllFlatEntityMaps: {
-            flatViewMaps,
-            flatFieldMetadataMaps,
-          },
-          buildOptions: {
-            isSystemBuild: false,
+            },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -221,20 +205,13 @@ export class ViewGroupService {
     deleteViewGroupInput: DeleteViewGroupInput;
     workspaceId: string;
   }): Promise<ViewGroupDTO> {
-    const {
-      flatViewGroupMaps: existingFlatViewGroupMaps,
-      flatViewMaps,
-      flatFieldMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewGroupMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-        ],
-      },
-    );
+    const { flatViewGroupMaps: existingFlatViewGroupMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewGroupMaps'],
+        },
+      );
 
     const optimisticallyUpdatedFlatViewGroupWithDeletedAt =
       fromDeleteViewGroupInputToFlatViewGroupOrThrow({
@@ -245,24 +222,17 @@ export class ViewGroupService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatViewGroupMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatViewGroupMaps,
+          allFlatEntityOperationByMetadataName: {
+            viewGroup: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
               flatEntityToUpdate: [
                 optimisticallyUpdatedFlatViewGroupWithDeletedAt,
               ],
-            }),
-          },
-          dependencyAllFlatEntityMaps: {
-            flatFieldMetadataMaps,
-            flatViewMaps,
-          },
-          buildOptions: {
-            isSystemBuild: false,
+            },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -294,20 +264,13 @@ export class ViewGroupService {
     destroyViewGroupInput: DestroyViewGroupInput;
     workspaceId: string;
   }): Promise<ViewGroupDTO> {
-    const {
-      flatViewGroupMaps: existingFlatViewGroupMaps,
-      flatViewMaps: existingFlatViewMaps,
-      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewGroupMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-        ],
-      },
-    );
+    const { flatViewGroupMaps: existingFlatViewGroupMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewGroupMaps'],
+        },
+      );
 
     const existingViewGroupToDelete =
       fromDestroyViewGroupInputToFlatViewGroupOrThrow({
@@ -318,25 +281,15 @@ export class ViewGroupService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatViewGroupMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatViewGroupMaps,
+          allFlatEntityOperationByMetadataName: {
+            viewGroup: {
               flatEntityToCreate: [],
               flatEntityToDelete: [existingViewGroupToDelete],
               flatEntityToUpdate: [],
-            }),
-          },
-          dependencyAllFlatEntityMaps: {
-            flatViewMaps: existingFlatViewMaps,
-            flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-          },
-          buildOptions: {
-            isSystemBuild: false,
-            inferDeletionFromMissingEntities: {
-              viewGroup: true,
             },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 

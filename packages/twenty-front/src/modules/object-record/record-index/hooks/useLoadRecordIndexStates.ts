@@ -178,11 +178,12 @@ export const useLoadRecordIndexStates = () => {
 
         onViewFieldsChange(view.viewFields, objectMetadataItem);
 
-        setRecordGroupsFromViewGroups(
-          view.id,
-          view.viewGroups,
+        setRecordGroupsFromViewGroups({
+          viewId: view.id,
+          mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId ?? '',
+          viewGroups: view.viewGroups,
           objectMetadataItem,
-        );
+        });
 
         setContextStoreTargetedRecordsRuleComponentState((prev) => ({
           ...prev,
@@ -199,9 +200,9 @@ export const useLoadRecordIndexStates = () => {
           view.calendarFieldMetadataId ?? null,
         );
 
-        if (isDefined(view.viewGroups?.[0]?.fieldMetadataId)) {
+        if (isDefined(view.mainGroupByFieldMetadataId)) {
           const recordIndexGroupFieldMetadataItemId =
-            view.viewGroups?.[0]?.fieldMetadataId;
+            view.mainGroupByFieldMetadataId;
 
           const { fieldMetadataItem: recordIndexGroupFieldMetadataItem } =
             getFieldMetadataItemByIdOrThrow(

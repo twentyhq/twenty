@@ -11,14 +11,14 @@ import { DestroyViewGroupInput } from 'src/engine/metadata-modules/view-group/dt
 import { UpdateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/update-view-group.input';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
+import { ViewGroupGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view-group/utils/view-group-graphql-api-exception.filter';
 import { CreateViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-group-permission.guard';
 import { DeleteViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-group-permission.guard';
 import { DestroyViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-group-permission.guard';
 import { UpdateViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-group-permission.guard';
-import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewGroupDTO)
-@UseFilters(ViewGraphqlApiExceptionFilter)
+@UseFilters(ViewGroupGraphqlApiExceptionFilter)
 @UseGuards(WorkspaceAuthGuard)
 export class ViewGroupResolver {
   constructor(private readonly viewGroupService: ViewGroupService) {}

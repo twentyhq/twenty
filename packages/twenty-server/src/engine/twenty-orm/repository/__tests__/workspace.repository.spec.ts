@@ -91,7 +91,6 @@ describe('WorkspaceRepository', () => {
       relationTargetObjectMetadataId: null,
       calendarViewIds: [],
       viewFilterIds: [],
-      viewGroupIds: [],
       kanbanAggregateOperationViewIds: [],
       viewFieldIds: [],
       mainGroupByFieldMetadataViewIds: [],

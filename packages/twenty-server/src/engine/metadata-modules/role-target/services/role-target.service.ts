@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { CreateRoleTargetInput } from 'src/engine/metadata-modules/role-target/types/create-role-target.input';
@@ -37,13 +36,33 @@ export class RoleTargetService {
     createRoleTargetInput: CreateRoleTargetInput;
     workspaceId: string;
   }): Promise<FlatRoleTarget> {
-    const { flatRoleTargetMaps, flatRoleMaps } =
+    const [flatRoleTarget] = await this.createMany({
+      createRoleTargetInputs: [createRoleTargetInput],
+      workspaceId,
+    });
+
+    return flatRoleTarget;
+  }
+
+  async createMany({
+    createRoleTargetInputs,
+    workspaceId,
+  }: {
+    createRoleTargetInputs: CreateRoleTargetInput[];
+    workspaceId: string;
+  }): Promise<FlatRoleTarget[]> {
+    if (createRoleTargetInputs.length === 0) {
+      return [];
+    }
+
+    const { flatRoleTargetMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatRoleTargetMaps', 'flatRoleMaps'],
+          flatMapsKeys: ['flatRoleTargetMaps'],
         },
       );
+
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
@@ -51,46 +70,45 @@ export class RoleTargetService {
         },
       );
 
-    const { flatRoleTargetToCreate, flatRoleTargetsToDelete } =
-      fromCreateRoleTargetInputToFlatRoleTargetToCreate({
-        createRoleTargetInput: {
-          ...createRoleTargetInput,
-          applicationId:
-            createRoleTargetInput.applicationId ??
-            workspaceCustomFlatApplication.id,
-        },
-        flatRoleTargetMaps,
-        workspaceId,
-      });
+    const allFlatRoleTargetsToCreate: FlatRoleTarget[] = [];
+    const allFlatRoleTargetsToDelete: FlatRoleTarget[] = [];
+
+    for (const createRoleTargetInput of createRoleTargetInputs) {
+      const { flatRoleTargetToCreate, flatRoleTargetsToDelete } =
+        fromCreateRoleTargetInputToFlatRoleTargetToCreate({
+          createRoleTargetInput: {
+            ...createRoleTargetInput,
+            applicationId:
+              createRoleTargetInput.applicationId ??
+              workspaceCustomFlatApplication.id,
+          },
+          flatRoleTargetMaps,
+          workspaceId,
+        });
+
+      allFlatRoleTargetsToCreate.push(flatRoleTargetToCreate);
+      allFlatRoleTargetsToDelete.push(...flatRoleTargetsToDelete);
+    }
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatRoleTargetMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: flatRoleTargetMaps,
-              flatEntityToCreate: [flatRoleTargetToCreate],
-              flatEntityToDelete: flatRoleTargetsToDelete,
+          allFlatEntityOperationByMetadataName: {
+            roleTarget: {
+              flatEntityToCreate: allFlatRoleTargetsToCreate,
+              flatEntityToDelete: allFlatRoleTargetsToDelete,
               flatEntityToUpdate: [],
-            }),
-          },
-          dependencyAllFlatEntityMaps: {
-            flatRoleMaps,
-          },
-          buildOptions: {
-            isSystemBuild: false,
-            inferDeletionFromMissingEntities: {
-              roleTarget: true,
             },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 
     if (isDefined(validateAndBuildResult)) {
       throw new WorkspaceMigrationBuilderExceptionV2(
         validateAndBuildResult,
-        'Multiple validation errors occurred while creating role target',
+        'Multiple validation errors occurred while creating role targets',
       );
     }
 
@@ -102,10 +120,12 @@ export class RoleTargetService {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatRoleTargetToCreate.id,
-      flatEntityMaps: recomputedFlatRoleTargetMaps,
-    });
+    return allFlatRoleTargetsToCreate.map((flatRoleTargetToCreate) =>
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: flatRoleTargetToCreate.id,
+        flatEntityMaps: recomputedFlatRoleTargetMaps,
+      }),
+    );
   }
 
   async delete({ id, workspaceId }: DeleteRoleTargetInput): Promise<void> {
@@ -125,21 +145,15 @@ export class RoleTargetService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatRoleTargetMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatRoleTargetMaps,
+          allFlatEntityOperationByMetadataName: {
+            roleTarget: {
               flatEntityToCreate: [],
               flatEntityToDelete: [roleTargetToDelete],
               flatEntityToUpdate: [],
-            }),
-          },
-          buildOptions: {
-            isSystemBuild: false,
-            inferDeletionFromMissingEntities: {
-              roleTarget: true,
             },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 

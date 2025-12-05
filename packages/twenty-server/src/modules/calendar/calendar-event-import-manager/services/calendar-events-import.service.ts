@@ -52,6 +52,7 @@ export class CalendarEventsImportService {
   ): Promise<void> {
     await this.calendarChannelSyncStatusService.markAsCalendarEventsImportOngoing(
       [calendarChannel.id],
+      workspaceId,
     );
 
     let calendarEvents: FetchedCalendarEvent[] = [];
@@ -66,8 +67,9 @@ export class CalendarEventsImportService {
         );
 
         if (!eventIdsToFetch || eventIdsToFetch.length === 0) {
-          await this.calendarChannelSyncStatusService.markAsCompletedAndScheduleCalendarEventListFetch(
+          await this.calendarChannelSyncStatusService.markAsCompletedAndMarkAsCalendarEventListFetchPending(
             [calendarChannel.id],
+            workspaceId,
           );
 
           return;
@@ -87,8 +89,9 @@ export class CalendarEventsImportService {
       }
 
       if (!calendarEvents || calendarEvents?.length === 0) {
-        await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
+        await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
           [calendarChannel.id],
+          workspaceId,
         );
       }
 
@@ -149,8 +152,9 @@ export class CalendarEventsImportService {
         workspaceId,
       );
 
-      await this.calendarChannelSyncStatusService.markAsCompletedAndScheduleCalendarEventListFetch(
+      await this.calendarChannelSyncStatusService.markAsCompletedAndMarkAsCalendarEventListFetchPending(
         [calendarChannel.id],
+        workspaceId,
       );
     } catch (error) {
       await this.calendarEventImportErrorHandlerService.handleDriverException(

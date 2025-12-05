@@ -99,7 +99,6 @@ export const createStandardFieldFlatMetadata = <
     morphId: null,
     viewFieldIds: [],
     viewFilterIds: [],
-    viewGroupIds: [],
     kanbanAggregateOperationViewIds: [],
     calendarViewIds: [],
     mainGroupByFieldMetadataViewIds: [],

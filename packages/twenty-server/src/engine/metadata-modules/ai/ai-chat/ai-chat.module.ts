@@ -13,8 +13,11 @@ import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiChatRouterModule } from 'src/engine/metadata-modules/ai/ai-chat-router/ai-chat-router.module';
+import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
+import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
 import { AgentChatController } from './controllers/agent-chat.controller';
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
@@ -22,6 +25,8 @@ import { AgentChatResolver } from './resolvers/agent-chat.resolver';
 import { AgentChatRoutingService } from './services/agent-chat-routing.service';
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
 import { AgentChatService } from './services/agent-chat.service';
+import { AgentTitleGenerationService } from './services/agent-title-generation.service';
+import { ChatToolsProviderService } from './services/chat-tools-provider.service';
 
 @Module({
   imports: [
@@ -42,6 +47,12 @@ import { AgentChatService } from './services/agent-chat.service';
     TokenModule,
     UserWorkspaceModule,
     AiBillingModule,
+    // Provides WorkflowToolWorkspaceService for ChatToolsProviderService
+    // Workflow tools are only available in chat context, not in workflow executor (to avoid circular deps)
+    WorkflowToolsModule,
+    // Provides metadata tools factories for ChatToolsProviderService
+    ObjectMetadataModule,
+    FieldMetadataModule,
   ],
   controllers: [AgentChatController],
   providers: [
@@ -49,6 +60,8 @@ import { AgentChatService } from './services/agent-chat.service';
     AgentChatService,
     AgentChatStreamingService,
     AgentChatRoutingService,
+    AgentTitleGenerationService,
+    ChatToolsProviderService,
   ],
   exports: [
     AgentChatService,

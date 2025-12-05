@@ -189,7 +189,10 @@ describe('MessagingMessageListFetchService', () => {
             markAsMessagesListFetchOngoing: jest
               .fn()
               .mockResolvedValue(undefined),
-            scheduleMessagesImport: jest.fn().mockResolvedValue(undefined),
+            markAsMessagesImportPending: jest.fn().mockResolvedValue(undefined),
+            markAsMessagesImportScheduled: jest
+              .fn()
+              .mockResolvedValue(undefined),
           },
         },
         {
@@ -331,7 +334,7 @@ describe('MessagingMessageListFetchService', () => {
     );
 
     expect(
-      messageChannelSyncStatusService.scheduleMessagesImport,
+      messageChannelSyncStatusService.markAsMessagesImportScheduled,
     ).toHaveBeenCalledWith([mockMicrosoftMessageChannel.id], workspaceId);
   });
 
@@ -390,7 +393,7 @@ describe('MessagingMessageListFetchService', () => {
     );
 
     expect(
-      messageChannelSyncStatusService.scheduleMessagesImport,
+      messageChannelSyncStatusService.markAsMessagesImportScheduled,
     ).toHaveBeenCalledWith([mockGoogleMessageChannel.id], workspaceId);
   });
 });
