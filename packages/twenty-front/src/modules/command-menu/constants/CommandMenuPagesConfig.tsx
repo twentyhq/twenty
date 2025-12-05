@@ -6,7 +6,6 @@ import { CommandMenuMessageThreadPage } from '@/command-menu/pages/message-threa
 import { CommandMenuPageLayoutChartSettings } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutChartSettings';
 import { CommandMenuPageLayoutGraphFilter } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphFilter';
 import { CommandMenuPageLayoutIframeSettings } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings';
-import { CommandMenuPageLayoutStandaloneRichTextSettings } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutStandaloneRichTextSettings';
 import { CommandMenuPageLayoutTabSettings } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings';
 import { CommandMenuPageLayoutWidgetTypeSelect } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect';
 import { CommandMenuMergeRecordPage } from '@/command-menu/pages/record-page/components/CommandMenuMergeRecordPage';
@@ -62,9 +61,5 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   [
     CommandMenuPages.PageLayoutTabSettings,
     <CommandMenuPageLayoutTabSettings />,
-  ],
-  [
-    CommandMenuPages.PageLayoutStandaloneRichTextSettings,
-    <CommandMenuPageLayoutStandaloneRichTextSettings />,
   ],
 ]);

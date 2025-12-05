@@ -1,6 +1,7 @@
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
@@ -13,11 +14,17 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconAlignBoxLeftTop, IconChartPie, IconFrame } from 'twenty-ui/display';
+import {
+  IconAlignBoxLeftTop,
+  IconChartPie,
+  IconFrame,
+} from 'twenty-ui/display';
 import { GraphType } from '~/generated-metadata/graphql';
 
 export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
+
+  const { closeCommandMenu } = useCommandMenu();
 
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
@@ -77,10 +84,7 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
       setPageLayoutEditingWidgetId(newWidget.id);
     }
 
-    navigatePageLayoutCommandMenu({
-      commandMenuPage: CommandMenuPages.PageLayoutStandaloneRichTextSettings,
-      focusTitleInput: true,
-    });
+    closeCommandMenu();
   };
 
   return (

@@ -5,5 +5,4 @@ export type PageLayoutCommandMenuPage =
   | CommandMenuPages.PageLayoutGraphTypeSelect
   | CommandMenuPages.PageLayoutIframeSettings
   | CommandMenuPages.PageLayoutGraphFilter
-  | CommandMenuPages.PageLayoutTabSettings
-  | CommandMenuPages.PageLayoutStandaloneRichTextSettings;
+  | CommandMenuPages.PageLayoutTabSettings;

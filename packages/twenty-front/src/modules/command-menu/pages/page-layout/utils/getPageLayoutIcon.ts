@@ -1,6 +1,5 @@
 import { type PageLayoutCommandMenuPage } from '@/command-menu/pages/page-layout/types/PageLayoutCommandMenuPage';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { IconTextCaption } from '@tabler/icons-react';
 import { assertUnreachable } from 'twenty-shared/utils';
 import {
   IconAppWindow,
@@ -21,8 +20,6 @@ export const getPageLayoutIcon = (page: PageLayoutCommandMenuPage) => {
       return IconFilter;
     case CommandMenuPages.PageLayoutTabSettings:
       return IconAppWindow;
-    case CommandMenuPages.PageLayoutStandaloneRichTextSettings:
-      return IconTextCaption;
     default:
       assertUnreachable(page);
   }
