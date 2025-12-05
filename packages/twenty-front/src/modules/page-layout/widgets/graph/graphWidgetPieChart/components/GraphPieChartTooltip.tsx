@@ -7,10 +7,11 @@ import { getPieChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetP
 import { createVirtualElementFromContainerOffset } from '@/page-layout/widgets/graph/utils/createVirtualElementFromContainerOffset';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type RefObject } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphPieChartTooltipProps = {
-  containerId: string;
+  containerRef: RefObject<HTMLDivElement>;
   enrichedData: PieChartEnrichedData[];
   formatOptions: GraphValueFormatOptions;
   displayType?: string;
@@ -18,7 +19,7 @@ type GraphPieChartTooltipProps = {
 };
 
 export const GraphPieChartTooltip = ({
-  containerId,
+  containerRef,
   enrichedData,
   formatOptions,
   displayType,
@@ -28,34 +29,35 @@ export const GraphPieChartTooltip = ({
     graphWidgetPieTooltipComponentState,
   );
 
-  const containerElement = document.getElementById(containerId);
+  const containerElement = containerRef.current;
   if (!isDefined(containerElement)) {
     return null;
   }
 
-  const isVisible = isDefined(tooltipState);
-
-  const tooltipData = isVisible
-    ? getPieChartTooltipData({
+  const tooltipData = !isDefined(tooltipState)
+    ? null
+    : getPieChartTooltipData({
         datum: tooltipState.datum,
         enrichedData,
         formatOptions,
         displayType,
-      })
-    : null;
+      });
 
-  const handleTooltipClick: (() => void) | undefined =
-    isDefined(onSliceClick) && isVisible
-      ? () => onSliceClick(tooltipState.datum.data)
-      : undefined;
+  const handleTooltipClick: (() => void) | undefined = isDefined(onSliceClick)
+    ? () => {
+        if (isDefined(tooltipState)) {
+          onSliceClick(tooltipState.datum.data);
+        }
+      }
+    : undefined;
 
-  const reference = isVisible
-    ? createVirtualElementFromContainerOffset(
+  const reference = !isDefined(tooltipState)
+    ? null
+    : createVirtualElementFromContainerOffset(
         containerElement,
         tooltipState.offsetLeft,
         tooltipState.offsetTop,
-      )
-    : null;
+      );
 
   return (
     <GraphWidgetFloatingTooltip

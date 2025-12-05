@@ -12,17 +12,17 @@ import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useGraphWidgetTooltipFloating = (
-  element: Element | VirtualElement | null,
-  boundaryElement: Element | null | undefined,
+  referenceElement: Element | VirtualElement | null,
+  boundaryElement: Element | null,
   tooltipOffsetFromAnchorInPx: number,
 ) => {
   const virtualElement = useMemo(() => {
-    if (!isDefined(element)) return null;
-    if (element instanceof Element) {
-      return createVirtualElementFromSVGElement(element);
+    if (!isDefined(referenceElement)) return null;
+    if (referenceElement instanceof Element) {
+      return createVirtualElementFromSVGElement(referenceElement);
     }
-    return element;
-  }, [element]);
+    return referenceElement;
+  }, [referenceElement]);
 
   const rootBoundary = document.querySelector('#root') ?? undefined;
 

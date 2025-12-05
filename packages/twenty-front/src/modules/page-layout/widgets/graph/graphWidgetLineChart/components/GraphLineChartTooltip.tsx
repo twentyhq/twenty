@@ -3,14 +3,15 @@ import { LINE_CHART_TOOLTIP_OFFSET_PX } from '@/page-layout/widgets/graph/graphW
 import { graphWidgetLineTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetLineChart/states/graphWidgetLineTooltipComponentState';
 import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartEnrichedSeries';
 import { getLineChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartTooltipData';
-import { getTooltipReferenceFromLineChartPointAnchor } from '@/page-layout/widgets/graph/utils/getTooltipReferenceFromLineChartPointAnchor';
+import { createVirtualElementFromContainerOffset } from '@/page-layout/widgets/graph/utils/createVirtualElementFromContainerOffset';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type LineSeries, type Point } from '@nivo/line';
+import { type RefObject } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphLineChartTooltipProps = {
-  containerId: string;
+  containerRef: RefObject<HTMLDivElement>;
   enrichedSeries: LineChartEnrichedSeries[];
   formatOptions: GraphValueFormatOptions;
   onSliceClick?: (point: Point<LineSeries>) => void;
@@ -19,7 +20,7 @@ type GraphLineChartTooltipProps = {
 };
 
 export const GraphLineChartTooltip = ({
-  containerId,
+  containerRef,
   enrichedSeries,
   formatOptions,
   onSliceClick,
@@ -30,49 +31,41 @@ export const GraphLineChartTooltip = ({
     graphWidgetLineTooltipComponentState,
   );
 
-  const containerElement = document.getElementById(containerId);
+  const containerElement = containerRef.current;
   if (!isDefined(containerElement)) {
     return null;
   }
 
-  const isVisible = isDefined(tooltipState);
+  const handleTooltipClick: (() => void) | undefined = isDefined(onSliceClick)
+    ? () => {
+        if (!isDefined(tooltipState)) return;
 
-  const handleTooltipClick: (() => void) | undefined =
-    isDefined(onSliceClick) && isVisible
-      ? () => {
-          const highlightedPoint = tooltipState.slice.points.find(
-            (point) =>
-              String(point.seriesId) === tooltipState.highlightedSeriesId,
-          );
+        const highlightedPoint = tooltipState.slice.points.find(
+          (point) =>
+            String(point.seriesId) === tooltipState.highlightedSeriesId,
+        );
 
-          if (!isDefined(highlightedPoint)) return;
+        if (!isDefined(highlightedPoint)) return;
 
-          onSliceClick(highlightedPoint);
-        }
-      : undefined;
+        onSliceClick(highlightedPoint);
+      }
+    : undefined;
 
-  const tooltipData = isVisible
-    ? getLineChartTooltipData({
+  const tooltipData = !isDefined(tooltipState)
+    ? null
+    : getLineChartTooltipData({
         slice: tooltipState.slice,
         enrichedSeries,
         formatOptions,
-      })
-    : null;
+      });
 
-  let reference = null;
-
-  if (isVisible) {
-    try {
-      const positioning = getTooltipReferenceFromLineChartPointAnchor(
-        containerId,
+  const reference = !isDefined(tooltipState)
+    ? null
+    : createVirtualElementFromContainerOffset(
+        containerElement,
         tooltipState.offsetLeft,
         tooltipState.offsetTop,
       );
-      reference = positioning.reference;
-    } catch {
-      reference = null;
-    }
-  }
 
   return (
     <GraphWidgetFloatingTooltip
