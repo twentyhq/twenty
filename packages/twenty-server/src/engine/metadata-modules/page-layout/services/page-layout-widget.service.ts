@@ -4,9 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { EntityManager, IsNull, Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { v4 } from 'uuid';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
 import { WidgetConfigurationInterface } from 'src/engine/metadata-modules/page-layout/dtos/widget-configuration.interface';
@@ -30,6 +32,8 @@ export class PageLayoutWidgetService {
   constructor(
     @InjectRepository(PageLayoutWidgetEntity)
     private readonly pageLayoutWidgetRepository: Repository<PageLayoutWidgetEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly pageLayoutTabService: PageLayoutTabService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
@@ -171,11 +175,22 @@ export class PageLayoutWidgetService {
         }
       }
 
+      const workspace = await (
+        transactionManager
+          ? transactionManager.getRepository(WorkspaceEntity)
+          : this.workspaceRepository
+      ).findOneOrFail({
+        where: { id: workspaceId },
+        select: ['workspaceCustomApplicationId'],
+      });
+
       const repository = this.getPageLayoutWidgetRepository(transactionManager);
 
       const insertResult = await repository.insert({
         ...pageLayoutWidgetData,
         workspaceId,
+        universalIdentifier: v4(),
+        applicationId: workspace.workspaceCustomApplicationId,
         ...(validatedConfig && { configuration: validatedConfig }),
       } as QueryDeepPartialEntity<PageLayoutWidgetEntity>);
 
