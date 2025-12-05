@@ -6,8 +6,11 @@ import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -344,11 +347,23 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
     });
 
+    const optimisticFlatFieldMetadataMaps = [
+      ...flatFieldMetadataToCreateOnObject,
+      ...relationTargetFlatFieldMetadataToCreate,
+    ].reduce<MetadataFlatEntityMaps<'fieldMetadata'>>(
+      (flatEntityMaps, flatFieldMetadata) =>
+        addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: flatFieldMetadata,
+          flatEntityMaps,
+        }),
+      createEmptyFlatEntityMaps(),
+    );
+
     const flatDefaultViewToCreate = await this.computeFlatViewToCreate({
       objectMetadata: flatObjectMetadataToCreate,
       workspaceId,
       workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
-      flatFieldMetadataMaps: flatFieldMetadataMaps,
+      flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
     });
 
     const flatDefaultViewFieldsToCreate =
