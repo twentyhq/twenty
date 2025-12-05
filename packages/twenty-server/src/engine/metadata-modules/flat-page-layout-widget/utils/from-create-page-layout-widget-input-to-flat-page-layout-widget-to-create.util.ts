@@ -9,11 +9,13 @@ export type FromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreateArgs =
   {
     createPageLayoutWidgetInput: CreatePageLayoutWidgetInput;
     workspaceId: string;
+    workspaceCustomApplicationId: string;
   };
 
 export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
   createPageLayoutWidgetInput: rawCreatePageLayoutWidgetInput,
   workspaceId,
+  workspaceCustomApplicationId,
 }: FromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreateArgs): FlatPageLayoutWidget => {
   const { pageLayoutTabId, ...createPageLayoutWidgetInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -37,6 +39,6 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
     objectMetadataId: createPageLayoutWidgetInput.objectMetadataId ?? null,
     gridPosition: createPageLayoutWidgetInput.gridPosition,
     configuration: createPageLayoutWidgetInput.configuration ?? null,
-    applicationId: null,
+    applicationId: workspaceCustomApplicationId,
   };
 };
