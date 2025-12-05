@@ -24,7 +24,7 @@ import { WorkspaceMigrationV2Exception } from 'src/engine/workspace-manager/work
 
 type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
   workspaceId: string;
-  allFlatEntities: {
+  allFlatEntityOperationByMetadataName: {
     [P in AllMetadataName]?: FlatEntityToCreateDeleteUpdate<P>;
   };
   isSystemBuild?: boolean;
@@ -43,11 +43,11 @@ export class WorkspaceMigrationValidateBuildAndRunService {
   ) {}
 
   private async computeAllRelatedFlatEntityMaps({
-    allFlatEntities,
+    allFlatEntityOperationByMetadataName,
     workspaceId,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs) {
     const allMetadataNameToCompare = Object.keys(
-      allFlatEntities,
+      allFlatEntityOperationByMetadataName,
     ) as AllMetadataName[];
     const allDependencyMetadataName = allMetadataNameToCompare.flatMap(
       (metadataName) =>
@@ -93,13 +93,12 @@ export class WorkspaceMigrationValidateBuildAndRunService {
 
     return {
       allRelatedFlatEntityMaps,
-      allMetadataNameToCompare,
       dependencyAllFlatEntityMaps,
     };
   }
 
   private async computeFromToAllFlatEntityMapsAndBuildOptions({
-    allFlatEntities,
+    allFlatEntityOperationByMetadataName,
     workspaceId,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<{
     fromToAllFlatEntityMaps: WorkspaceMigrationOrchestratorBuildArgs['fromToAllFlatEntityMaps'];
@@ -108,7 +107,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
   }> {
     const { allRelatedFlatEntityMaps, dependencyAllFlatEntityMaps } =
       await this.computeAllRelatedFlatEntityMaps({
-        allFlatEntities,
+        allFlatEntityOperationByMetadataName,
         workspaceId,
       });
 
@@ -117,11 +116,11 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     const inferDeletionFromMissingEntities: InferDeletionFromMissingEntities =
       {};
     const allMetadataNameToCompare = Object.keys(
-      allFlatEntities,
+      allFlatEntityOperationByMetadataName,
     ) as AllMetadataName[];
 
     for (const metadataName of allMetadataNameToCompare) {
-      const tmp = allFlatEntities[metadataName];
+      const tmp = allFlatEntityOperationByMetadataName[metadataName];
 
       if (!isDefined(tmp)) {
         throw new Error('Should never occurs');
@@ -152,7 +151,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
   }
 
   public async validateBuildAndRunWorkspaceMigration({
-    allFlatEntities,
+    allFlatEntityOperationByMetadataName: allFlatEntities,
     workspaceId,
     isSystemBuild = false,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
@@ -163,7 +162,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       inferDeletionFromMissingEntities,
       dependencyAllFlatEntityMaps,
     } = await this.computeFromToAllFlatEntityMapsAndBuildOptions({
-      allFlatEntities,
+      allFlatEntityOperationByMetadataName: allFlatEntities,
       workspaceId,
     });
 

@@ -59,7 +59,7 @@ export class ServerlessFunctionV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             serverlessFunction: {
               flatEntityToCreate: [flatServerlessFunctionToCreate],
               flatEntityToDelete: [],
@@ -115,7 +115,7 @@ export class ServerlessFunctionV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             serverlessFunction: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
@@ -185,7 +185,7 @@ export class ServerlessFunctionV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             serverlessFunction: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
@@ -254,7 +254,7 @@ export class ServerlessFunctionV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             serverlessFunction: {
               flatEntityToCreate: [],
               flatEntityToDelete: [existingFlatServerlessFunction],

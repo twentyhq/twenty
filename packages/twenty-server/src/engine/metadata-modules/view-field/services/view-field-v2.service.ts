@@ -87,7 +87,7 @@ export class ViewFieldV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             viewField: {
               flatEntityToCreate: flatViewFieldsToCreate,
               flatEntityToDelete: [],
@@ -144,7 +144,7 @@ export class ViewFieldV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             viewField: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
@@ -201,7 +201,7 @@ export class ViewFieldV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             viewField: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
@@ -258,7 +258,7 @@ export class ViewFieldV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             viewField: {
               flatEntityToCreate: [],
               flatEntityToDelete: [existingViewFieldToDelete],

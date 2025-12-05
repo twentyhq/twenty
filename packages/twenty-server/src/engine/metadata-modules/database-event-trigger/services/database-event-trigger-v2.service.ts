@@ -53,7 +53,7 @@ export class DatabaseEventTriggerV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             databaseEventTrigger: {
               flatEntityToCreate: [flatDatabaseEventTriggerToCreate],
               flatEntityToDelete: [],
@@ -112,7 +112,7 @@ export class DatabaseEventTriggerV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             databaseEventTrigger: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
@@ -178,7 +178,7 @@ export class DatabaseEventTriggerV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             databaseEventTrigger: {
               flatEntityToCreate: [],
               flatEntityToDelete: [existingFlatDatabaseEventTrigger],

@@ -104,7 +104,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatFieldMetadatasToDelete,
@@ -212,7 +212,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
               flatEntityToCreate: flatFieldMetadatasToCreate,
               flatEntityToDelete: [],
@@ -340,7 +340,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
               flatEntityToCreate: flatFieldMetadatasToCreate,
               flatEntityToDelete: [],

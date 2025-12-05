@@ -54,7 +54,7 @@ export class CronTriggerV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             cronTrigger: {
               flatEntityToCreate: [flatCronTriggerToCreate],
               flatEntityToDelete: [],
@@ -108,7 +108,7 @@ export class CronTriggerV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             cronTrigger: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
@@ -169,7 +169,7 @@ export class CronTriggerV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             cronTrigger: {
               flatEntityToCreate: [],
               flatEntityToDelete: [existingFlatCronTrigger],

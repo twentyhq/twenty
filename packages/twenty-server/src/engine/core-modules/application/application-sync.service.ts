@@ -1000,7 +1000,7 @@ export class ApplicationSyncService {
 
     await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
       {
-        allFlatEntities: {
+        allFlatEntityOperationByMetadataName: {
           objectMetadata: {
             flatEntityToCreate: [],
             flatEntityToDelete: flatObjectMetadataMapsByApplicationId,

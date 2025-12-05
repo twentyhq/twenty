@@ -53,7 +53,7 @@ export class RouteTriggerV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             routeTrigger: {
               flatEntityToCreate: [flatRouteTriggerToCreate],
               flatEntityToDelete: [],
@@ -107,7 +107,7 @@ export class RouteTriggerV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             routeTrigger: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
@@ -168,7 +168,7 @@ export class RouteTriggerV2Service {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             routeTrigger: {
               flatEntityToCreate: [],
               flatEntityToDelete: [existingFlatRoute],

@@ -126,7 +126,7 @@ export class AgentService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             agent: {
               flatEntityToCreate: [flatAgentToCreate],
               flatEntityToDelete: [],
@@ -195,7 +195,7 @@ export class AgentService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             agent: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
@@ -276,7 +276,7 @@ export class AgentService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             agent: {
               flatEntityToCreate: [],
               flatEntityToDelete: [agentToDelete],

@@ -88,7 +88,7 @@ export class RoleService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             role: {
               flatEntityToCreate: [flatRoleToCreate],
               flatEntityToDelete: [],
@@ -146,7 +146,7 @@ export class RoleService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             role: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
@@ -238,7 +238,7 @@ export class RoleService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             role: {
               flatEntityToCreate: [],
               flatEntityToDelete: [flatRoleToDelete],

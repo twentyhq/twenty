@@ -71,7 +71,7 @@ export class ViewService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             view: {
               flatEntityToCreate: [flatViewToCreate],
               flatEntityToDelete: [],
@@ -146,7 +146,7 @@ export class ViewService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             view: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
@@ -208,7 +208,7 @@ export class ViewService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             view: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
@@ -264,7 +264,7 @@ export class ViewService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          allFlatEntities: {
+          allFlatEntityOperationByMetadataName: {
             view: {
               flatEntityToCreate: [],
               flatEntityToDelete: [flatViewFromDestroyInput],
