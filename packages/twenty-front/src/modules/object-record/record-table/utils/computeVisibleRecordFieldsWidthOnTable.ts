@@ -1,6 +1,11 @@
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
 import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-record/record-table/constants/RecordTableLabelIdentifierColumnWidthOnMobile';
-import { sumByProperty } from 'twenty-shared/utils';
+
+const sumSizeWithMinWidth = (
+  acc: number,
+  field: Pick<RecordField, 'size'>,
+): number => acc + Math.max(field.size, RECORD_TABLE_COLUMN_MIN_WIDTH);
 
 export const computeVisibleRecordFieldsWidthOnTable = ({
   shouldCompactFirstColumn,
@@ -12,11 +17,11 @@ export const computeVisibleRecordFieldsWidthOnTable = ({
   const visibleRecordFieldsWithoutFirst = visibleRecordFields.slice(1);
 
   const sumWithoutFirstField = visibleRecordFieldsWithoutFirst.reduce(
-    sumByProperty('size'),
+    sumSizeWithMinWidth,
     0,
   );
 
-  const sumWithAllFields = visibleRecordFields.reduce(sumByProperty('size'), 0);
+  const sumWithAllFields = visibleRecordFields.reduce(sumSizeWithMinWidth, 0);
 
   const sumForCompactedFirstColumn =
     RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE + sumWithoutFirstField;
