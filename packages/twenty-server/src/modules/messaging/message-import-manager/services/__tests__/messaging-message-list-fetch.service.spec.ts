@@ -331,7 +331,7 @@ describe('MessagingMessageListFetchService', () => {
     );
 
     expect(
-      messageChannelSyncStatusService.markAsMessagesImportPending,
+      messageChannelSyncStatusService.markAsMessagesListFetchScheduled,
     ).toHaveBeenCalledWith([mockMicrosoftMessageChannel.id], workspaceId);
   });
 
@@ -390,7 +390,7 @@ describe('MessagingMessageListFetchService', () => {
     );
 
     expect(
-      messageChannelSyncStatusService.markAsMessagesImportPending,
+      messageChannelSyncStatusService.markAsMessagesListFetchScheduled,
     ).toHaveBeenCalledWith([mockGoogleMessageChannel.id], workspaceId);
   });
 });
