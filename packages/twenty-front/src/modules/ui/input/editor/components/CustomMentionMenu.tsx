@@ -54,6 +54,10 @@ export const CustomMentionMenu = ({
     return null;
   }
 
+  const filteredItems = items.filter(
+    (item) => isDefined(item.recordId) && isDefined(item.objectNameSingular),
+  );
+
   return (
     <StyledContainer ref={refs.setReference}>
       <>
@@ -74,28 +78,18 @@ export const CustomMentionMenu = ({
                   <SelectableList
                     focusId={MENTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
                     selectableListInstanceId={MENTION_MENU_LIST_ID}
-                    selectableItemIdArray={items
-                      .filter(
-                        (item) =>
-                          isDefined(item.recordId) &&
-                          isDefined(item.objectNameSingular),
-                      )
-                      .map((item) => item.recordId!)}
+                    selectableItemIdArray={filteredItems.map(
+                      (item) => item.recordId!,
+                    )}
                   >
-                    {items
-                      .filter(
-                        (item) =>
-                          isDefined(item.recordId) &&
-                          isDefined(item.objectNameSingular),
-                      )
-                      .map((item) => (
-                        <CustomMentionMenuListItem
-                          key={item.recordId!}
-                          recordId={item.recordId!}
-                          onClick={() => item.onItemClick()}
-                          objectNameSingular={item.objectNameSingular!}
-                        />
-                      ))}
+                    {filteredItems.map((item) => (
+                      <CustomMentionMenuListItem
+                        key={item.recordId!}
+                        recordId={item.recordId!}
+                        onClick={() => item.onItemClick()}
+                        objectNameSingular={item.objectNameSingular!}
+                      />
+                    ))}
                   </SelectableList>
                 </DropdownMenuItemsContainer>
               </DropdownContent>
