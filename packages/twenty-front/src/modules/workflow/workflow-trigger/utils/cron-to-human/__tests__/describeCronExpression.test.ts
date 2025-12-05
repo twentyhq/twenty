@@ -140,13 +140,16 @@ describe('describeCronExpression', () => {
       );
     });
 
-    it('should describe reduced format expressions', () => {
+    it('should describe 4-field format expressions', () => {
+      // 4-field format: hour day month dayOfWeek (minute defaults to 0)
       expect(describeCronExpression('9 * * *')).toBe('at 09:00 UTC');
       expect(describeCronExpression('*/2 * * *')).toBe('every 2 hours');
       expect(describeCronExpression('9 15 * *')).toBe(
         'at 09:00 UTC on the 15th of the month',
       );
-      expect(describeCronExpression('9 * * 1')).toBe('at 09:00 UTC only on Monday');
+      expect(describeCronExpression('9 * * 1')).toBe(
+        'at 09:00 UTC only on Monday',
+      );
     });
   });
 
