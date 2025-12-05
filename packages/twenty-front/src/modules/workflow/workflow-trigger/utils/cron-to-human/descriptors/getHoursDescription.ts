@@ -37,8 +37,8 @@ export const getHoursDescription = (
     if (range.includes('-')) {
       const [start, end] = range.split('-');
       const stepNumStr = stepNum.toString();
-      const startTime = formatCronTime(start, '0', use24Hour);
-      const endTime = formatCronTime(end, '0', use24Hour);
+      const startTime = formatCronTime(start, '0', use24Hour, true);
+      const endTime = formatCronTime(end, '0', use24Hour, true);
       return t`every ${stepNumStr} hours, between ${startTime} and ${endTime}`;
     }
 
@@ -48,15 +48,15 @@ export const getHoursDescription = (
 
   if (isNumericRange(hours) && hours.includes('-')) {
     const [start, end] = hours.split('-');
-    const startTime = formatCronTime(start, '0', use24Hour);
-    const endTime = formatCronTime(end, '0', use24Hour);
+    const startTime = formatCronTime(start, '0', use24Hour, true);
+    const endTime = formatCronTime(end, '0', use24Hour, true);
     return t`between ${startTime} and ${endTime}`;
   }
 
   if (isListValue(hours)) {
     const values = hours.split(',').map((v) => v.trim());
     const formattedTimes = values.map((hour) =>
-      formatCronTime(hour, minutes || '0', use24Hour),
+      formatCronTime(hour, minutes || '0', use24Hour, true),
     );
 
     if (formattedTimes.length === 2) {
@@ -71,7 +71,12 @@ export const getHoursDescription = (
 
   const hourNum = parseInt(hours, 10);
   if (!isNaN(hourNum)) {
-    const formattedTime = formatCronTime(hours, minutes || '0', use24Hour);
+    const formattedTime = formatCronTime(
+      hours,
+      minutes || '0',
+      use24Hour,
+      true,
+    );
     return t`at ${formattedTime}`;
   }
 

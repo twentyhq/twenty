@@ -19,40 +19,40 @@ describe('describeCronExpression', () => {
     });
 
     it('should describe daily at specific time', () => {
-      expect(describeCronExpression('30 14 * * *')).toBe('at 14:30');
+      expect(describeCronExpression('30 14 * * *')).toBe('at 14:30 UTC');
     });
 
     it('should describe daily at midnight', () => {
-      expect(describeCronExpression('0 0 * * *')).toBe('at 00:00');
+      expect(describeCronExpression('0 0 * * *')).toBe('at 00:00 UTC');
     });
   });
 
   describe('day-specific expressions', () => {
     it('should describe every day', () => {
-      expect(describeCronExpression('0 9 * * *')).toBe('at 09:00');
+      expect(describeCronExpression('0 9 * * *')).toBe('at 09:00 UTC');
     });
 
     it('should describe every 3 days', () => {
       expect(describeCronExpression('0 9 */3 * *')).toBe(
-        'at 09:00 every 3 days',
+        'at 09:00 UTC every 3 days',
       );
     });
 
     it('should describe weekdays', () => {
       expect(describeCronExpression('0 9 * * 1-5')).toBe(
-        'at 09:00 on weekdays',
+        'at 09:00 UTC on weekdays',
       );
     });
 
     it('should describe specific day of month', () => {
       expect(describeCronExpression('0 9 15 * *')).toBe(
-        'at 09:00 on the 15th of the month',
+        'at 09:00 UTC on the 15th of the month',
       );
     });
 
     it('should describe last day of month', () => {
       expect(describeCronExpression('0 9 L * *')).toBe(
-        'at 09:00 on the last day of the month',
+        'at 09:00 UTC on the last day of the month',
       );
     });
   });
@@ -60,25 +60,25 @@ describe('describeCronExpression', () => {
   describe('month-specific expressions', () => {
     it('should describe specific month', () => {
       expect(describeCronExpression('0 9 1 1 *')).toBe(
-        'at 09:00 on the 1st of the month only in January',
+        'at 09:00 UTC on the 1st of the month only in January',
       );
     });
 
     it('should describe multiple months', () => {
       expect(describeCronExpression('0 9 * 1,6,12 *')).toBe(
-        'at 09:00 only in January, June and December',
+        'at 09:00 UTC only in January, June and December',
       );
     });
 
     it('should describe month range', () => {
       expect(describeCronExpression('0 9 * 6-8 *')).toBe(
-        'at 09:00 between June and August',
+        'at 09:00 UTC between June and August',
       );
     });
 
     it('should describe every 3 months', () => {
       expect(describeCronExpression('0 9 1 */3 *')).toBe(
-        'at 09:00 on the 1st of the month every 3 months',
+        'at 09:00 UTC on the 1st of the month every 3 months',
       );
     });
   });
@@ -86,25 +86,25 @@ describe('describeCronExpression', () => {
   describe('complex expressions', () => {
     it('should describe business hours every 15 minutes on weekdays', () => {
       expect(describeCronExpression('*/15 9-17 * * 1-5')).toBe(
-        'every 15 minutes between 09:00 and 17:00 on weekdays',
+        'every 15 minutes between 09:00 UTC and 17:00 UTC on weekdays',
       );
     });
 
     it('should describe first Monday of every month', () => {
       expect(describeCronExpression('0 9 * * 1#1')).toBe(
-        'at 09:00 on the first Monday of the month',
+        'at 09:00 UTC on the first Monday of the month',
       );
     });
 
     it('should describe last Friday of every month', () => {
       expect(describeCronExpression('0 17 * * 5L')).toBe(
-        'at 17:00 on the last Friday of the month',
+        'at 17:00 UTC on the last Friday of the month',
       );
     });
 
     it('should describe multiple specific times', () => {
       expect(describeCronExpression('0 9,12,15 * * *')).toBe(
-        'at 09:00, 12:00 and 15:00',
+        'at 09:00 UTC, 12:00 UTC and 15:00 UTC',
       );
     });
 
@@ -116,7 +116,7 @@ describe('describeCronExpression', () => {
 
     it('should describe specific minutes on specific hours', () => {
       expect(describeCronExpression('30 9,14 * * *')).toBe(
-        'at 09:30 and 14:30',
+        'at 09:30 UTC and 14:30 UTC',
       );
     });
   });
@@ -124,13 +124,13 @@ describe('describeCronExpression', () => {
   describe('real-world complex expressions', () => {
     it('should describe business hours every 15 minutes on weekdays', () => {
       expect(describeCronExpression('*/15 9-17 * * 1-5')).toBe(
-        'every 15 minutes between 09:00 and 17:00 on weekdays',
+        'every 15 minutes between 09:00 UTC and 17:00 UTC on weekdays',
       );
     });
 
     it('should describe quarterly reports', () => {
       expect(describeCronExpression('0 9 1 1,4,7,10 *')).toBe(
-        'at 09:00 on the 1st of the month only in January, April, July and October',
+        'at 09:00 UTC on the 1st of the month only in January, April, July and October',
       );
     });
 
@@ -141,12 +141,12 @@ describe('describeCronExpression', () => {
     });
 
     it('should describe reduced format expressions', () => {
-      expect(describeCronExpression('9 * * *')).toBe('at 09:00');
+      expect(describeCronExpression('9 * * *')).toBe('at 09:00 UTC');
       expect(describeCronExpression('*/2 * * *')).toBe('every 2 hours');
       expect(describeCronExpression('9 15 * *')).toBe(
-        'at 09:00 on the 15th of the month',
+        'at 09:00 UTC on the 15th of the month',
       );
-      expect(describeCronExpression('9 * * 1')).toBe('at 09:00 only on Monday');
+      expect(describeCronExpression('9 * * 1')).toBe('at 09:00 UTC only on Monday');
     });
   });
 
@@ -174,7 +174,7 @@ describe('describeCronExpression', () => {
     it('should use 12-hour format when specified', () => {
       expect(
         describeCronExpression('0 14 * * *', { use24HourTimeFormat: false }),
-      ).toBe('at 2:00 PM');
+      ).toBe('at 2:00 PM UTC');
     });
 
     it('should use 12-hour format for multiple times', () => {
@@ -182,7 +182,7 @@ describe('describeCronExpression', () => {
         describeCronExpression('0 9,14,18 * * *', {
           use24HourTimeFormat: false,
         }),
-      ).toBe('at 9:00 AM, 2:00 PM and 6:00 PM');
+      ).toBe('at 9:00 AM UTC, 2:00 PM UTC and 6:00 PM UTC');
     });
   });
 });
