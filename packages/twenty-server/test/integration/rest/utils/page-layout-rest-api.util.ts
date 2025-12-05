@@ -1,8 +1,8 @@
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
-import { type PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
-import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
+import { type PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
+import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 
 export const createTestPageLayoutWithRestApi = async (
   overrides: Partial<PageLayoutEntity> = {},

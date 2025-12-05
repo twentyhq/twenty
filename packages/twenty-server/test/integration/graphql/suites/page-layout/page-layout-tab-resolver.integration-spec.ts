@@ -26,11 +26,11 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { assertPageLayoutTabStructure } from 'test/integration/utils/page-layout-tab-test.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
+import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
   PageLayoutTabExceptionMessageKey,
   generatePageLayoutTabExceptionMessage,
-} from 'src/engine/core-modules/page-layout/exceptions/page-layout-tab.exception';
+} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception';
 
 describe('Page Layout Tab Resolver', () => {
   let testObjectMetadataId: string;
