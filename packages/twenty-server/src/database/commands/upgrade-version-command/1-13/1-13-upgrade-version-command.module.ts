@@ -17,6 +17,7 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -37,6 +38,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
     DataSourceModule,
     WorkspaceSchemaManagerModule,
     WorkspaceCacheStorageModule,
+    WorkspaceMetadataVersionModule,
     FeatureFlagModule,
     WorkspaceCacheModule,
     ObjectMetadataModule,
