@@ -17,6 +17,7 @@ import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout/
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
     ]),
     DataSourceModule,
     ApplicationModule,
+    WorkspaceCacheModule
   ],
   providers: [
     CleanEmptyStringNullInTextFieldsCommand,

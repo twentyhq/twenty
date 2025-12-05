@@ -12,6 +12,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-widget.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Command({
   name: 'upgrade:1-13:backfill-page-layout-universal-identifiers',
@@ -29,6 +30,7 @@ export class BackfillPageLayoutUniversalIdentifiersCommand extends ActiveOrSuspe
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     protected readonly dataSourceService: DataSourceService,
     private readonly applicationService: ApplicationService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
@@ -116,6 +118,16 @@ export class BackfillPageLayoutUniversalIdentifiersCommand extends ActiveOrSuspe
           `Updated pageLayoutTab ${tab.id} with universalIdentifier ${universalIdentifier}`,
         );
       }
+    }
+
+    if (
+      !options.dryRun &&
+      (tabsToUpdate.length > 0 || widgetsToUpdate.length > 0)
+    ) {
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatPageLayoutTabMaps',
+        'flatPageLayoutWidgetMaps',
+      ]);
     }
 
     this.logger.log(
