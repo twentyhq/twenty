@@ -24,6 +24,7 @@ exports[`Role update should fail updating role with existing write permissions s
       "index": [],
       "objectMetadata": [],
       "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -57,6 +58,7 @@ exports[`Role update should fail updating role with existing write permissions s
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -86,6 +88,7 @@ exports[`Role update should fail when updating a non-editable system role 1`] = 
       "index": [],
       "objectMetadata": [],
       "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -119,6 +122,7 @@ exports[`Role update should fail when updating a non-editable system role 1`] = 
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -148,6 +152,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
       "index": [],
       "objectMetadata": [],
       "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -181,6 +186,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -210,6 +216,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
       "index": [],
       "objectMetadata": [],
       "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -243,6 +250,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -272,6 +280,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
       "index": [],
       "objectMetadata": [],
       "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -305,6 +314,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -334,6 +344,7 @@ exports[`Role update should fail when updating label to one that already exists 
       "index": [],
       "objectMetadata": [],
       "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -367,6 +378,7 @@ exports[`Role update should fail when updating label to one that already exists 
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
@@ -396,6 +408,7 @@ exports[`Role update should fail when updating to enable write permissions witho
       "index": [],
       "objectMetadata": [],
       "pageLayoutTab": [],
+      "pageLayoutWidget": [],
       "role": [
         {
           "errors": [
@@ -429,6 +442,7 @@ exports[`Role update should fail when updating to enable write permissions witho
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
       "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
       "invalidRole": 0,
       "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,

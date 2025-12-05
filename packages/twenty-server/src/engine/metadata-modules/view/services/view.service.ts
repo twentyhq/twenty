@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -56,6 +56,7 @@ export class ViewService {
       flatObjectMetadataMaps,
       flatViewMaps: existingFlatViewMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      flatViewGroupMaps: existingFlatViewGroupMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -63,16 +64,19 @@ export class ViewService {
           'flatObjectMetadataMaps',
           'flatViewMaps',
           'flatFieldMetadataMaps',
+          'flatViewGroupMaps',
         ],
       },
     );
 
-    const flatViewFromCreateInput = fromCreateViewInputToFlatViewToCreate({
-      createViewInput,
-      workspaceId,
-      createdByUserWorkspaceId,
-      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
-    });
+    const { flatViewToCreate, flatViewGroupsToCreate } =
+      fromCreateViewInputToFlatViewToCreate({
+        createViewInput,
+        workspaceId,
+        createdByUserWorkspaceId,
+        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -80,7 +84,13 @@ export class ViewService {
           fromToAllFlatEntityMaps: {
             flatViewMaps: computeFlatEntityMapsFromTo({
               flatEntityMaps: existingFlatViewMaps,
-              flatEntityToCreate: [flatViewFromCreateInput],
+              flatEntityToCreate: [flatViewToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            }),
+            flatViewGroupMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewGroupMaps,
+              flatEntityToCreate: flatViewGroupsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             }),
@@ -112,7 +122,7 @@ export class ViewService {
       );
 
     return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatViewFromCreateInput.id,
+      flatEntityId: flatViewToCreate.id,
       flatEntityMaps: recomputedExistingFlatViewMaps,
     });
   }
@@ -129,34 +139,26 @@ export class ViewService {
     const {
       flatViewMaps: existingFlatViewMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-    } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewMaps', 'flatFieldMetadataMaps'],
-        },
-      );
+      flatViewGroupMaps: existingFlatViewGroupMaps,
+    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatViewMaps',
+          'flatFieldMetadataMaps',
+          'flatViewGroupMaps',
+        ],
+      },
+    );
 
-    const flatViewFromUpdateInput =
+    const { flatViewToUpdate, flatViewGroupsToDelete, flatViewGroupsToCreate } =
       fromUpdateViewInputToFlatViewToUpdateOrThrow({
         updateViewInput,
         flatViewMaps: existingFlatViewMaps,
+        flatViewGroupMaps: existingFlatViewGroupMaps,
+        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+        userWorkspaceId,
       });
-
-    const existingFlatView = existingFlatViewMaps.byId[updateViewInput.id];
-
-    // If changing visibility from WORKSPACE to UNLISTED, ensure createdByUserWorkspaceId is set
-    // This prevents the view from disappearing for the user making the change
-    if (
-      isDefined(existingFlatView) &&
-      isDefined(updateViewInput.visibility) &&
-      updateViewInput.visibility === 'UNLISTED' &&
-      existingFlatView.visibility === 'WORKSPACE' &&
-      isDefined(userWorkspaceId)
-    ) {
-      // Re-allocate the view to the current user
-      flatViewFromUpdateInput.createdByUserWorkspaceId = userWorkspaceId;
-    }
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -166,7 +168,13 @@ export class ViewService {
               flatEntityMaps: existingFlatViewMaps,
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [flatViewFromUpdateInput],
+              flatEntityToUpdate: [flatViewToUpdate],
+            }),
+            flatViewGroupMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewGroupMaps,
+              flatEntityToCreate: flatViewGroupsToCreate,
+              flatEntityToDelete: flatViewGroupsToDelete,
+              flatEntityToUpdate: [],
             }),
           },
           dependencyAllFlatEntityMaps: {
@@ -174,6 +182,9 @@ export class ViewService {
           },
           buildOptions: {
             isSystemBuild: false,
+            inferDeletionFromMissingEntities: {
+              viewGroup: true,
+            },
           },
           workspaceId,
         },
@@ -385,7 +396,6 @@ export class ViewService {
       if (view.visibility === ViewVisibility.WORKSPACE) {
         return true;
       }
-
       if (
         view.visibility === ViewVisibility.UNLISTED &&
         isDefined(userWorkspaceId) &&
@@ -425,7 +435,6 @@ export class ViewService {
       if (view.visibility === ViewVisibility.WORKSPACE) {
         return true;
       }
-
       if (
         view.visibility === ViewVisibility.UNLISTED &&
         isDefined(userWorkspaceId) &&

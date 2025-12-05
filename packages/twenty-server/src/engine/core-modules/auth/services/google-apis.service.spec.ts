@@ -111,7 +111,7 @@ describe('GoogleAPIsService', () => {
         {
           provide: CalendarChannelSyncStatusService,
           useValue: {
-            resetAndScheduleCalendarEventListFetch: jest.fn(),
+            resetAndMarkAsCalendarEventListFetchPending: jest.fn(),
           },
         },
         {
@@ -127,7 +127,7 @@ describe('GoogleAPIsService', () => {
         {
           provide: MessageChannelSyncStatusService,
           useValue: {
-            resetAndScheduleMessageListFetch: jest.fn(),
+            resetAndMarkAsMessagesListFetchPending: jest.fn(),
           },
         },
         {
@@ -234,11 +234,11 @@ describe('GoogleAPIsService', () => {
       });
 
       expect(
-        calendarChannelSyncStatusService.resetAndScheduleCalendarEventListFetch,
+        calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending,
       ).toHaveBeenCalledWith([existingConnectedAccount.id], 'workspace-id');
 
       expect(
-        messagingChannelSyncStatusService.resetAndScheduleMessageListFetch,
+        messagingChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending,
       ).toHaveBeenCalledWith([existingConnectedAccount.id], 'workspace-id');
 
       expect(

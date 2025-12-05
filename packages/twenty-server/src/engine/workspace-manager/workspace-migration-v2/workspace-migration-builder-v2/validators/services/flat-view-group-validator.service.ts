@@ -20,7 +20,6 @@ export class FlatViewGroupValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewGroupMaps: optimisticFlatViewGroupMaps,
       flatViewMaps,
-      flatFieldMetadataMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewGroup
@@ -53,10 +52,17 @@ export class FlatViewGroupValidatorService {
       }),
     };
 
+    if (!isDefined(updatedFlatViewGroup.fieldValue)) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Field value is required`,
+        userFriendlyMessage: msg`Field value is required`,
+      });
+    }
+
     validationResult.flatEntityMinimalInformation = {
       id: updatedFlatViewGroup.id,
       viewId: updatedFlatViewGroup.viewId,
-      fieldMetadataId: updatedFlatViewGroup.fieldMetadataId,
     };
 
     const flatView = findFlatEntityByIdInFlatEntityMaps({
@@ -69,19 +75,6 @@ export class FlatViewGroupValidatorService {
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`View group to update parent view not found`,
         userFriendlyMessage: msg`View group to update parent view not found`,
-      });
-    }
-
-    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: updatedFlatViewGroup.fieldMetadataId,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
-
-    if (!isDefined(flatFieldMetadata)) {
-      validationResult.errors.push({
-        code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View group to update parent field not found`,
-        userFriendlyMessage: msg`View group to update parent field not found`,
       });
     }
 
@@ -122,7 +115,6 @@ export class FlatViewGroupValidatorService {
     flatEntityToValidate: flatViewGroupToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewGroupMaps: optimisticFlatViewGroupMaps,
-      flatFieldMetadataMaps,
       flatViewMaps,
     },
   }: FlatEntityValidationArgs<
@@ -134,7 +126,6 @@ export class FlatViewGroupValidatorService {
       flatEntityMinimalInformation: {
         id: flatViewGroupToValidate.id,
         viewId: flatViewGroupToValidate.viewId,
-        fieldMetadataId: flatViewGroupToValidate.fieldMetadataId,
       },
     };
 
@@ -151,19 +142,6 @@ export class FlatViewGroupValidatorService {
       });
     }
 
-    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatViewGroupToValidate.fieldMetadataId,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
-
-    if (!isDefined(flatFieldMetadata)) {
-      validationResult.errors.push({
-        code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`Field metadata not found`,
-        userFriendlyMessage: msg`Field metadata not found`,
-      });
-    }
-
     const flatView = flatViewMaps.byId[flatViewGroupToValidate.viewId];
 
     if (!isDefined(flatView)) {
@@ -174,6 +152,14 @@ export class FlatViewGroupValidatorService {
       });
 
       return validationResult;
+    }
+
+    if (!isDefined(flatViewGroupToValidate.fieldValue)) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Field value is required`,
+        userFriendlyMessage: msg`Field value is required`,
+      });
     }
 
     return validationResult;

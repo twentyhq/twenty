@@ -163,17 +163,19 @@ export class MessageImportExceptionHandlerService {
 
     switch (syncStep) {
       case MessageImportSyncStep.MESSAGE_LIST_FETCH:
-        await this.messageChannelSyncStatusService.scheduleMessageListFetch(
+        await this.messageChannelSyncStatusService.markAsMessagesListFetchPending(
           [messageChannel.id],
           workspaceId,
+          true,
         );
         break;
 
       case MessageImportSyncStep.MESSAGES_IMPORT_PENDING:
       case MessageImportSyncStep.MESSAGES_IMPORT_ONGOING:
-        await this.messageChannelSyncStatusService.scheduleMessagesImport(
+        await this.messageChannelSyncStatusService.markAsMessagesImportPending(
           [messageChannel.id],
           workspaceId,
+          true,
         );
         break;
 
@@ -248,7 +250,7 @@ export class MessageImportExceptionHandlerService {
       return;
     }
 
-    await this.messageChannelSyncStatusService.resetAndScheduleMessageListFetch(
+    await this.messageChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending(
       [messageChannel.id],
       workspaceId,
     );

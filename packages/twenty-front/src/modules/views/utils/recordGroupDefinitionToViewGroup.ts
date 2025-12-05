@@ -7,7 +7,6 @@ export const recordGroupDefinitionToViewGroup = (
   return {
     __typename: 'ViewGroup',
     id: recordGroup.id,
-    fieldMetadataId: recordGroup.fieldMetadataId,
     position: recordGroup.position,
     isVisible: recordGroup.isVisible ?? true,
     fieldValue: recordGroup.value ?? '',

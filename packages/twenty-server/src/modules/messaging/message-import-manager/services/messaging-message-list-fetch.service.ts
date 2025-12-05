@@ -276,7 +276,7 @@ export class MessagingMessageListFetchService {
       );
 
       if (totalMessagesToImportCount === 0) {
-        await this.messageChannelSyncStatusService.markAsCompletedAndScheduleMessageListFetch(
+        await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
           [messageChannelWithFreshTokens.id],
           workspaceId,
         );
@@ -288,7 +288,7 @@ export class MessagingMessageListFetchService {
         `messageChannelId: ${freshMessageChannel.id} Scheduling direct messages import`,
       );
 
-      await this.messageChannelSyncStatusService.scheduleMessagesImport(
+      await this.messageChannelSyncStatusService.markAsMessagesImportScheduled(
         [messageChannelWithFreshTokens.id],
         workspaceId,
       );
@@ -296,7 +296,7 @@ export class MessagingMessageListFetchService {
       await this.messagingMessagesImportService.processMessageBatchImport(
         {
           ...messageChannelWithFreshTokens,
-          syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+          syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
         },
         messageChannelWithFreshTokens.connectedAccount,
         workspaceId,

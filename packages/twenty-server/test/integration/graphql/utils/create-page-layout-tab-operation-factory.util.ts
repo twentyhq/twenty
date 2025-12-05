@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { PAGE_LAYOUT_TAB_GQL_FIELDS } from 'test/integration/constants/page-layout-gql-fields.constants';
 
-import { type CreatePageLayoutTabInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout-tab.input';
+import { type CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout-tab.input';
 
 type CreatePageLayoutTabOperationFactoryParams = {
   gqlFields?: string;

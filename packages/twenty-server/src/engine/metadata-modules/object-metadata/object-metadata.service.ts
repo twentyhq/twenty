@@ -7,6 +7,7 @@ import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -385,6 +386,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       objectMetadata: flatObjectMetadataToCreate,
       workspaceId,
       workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+      flatFieldMetadataMaps: flatFieldMetadataMapsFromTo.to,
     });
 
     const flatDefaultViewFieldsToCreate =
@@ -476,10 +478,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     objectMetadata,
     workspaceId,
     workspaceCustomApplicationId,
+    flatFieldMetadataMaps,
   }: {
     workspaceCustomApplicationId: string;
     objectMetadata: FlatObjectMetadata;
     workspaceId: string;
+    flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
   }) {
     const defaultViewInput = {
       objectMetadataId: objectMetadata.id,
@@ -490,13 +494,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       workspaceId: workspaceId,
     };
 
-    const flatViewFromCreateInput = fromCreateViewInputToFlatViewToCreate({
+    const { flatViewToCreate } = fromCreateViewInputToFlatViewToCreate({
       createViewInput: defaultViewInput,
       workspaceId,
       workspaceCustomApplicationId,
+      flatFieldMetadataMaps,
     });
 
-    return flatViewFromCreateInput;
+    return flatViewToCreate;
   }
 
   private async computeFlatViewFieldsToCreate({
