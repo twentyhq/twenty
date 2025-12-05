@@ -1,6 +1,10 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
 
 import { type HTTPMethod } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
+import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
+import { type ObjectPermissionInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
+import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { type FieldPermissionInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 
 export type PackageJson = {
   name: string;
@@ -25,13 +29,22 @@ type ApplicationVariable = {
 
 type Sources = { [key: string]: string | Sources };
 
+type Role = CreateRoleInput & {
+  universalIdentifier: string;
+  objectPermissions?: ObjectPermissionInput[];
+  fieldPermissions?: FieldPermissionInput[];
+  permissionFlags?: PermissionFlagType[];
+};
+
 type Application = {
   universalIdentifier: string;
   displayName?: string;
   description?: string;
   icon?: string;
   applicationVariables?: Record<string, ApplicationVariable>;
+  applicationRole?: Role;
 };
+
 export type AppManifest = {
   application: Application;
   objects: ObjectManifest[];
