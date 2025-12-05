@@ -19,9 +19,10 @@ const MentionInlineContentRenderer = ({
   const { record } = useFindOneRecord({
     objectNameSingular,
     objectRecordId: recordId,
+    skip: !objectNameSingular || !recordId,
   });
 
-  if (!record) {
+  if (!record || !objectNameSingular) {
     return null;
   }
 
@@ -51,6 +52,10 @@ export const MentionInlineContent = createReactInlineContentSpec(
   {
     render: (props) => {
       const { recordId, objectNameSingular } = props.inlineContent.props;
+
+      if (!recordId || !objectNameSingular) {
+        return <span>@mention</span>;
+      }
 
       return (
         <MentionInlineContentRenderer
