@@ -149,7 +149,7 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect an upd
 exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect created, deleted and updated entities 1`] = `
 {
   "createdFlatEntityMaps": {
-    "byId": {flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect created, deleted and updated entities 1
+    "byId": {
       "field-id-3": {
         "applicationId": "application-id-1",
         "calendarViewIds": [],
