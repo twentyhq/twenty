@@ -7,8 +7,8 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
+import { PackageJson } from 'twenty-shared/application';
 
-import { PackageJson } from 'src/engine/core-modules/application/types/application.types';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 @Entity('serverlessFunctionLayer')

@@ -32,20 +32,20 @@ import {
   isTemplateExpression,
   isVariableStatement,
 } from 'typescript';
-import { GENERATED_FOLDER_NAME } from '../services/generate.service';
+import { GENERATED_FOLDER_NAME } from '@/cli/services/generate.service';
+import { type Sources } from 'twenty-shared/types';
 import {
-  type AppManifest,
   type Application,
-  type FieldMetadata,
-  type ObjectManifest,
   type PackageJson,
+  type ApplicationManifest,
   type ServerlessFunctionManifest,
-  type Sources,
-} from '../types/config.types';
-import { findPathFile } from '../utils/find-path-file';
-import { getTsProgramAndDiagnostics } from '../utils/get-ts-program-and-diagnostics';
-import { parseJsoncFile, parseTextFile } from '../utils/jsonc-parser';
-import { formatAndWarnTsDiagnostics } from './format-and-warn-ts-diagnostics';
+  type ObjectManifest,
+  type FieldManifest,
+} from 'twenty-shared/application';
+import { findPathFile } from '@/cli/utils/find-path-file';
+import { getTsProgramAndDiagnostics } from '@/cli/utils/get-ts-program-and-diagnostics';
+import { parseJsoncFile, parseTextFile } from '@/cli/utils/jsonc-parser';
+import { formatAndWarnTsDiagnostics } from '@/cli/utils/format-and-warn-ts-diagnostics';
 
 type JSONValue =
   | string
@@ -161,7 +161,7 @@ const collectObjects = (program: Program) => {
 
               const fieldDec = getDecorators(member)?.find(
                 (d) =>
-                  isDecoratorNamed(d, 'FieldMetadata') ||
+                  isDecoratorNamed(d, 'FieldManifest') ||
                   isDecoratorNamed(d, 'Field'),
               );
 
@@ -185,7 +185,7 @@ const collectObjects = (program: Program) => {
               }
 
               fields.push({
-                ...(fieldCfg as FieldMetadata),
+                ...(fieldCfg as FieldManifest),
                 ...(name ? { name } : {}),
               });
             }
@@ -490,7 +490,7 @@ export const loadManifest = async (
 ): Promise<{
   packageJson: PackageJson;
   yarnLock: string;
-  manifest: AppManifest;
+  manifest: ApplicationManifest;
   shouldGenerate: boolean;
 }> => {
   const packageJson = await parseJsoncFile(

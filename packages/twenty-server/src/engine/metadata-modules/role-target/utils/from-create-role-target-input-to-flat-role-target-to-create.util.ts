@@ -27,6 +27,7 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
     userWorkspaceId: null,
     agentId: null,
     apiKeyId: null,
+    targetApplicationId: null,
     createdAt: now,
     updatedAt: now,
     universalIdentifier: universalIdentifier ?? v4(),

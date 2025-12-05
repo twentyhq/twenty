@@ -2,8 +2,7 @@ import { ArgsType, Field } from '@nestjs/graphql';
 
 import { IsString } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
-
-import { PackageJson } from 'src/engine/core-modules/application/types/application.types';
+import { PackageJson } from 'twenty-shared/application';
 
 @ArgsType()
 export class CreateServerlessFunctionLayerInput {

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';

@@ -3,6 +3,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -17,7 +18,6 @@ import { UpdateDatabaseEventTriggerInput } from 'src/engine/metadata-modules/dat
 import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/database-event-trigger/services/database-event-trigger-v2.service';
 import { databaseEventTriggerGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/database-event-trigger/utils/database-event-trigger-graphql-api-exception-handler.utils';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 @UseGuards(
   WorkspaceAuthGuard,

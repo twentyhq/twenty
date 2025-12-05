@@ -47,6 +47,11 @@
       "import": "./dist/ai.mjs",
       "require": "./dist/ai.cjs"
     },
+    "./application": {
+      "types": "./dist/application/index.d.ts",
+      "import": "./dist/application.mjs",
+      "require": "./dist/application.cjs"
+    },
     "./constants": {
       "types": "./dist/constants/index.d.ts",
       "import": "./dist/constants.mjs",
@@ -91,6 +96,7 @@
   "files": [
     "dist",
     "ai",
+    "application",
     "constants",
     "metadata",
     "testing",
@@ -104,6 +110,9 @@
     "*": {
       "ai": [
         "dist/ai/index.d.ts"
+      ],
+      "application": [
+        "dist/application/index.d.ts"
       ],
       "constants": [
         "dist/constants/index.d.ts"

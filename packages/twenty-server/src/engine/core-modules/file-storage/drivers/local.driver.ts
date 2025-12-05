@@ -4,14 +4,13 @@ import path, { dirname, join } from 'path';
 import { type Readable } from 'stream';
 
 import { isObject } from '@sniptt/guards';
+import { type Sources } from 'twenty-shared/types';
 
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-
-import { type Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 
 export interface LocalDriverOptions {
   storagePath: string;

@@ -1,9 +1,9 @@
 import chalk from 'chalk';
-import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
-import { ApiService } from '../services/api.service';
-import { GenerateService } from '../services/generate.service';
-import { type ApiResponse } from '../types/config.types';
-import { loadManifest } from '../utils/load-manifest';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/constants/current-execution-directory';
+import { ApiService } from '@/cli/services/api.service';
+import { GenerateService } from '@/cli/services/generate.service';
+import { type ApiResponse } from '@/cli/types/api-response.types';
+import { loadManifest } from '@/cli/utils/load-manifest';
 
 export class AppSyncCommand {
   private apiService = new ApiService();

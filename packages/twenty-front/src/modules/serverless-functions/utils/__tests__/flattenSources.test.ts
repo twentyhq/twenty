@@ -1,6 +1,7 @@
 // IA Generated
-import { type Sources } from '@/serverless-functions/types/sources.type';
+
 import { flattenSources } from '@/serverless-functions/utils/flattenSources';
+import { type Sources } from 'twenty-shared/types';
 
 describe('flattenSources', () => {
   it('flattens nested sources with root files', () => {
