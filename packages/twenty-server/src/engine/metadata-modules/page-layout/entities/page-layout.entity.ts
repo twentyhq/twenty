@@ -14,6 +14,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { StrictSyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/strict-syncable-entity.interface';
+
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-tab.entity';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -26,7 +28,10 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
   ['workspaceId', 'objectMetadataId'],
   { where: '"deletedAt" IS NULL' },
 )
-export class PageLayoutEntity implements Required<PageLayoutEntity> {
+export class PageLayoutEntity
+  extends StrictSyncableEntity
+  implements Required<PageLayoutEntity>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

@@ -15,12 +15,14 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { aggregateOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/utils/aggregate-orchestrator-actions-report.util';
 import { WorkspaceMigrationV2AgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/agent/workspace-migration-v2-agent-actions-builder.service';
-import { WorkspaceMigrationV2PageLayoutTabActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/page-layout-tab/workspace-migration-v2-page-layout-tab-actions-builder.service';
 import { WorkspaceMigrationV2CronTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/workspace-migration-v2-cron-trigger-action-builder.service';
 import { WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/workspace-migration-v2-database-event-trigger-actions-builder.service';
 import { WorkspaceMigrationV2FieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/workspace-migration-v2-field-actions-builder.service';
 import { WorkspaceMigrationV2IndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service';
 import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/workspace-migration-v2-object-actions-builder.service';
+import { WorkspaceMigrationV2PageLayoutTabActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/page-layout-tab/workspace-migration-v2-page-layout-tab-actions-builder.service';
+import { WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/page-layout-widget/workspace-migration-v2-page-layout-widget-actions-builder.service';
+import { WorkspaceMigrationV2PageLayoutActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/page-layout/workspace-migration-v2-page-layout-actions-builder.service';
 import { WorkspaceMigrationV2RoleTargetActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/role-target/workspace-migration-v2-role-target-actions-builder.service';
 import { WorkspaceMigrationV2RoleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/role/workspace-migration-v2-role-actions-builder.service';
 import { WorkspaceMigrationV2RouteTriggerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/route-trigger/workspace-migration-v2-route-trigger-actions-builder.service';
@@ -47,6 +49,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationV2FieldActionsBuilderService: WorkspaceMigrationV2FieldActionsBuilderService,
     private readonly workspaceMigrationV2RoleActionsBuilderService: WorkspaceMigrationV2RoleActionsBuilderService,
     private readonly workspaceMigrationV2AgentActionsBuilderService: WorkspaceMigrationV2AgentActionsBuilderService,
+    private readonly workspaceMigrationV2PageLayoutActionsBuilderService: WorkspaceMigrationV2PageLayoutActionsBuilderService,
+    private readonly workspaceMigrationV2PageLayoutWidgetActionsBuilderService: WorkspaceMigrationV2PageLayoutWidgetActionsBuilderService,
     private readonly workspaceMigrationV2PageLayoutTabActionsBuilderService: WorkspaceMigrationV2PageLayoutTabActionsBuilderService,
   ) {}
 
@@ -136,6 +140,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatRoleMaps,
       flatRoleTargetMaps,
       flatAgentMaps,
+      flatPageLayoutMaps,
+      flatPageLayoutWidgetMaps,
       flatPageLayoutTabMaps,
     } = fromToAllFlatEntityMaps;
 
@@ -611,6 +617,74 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatPageLayoutMaps)) {
+      const { from: fromFlatPageLayoutMaps, to: toFlatPageLayoutMaps } =
+        flatPageLayoutMaps;
+
+      const pageLayoutResult =
+        this.workspaceMigrationV2PageLayoutActionsBuilderService.validateAndBuild(
+          {
+            from: fromFlatPageLayoutMaps,
+            to: toFlatPageLayoutMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: undefined,
+            workspaceId,
+          },
+        );
+
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            pageLayoutResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
+
+      if (pageLayoutResult.status === 'fail') {
+        orchestratorFailureReport.pageLayout.push(...pageLayoutResult.errors);
+      } else {
+        orchestratorActionsReport.pageLayout = pageLayoutResult.actions;
+      }
+    }
+
+    if (isDefined(flatPageLayoutWidgetMaps)) {
+      const {
+        from: fromFlatPageLayoutWidgetMaps,
+        to: toFlatPageLayoutWidgetMaps,
+      } = flatPageLayoutWidgetMaps;
+
+      const pageLayoutWidgetResult =
+        this.workspaceMigrationV2PageLayoutWidgetActionsBuilderService.validateAndBuild(
+          {
+            from: fromFlatPageLayoutWidgetMaps,
+            to: toFlatPageLayoutWidgetMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: {
+              flatPageLayoutTabMaps:
+                optimisticAllFlatEntityMaps.flatPageLayoutTabMaps,
+            },
+            workspaceId,
+          },
+        );
+
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            pageLayoutWidgetResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
+
+      if (pageLayoutWidgetResult.status === 'fail') {
+        orchestratorFailureReport.pageLayoutWidget.push(
+          ...pageLayoutWidgetResult.errors,
+        );
+      } else {
+        orchestratorActionsReport.pageLayoutWidget =
+          pageLayoutWidgetResult.actions;
+      }
+    }
+
     if (isDefined(flatPageLayoutTabMaps)) {
       const { from: fromFlatPageLayoutTabMaps, to: toFlatPageLayoutTabMaps } =
         flatPageLayoutTabMaps;
@@ -621,7 +695,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
             from: fromFlatPageLayoutTabMaps,
             to: toFlatPageLayoutTabMaps,
             buildOptions,
-            dependencyOptimisticFlatEntityMaps: undefined,
+            dependencyOptimisticFlatEntityMaps: {
+              flatPageLayoutMaps:
+                optimisticAllFlatEntityMaps.flatPageLayoutMaps,
+            },
             workspaceId,
           },
         );
@@ -732,10 +809,22 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.roleTarget.updated,
           ///
 
-          //
+          // Agents
           ...aggregatedOrchestratorActionsReport.agent.deleted,
           ...aggregatedOrchestratorActionsReport.agent.created,
           ...aggregatedOrchestratorActionsReport.agent.updated,
+          ///
+
+          // Page layouts
+          ...aggregatedOrchestratorActionsReport.pageLayout.deleted,
+          ...aggregatedOrchestratorActionsReport.pageLayout.created,
+          ...aggregatedOrchestratorActionsReport.pageLayout.updated,
+          ///
+
+          // Page layout widgets
+          ...aggregatedOrchestratorActionsReport.pageLayoutWidget.deleted,
+          ...aggregatedOrchestratorActionsReport.pageLayoutWidget.created,
+          ...aggregatedOrchestratorActionsReport.pageLayoutWidget.updated,
           ///
 
           // Page layout tabs

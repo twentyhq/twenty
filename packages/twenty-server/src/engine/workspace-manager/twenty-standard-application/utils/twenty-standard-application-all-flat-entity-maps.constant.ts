@@ -89,6 +89,11 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
       idByUniversalIdentifier: {},
       universalIdentifiersByApplicationId: {},
     },
+    flatPageLayoutMaps: {
+      byId: {},
+      idByUniversalIdentifier: {},
+      universalIdentifiersByApplicationId: {},
+    },
     flatPageLayoutWidgetMaps: {
       byId: {},
       idByUniversalIdentifier: {},
