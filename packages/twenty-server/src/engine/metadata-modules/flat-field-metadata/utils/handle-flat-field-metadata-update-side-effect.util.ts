@@ -1,7 +1,7 @@
 import { type FromTo } from 'twenty-shared/types';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
+import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { handleEnumFlatFieldMetadataUpdateSideEffects } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-enum-flat-field-metadata-update-side-effects.util';
 import {
@@ -35,7 +35,9 @@ type HandleFlatFieldMetadataUpdateSideEffectArgs = FromTo<
     | 'flatViewGroupMaps'
     | 'flatViewMaps'
     | 'flatViewFieldMaps'
-  >;
+  > & {
+    workspaceCustomApplicationId: string;
+  };
 
 export const FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS: FlatFieldMetadataUpdateSideEffects =
   {
@@ -62,6 +64,7 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
   flatViewGroupMaps,
   flatViewMaps,
   flatViewFieldMaps,
+  workspaceCustomApplicationId,
 }: HandleFlatFieldMetadataUpdateSideEffectArgs): FieldInputTranspilationResult<FlatFieldMetadataUpdateSideEffects> => {
   const sideEffectResult = structuredClone(
     FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS,
@@ -114,17 +117,24 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
     sideEffectResult.flatViewFiltersToDelete.push(...flatViewFiltersToDelete);
   }
 
-  const {
-    flatIndexMetadatasToUpdate,
-    flatIndexMetadatasToCreate,
-    flatIndexMetadatasToDelete,
-  } = handleIndexChangesDuringFieldUpdate({
+  const indexChangesSideEffectResult = handleIndexChangesDuringFieldUpdate({
     fromFlatFieldMetadata,
     toFlatFieldMetadata,
     flatIndexMaps,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
+    workspaceCustomApplicationId,
   });
+
+  if (indexChangesSideEffectResult.status === 'fail') {
+    return indexChangesSideEffectResult;
+  }
+
+  const {
+    flatIndexMetadatasToUpdate,
+    flatIndexMetadatasToCreate,
+    flatIndexMetadatasToDelete,
+  } = indexChangesSideEffectResult.result;
 
   sideEffectResult.flatIndexMetadatasToUpdate.push(
     ...flatIndexMetadatasToUpdate,

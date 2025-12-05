@@ -6,14 +6,11 @@ import {
 } from 'twenty-shared/utils';
 
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
-import {
-  FieldMetadataException,
-  FieldMetadataExceptionCode,
-} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
-import { FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
+import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-to-update-and-related-flat-field-to-update.util';
 import { computeFlatFieldToUpdateFromMorphRelationUpdatePayload } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-to-update-from-morph-relation-update-payload.util';
@@ -83,10 +80,16 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   });
 
   if (!isDefined(flatObjectMetadata)) {
-    throw new FieldMetadataException(
-      'Field to update object metadata not found',
-      FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-    );
+    return {
+      status: 'fail',
+      errors: [
+        {
+          code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+          message: 'Field to update object metadata not found',
+          userFriendlyMessage: msg`Field to update object metadata not found`,
+        },
+      ],
+    };
   }
 
   const { flatFieldMetadataFromTo, relatedFlatFieldMetadatasFromTo } =
@@ -143,6 +146,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       toFlatFieldMetadata,
       flatViewMaps,
       flatViewFieldMaps,
+      workspaceCustomApplicationId,
     });
 
     if (sideEffectResult.status === 'fail') {
