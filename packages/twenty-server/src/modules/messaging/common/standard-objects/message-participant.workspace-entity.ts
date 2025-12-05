@@ -39,12 +39,12 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Role`,
     icon: 'IconAt',
     options: [
-      { value: 'from', label: 'From', position: 0, color: 'green' },
-      { value: 'to', label: 'To', position: 1, color: 'blue' },
-      { value: 'cc', label: 'Cc', position: 2, color: 'orange' },
-      { value: 'bcc', label: 'Bcc', position: 3, color: 'red' },
+      { value: 'FROM', label: 'From', position: 0, color: 'green' },
+      { value: 'TO', label: 'To', position: 1, color: 'blue' },
+      { value: 'CC', label: 'Cc', position: 2, color: 'orange' },
+      { value: 'BCC', label: 'Bcc', position: 3, color: 'red' },
     ],
-    defaultValue: "'from'",
+    defaultValue: "'FROM'",
   })
   role: string;
 
