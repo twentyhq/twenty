@@ -399,4 +399,17 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
+  targetMorphId: createStandardFieldFlatMetadata({
+    objectName: 'timelineActivity',
+    workspaceId,
+    options: {
+      fieldName: 'targetMorphId',
+      type: FieldMetadataType.TEXT,
+      label: 'Target Morph Id',
+      description: 'Target Morph Id to be used for morph relations',
+      icon: 'Icon123',
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
 });
