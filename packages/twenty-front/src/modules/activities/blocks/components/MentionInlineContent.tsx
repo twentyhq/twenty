@@ -1,7 +1,13 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { createReactInlineContentSpec } from '@blocknote/react';
-import { ChipSize } from 'twenty-ui/components';
+import styled from '@emotion/styled';
+
+const StyledRecordChip = styled(RecordChip)`
+  height: auto;
+  margin: 0;
+  padding: ${({ theme }) => `0 ${theme.spacing(1)}`};
+`;
 
 const MentionInlineContentRenderer = ({
   recordId,
@@ -20,11 +26,11 @@ const MentionInlineContentRenderer = ({
   }
 
   return (
-    <RecordChip
+    <StyledRecordChip
       objectNameSingular={objectNameSingular}
       record={record}
-      size={ChipSize.Small}
       forceDisableClick={false}
+      isIconHidden={true}
     />
   );
 };
