@@ -64,7 +64,7 @@ export class CalendarOngoingStaleJob {
             this.logger.log(
               `Sync for calendar channel ${calendarChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to CALENDAR_EVENT_LIST_FETCH_PENDING`,
             );
-            await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
+            await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
               [calendarChannel.id],
               workspaceId,
             );
@@ -74,7 +74,7 @@ export class CalendarOngoingStaleJob {
             this.logger.log(
               `Sync for calendar channel ${calendarChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to CALENDAR_EVENTS_IMPORT_PENDING`,
             );
-            await this.calendarChannelSyncStatusService.scheduleCalendarEventsImport(
+            await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
               [calendarChannel.id],
               workspaceId,
             );

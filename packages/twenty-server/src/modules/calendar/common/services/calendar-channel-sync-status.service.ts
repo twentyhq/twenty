@@ -27,7 +27,7 @@ export class CalendarChannelSyncStatusService {
     private readonly metricsService: MetricsService,
   ) {}
 
-  public async scheduleCalendarEventListFetch(
+  public async markAsCalendarEventListFetchPending(
     calendarChannelIds: string[],
     workspaceId: string,
     preserveSyncStageStartedAt: boolean = false,
@@ -69,7 +69,7 @@ export class CalendarChannelSyncStatusService {
     });
   }
 
-  public async resetAndScheduleCalendarEventListFetch(
+  public async resetAndMarkAsCalendarEventListFetchPending(
     calendarChannelIds: string[],
     workspaceId: string,
   ) {
@@ -95,7 +95,10 @@ export class CalendarChannelSyncStatusService {
       throttleFailureCount: 0,
     });
 
-    await this.scheduleCalendarEventListFetch(calendarChannelIds, workspaceId);
+    await this.markAsCalendarEventListFetchPending(
+      calendarChannelIds,
+      workspaceId,
+    );
   }
 
   public async resetSyncStageStartedAt(
@@ -117,7 +120,7 @@ export class CalendarChannelSyncStatusService {
     });
   }
 
-  public async scheduleCalendarEventsImport(
+  public async markAsCalendarEventsImportPending(
     calendarChannelIds: string[],
     workspaceId: string,
     preserveSyncStageStartedAt: boolean = false,
@@ -158,7 +161,7 @@ export class CalendarChannelSyncStatusService {
     });
   }
 
-  public async markAsCompletedAndScheduleCalendarEventListFetch(
+  public async markAsCompletedAndMarkAsCalendarEventListFetchPending(
     calendarChannelIds: string[],
     workspaceId: string,
   ) {
@@ -180,7 +183,10 @@ export class CalendarChannelSyncStatusService {
       syncedAt: new Date().toISOString(),
     });
 
-    await this.scheduleCalendarEventListFetch(calendarChannelIds, workspaceId);
+    await this.markAsCalendarEventListFetchPending(
+      calendarChannelIds,
+      workspaceId,
+    );
 
     await this.metricsService.batchIncrementCounter({
       key: MetricsKeys.CalendarEventSyncJobActive,

@@ -78,7 +78,7 @@ export class MessagingMessagesImportJob {
         messageChannel.throttleFailureCount,
       )
     ) {
-      await this.messageChannelSyncStatusService.scheduleMessagesImport(
+      await this.messageChannelSyncStatusService.markAsMessagesImportPending(
         [messageChannel.id],
         workspaceId,
         true,
