@@ -3,10 +3,10 @@ import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import { join } from 'path';
 import camelcase from 'lodash.camelcase';
-import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
-import { getObjectDecoratedClass } from '../utils/get-object-decorated-class';
-import { getFunctionBaseFile } from '../utils/get-function-base-file';
-import { convertToLabel } from '../utils/convert-to-label';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/constants/current-execution-directory';
+import { getObjectDecoratedClass } from '@/cli/utils/get-object-decorated-class';
+import { getFunctionBaseFile } from '@/cli/utils/get-function-base-file';
+import { convertToLabel } from '@/cli/utils/convert-to-label';
 
 export enum SyncableEntity {
   AGENT = 'agent',

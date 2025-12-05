@@ -1,6 +1,6 @@
 import { type Readable } from 'stream';
 
-import { type Sources } from 'src/engine/core-modules/file-storage/types/source.type';
+import { type Sources } from 'twenty-shared/types';
 
 export interface StorageDriver {
   delete(params: { folderPath: string; filename?: string }): Promise<void>;

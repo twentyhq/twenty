@@ -2,6 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { CreateWebhookInput } from 'src/engine/core-modules/webhook/dtos/create-webhook.dto';
 import { DeleteWebhookInput } from 'src/engine/core-modules/webhook/dtos/delete-webhook.dto';
@@ -12,7 +13,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 import { WebhookEntity } from './webhook.entity';
 import { WebhookService } from './webhook.service';

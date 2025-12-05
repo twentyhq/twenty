@@ -6,12 +6,12 @@ import {
   printSchema,
 } from 'graphql/index';
 import { createClient } from 'graphql-sse';
+import { type ApiResponse } from '@/cli/types/api-response.types';
+import { ConfigService } from '@/cli/services/config.service';
 import {
-  type ApiResponse,
-  type AppManifest,
   type PackageJson,
-} from '../types/config.types';
-import { ConfigService } from './config.service';
+  type ApplicationManifest,
+} from 'twenty-shared/application';
 
 export class ApiService {
   private client: AxiosInstance;
@@ -94,7 +94,7 @@ export class ApiService {
   }: {
     packageJson: PackageJson;
     yarnLock: string;
-    manifest: AppManifest;
+    manifest: ApplicationManifest;
   }): Promise<ApiResponse> {
     try {
       const mutation = `

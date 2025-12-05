@@ -3,6 +3,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { parse } from 'path';
 
 import { isDefined } from 'twenty-shared/utils';
+import { Sources } from 'twenty-shared/types';
+import {
+  FieldManifest,
+  ObjectManifest,
+  ServerlessFunctionManifest,
+  ServerlessFunctionTriggerManifest,
+} from 'twenty-shared/application';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -11,14 +18,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
-import {
-  FieldManifest,
-  ObjectManifest,
-  ServerlessFunctionManifest,
-  ServerlessFunctionTriggerManifest,
-} from 'src/engine/core-modules/application/types/application.types';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
-import { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
 import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';

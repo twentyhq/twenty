@@ -8,6 +8,8 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
+
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -21,7 +23,6 @@ import { WidgetConfiguration } from 'src/engine/metadata-modules/page-layout/dto
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout/services/page-layout-widget.service';
 import { injectWidgetConfigurationDiscriminator } from 'src/engine/metadata-modules/page-layout/utils/inject-widget-configuration-discriminator.util';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 @Resolver(() => PageLayoutWidgetDTO)
 @UseFilters(PageLayoutGraphqlApiExceptionFilter)

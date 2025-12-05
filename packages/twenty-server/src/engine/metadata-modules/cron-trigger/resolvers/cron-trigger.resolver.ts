@@ -3,6 +3,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -17,7 +18,6 @@ import { UpdateCronTriggerInput } from 'src/engine/metadata-modules/cron-trigger
 import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
 import { cronTriggerGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/cron-trigger/utils/cron-trigger-graphql-api-exception-handler.util';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 @UseGuards(
   WorkspaceAuthGuard,

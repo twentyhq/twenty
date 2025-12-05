@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import * as chokidar from 'chokidar';
-import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/constants/current-execution-directory';
 import { ApiService } from '@/cli/services/api.service';
 import { loadManifest } from '@/cli/utils/load-manifest';
 

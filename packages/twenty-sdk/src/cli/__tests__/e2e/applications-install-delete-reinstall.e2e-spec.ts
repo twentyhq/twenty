@@ -1,8 +1,8 @@
 import { existsSync } from 'fs';
-import { AppSyncCommand } from '../../commands/app-sync.command';
-import { AppUninstallCommand } from '../../commands/app-uninstall.command';
-import { COVERED_APPLICATION_FOLDERS } from './constants/covered-applications-folder.constant';
-import { getTestedApplicationPath } from './utils/get-tested-application-path.util';
+import { AppSyncCommand } from '@/cli/commands/app-sync.command';
+import { AppUninstallCommand } from '@/cli/commands/app-uninstall.command';
+import { COVERED_APPLICATION_FOLDERS } from '@/cli/__tests__/e2e/constants/covered-applications-folder.constant';
+import { getTestedApplicationPath } from '@/cli/__tests__/e2e/utils/get-tested-application-path.util';
 
 describe.each(COVERED_APPLICATION_FOLDERS)(
   'Application: "%s" install delete and reinstall test suite',

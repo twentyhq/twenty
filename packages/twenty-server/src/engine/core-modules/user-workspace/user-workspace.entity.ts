@@ -1,7 +1,10 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import {
+  PermissionsOnAllObjectRecords,
+  PermissionFlagType,
+} from 'twenty-shared/constants';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
   Column,
@@ -23,7 +26,6 @@ import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 registerEnumType(PermissionFlagType, {
   name: 'PermissionFlagType',

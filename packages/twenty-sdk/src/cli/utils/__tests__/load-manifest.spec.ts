@@ -1,7 +1,7 @@
 import { ensureDirSync, writeFileSync, removeSync } from 'fs-extra';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { loadManifest } from '../load-manifest';
+import { loadManifest } from '@/cli/utils/load-manifest';
 import { v4 } from 'uuid';
 
 const write = (root: string, file: string, content: string) => {

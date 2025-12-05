@@ -42,6 +42,7 @@
         "command": "tsx {projectRoot}/scripts/generateBarrels.ts"
       }
     },
+    "typecheck": {},
     "lint": {
       "options": {
         "lintFilePatterns": [

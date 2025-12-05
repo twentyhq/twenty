@@ -29,7 +29,8 @@ import {
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
-import type { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
+import type { Sources } from 'twenty-shared/types';
+
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 import { readS3FolderContent } from 'src/engine/core-modules/file-storage/utils/read-s3-folder-content';
 

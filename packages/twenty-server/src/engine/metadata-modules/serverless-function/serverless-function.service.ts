@@ -7,6 +7,7 @@ import deepEqual from 'deep-equal';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Repository } from 'typeorm';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { Sources } from 'twenty-shared/types';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { type ServerlessExecuteResult } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
@@ -14,7 +15,6 @@ import { type ServerlessExecuteResult } from 'src/engine/core-modules/serverless
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { SERVERLESS_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/serverless-function/serverless-function-executed';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';

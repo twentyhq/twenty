@@ -1,4 +1,4 @@
-import { getObjectDecoratedClass } from '../get-object-decorated-class';
+import { getObjectDecoratedClass } from '@/cli/utils/get-object-decorated-class';
 
 describe('getObjectDecoratedClass', () => {
   it('should return proper object file', () => {

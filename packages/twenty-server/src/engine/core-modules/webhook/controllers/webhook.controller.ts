@@ -10,6 +10,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
+
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { CreateWebhookInput } from 'src/engine/core-modules/webhook/dtos/create-webhook.dto';
 import { UpdateWebhookInput } from 'src/engine/core-modules/webhook/dtos/update-webhook.dto';
@@ -20,7 +22,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 /**
  * rest/webhooks is deprecated, use rest/metadata/webhooks instead

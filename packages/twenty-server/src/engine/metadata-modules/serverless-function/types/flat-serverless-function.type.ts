@@ -1,4 +1,5 @@
-import { type Sources } from 'src/engine/core-modules/file-storage/types/source.type';
+import { type Sources } from 'twenty-shared/types';
+
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { type DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';

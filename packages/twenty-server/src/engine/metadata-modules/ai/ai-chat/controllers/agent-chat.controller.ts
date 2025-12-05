@@ -9,6 +9,7 @@ import {
 
 import { Response } from 'express';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -19,7 +20,6 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/ai/ai-agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 @Controller('rest/agent-chat')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)

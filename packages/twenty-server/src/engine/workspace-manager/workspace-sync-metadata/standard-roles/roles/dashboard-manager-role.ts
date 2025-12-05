@@ -1,4 +1,5 @@
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { PermissionFlagType } from 'twenty-shared/constants';
+
 import { type StandardRoleDefinition } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/types/standard-role-definition.interface';
 
 export const DASHBOARD_MANAGER_ROLE: StandardRoleDefinition = {

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { type Sources } from 'twenty-shared/types';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { type Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
