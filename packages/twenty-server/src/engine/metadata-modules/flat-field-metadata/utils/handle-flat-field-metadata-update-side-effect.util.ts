@@ -1,6 +1,7 @@
 import { type FromTo } from 'twenty-shared/types';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { handleEnumFlatFieldMetadataUpdateSideEffects } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-enum-flat-field-metadata-update-side-effects.util';
 import {
@@ -61,7 +62,7 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
   flatViewGroupMaps,
   flatViewMaps,
   flatViewFieldMaps,
-}: HandleFlatFieldMetadataUpdateSideEffectArgs): FlatFieldMetadataUpdateSideEffects => {
+}: HandleFlatFieldMetadataUpdateSideEffectArgs): FieldInputTranspilationResult<FlatFieldMetadataUpdateSideEffects> => {
   const sideEffectResult = structuredClone(
     FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS,
   );
@@ -135,5 +136,8 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
     ...flatIndexMetadatasToDelete,
   );
 
-  return sideEffectResult;
+  return {
+    status: 'success',
+    result: sideEffectResult,
+  };
 };
