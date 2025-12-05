@@ -143,7 +143,6 @@ export class ApplicationService {
         universalIdentifier,
         workspaceId,
       },
-      relations: ['roleTargets.role'],
     });
   }
 
