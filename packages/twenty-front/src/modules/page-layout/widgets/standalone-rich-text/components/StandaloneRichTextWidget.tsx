@@ -18,13 +18,15 @@ import {
   type StandaloneRichTextConfiguration,
 } from '~/generated/graphql';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ isPageLayoutInEditMode?: boolean }>`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
   overflow: hidden;
+  padding-inline: ${({ theme, isPageLayoutInEditMode }) =>
+    isPageLayoutInEditMode ? theme.spacing(5) : 0};
 `;
 
 const StyledEmptyState = styled.div`
@@ -103,7 +105,7 @@ export const StandaloneRichTextWidget = ({
   }
 
   return (
-    <StyledContainer>
+    <StyledContainer isPageLayoutInEditMode={isPageLayoutInEditMode}>
       <ScrollWrapper
         componentInstanceId={`scroll-wrapper-rich-text-widget-${widget.id}`}
       >

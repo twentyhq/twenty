@@ -20,7 +20,7 @@ import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component
 import { useTheme } from '@emotion/react';
 import { type MouseEvent } from 'react';
 import { IconLock } from 'twenty-ui/display';
-import { type PageLayoutWidget } from '~/generated/graphql';
+import { type PageLayoutWidget, WidgetType } from '~/generated/graphql';
 
 type WidgetRendererProps = {
   widget: PageLayoutWidget;
@@ -60,7 +60,11 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
-  const showHeader = layoutMode !== 'canvas' && !isInPinnedTab;
+  const isRichTextWidget = widget.type === WidgetType.STANDALONE_RICH_TEXT;
+  const hideRichTextHeader = isRichTextWidget && !isPageLayoutInEditMode;
+
+  const showHeader =
+    layoutMode !== 'canvas' && !isInPinnedTab && !hideRichTextHeader;
 
   const handleClick = () => {
     handleEditWidget({

@@ -23,20 +23,11 @@ import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { useDebouncedCallback } from 'use-debounce';
 
 export type RichTextEditorProps = {
-  // Content
   initialBodyV2: { blocknote?: string | null; markdown?: string | null } | null;
-
-  // Attachments
   targetableObject: ActivityTargetableObject;
   attachments: Attachment[];
-
-  // Callbacks
   onChange: (blocknote: string) => void;
-
-  // State
   readonly?: boolean;
-
-  // Optional focus handling
   onFocus?: () => void;
   onBlur?: () => void;
 };
