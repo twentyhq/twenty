@@ -1,0 +1,1 @@
+export const MIN_LABEL_LENGTH_FOR_TRUNCATION = 13;

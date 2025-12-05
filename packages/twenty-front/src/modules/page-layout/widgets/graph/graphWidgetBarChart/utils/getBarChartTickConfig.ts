@@ -4,6 +4,8 @@ import { calculateWidthPerTick } from '@/page-layout/widgets/graph/graphWidgetBa
 import { computeBarChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartCategoryTickValues';
 import { computeBarChartValueTickCount } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartValueTickCount';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
+import { getTickRotationConfig } from '@/page-layout/widgets/graph/utils/getTickRotationConfig';
+import { NO_ROTATION_ANGLE } from '@/page-layout/widgets/graph/utils/noRotationAngle';
 import { type BarDatum } from '@nivo/bar';
 
 const MAX_LEFT_AXIS_LABEL_LENGTH = 10;
@@ -13,6 +15,7 @@ export type BarChartTickConfig = {
   numberOfValueTicks: number;
   maxBottomAxisTickLabelLength: number;
   maxLeftAxisTickLabelLength: number;
+  bottomAxisTickRotation: number;
 };
 
 export const getBarChartTickConfig = ({
@@ -63,10 +66,29 @@ export const getBarChartTickConfig = ({
     valueTickCount: numberOfValueTicks,
   });
 
-  const maxBottomAxisTickLabelLength = calculateMaxTickLabelLength({
-    widthPerTick,
-    axisFontSize,
-  });
+  const actualDataPointCount = data.length;
+  const widthPerDataPoint =
+    layout === BarChartLayout.VERTICAL &&
+    actualDataPointCount > 0 &&
+    availableWidth > 0
+      ? availableWidth / actualDataPointCount
+      : widthPerTick;
+
+  const tickRotationConfig =
+    layout === BarChartLayout.VERTICAL
+      ? getTickRotationConfig({ widthPerTick: widthPerDataPoint, axisFontSize })
+      : {
+          tickRotation: NO_ROTATION_ANGLE,
+          maxLabelLength: MAX_LEFT_AXIS_LABEL_LENGTH,
+        };
+
+  const maxBottomAxisTickLabelLength =
+    layout === BarChartLayout.VERTICAL
+      ? tickRotationConfig.maxLabelLength
+      : calculateMaxTickLabelLength({
+          widthPerTick,
+          axisFontSize,
+        });
 
   // TODO: Make this dynamic based on the data
   const maxLeftAxisTickLabelLength = MAX_LEFT_AXIS_LABEL_LENGTH;
@@ -76,5 +98,6 @@ export const getBarChartTickConfig = ({
     numberOfValueTicks,
     maxBottomAxisTickLabelLength,
     maxLeftAxisTickLabelLength,
+    bottomAxisTickRotation: tickRotationConfig.tickRotation,
   };
 };

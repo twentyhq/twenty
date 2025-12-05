@@ -7,7 +7,6 @@ import {
 import { CustomPointLabelsLayer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomPointLabelsLayer';
 import { CustomStackedAreasLayer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomStackedAreasLayer';
 import { GraphLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphLineChartTooltip';
-import { LINE_CHART_MARGIN_BOTTOM } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginBottom';
 import { LINE_CHART_MARGIN_LEFT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginLeft';
 import { LINE_CHART_MARGIN_RIGHT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginRight';
 import { LINE_CHART_MARGIN_TOP } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginTop';
@@ -202,11 +201,8 @@ export const GraphWidgetLineChart = ({
     />
   );
 
-  const axisBottomConfig = getLineChartAxisBottomConfig(
-    xAxisLabel,
-    chartWidth,
-    data,
-  );
+  const { config: axisBottomConfig, marginBottom } =
+    getLineChartAxisBottomConfig(xAxisLabel, chartWidth, data);
   const axisLeftConfig = getLineChartAxisLeftConfig(yAxisLabel, formatOptions);
 
   return (
@@ -227,7 +223,7 @@ export const GraphWidgetLineChart = ({
           margin={{
             top: LINE_CHART_MARGIN_TOP,
             right: LINE_CHART_MARGIN_RIGHT,
-            bottom: LINE_CHART_MARGIN_BOTTOM,
+            bottom: marginBottom,
             left: LINE_CHART_MARGIN_LEFT,
           }}
           xScale={{ type: 'point' }}

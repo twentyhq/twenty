@@ -13,7 +13,6 @@ import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { getBarChartInnerPadding } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartInnerPadding';
-import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
   formatGraphValue,
@@ -146,18 +145,21 @@ export const GraphWidgetBarChart = ({
     debouncedHideTooltip();
   }, [debouncedHideTooltip]);
 
-  const { axisBottom: axisBottomConfig, axisLeft: axisLeftConfig } =
-    getBarChartAxisConfigs({
-      width: chartWidth,
-      height: chartHeight,
-      data,
-      layout,
-      indexBy,
-      xAxisLabel,
-      yAxisLabel,
-      formatOptions,
-      axisFontSize: chartTheme.axis.ticks.text.fontSize,
-    });
+  const {
+    axisBottom: axisBottomConfig,
+    axisLeft: axisLeftConfig,
+    margins,
+  } = getBarChartAxisConfigs({
+    width: chartWidth,
+    height: chartHeight,
+    data,
+    layout,
+    indexBy,
+    xAxisLabel,
+    yAxisLabel,
+    formatOptions,
+    axisFontSize: chartTheme.axis.ticks.text.fontSize,
+  });
 
   const BarItemWithContext = useMemo(
     () => (props: BarItemProps<BarDatum>) => (
@@ -211,8 +213,6 @@ export const GraphWidgetBarChart = ({
         },
       ]
     : undefined;
-
-  const margins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
 
   return (
     <StyledContainer id={id}>
