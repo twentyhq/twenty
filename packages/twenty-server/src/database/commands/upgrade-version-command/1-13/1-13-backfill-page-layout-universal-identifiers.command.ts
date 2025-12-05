@@ -120,18 +120,24 @@ export class BackfillPageLayoutUniversalIdentifiersCommand extends ActiveOrSuspe
       }
     }
 
+    this.logger.log(
+      `${options.dryRun ? '[DRY RUN] Would have ' : ''}Successfully backfilled ${widgetsToUpdate.length} widgets and ${tabsToUpdate.length} tabs`,
+    );
+
     if (
       !options.dryRun &&
       (tabsToUpdate.length > 0 || widgetsToUpdate.length > 0)
     ) {
+      this.logger.log(
+        `Invalidating and recomputing cache for workspace ${workspaceId}`,
+      );
+
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatPageLayoutTabMaps',
         'flatPageLayoutWidgetMaps',
       ]);
-    }
 
-    this.logger.log(
-      `${options.dryRun ? '[DRY RUN] Would have ' : ''}Successfully backfilled ${widgetsToUpdate.length} widgets and ${tabsToUpdate.length} tabs`,
-    );
+      this.logger.log(`Cache invalidated and recomputed successfully`);
+    }
   }
 }
