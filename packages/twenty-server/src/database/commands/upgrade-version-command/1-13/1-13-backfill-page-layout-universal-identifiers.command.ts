@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { IsNull, Repository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 } from 'uuid';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
@@ -63,7 +63,7 @@ export class BackfillPageLayoutUniversalIdentifiersCommand extends ActiveOrSuspe
     );
 
     for (const widget of widgetsToUpdate) {
-      const universalIdentifier = uuidv4();
+      const universalIdentifier = v4();
 
       if (options.dryRun) {
         this.logger.log(
@@ -97,7 +97,7 @@ export class BackfillPageLayoutUniversalIdentifiersCommand extends ActiveOrSuspe
     );
 
     for (const tab of tabsToUpdate) {
-      const universalIdentifier = uuidv4();
+      const universalIdentifier = v4();
 
       if (options.dryRun) {
         this.logger.log(
