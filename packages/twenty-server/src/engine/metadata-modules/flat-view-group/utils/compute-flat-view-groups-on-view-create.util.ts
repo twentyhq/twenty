@@ -7,22 +7,19 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
-import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 
 type ComputeFlatViewGroupsOnViewCreateArgs = {
-  flatViewToCreate: FlatView;
+  flatViewToCreateId: string;
+  mainGroupByFieldMetadataId: string;
 } & Pick<AllFlatEntityMaps, 'flatFieldMetadataMaps'>;
 
 export const computeFlatViewGroupsOnViewCreate = ({
-  flatViewToCreate,
+  flatViewToCreateId,
+  mainGroupByFieldMetadataId,
   flatFieldMetadataMaps,
 }: ComputeFlatViewGroupsOnViewCreateArgs): FlatViewGroup[] => {
-  if (!isDefined(flatViewToCreate.mainGroupByFieldMetadataId)) {
-    return [];
-  }
-
   const mainGroupByFieldMetadata =
-    flatFieldMetadataMaps.byId[flatViewToCreate.mainGroupByFieldMetadataId];
+    flatFieldMetadataMaps.byId[mainGroupByFieldMetadataId];
 
   if (!isDefined(mainGroupByFieldMetadata)) {
     throw new FlatEntityMapsException(
@@ -41,7 +38,7 @@ export const computeFlatViewGroupsOnViewCreate = ({
     return {
       id: viewGroupId,
       fieldMetadataId: mainGroupByFieldMetadata.id,
-      viewId: flatViewToCreate.id,
+      viewId: flatViewToCreateId,
       workspaceId: mainGroupByFieldMetadata.workspaceId,
       createdAt,
       updatedAt: createdAt,
@@ -62,7 +59,7 @@ export const computeFlatViewGroupsOnViewCreate = ({
     flatViewGroups.push({
       id: emptyGroupId,
       fieldMetadataId: mainGroupByFieldMetadata.id,
-      viewId: flatViewToCreate.id,
+      viewId: flatViewToCreateId,
       workspaceId: mainGroupByFieldMetadata.workspaceId,
       createdAt,
       updatedAt: createdAt,

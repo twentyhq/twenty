@@ -74,7 +74,8 @@ export const fromCreateViewInputToFlatViewToCreate = ({
 
   if (isDefined(flatViewToCreate.mainGroupByFieldMetadataId)) {
     flatViewGroupsToCreate = computeFlatViewGroupsOnViewCreate({
-      flatViewToCreate: flatViewToCreate,
+      flatViewToCreateId: flatViewToCreate.id,
+      mainGroupByFieldMetadataId: flatViewToCreate.mainGroupByFieldMetadataId,
       flatFieldMetadataMaps,
     });
   }

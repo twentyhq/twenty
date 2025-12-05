@@ -1,4 +1,5 @@
 import { type FromTo } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -27,9 +28,10 @@ export const handleFlatViewUpdateSideEffect = ({
 }: HandleFlatViewUpdateSideEffectArgs): FlatViewUpdateSideEffects => {
   const sideEffectResult = structuredClone(FLAT_VIEW_UPDATE_EMPTY_SIDE_EFFECTS);
 
+  const newMainGroupByFieldMetadataId = toFlatView.mainGroupByFieldMetadataId;
+
   const hasMainGroupByFieldMetadataIdChanged =
-    fromFlatView.mainGroupByFieldMetadataId !==
-    toFlatView.mainGroupByFieldMetadataId;
+    fromFlatView.mainGroupByFieldMetadataId !== newMainGroupByFieldMetadataId;
 
   if (!hasMainGroupByFieldMetadataIdChanged) {
     return sideEffectResult;
@@ -43,15 +45,13 @@ export const handleFlatViewUpdateSideEffect = ({
       });
   }
 
-  if (toFlatView.mainGroupByFieldMetadataId === null) {
+  if (!isDefined(newMainGroupByFieldMetadataId)) {
     return sideEffectResult;
   }
 
   sideEffectResult.flatViewGroupsToCreate = computeFlatViewGroupsOnViewCreate({
-    flatViewToCreate: {
-      ...toFlatView,
-      viewGroupIds: [],
-    },
+    flatViewToCreateId: toFlatView.id,
+    mainGroupByFieldMetadataId: newMainGroupByFieldMetadataId,
     flatFieldMetadataMaps,
   });
 
