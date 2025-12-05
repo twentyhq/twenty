@@ -141,7 +141,6 @@ describe('describeCronExpression', () => {
     });
 
     it('should describe 4-field format expressions', () => {
-      // 4-field format: hour day month dayOfWeek (minute defaults to 0)
       expect(describeCronExpression('9 * * *')).toBe('at 09:00 UTC');
       expect(describeCronExpression('*/2 * * *')).toBe('every 2 hours');
       expect(describeCronExpression('9 15 * *')).toBe(
