@@ -301,25 +301,29 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
         { value: 'SYSTEM', label: 'System', position: 0, color: 'turquoise' },
         {
           value: 'COMMAS_AND_DOT',
-          label: 'Commas and dot (1,234.56)',
+          // TMP FIX SHOULD BE HANDLED NATIVELY at least find a workaround
+          label: 'Commas and dot',
           position: 1,
           color: 'blue',
         },
         {
           value: 'SPACES_AND_COMMA',
-          label: 'Spaces and comma (1 234,56)',
+          // TMP FIX SHOULD BE HANDLED NATIVELY at least find a workaround
+          label: 'Spaces and comma',
           position: 2,
           color: 'green',
         },
         {
           value: 'DOTS_AND_COMMA',
-          label: 'Dots and comma (1.234,56)',
+          // TMP FIX SHOULD BE HANDLED NATIVELY at least find a workaround
+          label: 'Dots and comma',
           position: 3,
           color: 'orange',
         },
         {
           value: 'APOSTROPHE_AND_DOT',
-          label: "Apostrophe and dot (1'234.56)",
+          // TMP FIX SHOULD BE HANDLED NATIVELY at least find a workaround
+          label: 'Apostrophe and dot',
           position: 4,
           color: 'purple',
         },

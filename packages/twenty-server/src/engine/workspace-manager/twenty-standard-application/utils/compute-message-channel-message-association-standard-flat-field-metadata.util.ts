@@ -128,10 +128,10 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         description: 'Message Direction',
         icon: 'IconDirection',
         isNullable: false,
-        defaultValue: "'incoming'",
+        defaultValue: "'INCOMING'",
         options: [
-          { value: 'incoming', label: 'Incoming', position: 0, color: 'green' },
-          { value: 'outgoing', label: 'Outgoing', position: 1, color: 'blue' },
+          { value: 'INCOMING', label: 'Incoming', position: 0, color: 'green' },
+          { value: 'OUTGOING', label: 'Outgoing', position: 1, color: 'blue' },
         ],
         createdAt,
       },
