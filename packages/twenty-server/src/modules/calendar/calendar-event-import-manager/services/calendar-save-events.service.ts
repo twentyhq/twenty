@@ -44,7 +44,7 @@ export class CalendarSaveEventsService {
 
     const existingCalendarEvents = await calendarEventRepository.find({
       where: {
-        iCalUID: Any(
+        iCalUid: Any(
           fetchedCalendarEvents.map((event) => event.iCalUID as string),
         ),
       },
@@ -53,7 +53,7 @@ export class CalendarSaveEventsService {
     const fetchedCalendarEventsWithDBEvents: FetchedCalendarEventWithDBEvent[] =
       fetchedCalendarEvents.map((event): FetchedCalendarEventWithDBEvent => {
         const existingEventWithSameiCalUID = existingCalendarEvents.find(
-          (existingEvent) => existingEvent.iCalUID === event.iCalUID,
+          (existingEvent) => existingEvent.iCalUid === event.iCalUID,
         );
 
         return {
@@ -78,7 +78,7 @@ export class CalendarSaveEventsService {
             .map(
               ({ fetchedCalendarEvent }) =>
                 ({
-                  iCalUID: fetchedCalendarEvent.iCalUID,
+                  iCalUid: fetchedCalendarEvent.iCalUID,
                   title: fetchedCalendarEvent.title,
                   description: fetchedCalendarEvent.description,
                   startsAt: fetchedCalendarEvent.startsAt,
@@ -113,7 +113,7 @@ export class CalendarSaveEventsService {
             ({ fetchedCalendarEvent, existingCalendarEvent }) => {
               const savedCalendarEvent = savedCalendarEvents.find(
                 (savedCalendarEvent) =>
-                  savedCalendarEvent.iCalUID === fetchedCalendarEvent.iCalUID,
+                  savedCalendarEvent.iCalUid === fetchedCalendarEvent.iCalUID,
               );
 
               return {
@@ -138,7 +138,7 @@ export class CalendarSaveEventsService {
 
               return {
                 id: existingCalendarEvent.id,
-                iCalUID: fetchedCalendarEvent.iCalUID,
+                iCalUid: fetchedCalendarEvent.iCalUID,
                 title: fetchedCalendarEvent.title,
                 description: fetchedCalendarEvent.description,
                 startsAt: fetchedCalendarEvent.startsAt,
