@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { CreateRoleTargetInput } from 'src/engine/metadata-modules/role-target/types/create-role-target.input';
@@ -56,11 +55,11 @@ export class RoleTargetService {
       return [];
     }
 
-    const { flatRoleTargetMaps, flatRoleMaps } =
+    const { flatRoleTargetMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatRoleTargetMaps', 'flatRoleMaps'],
+          flatMapsKeys: ['flatRoleTargetMaps'],
         },
       );
 
@@ -94,24 +93,15 @@ export class RoleTargetService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatRoleTargetMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: flatRoleTargetMaps,
+          allFlatEntityOperationByMetadataName: {
+            roleTarget: {
               flatEntityToCreate: allFlatRoleTargetsToCreate,
               flatEntityToDelete: allFlatRoleTargetsToDelete,
               flatEntityToUpdate: [],
-            }),
-          },
-          dependencyAllFlatEntityMaps: {
-            flatRoleMaps,
-          },
-          buildOptions: {
-            isSystemBuild: false,
-            inferDeletionFromMissingEntities: {
-              roleTarget: true,
             },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 
@@ -155,21 +145,15 @@ export class RoleTargetService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          fromToAllFlatEntityMaps: {
-            flatRoleTargetMaps: computeFlatEntityMapsFromTo({
-              flatEntityMaps: existingFlatRoleTargetMaps,
+          allFlatEntityOperationByMetadataName: {
+            roleTarget: {
               flatEntityToCreate: [],
               flatEntityToDelete: [roleTargetToDelete],
               flatEntityToUpdate: [],
-            }),
-          },
-          buildOptions: {
-            isSystemBuild: false,
-            inferDeletionFromMissingEntities: {
-              roleTarget: true,
             },
           },
           workspaceId,
+          isSystemBuild: false,
         },
       );
 

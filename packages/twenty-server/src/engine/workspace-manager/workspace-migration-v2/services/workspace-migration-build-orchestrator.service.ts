@@ -69,7 +69,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
       (allFlatEntityMaps, currFlatMaps) => {
         const fromToOccurence = fromToAllFlatEntityMaps[currFlatMaps];
 
-        if (!isDefined(fromToOccurence)) {
+        if (
+          !isDefined(fromToOccurence) ||
+          isDefined(allFlatEntityMaps[currFlatMaps])
+        ) {
           return allFlatEntityMaps;
         }
 
