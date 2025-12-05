@@ -5,6 +5,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStage,
   type MessageChannelWorkspaceEntity,
@@ -24,6 +25,7 @@ export class MessagingMessagesImportJob {
   constructor(
     private readonly messagingMessagesImportService: MessagingMessagesImportService,
     private readonly messagingMonitoringService: MessagingMonitoringService,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
@@ -64,18 +66,24 @@ export class MessagingMessagesImportJob {
     }
 
     if (
-      isThrottled(
-        messageChannel.syncStageStartedAt,
-        messageChannel.throttleFailureCount,
-      )
+      messageChannel.syncStage !==
+      MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED
     ) {
       return;
     }
 
     if (
-      messageChannel.syncStage !==
-      MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED
+      isThrottled(
+        messageChannel.syncStageStartedAt,
+        messageChannel.throttleFailureCount,
+      )
     ) {
+      await this.messageChannelSyncStatusService.scheduleMessagesImport(
+        [messageChannel.id],
+        workspaceId,
+        true,
+      );
+
       return;
     }
 
