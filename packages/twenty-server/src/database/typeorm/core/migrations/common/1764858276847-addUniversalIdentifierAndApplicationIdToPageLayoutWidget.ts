@@ -37,19 +37,19 @@ export class AddUniversalIdentifierAndApplicationIdToPageLayoutWidget17648582768
 
     // Add unique index and foreign key
     await queryRunner.query(
-      `CREATE UNIQUE INDEX "IDX_PAGE_LAYOUT_WIDGET_WORKSPACE_UNIVERSAL_ID" ON "core"."pageLayoutWidget" ("workspaceId", "universalIdentifier")`,
+      `CREATE UNIQUE INDEX "IDX_2a33a0e7e44c393ca7bb578dae" ON "core"."pageLayoutWidget" ("workspaceId", "universalIdentifier")`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."pageLayoutWidget" ADD CONSTRAINT "FK_PAGE_LAYOUT_WIDGET_APPLICATION" FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."pageLayoutWidget" ADD CONSTRAINT "FK_fb84d310b4cfe5916ced6fc3e2a" FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."pageLayoutWidget" DROP CONSTRAINT "FK_PAGE_LAYOUT_WIDGET_APPLICATION"`,
+      `ALTER TABLE "core"."pageLayoutWidget" DROP CONSTRAINT "FK_fb84d310b4cfe5916ced6fc3e2a"`,
     );
     await queryRunner.query(
-      `DROP INDEX "core"."IDX_PAGE_LAYOUT_WIDGET_WORKSPACE_UNIVERSAL_ID"`,
+      `DROP INDEX "core"."IDX_2a33a0e7e44c393ca7bb578dae"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."pageLayoutWidget" DROP COLUMN "applicationId"`,
