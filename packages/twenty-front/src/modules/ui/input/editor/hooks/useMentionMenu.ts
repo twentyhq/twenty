@@ -1,17 +1,21 @@
 import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
+import { SEARCH_QUERY } from '@/command-menu/graphql/queries/search';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { type MentionItem } from '@/ui/input/editor/components/types';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { type SearchQuery } from '~/generated/graphql';
+import {
+  type SearchQuery,
+  type SearchQueryVariables,
+} from '~/generated/graphql';
 
 const MENTION_SEARCH_LIMIT = 50;
 
 export const useMentionMenu = (editor: typeof BLOCK_SCHEMA.BlockNoteEditor) => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
-  const [searchQuery, setSearchQuery] = useState('');
+  const apolloCoreClient = useApolloCoreClient();
 
   const objectsToSearch = useMemo(
     () =>
@@ -21,10 +25,22 @@ export const useMentionMenu = (editor: typeof BLOCK_SCHEMA.BlockNoteEditor) => {
     [activeObjectMetadataItems],
   );
 
-  const onSearchRecordsCompleted = useRecoilCallback(
+  const getMentionItems = useRecoilCallback(
     ({ set }) =>
-      (data: SearchQuery) => {
-        const searchRecords = data.search.edges.map((edge) => edge.node);
+      async (query: string): Promise<MentionItem[]> => {
+        const { data } = await apolloCoreClient.query<
+          SearchQuery,
+          SearchQueryVariables
+        >({
+          query: SEARCH_QUERY,
+          variables: {
+            searchInput: query,
+            limit: MENTION_SEARCH_LIMIT,
+            includedObjectNameSingulars: objectsToSearch,
+          },
+        });
+
+        const searchRecords = data?.search.edges.map((edge) => edge.node) || [];
 
         searchRecords.forEach((searchRecord) => {
           set(searchRecordStoreFamilyState(searchRecord.recordId), {
@@ -32,46 +48,26 @@ export const useMentionMenu = (editor: typeof BLOCK_SCHEMA.BlockNoteEditor) => {
             record: undefined,
           });
         });
-      },
-    [],
-  );
 
-  const { searchRecords } = useObjectRecordSearchRecords({
-    objectNameSingulars: objectsToSearch,
-    searchInput: searchQuery,
-    limit: MENTION_SEARCH_LIMIT,
-    skip: objectsToSearch.length === 0,
-    onCompleted: onSearchRecordsCompleted,
-  });
-
-  const mentionItems: MentionItem[] = useMemo(
-    () =>
-      searchRecords.map((searchRecord) => ({
-        title: searchRecord.label,
-        recordId: searchRecord.recordId,
-        objectNameSingular: searchRecord.objectNameSingular,
-        onItemClick: () => {
-          editor.insertInlineContent([
-            {
-              type: 'mention',
-              props: {
-                recordId: searchRecord.recordId,
-                objectNameSingular: searchRecord.objectNameSingular,
+        return searchRecords.map((searchRecord) => ({
+          title: searchRecord.label,
+          recordId: searchRecord.recordId,
+          objectNameSingular: searchRecord.objectNameSingular,
+          onItemClick: () => {
+            editor.insertInlineContent([
+              {
+                type: 'mention',
+                props: {
+                  recordId: searchRecord.recordId,
+                  objectNameSingular: searchRecord.objectNameSingular,
+                },
               },
-            },
-            ' ',
-          ]);
-        },
-      })),
-    [searchRecords, editor],
-  );
-
-  const getMentionItems = useCallback(
-    async (query: string): Promise<MentionItem[]> => {
-      setSearchQuery(query);
-      return mentionItems;
-    },
-    [mentionItems],
+              ' ',
+            ]);
+          },
+        }));
+      },
+    [apolloCoreClient, editor, objectsToSearch],
   );
 
   return getMentionItems;
