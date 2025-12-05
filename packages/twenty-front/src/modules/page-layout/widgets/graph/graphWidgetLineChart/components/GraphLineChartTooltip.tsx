@@ -30,10 +30,7 @@ export const GraphLineChartTooltip = ({
     graphWidgetLineTooltipComponentState,
   );
 
-  const containerElement =
-    typeof document !== 'undefined'
-      ? document.getElementById(containerId)
-      : null;
+  const containerElement = document.getElementById(containerId);
   if (!isDefined(containerElement)) {
     return null;
   }

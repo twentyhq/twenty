@@ -24,10 +24,7 @@ export const useGraphWidgetTooltipFloating = (
     return element;
   }, [element]);
 
-  const rootBoundary =
-    typeof document !== 'undefined'
-      ? document.querySelector('#root') ?? undefined
-      : undefined;
+  const rootBoundary = document.querySelector('#root') ?? undefined;
 
   const { refs, x, y, isPositioned } = useFloating({
     elements: {
