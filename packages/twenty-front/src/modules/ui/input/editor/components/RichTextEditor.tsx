@@ -36,9 +36,6 @@ export type RichTextEditorProps = {
   // State
   readonly?: boolean;
 
-  // When true, syncs external content changes to editor (for read-only viewers)
-  syncExternalContent?: boolean;
-
   // Optional focus handling
   onFocus?: () => void;
   onBlur?: () => void;
@@ -50,7 +47,6 @@ export const RichTextEditor = ({
   attachments,
   onChange,
   readonly,
-  syncExternalContent,
   onFocus,
   onBlur,
 }: RichTextEditorProps) => {
@@ -111,20 +107,12 @@ export const RichTextEditor = ({
     return undefined;
   }, [initialBodyV2?.blocknote]);
 
-  // When syncExternalContent is true, recreate editor when content changes
-  // This ensures the read-only viewer stays in sync with external state
-  const editorDeps =
-    syncExternalContent === true ? [initialBodyV2?.blocknote] : [];
-
-  const editor = useCreateBlockNote(
-    {
-      initialContent,
-      domAttributes: { editor: { class: 'editor' } },
-      schema: BLOCK_SCHEMA,
-      uploadFile: handleEditorBuiltInUploadFile,
-    },
-    editorDeps,
-  );
+  const editor = useCreateBlockNote({
+    initialContent,
+    domAttributes: { editor: { class: 'editor' } },
+    schema: BLOCK_SCHEMA,
+    uploadFile: handleEditorBuiltInUploadFile,
+  });
 
   const prepareBody = (newStringifiedBody: string) => {
     if (!newStringifiedBody) return newStringifiedBody;

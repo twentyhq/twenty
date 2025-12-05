@@ -48,14 +48,6 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
           resetNavigationStack: true,
         });
       }
-
-      if (widgetType === WidgetType.STANDALONE_RICH_TEXT) {
-        navigatePageLayoutCommandMenu({
-          commandMenuPage: CommandMenuPages.PageLayoutStandaloneRichTextSettings,
-          pageTitle: t`Edit Rich Text`,
-          resetNavigationStack: true,
-        });
-      }
     },
     [setPageLayoutEditingWidgetId, navigatePageLayoutCommandMenu],
   );

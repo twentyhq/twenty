@@ -1,9 +1,11 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { RichTextEditor } from '@/ui/input/editor/components/RichTextEditor';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -40,20 +42,21 @@ type StandaloneRichTextWidgetProps = {
 export const StandaloneRichTextWidget = ({
   widget,
 }: StandaloneRichTextWidgetProps) => {
-  const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
-
-  const draftPageLayout = useRecoilComponentValue(
-    pageLayoutDraftComponentState,
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
   );
 
-  const draftWidget = draftPageLayout.tabs
-    .flatMap((tab) => tab.widgets)
-    .find((w) => w.id === widget.id);
+  const editingWidgetId = useRecoilComponentValue(
+    pageLayoutEditingWidgetIdComponentState,
+  );
+
+  const { updatePageLayoutWidget } = useUpdatePageLayoutWidget();
+  const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
 
   const isDashboard = layoutType === PageLayoutType.DASHBOARD;
   const dashboardId = isDashboard ? targetRecordIdentifier?.id : undefined;
 
-  const configuration = (draftWidget?.configuration ?? widget.configuration) as
+  const configuration = widget.configuration as
     | StandaloneRichTextConfiguration
     | undefined;
 
@@ -71,6 +74,23 @@ export const StandaloneRichTextWidget = ({
       : undefined,
     skip: !isDefined(dashboardId),
   });
+
+  const handleChange = useCallback(
+    (blocknote: string) => {
+      updatePageLayoutWidget(widget.id, {
+        configuration: {
+          body: {
+            blocknote,
+            markdown: null,
+          },
+        },
+      });
+    },
+    [updatePageLayoutWidget, widget.id],
+  );
+
+  const isThisWidgetBeingEdited = editingWidgetId === widget.id;
+  const isEditable = isPageLayoutInEditMode && isThisWidgetBeingEdited;
 
   if (!isDefined(dashboardId)) {
     return (
@@ -94,9 +114,8 @@ export const StandaloneRichTextWidget = ({
             targetObjectNameSingular: CoreObjectNameSingular.Dashboard,
           }}
           attachments={attachments}
-          onChange={() => {}}
-          readonly={true}
-          syncExternalContent={true}
+          onChange={handleChange}
+          readonly={!isEditable}
         />
       </ScrollWrapper>
     </StyledContainer>
