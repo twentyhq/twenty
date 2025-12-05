@@ -31,7 +31,7 @@ const createMockCalendarEvent = (
   deletedAt: null,
   createdAt: '2024-03-20T09:00:00Z',
   updatedAt: '2024-03-20T09:00:00Z',
-  iCalUID: '',
+  iCalUid: '',
   conferenceSolution: '',
   calendarChannelEventAssociations: [],
   calendarEventParticipants: [],
