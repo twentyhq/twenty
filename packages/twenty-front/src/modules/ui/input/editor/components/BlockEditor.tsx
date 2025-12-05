@@ -7,11 +7,16 @@ import { type ClipboardEvent } from 'react';
 
 import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { getSlashMenu } from '@/activities/blocks/utils/getSlashMenu';
+import {
+  CustomMentionMenu,
+  type MentionItem,
+} from '@/ui/input/editor/components/CustomMentionMenu';
 import { CustomSideMenu } from '@/ui/input/editor/components/CustomSideMenu';
 import {
   CustomSlashMenu,
   type SuggestionItem,
 } from '@/ui/input/editor/components/CustomSlashMenu';
+import { useMentionMenu } from '@/ui/input/editor/hooks/useMentionMenu';
 
 interface BlockEditorProps {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
@@ -141,6 +146,7 @@ export const BlockEditor = ({
 }: BlockEditorProps) => {
   const theme = useTheme();
   const blockNoteTheme = theme.name === 'light' ? 'light' : 'dark';
+  const mentionItems = useMentionMenu(editor);
 
   const handleFocus = () => {
     onFocus?.();
@@ -178,6 +184,13 @@ export const BlockEditor = ({
             filterSuggestionItems<SuggestionItem>(getSlashMenu(editor), query)
           }
           suggestionMenuComponent={CustomSlashMenu}
+        />
+        <SuggestionMenuController
+          triggerCharacter="@"
+          getItems={async (query) =>
+            filterSuggestionItems<MentionItem>(mentionItems, query)
+          }
+          suggestionMenuComponent={CustomMentionMenu}
         />
       </BlockNoteView>
     </StyledEditor>
