@@ -4,6 +4,8 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -18,6 +20,7 @@ type FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs 
     createObjectInput: CreateObjectInput;
     workspaceId: string;
     workspaceCustomApplicationId: string;
+    existingFeatureFlagsMap: FeatureFlagMap;
   } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>;
 export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate =
   ({
@@ -25,6 +28,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
     workspaceId,
     workspaceCustomApplicationId,
     flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+    existingFeatureFlagsMap,
   }: FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs): {
     flatObjectMetadataToCreate: FlatObjectMetadata;
     relationTargetFlatFieldMetadataToCreate: FlatFieldMetadata[];
@@ -96,6 +100,8 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       existingFlatObjectMetadataMaps,
       sourceFlatObjectMetadata: flatObjectMetadataToCreate,
       workspaceId,
+      workspaceCustomApplicationId,
+      existingFeatureFlagsMap,
     });
 
     const objectFlatFieldMetadatas: FlatFieldMetadata[] = [

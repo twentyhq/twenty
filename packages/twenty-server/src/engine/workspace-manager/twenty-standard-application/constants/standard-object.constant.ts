@@ -1391,6 +1391,9 @@ export const STANDARD_OBJECTS = {
         universalIdentifier:
           TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedObjectMetadataId,
       },
+      targetMorphId: {
+        universalIdentifier: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
+      },
     },
     views: {
       allTimelineActivities: {
