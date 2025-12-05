@@ -5,6 +5,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStage,
   type MessageChannelWorkspaceEntity,
@@ -31,6 +32,7 @@ export class MessagingMessageListFetchJob {
     private readonly messagingMonitoringService: MessagingMonitoringService,
     private readonly twentyORMManager: TwentyORMManager,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
 
   @Process(MessagingMessageListFetchJob.name)
@@ -65,6 +67,13 @@ export class MessagingMessageListFetchJob {
       return;
     }
 
+    if (
+      messageChannel.syncStage !==
+      MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED
+    ) {
+      return;
+    }
+
     try {
       if (
         isThrottled(
@@ -72,35 +81,33 @@ export class MessagingMessageListFetchJob {
           messageChannel.throttleFailureCount,
         )
       ) {
+        await this.messageChannelSyncStatusService.scheduleMessageListFetch(
+          [messageChannel.id],
+          workspaceId,
+          true,
+        );
+
         return;
       }
 
-      switch (messageChannel.syncStage) {
-        case MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED:
-          await this.messagingMonitoringService.track({
-            eventName: 'message_list_fetch.started',
-            workspaceId,
-            connectedAccountId: messageChannel.connectedAccount.id,
-            messageChannelId: messageChannel.id,
-          });
+      await this.messagingMonitoringService.track({
+        eventName: 'message_list_fetch.started',
+        workspaceId,
+        connectedAccountId: messageChannel.connectedAccount.id,
+        messageChannelId: messageChannel.id,
+      });
 
-          await this.messagingMessageListFetchService.processMessageListFetch(
-            messageChannel,
-            workspaceId,
-          );
+      await this.messagingMessageListFetchService.processMessageListFetch(
+        messageChannel,
+        workspaceId,
+      );
 
-          await this.messagingMonitoringService.track({
-            eventName: 'message_list_fetch.completed',
-            workspaceId,
-            connectedAccountId: messageChannel.connectedAccount.id,
-            messageChannelId: messageChannel.id,
-          });
-
-          break;
-
-        default:
-          break;
-      }
+      await this.messagingMonitoringService.track({
+        eventName: 'message_list_fetch.completed',
+        workspaceId,
+        connectedAccountId: messageChannel.connectedAccount.id,
+        messageChannelId: messageChannel.id,
+      });
     } catch (error) {
       await this.messageImportErrorHandlerService.handleDriverException(
         error,

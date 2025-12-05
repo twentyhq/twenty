@@ -149,12 +149,16 @@ export class CalendarEventImportErrorHandlerService {
       case CalendarEventImportSyncStep.CALENDAR_EVENT_LIST_FETCH:
         await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
           [calendarChannel.id],
+          workspaceId,
+          true,
         );
         break;
 
       case CalendarEventImportSyncStep.CALENDAR_EVENTS_IMPORT:
         await this.calendarChannelSyncStatusService.scheduleCalendarEventsImport(
           [calendarChannel.id],
+          workspaceId,
+          true,
         );
         break;
 

@@ -9,13 +9,14 @@ import { DeleteRecordService } from 'src/engine/core-modules/record-crud/service
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
+import { PerObjectToolGeneratorService } from 'src/engine/core-modules/tool-generator/services/per-object-tool-generator.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { SearchArticlesTool } from 'src/engine/core-modules/tool/tools/search-articles-tool/search-articles-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { AgentToolGeneratorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-tool-generator.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { AgentToolGeneratorService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-tool-generator.service';
 import { ToolAdapterService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool-adapter.service';
 import { ToolService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -24,8 +25,8 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 import { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
@@ -37,6 +38,7 @@ export interface AgentToolTestContext {
   objectMetadataService: ObjectMetadataService;
   roleRepository: Repository<RoleEntity>;
   workspaceCacheService: WorkspaceCacheService;
+  perObjectToolGeneratorService: PerObjectToolGeneratorService;
   twentyORMGlobalManager: TwentyORMGlobalManager;
   testAgent: AgentEntity & { roleId: string | null };
   testRole: RoleEntity;
@@ -92,6 +94,12 @@ export const createAgentToolTestModule =
           provide: WorkspaceCacheService,
           useValue: {
             getOrRecompute: jest.fn(),
+          },
+        },
+        {
+          provide: PerObjectToolGeneratorService,
+          useValue: {
+            generate: jest.fn().mockResolvedValue({}),
           },
         },
         {
@@ -314,6 +322,9 @@ export const createAgentToolTestModule =
       WorkspaceCacheService,
     );
 
+    const perObjectToolGeneratorService =
+      module.get<PerObjectToolGeneratorService>(PerObjectToolGeneratorService);
+
     return {
       module,
       agentToolService,
@@ -321,6 +332,7 @@ export const createAgentToolTestModule =
       objectMetadataService,
       roleRepository,
       workspaceCacheService,
+      perObjectToolGeneratorService,
       twentyORMGlobalManager,
       testAgent,
       testRole,

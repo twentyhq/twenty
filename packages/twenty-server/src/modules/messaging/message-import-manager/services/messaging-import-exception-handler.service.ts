@@ -166,6 +166,7 @@ export class MessageImportExceptionHandlerService {
         await this.messageChannelSyncStatusService.scheduleMessageListFetch(
           [messageChannel.id],
           workspaceId,
+          true,
         );
         break;
 
@@ -174,6 +175,7 @@ export class MessageImportExceptionHandlerService {
         await this.messageChannelSyncStatusService.scheduleMessagesImport(
           [messageChannel.id],
           workspaceId,
+          true,
         );
         break;
 

@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/ai/ai-agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { type PlanStep } from 'src/engine/metadata-modules/ai/ai-chat-router/types/router-result.interface';
-import { standardAgentDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents';
+import { STANDARD_AGENT_DEFINITIONS } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/standard-agent-definitions';
 
 import { AgentExecutionService } from './agent-execution.service';
 
@@ -32,7 +33,10 @@ export type PlanExecutionResult = {
 export class AgentPlanExecutorService {
   private readonly logger = new Logger(AgentPlanExecutorService.name);
 
-  constructor(private readonly agentExecutionService: AgentExecutionService) {}
+  constructor(
+    private readonly agentExecutionService: AgentExecutionService,
+    private readonly agentService: AgentService,
+  ) {}
 
   async executePlan({
     steps,
@@ -70,11 +74,10 @@ export class AgentPlanExecutorService {
           `[PLAN EXECUTION] Step ${step.stepNumber}: Looking up agent "${step.agentName}"`,
         );
 
-        const agent =
-          await this.agentExecutionService.agentService.findOneAgentByName({
-            name: step.agentName,
-            workspaceId: workspace.id,
-          });
+        const agent = await this.agentService.findOneAgentByName({
+          name: step.agentName,
+          workspaceId: workspace.id,
+        });
 
         this.logger.log(
           `[PLAN EXECUTION] Step ${step.stepNumber}: Found agent "${agent.label}" (${agent.id})`,
@@ -226,7 +229,7 @@ export class AgentPlanExecutorService {
     );
 
     if (lastStepDefinition) {
-      const agentDefinition = standardAgentDefinitions.find(
+      const agentDefinition = STANDARD_AGENT_DEFINITIONS.find(
         (def) => def.name === lastStepDefinition.agentName,
       );
 

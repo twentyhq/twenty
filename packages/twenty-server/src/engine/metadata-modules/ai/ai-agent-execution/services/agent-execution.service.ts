@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   convertToModelMessages,
-  LanguageModelUsage,
   stepCountIs,
   streamText,
   ToolSet,
@@ -24,9 +23,6 @@ import {
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
-import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-actor-context.service';
-import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-model-config.service';
-import { AgentToolGeneratorService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-tool-generator.service';
 import { RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/ai/ai-agent/types/recordIdsByObjectMetadataNameSingular.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
@@ -37,10 +33,12 @@ import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/type
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-export interface AgentExecutionResult {
-  result: object;
-  usage: LanguageModelUsage;
-}
+import { AgentActorContextService } from './agent-actor-context.service';
+import { AgentModelConfigService } from './agent-model-config.service';
+import { AgentToolGeneratorService } from './agent-tool-generator.service';
+
+// Re-export for backward compatibility
+export { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 
 export interface StreamChatResponseResult {
   stream: ReturnType<typeof streamText>;
@@ -63,8 +61,8 @@ export class AgentExecutionService {
     private readonly agentToolGeneratorService: AgentToolGeneratorService,
     private readonly agentModelConfigService: AgentModelConfigService,
     private readonly aiBillingService: AIBillingService,
-    public readonly agentActorContextService: AgentActorContextService,
-    public readonly agentService: AgentService,
+    private readonly agentActorContextService: AgentActorContextService,
+    private readonly agentService: AgentService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -75,6 +73,7 @@ export class AgentExecutionService {
     actorContext,
     roleIds,
     toolHints,
+    additionalTools,
   }: {
     system: string;
     agent: FlatAgentWithRoleId | null;
@@ -82,6 +81,7 @@ export class AgentExecutionService {
     actorContext?: ActorMetadata;
     roleIds?: string[];
     toolHints?: ToolHints;
+    additionalTools?: ToolSet;
   }) {
     try {
       if (agent) {
@@ -112,7 +112,11 @@ export class AgentExecutionService {
             agent,
           );
 
-        tools = { ...baseTools, ...nativeModelTools };
+        tools = {
+          ...baseTools,
+          ...nativeModelTools,
+          ...(additionalTools || {}),
+        };
 
         providerOptions = this.agentModelConfigService.getProviderOptions(
           registeredModel,
@@ -120,7 +124,9 @@ export class AgentExecutionService {
         );
       }
 
-      this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
+      this.logger.log(
+        `Generated ${Object.keys(tools).length} tools for agent (including ${Object.keys(additionalTools || {}).length} additional tools)`,
+      );
 
       return {
         system,
@@ -278,6 +284,7 @@ export class AgentExecutionService {
     messages,
     recordIdsByObjectMetadataNameSingular,
     toolHints,
+    additionalTools,
   }: {
     workspace: WorkspaceEntity;
     userWorkspaceId: string;
@@ -285,6 +292,7 @@ export class AgentExecutionService {
     messages: UIMessage<unknown, UIDataTypes, UITools>[];
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
     toolHints?: ToolHints;
+    additionalTools?: ToolSet;
   }): Promise<{
     stream: ReturnType<typeof streamText>;
     timings: {
@@ -345,6 +353,7 @@ export class AgentExecutionService {
         actorContext,
         roleIds: [roleId, ...(agent?.roleId ? [agent?.roleId] : [])],
         toolHints,
+        additionalTools,
       });
 
       const aiRequestPrepTime = Date.now() - aiRequestPrepStart;
