@@ -15,6 +15,7 @@ import {
   MessageChannelPendingGroupEmailsAction,
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
+  MessageFolderImportPolicy,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessageFolderPendingSyncAction,
@@ -135,10 +136,16 @@ export class MessagingMessageListFetchService {
         },
       });
 
+      const messageFoldersToSync =
+        messageChannelWithFreshTokens.messageFolderImportPolicy ===
+        MessageFolderImportPolicy.ALL_FOLDERS
+          ? messageFolders
+          : messageFolders.filter((folder) => folder.isSynced);
+
       const messageLists =
         await this.messagingGetMessageListService.getMessageLists(
           messageChannelWithFreshTokens,
-          messageFolders,
+          messageFoldersToSync,
         );
 
       await this.cacheStorage.del(
