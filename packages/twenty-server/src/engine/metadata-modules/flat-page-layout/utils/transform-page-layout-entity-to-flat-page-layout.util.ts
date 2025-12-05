@@ -1,0 +1,19 @@
+import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
+import { type PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
+
+export const transformPageLayoutEntityToFlatPageLayout = (
+  pageLayoutEntity: PageLayoutEntity,
+): FlatPageLayout => {
+  return {
+    createdAt: pageLayoutEntity.createdAt,
+    deletedAt: pageLayoutEntity.deletedAt,
+    updatedAt: pageLayoutEntity.updatedAt,
+    id: pageLayoutEntity.id,
+    name: pageLayoutEntity.name,
+    type: pageLayoutEntity.type,
+    objectMetadataId: pageLayoutEntity.objectMetadataId,
+    workspaceId: pageLayoutEntity.workspaceId,
+    universalIdentifier: pageLayoutEntity.universalIdentifier,
+    applicationId: pageLayoutEntity.applicationId,
+  };
+};

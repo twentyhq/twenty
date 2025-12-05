@@ -8,10 +8,10 @@ import { v4 } from 'uuid';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
 import { WidgetConfigurationInterface } from 'src/engine/metadata-modules/page-layout/dtos/widget-configuration.interface';
+import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout-widget.entity';
 import {
   PageLayoutTabException,
@@ -32,8 +32,6 @@ export class PageLayoutWidgetService {
   constructor(
     @InjectRepository(PageLayoutWidgetEntity)
     private readonly pageLayoutWidgetRepository: Repository<PageLayoutWidgetEntity>,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly pageLayoutTabService: PageLayoutTabService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
@@ -130,11 +128,30 @@ export class PageLayoutWidgetService {
     );
 
     try {
-      await this.pageLayoutTabService.findByIdOrThrow(
-        pageLayoutWidgetData.pageLayoutTabId,
-        workspaceId,
-        transactionManager,
-      );
+      const repository = this.getPageLayoutWidgetRepository(transactionManager);
+
+      const pageLayoutTab = await (
+        transactionManager
+          ? transactionManager.getRepository(PageLayoutTabEntity)
+          : repository.manager.getRepository(PageLayoutTabEntity)
+      ).findOne({
+        where: {
+          id: pageLayoutWidgetData.pageLayoutTabId,
+          workspaceId,
+          deletedAt: IsNull(),
+        },
+        relations: ['pageLayout'],
+      });
+
+      if (!isDefined(pageLayoutTab)) {
+        throw new PageLayoutWidgetException(
+          generatePageLayoutWidgetExceptionMessage(
+            PageLayoutWidgetExceptionMessageKey.PAGE_LAYOUT_TAB_NOT_FOUND,
+            pageLayoutWidgetData.pageLayoutTabId,
+          ),
+          PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+        );
+      }
 
       let validatedConfig: WidgetConfigurationInterface | null = null;
 
@@ -175,22 +192,11 @@ export class PageLayoutWidgetService {
         }
       }
 
-      const workspace = await (
-        transactionManager
-          ? transactionManager.getRepository(WorkspaceEntity)
-          : this.workspaceRepository
-      ).findOneOrFail({
-        where: { id: workspaceId },
-        select: ['workspaceCustomApplicationId'],
-      });
-
-      const repository = this.getPageLayoutWidgetRepository(transactionManager);
-
       const insertResult = await repository.insert({
         ...pageLayoutWidgetData,
         workspaceId,
         universalIdentifier: v4(),
-        applicationId: workspace.workspaceCustomApplicationId,
+        applicationId: pageLayoutTab.pageLayout.applicationId,
         ...(validatedConfig && { configuration: validatedConfig }),
       } as QueryDeepPartialEntity<PageLayoutWidgetEntity>);
 

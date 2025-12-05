@@ -19,7 +19,6 @@ import {
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 
 describe('PageLayoutTabService', () => {
   let pageLayoutTabService: PageLayoutTabService;
@@ -74,14 +73,6 @@ describe('PageLayoutTabService', () => {
             delete: jest.fn(),
             restore: jest.fn(),
             insert: jest.fn(),
-          },
-        },
-        {
-          provide: getRepositoryToken(WorkspaceEntity),
-          useValue: {
-            findOneOrFail: jest.fn().mockResolvedValue({
-              workspaceCustomApplicationId: 'application-id',
-            }),
           },
         },
         {
@@ -250,6 +241,15 @@ describe('PageLayoutTabService', () => {
         pageLayoutId: 'page-layout-id',
         position: 1,
       };
+
+      const mockPageLayout = {
+        id: 'page-layout-id',
+        applicationId: 'application-id',
+      };
+
+      jest
+        .spyOn(pageLayoutService, 'findByIdOrThrow')
+        .mockResolvedValue(mockPageLayout as any);
 
       jest
         .spyOn(pageLayoutTabService, 'findByIdOrThrow')

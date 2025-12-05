@@ -36,6 +36,9 @@ describe('PageLayoutUpdateService', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: null,
+    universalIdentifier: 'universal-identifier',
+    applicationId: 'application-id',
+    application: {} as ApplicationEntity,
   } as PageLayoutEntity;
 
   const mockTab = {
