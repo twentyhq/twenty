@@ -8,6 +8,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -39,6 +40,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Message id from the message header`,
     icon: 'IconHash',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   headerMessageId: string | null;
 
@@ -49,6 +51,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Subject`,
     icon: 'IconMessage',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   subject: string | null;
 
@@ -59,6 +62,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Text`,
     icon: 'IconMessage',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   text: string | null;
 
@@ -69,6 +73,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The date the message was received`,
     icon: 'IconCalendar',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   receivedAt: Date | null;
 
@@ -82,6 +87,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'messages',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   messageThread: Relation<MessageThreadWorkspaceEntity> | null;
 
@@ -97,6 +103,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => MessageParticipantWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   messageParticipants: Relation<MessageParticipantWorkspaceEntity[]>;
 
@@ -109,6 +116,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => MessageChannelMessageAssociationWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   messageChannelMessageAssociations: Relation<
     MessageChannelMessageAssociationWorkspaceEntity[]

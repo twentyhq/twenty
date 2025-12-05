@@ -8,6 +8,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -47,6 +48,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
     description: msg`Handle`,
     icon: 'IconMail',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   handle: string | null;
 
@@ -57,6 +59,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
     description: msg`Display Name`,
     icon: 'IconUser',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   displayName: string | null;
 
@@ -68,6 +71,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
     icon: 'IconUser',
     defaultValue: false,
   })
+  @WorkspaceIsFieldUIReadOnly()
   isOrganizer: boolean;
 
   @WorkspaceField({
@@ -104,6 +108,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
     ],
     defaultValue: `'${CalendarEventParticipantResponseStatus.NEEDS_ACTION}'`,
   })
+  @WorkspaceIsFieldUIReadOnly()
   responseStatus: string;
 
   @WorkspaceRelation({
@@ -116,6 +121,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
     inverseSideFieldKey: 'calendarEventParticipants',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   calendarEvent: Relation<CalendarEventWorkspaceEntity>;
 
   @WorkspaceJoinColumn('calendarEvent')
@@ -131,6 +137,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
     inverseSideFieldKey: 'calendarEventParticipants',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
 
@@ -147,6 +154,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
     inverseSideFieldKey: 'calendarEventParticipants',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   workspaceMember: Relation<WorkspaceMemberWorkspaceEntity> | null;
 

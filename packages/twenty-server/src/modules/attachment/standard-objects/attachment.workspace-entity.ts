@@ -49,6 +49,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Attachment name`,
     icon: 'IconFileUpload',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   name: string | null;
 
@@ -59,6 +60,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Attachment full path`,
     icon: 'IconLink',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   fullPath: string | null;
 
@@ -70,6 +72,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Attachment type (deprecated - use fileCategory)`,
     icon: 'IconList',
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   type: string | null;
 
@@ -131,6 +134,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     ],
     defaultValue: "'OTHER'",
   })
+  @WorkspaceIsFieldUIReadOnly()
   fileCategory: string;
 
   @WorkspaceField({
@@ -154,6 +158,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'authoredAttachments',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   author: Relation<WorkspaceMemberWorkspaceEntity> | null;
 
@@ -170,6 +175,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'attachments',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   task: Relation<TaskWorkspaceEntity> | null;
 
@@ -186,6 +192,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'attachments',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   note: Relation<NoteWorkspaceEntity> | null;
 
@@ -202,6 +209,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'attachments',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
 
@@ -218,6 +226,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'attachments',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   company: Relation<CompanyWorkspaceEntity> | null;
 
@@ -234,6 +243,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'attachments',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   opportunity: Relation<OpportunityWorkspaceEntity> | null;
 
@@ -250,6 +260,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'attachments',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   dashboard: Relation<DashboardWorkspaceEntity> | null;
 
@@ -266,6 +277,7 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'attachments',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()
   workflow: Relation<WorkflowWorkspaceEntity> | null;
 
