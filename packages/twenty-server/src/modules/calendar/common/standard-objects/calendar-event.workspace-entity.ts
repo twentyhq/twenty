@@ -134,8 +134,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconKey',
   })
   @WorkspaceIsNullable()
-  // iCalUid: string | null;
-  iCalUID: string | null;
+  iCalUid: string | null;
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.conferenceSolution,

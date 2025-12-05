@@ -5,7 +5,7 @@ export const mapCalendarEventsByICalUID = (
 ): Map<string, string> => {
   return new Map<string, string>(
     existingCalendarEvents.map((calendarEvent) => [
-      calendarEvent.iCalUID ?? '',
+      calendarEvent.iCalUid ?? '',
       calendarEvent.id,
     ]),
   );
