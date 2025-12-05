@@ -60,7 +60,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       ),
     ];
     const allMetadataNameCacheToCompute = [
-      ...new Set(...allMetadataNameToCompare, allDependencyMetadataName),
+      ...new Set(...allMetadataNameToCompare, ...allDependencyMetadataName),
     ];
     const allRelatedFlatEntityMaps =
       await this.workspaceCacheService.getOrRecompute(
