@@ -1,7 +1,8 @@
 import { type DataSource } from 'typeorm';
+import { v4 } from 'uuid';
 
-import { validateAndTransformWidgetConfiguration } from 'src/engine/core-modules/page-layout/utils/validate-and-transform-widget-configuration.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { validateAndTransformWidgetConfiguration } from 'src/engine/metadata-modules/page-layout/utils/validate-and-transform-widget-configuration.util';
 import { getPageLayoutWidgetDataSeeds } from 'src/engine/workspace-manager/dev-seeder/core/utils/get-page-layout-widget-data-seeds.util';
 
 export const seedPageLayoutWidgets = async ({
@@ -10,12 +11,14 @@ export const seedPageLayoutWidgets = async ({
   workspaceId,
   objectMetadataItems,
   isDashboardV2Enabled,
+  workspaceCustomApplicationId,
 }: {
   dataSource: DataSource;
   schemaName: string;
   workspaceId: string;
   objectMetadataItems: ObjectMetadataEntity[];
   isDashboardV2Enabled: boolean;
+  workspaceCustomApplicationId: string;
 }) => {
   const widgetSeeds = getPageLayoutWidgetDataSeeds(
     workspaceId,
@@ -38,6 +41,8 @@ export const seedPageLayoutWidgets = async ({
         workspaceId,
         gridPosition: widget.gridPosition,
         configuration: validatedConfiguration,
+        universalIdentifier: v4(),
+        applicationId: workspaceCustomApplicationId,
       };
     }),
   );
@@ -55,6 +60,8 @@ export const seedPageLayoutWidgets = async ({
         'configuration',
         'objectMetadataId',
         'workspaceId',
+        'universalIdentifier',
+        'applicationId',
       ])
       .values(pageLayoutWidgets)
       .orIgnore()
