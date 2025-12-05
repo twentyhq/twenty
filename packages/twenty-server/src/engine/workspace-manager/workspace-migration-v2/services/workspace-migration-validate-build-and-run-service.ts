@@ -7,7 +7,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-required-metadata-for-validation.constant';
-import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
@@ -58,12 +58,25 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     const allMetadataNameCacheToCompute = [
       ...new Set([...allMetadataNameToCompare, ...allDependencyMetadataName]),
     ];
+    const allFlatEntityMapsCacheKeysToCompute =
+      allMetadataNameCacheToCompute.map(getMetadataFlatEntityMapsKey);
+
     const allRelatedFlatEntityMaps =
       await this.workspaceCacheService.getOrRecompute(
         workspaceId,
-        allMetadataNameCacheToCompute.map(getMetadataFlatEntityMapsKey),
+        allFlatEntityMapsCacheKeysToCompute,
       );
 
+    const initialAccumulator = allDependencyMetadataName.reduce<
+      Partial<AllFlatEntityMaps>
+    >(
+      (allFlatEntityMaps, metadataName) => ({
+        ...allFlatEntityMaps,
+        [getMetadataFlatEntityMapsKey(metadataName)]:
+          createEmptyFlatEntityMaps(),
+      }),
+      {},
+    );
     const dependencyAllFlatEntityMaps = allDependencyMetadataName.reduce(
       (allFlatEntityMaps, metadataName) => {
         const metadataFlatEntityMapsKey =
@@ -75,7 +88,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
             allRelatedFlatEntityMaps[metadataFlatEntityMapsKey],
         };
       },
-      createEmptyAllFlatEntityMaps(),
+      initialAccumulator,
     );
 
     return {
