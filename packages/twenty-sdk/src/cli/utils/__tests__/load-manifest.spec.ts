@@ -74,13 +74,13 @@ declare module 'twenty-sdk' {
     icon?: string;
   };
 
-  export const ObjectMetadata = (_: ObjectMetadataOptions): ClassDecorator => {
+  export const Object = (_: ObjectMetadataOptions): ClassDecorator => {
     return () => {};
   };
 
   export class BaseObjectMetadata {}
 
-  export enum FieldMetadataType {
+  export enum FieldType {
     TEXT = 'TEXT',
     FULL_NAME = 'FULL_NAME',
     ADDRESS = 'ADDRESS',
@@ -88,7 +88,7 @@ declare module 'twenty-sdk' {
     DATE_TIME = 'DATE_TIME',
   }
 
-  export const FieldMetadata: (_: any) => PropertyDecorator;
+  export const Field: (_: any) => PropertyDecorator;
 }
 `;
 
@@ -125,10 +125,9 @@ export const config: FunctionConfig = {
 };`;
 
 const objectMock = `import {
-  ObjectMetadata,
-  BaseObjectMetadata,
-  FieldMetadata,
-  FieldMetadataType
+  Object,
+  Field,
+  FieldType
 } from 'twenty-sdk';
 
 enum PostCardStatus {
@@ -138,7 +137,7 @@ enum PostCardStatus {
   RETURNED = 'RETURNED',
 }
 
-@ObjectMetadata({
+@Object({
   universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
   nameSingular: 'postCard',
   namePlural: 'postCards',
@@ -147,32 +146,32 @@ enum PostCardStatus {
   description: ' A post card object',
   icon: 'IconMail',
 })
-export class PostCard extends BaseObjectMetadata {
-  @FieldMetadata({
+export class PostCard {
+  @Field({
     universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
-    type: FieldMetadataType.TEXT,
+    type: FieldType.TEXT,
     label: 'Content',
     description: "Postcard's content",
   })
   content: string;
 
-  @FieldMetadata({
+  @Field({
     universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
-    type: FieldMetadataType.FULL_NAME,
+    type: FieldType.FULL_NAME,
     label: 'Recipient name',
   })
   recipientName: string;
 
-  @FieldMetadata({
+  @Field({
     universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
-    type: FieldMetadataType.ADDRESS,
+    type: FieldType.ADDRESS,
     label: 'Recipient address',
   })
   recipientAddress: string;
 
-  @FieldMetadata({
+  @Field({
     universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
-    type: FieldMetadataType.SELECT,
+    type: FieldType.SELECT,
     label: 'Status',
     defaultValue: \`'\${PostCardStatus.DRAFT}'\`,
     options: [
@@ -204,9 +203,9 @@ export class PostCard extends BaseObjectMetadata {
   })
   status: 'draft' | 'sent' | 'delivered' | 'returned';
 
-  @FieldMetadata({
+  @Field({
     universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
-    type: FieldMetadataType.DATE_TIME,
+    type: FieldType.DATE_TIME,
     label: 'Delivered at',
     isNullable: true,
     defaultValue: null,

@@ -16,6 +16,10 @@ import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serve
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
+import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-target.module';
+import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
+import { PermissionFlagModule } from 'src/engine/metadata-modules/permission-flag/permission-flag.module';
+import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 
 @Module({
   imports: [
@@ -32,6 +36,10 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     RouteTriggerModule,
     WorkspaceMigrationV2Module,
     PermissionsModule,
+    RoleModule,
+    RoleTargetModule,
+    ObjectPermissionModule,
+    PermissionFlagModule,
   ],
   providers: [
     ApplicationResolver,
