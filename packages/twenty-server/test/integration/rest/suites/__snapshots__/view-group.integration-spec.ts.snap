@@ -24,8 +24,8 @@ exports[`View Group REST API POST /metadata/viewGroups should fail to create vie
         "errors": [
           {
             "code": "INVALID_VIEW_DATA",
-            "message": "Field metadata not found",
-            "userFriendlyMessage": "Field metadata not found",
+            "message": "Field value is required",
+            "userFriendlyMessage": "Field value is required",
           },
         ],
         "flatEntityMinimalInformation": {

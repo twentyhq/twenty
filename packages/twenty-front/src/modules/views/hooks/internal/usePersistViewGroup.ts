@@ -32,9 +32,11 @@ export const usePersistViewGroupRecords = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const createViewGroups = useCallback(
-    async (
-      createCoreViewGroupInputs: CreateManyCoreViewGroupsMutationVariables,
-    ): Promise<
+    async ({
+      createCoreViewGroupInputs,
+    }: {
+      createCoreViewGroupInputs: CreateManyCoreViewGroupsMutationVariables;
+    }): Promise<
       MetadataRequestResult<Awaited<
         ReturnType<typeof createManyCoreViewGroupsMutation>
       > | null>

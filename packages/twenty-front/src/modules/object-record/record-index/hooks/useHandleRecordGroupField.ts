@@ -2,17 +2,21 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
+import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { usePersistView } from '@/views/hooks/internal/usePersistView';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroup';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { type ViewGroup } from '@/views/types/ViewGroup';
+import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { type CoreView } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useHandleRecordGroupField = () => {
-  const { createViewGroups, deleteViewGroups } = usePersistViewGroupRecords();
+  const { deleteViewGroups } = usePersistViewGroupRecords();
 
   const currentViewIdCallbackState = useRecoilComponentCallbackState(
     contextStoreCurrentViewIdComponentState,
@@ -25,6 +29,7 @@ export const useHandleRecordGroupField = () => {
   const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
   const { updateView } = usePersistView();
+  const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
   const handleRecordGroupFieldChange = useRecoilCallback(
     ({ snapshot }) =>
@@ -50,16 +55,29 @@ export const useHandleRecordGroupField = () => {
           return;
         }
 
-        await updateView({
+        const updatedViewResult = await updateView({
           id: view.id,
           input: {
             mainGroupByFieldMetadataId: fieldMetadataItem.id,
           },
         });
 
+        if (updatedViewResult.status === 'successful') {
+          const updatedCoreView = updatedViewResult.response.data
+            ?.updateCoreView as CoreView;
+
+          if (isDefined(updatedCoreView)) {
+            const updatedViewConverted = convertCoreViewToView(updatedCoreView);
+            await loadRecordIndexStates(
+              updatedViewConverted,
+              objectMetadataItem,
+            );
+          }
+        }
+
         const existingGroupKeys = new Set(
           view.viewGroups.map(
-            (group) => `${group.fieldMetadataId}:${group.fieldValue}`,
+            (group) => `${view.mainGroupByFieldMetadataId}:${group.fieldValue}`,
           ),
         );
 
@@ -79,7 +97,6 @@ export const useHandleRecordGroupField = () => {
                 fieldValue: option.value,
                 isVisible: true,
                 position: index,
-                fieldMetadataId: fieldMetadataItem.id,
               }) satisfies ViewGroup,
           );
 
@@ -93,45 +110,23 @@ export const useHandleRecordGroupField = () => {
             fieldValue: '',
             isVisible: true,
             position: fieldMetadataItem.options.length,
-            fieldMetadataId: fieldMetadataItem.id,
           } satisfies ViewGroup);
         }
 
-        const viewGroupsToDelete = view.viewGroups.filter(
-          (group) => group.fieldMetadataId !== fieldMetadataItem.id,
-        );
-
         const newViewGroupsList = [
           ...view.viewGroups.filter(
-            (group) => group.fieldMetadataId === fieldMetadataItem.id,
+            (_group) =>
+              view.mainGroupByFieldMetadataId === fieldMetadataItem.id,
           ),
           ...viewGroupsToCreate,
         ];
 
-        setRecordGroupsFromViewGroups(
-          view.id,
-          newViewGroupsList,
+        setRecordGroupsFromViewGroups({
+          viewId: view.id,
+          mainGroupByFieldMetadataId: fieldMetadataItem.id,
+          viewGroups: newViewGroupsList,
           objectMetadataItem,
-        );
-
-        if (viewGroupsToCreate.length > 0) {
-          await createViewGroups({
-            inputs: viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
-              ...viewGroup,
-              viewId: view.id,
-            })),
-          });
-        }
-
-        if (viewGroupsToDelete.length > 0) {
-          await deleteViewGroups(
-            viewGroupsToDelete.map((group) => ({
-              input: {
-                id: group.id,
-              },
-            })),
-          );
-        }
+        });
       },
     [
       currentViewIdCallbackState,
@@ -139,8 +134,7 @@ export const useHandleRecordGroupField = () => {
       updateView,
       setRecordGroupsFromViewGroups,
       objectMetadataItem,
-      createViewGroups,
-      deleteViewGroups,
+      loadRecordIndexStates,
     ],
   );
 
@@ -173,7 +167,16 @@ export const useHandleRecordGroupField = () => {
           })),
         );
 
-        setRecordGroupsFromViewGroups(view.id, [], objectMetadataItem);
+        if (!isDefined(view.mainGroupByFieldMetadataId)) {
+          throw new Error('mainGroupByFieldMetadataId is required');
+        }
+
+        setRecordGroupsFromViewGroups({
+          viewId: view.id,
+          mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId,
+          viewGroups: [],
+          objectMetadataItem,
+        });
       },
     [
       deleteViewGroups,
