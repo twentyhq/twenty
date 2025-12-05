@@ -21,5 +21,6 @@ export const FLAT_FIELD_METADATA_EDITABLE_PROPERTIES = {
     'label',
     'options',
     'settings',
+    'isUnique', // not editable for standard fields with standard unique constraint
   ],
 } as const satisfies Record<'standard' | 'custom', (keyof FlatFieldMetadata)[]>;
