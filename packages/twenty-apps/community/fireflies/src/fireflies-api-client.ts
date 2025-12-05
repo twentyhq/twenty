@@ -1,5 +1,11 @@
 import { createLogger } from './logger';
-import type { FirefliesMeetingData, FirefliesParticipant, SummaryFetchConfig } from './types';
+import {
+  FIREFLIES_PLANS,
+  type FirefliesMeetingData,
+  type FirefliesParticipant,
+  type FirefliesPlan,
+  type SummaryFetchConfig
+} from './types';
 
 const logger = createLogger('fireflies-api');
 
@@ -16,10 +22,14 @@ export class FirefliesApiClient {
 
   async fetchMeetingData(
     meetingId: string,
-    options?: { timeout?: number }
+    options?: { timeout?: number; plan?: FirefliesPlan }
   ): Promise<FirefliesMeetingData> {
-    const query = `
-      query GetTranscript($transcriptId: String!) {
+    const plan = options?.plan ?? FIREFLIES_PLANS.FREE;
+    const isPremiumPlan =
+      plan === FIREFLIES_PLANS.BUSINESS || plan === FIREFLIES_PLANS.ENTERPRISE;
+
+    const basicQuery = `
+      query GetTranscriptBasic($transcriptId: String!) {
         transcript(id: $transcriptId) {
           id
           title
@@ -45,75 +55,97 @@ export class FirefliesApiClient {
           summary {
             action_items
             overview
+            keywords
+            topics_discussed
+            meeting_type
           }
           transcript_url
+          video_url
         }
       }
     `;
 
-    const controller = new AbortController();
-    const timeoutId = options?.timeout
-      ? setTimeout(() => controller.abort(), options.timeout)
-      : null;
+    const businessQuery = `
+      query GetTranscriptFull($transcriptId: String!) {
+        transcript(id: $transcriptId) {
+          id
+          title
+          date
+          duration
+          participants
+          organizer_email
+          analytics {
+            sentiments {
+              positive_pct
+              negative_pct
+              neutral_pct
+            }
+          }
+          meeting_attendees {
+            displayName
+            email
+            phoneNumber
+            name
+            location
+          }
+          meeting_attendance {
+            name
+            join_time
+            leave_time
+          }
+          speakers {
+            name
+          }
+          summary {
+            action_items
+            overview
+            keywords
+            topics_discussed
+            meeting_type
+          }
+          transcript_url
+          video_url
+        }
+      }
+    `;
+
+    const queryToUse = isPremiumPlan ? businessQuery : basicQuery;
 
     try {
-      const response = await fetch('https://api.fireflies.ai/graphql', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
-        },
-        body: JSON.stringify({
-          query,
-          variables: { transcriptId: meetingId },
-        }),
-        signal: controller.signal,
+      return await this.executeTranscriptQuery({
+        meetingId,
+        query: queryToUse,
+        timeout: options?.timeout,
       });
-
-      if (timeoutId) clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        let errorDetails = `Fireflies API request failed with status ${response.status}`;
-        try {
-          const errorBody = await response.text();
-          if (errorBody) {
-            errorDetails += `: ${errorBody}`;
-          }
-        } catch {
-          // Ignore if we can't read the response body
-        }
-        throw new Error(errorDetails);
-      }
-
-      const json = await response.json() as {
-        data?: { transcript?: any };
-        errors?: Array<{ message?: string }>;
-      };
-
-      if (json.errors && json.errors.length > 0) {
-        throw new Error(`Fireflies API error: ${json.errors[0]?.message || 'Unknown error'}`);
-      }
-
-      const transcript = json.data?.transcript;
-      if (!transcript) {
-        throw new Error('Invalid response from Fireflies API: missing transcript data');
-      }
-
-      return this.transformMeetingData(transcript, meetingId);
     } catch (error) {
-      if (timeoutId) clearTimeout(timeoutId);
+      const message = error instanceof Error ? error.message : String(error);
+      const planError =
+        message.toLowerCase().includes('business or higher plan') ||
+        message.includes('Cannot query field "sentiments"') ||
+        message.includes('Cannot query field "analytics"');
+
+      if (isPremiumPlan && planError) {
+        logger.warn('Fireflies plan limitation detected, retrying with basic query (analytics/sentiments unavailable)');
+        return this.executeTranscriptQuery({
+          meetingId,
+          query: basicQuery,
+          timeout: options?.timeout,
+        });
+      }
+
       throw error;
     }
   }
 
   async fetchMeetingDataWithRetry(
     meetingId: string,
-    config: SummaryFetchConfig
+    config: SummaryFetchConfig,
+    plan: FirefliesPlan = FIREFLIES_PLANS.FREE
   ): Promise<{ data: FirefliesMeetingData; summaryReady: boolean }> {
     // immediate_only: single attempt, no retries
     if (config.strategy === 'immediate_only') {
       logger.debug(`fetching meeting ${meetingId} (strategy: immediate_only)`);
-      const meetingData = await this.fetchMeetingData(meetingId, { timeout: 10000 });
+      const meetingData = await this.fetchMeetingData(meetingId, { timeout: 10000, plan });
       const ready = this.isSummaryReady(meetingData);
       logger.debug(`summary ready: ${ready}`);
       return { data: meetingData, summaryReady: ready };
@@ -124,7 +156,7 @@ export class FirefliesApiClient {
 
     for (let attempt = 1; attempt <= config.retryAttempts; attempt++) {
       try {
-        const meetingData = await this.fetchMeetingData(meetingId, { timeout: 10000 });
+        const meetingData = await this.fetchMeetingData(meetingId, { timeout: 10000, plan });
         const ready = this.isSummaryReady(meetingData);
 
         logger.debug(`attempt ${attempt}/${config.retryAttempts}: summary ready=${ready}`);
@@ -158,6 +190,67 @@ export class FirefliesApiClient {
     throw new Error('Failed to fetch meeting data after retries');
   }
 
+  private async executeTranscriptQuery({
+    meetingId,
+    query,
+    timeout,
+  }: {
+    meetingId: string;
+    query: string;
+    timeout?: number;
+  }): Promise<FirefliesMeetingData> {
+    const controller = new AbortController();
+    const timeoutId = timeout ? setTimeout(() => controller.abort(), timeout) : null;
+
+    try {
+      const response = await fetch('https://api.fireflies.ai/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.apiKey}`,
+        },
+        body: JSON.stringify({
+          query,
+          variables: { transcriptId: meetingId },
+        }),
+        signal: controller.signal,
+      });
+
+      if (timeoutId) clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        let errorDetails = `Fireflies API request failed with status ${response.status}`;
+        try {
+          const errorBody = await response.text();
+          if (errorBody) {
+            errorDetails += `: ${errorBody}`;
+          }
+        } catch {
+          // Ignore if we can't read the response body
+        }
+        throw new Error(errorDetails);
+      }
+
+      const json = await response.json() as {
+        data?: { transcript?: Record<string, unknown> };
+        errors?: Array<{ message?: string }>;
+      };
+
+      if (json.errors && json.errors.length > 0) {
+        throw new Error(`Fireflies API error: ${json.errors[0]?.message || 'Unknown error'}`);
+      }
+
+      const transcript = json.data?.transcript;
+      if (!transcript) {
+        throw new Error('Invalid response from Fireflies API: missing transcript data');
+      }
+
+      return this.transformMeetingData(transcript, meetingId);
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
+    }
+  }
+
   private isSummaryReady(meetingData: FirefliesMeetingData): boolean {
     return (
       (meetingData.summary?.action_items?.length > 0) ||
@@ -166,23 +259,21 @@ export class FirefliesApiClient {
     );
   }
 
-  private extractAllParticipants(transcript: any): FirefliesParticipant[] {
+  private extractAllParticipants(transcript: Record<string, unknown>): FirefliesParticipant[] {
     const participantsWithEmails: FirefliesParticipant[] = [];
     const participantsNameOnly: FirefliesParticipant[] = [];
 
     logger.debug('=== PARTICIPANT EXTRACTION DEBUG ===');
     logger.debug('participants field:', JSON.stringify(transcript.participants));
     logger.debug('meeting_attendees field:', JSON.stringify(transcript.meeting_attendees));
-    logger.debug('speakers field:', transcript.speakers?.map((s: any) => s.name));
-    logger.debug('meeting_attendance field:', transcript.meeting_attendance?.map((a: any) => a.name));
+    logger.debug('speakers field:', (transcript.speakers as Array<{ name: string }>)?.map((s) => s.name));
+    logger.debug('meeting_attendance field:', (transcript.meeting_attendance as Array<{ name: string }>)?.map((a) => a.name));
     logger.debug('organizer_email:', transcript.organizer_email);
 
-    // Helper function to check if a string is an email
     const isEmail = (str: string): boolean => {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str.trim());
     };
 
-    // Helper function to check if already exists
     const isDuplicate = (name: string, email: string): boolean => {
       const nameLower = name.toLowerCase().trim();
       const emailLower = email.toLowerCase().trim();
@@ -198,29 +289,24 @@ export class FirefliesApiClient {
     // 1. Extract from legacy participants field (with emails)
     if (transcript.participants && Array.isArray(transcript.participants)) {
       transcript.participants.forEach((participant: string) => {
-        // Handle comma-separated emails or names
         const parts = participant.split(',').map(p => p.trim());
 
         parts.forEach(part => {
           const emailMatch = part.match(/<([^>]+)>/);
           const email = emailMatch ? emailMatch[1] : '';
-          // Extract name properly: if there's an email in angle brackets, get the part before it
           const name = emailMatch
             ? part.substring(0, part.indexOf('<')).trim()
             : part.trim();
 
-          // Skip if the "name" is actually an email address
           if (isEmail(name)) {
             logger.debug(`Skipping participant with email as name: "${name}"`);
             return;
           }
 
-          // Skip if empty name
           if (!name) {
             return;
           }
 
-          // Skip duplicates
           if (isDuplicate(name, email)) {
             logger.debug(`Skipping duplicate participant: "${name}" <${email}>`);
             return;
@@ -237,11 +323,10 @@ export class FirefliesApiClient {
 
     // 2. Extract from meeting_attendees field (structured)
     if (transcript.meeting_attendees && Array.isArray(transcript.meeting_attendees)) {
-      transcript.meeting_attendees.forEach((attendee: any) => {
-        const name = attendee.displayName || attendee.name || '';
-        const email = attendee.email || '';
+      transcript.meeting_attendees.forEach((attendee: Record<string, unknown>) => {
+        const name = (attendee.displayName || attendee.name || '') as string;
+        const email = (attendee.email || '') as string;
 
-        // Skip if name is actually an email
         if (isEmail(name)) {
           logger.debug(`Skipping attendee with email as name: "${name}"`);
           return;
@@ -259,10 +344,9 @@ export class FirefliesApiClient {
 
     // 3. Extract from speakers field (name only)
     if (transcript.speakers && Array.isArray(transcript.speakers)) {
-      transcript.speakers.forEach((speaker: any) => {
-        const name = speaker.name || '';
+      transcript.speakers.forEach((speaker: Record<string, unknown>) => {
+        const name = (speaker.name || '') as string;
 
-        // Skip if name is actually an email
         if (isEmail(name)) {
           logger.debug(`Skipping speaker with email as name: "${name}"`);
           return;
@@ -276,10 +360,9 @@ export class FirefliesApiClient {
 
     // 4. Extract from meeting_attendance field (name only)
     if (transcript.meeting_attendance && Array.isArray(transcript.meeting_attendance)) {
-      transcript.meeting_attendance.forEach((attendance: any) => {
-        const name = attendance.name || '';
+      transcript.meeting_attendance.forEach((attendance: Record<string, unknown>) => {
+        const name = (attendance.name || '') as string;
 
-        // Skip if name is actually an email or contains comma-separated emails
         if (isEmail(name) || name.includes(',')) {
           logger.debug(`Skipping attendance with email/list as name: "${name}"`);
           return;
@@ -292,57 +375,49 @@ export class FirefliesApiClient {
     }
 
     // 5. Add organizer email if available and not already included
-    const organizerEmail = transcript.organizer_email;
+    const organizerEmail = transcript.organizer_email as string | undefined;
     if (organizerEmail) {
-      // Check if organizer email is already in the participants
       const existsWithEmail = participantsWithEmails.some(p =>
         p.email.toLowerCase() === organizerEmail.toLowerCase()
       );
 
       if (!existsWithEmail) {
-        // Try to find organizer name from speakers/attendance and match with email
         let organizerName = '';
 
-        // Extract username from organizer email for matching
         const emailUsername = organizerEmail.split('@')[0].toLowerCase();
         const emailNameVariations = [emailUsername];
 
-        // Add common name variations based on email username
         if (emailUsername === 'alex') {
           emailNameVariations.push('alexander', 'alexandre', 'alex');
         }
 
-        // Look for organizer in speakers by matching email username to speaker names
         if (transcript.speakers && Array.isArray(transcript.speakers)) {
-          const potentialOrganizerSpeaker = transcript.speakers.find((speaker: any) => {
-            const name = (speaker.name || '').toLowerCase();
+          const potentialOrganizerSpeaker = transcript.speakers.find((speaker: Record<string, unknown>) => {
+            const name = ((speaker.name || '') as string).toLowerCase();
             return emailNameVariations.some(variation =>
               name.includes(variation) || variation.includes(name)
             );
-          });
+          }) as Record<string, unknown> | undefined;
           if (potentialOrganizerSpeaker) {
-            organizerName = potentialOrganizerSpeaker.name;
+            organizerName = potentialOrganizerSpeaker.name as string;
           }
         }
 
-        // Look for organizer in attendance
         if (!organizerName && transcript.meeting_attendance && Array.isArray(transcript.meeting_attendance)) {
-          const potentialOrganizerAttendance = transcript.meeting_attendance.find((attendance: any) => {
-            const name = (attendance.name || '').toLowerCase();
+          const potentialOrganizerAttendance = transcript.meeting_attendance.find((attendance: Record<string, unknown>) => {
+            const name = ((attendance.name || '') as string).toLowerCase();
             return emailNameVariations.some(variation =>
               name.includes(variation) || variation.includes(name)
             );
-          });
+          }) as Record<string, unknown> | undefined;
           if (potentialOrganizerAttendance) {
-            organizerName = potentialOrganizerAttendance.name;
+            organizerName = potentialOrganizerAttendance.name as string;
           }
         }
 
-        // If we found a name match, add as participant with email
         if (organizerName) {
           participantsWithEmails.push({ name: organizerName, email: organizerEmail });
 
-          // Remove from name-only participants to avoid duplicates
           const nameIndex = participantsNameOnly.findIndex(p =>
             p.name.toLowerCase().includes(organizerName.toLowerCase()) ||
             organizerName.toLowerCase().includes(p.name.toLowerCase())
@@ -351,13 +426,11 @@ export class FirefliesApiClient {
             participantsNameOnly.splice(nameIndex, 1);
           }
         } else {
-          // If no name found, add with generic organizer name
           participantsWithEmails.push({ name: 'Meeting Organizer', email: organizerEmail });
         }
       }
     }
 
-    // Return participants with emails first, then name-only participants
     const allParticipants = [...participantsWithEmails, ...participantsNameOnly];
 
     logger.debug('=== EXTRACTED PARTICIPANTS ===');
@@ -368,21 +441,16 @@ export class FirefliesApiClient {
     return allParticipants;
   }
 
-  private transformMeetingData(transcript: any, meetingId: string): FirefliesMeetingData {
-    // Convert date to ISO string - handle both timestamp and ISO string formats
+  private transformMeetingData(transcript: Record<string, unknown>, meetingId: string): FirefliesMeetingData {
     let dateString: string;
     if (transcript.date) {
       if (typeof transcript.date === 'number') {
-        // Unix timestamp in milliseconds
         dateString = new Date(transcript.date).toISOString();
       } else if (typeof transcript.date === 'string') {
-        // Could be ISO string or timestamp string
         const parsed = Number(transcript.date);
         if (!isNaN(parsed)) {
-          // It's a numeric string (timestamp)
           dateString = new Date(parsed).toISOString();
         } else {
-          // It's already an ISO string
           dateString = transcript.date;
         }
       } else {
@@ -392,34 +460,38 @@ export class FirefliesApiClient {
       dateString = new Date().toISOString();
     }
 
+    const summary = transcript.summary as Record<string, unknown> | undefined;
+    const analytics = transcript.analytics as Record<string, unknown> | undefined;
+    const sentiments = analytics?.sentiments as Record<string, number> | undefined;
+
     return {
-      id: transcript.id || meetingId,
-      title: transcript.title || 'Untitled Meeting',
+      id: (transcript.id as string) || meetingId,
+      title: (transcript.title as string) || 'Untitled Meeting',
       date: dateString,
-      duration: transcript.duration || 0,
+      duration: (transcript.duration as number) || 0,
       participants: this.extractAllParticipants(transcript),
-      organizer_email: transcript.organizer_email,
+      organizer_email: transcript.organizer_email as string | undefined,
       summary: {
-        action_items: Array.isArray(transcript.summary?.action_items)
-          ? transcript.summary.action_items
-          : (typeof transcript.summary?.action_items === 'string'
-             ? [transcript.summary.action_items]
+        action_items: Array.isArray(summary?.action_items)
+          ? summary.action_items as string[]
+          : (typeof summary?.action_items === 'string'
+             ? [summary.action_items]
              : []),
-        overview: transcript.summary?.overview || '',
-        keywords: transcript.summary?.keywords,
-        topics_discussed: transcript.summary?.topics_discussed,
-        meeting_type: transcript.summary?.meeting_type,
+        overview: (summary?.overview as string) || '',
+        keywords: summary?.keywords as string[] | undefined,
+        topics_discussed: summary?.topics_discussed as string[] | undefined,
+        meeting_type: summary?.meeting_type as string | undefined,
       },
-      analytics: transcript.sentiments ? {
+      analytics: sentiments ? {
         sentiments: {
-          positive_pct: transcript.sentiments.positive_pct || 0,
-          negative_pct: transcript.sentiments.negative_pct || 0,
-          neutral_pct: transcript.sentiments.neutral_pct || 0,
+          positive_pct: sentiments.positive_pct || 0,
+          negative_pct: sentiments.negative_pct || 0,
+          neutral_pct: sentiments.neutral_pct || 0,
         }
       } : undefined,
-      transcript_url: transcript.transcript_url || `https://app.fireflies.ai/view/${meetingId}`,
-      recording_url: transcript.video_url || undefined,
-      summary_status: transcript.summary_status,
+      transcript_url: (transcript.transcript_url as string) || `https://app.fireflies.ai/view/${meetingId}`,
+      recording_url: (transcript.video_url as string) || undefined,
+      summary_status: transcript.summary_status as string | undefined,
     };
   }
 }

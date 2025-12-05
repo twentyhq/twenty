@@ -414,13 +414,9 @@ const main = async () => {
     }
 
     if (createdCount === 0 && skippedCount === MEETING_FIELDS.length) {
-      console.log('\n✨ All fields already exist. Nothing to do!');
+      console.log('\n✨ All fields already exist. Nothing to do!\n');
     } else if (createdCount > 0) {
-      console.log('\n✨ Custom fields added successfully!');
-      console.log('\n📝 Next steps:');
-      console.log('   1. Re-sync your app: npx twenty-cli app sync');
-      console.log('   2. Update the createMeetingRecord function to use these fields');
-      console.log('   3. Test the integration with a real meeting');
+      console.log('\n✨ Custom fields added successfully!\n');
     }
 
   } catch (error) {

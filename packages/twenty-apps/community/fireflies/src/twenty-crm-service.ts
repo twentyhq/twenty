@@ -1,15 +1,15 @@
 import { createLogger } from './logger';
 import type {
-  Contact,
-  CreateMeetingResponse,
-  CreateNoteResponse,
-  CreatePersonResponse,
-  FindMeetingResponse,
-  FindPeopleResponse,
-  FirefliesParticipant,
-  GraphQLResponse,
-  IdNode,
-  MeetingCreateInput,
+    Contact,
+    CreateMeetingResponse,
+    CreateNoteResponse,
+    CreatePersonResponse,
+    FindMeetingResponse,
+    FindPeopleResponse,
+    FirefliesParticipant,
+    GraphQLResponse,
+    IdNode,
+    MeetingCreateInput,
 } from './types';
 
 const logger = createLogger('20 CRM Service');
@@ -53,21 +53,18 @@ export class TwentyCrmService {
       return { matchedContacts: [], unmatchedParticipants: [] };
     }
 
-    // Split participants into those with emails and those with names only
     const participantsWithEmails = participants.filter(p => p.email && p.email.trim());
     const participantsNameOnly = participants.filter(p => !p.email || !p.email.trim());
 
     let matchedContacts: Contact[] = [];
     let unmatchedParticipants: FirefliesParticipant[] = [];
 
-    // 1. Match by email first
     if (participantsWithEmails.length > 0) {
       const emailMatches = await this.matchByEmail(participantsWithEmails);
       matchedContacts.push(...emailMatches.matchedContacts);
       unmatchedParticipants.push(...emailMatches.unmatchedParticipants);
     }
 
-    // 2. For participants without emails, try name-based matching
     if (participantsNameOnly.length > 0) {
       const nameMatches = await this.matchByName(participantsNameOnly, matchedContacts);
       matchedContacts.push(...nameMatches.matchedContacts);
@@ -126,7 +123,6 @@ export class TwentyCrmService {
     const matchedContacts: Contact[] = [];
     const unmatchedParticipants: FirefliesParticipant[] = [];
 
-    // Get set of already matched contact IDs to avoid duplicates
     const alreadyMatchedIds = new Set(alreadyMatchedContacts.map(c => c.id));
 
     for (const participant of participants) {
@@ -152,7 +148,6 @@ export class TwentyCrmService {
     const firstName = nameParts[0];
     const lastName = nameParts.slice(1).join(' ');
 
-    // Try exact name match first
     let query = `
       query FindPeopleByName($firstName: String!, $lastName: String) {
         people(filter: {
@@ -166,13 +161,13 @@ export class TwentyCrmService {
       }
     `;
 
-    let variables: any = { firstName };
+    const variables: Record<string, unknown> = { firstName };
     if (lastName) {
       variables.lastName = lastName;
     }
 
     try {
-      const response = await this.gqlRequest<any>(query, variables);
+      const response = await this.gqlRequest<{ people: { edges: Array<{ node: { id: string; emails?: { primaryEmail?: string }; name?: { firstName?: string; lastName?: string } } }> } }>(query, variables);
       const people = response.data?.people?.edges;
 
       if (people && people.length > 0) {
@@ -183,7 +178,6 @@ export class TwentyCrmService {
         };
       }
 
-      // If no exact match and we have a last name, try fuzzy matching
       if (lastName) {
         query = `
           query FindPeopleByNameFuzzy($firstName: String!) {
@@ -193,12 +187,11 @@ export class TwentyCrmService {
           }
         `;
 
-        const fuzzyResponse = await this.gqlRequest<any>(query, { firstName: `%${firstName}%` });
+        const fuzzyResponse = await this.gqlRequest<{ people: { edges: Array<{ node: { id: string; emails?: { primaryEmail?: string }; name?: { firstName?: string; lastName?: string } } }> } }>(query, { firstName: `%${firstName}%` });
         const fuzzyPeople = fuzzyResponse.data?.people?.edges;
 
         if (fuzzyPeople && fuzzyPeople.length > 0) {
-          // Find best match by checking if last name contains our target
-          const bestMatch = fuzzyPeople.find((edge: any) => {
+          const bestMatch = fuzzyPeople.find((edge) => {
             const personLastName = edge.node.name?.lastName || '';
             return personLastName.toLowerCase().includes(lastName.toLowerCase());
           });
@@ -215,7 +208,6 @@ export class TwentyCrmService {
 
       return null;
     } catch {
-      // Silently fail - don't break the entire process for a single contact lookup
       return null;
     }
   }
@@ -225,17 +217,14 @@ export class TwentyCrmService {
   ): Promise<string[]> {
     const newContactIds: string[] = [];
 
-    // Split participants into those with emails and those with names only
     const participantsWithEmails = participants.filter(p => p.email && p.email.trim());
     const participantsNameOnly = participants.filter(p => !p.email || !p.email.trim());
 
-    // Process participants with emails
     if (participantsWithEmails.length > 0) {
       const emailContactIds = await this.createContactsWithEmails(participantsWithEmails);
       newContactIds.push(...emailContactIds);
     }
 
-    // Process participants with names only
     if (participantsNameOnly.length > 0) {
       const nameContactIds = await this.createContactsNameOnly(participantsNameOnly);
       newContactIds.push(...nameContactIds);
@@ -247,7 +236,6 @@ export class TwentyCrmService {
   private async createContactsWithEmails(participants: FirefliesParticipant[]): Promise<string[]> {
     const newContactIds: string[] = [];
 
-    // Deduplicate participants by email to prevent duplicate contact creation
     const uniqueParticipants = participants.reduce<FirefliesParticipant[]>((unique, participant) => {
       const existing = unique.find(p => p.email === participant.email);
       if (!existing) {
@@ -297,7 +285,6 @@ export class TwentyCrmService {
   private async createContactsNameOnly(participants: FirefliesParticipant[]): Promise<string[]> {
     const newContactIds: string[] = [];
 
-    // Deduplicate participants by name to prevent duplicate contact creation
     const uniqueParticipants = participants.reduce<FirefliesParticipant[]>((unique, participant) => {
       const existing = unique.find(p =>
         p.name.toLowerCase().trim() === participant.name.toLowerCase().trim()
@@ -311,7 +298,6 @@ export class TwentyCrmService {
     }, []);
 
     for (const participant of uniqueParticipants) {
-      // Check if we already have a contact with this exact name to avoid duplicates
       const existingContact = await this.findContactByName(participant.name);
       if (existingContact) {
         logger.warn(`Contact with name "${participant.name}" already exists. Skipping creation.`);
@@ -330,8 +316,6 @@ export class TwentyCrmService {
       const variables = {
         data: {
           name: { firstName, lastName },
-          // Note: We don't set emails for name-only participants
-          // This will create a contact without an email address
         },
       };
 
@@ -346,7 +330,6 @@ export class TwentyCrmService {
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         logger.warn(`Failed to create contact for ${participant.name}: ${errorMessage}`);
-        // Continue processing other participants instead of failing completely
         continue;
       }
     }
@@ -409,7 +392,7 @@ export class TwentyCrmService {
       },
     };
 
-    await this.gqlRequest<any>(mutation, variables);
+    await this.gqlRequest<{ createNoteTarget: { id: string; noteId: string; personId: string } }>(mutation, variables);
   }
 
   async createMeetingTarget(meetingId: string, contactId: string): Promise<void> {
@@ -430,7 +413,7 @@ export class TwentyCrmService {
       },
     };
 
-    await this.gqlRequest<any>(mutation, variables);
+    await this.gqlRequest<{ createNoteTarget: { id: string; meetingId: string; personId: string } }>(mutation, variables);
   }
 
   async createMeeting(meetingData: MeetingCreateInput): Promise<string> {
@@ -442,7 +425,6 @@ export class TwentyCrmService {
 
     const variables = { data: meetingData };
 
-    // Debug: log the variables being sent
     if (!this.isTestEnvironment) {
       logger.debug('createMeeting variables:', JSON.stringify(variables, null, 2));
     }
@@ -525,7 +507,15 @@ export class TwentyCrmService {
     return response.data.createMeeting.id;
   }
 
-  async findFailedMeetings(): Promise<any[]> {
+  async findFailedMeetings(): Promise<Array<{
+    id: string;
+    name: string;
+    firefliesMeetingId: string;
+    importError: string;
+    lastImportAttempt: string;
+    importAttempts: number;
+    createdAt: string;
+  }>> {
     const query = `
       query FindFailedMeetings {
         meetings(filter: { importStatus: { eq: "FAILED" } }) {
@@ -544,8 +534,8 @@ export class TwentyCrmService {
       }
     `;
 
-    const response = await this.gqlRequest<any>(query);
-    return response.data?.meetings?.edges?.map((edge: any) => edge.node) || [];
+    const response = await this.gqlRequest<{ meetings: { edges: Array<{ node: { id: string; name: string; firefliesMeetingId: string; importError: string; lastImportAttempt: string; importAttempts: number; createdAt: string } }> } }>(query);
+    return response.data?.meetings?.edges?.map((edge) => edge.node) || [];
   }
 
   async retryFailedMeeting(meetingId: string, updatedData: Partial<MeetingCreateInput>): Promise<void> {
@@ -564,7 +554,7 @@ export class TwentyCrmService {
       }
     };
 
-    await this.gqlRequest<any>(mutation, variables);
+    await this.gqlRequest<{ updateMeeting: { id: string } }>(mutation, variables);
   }
 }
 

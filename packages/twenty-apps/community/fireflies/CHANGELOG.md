@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.2.3] - 2025-12-06
+
+### Added
+- **Meeting ingest utility**: New `yarn meeting:ingest <meetingId>` script to manually fetch and import specific Fireflies meetings into Twenty
+- **Plan-based field selection**: Added `FIREFLIES_PLAN` configuration to control which GraphQL fields are requested based on subscription level (free, pro, business, enterprise)
+- **Main entry point**: New `src/index.ts` centralizing all exports for cleaner imports
+
+### Changed
+- **Auth configuration**: Disabled authentication requirement for webhook route (`isAuthRequired: false`) to support serverless deployments
+- **Signature verification fallback**: Webhook handler now supports signature in payload body as fallback when HTTP headers aren't forwarded to serverless functions (production doesn't work for Fireflies webhook)
+- **Improved type safety**: Replaced `any` types with proper TypeScript types throughout codebase
+
+### Enhanced
+- **Webhook debugging**: Added detailed debug output including param keys, header info, and signature comparison details
+- **Test webhook script**: Includes signature in both header and payload, with diagnostic output for header forwarding status
+- **Documentation**: Added README sections on current twenty headers forward limitations and utility scripts
+
 ## [0.2.2] - 2025-11-04
 
 ### Added

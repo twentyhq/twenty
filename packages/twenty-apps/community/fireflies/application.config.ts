@@ -1,4 +1,4 @@
-import { type ApplicationConfig } from 'twenty-sdk/application';
+import { type ApplicationConfig } from 'twenty-sdk';
 
 const config: ApplicationConfig = {
   universalIdentifier: 'a4df0c0f-c65e-44e5-8436-24814182d4ac',
@@ -15,6 +15,11 @@ const config: ApplicationConfig = {
       universalIdentifier: 'faa41f07-b28e-4500-b1c0-ce4b3d27924c',
       description: 'Fireflies GraphQL API key used to fetch meeting summaries',
       isSecret: true,
+    },
+    FIREFLIES_PLAN: {
+      universalIdentifier: '12345678-1234-1234-1234-123456789012',
+      description: 'Fireflies plan: free, pro, business, enterprise',
+      value: 'free',
     },
     TWENTY_API_KEY: {
       universalIdentifier: '02756551-5bf7-4fb2-8e08-1f622008d305',
