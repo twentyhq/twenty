@@ -16,6 +16,7 @@ export const DATA_MODEL_MANAGER_ROLE: StandardRoleDefinition = {
   canBeAssignedToUsers: false,
   canBeAssignedToAgents: true,
   canBeAssignedToApiKeys: false,
+  canBeAssignedToApplications: true,
   permissionFlags: [PermissionFlagType.DATA_MODEL],
   applicationId: null,
 };

@@ -19,7 +19,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 
 @Entity({ name: 'application', schema: 'core' })
 @ObjectType('Application')
@@ -97,12 +96,6 @@ export class ApplicationEntity {
     },
   )
   applicationVariables: Relation<ApplicationVariableEntity[]>;
-
-  @OneToMany(
-    () => RoleTargetEntity,
-    (roleTargets: RoleTargetEntity) => roleTargets.targetApplication,
-  )
-  roleTargets: Relation<RoleTargetEntity[]>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

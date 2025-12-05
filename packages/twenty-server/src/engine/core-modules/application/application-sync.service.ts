@@ -37,6 +37,11 @@ import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverl
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
+import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
+import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
+import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -55,6 +60,11 @@ export class ApplicationSyncService {
     private readonly cronTriggerV2Service: CronTriggerV2Service,
     private readonly routeTriggerV2Service: RouteTriggerV2Service,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly roleService: RoleService,
+    private readonly roleTargetService: RoleTargetService,
+    private readonly objectPermissionService: ObjectPermissionService,
+    private readonly fieldPermissionService: FieldPermissionService,
+    private readonly permissionService: PermissionFlagService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -123,6 +133,104 @@ export class ApplicationSyncService {
       }));
 
     let serverlessFunctionLayerId = application.serverlessFunctionLayerId;
+
+    const applicationRole = manifest.application.applicationRole;
+
+    if (
+      isDefined(applicationRole) &&
+      isDefined(applicationRole.universalIdentifier)
+    ) {
+      let role = await this.roleService.getRoleByUniversalIdentifier({
+        universalIdentifier: applicationRole.universalIdentifier,
+        workspaceId,
+      });
+
+      if (role) {
+        await this.roleService.updateRole({
+          input: {
+            id: role.id,
+            update: {
+              ...applicationRole,
+              canAccessAllTools: false,
+              canUpdateAllSettings: false,
+              canBeAssignedToAgents: false,
+              canBeAssignedToUsers: false,
+              canBeAssignedToApiKeys: false,
+              canBeAssignedToApplications: true,
+            },
+          },
+          workspaceId,
+        });
+      } else {
+        role = await this.roleService.createRole({
+          input: {
+            canReadAllObjectRecords: true,
+            canUpdateAllObjectRecords: false,
+            canSoftDeleteAllObjectRecords: false,
+            canDestroyAllObjectRecords: false,
+            ...applicationRole,
+            canAccessAllTools: false,
+            canUpdateAllSettings: false,
+            canBeAssignedToAgents: false,
+            canBeAssignedToUsers: false,
+            canBeAssignedToApiKeys: false,
+            canBeAssignedToApplications: true,
+          },
+          workspaceId,
+          applicationId: application.id,
+        });
+
+        await this.roleTargetService.create({
+          createRoleTargetInput: {
+            roleId: role.id,
+            applicationId: application.id,
+            universalIdentifier: role.universalIdentifier,
+            targetMetadataForeignKey: 'targetApplicationId',
+            targetId: application.id,
+          },
+          workspaceId,
+        });
+      }
+
+      if (
+        isDefined(applicationRole.objectPermissions) &&
+        applicationRole.objectPermissions.length > 0
+      ) {
+        await this.objectPermissionService.upsertObjectPermissions({
+          workspaceId,
+          input: {
+            roleId: role.id,
+            objectPermissions: applicationRole.objectPermissions,
+          },
+        });
+      }
+
+      if (
+        isDefined(applicationRole.fieldPermissions) &&
+        applicationRole.fieldPermissions.length > 0
+      ) {
+        await this.fieldPermissionService.upsertFieldPermissions({
+          workspaceId,
+          input: {
+            roleId: role.id,
+            fieldPermissions: applicationRole.fieldPermissions,
+          },
+        });
+      }
+
+      if (
+        isDefined(applicationRole.permissionFlags) &&
+        applicationRole.permissionFlags.length > 0
+      ) {
+        await this.permissionService.upsertPermissionFlags({
+          workspaceId,
+          input: {
+            roleId: role.id,
+            permissionFlagKeys: applicationRole.permissionFlags,
+          },
+        });
+      }
+    }
 
     if (manifest.serverlessFunctions.length > 0) {
       if (!isDefined(serverlessFunctionLayerId)) {
