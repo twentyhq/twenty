@@ -13,7 +13,6 @@ import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/rec
 import { RecordTableRowVirtualizedSkeleton } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualizedSkeleton';
 import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
 
-import { ListenRecordUpdatesEffect } from '@/subscription/components/ListenRecordUpdatesEffect';
 import { getDefaultRecordFieldsToListen } from '@/subscription/utils/getDefaultRecordFieldsToListen.util';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -67,11 +66,11 @@ export const RecordTableRowVirtualizedFullData = ({
       <RecordTableFieldsCells />
       <RecordTablePlusButtonCellPlaceholder />
       <RecordTableLastEmptyCell />
-      <ListenRecordUpdatesEffect
+      {/* <ListenRecordUpdatesEffect
         objectNameSingular={objectNameSingular}
         recordId={recordId}
         listenedFields={listenedFields}
-      />
+      /> */}
     </RecordTableDraggableTr>
   );
 };

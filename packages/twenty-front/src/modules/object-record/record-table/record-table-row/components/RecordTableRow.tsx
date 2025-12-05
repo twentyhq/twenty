@@ -81,11 +81,11 @@ export const RecordTableRow = ({
       <RecordTableFieldsCells />
       <RecordTablePlusButtonCellPlaceholder />
       <RecordTableLastEmptyCell />
-      <ListenRecordUpdatesEffect
+      {/* <ListenRecordUpdatesEffect
         objectNameSingular={objectNameSingular}
         recordId={recordId}
         listenedFields={listenedFields}
-      />
+      /> */}
     </RecordTableDraggableTr>
   );
 };
