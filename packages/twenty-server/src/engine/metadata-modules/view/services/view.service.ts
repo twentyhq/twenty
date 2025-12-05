@@ -191,14 +191,11 @@ export class ViewService {
     deleteViewInput: DeleteViewInput;
     workspaceId: string;
   }): Promise<ViewDTO> {
-    const {
-      flatViewMaps: existingFlatViewMaps,
-      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-    } =
+    const { flatViewMaps: existingFlatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewMaps', 'flatFieldMetadataMaps'],
+          flatMapsKeys: ['flatViewMaps'],
         },
       );
 
@@ -251,14 +248,11 @@ export class ViewService {
     destroyViewInput: DestroyViewInput;
     workspaceId: string;
   }): Promise<ViewDTO> {
-    const {
-      flatViewMaps: existingFlatViewMaps,
-      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-    } =
+    const { flatViewMaps: existingFlatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewMaps', 'flatFieldMetadataMaps'],
+          flatMapsKeys: ['flatViewMaps'],
         },
       );
 

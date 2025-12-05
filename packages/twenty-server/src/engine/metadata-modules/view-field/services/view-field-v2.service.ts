@@ -127,20 +127,13 @@ export class ViewFieldV2Service {
     workspaceId: string;
     updateViewFieldInput: UpdateViewFieldInput;
   }): Promise<ViewFieldDTO> {
-    const {
-      flatViewFieldMaps: existingFlatViewFieldMaps,
-      flatObjectMetadataMaps,
-      flatViewMaps,
-    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewFieldMaps',
-          'flatObjectMetadataMaps',
-          'flatViewMaps',
-        ],
-      },
-    );
+    const { flatViewFieldMaps: existingFlatViewFieldMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFieldMaps'],
+        },
+      );
 
     const optimisticallyUpdatedFlatView =
       fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow({
@@ -191,20 +184,13 @@ export class ViewFieldV2Service {
     deleteViewFieldInput: DeleteViewFieldInput;
     workspaceId: string;
   }): Promise<ViewFieldDTO> {
-    const {
-      flatViewFieldMaps: existingFlatViewFieldMaps,
-      flatObjectMetadataMaps,
-      flatViewMaps,
-    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewFieldMaps',
-          'flatObjectMetadataMaps',
-          'flatViewMaps',
-        ],
-      },
-    );
+    const { flatViewFieldMaps: existingFlatViewFieldMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFieldMaps'],
+        },
+      );
 
     const optimisticallyUpdatedFlatViewWithDeletedAt =
       fromDeleteViewFieldInputToFlatViewFieldOrThrow({
@@ -255,22 +241,13 @@ export class ViewFieldV2Service {
     destroyViewFieldInput: DestroyViewFieldInput;
     workspaceId: string;
   }): Promise<ViewFieldDTO> {
-    const {
-      flatViewFieldMaps: existingFlatViewFieldMaps,
-      flatViewMaps: existingFlatViewMaps,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewFieldMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-          'flatObjectMetadataMaps',
-        ],
-      },
-    );
+    const { flatViewFieldMaps: existingFlatViewFieldMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFieldMaps'],
+        },
+      );
 
     const existingViewFieldToDelete =
       fromDestroyViewFieldInputToFlatViewFieldOrThrow({

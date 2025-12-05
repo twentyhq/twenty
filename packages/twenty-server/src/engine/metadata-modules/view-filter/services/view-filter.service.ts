@@ -44,23 +44,6 @@ export class ViewFilterService {
         },
       );
 
-    const {
-      flatViewFilterMaps: existingFlatViewFilterMaps,
-      flatViewMaps,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewFilterMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-          'flatObjectMetadataMaps',
-        ],
-      },
-    );
-
     const flatViewFilterToCreate =
       fromCreateViewFilterInputToFlatViewFilterToCreate({
         createViewFilterInput,
@@ -116,20 +99,13 @@ export class ViewFilterService {
     workspaceId: string;
     updateViewFilterInput: UpdateViewFilterInput;
   }): Promise<ViewFilterDTO> {
-    const {
-      flatViewFilterMaps: existingFlatViewFilterMaps,
-      flatViewMaps,
-      flatFieldMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewFilterMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-        ],
-      },
-    );
+    const { flatViewFilterMaps: existingFlatViewFilterMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFilterMaps'],
+        },
+      );
 
     const optimisticallyUpdatedFlatViewFilter =
       fromUpdateViewFilterInputToFlatViewFilterToUpdateOrThrow({
@@ -180,20 +156,13 @@ export class ViewFilterService {
     deleteViewFilterInput: DeleteViewFilterInput;
     workspaceId: string;
   }): Promise<ViewFilterDTO> {
-    const {
-      flatViewFilterMaps: existingFlatViewFilterMaps,
-      flatViewMaps,
-      flatFieldMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewFilterMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-        ],
-      },
-    );
+    const { flatViewFilterMaps: existingFlatViewFilterMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFilterMaps'],
+        },
+      );
 
     const optimisticallyUpdatedFlatViewFilterWithDeletedAt =
       fromDeleteViewFilterInputToFlatViewFilterOrThrow({
@@ -246,20 +215,13 @@ export class ViewFilterService {
     destroyViewFilterInput: DestroyViewFilterInput;
     workspaceId: string;
   }): Promise<ViewFilterDTO> {
-    const {
-      flatViewFilterMaps: existingFlatViewFilterMaps,
-      flatViewMaps: existingFlatViewMaps,
-      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewFilterMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-        ],
-      },
-    );
+    const { flatViewFilterMaps: existingFlatViewFilterMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFilterMaps'],
+        },
+      );
 
     const existingViewFilterToDelete =
       fromDestroyViewFilterInputToFlatViewFilterOrThrow({

@@ -175,9 +175,10 @@ export class AgentService {
     input: UpdateAgentInput;
     workspaceId: string;
   }): Promise<FlatAgentWithRoleId> {
-    const { flatRoleTargetByAgentIdMaps } =
+    const { flatRoleTargetByAgentIdMaps, flatAgentMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatRoleTargetByAgentIdMaps',
+        'flatAgentMaps',
       ]);
 
     const {
@@ -187,7 +188,7 @@ export class AgentService {
       flatRoleTargetToUpdate,
     } = fromUpdateAgentInputToFlatAgentToUpdate({
       updateAgentInput: input,
-      flatAgentMaps: existingFlatAgentMaps,
+      flatAgentMaps,
       flatRoleTargetByAgentIdMaps,
     });
 

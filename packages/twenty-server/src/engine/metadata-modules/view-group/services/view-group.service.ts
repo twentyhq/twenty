@@ -140,20 +140,13 @@ export class ViewGroupService {
     workspaceId: string;
     updateViewGroupInput: UpdateViewGroupInput;
   }): Promise<ViewGroupDTO> {
-    const {
-      flatViewGroupMaps: existingFlatViewGroupMaps,
-      flatViewMaps,
-      flatFieldMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewGroupMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-        ],
-      },
-    );
+    const { flatViewGroupMaps: existingFlatViewGroupMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewGroupMaps'],
+        },
+      );
 
     const optimisticallyUpdatedFlatViewGroup =
       fromUpdateViewGroupInputToFlatViewGroupToUpdateOrThrow({
@@ -204,20 +197,13 @@ export class ViewGroupService {
     deleteViewGroupInput: DeleteViewGroupInput;
     workspaceId: string;
   }): Promise<ViewGroupDTO> {
-    const {
-      flatViewGroupMaps: existingFlatViewGroupMaps,
-      flatViewMaps,
-      flatFieldMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewGroupMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-        ],
-      },
-    );
+    const { flatViewGroupMaps: existingFlatViewGroupMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewGroupMaps'],
+        },
+      );
 
     const optimisticallyUpdatedFlatViewGroupWithDeletedAt =
       fromDeleteViewGroupInputToFlatViewGroupOrThrow({
@@ -270,20 +256,13 @@ export class ViewGroupService {
     destroyViewGroupInput: DestroyViewGroupInput;
     workspaceId: string;
   }): Promise<ViewGroupDTO> {
-    const {
-      flatViewGroupMaps: existingFlatViewGroupMaps,
-      flatViewMaps: existingFlatViewMaps,
-      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatViewGroupMaps',
-          'flatViewMaps',
-          'flatFieldMetadataMaps',
-        ],
-      },
-    );
+    const { flatViewGroupMaps: existingFlatViewGroupMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewGroupMaps'],
+        },
+      );
 
     const existingViewGroupToDelete =
       fromDestroyViewGroupInputToFlatViewGroupOrThrow({
