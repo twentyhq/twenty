@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -7,7 +7,7 @@ import { ApplicationSyncService } from 'src/engine/core-modules/application/appl
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
-import { DeleteApplicationInput } from 'src/engine/core-modules/application/dtos/deleteApplication.input';
+import { UninstallApplicationInput } from 'src/engine/core-modules/application/dtos/uninstallApplicationInput';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -15,12 +15,14 @@ import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
 
 @UseGuards(
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
 )
 @Resolver()
+@UseInterceptors(WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor)
 @UseFilters(ApplicationExceptionFilter)
 export class ApplicationResolver {
   constructor(
@@ -61,11 +63,11 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteApplication(
-    @Args() { universalIdentifier }: DeleteApplicationInput,
+  async uninstallApplication(
+    @Args() { universalIdentifier }: UninstallApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    await this.applicationSyncService.deleteApplication({
+    await this.applicationSyncService.uninstallApplication({
       applicationUniversalIdentifier: universalIdentifier,
       workspaceId,
     });

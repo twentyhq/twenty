@@ -47,7 +47,7 @@ describe('Destroy core view', () => {
     });
   });
 
-  it.only('should destroy an existing view', async () => {
+  it('should destroy an existing view', async () => {
     const {
       data: { createCoreView: view },
     } = await createOneCoreView({

@@ -3,13 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { In, type Repository } from 'typeorm';
 
-import {
-  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  RunOnWorkspaceArgs,
-} from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
@@ -20,13 +19,14 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 export class CleanOrphanedRoleTargetsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   private hasRunOnce = false;
   constructor(
-    @InjectRepository(RoleTargetsEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
+    @InjectRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    protected readonly dataSourceService: DataSourceService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager);
+    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
 
   override async runOnWorkspace({
@@ -43,7 +43,7 @@ export class CleanOrphanedRoleTargetsCommand extends ActiveOrSuspendedWorkspaces
       this.logger.log('Dry run mode: No changes will be applied');
     }
 
-    const orphanedRoleTargets = await this.roleTargetsRepository
+    const orphanedRoleTargets = await this.roleTargetRepository
       .createQueryBuilder('roleTarget')
       .leftJoin(
         UserWorkspaceEntity,
@@ -82,7 +82,7 @@ export class CleanOrphanedRoleTargetsCommand extends ActiveOrSuspendedWorkspaces
 
     const orphanedIds = orphanedRoleTargets.map((roleTarget) => roleTarget.id);
 
-    await this.roleTargetsRepository.delete({ id: In(orphanedIds) });
+    await this.roleTargetRepository.delete({ id: In(orphanedIds) });
 
     this.logger.log(
       `Deleted ${orphanedRoleTargets.length} orphaned roleTarget(s)`,

@@ -27,7 +27,7 @@ const StyledEditor = styled.div`
   width: 100%;
 
   & .editor {
-    background: ${({ theme }) => theme.background.primary};
+    background: transparent;
     font-size: 13px;
     color: ${({ theme }) => theme.font.color.primary};
     min-height: 400px;

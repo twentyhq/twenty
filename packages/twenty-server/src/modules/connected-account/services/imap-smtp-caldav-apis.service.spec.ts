@@ -10,6 +10,7 @@ import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common
 import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
+  MessageChannelPendingGroupEmailsAction,
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
   MessageChannelType,
@@ -125,6 +126,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         isSyncEnabled: true,
         syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
         syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
+        pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
         syncCursor: '',
         syncStageStartedAt: null,
       };
@@ -155,6 +157,7 @@ describe('ImapSmtpCalDavAPIService', () => {
           isSyncEnabled: true,
           syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
           syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
+          pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
           syncCursor: '',
           syncStageStartedAt: null,
         },
@@ -258,7 +261,7 @@ describe('ImapSmtpCalDavAPIService', () => {
       expect(mockCalendarQueueService.add).not.toHaveBeenCalled();
     });
 
-    it('should create both channels when only CALDAV is configured but disable message sync', async () => {
+    it('should only create calendar channel when only CALDAV is configured', async () => {
       const caldavOnlyInput = {
         ...baseInput,
         connectionParameters: {
@@ -288,20 +291,7 @@ describe('ImapSmtpCalDavAPIService', () => {
 
       await service.processAccount(caldavOnlyInput);
 
-      expect(mockMessageChannelRepository.save).toHaveBeenCalledWith(
-        {
-          id: 'mocked-uuid',
-          connectedAccountId: 'mocked-uuid',
-          type: MessageChannelType.EMAIL,
-          handle: 'test@example.com',
-          isSyncEnabled: false,
-          syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
-          syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
-          syncCursor: '',
-          syncStageStartedAt: null,
-        },
-        {},
-      );
+      expect(mockMessageChannelRepository.save).not.toHaveBeenCalled();
       expect(mockCalendarChannelRepository.save).toHaveBeenCalled();
 
       expect(mockMessageQueueService.add).not.toHaveBeenCalled();

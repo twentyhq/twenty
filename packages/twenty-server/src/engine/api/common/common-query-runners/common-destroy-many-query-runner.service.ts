@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
@@ -21,7 +21,11 @@ import {
   DestroyManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 
 @Injectable()
 export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -39,46 +43,49 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
       authContext,
       rolePermissionConfig,
       workspaceDataSource,
-      objectMetadataMaps,
-      objectMetadataItemWithFieldMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
       commonQueryParser,
     } = queryRunnerContext;
 
     const queryBuilder = repository.createQueryBuilder(
-      objectMetadataItemWithFieldMaps.nameSingular,
+      flatObjectMetadata.nameSingular,
     );
 
     commonQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataItemWithFieldMaps.nameSingular,
+      flatObjectMetadata.nameSingular,
       args.filter,
     );
 
     const columnsToReturn = buildColumnsToReturn({
       select: args.selectedFieldsResult.select,
       relations: args.selectedFieldsResult.relations,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     });
 
-    const deletedObjectRecords = await queryBuilder
+    const destroyedObjectRecords = await queryBuilder
       .delete()
       .returning(columnsToReturn)
       .execute();
 
-    const deletedRecords = deletedObjectRecords.generatedMaps as ObjectRecord[];
+    const destroyedRecords =
+      destroyedObjectRecords.generatedMaps as ObjectRecord[];
 
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
-        objectMetadataMaps,
-        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: deletedRecords,
-        //TODO : Refacto-common - Typing to fix when switching processNestedRelationsHelper to Common
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        parentObjectMetadataItem: flatObjectMetadata,
+        parentObjectRecords: destroyedRecords,
         relations: args.selectedFieldsResult.relations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
         >,
-        limit: QUERY_MAX_RECORDS,
+        limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
         workspaceDataSource,
         rolePermissionConfig,
@@ -86,47 +93,56 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
       });
     }
 
-    return deletedRecords;
+    return destroyedRecords;
   }
 
   async computeArgs(
     args: CommonInput<DestroyManyQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<DestroyManyQueryArgs>> {
-    const { objectMetadataItemWithFieldMaps } = queryRunnerContext;
+    const { flatObjectMetadata, flatFieldMetadataMaps } = queryRunnerContext;
 
     return {
       ...args,
       filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
         args.filter,
-        objectMetadataItemWithFieldMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
       ),
     };
   }
 
   async processQueryResult(
     queryResult: ObjectRecord[],
-    objectMetadataItemId: string,
-    objectMetadataMaps: ObjectMetadataMaps,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     authContext: WorkspaceAuthContext,
   ): Promise<ObjectRecord[]> {
     return this.commonResultGettersService.processRecordArray(
       queryResult,
-      objectMetadataItemId,
-      objectMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
       authContext.workspace.id,
     );
   }
 
   async validate(
     args: CommonInput<DestroyManyQueryArgs>,
-    _queryRunnerContext: CommonBaseQueryRunnerContext,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<void> {
+    const { flatObjectMetadata } = queryRunnerContext;
+
+    assertMutationNotOnRemoteObject(flatObjectMetadata);
+
     if (!isDefined(args.filter)) {
       throw new CommonQueryRunnerException(
         'Filter is required',
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       );
     }
+
+    args.filter.id?.in?.forEach((id: string) => assertIsValidUuid(id));
   }
 }

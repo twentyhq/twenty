@@ -1,14 +1,17 @@
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
+import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
+
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
-import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
-import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
+import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateFieldMetadataItemComponentState';
+import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
@@ -32,16 +35,27 @@ export const useLoadRecordIndexStates = () => {
   const setRecordIndexOpenRecordIn = useSetRecoilState(
     recordIndexOpenRecordInState,
   );
-  const setRecordIndexViewKanbanFieldMetadataIdState = useSetRecoilState(
-    recordIndexKanbanFieldMetadataIdState,
+
+  const setRecordIndexGroupFieldMetadataItem = useSetRecoilComponentState(
+    recordIndexGroupFieldMetadataItemComponentState,
   );
+
+  const setRecordIndexGroupAggregateOperation = useSetRecoilComponentState(
+    recordIndexGroupAggregateOperationComponentState,
+  );
+
+  const setRecordIndexGroupAggregateFieldMetadataItem =
+    useSetRecoilComponentState(
+      recordIndexGroupAggregateFieldMetadataItemComponentState,
+    );
 
   const setRecordIndexCalendarFieldMetadataIdState = useSetRecoilState(
     recordIndexCalendarFieldMetadataIdState,
   );
-  const setRecordIndexViewKanbanAggregateOperationState = useSetRecoilState(
-    recordIndexKanbanAggregateOperationState,
-  );
+
+  const { getFieldMetadataItemByIdOrThrow } =
+    useGetFieldMetadataItemByIdOrThrow();
+
   const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
   const onViewFieldsChange = useRecoilCallback(
@@ -180,26 +194,46 @@ export const useLoadRecordIndexStates = () => {
 
         setRecordIndexViewType(view.type);
         setRecordIndexOpenRecordIn(view.openRecordIn);
-        setRecordIndexViewKanbanFieldMetadataIdState(
-          view.viewGroups?.[0]?.fieldMetadataId,
-        );
+
         setRecordIndexCalendarFieldMetadataIdState(
           view.calendarFieldMetadataId ?? null,
         );
-        const kanbanAggregateOperationFieldMetadataType =
+
+        if (isDefined(view.viewGroups?.[0]?.fieldMetadataId)) {
+          const recordIndexGroupFieldMetadataItemId =
+            view.viewGroups?.[0]?.fieldMetadataId;
+
+          const { fieldMetadataItem: recordIndexGroupFieldMetadataItem } =
+            getFieldMetadataItemByIdOrThrow(
+              recordIndexGroupFieldMetadataItemId,
+            );
+
+          setRecordIndexGroupFieldMetadataItem(
+            recordIndexGroupFieldMetadataItem,
+          );
+        }
+
+        const recordIndexGroupAggregateFieldMetadataItem =
           objectMetadataItem.fields?.find(
             (field) =>
               field.id === view.kanbanAggregateOperationFieldMetadataId,
-          )?.type;
-        setRecordIndexViewKanbanAggregateOperationState({
-          operation: isDefined(view.kanbanAggregateOperation)
-            ? convertAggregateOperationToExtendedAggregateOperation(
-                view.kanbanAggregateOperation,
-                kanbanAggregateOperationFieldMetadataType,
-              )
-            : view.kanbanAggregateOperation,
-          fieldMetadataId: view.kanbanAggregateOperationFieldMetadataId,
-        });
+          );
+
+        if (isDefined(view.kanbanAggregateOperation)) {
+          const convertedAggregateOperation =
+            convertAggregateOperationToExtendedAggregateOperation(
+              view.kanbanAggregateOperation,
+              recordIndexGroupAggregateFieldMetadataItem?.type,
+            );
+
+          setRecordIndexGroupAggregateOperation(convertedAggregateOperation);
+        }
+
+        if (isDefined(recordIndexGroupAggregateFieldMetadataItem)) {
+          setRecordIndexGroupAggregateFieldMetadataItem(
+            recordIndexGroupAggregateFieldMetadataItem,
+          );
+        }
       },
     [
       onViewFieldsChange,
@@ -207,9 +241,11 @@ export const useLoadRecordIndexStates = () => {
       setContextStoreTargetedRecordsRuleComponentState,
       setRecordIndexViewType,
       setRecordIndexOpenRecordIn,
-      setRecordIndexViewKanbanFieldMetadataIdState,
       setRecordIndexCalendarFieldMetadataIdState,
-      setRecordIndexViewKanbanAggregateOperationState,
+      setRecordIndexGroupAggregateFieldMetadataItem,
+      setRecordIndexGroupAggregateOperation,
+      getFieldMetadataItemByIdOrThrow,
+      setRecordIndexGroupFieldMetadataItem,
     ],
   );
 

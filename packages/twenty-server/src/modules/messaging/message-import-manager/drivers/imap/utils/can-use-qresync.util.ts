@@ -1,21 +1,19 @@
+import { type ImapFlow } from 'imapflow';
+
 import { type MailboxState } from './extract-mailbox-state.util';
 import { type ImapSyncCursor } from './parse-sync-cursor.util';
 
 export const canUseQresync = (
-  supportsQresync: boolean,
+  client: ImapFlow,
   previousCursor: ImapSyncCursor | null,
   mailboxState: MailboxState,
 ): boolean => {
-  const lastModSeq = previousCursor?.modSeq
-    ? BigInt(previousCursor.modSeq)
-    : undefined;
-  const lastUidValidity = previousCursor?.uidValidity ?? 0;
-  const { uidValidity, highestModSeq } = mailboxState;
+  const supportsQresync = client.capabilities.has('QRESYNC');
+  const hasModSeq = previousCursor?.modSeq !== undefined;
+  const hasServerModSeq = mailboxState.highestModSeq !== undefined;
+  const uidValidityMatches =
+    (previousCursor?.uidValidity ?? 0) === mailboxState.uidValidity ||
+    previousCursor?.uidValidity === 0;
 
-  return (
-    supportsQresync &&
-    lastModSeq !== undefined &&
-    highestModSeq !== undefined &&
-    lastUidValidity === uidValidity
-  );
+  return supportsQresync && hasModSeq && hasServerModSeq && uidValidityMatches;
 };

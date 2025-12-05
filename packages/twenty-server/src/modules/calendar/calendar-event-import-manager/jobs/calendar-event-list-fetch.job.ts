@@ -5,6 +5,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
+import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import {
   CalendarChannelSyncStage,
   type CalendarChannelWorkspaceEntity,
@@ -23,6 +24,7 @@ export type CalendarEventListFetchJobData = {
 export class CalendarEventListFetchJob {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
+    private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
     private readonly calendarFetchEventsService: CalendarFetchEventsService,
   ) {}
 
@@ -48,26 +50,31 @@ export class CalendarEventListFetchJob {
     }
 
     if (
+      calendarChannel.syncStage !==
+      CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED
+    ) {
+      return;
+    }
+
+    if (
       isThrottled(
         calendarChannel.syncStageStartedAt,
         calendarChannel.throttleFailureCount,
       )
     ) {
+      await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
+        [calendarChannel.id],
+        workspaceId,
+        true,
+      );
+
       return;
     }
 
-    switch (calendarChannel.syncStage) {
-      case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED:
-      case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING:
-        await this.calendarFetchEventsService.fetchCalendarEvents(
-          calendarChannel,
-          calendarChannel.connectedAccount,
-          workspaceId,
-        );
-        break;
-
-      default:
-        break;
-    }
+    await this.calendarFetchEventsService.fetchCalendarEvents(
+      calendarChannel,
+      calendarChannel.connectedAccount,
+      workspaceId,
+    );
   }
 }

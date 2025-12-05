@@ -16,11 +16,16 @@ import {
 
 import assert from 'assert';
 
-import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
+import type { FileUpload } from 'graphql-upload/processRequest.mjs';
+
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
+import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
@@ -69,6 +74,7 @@ import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/cons
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { getRequest } from 'src/utils/extract-request';
@@ -101,6 +107,7 @@ export class WorkspaceResolver {
     private readonly viewService: ViewService,
     private readonly dnsManagerService: DnsManagerService,
     private readonly customDomainManagerService: CustomDomainManagerService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   @Query(() => WorkspaceEntity)
@@ -143,6 +150,13 @@ export class WorkspaceResolver {
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
     }
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async routerModel(
+    @Parent() _workspace: WorkspaceEntity,
+  ): Promise<string | null> {
+    return 'auto';
   }
 
   @Mutation(() => SignedFileDTO)
@@ -225,17 +239,49 @@ export class WorkspaceResolver {
       return null;
     }
 
-    return await this.roleService.getRoleById(
+    const defaultRoleEntity = await this.roleService.getRoleById(
       workspace.defaultRoleId,
       workspace.id,
     );
+
+    return isDefined(defaultRoleEntity)
+      ? fromRoleEntityToRoleDto(defaultRoleEntity)
+      : null;
   }
 
   @ResolveField(() => String, { nullable: true })
-  async routerModel(
+  async fastModel(
     @Parent() workspace: WorkspaceEntity,
   ): Promise<string | null> {
-    return workspace.routerModel;
+    return workspace.fastModel;
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async smartModel(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<string | null> {
+    return workspace.smartModel;
+  }
+
+  @ResolveField(() => ApplicationDTO, { nullable: true })
+  async workspaceCustomApplication(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<ApplicationDTO | null> {
+    try {
+      const { workspaceCustomFlatApplication } =
+        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+          {
+            workspace,
+          },
+        );
+
+      return fromFlatApplicationToApplicationDto(
+        workspaceCustomFlatApplication,
+      );
+    } catch {
+      // Temporary should be removed after CreateWorkspaceCustomApplicationCommand is run
+      return null;
+    }
   }
 
   @ResolveField(() => BillingSubscriptionEntity, { nullable: true })

@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`applyCumulativeTransformToBarChartData should handle basic accumulation 1`] = `
+[
+  {
+    "id": "a",
+    "value": 10,
+  },
+  {
+    "id": "b",
+    "value": 30,
+  },
+  {
+    "id": "c",
+    "value": 60,
+  },
+]
+`;
+
+exports[`applyCumulativeTransformToBarChartData should handle empty data 1`] = `[]`;
+
+exports[`applyCumulativeTransformToBarChartData should handle filter above rangeMax 1`] = `
+[
+  {
+    "id": "a",
+    "value": 10,
+  },
+]
+`;
+
+exports[`applyCumulativeTransformToBarChartData should handle filter below rangeMin 1`] = `
+[
+  {
+    "id": "b",
+    "value": 20,
+  },
+  {
+    "id": "c",
+    "value": 30,
+  },
+]
+`;
+
+exports[`applyCumulativeTransformToBarChartData should handle skip non-numeric values 1`] = `
+[
+  {
+    "id": "a",
+    "value": 10,
+  },
+  {
+    "id": "b",
+    "value": 10,
+  },
+  {
+    "id": "c",
+    "value": 30,
+  },
+]
+`;

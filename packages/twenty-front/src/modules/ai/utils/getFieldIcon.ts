@@ -1,16 +1,13 @@
-import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type AgentResponseFieldType } from 'twenty-shared/ai';
 
-export const getFieldIcon = (fieldType?: InputSchemaPropertyType): string => {
+export const getFieldIcon = (fieldType?: AgentResponseFieldType): string => {
   switch (fieldType) {
-    case FieldMetadataType.TEXT:
+    case 'string':
       return 'IconAbc';
-    case FieldMetadataType.NUMBER:
+    case 'number':
       return 'IconText';
-    case FieldMetadataType.BOOLEAN:
+    case 'boolean':
       return 'IconCheckbox';
-    case FieldMetadataType.DATE:
-      return 'IconCalendarEvent';
     default:
       return 'IconQuestionMark';
   }

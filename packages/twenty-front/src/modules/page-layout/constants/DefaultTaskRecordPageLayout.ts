@@ -48,7 +48,7 @@ export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
           id: 'task-widget-note',
           pageLayoutTabId: 'task-tab-fields',
           title: 'Note',
-          type: WidgetType.RICH_TEXT,
+          type: WidgetType.FIELD_RICH_TEXT,
           objectMetadataId: null,
           gridPosition: {
             __typename: 'GridPosition',
@@ -87,7 +87,7 @@ export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
           id: 'task-widget-note',
           pageLayoutTabId: 'task-tab-note',
           title: 'Note',
-          type: WidgetType.RICH_TEXT,
+          type: WidgetType.FIELD_RICH_TEXT,
           objectMetadataId: null,
           gridPosition: {
             __typename: 'GridPosition',

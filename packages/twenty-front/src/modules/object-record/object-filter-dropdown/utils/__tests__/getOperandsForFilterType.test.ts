@@ -16,6 +16,8 @@ describe('getOperandsForFilterType', () => {
   ];
 
   const numberOperands = [
+    RecordFilterOperand.IS,
+    RecordFilterOperand.IS_NOT,
     RecordFilterOperand.GREATER_THAN_OR_EQUAL,
     RecordFilterOperand.LESS_THAN_OR_EQUAL,
   ];

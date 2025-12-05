@@ -13,7 +13,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 
 @Resolver()
 @UseFilters(SearchApiExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
@@ -22,7 +22,7 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 export class SearchResolver {
   constructor(
     private readonly searchService: SearchService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   @Query(() => SearchResultConnectionDTO)
@@ -38,23 +38,29 @@ export class SearchResolver {
       after,
     }: SearchArgs,
   ) {
-    const objectMetadataMaps =
-      await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
-        workspace.id,
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId: workspace.id,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
       );
+
+    const flatObjectMetadatas = Object.values(
+      flatObjectMetadataMaps.byId,
+    ).filter(isDefined);
 
     const filteredObjectMetadataItems =
       this.searchService.filterObjectMetadataItems({
-        objectMetadataItemWithFieldMaps: Object.values(
-          objectMetadataMaps.byId,
-        ).filter(isDefined),
+        flatObjectMetadatas,
         includedObjectNameSingulars: includedObjectNameSingulars ?? [],
         excludedObjectNameSingulars: excludedObjectNameSingulars ?? [],
       });
 
     const allRecordsWithObjectMetadataItems =
       await this.searchService.getAllRecordsWithObjectMetadataItems({
-        objectMetadataItemWithFieldMaps: filteredObjectMetadataItems,
+        flatObjectMetadatas: filteredObjectMetadataItems,
+        flatFieldMetadataMaps,
         searchInput,
         limit,
         filter,
@@ -65,6 +71,7 @@ export class SearchResolver {
 
     return this.searchService.computeSearchObjectResults({
       recordsWithObjectMetadataItems: allRecordsWithObjectMetadataItems,
+      flatFieldMetadataMaps,
       workspaceId: workspace.id,
       limit,
       after,

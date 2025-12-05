@@ -16,25 +16,26 @@ import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-pa
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { getObjectMetadataMapItemByNamePlural } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-plural.util';
-import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
 
@@ -57,13 +58,13 @@ export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly twentyORMManager: TwentyORMManager;
   @Inject()
-  protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService;
+  protected readonly workspaceCacheService: WorkspaceCacheService;
   @Inject()
   protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
   @Inject()
   protected readonly workspaceCacheStorageService: WorkspaceCacheStorageService;
   @Inject()
-  protected readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService;
+  protected readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService;
   @Inject()
   protected readonly apiKeyRoleService: ApiKeyRoleService;
   @Inject()
@@ -98,6 +99,13 @@ export abstract class RestApiBaseHandler {
         authContext.workspace.id,
       );
     } else {
+      if (!isDefined(authContext.userWorkspaceId)) {
+        throw new PermissionsException(
+          'No user workspace ID found in authentication context',
+          PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
+        );
+      }
+
       const userWorkspaceRoleId =
         await this.userRoleService.getRoleIdForUserWorkspace({
           userWorkspaceId: authContext.userWorkspaceId,
@@ -114,35 +122,36 @@ export abstract class RestApiBaseHandler {
       roleId = userWorkspaceRoleId;
     }
 
-    const objectMetadataPermissions =
-      await this.workspacePermissionsCacheService.getObjectRecordPermissionsForRoles(
-        {
-          workspaceId: authContext.workspace.id,
-          roleIds: [roleId],
-        },
+    const { rolesPermissions } =
+      await this.workspaceCacheService.getOrRecompute(
+        authContext.workspace.id,
+        ['rolesPermissions'],
       );
 
-    return { objectsPermissions: objectMetadataPermissions[roleId] };
+    return { objectsPermissions: rolesPermissions[roleId] };
   };
 
   async computeSelectedFields({
     authContext,
     depth,
-    objectMetadataMapItem,
-    objectMetadataMaps,
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
   }: {
     authContext: WorkspaceAuthContext;
     depth?: Depth | undefined;
-    objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
-    objectMetadataMaps: ObjectMetadataMaps;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }): Promise<CommonSelectedFields> {
     const { objectsPermissions } =
       await this.getObjectsPermissions(authContext);
 
     return this.restToCommonSelectedFieldsHandler.computeFromDepth({
       objectsPermissions,
-      objectMetadataMaps,
-      objectMetadataMapItem,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
       depth,
     });
   }
@@ -150,15 +159,21 @@ export abstract class RestApiBaseHandler {
   async buildCommonOptions(request: AuthenticatedRequest) {
     const { object: parsedObject } = parseCorePath(request);
 
-    const { objectMetadataMaps, objectMetadataMapItem } =
-      await this.getObjectMetadata(request, parsedObject);
+    const {
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
+    } = await this.getObjectMetadata(request, parsedObject);
 
     const authContext = this.getAuthContextFromRequest(request);
 
     return {
       authContext,
-      objectMetadataItemWithFieldMaps: objectMetadataMapItem,
-      objectMetadataMaps: objectMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
     };
   }
 
@@ -166,8 +181,11 @@ export abstract class RestApiBaseHandler {
     request: AuthenticatedRequest,
     parsedObject: string,
   ): Promise<{
-    objectMetadataMaps: ObjectMetadataMaps;
-    objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
+    objectIdByNameSingular: Record<string, string>;
   }> {
     const { workspace } =
       await this.accessTokenService.validateTokenByRequest(request);
@@ -178,19 +196,31 @@ export abstract class RestApiBaseHandler {
       await this.workspaceCacheStorageService.getMetadataVersion(workspace.id);
 
     if (currentCacheVersion === undefined) {
-      await this.workspaceMetadataCacheService.recomputeMetadataCache({
-        workspaceId: workspace.id,
-      });
-
-      throw new BadRequestException('Metadata cache version not found');
+      if (isDefined(workspace.metadataVersion)) {
+        await this.workspaceCacheStorageService.setMetadataVersion(
+          workspace.id,
+          workspace.metadataVersion,
+        );
+      } else {
+        throw new BadRequestException(
+          'Workspace metadata version not found in database',
+        );
+      }
     }
-    const objectMetadataMaps =
-      await this.workspaceCacheStorageService.getObjectMetadataMaps(
-        workspace.id,
-        currentCacheVersion,
+
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId: workspace.id,
+          flatMapsKeys: [
+            'flatObjectMetadataMaps',
+            'flatFieldMetadataMaps',
+            'flatIndexMaps',
+          ],
+        },
       );
 
-    if (!objectMetadataMaps) {
+    if (!isDefined(flatObjectMetadataMaps)) {
       throw new BadRequestException(
         `No object was found for the workspace associated with this API key. You may generate a new one here ${this.workspaceDomainsService
           .buildWorkspaceURL({
@@ -201,21 +231,25 @@ export abstract class RestApiBaseHandler {
       );
     }
 
-    const objectMetadataItem = getObjectMetadataMapItemByNamePlural(
-      objectMetadataMaps,
-      parsedObject,
+    const { idByNameSingular, idByNamePlural } = buildObjectIdByNameMaps(
+      flatObjectMetadataMaps,
     );
 
-    if (!objectMetadataItem) {
-      const wrongObjectMetadataItem = getObjectMetadataMapItemByNameSingular(
-        objectMetadataMaps,
-        parsedObject,
-      );
+    let objectId = idByNamePlural[parsedObject];
+    let flatObjectMetadataItem = objectId
+      ? flatObjectMetadataMaps.byId[objectId]
+      : undefined;
+
+    if (!flatObjectMetadataItem) {
+      const wrongObjectId = idByNameSingular[parsedObject];
+      const wrongFlatObjectMetadataItem = wrongObjectId
+        ? flatObjectMetadataMaps.byId[wrongObjectId]
+        : undefined;
 
       let hint = 'eg: companies';
 
-      if (wrongObjectMetadataItem) {
-        hint = `Did you mean '${wrongObjectMetadataItem.namePlural}'?`;
+      if (wrongFlatObjectMetadataItem) {
+        hint = `Did you mean '${wrongFlatObjectMetadataItem.namePlural}'?`;
       }
 
       throw new BadRequestException(
@@ -229,7 +263,7 @@ export abstract class RestApiBaseHandler {
     // Check if this entity is workspace-gated and should be blocked from workspace API
     if (
       shouldExcludeFromWorkspaceApi(
-        objectMetadataItem,
+        flatObjectMetadataItem,
         standardObjectMetadataDefinitions,
         workspaceFeatureFlagsMap,
       )
@@ -240,8 +274,11 @@ export abstract class RestApiBaseHandler {
     }
 
     return {
-      objectMetadataMaps,
-      objectMetadataMapItem: objectMetadataItem,
+      flatObjectMetadata: flatObjectMetadataItem,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatIndexMaps,
+      objectIdByNameSingular: idByNameSingular,
     };
   }
 }

@@ -3,7 +3,6 @@ import {
   type CompositeProperty,
 } from 'twenty-shared/types';
 
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
@@ -19,8 +18,8 @@ export type FieldTypeAndNameMetadata = {
 };
 
 // TODO: If we need to implement custom name logic for columns, we can do it here
-export function computeColumnName<T extends FieldMetadataType>(
-  fieldMetadataOrFieldName: FieldMetadataEntity<T> | string,
+export function computeColumnName(
+  fieldMetadataOrFieldName: FieldTypeAndNameMetadata | string,
   options?: ComputeColumnNameOptions,
 ): string {
   const generateName = (name: string) => {
@@ -40,11 +39,9 @@ export function computeColumnName<T extends FieldMetadataType>(
 
   return generateName(fieldMetadataOrFieldName.name);
 }
-export function computeCompositeColumnName<T extends FieldMetadataType>(
-  fieldMetadataOrFieldName:
-    | FieldTypeAndNameMetadata
-    | FieldMetadataEntity<T>
-    | string,
+
+export function computeCompositeColumnName(
+  fieldMetadataOrFieldName: FieldTypeAndNameMetadata | string,
   compositeProperty: CompositeProperty,
 ): string {
   const generateName = (name: string) => {

@@ -1,14 +1,23 @@
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { v4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewOpenRecordInType } from 'src/engine/metadata-modules/view/types/view-open-record-in-type.type';
+import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { WORKFLOW_RUN_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-export const workflowRunsAllView = (
-  objectMetadataItems: ObjectMetadataEntity[],
+export const workflowRunsAllView = ({
+  objectMetadataItems,
   useCoreNaming = false,
-) => {
+  twentyStandardFlatApplication,
+}: {
+  objectMetadataItems: ObjectMetadataEntity[];
+  useCoreNaming?: boolean;
+  twentyStandardFlatApplication: FlatApplication;
+}): ViewDefinition => {
   const workflowRunObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.workflowRun,
   );
@@ -17,7 +26,13 @@ export const workflowRunsAllView = (
     throw new Error('Workflow run object metadata not found');
   }
 
+  const viewUniversalIdentifier =
+    STANDARD_OBJECTS.workflowRun.views.allWorkflowRuns.universalIdentifier;
+
   return {
+    id: v4(),
+    universalIdentifier: viewUniversalIdentifier,
+    applicationId: twentyStandardFlatApplication.id,
     name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All Workflow Runs',
     objectMetadataId: workflowRunObjectMetadata.id,
     type: 'table',
@@ -25,7 +40,6 @@ export const workflowRunsAllView = (
     position: 0,
     icon: 'IconHistoryToggle',
     openRecordIn: ViewOpenRecordInType.RECORD_PAGE,
-    kanbanFieldMetadataId: '',
     filters: [],
     fields: [
       {
@@ -37,6 +51,9 @@ export const workflowRunsAllView = (
         position: 0,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.workflowRun.views.allWorkflowRuns.viewFields.name
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -47,6 +64,9 @@ export const workflowRunsAllView = (
         position: 1,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.workflowRun.views.allWorkflowRuns.viewFields.workflow
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -57,6 +77,9 @@ export const workflowRunsAllView = (
         position: 2,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.workflowRun.views.allWorkflowRuns.viewFields.status
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -67,6 +90,9 @@ export const workflowRunsAllView = (
         position: 3,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.workflowRun.views.allWorkflowRuns.viewFields
+            .startedAt.universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -77,6 +103,9 @@ export const workflowRunsAllView = (
         position: 4,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.workflowRun.views.allWorkflowRuns.viewFields
+            .createdBy.universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -88,6 +117,9 @@ export const workflowRunsAllView = (
         position: 5,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.workflowRun.views.allWorkflowRuns.viewFields
+            .workflowVersion.universalIdentifier,
       },
     ],
   };

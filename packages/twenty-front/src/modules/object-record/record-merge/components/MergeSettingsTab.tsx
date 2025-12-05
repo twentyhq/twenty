@@ -1,4 +1,4 @@
-import { useMergePreview } from '@/object-record/record-merge/hooks/useMergePreview';
+import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hooks/useMergeRecordsSelectedRecords';
 import { useMergeRecordsSettings } from '@/object-record/record-merge/hooks/useMergeRecordsSettings';
 import { Select } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
@@ -11,16 +11,10 @@ const StyledSection = styled(Section)`
   width: auto;
 `;
 
-export const MergeSettingsTab = ({
-  objectNameSingular,
-}: {
-  objectNameSingular: string;
-}) => {
+export const MergeSettingsTab = () => {
   const { mergeSettings, updatePriorityRecordIndex } =
     useMergeRecordsSettings();
-  const { selectedRecords } = useMergePreview({
-    objectNameSingular,
-  });
+  const { selectedRecords } = useMergeRecordsSelectedRecords();
 
   const priorityOptions = selectedRecords.map((_, index) => ({
     value: index,

@@ -1,3 +1,4 @@
+import { type AgentResponseSchema } from 'twenty-shared/ai';
 import { z } from 'zod';
 import { zodNonEmptyString } from '~/types/ZodNonEmptyString';
 
@@ -26,6 +27,13 @@ export const settingsAIAgentFormSchema = z.object({
         .optional(),
     })
     .optional(),
+  responseFormat: z
+    .object({
+      type: z.enum(['text', 'json']),
+      schema: z.custom<AgentResponseSchema>().optional(),
+    })
+    .optional(),
+  evaluationInputs: z.array(z.string()).default([]),
 });
 
 export type SettingsAIAgentFormValues = z.infer<

@@ -38,8 +38,8 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { computeWorkspaceCustomCreateApplicationInput } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-workspace-custom-create-application-input';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
@@ -60,6 +60,7 @@ export class SignInUpService {
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly userService: UserService,
     private readonly metricsService: MetricsService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
     @InjectDataSource()
     private readonly dataSource: DataSource,
@@ -459,26 +460,19 @@ export class SignInUpService {
       isWorkEmailFound && (await isLogoUrlValid()) ? logoUrl : undefined;
 
     const workspaceId = v4();
-    const workspaceCustomApplicationCreateInput =
-      computeWorkspaceCustomCreateApplicationInput({
-        workspace: {
-          id: workspaceId,
-        },
-      });
-
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const workspaceCustomApplication = await this.applicationService.create(
-        {
-          ...workspaceCustomApplicationCreateInput,
-          serverlessFunctionLayerId: null,
-        },
-        queryRunner,
-      );
+      const workspaceCustomApplication =
+        await this.applicationService.createWorkspaceCustomApplication(
+          {
+            workspaceId,
+          },
+          queryRunner,
+        );
 
       const workspaceToCreate = this.workspaceRepository.create({
         id: workspaceId,
@@ -532,6 +526,9 @@ export class SignInUpService {
       );
 
       await queryRunner.commitTransaction();
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
 
       return { user, workspace };
     } catch (error) {

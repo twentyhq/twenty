@@ -9,9 +9,9 @@ import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { transformEnumValue } from 'src/engine/utils/transform-enum-value';
 import { pascalCase } from 'src/utils/pascal-case';
 
@@ -23,25 +23,28 @@ export class EnumFieldMetadataGqlEnumTypeGenerator {
 
   constructor(private readonly gqlTypesStorage: GqlTypesStorage) {}
 
-  public buildAndStore(objectMetadata: ObjectMetadataEntity) {
-    for (const fieldMetadata of objectMetadata.fields) {
+  public buildAndStore(
+    flatObjectMetadata: FlatObjectMetadata,
+    fields: FlatFieldMetadata[],
+  ) {
+    for (const fieldMetadata of fields) {
       if (!isEnumFieldMetadataType(fieldMetadata.type)) {
         continue;
       }
 
       this.gqlTypesStorage.addGqlType(
         computeEnumFieldGqlTypeKey(
-          objectMetadata.nameSingular,
+          flatObjectMetadata.nameSingular,
           fieldMetadata.name,
         ),
-        this.generateEnum(objectMetadata.nameSingular, fieldMetadata),
+        this.generateEnum(flatObjectMetadata.nameSingular, fieldMetadata),
       );
     }
   }
 
   private generateEnum(
     objectName: string,
-    fieldMetadata: FieldMetadataEntity,
+    fieldMetadata: FlatFieldMetadata,
   ): GraphQLEnumType {
     // FixMe: It's a hack until Typescript get fixed on union types for reduce function
     // https://github.com/microsoft/TypeScript/issues/36390

@@ -1,17 +1,26 @@
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { v4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/constants/DEFAULT_VIEW_FIELD_SIZE';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   MESSAGE_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-export const messagesAllView = (
-  objectMetadataItems: ObjectMetadataEntity[],
-  useCoreNaming = false,
-) => {
+export const messagesAllView = ({
+  objectMetadataItems,
+  twentyStandardFlatApplication,
+  useCoreNaming,
+}: {
+  objectMetadataItems: ObjectMetadataEntity[];
+  useCoreNaming?: boolean;
+  twentyStandardFlatApplication: FlatApplication;
+}): ViewDefinition => {
   const messageObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.message,
   );
@@ -20,14 +29,19 @@ export const messagesAllView = (
     throw new Error('Message object metadata not found');
   }
 
+  const viewUniversalIdentifier =
+    STANDARD_OBJECTS.message.views.allMessages.universalIdentifier;
+
   return {
+    id: v4(),
+    universalIdentifier: viewUniversalIdentifier,
+    applicationId: twentyStandardFlatApplication.id,
     name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All Messages',
     objectMetadataId: messageObjectMetadata.id ?? '',
     type: 'table',
     key: 'INDEX',
     position: 0,
     icon: 'IconList',
-    kanbanFieldMetadataId: '',
     filters: [],
     fields: [
       {
@@ -38,6 +52,9 @@ export const messagesAllView = (
         position: 0,
         isVisible: true,
         size: DEFAULT_VIEW_FIELD_SIZE,
+        universalIdentifier:
+          STANDARD_OBJECTS.message.views.allMessages.viewFields.subject
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -48,6 +65,9 @@ export const messagesAllView = (
         position: 1,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.message.views.allMessages.viewFields.messageThread
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -59,6 +79,9 @@ export const messagesAllView = (
         position: 2,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.message.views.allMessages.viewFields
+            .messageParticipants.universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -69,6 +92,9 @@ export const messagesAllView = (
         position: 3,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.message.views.allMessages.viewFields.receivedAt
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -79,6 +105,9 @@ export const messagesAllView = (
         position: 4,
         isVisible: true,
         size: 180,
+        universalIdentifier:
+          STANDARD_OBJECTS.message.views.allMessages.viewFields.headerMessageId
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -88,6 +117,9 @@ export const messagesAllView = (
         position: 5,
         isVisible: true,
         size: 200,
+        universalIdentifier:
+          STANDARD_OBJECTS.message.views.allMessages.viewFields.text
+            .universalIdentifier,
       },
       {
         fieldMetadataId:
@@ -98,6 +130,9 @@ export const messagesAllView = (
         position: 6,
         isVisible: true,
         size: 150,
+        universalIdentifier:
+          STANDARD_OBJECTS.message.views.allMessages.viewFields.createdAt
+            .universalIdentifier,
       },
     ],
   };

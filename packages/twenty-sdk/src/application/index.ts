@@ -20,7 +20,10 @@ export type {
 } from './field-metadata/composite-fields';
 export { FieldType } from './field-metadata/field-type';
 export { Field } from './field-metadata/field.decorator';
-export { BaseObject } from './object-metadata/base-object';
+export { OnDeleteAction } from './field-metadata/on-delete-action';
+export { RelationType } from './field-metadata/relation-type';
+export { Relation } from './field-metadata/relation.decorator';
+export type { FunctionConfig } from './function-config';
 export { Object } from './object-metadata/object.decorator';
-export type { ServerlessFunctionConfig } from './serverless-function-config';
+export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './object-metadata/standard-object-ids';
 export type { SyncableEntityOptions } from './syncable-entity-options.type';

@@ -1,10 +1,11 @@
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
-  FieldMetadataType,
-  RelationOnDeleteAction,
   ActorMetadata,
   EmailsMetadata,
+  FieldMetadataType,
   PhonesMetadata,
+  RelationOnDeleteAction,
   type FullNameMetadata,
   type LinksMetadata,
 } from 'twenty-shared/types';
@@ -12,8 +13,8 @@ import {
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/workspace-duplicate-criteria.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -29,10 +30,9 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { PERSON_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
-  type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
+  type FieldTypeAndNameMetadata,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -96,6 +96,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     },
   })
   @WorkspaceIsUnique()
+  @WorkspaceIsNullable()
   emails: EmailsMetadata;
 
   @WorkspaceField({
@@ -125,7 +126,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Contact’s job title`,
     icon: 'IconBriefcase',
   })
-  jobTitle: string;
+  @WorkspaceIsNullable()
+  jobTitle: string | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.phone,
@@ -135,7 +137,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconPhone',
   })
   @WorkspaceIsDeprecated()
-  phone: string;
+  @WorkspaceIsNullable()
+  phone: string | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.phones,
@@ -147,6 +150,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
       maxNumberOfValues: 1,
     },
   })
+  @WorkspaceIsNullable()
   phones: PhonesMetadata;
 
   @WorkspaceField({
@@ -156,7 +160,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Contact’s city`,
     icon: 'IconMap',
   })
-  city: string;
+  @WorkspaceIsNullable()
+  city: string | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.avatarUrl,
@@ -166,7 +171,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconFileUpload',
   })
   @WorkspaceIsSystem()
-  avatarUrl: string;
+  @WorkspaceIsNullable()
+  avatarUrl: string | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.position,

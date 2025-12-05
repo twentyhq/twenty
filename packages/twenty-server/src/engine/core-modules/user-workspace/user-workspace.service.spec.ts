@@ -16,6 +16,7 @@ import {
   type SignedFilesResult,
 } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -24,7 +25,7 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -38,6 +39,7 @@ describe('UserWorkspaceService', () => {
   let userRoleService: UserRoleService;
   let fileService: FileService;
   let fileUploadService: FileUploadService;
+  let onboardingService: OnboardingService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -68,7 +70,7 @@ describe('UserWorkspaceService', () => {
           },
         },
         {
-          provide: getRepositoryToken(RoleTargetsEntity),
+          provide: getRepositoryToken(RoleTargetEntity),
           useValue: {
             findOneOrFail: jest.fn(),
           },
@@ -108,7 +110,7 @@ describe('UserWorkspaceService', () => {
         {
           provide: UserRoleService,
           useValue: {
-            assignRoleToUserWorkspace: jest.fn(),
+            assignRoleToManyUserWorkspace: jest.fn(),
           },
         },
         {
@@ -133,6 +135,12 @@ describe('UserWorkspaceService', () => {
             copyFileFromWorkspaceToWorkspace: jest.fn(),
           },
         },
+        {
+          provide: OnboardingService,
+          useValue: {
+            setOnboardingCreateProfilePending: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -153,6 +161,7 @@ describe('UserWorkspaceService', () => {
     );
     userRoleService = module.get<UserRoleService>(UserRoleService);
     fileUploadService = module.get<FileUploadService>(FileUploadService);
+    onboardingService = module.get<OnboardingService>(OnboardingService);
   });
 
   it('should be defined', () => {
@@ -408,7 +417,7 @@ describe('UserWorkspaceService', () => {
       jest.spyOn(service, 'create').mockResolvedValue(userWorkspace);
       jest.spyOn(service, 'createWorkspaceMember').mockResolvedValue(undefined);
       jest
-        .spyOn(userRoleService, 'assignRoleToUserWorkspace')
+        .spyOn(userRoleService, 'assignRoleToManyUserWorkspace')
         .mockResolvedValue(undefined);
       jest
         .spyOn(workspaceInvitationService, 'invalidateWorkspaceInvitation')
@@ -421,29 +430,33 @@ describe('UserWorkspaceService', () => {
         workspace.id,
       );
       expect(service.create).toHaveBeenCalled();
-      expect(service.create).toHaveBeenCalledWith(
-        {
-          workspaceId: workspace.id,
-          userId: user.id,
-          isExistingUser: true,
-        },
-        undefined,
-      );
+      expect(service.create).toHaveBeenCalledWith({
+        workspaceId: workspace.id,
+        userId: user.id,
+        isExistingUser: true,
+      });
       expect(service.createWorkspaceMember).toHaveBeenCalledWith(
         workspace.id,
         user,
       );
-      expect(userRoleService.assignRoleToUserWorkspace).toHaveBeenCalledWith(
-        {
-          workspaceId: workspace.id,
-          userWorkspaceId: userWorkspace.id,
-          roleId: workspace.defaultRoleId,
-        },
-        undefined,
-      );
+      expect(
+        userRoleService.assignRoleToManyUserWorkspace,
+      ).toHaveBeenCalledWith({
+        workspaceId: workspace.id,
+        userWorkspaceIds: [userWorkspace.id],
+        roleId: workspace.defaultRoleId,
+      });
       expect(
         workspaceInvitationService.invalidateWorkspaceInvitation,
-      ).toHaveBeenCalledWith(workspace.id, user.email, undefined);
+      ).toHaveBeenCalledWith(workspace.id, user.email);
+
+      expect(
+        onboardingService.setOnboardingCreateProfilePending,
+      ).toHaveBeenCalledWith({
+        userId: user.id,
+        workspaceId: workspace.id,
+        value: true,
+      });
     });
 
     it('should not add user to workspace if already in workspace', async () => {

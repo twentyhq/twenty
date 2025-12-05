@@ -19,9 +19,11 @@ export const GraphWidgetAggregateChartRenderer = ({
 }: {
   widget: PageLayoutWidget;
 }) => {
+  const configuration = widget.configuration as AggregateChartConfiguration;
+
   const { value, loading } = useGraphWidgetAggregateQuery({
     objectMetadataItemId: widget.objectMetadataId,
-    configuration: widget.configuration as AggregateChartConfiguration,
+    configuration,
   });
 
   if (loading) {
@@ -30,7 +32,11 @@ export const GraphWidgetAggregateChartRenderer = ({
 
   return (
     <Suspense fallback={<ChartSkeletonLoader />}>
-      <GraphWidgetAggregateChart value={value ?? '-'} />
+      <GraphWidgetAggregateChart
+        value={value ?? '-'}
+        prefix={configuration.prefix ?? undefined}
+        suffix={configuration.suffix ?? undefined}
+      />
     </Suspense>
   );
 };

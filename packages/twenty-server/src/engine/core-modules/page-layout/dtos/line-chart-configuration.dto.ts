@@ -109,6 +109,11 @@ export class LineChartConfigurationDTO {
   @IsOptional()
   displayDataLabel?: boolean;
 
+  @Field(() => Boolean, { nullable: true, defaultValue: true })
+  @IsBoolean()
+  @IsOptional()
+  displayLegend?: boolean;
+
   @Field(() => Number, { nullable: true })
   @IsNumber()
   @IsOptional()
@@ -140,6 +145,13 @@ export class LineChartConfigurationDTO {
   @IsBoolean()
   @IsOptional()
   isStacked?: boolean;
+
+  @Field(() => Boolean, {
+    nullable: true,
+  })
+  @IsBoolean()
+  @IsOptional()
+  isCumulative?: boolean;
 
   @Field(() => String, { nullable: true, defaultValue: 'UTC' })
   @IsTimeZone()

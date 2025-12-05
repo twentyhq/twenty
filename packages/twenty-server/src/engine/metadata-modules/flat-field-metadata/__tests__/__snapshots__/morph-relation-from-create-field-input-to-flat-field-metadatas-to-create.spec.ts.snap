@@ -104,7 +104,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
   "result": {
     "flatFieldMetadatas": [
       {
-        "applicationId": null,
+        "applicationId": Any<String>,
         "calendarViewIds": [],
         "createdAt": Any<ClockDate>,
         "defaultValue": null,
@@ -120,6 +120,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "isUnique": null,
         "kanbanAggregateOperationViewIds": [],
         "label": "newFieldLabel",
+        "mainGroupByFieldMetadataViewIds": [],
         "morphId": Any<String>,
         "name": "newFieldPets",
         "objectMetadataId": Any<String>,
@@ -140,7 +141,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "workspaceId": Any<String>,
       },
       {
-        "applicationId": null,
+        "applicationId": Any<String>,
         "calendarViewIds": [],
         "createdAt": Any<ClockDate>,
         "defaultValue": null,
@@ -156,6 +157,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "isUnique": null,
         "kanbanAggregateOperationViewIds": [],
         "label": "Pet",
+        "mainGroupByFieldMetadataViewIds": [],
         "morphId": null,
         "name": "pet",
         "objectMetadataId": Any<String>,
@@ -178,7 +180,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "workspaceId": Any<String>,
       },
       {
-        "applicationId": null,
+        "applicationId": Any<String>,
         "calendarViewIds": [],
         "createdAt": Any<ClockDate>,
         "defaultValue": null,
@@ -194,6 +196,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "isUnique": null,
         "kanbanAggregateOperationViewIds": [],
         "label": "newFieldLabel",
+        "mainGroupByFieldMetadataViewIds": [],
         "morphId": Any<String>,
         "name": "newFieldCompanies",
         "objectMetadataId": Any<String>,
@@ -214,7 +217,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "workspaceId": Any<String>,
       },
       {
-        "applicationId": null,
+        "applicationId": Any<String>,
         "calendarViewIds": [],
         "createdAt": Any<ClockDate>,
         "defaultValue": null,
@@ -230,6 +233,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "isUnique": null,
         "kanbanAggregateOperationViewIds": [],
         "label": "Company",
+        "mainGroupByFieldMetadataViewIds": [],
         "morphId": null,
         "name": "company",
         "objectMetadataId": Any<String>,
@@ -254,7 +258,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
     ],
     "indexMetadatas": [
       {
-        "applicationId": null,
+        "applicationId": Any<String>,
         "createdAt": Any<ClockDate>,
         "flatIndexFieldMetadatas": [
           {
@@ -278,7 +282,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "workspaceId": Any<String>,
       },
       {
-        "applicationId": null,
+        "applicationId": Any<String>,
         "createdAt": Any<ClockDate>,
         "flatIndexFieldMetadatas": [
           {

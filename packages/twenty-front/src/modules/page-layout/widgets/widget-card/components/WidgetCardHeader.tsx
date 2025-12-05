@@ -70,7 +70,7 @@ export const WidgetCardHeader = ({
 
   return (
     <StyledWidgetCardHeader className={className}>
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {!isEmpty && isInEditMode && (
           <WidgetGrip
             className="drag-handle"
@@ -83,7 +83,7 @@ export const WidgetCardHeader = ({
       </StyledTitleContainer>
       <StyledRightContainer>
         {isDefined(forbiddenDisplay) && forbiddenDisplay}
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
           {!isResizing &&
             !isEmpty &&
             isInEditMode &&

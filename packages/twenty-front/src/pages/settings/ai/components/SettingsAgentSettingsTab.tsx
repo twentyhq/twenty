@@ -13,6 +13,7 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { type Agent } from '~/generated/graphql';
 import { SettingsAgentDeleteConfirmationModal } from '~/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal';
+import { SettingsAgentResponseFormat } from '~/pages/settings/ai/components/SettingsAgentResponseFormat';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 import { SettingsAgentModelCapabilities } from '../components/SettingsAgentModelCapabilities';
 import { type SettingsAIAgentFormValues } from '../hooks/useSettingsAgentFormState';
@@ -97,7 +98,6 @@ export const SettingsAgentSettingsTab = ({
           </StyledNameContainer>
         </StyledIconNameRow>
       </StyledFormContainer>
-
       <StyledFormContainer>
         <TextArea
           textAreaId="agent-description-textarea"
@@ -108,7 +108,6 @@ export const SettingsAgentSettingsTab = ({
           disabled={disabled}
         />
       </StyledFormContainer>
-
       <StyledFormContainer>
         {noModelsAvailable ? (
           <StyledErrorMessage>
@@ -125,7 +124,6 @@ export const SettingsAgentSettingsTab = ({
           />
         )}
       </StyledFormContainer>
-
       {formValues.modelId && (
         <StyledFormContainer>
           <SettingsAgentModelCapabilities
@@ -138,7 +136,6 @@ export const SettingsAgentSettingsTab = ({
           />
         </StyledFormContainer>
       )}
-
       <StyledFormContainer>
         <TextArea
           textAreaId="agent-prompt-textarea"
@@ -151,7 +148,15 @@ export const SettingsAgentSettingsTab = ({
           disabled={disabled}
         />
       </StyledFormContainer>
-
+      <StyledFormContainer>
+        <SettingsAgentResponseFormat
+          responseFormat={formValues.responseFormat}
+          onResponseFormatChange={(format) =>
+            onFieldChange('responseFormat', format)
+          }
+          disabled={disabled}
+        />
+      </StyledFormContainer>
       {!disabled && agent && formValues.isCustom && (
         <Section>
           <H2Title title={t`Danger zone`} description={t`Delete this agent`} />

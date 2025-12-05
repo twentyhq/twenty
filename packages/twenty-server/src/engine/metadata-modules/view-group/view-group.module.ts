@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ViewGroupController } from 'src/engine/metadata-modules/view-group/controllers/view-group.controller';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewGroupResolver } from 'src/engine/metadata-modules/view-group/resolvers/view-group.resolver';
-import { ViewGroupV2Service } from 'src/engine/metadata-modules/view-group/services/view-group-v2.service';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
 import { ViewPermissionsModule } from 'src/engine/metadata-modules/view-permissions/view-permissions.module';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -18,6 +18,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
   imports: [
     TypeOrmModule.forFeature([ViewGroupEntity, ViewEntity]),
     WorkspaceCacheStorageModule,
+    ApplicationModule,
     FeatureFlagModule,
     PermissionsModule,
     WorkspaceMigrationV2Module,
@@ -25,7 +26,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     ViewPermissionsModule,
   ],
   controllers: [ViewGroupController],
-  providers: [ViewGroupService, ViewGroupV2Service, ViewGroupResolver],
+  providers: [ViewGroupService, ViewGroupResolver],
   exports: [ViewGroupService],
 })
 export class ViewGroupModule {}

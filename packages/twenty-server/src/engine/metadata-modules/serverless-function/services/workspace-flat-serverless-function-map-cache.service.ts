@@ -3,9 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+
 import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -14,19 +13,16 @@ import { RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/ro
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { fromServerlessFunctionEntityToFlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/utils/from-serverless-function-entity-to-flat-serverless-function.type';
-import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
-import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
-import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-flat-map-cache/utils/regroup-entities-by-related-entity-id';
+import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
-@WorkspaceFlatMapCache('flatServerlessFunctionMaps')
-export class WorkspaceFlatServerlessFunctionMapCacheService extends WorkspaceFlatMapCacheService<
+@WorkspaceCache('flatServerlessFunctionMaps')
+export class WorkspaceFlatServerlessFunctionMapCacheService extends WorkspaceCacheProvider<
   FlatEntityMaps<FlatServerlessFunction>
 > {
   constructor(
-    @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
-    cacheStorageService: CacheStorageService,
     @InjectRepository(ServerlessFunctionEntity)
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
     @InjectRepository(DatabaseEventTriggerEntity)
@@ -36,14 +32,12 @@ export class WorkspaceFlatServerlessFunctionMapCacheService extends WorkspaceFla
     @InjectRepository(RouteTriggerEntity)
     private readonly routeTriggerRepository: Repository<RouteTriggerEntity>,
   ) {
-    super(cacheStorageService);
+    super();
   }
 
-  protected async computeFlatMap({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<FlatEntityMaps<FlatServerlessFunction>> {
+  async computeForCache(
+    workspaceId: string,
+  ): Promise<FlatEntityMaps<FlatServerlessFunction>> {
     const [
       serverlessFunctions,
       routeTriggers,

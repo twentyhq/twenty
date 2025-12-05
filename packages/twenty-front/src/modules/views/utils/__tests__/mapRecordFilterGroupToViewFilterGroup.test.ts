@@ -37,7 +37,7 @@ describe('mapRecordFilterGroupToViewFilterGroup', () => {
     viewFields: [],
     viewGroups: [],
     viewSorts: [],
-    kanbanFieldMetadataId: '',
+    mainGroupByFieldMetadataId: '',
     kanbanAggregateOperation: AggregateOperations.COUNT,
     icon: '',
     kanbanAggregateOperationFieldMetadataId: '',

@@ -1,3 +1,4 @@
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
@@ -24,9 +25,13 @@ export const useDeletePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
     pageLayoutId,
   );
 
+  const { closeCommandMenu } = useCommandMenu();
+
   const deletePageLayoutWidget = useRecoilCallback(
     ({ snapshot, set }) =>
       (widgetId: string) => {
+        closeCommandMenu();
+
         const pageLayoutDraft = snapshot
           .getLoadable(pageLayoutDraftState)
           .getValue();
@@ -53,7 +58,7 @@ export const useDeletePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
           }));
         }
       },
-    [pageLayoutCurrentLayoutsState, pageLayoutDraftState],
+    [closeCommandMenu, pageLayoutCurrentLayoutsState, pageLayoutDraftState],
   );
 
   return { deletePageLayoutWidget };

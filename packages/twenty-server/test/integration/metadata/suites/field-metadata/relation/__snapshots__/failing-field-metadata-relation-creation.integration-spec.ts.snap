@@ -5,6 +5,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -28,6 +29,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
       ],
       "index": [],
       "objectMetadata": [],
+      "pageLayoutTab": [],
+      "role": [],
+      "roleTarget": [],
       "routeTrigger": [],
       "serverlessFunction": [],
       "view": [],
@@ -37,11 +41,15 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
@@ -62,6 +70,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -85,6 +94,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
       ],
       "index": [],
       "objectMetadata": [],
+      "pageLayoutTab": [],
+      "role": [],
+      "roleTarget": [],
       "routeTrigger": [],
       "serverlessFunction": [],
       "view": [],
@@ -94,11 +106,15 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
@@ -119,6 +135,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -148,6 +165,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
       ],
       "index": [],
       "objectMetadata": [],
+      "pageLayoutTab": [],
+      "role": [],
+      "roleTarget": [],
       "routeTrigger": [],
       "serverlessFunction": [],
       "view": [],
@@ -157,11 +177,15 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
@@ -182,6 +206,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -205,6 +230,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
       ],
       "index": [],
       "objectMetadata": [],
+      "pageLayoutTab": [],
+      "role": [],
+      "roleTarget": [],
       "routeTrigger": [],
       "serverlessFunction": [],
       "view": [],
@@ -214,11 +242,15 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
@@ -239,6 +271,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -268,6 +301,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
       ],
       "index": [],
       "objectMetadata": [],
+      "pageLayoutTab": [],
+      "role": [],
+      "roleTarget": [],
       "routeTrigger": [],
       "serverlessFunction": [],
       "view": [],
@@ -277,11 +313,15 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
@@ -302,6 +342,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
@@ -325,6 +366,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
           "type": "create_field",
         },
       ],
+      "pageLayoutTab": [],
+      "role": [],
+      "roleTarget": [],
       "routeTrigger": [],
       "serverlessFunction": [],
       "view": [],
@@ -334,11 +378,15 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
@@ -359,6 +407,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
@@ -382,6 +431,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
           "type": "create_field",
         },
       ],
+      "pageLayoutTab": [],
+      "role": [],
+      "roleTarget": [],
       "routeTrigger": [],
       "serverlessFunction": [],
       "view": [],
@@ -391,11 +443,15 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
@@ -416,6 +472,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
@@ -438,6 +495,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
           "type": "create_field",
         },
       ],
+      "pageLayoutTab": [],
+      "role": [],
+      "roleTarget": [],
       "routeTrigger": [],
       "serverlessFunction": [],
       "view": [],
@@ -447,11 +507,15 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
@@ -472,6 +536,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -527,6 +592,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
         },
       ],
       "objectMetadata": [],
+      "pageLayoutTab": [],
+      "role": [],
+      "roleTarget": [],
       "routeTrigger": [],
       "serverlessFunction": [],
       "view": [],
@@ -536,11 +604,15 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
@@ -561,6 +633,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [],
@@ -584,6 +657,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
           "type": "create_field",
         },
       ],
+      "pageLayoutTab": [],
+      "role": [],
+      "roleTarget": [],
       "routeTrigger": [],
       "serverlessFunction": [],
       "view": [],
@@ -593,11 +669,15 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
@@ -619,6 +699,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -658,6 +739,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
           },
         ],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -667,11 +751,15 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -694,6 +782,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -733,6 +822,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
           },
         ],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -742,11 +834,15 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -769,6 +865,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -814,6 +911,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
           },
         ],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -823,11 +923,15 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -850,6 +954,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -889,6 +994,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
           },
         ],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -898,11 +1006,15 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -925,6 +1037,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -970,6 +1083,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
           },
         ],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -979,11 +1095,15 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1006,6 +1126,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [],
@@ -1029,6 +1150,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
             "type": "create_field",
           },
         ],
+        "pageLayoutTab": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1038,11 +1162,15 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1065,6 +1193,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [],
@@ -1088,6 +1217,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
             "type": "create_field",
           },
         ],
+        "pageLayoutTab": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1097,11 +1229,15 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1124,6 +1260,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [],
@@ -1146,6 +1283,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
             "type": "create_field",
           },
         ],
+        "pageLayoutTab": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1155,11 +1295,15 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1182,6 +1326,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [
@@ -1237,6 +1382,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
           },
         ],
         "objectMetadata": [],
+        "pageLayoutTab": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1246,11 +1394,15 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1273,6 +1425,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
+        "agent": [],
         "cronTrigger": [],
         "databaseEventTrigger": [],
         "fieldMetadata": [],
@@ -1296,6 +1449,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
             "type": "create_field",
           },
         ],
+        "pageLayoutTab": [],
+        "role": [],
+        "roleTarget": [],
         "routeTrigger": [],
         "serverlessFunction": [],
         "view": [],
@@ -1305,11 +1461,15 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
       },
       "message": "Validation failed for 0 object(s) and 0 field(s)",
       "summary": {
+        "invalidAgent": 0,
         "invalidCronTrigger": 0,
         "invalidDatabaseEventTrigger": 0,
         "invalidFieldMetadata": 0,
         "invalidIndex": 0,
         "invalidObjectMetadata": 0,
+        "invalidPageLayoutTab": 0,
+        "invalidRole": 0,
+        "invalidRoleTarget": 0,
         "invalidRouteTrigger": 0,
         "invalidServerlessFunction": 0,
         "invalidView": 0,
@@ -1331,6 +1491,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -1354,6 +1515,9 @@ exports[`Field metadata relation creation should fail should fail when creating 
       ],
       "index": [],
       "objectMetadata": [],
+      "pageLayoutTab": [],
+      "role": [],
+      "roleTarget": [],
       "routeTrigger": [],
       "serverlessFunction": [],
       "view": [],
@@ -1363,11 +1527,15 @@ exports[`Field metadata relation creation should fail should fail when creating 
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,
@@ -1388,6 +1556,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
+      "agent": [],
       "cronTrigger": [],
       "databaseEventTrigger": [],
       "fieldMetadata": [
@@ -1427,6 +1596,9 @@ exports[`Field metadata relation creation should fail should fail when creating 
         },
       ],
       "objectMetadata": [],
+      "pageLayoutTab": [],
+      "role": [],
+      "roleTarget": [],
       "routeTrigger": [],
       "serverlessFunction": [],
       "view": [],
@@ -1436,11 +1608,209 @@ exports[`Field metadata relation creation should fail should fail when creating 
     },
     "message": "Validation failed for 0 object(s) and 0 field(s)",
     "summary": {
+      "invalidAgent": 0,
       "invalidCronTrigger": 0,
       "invalidDatabaseEventTrigger": 0,
       "invalidFieldMetadata": 0,
       "invalidIndex": 0,
       "invalidObjectMetadata": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail should fail when creating a relation field with name that conflicts with existing field name 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [],
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "fieldName" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "fieldName" is not available as it is already used by another field",
+              "value": "fieldName",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "fieldName",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
+              "userFriendlyMessage": "Relation field target metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "relatedObject",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+      ],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_7ee6c7ff1e4648b0665f60cd5e4",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
+      "objectMetadata": [],
+      "pageLayoutTab": [],
+      "role": [],
+      "roleTarget": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidAgent": 0,
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail should fail when creating a relation field with name that conflicts with existing join column name 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [],
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "companyId" is not available as it is already used by another join column name",
+              "userFriendlyMessage": "Name "companyId" is not available as it is already used by join column name",
+              "value": "companyId",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "companyId",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
+              "userFriendlyMessage": "Relation field target metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "related",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+      ],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_ed8240d8bc1e69a39dab1c17fe2",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
+      "objectMetadata": [],
+      "pageLayoutTab": [],
+      "role": [],
+      "roleTarget": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidAgent": 0,
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
       "invalidRouteTrigger": 0,
       "invalidServerlessFunction": 0,
       "invalidView": 0,

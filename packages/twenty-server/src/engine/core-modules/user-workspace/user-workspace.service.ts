@@ -19,6 +19,7 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
@@ -30,7 +31,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -43,8 +44,8 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    @InjectRepository(RoleTargetsEntity)
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
+    @InjectRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly loginTokenService: LoginTokenService,
@@ -53,6 +54,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly userRoleService: UserRoleService,
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
+    private readonly onboardingService: OnboardingService,
   ) {
     super(userWorkspaceRepository);
   }
@@ -131,7 +133,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
   async addUserToWorkspaceIfUserNotInWorkspace(
     user: UserEntity,
     workspace: WorkspaceEntity,
-    queryRunner?: QueryRunner,
   ) {
     let userWorkspace = await this.checkUserWorkspaceExists(
       user.id,
@@ -139,14 +140,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     );
 
     if (!userWorkspace) {
-      userWorkspace = await this.create(
-        {
-          userId: user.id,
-          workspaceId: workspace.id,
-          isExistingUser: true,
-        },
-        queryRunner,
-      );
+      userWorkspace = await this.create({
+        userId: user.id,
+        workspaceId: workspace.id,
+        isExistingUser: true,
+      });
 
       await this.createWorkspaceMember(workspace.id, user);
 
@@ -159,20 +157,22 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         );
       }
 
-      await this.userRoleService.assignRoleToUserWorkspace(
-        {
-          workspaceId: workspace.id,
-          userWorkspaceId: userWorkspace.id,
-          roleId: defaultRoleId,
-        },
-        queryRunner,
-      );
+      await this.userRoleService.assignRoleToManyUserWorkspace({
+        workspaceId: workspace.id,
+        userWorkspaceIds: [userWorkspace.id],
+        roleId: defaultRoleId,
+      });
 
       await this.workspaceInvitationService.invalidateWorkspaceInvitation(
         workspace.id,
         user.email,
-        queryRunner,
       );
+
+      await this.onboardingService.setOnboardingCreateProfilePending({
+        userId: user.id,
+        workspaceId: workspace.id,
+        value: true,
+      });
     }
   }
 
@@ -246,10 +246,10 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     softDelete?: boolean;
   }): Promise<void> {
     if (softDelete) {
-      await this.roleTargetsRepository.softRemove({ userWorkspaceId });
+      await this.roleTargetRepository.softRemove({ userWorkspaceId });
       await this.userWorkspaceRepository.softDelete({ id: userWorkspaceId });
     } else {
-      await this.roleTargetsRepository.delete({ userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
+      await this.roleTargetRepository.delete({ userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
       await this.userWorkspaceRepository.delete({ id: userWorkspaceId });
     }
   }

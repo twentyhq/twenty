@@ -7,19 +7,30 @@ import { type MockedResponse } from '@apollo/client/testing';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import { type MutableSnapshot } from 'recoil';
+import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
+
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
+
+import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
-import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
-import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
-import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
+import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { type PageLayout } from '@/page-layout/types/PageLayout';
+import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
+import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import {
   GraphOrderBy,
@@ -32,6 +43,7 @@ import {
   PageLayoutType,
   type PageLayoutWidget,
 } from '~/generated/graphql';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
@@ -49,9 +61,9 @@ const createdAtField = getMockFieldMetadataItemOrThrow({
   fieldName: 'createdAt',
 });
 
-const barChartGroupByQuery = generateGroupByQuery({
+const barChartGroupByQuery = generateGroupByAggregateQuery({
   objectMetadataItem: companyObjectMetadataItem,
-  aggregateOperations: ['totalCount'],
+  aggregateOperationGqlFields: ['totalCount'],
 });
 
 const graphqlMocks: MockedResponse[] = [
@@ -123,6 +135,7 @@ const meta: Meta<typeof WidgetRenderer> = {
   title: 'Modules/PageLayout/Widgets/WidgetRenderer',
   component: WidgetRenderer,
   decorators: [
+    I18nFrontDecorator,
     (Story) => {
       const initializeState = (snapshot: MutableSnapshot) => {
         snapshot.set(
@@ -518,4 +531,263 @@ export const TallWidget: Story = {
       <WidgetRenderer widget={args.widget} />
     </div>
   ),
+};
+
+export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
+  args: {
+    widget: {
+      __typename: 'PageLayoutWidget',
+      id: 'catalog-widget',
+      pageLayoutTabId: 'tab-overview',
+      type: WidgetType.GRAPH,
+      title: 'Widget name',
+      objectMetadataId: companyObjectMetadataItem.id,
+      gridPosition: {
+        __typename: 'GridPosition',
+        row: 0,
+        column: 0,
+        rowSpan: 2,
+        columnSpan: 3,
+      },
+      configuration: {
+        __typename: 'AggregateChartConfiguration',
+        graphType: GraphType.AGGREGATE,
+        aggregateOperation: AggregateOperations.COUNT,
+        aggregateFieldMetadataId: idField.id,
+        displayDataLabel: true,
+      },
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
+    } as PageLayoutWidget,
+  },
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
+          name: 'state',
+          values: ['default', 'hover', 'selected', 'dragging', 'read'],
+          props: (state: string) => ({ catalogState: state }) as any,
+          labels: (state: string) => {
+            const labelMap: Record<string, string> = {
+              default: 'Default',
+              hover: 'Hover',
+              selected: 'Selected',
+              dragging: 'Dragging',
+              read: 'Read',
+            };
+            return labelMap[state] ?? state;
+          },
+        },
+        {
+          name: 'variant',
+          values: [
+            'record-page',
+            'side-column',
+            'record-page-restricted',
+            'dashboard',
+            'dashboard-restricted',
+          ],
+          props: (variant: string) => ({ catalogVariant: variant }) as any,
+          labels: (variant: string) => {
+            const labelMap: Record<string, string> = {
+              'record-page': 'Record page > Default',
+              'side-column': 'Record page > Side column',
+              'record-page-restricted': 'Record page - content restriction',
+              dashboard: 'Dashboard',
+              'dashboard-restricted': 'Dashboard - content restriction',
+            };
+            return labelMap[variant] ?? variant;
+          },
+        },
+      ],
+      options: {
+        elementContainer: {
+          width: 300,
+        },
+      },
+    },
+    pseudo: {
+      hover: ['.hover-state *'],
+    },
+  },
+  render: (args) => {
+    const state = (args as any).catalogState || 'default';
+    const variantKey = (args as any).catalogVariant || 'record-page';
+
+    const isRestricted = variantKey.includes('-restricted');
+    const variant = variantKey.replace('-restricted', '') as WidgetCardVariant;
+
+    const isInEditMode = state !== 'read';
+
+    const pageLayoutType =
+      variant === 'dashboard'
+        ? PageLayoutType.DASHBOARD
+        : PageLayoutType.RECORD_PAGE;
+
+    const layoutMode =
+      variant === 'canvas'
+        ? ('canvas' as const)
+        : variant === 'side-column'
+          ? ('grid' as const)
+          : ('grid' as const);
+
+    const initializeState = (snapshot: MutableSnapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+      snapshot.set(shouldAppBeLoadingState, false);
+
+      if (state === 'hover') {
+        snapshot.set(
+          widgetCardHoveredComponentFamilyState.atomFamily({
+            instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+            familyKey: args.widget.id,
+          }),
+          true,
+        );
+      }
+
+      if (state === 'selected') {
+        snapshot.set(
+          pageLayoutEditingWidgetIdComponentState.atomFamily({
+            instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          }),
+          args.widget.id,
+        );
+      }
+
+      if (state === 'dragging') {
+        snapshot.set(
+          pageLayoutDraggingWidgetIdComponentState.atomFamily({
+            instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          }),
+          args.widget.id,
+        );
+      }
+
+      if (isRestricted === true) {
+        snapshot.set(currentUserWorkspaceState, {
+          permissionFlags: [],
+          twoFactorAuthenticationMethodSummary: null,
+          objectsPermissions: [
+            {
+              objectMetadataId: companyObjectMetadataItem.id,
+              canReadObjectRecords: false,
+              canUpdateObjectRecords: false,
+              canSoftDeleteObjectRecords: false,
+              canDestroyObjectRecords: false,
+              restrictedFields: {},
+            },
+          ],
+        });
+      } else {
+        snapshot.set(currentUserWorkspaceState, {
+          permissionFlags: [],
+          twoFactorAuthenticationMethodSummary: null,
+          objectsPermissions: [
+            {
+              objectMetadataId: companyObjectMetadataItem.id,
+              canReadObjectRecords: true,
+              canUpdateObjectRecords: true,
+              canSoftDeleteObjectRecords: true,
+              canDestroyObjectRecords: true,
+              restrictedFields: {},
+            },
+          ],
+        });
+      }
+
+      const pageLayoutData: PageLayout = {
+        id: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        name: 'Mock Page Layout',
+        type: pageLayoutType,
+        objectMetadataId: companyObjectMetadataItem.id,
+        tabs:
+          variant === 'side-column'
+            ? [
+                {
+                  __typename: 'PageLayoutTab',
+                  id: 'pinned-tab',
+                  title: 'Pinned Tab',
+                  position: 0,
+                  pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+                  widgets: [args.widget],
+                  createdAt: '2024-01-01T00:00:00Z',
+                  updatedAt: '2024-01-01T00:00:00Z',
+                  deletedAt: null,
+                },
+                {
+                  __typename: 'PageLayoutTab',
+                  id: 'other-tab',
+                  title: 'Other Tab',
+                  position: 1,
+                  pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+                  widgets: [args.widget],
+                  createdAt: '2024-01-01T00:00:00Z',
+                  updatedAt: '2024-01-01T00:00:00Z',
+                  deletedAt: null,
+                },
+              ]
+            : [],
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z',
+        deletedAt: null,
+      };
+
+      snapshot.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        pageLayoutData,
+      );
+      snapshot.set(
+        isPageLayoutInEditModeComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        isInEditMode,
+      );
+    };
+
+    const containerClassName = state === 'hover' ? 'hover-state' : '';
+
+    return (
+      <div
+        style={{ width: '300px', height: '200px' }}
+        className={containerClassName}
+      >
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper initializeState={initializeState}>
+              <LayoutRenderingProvider
+                value={{
+                  isInRightDrawer: false,
+                  layoutType: pageLayoutType,
+                  targetRecordIdentifier: {
+                    id: companyObjectMetadataItem.id,
+                    targetObjectNameSingular:
+                      companyObjectMetadataItem.nameSingular,
+                  },
+                }}
+              >
+                <PageLayoutContentProvider
+                  value={{
+                    layoutMode,
+                    tabId: variant === 'side-column' ? 'pinned-tab' : 'fields',
+                  }}
+                >
+                  <WidgetRenderer widget={args.widget} />
+                </PageLayoutContentProvider>
+              </LayoutRenderingProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
+  },
+  decorators: [CatalogDecorator],
 };

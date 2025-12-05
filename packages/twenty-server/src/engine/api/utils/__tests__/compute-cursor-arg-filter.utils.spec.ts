@@ -2,79 +2,119 @@ import { FieldMetadataType, OrderByDirection } from 'twenty-shared/types';
 
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
-import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
-import { getMockObjectMetadataItemWithFieldsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 describe('computeCursorArgFilter', () => {
-  const objectMetadataItemWithFieldMaps =
-    getMockObjectMetadataItemWithFieldsMaps({
-      id: 'object-id',
-      workspaceId: 'workspace-id',
-      nameSingular: 'person',
-      namePlural: 'people',
-      isCustom: false,
-      isRemote: false,
-      labelSingular: 'Person',
-      labelPlural: 'People',
-      targetTableName: 'person',
-      indexMetadatas: [],
-      isSystem: false,
-      isActive: true,
-      isAuditLogged: false,
-      isSearchable: false,
-      fieldIdByJoinColumnName: {},
-      icon: 'Icon123',
-      fieldIdByName: {
-        name: 'name-id',
-        age: 'age-id',
-        fullName: 'fullname-id',
+  const workspaceId = 'workspace-id';
+  const objectMetadataId = 'object-id';
+
+  const createMockField = (
+    overrides: Partial<FlatFieldMetadata> & {
+      id: string;
+      name: string;
+      type: FieldMetadataType;
+    },
+  ): FlatFieldMetadata =>
+    ({
+      workspaceId,
+      objectMetadataId,
+      isNullable: true,
+      isLabelSyncedWithName: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      universalIdentifier: overrides.id,
+      viewFieldIds: [],
+      viewFilterIds: [],
+      viewGroupIds: [],
+      kanbanAggregateOperationViewIds: [],
+      calendarViewIds: [],
+      applicationId: null,
+      label: overrides.name,
+      ...overrides,
+    }) as FlatFieldMetadata;
+
+  const nameField = createMockField({
+    id: 'name-id',
+    type: FieldMetadataType.TEXT,
+    name: 'name',
+    label: 'Name',
+  });
+
+  const ageField = createMockField({
+    id: 'age-id',
+    type: FieldMetadataType.NUMBER,
+    name: 'age',
+    label: 'Age',
+  });
+
+  const fullNameField = createMockField({
+    id: 'fullname-id',
+    type: FieldMetadataType.FULL_NAME,
+    name: 'fullName',
+    label: 'Full Name',
+  });
+
+  const buildFlatFieldMetadataMaps = (
+    fields: FlatFieldMetadata[],
+  ): FlatEntityMaps<FlatFieldMetadata> => ({
+    byId: fields.reduce(
+      (acc, field) => {
+        acc[field.id] = field;
+
+        return acc;
       },
-      fieldsById: {
-        'name-id': getMockFieldMetadataEntity({
-          workspaceId: 'workspace-id',
-          objectMetadataId: 'object-id',
-          id: 'name-id',
-          type: FieldMetadataType.TEXT,
-          name: 'name',
-          label: 'Name',
-          isLabelSyncedWithName: true,
-          isNullable: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }),
-        'age-id': getMockFieldMetadataEntity({
-          workspaceId: 'workspace-id',
-          objectMetadataId: 'object-id',
-          id: 'age-id',
-          type: FieldMetadataType.NUMBER,
-          name: 'age',
-          label: 'Age',
-          isLabelSyncedWithName: true,
-          isNullable: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }),
-        'fullname-id': getMockFieldMetadataEntity({
-          workspaceId: 'workspace-id',
-          objectMetadataId: 'object-id',
-          id: 'fullname-id',
-          type: FieldMetadataType.FULL_NAME,
-          name: 'fullName',
-          label: 'Full Name',
-          isLabelSyncedWithName: true,
-          isNullable: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }),
+      {} as Record<string, FlatFieldMetadata>,
+    ),
+    idByUniversalIdentifier: fields.reduce(
+      (acc, field) => {
+        acc[field.universalIdentifier] = field.id;
+
+        return acc;
       },
-    });
+      {} as Record<string, string>,
+    ),
+    universalIdentifiersByApplicationId: {},
+  });
+
+  const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([
+    nameField,
+    ageField,
+    fullNameField,
+  ]);
+
+  const flatObjectMetadata: FlatObjectMetadata = {
+    id: objectMetadataId,
+    workspaceId,
+    nameSingular: 'person',
+    namePlural: 'people',
+    labelSingular: 'Person',
+    labelPlural: 'People',
+    targetTableName: 'person',
+    isCustom: false,
+    isRemote: false,
+    isActive: true,
+    isSystem: false,
+    isAuditLogged: false,
+    isSearchable: false,
+    icon: 'Icon123',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    universalIdentifier: objectMetadataId,
+    fieldMetadataIds: ['name-id', 'age-id', 'fullname-id'],
+    indexMetadataIds: [],
+    viewIds: [],
+    applicationId: null,
+  } as unknown as FlatObjectMetadata;
 
   describe('basic cursor filtering', () => {
     it('should return empty array when cursor is empty', () => {
       const result = computeCursorArgFilter(
         {},
         [],
-        objectMetadataItemWithFieldMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
         true,
       );
 
@@ -88,7 +128,8 @@ describe('computeCursorArgFilter', () => {
       const result = computeCursorArgFilter(
         cursor,
         orderBy,
-        objectMetadataItemWithFieldMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
         true,
       );
 
@@ -102,7 +143,8 @@ describe('computeCursorArgFilter', () => {
       const result = computeCursorArgFilter(
         cursor,
         orderBy,
-        objectMetadataItemWithFieldMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
         false,
       );
 
@@ -121,7 +163,8 @@ describe('computeCursorArgFilter', () => {
       const result = computeCursorArgFilter(
         cursor,
         orderBy,
-        objectMetadataItemWithFieldMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
         true,
       );
 
@@ -149,7 +192,8 @@ describe('computeCursorArgFilter', () => {
       const result = computeCursorArgFilter(
         cursor,
         orderBy,
-        objectMetadataItemWithFieldMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
         true,
       );
 
@@ -195,7 +239,8 @@ describe('computeCursorArgFilter', () => {
       const result = computeCursorArgFilter(
         cursor,
         orderBy,
-        objectMetadataItemWithFieldMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
         true,
       );
 
@@ -224,7 +269,8 @@ describe('computeCursorArgFilter', () => {
       const result = computeCursorArgFilter(
         cursor,
         orderBy,
-        objectMetadataItemWithFieldMaps,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
         false,
       );
 
@@ -265,7 +311,8 @@ describe('computeCursorArgFilter', () => {
         computeCursorArgFilter(
           cursor,
           orderBy,
-          objectMetadataItemWithFieldMaps,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
           true,
         ),
       ).toThrow(GraphqlQueryRunnerException);
@@ -279,7 +326,8 @@ describe('computeCursorArgFilter', () => {
         computeCursorArgFilter(
           cursor,
           orderBy,
-          objectMetadataItemWithFieldMaps,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
           true,
         ),
       ).toThrow(GraphqlQueryRunnerException);

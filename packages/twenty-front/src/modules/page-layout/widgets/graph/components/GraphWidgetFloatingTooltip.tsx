@@ -14,9 +14,10 @@ type GraphWidgetFloatingTooltipProps = {
   items: GraphWidgetTooltipItem[];
   indexLabel?: string;
   highlightedKey?: string;
-  linkTo?: string;
+  onGraphWidgetTooltipClick?: () => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
+  disablePointerEvents?: boolean;
 };
 
 export const GraphWidgetFloatingTooltip = ({
@@ -25,9 +26,10 @@ export const GraphWidgetFloatingTooltip = ({
   items,
   indexLabel,
   highlightedKey,
-  linkTo,
+  onGraphWidgetTooltipClick,
   onMouseEnter,
   onMouseLeave,
+  disablePointerEvents = false,
 }: GraphWidgetFloatingTooltipProps) => {
   const theme = useTheme();
 
@@ -44,7 +46,11 @@ export const GraphWidgetFloatingTooltip = ({
     <FloatingPortal root={boundary}>
       <div
         ref={refs.setFloating}
-        style={{ ...floatingStyles, zIndex: theme.lastLayerZIndex }}
+        style={{
+          ...floatingStyles,
+          zIndex: theme.lastLayerZIndex,
+          pointerEvents: disablePointerEvents ? 'none' : 'auto',
+        }}
         role="tooltip"
         aria-live="polite"
         onMouseEnter={onMouseEnter}
@@ -67,7 +73,7 @@ export const GraphWidgetFloatingTooltip = ({
               items={items}
               indexLabel={indexLabel}
               highlightedKey={highlightedKey}
-              linkTo={linkTo}
+              onGraphWidgetTooltipClick={onGraphWidgetTooltipClick}
             />
           </motion.div>
         </AnimatePresence>

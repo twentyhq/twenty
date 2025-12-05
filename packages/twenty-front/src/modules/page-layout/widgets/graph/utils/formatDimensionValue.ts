@@ -41,12 +41,15 @@ const normalizeMultiSelectValue = (value: unknown): unknown[] => {
 export const formatDimensionValue = ({
   value,
   fieldMetadata,
-  dateGranularity = GRAPH_DEFAULT_DATE_GRANULARITY as ObjectRecordGroupByDateGranularity,
+  dateGranularity,
   subFieldName,
 }: FormatDimensionValueParams): string => {
   if (!isDefined(value)) {
     return t`Not Set`;
   }
+
+  const effectiveDateGranularity = (dateGranularity ??
+    GRAPH_DEFAULT_DATE_GRANULARITY) as ObjectRecordGroupByDateGranularity;
 
   switch (fieldMetadata.type) {
     case FieldMetadataType.SELECT: {
@@ -75,17 +78,44 @@ export const formatDimensionValue = ({
 
     case FieldMetadataType.DATE:
     case FieldMetadataType.DATE_TIME: {
+      const parsedDate = new Date(String(value));
+
+      if (isNaN(parsedDate.getTime())) {
+        return String(value);
+      }
+
       if (
-        dateGranularity ===
+        effectiveDateGranularity ===
           ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK ||
-        dateGranularity ===
+        effectiveDateGranularity ===
           ObjectRecordGroupByDateGranularity.MONTH_OF_THE_YEAR ||
-        dateGranularity ===
+        effectiveDateGranularity ===
           ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR
       ) {
         return String(value);
       }
-      return formatDateByGranularity(new Date(String(value)), dateGranularity);
+      return formatDateByGranularity(parsedDate, effectiveDateGranularity);
+    }
+
+    case FieldMetadataType.RELATION: {
+      if (isDefined(dateGranularity)) {
+        const parsedDate = new Date(String(value));
+        if (isNaN(parsedDate.getTime())) {
+          return String(value);
+        }
+        if (
+          dateGranularity ===
+            ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK ||
+          dateGranularity ===
+            ObjectRecordGroupByDateGranularity.MONTH_OF_THE_YEAR ||
+          dateGranularity ===
+            ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR
+        ) {
+          return String(value);
+        }
+        return formatDateByGranularity(parsedDate, dateGranularity);
+      }
+      return String(value);
     }
 
     case FieldMetadataType.NUMBER:

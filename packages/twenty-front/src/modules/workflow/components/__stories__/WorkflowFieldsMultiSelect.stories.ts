@@ -92,6 +92,7 @@ export const Default: Story = {
     handleFieldsChange: () => {},
     readonly: false,
     defaultFields: [],
+    actionType: 'UPDATE_RECORD',
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -105,6 +106,7 @@ export const WithDefaultValues: Story = {
   args: {
     ...Default.args,
     defaultFields: ['name', 'domainName'],
+    actionType: 'UPDATE_RECORD',
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -118,6 +120,7 @@ export const ReadOnly: Story = {
     ...Default.args,
     readonly: true,
     defaultFields: ['name', 'domainName'],
+    actionType: 'UPDATE_RECORD',
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

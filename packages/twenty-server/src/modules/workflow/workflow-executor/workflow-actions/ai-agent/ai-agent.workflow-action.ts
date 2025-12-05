@@ -6,12 +6,14 @@ import { Repository } from 'typeorm';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import {
   AgentException,
   AgentExceptionCode,
-} from 'src/engine/metadata-modules/agent/agent.exception';
+} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -20,14 +22,13 @@ import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-e
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
-import { AiAgentExecutorService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/ai-agent-executor.service';
 
 import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.guard';
 
 @Injectable()
 export class AiAgentWorkflowAction implements WorkflowAction {
   constructor(
-    private readonly aiAgentExecutionService: AiAgentExecutorService,
+    private readonly aiAgentExecutionService: AgentAsyncExecutorService,
     private readonly aiBillingService: AIBillingService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     @InjectRepository(AgentEntity)
@@ -80,7 +81,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       const { result, usage } = await this.aiAgentExecutionService.executeAgent(
         {
           agent,
-          schema: step.settings.outputSchema,
           userPrompt: resolveInput(prompt, context) as string,
           actorContext: executionContext.isActingOnBehalfOfUser
             ? executionContext.initiator
@@ -90,9 +90,10 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
 
       await this.aiBillingService.calculateAndBillUsage(
-        agent?.modelId ?? 'auto',
+        agent?.modelId ?? DEFAULT_SMART_MODEL,
         usage,
         workspaceId,
+        agent?.id || null,
       );
 
       return {

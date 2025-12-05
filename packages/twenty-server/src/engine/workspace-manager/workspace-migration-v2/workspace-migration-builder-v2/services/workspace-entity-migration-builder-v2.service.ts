@@ -50,13 +50,13 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     this.metadataName = metadataName;
   }
 
-  public async validateAndBuild({
+  public validateAndBuild({
     buildOptions,
     dependencyOptimisticFlatEntityMaps: inputDependencyOptimisticFlatEntityMaps,
     from: fromFlatEntityMaps,
     to: toFlatEntityMaps,
     workspaceId,
-  }: ValidateAndBuildArgs<T>): Promise<ValidateAndBuildReturnType<T>> {
+  }: ValidateAndBuildArgs<T>): ValidateAndBuildReturnType<T> {
     this.logger.time(`EntityBuilder ${this.metadataName}`, 'validateAndBuild');
     this.logger.time(
       `EntityBuilder ${this.metadataName}`,
@@ -122,7 +122,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntityMapsToMutate: remainingFlatEntityMapsToCreate,
       });
 
-      const validationResult = await this.validateFlatEntityCreation({
+      const validationResult = this.validateFlatEntityCreation({
         flatEntityToValidate: flatEntityToCreate,
         workspaceId,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
@@ -185,7 +185,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntityMapsToMutate: remainingFlatEntityMapsToDelete,
       });
 
-      const validationResult = await this.validateFlatEntityDeletion({
+      const validationResult = this.validateFlatEntityDeletion({
         flatEntityToValidate: flatEntityToDelete,
         workspaceId,
         remainingFlatEntityMapsToValidate: remainingFlatEntityMapsToDelete,
@@ -229,7 +229,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         );
       }
 
-      const validationResult = await this.validateFlatEntityUpdate({
+      const validationResult = this.validateFlatEntityUpdate({
         flatEntityUpdates: flatEntityToUpdate.updates,
         flatEntityId: flatEntityToUpdateId,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
@@ -307,13 +307,13 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
 
   protected abstract validateFlatEntityCreation(
     args: FlatEntityValidationArgs<T>,
-  ): Promise<FlatEntityValidationReturnType<T, 'created'>>;
+  ): FlatEntityValidationReturnType<T, 'created'>;
 
   protected abstract validateFlatEntityDeletion(
     args: FlatEntityValidationArgs<T>,
-  ): Promise<FlatEntityValidationReturnType<T, 'deleted'>>;
+  ): FlatEntityValidationReturnType<T, 'deleted'>;
 
   protected abstract validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<T>,
-  ): Promise<FlatEntityValidationReturnType<T, 'updated'>>;
+  ): FlatEntityValidationReturnType<T, 'updated'>;
 }

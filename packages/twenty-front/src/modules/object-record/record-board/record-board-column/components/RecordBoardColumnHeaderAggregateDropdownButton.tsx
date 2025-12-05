@@ -2,6 +2,7 @@ import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/Styl
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
+import { type Nullable } from 'twenty-shared/types';
 import { Tag } from 'twenty-ui/components';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
 
@@ -19,8 +20,8 @@ export const RecordBoardColumnHeaderAggregateDropdownButton = ({
   tooltip,
 }: {
   dropdownId: string;
-  value?: string | number;
-  tooltip?: string;
+  value?: Nullable<string | number>;
+  tooltip?: Nullable<string>;
 }) => {
   const isDropdownOpen = useRecoilComponentValue(
     isDropdownOpenComponentState,
@@ -38,7 +39,7 @@ export const RecordBoardColumnHeaderAggregateDropdownButton = ({
         {!isDropdownOpen && (
           <AppTooltip
             anchorSelect={`#${dropdownId}`}
-            content={tooltip}
+            content={tooltip ?? ''}
             noArrow
             place="right"
             positionStrategy="fixed"
