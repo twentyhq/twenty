@@ -54,7 +54,7 @@ export class BlocklistReimportCalendarEventsJob {
         },
       });
 
-      await this.calendarChannelSyncStatusService.resetAndScheduleCalendarEventListFetch(
+      await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
         calendarChannels.map((calendarChannel) => calendarChannel.id),
         workspaceId,
       );

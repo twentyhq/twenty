@@ -62,7 +62,7 @@ export class MessagingResetChannelCommand extends CommandRunner {
     );
 
     for (const messageChannel of messageChannels) {
-      await this.messagingChannelSyncStatusService.resetAndScheduleMessageListFetch(
+      await this.messagingChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending(
         [messageChannel.id],
         workspaceId,
       );
