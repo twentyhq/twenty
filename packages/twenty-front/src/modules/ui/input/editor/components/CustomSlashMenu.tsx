@@ -8,7 +8,7 @@ import { createPortal } from 'react-dom';
 import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/SlashMenuDropdownClickOutsideId';
 import { SLASH_MENU_LIST_ID } from '@/ui/input/constants/SlashMenuListId';
 import { CustomSlashMenuListItem } from '@/ui/input/editor/components/CustomSlashMenuListItem';
-import {
+import type {
   CustomSlashMenuProps,
   SuggestionItem,
 } from '@/ui/input/editor/components/types';
@@ -55,10 +55,7 @@ export const CustomSlashMenu = ({
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
     whileElementsMounted: autoUpdate,
-    middleware: [
-      flip(),
-      offset(({ placement }) => getOffsetValue(placement)),
-    ],
+    middleware: [flip(), offset(({ placement }) => getOffsetValue(placement))],
   });
 
   const { setSelectedItemId } = useSelectableList(SLASH_MENU_LIST_ID);
