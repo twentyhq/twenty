@@ -5,8 +5,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
-import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
+import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { DeleteWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/delete-workflow-version-step-input.dto';
 import { DuplicateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/duplicate-workflow-version-step-input.dto';
@@ -47,7 +46,7 @@ export class WorkflowVersionStepResolver {
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
-    private readonly toolRegistryService: ToolRegistryService,
+    private readonly httpTool: HttpTool,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -153,7 +152,7 @@ export class WorkflowVersionStepResolver {
     @Args('input')
     { url, method, headers, body }: TestHttpRequestInput,
   ): Promise<TestHttpRequestOutput> {
-    return this.toolRegistryService.getTool(ToolType.HTTP_REQUEST).execute({
+    return this.httpTool.execute({
       url,
       method,
       headers,
