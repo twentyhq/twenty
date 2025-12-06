@@ -1,15 +1,15 @@
 import { createLogger } from './logger';
 import type {
-    Contact,
-    CreateMeetingResponse,
-    CreateNoteResponse,
-    CreatePersonResponse,
-    FindMeetingResponse,
-    FindPeopleResponse,
-    FirefliesParticipant,
-    GraphQLResponse,
-    IdNode,
-    MeetingCreateInput,
+  Contact,
+  CreateMeetingResponse,
+  CreateNoteResponse,
+  CreatePersonResponse,
+  FindMeetingResponse,
+  FindPeopleResponse,
+  FirefliesParticipant,
+  GraphQLResponse,
+  IdNode,
+  MeetingCreateInput,
 } from './types';
 
 const logger = createLogger('20 CRM Service');

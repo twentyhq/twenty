@@ -28,7 +28,26 @@ export class FirefliesApiClient {
     const isPremiumPlan =
       plan === FIREFLIES_PLANS.BUSINESS || plan === FIREFLIES_PLANS.ENTERPRISE;
 
-    const basicQuery = `
+    // Minimal query for free plans - only basic fields available on all plans
+    // Note: audio_url requires Pro+, video_url requires Business+
+    const freeQuery = `
+      query GetTranscriptMinimal($transcriptId: String!) {
+        transcript(id: $transcriptId) {
+          id
+          title
+          date
+          duration
+          participants
+          organizer_email
+          transcript_url
+          meeting_link
+        }
+      }
+    `;
+
+    // Standard query for pro plans - adds speakers, summary, sentences, and audio_url (Pro+)
+    // Note: video_url requires Business+
+    const proQuery = `
       query GetTranscriptBasic($transcriptId: String!) {
         transcript(id: $transcriptId) {
           id
@@ -37,34 +56,39 @@ export class FirefliesApiClient {
           duration
           participants
           organizer_email
-          meeting_attendees {
-            displayName
-            email
-            phoneNumber
-            name
-            location
-          }
-          meeting_attendance {
-            name
-            join_time
-            leave_time
-          }
           speakers {
             name
           }
+          sentences {
+            index
+            speaker_name
+            text
+            start_time
+            end_time
+          }
           summary {
-            action_items
             overview
             keywords
-            topics_discussed
-            meeting_type
+            action_items
+            notes
+            gist
+            bullet_gist
+            short_summary
+            short_overview
+            outline
+            shorthand_bullet
+          }
+          meeting_info {
+            summary_status
           }
           transcript_url
-          video_url
+          audio_url
+          meeting_link
         }
       }
     `;
 
+    // Full query for business/enterprise - includes all fields
     const businessQuery = `
       query GetTranscriptFull($transcriptId: String!) {
         transcript(id: $transcriptId) {
@@ -79,6 +103,22 @@ export class FirefliesApiClient {
               positive_pct
               negative_pct
               neutral_pct
+            }
+            categories {
+              questions
+              tasks
+              metrics
+              date_times
+            }
+            speakers {
+              speaker_id
+              name
+              duration
+              word_count
+              longest_monologue
+              filler_words
+              questions
+              words_per_minute
             }
           }
           meeting_attendees {
@@ -96,20 +136,55 @@ export class FirefliesApiClient {
           speakers {
             name
           }
+          sentences {
+            index
+            speaker_name
+            text
+            start_time
+            end_time
+            ai_filters {
+              task
+              question
+              sentiment
+            }
+          }
           summary {
             action_items
             overview
             keywords
+            notes
+            gist
+            bullet_gist
+            short_summary
+            short_overview
+            outline
+            shorthand_bullet
             topics_discussed
             meeting_type
+            transcript_chapters
+          }
+          meeting_info {
+            summary_status
           }
           transcript_url
+          audio_url
           video_url
+          meeting_link
         }
       }
     `;
 
-    const queryToUse = isPremiumPlan ? businessQuery : basicQuery;
+    // Select query based on plan
+    const queryToUse = isPremiumPlan ? businessQuery :
+      (plan === FIREFLIES_PLANS.PRO ? proQuery : freeQuery);
+
+    const planFeatures = {
+      [FIREFLIES_PLANS.FREE]: 'basic fields only (no summary, no audio/video)',
+      [FIREFLIES_PLANS.PRO]: 'summary, speakers, audio_url',
+      [FIREFLIES_PLANS.BUSINESS]: 'full access including analytics, video_url',
+      [FIREFLIES_PLANS.ENTERPRISE]: 'full access including analytics, video_url',
+    };
+    logger.debug(`using ${plan} plan query (${planFeatures[plan]})`);
 
     try {
       return await this.executeTranscriptQuery({
@@ -119,18 +194,52 @@ export class FirefliesApiClient {
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      const planError =
-        message.toLowerCase().includes('business or higher plan') ||
-        message.includes('Cannot query field "sentiments"') ||
-        message.includes('Cannot query field "analytics"');
 
-      if (isPremiumPlan && planError) {
-        logger.warn('Fireflies plan limitation detected, retrying with basic query (analytics/sentiments unavailable)');
-        return this.executeTranscriptQuery({
-          meetingId,
-          query: basicQuery,
-          timeout: options?.timeout,
-        });
+      // Detect plan-specific errors
+      const requiresBusiness = message.toLowerCase().includes('business or higher');
+      const requiresPro = message.toLowerCase().includes('pro or higher');
+      const planError = requiresBusiness || requiresPro ||
+        message.toLowerCase().includes('higher plan') ||
+        message.includes('Cannot query field');
+
+      // Fallback cascade: business -> pro -> free
+      if (planError) {
+        if (isPremiumPlan) {
+          logger.warn(`Plan limitation detected (configured: ${plan}), falling back to pro query`);
+          try {
+            return await this.executeTranscriptQuery({
+              meetingId,
+              query: proQuery,
+              timeout: options?.timeout,
+            });
+          } catch (proError) {
+            const proMessage = proError instanceof Error ? proError.message : String(proError);
+            if (proMessage.toLowerCase().includes('plan') || proMessage.includes('Cannot query field')) {
+              logger.warn('Pro query also failed, falling back to minimal free query');
+              return this.executeTranscriptQuery({
+                meetingId,
+                query: freeQuery,
+                timeout: options?.timeout,
+              });
+            }
+            throw proError;
+          }
+        } else if (plan === FIREFLIES_PLANS.PRO) {
+          logger.warn(`Pro plan query failed (${requiresBusiness ? 'requires Business+' : 'unknown restriction'}), falling back to free query`);
+          return this.executeTranscriptQuery({
+            meetingId,
+            query: freeQuery,
+            timeout: options?.timeout,
+          });
+        } else {
+          // Already using free query - some field might still be restricted
+          logger.error(
+            'Fireflies API rejected the minimal free query. This may indicate: ' +
+            '1) The transcript ID is invalid, or ' +
+            '2) Your API key does not have access to this transcript, or ' +
+            '3) An unexpected API restriction : open an issue'
+          );
+        }
       }
 
       throw error;
@@ -459,6 +568,32 @@ export class FirefliesApiClient {
     const summary = transcript.summary as Record<string, unknown> | undefined;
     const analytics = transcript.analytics as Record<string, unknown> | undefined;
     const sentiments = analytics?.sentiments as Record<string, number> | undefined;
+    const categories = analytics?.categories as Record<string, number> | undefined;
+    const speakersAnalytics = analytics?.speakers as Array<Record<string, unknown>> | undefined;
+    const meetingInfo = transcript.meeting_info as Record<string, unknown> | undefined;
+
+    // Transform sentences array
+    const rawSentences = transcript.sentences as Array<Record<string, unknown>> | undefined;
+    const sentences = rawSentences?.map(s => ({
+      index: (s.index as number) || 0,
+      speaker_name: (s.speaker_name as string) || 'Unknown',
+      text: (s.text as string) || '',
+      start_time: (s.start_time as string) || '0',
+      end_time: (s.end_time as string) || '0',
+      ai_filters: s.ai_filters as { task?: boolean; question?: boolean; sentiment?: string } | undefined,
+    }));
+
+    // Transform speaker analytics
+    const speakers = speakersAnalytics?.map(sp => ({
+      speaker_id: (sp.speaker_id as string) || '',
+      name: (sp.name as string) || 'Unknown',
+      duration: (sp.duration as number) || 0,
+      word_count: (sp.word_count as number) || 0,
+      longest_monologue: (sp.longest_monologue as number) || 0,
+      filler_words: (sp.filler_words as number) || 0,
+      questions: (sp.questions as number) || 0,
+      words_per_minute: (sp.words_per_minute as number) || 0,
+    }));
 
     return {
       id: (transcript.id as string) || meetingId,
@@ -467,27 +602,50 @@ export class FirefliesApiClient {
       duration: (transcript.duration as number) || 0,
       participants: this.extractAllParticipants(transcript),
       organizer_email: transcript.organizer_email as string | undefined,
+      sentences,
       summary: {
+        // action_items can be string or array - normalize to array
         action_items: Array.isArray(summary?.action_items)
           ? summary.action_items as string[]
-          : (typeof summary?.action_items === 'string'
-             ? [summary.action_items]
+          : (typeof summary?.action_items === 'string' && summary.action_items.trim()
+             ? summary.action_items.split('\n').filter((item: string) => item.trim())
              : []),
         overview: (summary?.overview as string) || '',
+        notes: summary?.notes as string | undefined,
+        gist: summary?.gist as string | undefined,
+        bullet_gist: summary?.bullet_gist as string | undefined,
+        short_summary: summary?.short_summary as string | undefined,
+        short_overview: summary?.short_overview as string | undefined,
+        outline: summary?.outline as string | undefined,
+        shorthand_bullet: summary?.shorthand_bullet as string | undefined,
         keywords: summary?.keywords as string[] | undefined,
         topics_discussed: summary?.topics_discussed as string[] | undefined,
         meeting_type: summary?.meeting_type as string | undefined,
+        transcript_chapters: summary?.transcript_chapters as string[] | undefined,
       },
-      analytics: sentiments ? {
-        sentiments: {
+      analytics: (sentiments || categories || speakers) ? {
+        sentiments: sentiments ? {
           positive_pct: sentiments.positive_pct || 0,
           negative_pct: sentiments.negative_pct || 0,
           neutral_pct: sentiments.neutral_pct || 0,
-        }
+        } : undefined,
+        categories: categories ? {
+          questions: categories.questions || 0,
+          tasks: categories.tasks || 0,
+          metrics: categories.metrics || 0,
+          date_times: categories.date_times || 0,
+        } : undefined,
+        speakers,
       } : undefined,
+      meeting_info: meetingInfo ? {
+        summary_status: meetingInfo.summary_status as string | undefined,
+      } : undefined,
+      // URLs by plan availability:
       transcript_url: (transcript.transcript_url as string) || `https://app.fireflies.ai/view/${meetingId}`,
-      recording_url: (transcript.video_url as string) || undefined,
-      summary_status: transcript.summary_status as string | undefined,
+      audio_url: transcript.audio_url as string | undefined,     // Pro+
+      video_url: transcript.video_url as string | undefined,     // Business+
+      meeting_link: transcript.meeting_link as string | undefined, // All plans
+      summary_status: (meetingInfo?.summary_status as string) || (transcript.summary_status as string) || undefined,
     };
   }
 }

@@ -2,6 +2,7 @@
 
 Automatically captures meeting notes with AI-generated summaries and insights from Fireflies.ai into your Twenty CRM.
 
+### Current Status
 - Doesn't work with Fireflies webhook yet due to missing headers forwarding in twenty serverless func
 - Meeting ingestion utility script is available for individual meeting fetching
 - Soon be added : Fetch all Fireflies historical meetings (no header limitation for this)
@@ -23,19 +24,54 @@ Automatically captures meeting notes with AI-generated summaries and insights fr
 
 ## API Access by Subscription Plan
 
-Fireflies API access varies significantly by subscription tier:
+Fireflies API access varies by subscription tier. This integration automatically adapts queries based on your plan and falls back gracefully if restrictions are encountered.
+
+### Plan Comparison
 
 | Feature | Free | Pro | Business | Enterprise |
-|---------|------|-----|----------|------------|
-| **API Rate Limit** | 50 requests/day | 50 requests/day | 60 requests/minute | 60 requests/minute |
-| **Storage** | 800 mins/seat | 8,000 mins/seat | Unlimited | Unlimited |
-| **AI Summaries** | Limited (20 credits) | Unlimited | Unlimited | Unlimited |
-| **Video Upload** | 100MB max | 1.5GB max | 1.5GB max | 1.5GB max |
-| **Advanced Features** | Basic transcription | AI apps, analytics | Team analytics, CI | Full API, SSO, compliance |
+|---------|:----:|:---:|:--------:|:----------:|
+| **API Rate Limit** | 50/day | 50/day | 60/min | 60/min |
+| **Basic Data** (title, date, duration) | ✅ | ✅ | ✅ | ✅ |
+| **Participants List** | ✅ | ✅ | ✅ | ✅ |
+| **Transcript URL** | ✅ | ✅ | ✅ | ✅ |
+| **Speakers** | ❌ | ✅ | ✅ | ✅ |
+| **Summary** (overview, keywords) | ❌ | ✅ | ✅ | ✅ |
+| **Audio URL** | ❌ | ✅ | ✅ | ✅ |
+| **Action Items** | ❌ | ❌ | ✅ | ✅ |
+| **Topics Discussed** | ❌ | ❌ | ✅ | ✅ |
+| **Video URL** | ❌ | ❌ | ✅ | ✅ |
+| **Sentiment Analytics** | ❌ | ❌ | ✅ | ✅ |
+| **Meeting Attendees (detailed)** | ❌ | ❌ | ✅ | ✅ |
 
-**Key Design Pattern:** Subscription-based API access uses **tiered rate limiting** rather than feature gating. Lower tiers get severely restricted throughput (50/day vs 60/minute = 1,700x difference), making production integrations effectively require Business+ plans.
+### What You'll Get Per Plan
 
-**Pro Plan Limitation:** Despite "unlimited" AI summaries, the 50 requests/day limit severely constrains production usage for meeting-heavy organizations.
+**Free Plan:**
+- Meeting title, date, duration
+- Participant names/emails (basic)
+- Link to transcript
+
+**Pro Plan:**
+- Everything in Free, plus:
+- Speaker identification
+- AI summary (overview + keywords)
+- Audio recording URL
+
+**Business Plan:**
+- Everything in Pro, plus:
+- Action items extraction
+- Topics discussed
+- Sentiment analysis (positive/negative/neutral %)
+- Video recording URL
+- Detailed meeting attendee info
+
+### Configuration
+
+Set your plan in `.env`:
+```bash
+FIREFLIES_PLAN=free  # Options: free, pro, business, enterprise
+```
+
+**Rate Limiting:** Free/Pro plans are limited to 50 API calls/day. The integration uses conservative retry settings by default to stay within limits.
 
 ## What Gets Captured
 

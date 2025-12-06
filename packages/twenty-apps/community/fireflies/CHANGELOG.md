@@ -1,5 +1,47 @@
 # Changelog
 
+## [0.3.0] - 2025-12-08
+
+Subscription-based query / Full transcript and AI notes for Pro+ / More
+
+### Added
+- **Full transcript capture**: Meeting object now stores the complete meeting transcript with speaker names and timestamps (`transcript` field)
+- **Rich AI meeting notes**: Captures detailed AI-generated meeting notes from Fireflies (`notes` field with 7,000+ char summaries)
+- **Expanded summary fields**: Now fetches all available Fireflies summary data:
+  - `notes` - Detailed AI-generated meeting notes with timestamps and section headers
+  - `bullet_gist` - Emoji-enhanced bullet point summaries
+  - `outline` / `shorthand_bullet` - Timestamped meeting outline
+  - `gist` - One-sentence meeting summary
+  - `short_summary` - Single paragraph summary
+  - `short_overview` - Brief overview
+- **New Meeting fields**:
+  - `transcript` - Full meeting transcript with speaker attribution
+  - `notes` - AI-generated detailed notes
+  - `audioUrl` - Link to audio recording (Pro+)
+  - `videoUrl` - Link to video recording (Business+)
+  - `meetingLink` - Original meeting link
+  - `neutralPercent` - Neutral sentiment percentage
+- **Meeting delete utility**: New `yarn meeting:delete <meetingId>` script for cleanup and re-import
+- **Debug meeting utility**: New `scripts/debug-meeting.ts` to inspect raw Fireflies API responses
+
+### Changed
+- **Plan-based GraphQL queries**: Completely redesigned query system with three tiers:
+  - **Free**: Basic fields only (title, date, duration, participants, transcript_url, meeting_link)
+  - **Pro**: Adds full transcript (`sentences`), summary fields, speakers, audio_url
+  - **Business+**: Adds analytics, video_url, speaker stats, meeting metrics
+- **Action items parsing**: Fixed parsing of `action_items` which Fireflies returns as newline-separated string, not array
+- **Note body format**: Enhanced with Meeting Notes, Outline, Key Points sections from rich Fireflies data
+- **Import status**: Added `PARTIAL` status for imports missing summary/analytics data
+
+### Fixed
+- Missing `notes` and `bullet_gist` fields in data transform (were fetched but not passed through)
+- Proper fallback: Uses `shorthand_bullet` when `outline` is empty (Fireflies stores outline content there)
+- Summary readiness detection now checks `notes` field in addition to `overview` and `action_items`
+
+### Documentation
+- Updated README with complete API access comparison table by subscription plan
+- Documented all available Fireflies summary fields and their plan requirements
+
 ## [0.2.3] - 2025-12-06
 
 ### Added
