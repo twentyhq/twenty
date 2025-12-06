@@ -15,7 +15,6 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/const/previewable-extensions.const';
 import { FileIcon } from '@/file/components/FileIcon';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
@@ -89,10 +88,6 @@ export const AttachmentRow = ({
 
   const { name: originalFileName, extension: attachmentFileExtension } =
     getFileNameAndExtension(attachment.name);
-
-  const fileExtension =
-    attachmentFileExtension?.toLowerCase().replace('.', '') ?? '';
-  const isPreviewable = PREVIEWABLE_EXTENSIONS.includes(fileExtension);
 
   const [attachmentFileName, setAttachmentFileName] =
     useState(originalFileName);
@@ -180,22 +175,14 @@ export const AttachmentRow = ({
             />
           ) : (
             <StyledLinkContainer>
-              {isPreviewable ? (
-                <StyledLink
-                  onClick={handleOpenDocument}
-                  href={attachment.fullPath}
-                >
-                  <OverflowingTextWithTooltip text={attachment.name} />
-                </StyledLink>
-              ) : (
-                <StyledLink
-                  href={attachment.fullPath}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <OverflowingTextWithTooltip text={attachment.name} />
-                </StyledLink>
-              )}
+              <StyledLink
+                onClick={handleOpenDocument}
+                href={attachment.fullPath}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <OverflowingTextWithTooltip text={attachment.name} />
+              </StyledLink>
             </StyledLinkContainer>
           )}
         </StyledLeftContent>
