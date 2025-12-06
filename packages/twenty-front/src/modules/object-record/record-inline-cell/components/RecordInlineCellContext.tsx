@@ -29,7 +29,6 @@ const defaultRecordInlineCellContextProp: RecordInlineCellContextProps = {
   editModeContent: undefined,
   editModeContentOnly: false,
   displayModeContent: undefined,
-  isDisplayModeFixHeight: false,
   disableHoverEffect: false,
   loading: false,
   isCentered: false,
