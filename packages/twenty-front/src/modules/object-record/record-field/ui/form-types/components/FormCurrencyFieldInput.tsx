@@ -45,9 +45,12 @@ export const FormCurrencyFieldInput = ({
   ) => {
     onChange({
       currencyCode: defaultValue?.currencyCode ?? null,
-      amountMicros: Number.isFinite(newAmountMicros)
-        ? convertCurrencyAmountToCurrencyMicros(Number(newAmountMicros))
-        : null,
+      amountMicros:
+        newAmountMicros != null
+          ? Number.isFinite(+newAmountMicros)
+            ? convertCurrencyAmountToCurrencyMicros(Number(newAmountMicros))
+            : null
+          : null,
     });
   };
 
@@ -73,10 +76,12 @@ export const FormCurrencyFieldInput = ({
         <FormNumberFieldInput
           label="Amount"
           defaultValue={
-            Number.isFinite(defaultValue?.amountMicros)
-              ? convertCurrencyMicrosToCurrencyAmount(
-                  Number(defaultValue?.amountMicros),
-                )
+            defaultValue?.amountMicros != null
+              ? Number.isFinite(+defaultValue.amountMicros)
+                ? convertCurrencyMicrosToCurrencyAmount(
+                    +defaultValue.amountMicros,
+                  )
+                : defaultValue.amountMicros
               : ''
           }
           onChange={handleAmountMicrosChange}
