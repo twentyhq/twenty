@@ -1,5 +1,6 @@
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
+import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { AvatarChip, Chip } from 'twenty-ui/components';
@@ -21,7 +22,7 @@ type ActorDisplayProps = Partial<FieldActorValue> & {
   avatarUrl?: string | null;
 };
 
-const PROVIDORS_ICON_MAPPING = {
+const PROVIDERS_ICON_MAPPING = {
   EMAIL: {
     [ConnectedAccountProvider.MICROSOFT]: IconMicrosoftOutlook,
     [ConnectedAccountProvider.GOOGLE]: IconGmail,
@@ -34,7 +35,6 @@ const PROVIDORS_ICON_MAPPING = {
     default: IconCalendar,
   },
 };
-
 export const ActorDisplay = ({
   name,
   source,
@@ -42,6 +42,7 @@ export const ActorDisplay = ({
   avatarUrl,
   context,
 }: ActorDisplayProps) => {
+  const { t } = useLingui();
   const LeftIcon = useMemo(() => {
     switch (source) {
       case 'API':
@@ -49,12 +50,12 @@ export const ActorDisplay = ({
       case 'IMPORT':
         return IconCsv;
       case 'EMAIL':
-        return PROVIDORS_ICON_MAPPING.EMAIL[context?.provider ?? 'default'];
+        return PROVIDERS_ICON_MAPPING.EMAIL[context?.provider ?? 'default'];
       case 'CALENDAR':
         return (
-          PROVIDORS_ICON_MAPPING.CALENDAR[
-            context?.provider as keyof typeof PROVIDORS_ICON_MAPPING.CALENDAR
-          ] ?? PROVIDORS_ICON_MAPPING.CALENDAR.default
+          PROVIDERS_ICON_MAPPING.CALENDAR[
+            context?.provider as keyof typeof PROVIDERS_ICON_MAPPING.CALENDAR
+          ] ?? PROVIDERS_ICON_MAPPING.CALENDAR.default
         );
       case 'SYSTEM':
         return IconRobot;
@@ -72,7 +73,7 @@ export const ActorDisplay = ({
 
   return (
     <Chip
-      label={name ?? ''}
+      label={name ?? t`Deleted user`}
       leftComponent={
         <AvatarChip
           placeholderColorSeed={workspaceMemberId ?? undefined}
