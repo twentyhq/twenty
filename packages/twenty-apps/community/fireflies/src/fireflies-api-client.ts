@@ -387,10 +387,6 @@ export class FirefliesApiClient {
         const emailUsername = organizerEmail.split('@')[0].toLowerCase();
         const emailNameVariations = [emailUsername];
 
-        if (emailUsername === 'alex') {
-          emailNameVariations.push('alexander', 'alexandre', 'alex');
-        }
-
         if (transcript.speakers && Array.isArray(transcript.speakers)) {
           const potentialOrganizerSpeaker = transcript.speakers.find((speaker: Record<string, unknown>) => {
             const name = ((speaker.name || '') as string).toLowerCase();

@@ -395,27 +395,6 @@ export class TwentyCrmService {
     await this.gqlRequest<{ createNoteTarget: { id: string; noteId: string; personId: string } }>(mutation, variables);
   }
 
-  async createMeetingTarget(meetingId: string, contactId: string): Promise<void> {
-    const mutation = `
-      mutation CreateMeetingTarget($data: NoteTargetCreateInput!) {
-        createNoteTarget(data: $data) {
-          id
-          meetingId
-          personId
-        }
-      }
-    `;
-
-    const variables = {
-      data: {
-        meetingId,
-        personId: contactId,
-      },
-    };
-
-    await this.gqlRequest<{ createNoteTarget: { id: string; meetingId: string; personId: string } }>(mutation, variables);
-  }
-
   async createMeeting(meetingData: MeetingCreateInput): Promise<string> {
     const mutation = `
       mutation CreateMeeting($data: MeetingCreateInput!) {
