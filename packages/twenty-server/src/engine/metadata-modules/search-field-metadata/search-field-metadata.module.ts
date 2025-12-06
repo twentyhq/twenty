@@ -4,11 +4,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { SearchFieldMetadataResolver } from 'src/engine/metadata-modules/search-field-metadata/resolvers/search-field-metadata.resolver';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { SearchFieldMetadataService } from 'src/engine/metadata-modules/search-field-metadata/services/search-field-metadata.service';
+import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
 
 @Module({
@@ -17,11 +19,13 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
       SearchFieldMetadataEntity,
       ObjectMetadataEntity,
       FieldMetadataEntity,
+      IndexMetadataEntity,
     ]),
     WorkspaceSyncMetadataModule,
     DataSourceModule,
     FeatureFlagModule,
     PermissionsModule,
+    WorkspaceSchemaManagerModule,
   ],
   providers: [SearchFieldMetadataService, SearchFieldMetadataResolver],
   exports: [SearchFieldMetadataService],

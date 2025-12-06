@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { FieldMetadataType } from 'twenty-shared/types';
 import { type EntityManager } from 'typeorm';
 
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
@@ -7,6 +8,10 @@ import {
   ComparatorAction,
   type FieldComparatorResult,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
+import {
+  type ComputedPartialFieldMetadata,
+  type PartialFieldMetadata,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -19,6 +24,7 @@ import { WorkspaceMetadataUpdaterService } from 'src/engine/workspace-manager/wo
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { type WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 import { computeStandardFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-standard-fields.util';
+import { getSearchVectorExpressionFromMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-search-fields-from-metadata.util';
 import { mapObjectMetadataByUniqueIdentifier } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/sync-metadata.util';
 
 @Injectable()
@@ -56,6 +62,7 @@ export class WorkspaceSyncFieldMetadataService {
 
     await this.synchronizeStandardObjectFields(
       context,
+      manager,
       originalObjectMetadataCollection,
       customObjectMetadataCollection,
       storage,
@@ -63,6 +70,7 @@ export class WorkspaceSyncFieldMetadataService {
 
     await this.synchronizeCustomObjectFields(
       context,
+      manager,
       customObjectMetadataCollection,
       storage,
     );
@@ -114,6 +122,7 @@ export class WorkspaceSyncFieldMetadataService {
    */
   private async synchronizeStandardObjectFields(
     context: WorkspaceSyncContext,
+    manager: EntityManager,
     originalObjectMetadataCollection: ObjectMetadataEntity[],
     customObjectMetadataCollection: ObjectMetadataEntity[],
     storage: WorkspaceSyncStorage,
@@ -144,6 +153,14 @@ export class WorkspaceSyncFieldMetadataService {
         originalObjectMetadata,
         // We need to provide this for generated relations with custom objects
         customObjectMetadataCollection,
+      );
+
+      // Override asExpression for searchVector fields from SearchFieldMetadataEntity
+      await this.overrideSearchVectorExpression(
+        manager,
+        context.workspaceId,
+        originalObjectMetadata.id,
+        computedStandardFieldMetadataCollection,
       );
 
       const fieldComparatorResults = this.workspaceFieldComparator.compare(
@@ -184,6 +201,7 @@ export class WorkspaceSyncFieldMetadataService {
 
   private async synchronizeCustomObjectFields(
     context: WorkspaceSyncContext,
+    manager: EntityManager,
     customObjectMetadataCollection: ObjectMetadataEntity[],
     storage: WorkspaceSyncStorage,
   ): Promise<void> {
@@ -200,6 +218,14 @@ export class WorkspaceSyncFieldMetadataService {
         customObjectMetadata,
       );
 
+      // Override asExpression for searchVector fields from SearchFieldMetadataEntity
+      await this.overrideSearchVectorExpression(
+        manager,
+        context.workspaceId,
+        customObjectMetadata.id,
+        standardFieldMetadataCollection,
+      );
+
       /**
        * COMPARE FIELD METADATA
        */
@@ -210,6 +236,48 @@ export class WorkspaceSyncFieldMetadataService {
       );
 
       this.storeComparatorResults(fieldComparatorResults, storage);
+    }
+  }
+
+  private async overrideSearchVectorExpression(
+    manager: EntityManager,
+    workspaceId: string,
+    objectMetadataId: string,
+    computedFieldMetadataCollection: Array<
+      ComputedPartialFieldMetadata | PartialFieldMetadata
+    >,
+  ): Promise<void> {
+    // Find searchVector field
+    const searchVectorField = computedFieldMetadataCollection.find(
+      (field) => field.type === FieldMetadataType.TS_VECTOR,
+    );
+
+    if (!searchVectorField) {
+      return;
+    }
+
+    // Get search vector expression from SearchFieldMetadataEntity
+    const searchVectorExpression = await getSearchVectorExpressionFromMetadata(
+      manager,
+      workspaceId,
+      objectMetadataId,
+    );
+
+    // Always override asExpression based on SearchFieldMetadataEntity
+    // If no entries exist, set it to undefined (field is nullable)
+    if (!searchVectorField.settings) {
+      searchVectorField.settings = {
+        asExpression: searchVectorExpression ?? undefined,
+        generatedType: 'STORED',
+      };
+    } else {
+      // Type assertion needed because settings is a union type
+      const tsVectorSettings = searchVectorField.settings as {
+        asExpression?: string;
+        generatedType?: 'STORED' | 'VIRTUAL';
+      };
+
+      tsVectorSettings.asExpression = searchVectorExpression ?? undefined;
     }
   }
 
