@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
+import { FieldClickAction } from 'twenty-shared/types';
 import {
   getAbsoluteUrlOrThrow,
   getUrlHostnameOrThrow,
@@ -13,9 +14,15 @@ import { checkUrlType } from '~/utils/checkUrlType';
 
 type LinksDisplayProps = {
   value?: FieldLinksValue;
+  onLinkClick?: (url: string, event: React.MouseEvent<HTMLElement>) => void;
+  clickAction?: FieldClickAction;
 };
 
-export const LinksDisplay = ({ value }: LinksDisplayProps) => {
+export const LinksDisplay = ({
+  value,
+  onLinkClick,
+  clickAction,
+}: LinksDisplayProps) => {
   const links = useMemo(() => {
     if (!isDefined(value)) {
       return [];
@@ -39,13 +46,30 @@ export const LinksDisplay = ({ value }: LinksDisplayProps) => {
     });
   }, [value]);
 
+  const handleClick = (url: string, event: React.MouseEvent<HTMLElement>) => {
+    if (clickAction === FieldClickAction.COPY) {
+      onLinkClick?.(url, event);
+    }
+  };
+
   return (
     <ExpandableList>
       {links.map(({ url, label, type }, index) =>
         type === LinkType.LinkedIn || type === LinkType.Twitter ? (
-          <SocialLink key={index} href={url} type={type} label={label} />
+          <SocialLink
+            key={index}
+            href={url}
+            type={type}
+            label={label}
+            onClick={(event) => handleClick(url, event)}
+          />
         ) : (
-          <RoundedLink key={index} href={url} label={label} />
+          <RoundedLink
+            key={index}
+            href={url}
+            label={label}
+            onClick={(event) => handleClick(url, event)}
+          />
         ),
       )}
     </ExpandableList>

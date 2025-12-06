@@ -5,6 +5,7 @@ import { phonesSchema as phonesFieldDefaultValueSchema } from '@/object-record/r
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { countryCodeToCallingCode } from '@/settings/data-model/fields/preview/utils/getPhonesFieldPreviewValue';
 import { settingsDataModelFieldMaxValuesSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldMaxValuesSchema';
+import { settingsDataModelFieldClickBehaviorSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldClickBehaviorSchema';
 import { Select } from '@/ui/input/components/Select';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { useLingui } from '@lingui/react/macro';
@@ -28,7 +29,8 @@ export const settingsDataModelFieldPhonesFormSchema = z
   .object({
     defaultValue: phonesFieldDefaultValueSchema,
   })
-  .merge(settingsDataModelFieldMaxValuesSchema);
+  .merge(settingsDataModelFieldMaxValuesSchema)
+  .merge(settingsDataModelFieldClickBehaviorSchema);
 
 export type SettingsDataModelFieldPhonesFormValues = z.infer<
   typeof settingsDataModelFieldPhonesFormSchema

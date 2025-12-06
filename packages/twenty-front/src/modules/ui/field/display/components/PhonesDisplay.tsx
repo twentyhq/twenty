@@ -5,6 +5,7 @@ import { ExpandableList } from '@/ui/layout/expandable-list/components/Expandabl
 
 import { styled } from '@linaria/react';
 import { parsePhoneNumber } from 'libphonenumber-js';
+import { FieldClickAction } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { RoundedLink } from 'twenty-ui/navigation';
 import { THEME_COMMON } from 'twenty-ui/theme';
@@ -17,6 +18,7 @@ type PhonesDisplayProps = {
     phoneNumber: string,
     event: React.MouseEvent<HTMLElement>,
   ) => void;
+  clickAction?: FieldClickAction;
 };
 
 const themeSpacing = THEME_COMMON.spacingMultiplicator;
@@ -38,6 +40,7 @@ export const PhonesDisplay = ({
   value,
   isFocused,
   onPhoneNumberClick,
+  clickAction,
 }: PhonesDisplayProps) => {
   const phones = useMemo(
     () =>
@@ -79,7 +82,9 @@ export const PhonesDisplay = ({
     number: string,
     event: React.MouseEvent<HTMLElement>,
   ) => {
-    onPhoneNumberClick?.(number, event);
+    if (clickAction === FieldClickAction.COPY) {
+      onPhoneNumberClick?.(number, event);
+    }
   };
 
   return isFocused ? (
