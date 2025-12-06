@@ -150,6 +150,12 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     TransientTokenService,
     AuthSsoService,
   ],
-  exports: [AccessTokenService, LoginTokenService, RefreshTokenService],
+  exports: [
+    AccessTokenService,
+    LoginTokenService,
+    RefreshTokenService,
+    CreateMessageChannelService,
+    CreateCalendarChannelService,
+  ],
 })
 export class AuthModule {}
