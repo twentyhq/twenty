@@ -2,7 +2,7 @@ import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modul
 
 export type FailedFieldInputTranspilation = {
   status: 'fail';
-  error: FlatFieldMetadataValidationError;
+  errors: FlatFieldMetadataValidationError[];
 };
 export type SuccessfulFieldInputTranspilation<T> = {
   status: 'success';

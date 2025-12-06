@@ -22,6 +22,7 @@ import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/met
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
+import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-failure-report.constant';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -183,13 +184,21 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     });
 
     if (inputTranspilationResult.status === 'fail') {
-      throw new FieldMetadataException(
-        inputTranspilationResult.error.message,
-        inputTranspilationResult.error.code,
+      throw new WorkspaceMigrationBuilderExceptionV2(
         {
-          userFriendlyMessage:
-            inputTranspilationResult.error.userFriendlyMessage,
+          report: {
+            ...EMPTY_ORCHESTRATOR_FAILURE_REPORT(),
+            fieldMetadata: [
+              {
+                errors: inputTranspilationResult.errors,
+                type: 'update_field',
+                flatEntityMinimalInformation: {},
+              },
+            ],
+          },
+          status: 'fail',
         },
+        'Validation errors occurred while updating field',
       );
     }
 

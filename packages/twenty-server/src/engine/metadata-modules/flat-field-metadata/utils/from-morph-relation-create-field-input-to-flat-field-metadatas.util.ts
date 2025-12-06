@@ -44,12 +44,14 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
   ) {
     return {
       status: 'fail',
-      error: {
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: `Relation creation payload is required`,
-        userFriendlyMessage: msg`Relation creation payload is required`,
-        value: rawMorphCreationPayload,
-      },
+      errors: [
+        {
+          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          message: `Relation creation payload is required`,
+          userFriendlyMessage: msg`Relation creation payload is required`,
+          value: rawMorphCreationPayload,
+        },
+      ],
     };
   }
 

@@ -39,12 +39,14 @@ export const validateRelationCreationPayload = async ({
     if (error instanceof FieldMetadataException) {
       return {
         status: 'fail',
-        error: {
-          code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-          message: `Relation creation payload is invalid`,
-          userFriendlyMessage: msg`Invalid relation creation payload`,
-          value: relationCreationPayload,
-        },
+        errors: [
+          {
+            code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+            message: `Relation creation payload is invalid`,
+            userFriendlyMessage: msg`Invalid relation creation payload`,
+            value: relationCreationPayload,
+          },
+        ],
       };
     } else {
       throw error;
@@ -59,12 +61,14 @@ export const validateRelationCreationPayload = async ({
   if (!isDefined(targetFlatObjectMetadata)) {
     return {
       status: 'fail',
-      error: {
-        code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-        message: `Object metadata relation target not found for relation creation payload`,
-        userFriendlyMessage: msg`Object targeted by field to create not found`,
-        value: relationCreationPayload,
-      },
+      errors: [
+        {
+          code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+          message: `Object metadata relation target not found for relation creation payload`,
+          userFriendlyMessage: msg`Object targeted by field to create not found`,
+          value: relationCreationPayload,
+        },
+      ],
     };
   }
 

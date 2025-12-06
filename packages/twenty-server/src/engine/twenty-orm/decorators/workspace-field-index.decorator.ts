@@ -1,4 +1,4 @@
-import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
+import { generateDeterministicIndexNameV2 } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name-v2';
 import { type WorkspaceIndexOptions } from 'src/engine/twenty-orm/decorators/workspace-index.decorator';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { getColumnsForIndex } from 'src/engine/twenty-orm/utils/get-default-columns-for-index.util';
@@ -30,10 +30,18 @@ export function WorkspaceFieldIndex(
     ];
 
     metadataArgsStorage.addIndexes({
-      name: `IDX_${generateDeterministicIndexName([
-        convertClassNameToObjectMetadataName(target.constructor.name),
-        ...columns,
-      ])}`,
+      name: generateDeterministicIndexNameV2({
+        flatObjectMetadata: {
+          nameSingular: convertClassNameToObjectMetadataName(
+            target.constructor.name,
+          ),
+          isCustom: false,
+        },
+        relatedFieldNames: columns.map((column) => ({
+          name: column,
+        })),
+        isUnique: options?.isUnique ?? false,
+      }),
       columns,
       target: target.constructor,
       gate,
