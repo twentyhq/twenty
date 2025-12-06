@@ -8,6 +8,7 @@ import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidthClassName';
 import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthClassName';
 import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthVariableName';
+import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
 import { RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnWithGroupLastEmptyColumnWidthVariableName';
 import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-record/record-table/constants/RecordTableLabelIdentifierColumnWidthOnMobile';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
@@ -94,7 +95,11 @@ const StyledRowDraggableCloneCSSBridge = styled.div<{
     let returnedCSS = '';
 
     for (let i = 0; i < visibleRecordFields.length; i++) {
-      returnedCSS += `--record-table-column-field-${i}: ${visibleRecordFields[i].size}px; \n`;
+      const columnWidth = Math.max(
+        visibleRecordFields[i].size,
+        RECORD_TABLE_COLUMN_MIN_WIDTH,
+      );
+      returnedCSS += `--record-table-column-field-${i}: ${columnWidth}px; \n`;
     }
 
     for (let i = 0; i < visibleRecordFields.length; i++) {

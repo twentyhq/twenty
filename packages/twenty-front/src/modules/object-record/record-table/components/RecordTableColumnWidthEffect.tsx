@@ -77,9 +77,13 @@ export const RecordTableColumnWidthEffect = () => {
     );
 
     for (const [index, recordField] of visibleRecordFields.entries()) {
+      const columnWidth = Math.max(
+        recordField.size,
+        RECORD_TABLE_COLUMN_MIN_WIDTH,
+      );
       updateRecordTableCSSVariable(
         getRecordTableColumnFieldWidthCSSVariableName(index),
-        `${recordField.size}px`,
+        `${columnWidth}px`,
       );
     }
 
@@ -87,14 +91,6 @@ export const RecordTableColumnWidthEffect = () => {
       updateRecordTableCSSVariable(
         getRecordTableColumnFieldWidthCSSVariableName(0),
         `${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px`,
-      );
-    } else {
-      const firstColumnWidth =
-        visibleRecordFields[0]?.size ?? RECORD_TABLE_COLUMN_MIN_WIDTH;
-
-      updateRecordTableCSSVariable(
-        getRecordTableColumnFieldWidthCSSVariableName(0),
-        `${firstColumnWidth}px`,
       );
     }
   }, [
