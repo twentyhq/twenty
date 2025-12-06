@@ -3,7 +3,7 @@ import { MeetingFormatter } from './formatters';
 import { createLogger } from './logger';
 import { TwentyCrmService } from './twenty-crm-service';
 import type { FirefliesWebhookPayload, ProcessResult } from './types';
-import { getApiUrl, getSummaryFetchConfig, shouldAutoCreateContacts } from './utils';
+import { getApiUrl, getFirefliesPlan, getSummaryFetchConfig, shouldAutoCreateContacts } from './utils';
 import {
   getWebhookSecretFingerprint,
   isValidFirefliesPayload,
@@ -16,11 +16,6 @@ const logger = createLogger('fireflies');
 
 export class WebhookHandler {
   private debug: string[] = [];
-  private isTestEnvironment: boolean;
-
-  constructor() {
-    this.isTestEnvironment = process.env.NODE_ENV === 'test' || process.env.JEST_WORKER_ID !== undefined;
-  }
 
   async handle(params: unknown, headers?: Record<string, string>): Promise<ProcessResult> {
     const result: ProcessResult = {
@@ -33,6 +28,14 @@ export class WebhookHandler {
     try {
       logger.debug('invoked');
       logger.debug(`apiUrl=${getApiUrl()}`);
+      const paramKeys =
+        params && typeof params === 'object'
+          ? Object.keys(params as Record<string, unknown>)
+          : [];
+      this.debug.push(
+        `paramsType=${typeof params}`,
+        `paramKeys=${paramKeys.join(',') || 'none'}`
+      );
 
       // 0) Validate environment configuration
       const firefliesApiKey = process.env.FIREFLIES_API_KEY || '';
@@ -63,13 +66,15 @@ export class WebhookHandler {
 
       // 3) Fetch meeting data from Fireflies
       const summaryConfig = getSummaryFetchConfig();
+      const firefliesPlan = getFirefliesPlan();
       logger.debug(`summary strategy: ${summaryConfig.strategy} (retryAttempts=${summaryConfig.retryAttempts}, retryDelay=${summaryConfig.retryDelay}ms)`);
       logger.debug(`fetching meeting data from Fireflies API`);
 
       const firefliesClient = new FirefliesApiClient(firefliesApiKey);
       const { data: meetingData, summaryReady } = await firefliesClient.fetchMeetingDataWithRetry(
         payload.meetingId,
-        summaryConfig
+        summaryConfig,
+        firefliesPlan
       );
 
       logger.debug(`meeting data fetched: title="${meetingData.title}" summaryReady=${summaryReady}`);
@@ -237,6 +242,10 @@ export class WebhookHandler {
     if (headerKeys.length > 0) {
       logger.debug(`header keys: ${headerKeys.join(',')}`);
     }
+    this.debug.push(
+      `headerKeys=${headerKeys.join(',') || 'none'}`,
+      `rawHeaders=${JSON.stringify(normalizedHeaders)}`
+    );
 
     const headerSignature = Object.entries(normalizedHeaders).find(
       ([key]) => key.toLowerCase() === 'x-hub-signature',
@@ -255,12 +264,27 @@ export class WebhookHandler {
     const signature =
       (typeof headerSignature === 'string' ? headerSignature : undefined) || payloadSignature;
 
-    const body = typeof normalizedHeaders['body'] === 'string'
-      ? normalizedHeaders['body']
-      : JSON.stringify(payloadRecord);
+    const payloadForSignature =
+      payloadSignature && 'x-hub-signature' in payloadRecord
+        ? Object.fromEntries(
+            Object.entries(payloadRecord).filter(
+              ([key]) => key.toLowerCase() !== 'x-hub-signature',
+            ),
+          )
+        : payloadRecord;
+
+    const body =
+      typeof normalizedHeaders['body'] === 'string'
+        ? normalizedHeaders['body']
+        : JSON.stringify(payloadForSignature);
 
     const signatureCheck = verifyWebhookSignature(body, signature, webhookSecret);
     if (!signatureCheck.isValid) {
+      this.debug.push(
+        `providedSignature=${signature ?? 'undefined'}`,
+        `computedSignature=${signatureCheck.computedSignature ?? 'undefined'}`,
+        `webhookSecretFingerprint=${getWebhookSecretFingerprint(webhookSecret)}`
+      );
       logger.debug(
         `signature check failed. headerPresent=${Boolean(
           headerSignature,
@@ -284,7 +308,6 @@ export class WebhookHandler {
     noteId: string,
     contactIds: string[]
   ): Promise<void> {
-    // Create Note-Person links for each participant
     for (const contactId of contactIds) {
       try {
         await twentyService.createNoteTarget(noteId, contactId);
@@ -292,7 +315,6 @@ export class WebhookHandler {
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Unknown error';
         logger.error(`failed to link note to person ${contactId}: ${message}`);
-        // Continue with other participants
       }
     }
   }
@@ -306,7 +328,6 @@ export class WebhookHandler {
         return;
       }
 
-      // Try to extract meeting ID and title from the params
       let meetingId = 'unknown';
       let meetingTitle = 'Unknown Meeting';
 
@@ -314,7 +335,6 @@ export class WebhookHandler {
       if (payload?.meetingId) {
         meetingId = payload.meetingId;
 
-        // Try to get meeting title from Fireflies API if possible
         const firefliesApiKey = process.env.FIREFLIES_API_KEY || '';
         if (firefliesApiKey) {
           try {
@@ -337,7 +357,6 @@ export class WebhookHandler {
       const failedMeetingId = await twentyService.createFailedMeeting(failedMeetingData);
       logger.debug(`Created failed meeting record: ${failedMeetingId}`);
     } catch (recordError) {
-      // Don't throw here - we don't want to break the original error handling
       logger.error(`Failed to create failed meeting record: ${recordError instanceof Error ? recordError.message : 'Unknown error'}`);
     }
   }

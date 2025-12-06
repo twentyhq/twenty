@@ -2,6 +2,10 @@
 
 Automatically captures meeting notes with AI-generated summaries and insights from Fireflies.ai into your Twenty CRM.
 
+- Doesn't work with Fireflies webhook yet due to missing headers forwarding in twenty serverless func
+- Meeting ingestion utility script is available for individual meeting fetching
+- Soon be added : Fetch all Fireflies historical meetings (no header limitation for this)
+
 ## Integration Overview
 
 **Fireflies webhook → Fireflies API → Twenty CRM with summary-focused insights**
@@ -160,6 +164,16 @@ The integration uses **HMAC SHA-256 signature verification**:
 - Twenty verifies signature using your webhook secret
 - Invalid signatures are rejected immediately
 
+### Current Platform Limitation (Headers)
+
+- Twenty serverless route triggers currently do **not forward HTTP headers** to functions. Fireflies signatures sent in headers are stripped, so header-based verification does not work in production.
+- Workaround: the provided test script also includes the signature inside the payload; the handler falls back to that payload signature. Use this only for testing until header forwarding is supported.
+
+## Utilities for meeting insertion (workarounds)
+
+- Ingest a specific Fireflies meeting into Twenty:
+`yarn meeting:ingest <meetingId>` or `MEETING_ID=... yarn meeting:ingest`
+
 ## Development
 
 ```bash
@@ -249,8 +263,9 @@ Client expressed strong interest in the enterprise plan.
 
 ### Past Meetings Retrieval
 - **New trigger to retrieve past meetings from a contact** - Enable users to fetch historical meeting data from Fireflies for specific contacts, allowing retrospective capture and analysis of past interactions.
+- **Fetch all Fireflies historical meetings** - Enable users to fetch all historical meeting data from Fireflies.
 
-Next iteration would enhance the **intelligence layer** to:
+Next iterations would enhance the **intelligence layer** to:
 
 ### AI-Powered Insights
 - **Extract pain points, objections & buying signals** automatically from transcripts

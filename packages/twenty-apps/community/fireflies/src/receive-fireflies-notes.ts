@@ -1,4 +1,4 @@
-import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
+import { type FunctionConfig } from 'twenty-sdk';
 import type { ProcessResult } from './types';
 import { WebhookHandler } from './webhook-handler';
 
@@ -10,7 +10,7 @@ export const main = async (
   return handler.handle(params, headers);
 };
 
-export const config: ServerlessFunctionConfig = {
+export const config: FunctionConfig = {
   universalIdentifier: '2d3ea303-667c-4bbe-9e3d-db6ffb9d6c74',
   name: 'receive-fireflies-notes',
   description:
@@ -22,7 +22,8 @@ export const config: ServerlessFunctionConfig = {
       type: 'route',
       path: '/webhook/fireflies',
       httpMethod: 'POST',
-      isAuthRequired: true,
+      isAuthRequired: false,
     },
   ],
 };
+
