@@ -32,9 +32,9 @@ import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models
 import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
 
 import { AgentActorContextService } from './agent-actor-context.service';
-import { AgentModelConfigService } from './agent-model-config.service';
 import { AgentToolGeneratorService } from './agent-tool-generator.service';
 
 // Re-export for backward compatibility
