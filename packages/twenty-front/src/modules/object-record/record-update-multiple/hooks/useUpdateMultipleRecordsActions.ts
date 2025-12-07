@@ -9,7 +9,6 @@ import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 
 type UseUpdateMultipleRecordsActionsProps = {
   objectNameSingular: string;
@@ -64,9 +63,7 @@ export const useUpdateMultipleRecordsActions = ({
     try {
       await incrementalUpdateManyRecords(fieldsToUpdate);
 
-      const count = isDefined(progress.totalRecordCount)
-        ? progress.totalRecordCount
-        : progress.processedRecordCount;
+      const count = progress.processedRecordCount;
 
       enqueueSuccessSnackBar({
         message: t`Successfully updated ${count} records`,

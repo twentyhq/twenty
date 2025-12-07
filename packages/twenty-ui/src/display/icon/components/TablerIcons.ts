@@ -149,7 +149,9 @@ export {
   IconDeviceFloppy,
   IconDoorEnter,
   IconDotsVertical,
-  IconDownload, IconEdit, IconEditCircle,
+  IconDownload,
+  IconEdit,
+  IconEditCircle,
   IconExclamationCircle,
   IconExternalLink,
   IconEye,
@@ -318,7 +320,8 @@ export {
   IconSparkles,
   IconSpy,
   IconSql,
-  IconSquare, IconSquareKey,
+  IconSquare,
+  IconSquareKey,
   IconSquareNumber1,
   IconSquareNumber2,
   IconSquareNumber3,
@@ -373,7 +376,7 @@ export {
   IconWand,
   IconWebhook,
   IconWorld,
-  IconX
+  IconX,
 } from '@tabler/icons-react';
 
 export type { IconProps as TablerIconsProps } from '@tabler/icons-react';

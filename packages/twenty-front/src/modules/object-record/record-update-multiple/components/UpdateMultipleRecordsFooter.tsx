@@ -51,7 +51,7 @@ export const UpdateMultipleRecordsFooter = ({
       }
     },
     focusId: SIDE_PANEL_FOCUS_ID,
-    dependencies: [onUpdate, isUpdating],
+    dependencies: [onUpdate, isUpdating, isUpdateDisabled],
   });
 
   return (
