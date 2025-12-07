@@ -9,7 +9,7 @@ import { v4 } from 'uuid';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
-import { type AllStandardFieldByObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
+import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
@@ -17,7 +17,7 @@ const TWENTY_STANDARD_APPLICATION_ID =
   TWENTY_STANDARD_APPLICATION.universalIdentifier;
 
 export type CreateStandardFieldOptions<O extends AllStandardObjectName> = {
-  fieldName: AllStandardFieldByObjectName<O>;
+  fieldName: AllStandardObjectFieldName<O>;
   type: Exclude<FieldMetadataType, typeof FieldMetadataType.RELATION>;
   label: string;
   description: string;

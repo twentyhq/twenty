@@ -1,13 +1,13 @@
 import { v4 } from 'uuid';
 
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
-import { type AllStandardFieldByObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
+import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 
 export type StandardFieldMetadataIdByObjectAndFieldName = {
   [O in AllStandardObjectName]: {
     id: string;
-    fields: Record<AllStandardFieldByObjectName<O>, string>;
+    fields: Record<AllStandardObjectFieldName<O>, string>;
   };
 };
 
@@ -21,10 +21,10 @@ export const getStandardFieldMetadataIdByObjectAndFieldName =
     ) as AllStandardObjectName[]) {
       const fieldNames = Object.keys(
         STANDARD_OBJECTS[objectName].fields,
-      ) as AllStandardFieldByObjectName<typeof objectName>[];
+      ) as AllStandardObjectFieldName<typeof objectName>[];
 
       const fieldIds = {} as Record<
-        AllStandardFieldByObjectName<typeof objectName>,
+        AllStandardObjectFieldName<typeof objectName>,
         string
       >;
 
