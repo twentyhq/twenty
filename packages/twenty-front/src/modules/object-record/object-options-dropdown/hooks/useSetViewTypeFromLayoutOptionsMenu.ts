@@ -121,6 +121,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
               ),
               {
                 ...currentCoreView,
+                mainGroupByFieldMetadataId: null,
                 type: convertViewTypeToCore(viewType),
                 calendarLayout: ViewCalendarLayout.MONTH,
                 calendarFieldMetadataId,
@@ -144,6 +145,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
             updateCurrentViewParams.calendarLayout = ViewCalendarLayout.MONTH;
             updateCurrentViewParams.calendarFieldMetadataId =
               calendarFieldMetadataId;
+            updateCurrentViewParams.mainGroupByFieldMetadataId = null;
             return await updateCurrentView(updateCurrentViewParams);
           }
           default: {

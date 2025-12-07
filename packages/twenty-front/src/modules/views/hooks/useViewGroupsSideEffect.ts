@@ -1,5 +1,6 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useTriggerViewGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewGroupOptimisticEffect';
+import { type View } from '@/views/types/View';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -80,15 +81,15 @@ const useViewGroupsSideEffect = () => {
   };
 
   const triggerViewGroupSideEffectAtViewUpdate = ({
-    newViewId,
-    mainGroupByFieldMetadataId,
+    existingView,
+    newMainGroupByFieldMetadataId,
     objectMetadataItemId,
   }: {
-    newViewId: string;
-    mainGroupByFieldMetadataId?: string | null;
+    existingView: View;
+    newMainGroupByFieldMetadataId?: string | null;
     objectMetadataItemId: string;
   }) => {
-    if (mainGroupByFieldMetadataId === undefined) {
+    if (newMainGroupByFieldMetadataId === undefined) {
       return {};
     }
 
@@ -103,14 +104,15 @@ const useViewGroupsSideEffect = () => {
     let viewGroupsToCreate: ViewGroup[] = [];
     let viewGroupsToDelete: ViewGroup[] = [];
 
-    if (mainGroupByFieldMetadataId === null) {
+    if (newMainGroupByFieldMetadataId === null) {
       // TODO delete existing view groups
+      viewGroupsToDelete = existingView.viewGroups;
     } else {
       // else if mainGroupByFieldMetadataId has changed
       // TODO delete existing view groups
       viewGroupsToCreate =
         objectMetadataItem.fields
-          ?.find((field) => field.id === mainGroupByFieldMetadataId)
+          ?.find((field) => field.id === newMainGroupByFieldMetadataId)
           ?.options?.map(
             (option, index) =>
               ({
@@ -124,7 +126,7 @@ const useViewGroupsSideEffect = () => {
 
       if (
         objectMetadataItem.fields.find(
-          (field) => field.id === mainGroupByFieldMetadataId,
+          (field) => field.id === newMainGroupByFieldMetadataId,
         )?.isNullable === true
       ) {
         viewGroupsToCreate.push({
@@ -142,7 +144,7 @@ const useViewGroupsSideEffect = () => {
         ({ __typename, ...viewGroup }) =>
           ({
             ...viewGroup,
-            viewId: newViewId,
+            viewId: existingView.id,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             deletedAt: null,
@@ -152,7 +154,7 @@ const useViewGroupsSideEffect = () => {
         ({ __typename, ...viewGroup }) =>
           ({
             ...viewGroup,
-            viewId: newViewId,
+            viewId: existingView.id,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             deletedAt: new Date().toISOString(),
@@ -164,8 +166,8 @@ const useViewGroupsSideEffect = () => {
   };
 
   return {
-    triggerViewGroupSideEffectAtViewUpdate,
     triggerViewGroupSideEffectAtViewCreation,
+    triggerViewGroupSideEffectAtViewUpdate,
   };
 };
 
