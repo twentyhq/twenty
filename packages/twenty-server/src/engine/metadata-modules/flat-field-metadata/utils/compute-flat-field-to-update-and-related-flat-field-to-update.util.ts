@@ -51,7 +51,7 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
       existing: fromFlatFieldMetadata,
       properties:
         FLAT_FIELD_METADATA_EDITABLE_PROPERTIES[
-          isStandardField ? 'standard' : 'custom'
+          isStandardField && !isSystemBuild ? 'standard' : 'custom'
         ],
       update: updatedEditableFieldProperties,
     }),
