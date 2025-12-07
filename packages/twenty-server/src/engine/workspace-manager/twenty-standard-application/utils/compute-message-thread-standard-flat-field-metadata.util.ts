@@ -14,7 +14,10 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
   createdAt: Date;
   workspaceId: string;
   standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<AllStandardFieldByObjectName<'messageThread'>, FlatFieldMetadata> => ({
+}): Record<
+  AllStandardFieldByObjectName<'messageThread'>,
+  FlatFieldMetadata
+> => ({
   id: createStandardFieldFlatMetadata({
     objectName: 'messageThread',
     workspaceId,

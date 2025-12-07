@@ -1,7 +1,7 @@
 import {
-    FieldMetadataType,
-    RelationOnDeleteAction,
-    RelationType,
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
 } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -18,7 +18,10 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
   createdAt: Date;
   workspaceId: string;
   standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<AllStandardFieldByObjectName<'messageFolder'>, FlatFieldMetadata> => ({
+}): Record<
+  AllStandardFieldByObjectName<'messageFolder'>,
+  FlatFieldMetadata
+> => ({
   id: createStandardFieldFlatMetadata({
     objectName: 'messageFolder',
     workspaceId,
