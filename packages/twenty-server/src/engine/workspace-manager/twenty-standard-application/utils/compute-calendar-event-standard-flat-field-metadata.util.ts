@@ -14,7 +14,10 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
   createdAt: Date;
   workspaceId: string;
   standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<AllStandardFieldByObjectName<'calendarEvent'>, FlatFieldMetadata> => ({
+}): Record<
+  AllStandardFieldByObjectName<'calendarEvent'>,
+  FlatFieldMetadata
+> => ({
   id: createStandardFieldFlatMetadata({
     objectName: 'calendarEvent',
     workspaceId,

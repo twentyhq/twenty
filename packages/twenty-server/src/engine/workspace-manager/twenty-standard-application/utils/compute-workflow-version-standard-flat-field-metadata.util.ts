@@ -1,7 +1,7 @@
 import {
-    FieldMetadataType,
-    RelationOnDeleteAction,
-    RelationType,
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
 } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
