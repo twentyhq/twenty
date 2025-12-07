@@ -5,8 +5,8 @@ import { useLingui } from '@lingui/react/macro';
 
 import { computeProgressText } from '@/action-menu/utils/computeProgressText';
 import { type ObjectRecordQueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
-import { IconEdit } from '@tabler/icons-react';
 import { Key } from 'ts-key-enum';
+import { IconEdit } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
 const StyledFooterContainer = styled.div`
@@ -41,6 +41,7 @@ export const UpdateMultipleRecordsFooter = ({
   progress,
 }: UpdateMultipleRecordsFooterProps) => {
   const { t } = useLingui();
+  const progressText = computeProgressText(progress);
 
   useHotkeysOnFocusedElement({
     keys: [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
@@ -63,7 +64,7 @@ export const UpdateMultipleRecordsFooter = ({
           onClick={onCancel}
         />
         <Button
-          title={t`Update${computeProgressText(progress)}`}
+          title={t`Update${progressText}`}
           variant="primary"
           accent="blue"
           size="medium"

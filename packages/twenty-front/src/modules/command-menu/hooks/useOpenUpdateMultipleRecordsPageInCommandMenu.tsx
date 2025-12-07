@@ -4,8 +4,8 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 
 import { msg, t } from '@lingui/core/macro';
-import { IconEdit } from '@tabler/icons-react';
 import { useRecoilCallback } from 'recoil';
+import { IconEdit } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 
 type UseOpenUpdateMultipleRecordsPageInCommandMenuProps = {
@@ -41,10 +41,7 @@ export const useOpenUpdateMultipleRecordsPageInCommandMenu = ({
         });
       };
     },
-    [
-      objectMetadataItem.id,
-      navigateCommandMenu,
-    ],
+    [objectMetadataItem.id, navigateCommandMenu],
   );
 
   return {

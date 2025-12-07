@@ -30,13 +30,16 @@ export const UpdateMultipleRecordsContainer = ({
 }: {
   objectNameSingular: string;
 }) => {
-  const { updateRecords, isUpdating, progress, cancel } = useUpdateMultipleRecordsActions({
-    objectNameSingular,
-  });
+  const { updateRecords, isUpdating, progress, cancel } =
+    useUpdateMultipleRecordsActions({
+      objectNameSingular,
+    });
 
   const { closeCommandMenu } = useCommandMenu();
 
-  const [fieldUpdates, setFieldUpdates] = useState<UpdateMultipleRecordsState>({});
+  const [fieldUpdates, setFieldUpdates] = useState<UpdateMultipleRecordsState>(
+    {},
+  );
 
   const handleUpdate = () => {
     updateRecords(fieldUpdates);
@@ -47,7 +50,9 @@ export const UpdateMultipleRecordsContainer = ({
     closeCommandMenu();
   };
 
-  const hasChanges = Object.values(fieldUpdates).some((value) => value !== undefined);
+  const hasChanges = Object.values(fieldUpdates).some(
+    (value) => value !== undefined,
+  );
 
   const handleFieldChange = (fieldName: string, value: any) => {
     setFieldUpdates((prevState) => ({

@@ -215,6 +215,7 @@ export {
   IconDoorEnter,
   IconDotsVertical,
   IconDownload,
+  IconEdit,
   IconEditCircle,
   IconExclamationCircle,
   IconExternalLink,

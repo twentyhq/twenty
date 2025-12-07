@@ -3,7 +3,7 @@ import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryP
 import { type UseFindManyRecordsParams } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { type ObjectRecordQueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseIncrementalFetchAndMutateRecordsParams<T> = Omit<
@@ -29,7 +29,8 @@ export const useIncrementalFetchAndMutateRecords = <T>({
     displayType: 'number',
   });
 
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const [abortController, setAbortController] =
+    useState<AbortController | null>(null);
 
   const { fetchMoreRecordsLazy, findManyRecordsLazy } = useLazyFindManyRecords({
     objectNameSingular,
@@ -52,7 +53,8 @@ export const useIncrementalFetchAndMutateRecords = <T>({
 
     try {
       setIsProcessing(true);
-      abortControllerRef.current = new AbortController();
+      const controller = new AbortController();
+      setAbortController(controller);
 
       const findManyRecordsDataResult = await findManyRecordsLazy();
 
@@ -84,7 +86,7 @@ export const useIncrementalFetchAndMutateRecords = <T>({
       let lastCursor = firstQueryResult?.pageInfo.endCursor ?? null;
 
       for (let pageIndex = 0; pageIndex < remainingPages; pageIndex++) {
-        if (lastCursor === null || abortControllerRef.current?.signal.aborted) {
+        if (lastCursor === null || controller.signal.aborted) {
           break;
         }
 
@@ -119,12 +121,12 @@ export const useIncrementalFetchAndMutateRecords = <T>({
       setProgress({
         displayType: 'number',
       });
-      abortControllerRef.current = null;
+      setAbortController(null);
     }
   };
 
   const cancel = () => {
-    abortControllerRef.current?.abort();
+    abortController?.abort();
   };
 
   const updateProgress = (

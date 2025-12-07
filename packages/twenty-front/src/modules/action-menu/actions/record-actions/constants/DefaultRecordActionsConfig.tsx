@@ -31,12 +31,10 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { IconEdit } from '@tabler/icons-react';
 import { MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-
-import { isDefined } from 'twenty-shared/utils';
 import {
+  IconEdit,
   IconArrowMerge,
   IconBuildingSkyscraper,
   IconCheckbox,
@@ -59,6 +57,8 @@ import {
   IconTrashX,
   IconUser,
 } from 'twenty-ui/display';
+
+import { isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<

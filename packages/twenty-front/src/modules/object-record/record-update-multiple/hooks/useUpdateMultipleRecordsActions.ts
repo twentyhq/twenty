@@ -57,7 +57,7 @@ export const useUpdateMultipleRecordsActions = ({
     cancel,
   } = useIncrementalUpdateManyRecords({
     objectNameSingular,
-    filter: graphqlFilter
+    filter: graphqlFilter,
   });
 
   const updateRecords = async (fieldsToUpdate: Record<string, any>) => {
@@ -73,7 +73,7 @@ export const useUpdateMultipleRecordsActions = ({
       });
     } catch (error) {
       if ((error as any).name === 'AbortError') {
-          return;
+        return;
       }
 
       enqueueErrorSnackBar({

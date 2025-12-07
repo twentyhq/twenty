@@ -38,7 +38,6 @@ export const useIncrementalUpdateManyRecords = <
     objectNameSingular,
   });
 
-
   const { updateManyRecordsMutation } = useUpdateManyRecordsMutation({
     objectNameSingular,
   });
@@ -47,32 +46,36 @@ export const useIncrementalUpdateManyRecords = <
     objectMetadataNamePlural: objectMetadataItem.namePlural,
   });
 
-  const { incrementalFetchAndMutate, progress, isProcessing, updateProgress, cancel } =
-    useIncrementalFetchAndMutateRecords<T>({
-      objectNameSingular,
-      filter,
-      orderBy,
-      limit: pageSize,
-      recordGqlFields: { id: true },
-    });
+  const {
+    incrementalFetchAndMutate,
+    progress,
+    isProcessing,
+    updateProgress,
+    cancel,
+  } = useIncrementalFetchAndMutateRecords<T>({
+    objectNameSingular,
+    filter,
+    orderBy,
+    limit: pageSize,
+    recordGqlFields: { id: true },
+  });
 
   const updateManyRecordsBatch = async (
     recordIdsToUpdate: string[],
     fieldsToUpdate: Partial<UpdatedObjectRecord>,
   ) => {
-      await apolloCoreClient
-        .mutate<Record<string, UpdatedObjectRecord[]>>({
-          mutation: updateManyRecordsMutation,
-          variables: {
-            filter: { id: { in: recordIdsToUpdate } },
-            data: fieldsToUpdate,
-          },
-        })
+    await apolloCoreClient.mutate<Record<string, UpdatedObjectRecord[]>>({
+      mutation: updateManyRecordsMutation,
+      variables: {
+        filter: { id: { in: recordIdsToUpdate } },
+        data: fieldsToUpdate,
+      },
+    });
 
-      if (delayInMsBetweenMutations > 0) {
-        await sleep(delayInMsBetweenMutations);
-      }
-    };
+    if (delayInMsBetweenMutations > 0) {
+      await sleep(delayInMsBetweenMutations);
+    }
+  };
 
   const incrementalUpdateManyRecords = async (
     fieldsToUpdate: Partial<UpdatedObjectRecord>,

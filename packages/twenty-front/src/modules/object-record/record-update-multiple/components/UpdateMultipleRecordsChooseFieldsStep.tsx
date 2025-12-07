@@ -12,11 +12,11 @@ import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
 const StyledSection = styled(Section)`
-  margin: ${({ theme }) => theme.spacing(4)};
-  width: auto;
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(4)};
+  margin: ${({ theme }) => theme.spacing(4)};
+  width: auto;
 `;
 
 const StyledFieldRow = styled.div`
@@ -26,8 +26,8 @@ const StyledFieldRow = styled.div`
 `;
 
 const StyledLabel = styled.span`
-  display: block;
   color: ${({ theme }) => theme.font.color.secondary};
+  display: block;
 `;
 
 type UpdateMultipleRecordsChooseFieldsStepProps = {
