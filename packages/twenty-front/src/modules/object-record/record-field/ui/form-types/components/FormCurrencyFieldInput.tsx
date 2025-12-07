@@ -14,6 +14,30 @@ import {
   convertCurrencyMicrosToCurrencyAmount,
 } from '~/utils/convertCurrencyToCurrencyMicros';
 
+const formatMicrosToDisplayAmount = (
+  amountMicros: string | number | null | undefined,
+): string | number => {
+  if (amountMicros == null) {
+    return '';
+  }
+  if (Number.isFinite(+amountMicros)) {
+    return convertCurrencyMicrosToCurrencyAmount(+amountMicros);
+  }
+  return amountMicros;
+};
+
+const parseDisplayAmountToMicros = (
+  displayAmount: string | number | null,
+): number | null => {
+  if (displayAmount == null) {
+    return null;
+  }
+  if (Number.isFinite(+displayAmount)) {
+    return convertCurrencyAmountToCurrencyMicros(Number(displayAmount));
+  }
+  return null;
+};
+
 type FormCurrencyFieldInputProps = {
   label?: string;
   defaultValue?: FormFieldCurrencyValue | null;
@@ -45,12 +69,7 @@ export const FormCurrencyFieldInput = ({
   ) => {
     onChange({
       currencyCode: defaultValue?.currencyCode ?? null,
-      amountMicros:
-        newAmountMicros != null
-          ? Number.isFinite(+newAmountMicros)
-            ? convertCurrencyAmountToCurrencyMicros(Number(newAmountMicros))
-            : null
-          : null,
+      amountMicros: parseDisplayAmountToMicros(newAmountMicros),
     });
   };
 
@@ -75,15 +94,7 @@ export const FormCurrencyFieldInput = ({
         />
         <FormNumberFieldInput
           label="Amount"
-          defaultValue={
-            defaultValue?.amountMicros != null
-              ? Number.isFinite(+defaultValue.amountMicros)
-                ? convertCurrencyMicrosToCurrencyAmount(
-                    +defaultValue.amountMicros,
-                  )
-                : defaultValue.amountMicros
-              : ''
-          }
+          defaultValue={formatMicrosToDisplayAmount(defaultValue?.amountMicros)}
           onChange={handleAmountMicrosChange}
           VariablePicker={VariablePicker}
           placeholder="Set 3.21 for $3.21"
