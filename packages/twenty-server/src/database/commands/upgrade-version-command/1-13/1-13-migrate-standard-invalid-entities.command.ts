@@ -371,18 +371,19 @@ export class MigrateStandardInvalidEntitiesCommand extends ActiveOrSuspendedWork
       ...flatEnumFieldMetadatasToUpdate,
     ];
 
-    writeFileSync(
-      `${Date.now()}-update.json`,
-      JSON.stringify(allUpdates, null, 2),
-    );
-
     if (!isDryRun) {
-      for (const updateFieldInput of allUpdates)
+      for (const updateFieldInput of allUpdates) {
+        writeFileSync(
+          `${Date.now()}-update.json`,
+          JSON.stringify(updateFieldInput, null, 2),
+        );
+
         await this.fieldMetadataService.updateOneField({
           updateFieldInput,
           workspaceId,
           isSystemBuild: true,
         });
+      }
     }
     this.logger.log('Migrated standard invalid entities');
   }
