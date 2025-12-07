@@ -22,7 +22,7 @@ import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-fiel
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { AllStandardFieldByObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
+import { AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import {
   CALENDAR_EVENT_STANDARD_FIELD_IDS,
@@ -253,7 +253,7 @@ const ENUM_FIELD_OPTIONS_TO_MUTATE = {
 } as const satisfies {
   [P in AllStandardObjectName]?: {
     fieldStandardId: string;
-    field: AllStandardFieldByObjectName<P>;
+    field: AllStandardObjectFieldName<P>;
     options: FromTo<FieldMetadataComplexOption, 'option'>[];
     defaultValue: FromTo<string, 'defaultValue'>;
   };
