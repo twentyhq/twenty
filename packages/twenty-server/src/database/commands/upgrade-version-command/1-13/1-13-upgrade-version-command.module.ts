@@ -42,7 +42,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     DataSourceModule,
     ApplicationModule,
     WorkspaceCacheModule,
-    FieldMetadataModule
+    FieldMetadataModule,
   ],
   providers: [
     CleanEmptyStringNullInTextFieldsCommand,

@@ -1,6 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
+
 import { Command } from 'nest-commander';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultValue,
@@ -10,7 +12,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
-import { writeFileSync } from 'fs';
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -31,7 +32,6 @@ import {
   MESSAGE_STANDARD_FIELD_IDS,
   WORKSPACE_MEMBER_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 const findStandardFlatObjectMetadataOrThrow = ({
   flatObjectMetadataMaps,
@@ -373,11 +373,6 @@ export class MigrateStandardInvalidEntitiesCommand extends ActiveOrSuspendedWork
 
     if (!isDryRun) {
       for (const updateFieldInput of allUpdates) {
-        writeFileSync(
-          `${Date.now()}-update.json`,
-          JSON.stringify(updateFieldInput, null, 2),
-        );
-
         await this.fieldMetadataService.updateOneField({
           updateFieldInput,
           workspaceId,
