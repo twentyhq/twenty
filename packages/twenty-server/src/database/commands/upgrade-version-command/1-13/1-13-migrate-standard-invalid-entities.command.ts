@@ -15,16 +15,75 @@ import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/worksp
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { AllStandardFieldByObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
+import {
+  CALENDAR_EVENT_STANDARD_FIELD_IDS,
+  MESSAGE_CHANNEL_STANDARD_FIELD_IDS,
+  MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS,
+  MESSAGE_STANDARD_FIELD_IDS,
+  WORKSPACE_MEMBER_STANDARD_FIELD_IDS,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+
+const findStandardFlatObjectMetadataOrThrow = ({
+  flatObjectMetadataMaps,
+  standardId,
+}: {
+  flatObjectMetadataMaps: MetadataFlatEntityMaps<'objectMetadata'>;
+  standardId: string;
+}): FlatObjectMetadata => {
+  const flatObjectMetadata = Object.values(flatObjectMetadataMaps.byId).find(
+    (flatObjectMetadata) => flatObjectMetadata?.standardId === standardId,
+  );
+
+  if (!isDefined(flatObjectMetadata)) {
+    throw new Error(`Could not find standard object ${standardId}`);
+  }
+
+  return flatObjectMetadata;
+};
+
+const findStandardFlatFieldMetadatawOrThrow = ({
+  flatFieldMetadataMaps,
+  flatObjectMetadata,
+  standardId,
+}: {
+  standardId: string;
+  flatObjectMetadata: FlatObjectMetadata;
+  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
+}) => {
+  const objectFlatFieldMetadata = findManyFlatEntityByIdInFlatEntityMapsOrThrow(
+    {
+      flatEntityIds: flatObjectMetadata.fieldMetadataIds,
+      flatEntityMaps: flatFieldMetadataMaps,
+    },
+  );
+
+  if (!isDefined(flatObjectMetadata)) {
+    throw new Error(`Could not find object ${standardId}`);
+  }
+
+  const flatFieldMetadata = objectFlatFieldMetadata.find(
+    (flatFieldMetadata) => flatFieldMetadata.standardId === standardId,
+  );
+
+  if (!isDefined(flatFieldMetadata)) {
+    throw new Error(`Could not find standard field ${standardId}`);
+  }
+
+  return flatFieldMetadata;
+};
 
 const ENUM_FIELD_OPTIONS_TO_MUTATE = {
   messageChannelMessageAssociation: {
+    fieldStandardId: MESSAGE_STANDARD_FIELD_IDS.direction,
     field: 'direction',
     defaultValue: {
       fromDefaultValue: "'incoming'",
@@ -62,6 +121,7 @@ const ENUM_FIELD_OPTIONS_TO_MUTATE = {
     ],
   },
   messageChannel: {
+    fieldStandardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.type,
     field: 'type',
     defaultValue: { fromDefaultValue: "'email'", toDefaultValue: "'EMAIL'" },
     options: [
@@ -86,6 +146,7 @@ const ENUM_FIELD_OPTIONS_TO_MUTATE = {
     ],
   },
   messageParticipant: {
+    fieldStandardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.role,
     field: 'role',
     defaultValue: { fromDefaultValue: "'from'", toDefaultValue: "'FROM'" },
     options: [
@@ -113,6 +174,7 @@ const ENUM_FIELD_OPTIONS_TO_MUTATE = {
     ],
   },
   workspaceMember: {
+    fieldStandardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.numberFormat,
     field: 'numberFormat',
     defaultValue: { fromDefaultValue: "'system'", toDefaultValue: "'SYSTEM'" },
     options: [
@@ -190,6 +252,7 @@ const ENUM_FIELD_OPTIONS_TO_MUTATE = {
   },
 } as const satisfies {
   [P in AllStandardObjectName]?: {
+    fieldStandardId: string;
     field: AllStandardFieldByObjectName<P>;
     options: FromTo<FieldMetadataComplexOption, 'option'>[];
     defaultValue: FromTo<string, 'defaultValue'>;
@@ -221,27 +284,22 @@ export class MigrateStandardInvalidEntitiesCommand extends ActiveOrSuspendedWork
     this.logger.log(
       `MigrateStandardInvalidEntitiesCommand starting for workspace ${workspaceId}`,
     );
-    const { flatFieldMetadataMaps } =
+    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',
+        'flatObjectMetadataMaps',
       ]);
 
-    const iCalUidFieldId =
-      flatFieldMetadataMaps.idByUniversalIdentifier[
-        STANDARD_OBJECTS.calendarEvent.fields.iCalUid.universalIdentifier
-      ];
+    const flatCalendarEventObject = findStandardFlatObjectMetadataOrThrow({
+      standardId: STANDARD_OBJECT_IDS.calendarEvent,
+      flatObjectMetadataMaps,
+    });
 
-    if (!isDefined(iCalUidFieldId)) {
-      throw new Error(
-        `Could not find caldavuid id for workspace ${workspaceId}`,
-      );
-    }
-
-    if (!isDefined(iCalUidFieldId)) {
-      throw new Error(
-        `Could not find caldavuid id for workspace ${workspaceId}`,
-      );
-    }
+    const iCalUidFieldId = findStandardFlatFieldMetadatawOrThrow({
+      flatFieldMetadataMaps,
+      flatObjectMetadata: flatCalendarEventObject,
+      standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUID,
+    }).id;
 
     const allAffectedObjectNames = Object.keys(
       ENUM_FIELD_OPTIONS_TO_MUTATE,
@@ -252,33 +310,21 @@ export class MigrateStandardInvalidEntitiesCommand extends ActiveOrSuspendedWork
       options: FieldMetadataComplexOption[];
       defaultValue: FieldMetadataDefaultValue<FieldMetadataType.SELECT>;
     }>((objectName) => {
-      const { defaultValue, field, options } =
+      const { defaultValue, field, options, fieldStandardId } =
         ENUM_FIELD_OPTIONS_TO_MUTATE[objectName];
 
-      const universalIdentifier =
-        STANDARD_OBJECTS[objectName].fields[
-          field as AllStandardFieldByObjectName<typeof objectName>
-        ].universalIdentifier;
+      const objectStandardId = STANDARD_OBJECT_IDS[objectName];
 
-      const fieldMetadataId =
-        flatFieldMetadataMaps.idByUniversalIdentifier[universalIdentifier];
-
-      if (!isDefined(fieldMetadataId)) {
-        throw new Error(
-          `Could not find field ${field} of object ${objectName} in workspace ${workspaceId} universalIdentifier ${universalIdentifier}`,
-        );
-      }
-
-      const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: fieldMetadataId,
-        flatEntityMaps: flatFieldMetadataMaps,
+      const flatObjectMetadata = findStandardFlatObjectMetadataOrThrow({
+        flatObjectMetadataMaps,
+        standardId: objectStandardId,
       });
 
-      if (!isDefined(flatFieldMetadata)) {
-        throw new Error(
-          `Could not find flat field ${field} of object ${objectName} in workspace ${workspaceId} universalIdentifier ${universalIdentifier} cache`,
-        );
-      }
+      const flatFieldMetadata = findStandardFlatFieldMetadatawOrThrow({
+        flatFieldMetadataMaps,
+        flatObjectMetadata,
+        standardId: fieldStandardId,
+      });
 
       if (
         flatFieldMetadata.name !== field ||
@@ -310,7 +356,7 @@ export class MigrateStandardInvalidEntitiesCommand extends ActiveOrSuspendedWork
           : flatFieldMetadata.defaultValue;
 
       return {
-        id: fieldMetadataId,
+        id: flatFieldMetadata.id,
         options: updatedOptions,
         defaultValue: updatedDefaultValue,
       };
