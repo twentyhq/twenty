@@ -5,7 +5,7 @@ import {
 } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
+import { type AllStandardFieldByObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-relation-field-flat-metadata.util';
 import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
@@ -19,7 +19,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
   workspaceId: string;
   standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
 }): Record<
-  AllStandardObjectFieldName<'workspaceMember'>,
+  AllStandardFieldByObjectName<'workspaceMember'>,
   FlatFieldMetadata
 > => ({
   id: createStandardFieldFlatMetadata({
@@ -301,28 +301,24 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
         { value: 'SYSTEM', label: 'System', position: 0, color: 'turquoise' },
         {
           value: 'COMMAS_AND_DOT',
-          // TMP FIX SHOULD BE HANDLED NATIVELY at least find a workaround
           label: 'Commas and dot',
           position: 1,
           color: 'blue',
         },
         {
           value: 'SPACES_AND_COMMA',
-          // TMP FIX SHOULD BE HANDLED NATIVELY at least find a workaround
           label: 'Spaces and comma',
           position: 2,
           color: 'green',
         },
         {
           value: 'DOTS_AND_COMMA',
-          // TMP FIX SHOULD BE HANDLED NATIVELY at least find a workaround
           label: 'Dots and comma',
           position: 3,
           color: 'orange',
         },
         {
           value: 'APOSTROPHE_AND_DOT',
-          // TMP FIX SHOULD BE HANDLED NATIVELY at least find a workaround
           label: 'Apostrophe and dot',
           position: 4,
           color: 'purple',
