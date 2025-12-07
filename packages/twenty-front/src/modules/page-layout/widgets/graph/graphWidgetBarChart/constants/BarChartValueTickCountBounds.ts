@@ -1,0 +1,2 @@
+export const BAR_CHART_MIN_VALUE_TICK_COUNT = 2;
+export const BAR_CHART_MAX_VALUE_TICK_COUNT = 6;

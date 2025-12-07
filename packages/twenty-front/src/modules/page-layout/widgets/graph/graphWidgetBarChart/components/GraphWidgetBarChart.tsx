@@ -1,5 +1,6 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
+import { NoDataLayer } from '@/page-layout/widgets/graph/components/NoDataLayer';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
 import { GraphBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphBarChartTooltip';
@@ -14,7 +15,9 @@ import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetB
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { getBarChartInnerPadding } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartInnerPadding';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
+import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
+import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
@@ -25,6 +28,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   ResponsiveBar,
+  type BarCustomLayerProps,
   type BarDatum,
   type BarItemProps,
   type ComputedBarDatum,
@@ -36,6 +40,8 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+
+type NoDataLayerWrapperProps = BarCustomLayerProps<BarDatum>;
 
 type GraphWidgetBarChartProps = {
   data: BarDatum[];
@@ -56,6 +62,9 @@ type GraphWidgetBarChartProps = {
   omitNullValues?: boolean;
   onBarClick?: (datum: ComputedDatum<BarDatum>) => void;
 } & GraphValueFormatOptions;
+
+const POSITIVE_RANGE_PADDING_RATIO = 0.1;
+const MIN_POSITIVE_RANGE_PADDING = 1;
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -120,6 +129,63 @@ export const GraphWidgetBarChart = ({
     seriesLabels,
   });
 
+  const calculatedValueRange =
+    groupMode === 'stacked'
+      ? calculateStackedBarChartValueRange(data, keys)
+      : calculateValueRangeFromBarChartKeys(data, keys);
+
+  const hasOnlyNonNegativeValues =
+    calculatedValueRange.minimum >= 0 && calculatedValueRange.maximum >= 0;
+  const hasOnlyZeroValues =
+    calculatedValueRange.minimum === 0 && calculatedValueRange.maximum === 0;
+  const hasNoData = data.length === 0 || hasOnlyZeroValues;
+
+  const baseMinimumValue = isDefined(rangeMin)
+    ? rangeMin
+    : hasOnlyNonNegativeValues
+    ? 0
+    : calculatedValueRange.minimum;
+
+  const positiveRangePaddingTarget = isDefined(rangeMax)
+    ? rangeMax
+    : calculatedValueRange.maximum;
+
+  const paddedMaximumForNonNegative =
+    isDefined(rangeMax) || !hasOnlyNonNegativeValues
+      ? positiveRangePaddingTarget
+      : positiveRangePaddingTarget +
+        Math.max(
+          Math.abs(positiveRangePaddingTarget) * POSITIVE_RANGE_PADDING_RATIO,
+          MIN_POSITIVE_RANGE_PADDING,
+        );
+
+  let effectiveMinimumValue = baseMinimumValue;
+  let effectiveMaximumValue = paddedMaximumForNonNegative;
+
+  if (!isDefined(rangeMax) && !isDefined(rangeMin)) {
+    if (effectiveMinimumValue === effectiveMaximumValue) {
+      effectiveMaximumValue =
+        effectiveMinimumValue + MIN_POSITIVE_RANGE_PADDING;
+    }
+  }
+
+  const tickConfig = getBarChartTickConfig({
+    width: chartWidth,
+    height: chartHeight,
+    data,
+    indexBy,
+    xAxisLabel,
+    yAxisLabel,
+    axisFontSize: chartTheme.axis.ticks.text.fontSize,
+    layout,
+  });
+
+  const valueTickValues = computeValueTickValues({
+    minimum: effectiveMinimumValue,
+    maximum: effectiveMaximumValue,
+    tickCount: tickConfig.numberOfValueTicks,
+  });
+
   const hasClickableItems = isDefined(onBarClick);
 
   const hideTooltip = () => setActiveBarTooltip(null);
@@ -157,6 +223,8 @@ export const GraphWidgetBarChart = ({
       yAxisLabel,
       formatOptions,
       axisFontSize: chartTheme.axis.ticks.text.fontSize,
+      valueTickValues,
+      tickConfig,
     });
 
   const BarItemWithContext = useMemo(
@@ -179,24 +247,31 @@ export const GraphWidgetBarChart = ({
     bars,
   }: {
     bars: readonly ComputedBarDatum<BarDatum>[];
-  }) => (
-    <CustomTotalsLayer
-      bars={bars}
-      formatValue={(value) => formatGraphValue(value, formatOptions)}
-      offset={theme.spacingMultiplicator * 2}
-      layout={layout}
-      groupMode={groupMode}
-      omitNullValues={omitNullValues}
-      showValues={showValues}
+  }) => {
+    if (hasNoData) {
+      return null;
+    }
+
+    return (
+      <CustomTotalsLayer
+        bars={bars}
+        formatValue={(value) => formatGraphValue(value, formatOptions)}
+        offset={theme.spacingMultiplicator * 2}
+        layout={layout}
+        groupMode={groupMode}
+        omitNullValues={omitNullValues}
+        showValues={showValues}
+      />
+    );
+  };
+
+  const NoDataLayerWrapper = (layerProps: NoDataLayerWrapperProps) => (
+    <NoDataLayer
+      innerWidth={layerProps.innerWidth}
+      innerHeight={layerProps.innerHeight}
+      hasNoData={hasNoData}
     />
   );
-
-  const calculatedValueRange =
-    groupMode === 'stacked'
-      ? calculateStackedBarChartValueRange(data, keys)
-      : calculateValueRangeFromBarChartKeys(data, keys);
-  const effectiveMinimumValue = rangeMin ?? calculatedValueRange.minimum;
-  const effectiveMaximumValue = rangeMax ?? calculatedValueRange.maximum;
 
   const hasNegativeValues = calculatedValueRange.minimum < 0;
   const zeroMarker = hasNegativeValues
@@ -245,7 +320,15 @@ export const GraphWidgetBarChart = ({
           }}
           indexScale={{ type: 'band', round: true }}
           colors={(datum) => getBarChartColor(datum, barConfigs, theme)}
-          layers={['grid', 'markers', 'axes', 'bars', 'legends', TotalsLayer]}
+          layers={[
+            'grid',
+            'markers',
+            'axes',
+            'bars',
+            'legends',
+            TotalsLayer,
+            NoDataLayerWrapper,
+          ]}
           markers={zeroMarker}
           axisTop={null}
           axisRight={null}
@@ -275,9 +358,9 @@ export const GraphWidgetBarChart = ({
             formatGraphValue(Number(barDatumCandidate.value), formatOptions)
           }
           tooltip={() => null}
-          onMouseEnter={handleBarEnter}
-          onMouseLeave={handleBarLeave}
-          onClick={onBarClick}
+          onMouseEnter={hasNoData ? undefined : handleBarEnter}
+          onMouseLeave={hasNoData ? undefined : handleBarLeave}
+          onClick={hasNoData ? undefined : onBarClick}
           theme={chartTheme}
           borderRadius={parseInt(theme.border.radius.sm)}
         />
@@ -294,7 +377,7 @@ export const GraphWidgetBarChart = ({
         onMouseLeave={handleTooltipMouseLeave}
       />
       <GraphWidgetLegend
-        show={showLegend}
+        show={showLegend && !hasNoData}
         items={enrichedKeys.map((item) => {
           return {
             id: item.key,
