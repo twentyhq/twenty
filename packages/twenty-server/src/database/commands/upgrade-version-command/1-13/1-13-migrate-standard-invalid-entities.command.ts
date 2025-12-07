@@ -66,10 +66,6 @@ const findStandardFlatFieldMetadatawOrThrow = ({
     },
   );
 
-  if (!isDefined(flatObjectMetadata)) {
-    throw new Error(`Could not find object ${standardId}`);
-  }
-
   const flatFieldMetadata = objectFlatFieldMetadata.find(
     (flatFieldMetadata) => flatFieldMetadata.standardId === standardId,
   );
