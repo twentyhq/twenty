@@ -18,10 +18,7 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
   createdAt: Date;
   workspaceId: string;
   standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-}): Record<
-  AllStandardObjectFieldName<'messageFolder'>,
-  FlatFieldMetadata
-> => ({
+}): Record<AllStandardObjectFieldName<'messageFolder'>, FlatFieldMetadata> => ({
   id: createStandardFieldFlatMetadata({
     objectName: 'messageFolder',
     workspaceId,
