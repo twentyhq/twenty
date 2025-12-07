@@ -25,7 +25,8 @@ export type ObjectOperationData =
         | 'delete-many'
         | 'restore-one'
         | 'restore-many'
-        | 'merge-records';
+        | 'merge-records'
+        | 'update-many';
     };
 
 export type ObjectOperation = {

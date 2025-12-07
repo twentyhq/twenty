@@ -113,7 +113,7 @@ export const useResetVirtualizationBecauseDataChanged = (
 
   const resetVirtualizationBecauseDataChanged = useCallback(
     async (objectOperation: ObjectOperation) => {
-      if (!objectOperation.data.type.startsWith('update')) {
+      if (objectOperation.data.type !== 'update-one') {
         await resetVirtualization();
 
         await triggerFetchPagesWithoutDebounce();
