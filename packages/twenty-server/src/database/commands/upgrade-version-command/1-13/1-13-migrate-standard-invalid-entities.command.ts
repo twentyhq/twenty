@@ -1,6 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
