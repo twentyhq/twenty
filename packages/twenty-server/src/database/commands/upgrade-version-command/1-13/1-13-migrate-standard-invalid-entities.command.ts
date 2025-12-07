@@ -5,7 +5,7 @@ import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultValue,
   FieldMetadataType,
-  FromTo
+  FromTo,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
