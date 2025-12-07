@@ -26,6 +26,7 @@ type ComputeFlatFieldToUpdateAndRelatedFlatFieldToUpdateArgs = {
   rawUpdateFieldInput: UpdateFieldInput;
   fromFlatFieldMetadata: FlatFieldMetadata;
   flatObjectMetadata: FlatObjectMetadata;
+  isSystemBuild: boolean;
 } & Pick<AllFlatEntityMaps, 'flatFieldMetadataMaps'>;
 // Note: Standard override is way too complex we should land a smoother implemenentation once we standardize
 // them across every flat entities
@@ -34,11 +35,13 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
   rawUpdateFieldInput,
   flatFieldMetadataMaps,
   flatObjectMetadata,
+  isSystemBuild,
 }: ComputeFlatFieldToUpdateAndRelatedFlatFieldToUpdateArgs): ComputeFlatFieldToUpdateAndRelatedFlatFieldToUpdateReturnType => {
   const { standardOverrides, updatedEditableFieldProperties } =
     sanitizeRawUpdateFieldInput({
       existingFlatFieldMetadata: fromFlatFieldMetadata,
       rawUpdateFieldInput,
+      isSystemBuild,
     });
 
   const isStandardField = isStandardMetadata(fromFlatFieldMetadata);

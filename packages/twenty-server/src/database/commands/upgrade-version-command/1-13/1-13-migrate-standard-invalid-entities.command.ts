@@ -10,6 +10,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
+import { writeFileSync } from 'fs';
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -362,14 +363,21 @@ export class MigrateStandardInvalidEntitiesCommand extends ActiveOrSuspendedWork
       };
     });
 
+    const allUpdates = [
+      {
+        id: iCalUidFieldId,
+        name: 'iCalUid',
+      },
+      ...flatEnumFieldMetadatasToUpdate,
+    ];
+
+    writeFileSync(
+      `${Date.now()}-update.json`,
+      JSON.stringify(allUpdates, null, 2),
+    );
+
     if (!isDryRun) {
-      for (const updateFieldInput of [
-        {
-          id: iCalUidFieldId,
-          name: 'iCalUid',
-        },
-        ...flatEnumFieldMetadatasToUpdate,
-      ])
+      for (const updateFieldInput of allUpdates)
         await this.fieldMetadataService.updateOneField({
           updateFieldInput,
           workspaceId,

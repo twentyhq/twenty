@@ -180,6 +180,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       flatViewMaps: existingFlatViewMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
       workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+      isSystemBuild,
     });
 
     if (inputTranspilationResult.status === 'fail') {

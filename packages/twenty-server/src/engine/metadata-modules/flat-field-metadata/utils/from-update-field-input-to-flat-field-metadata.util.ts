@@ -26,6 +26,7 @@ import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-fiel
 type FromUpdateFieldInputToFlatFieldMetadataArgs = {
   updateFieldInput: UpdateFieldInput;
   workspaceCustomApplicationId: string;
+  isSystemBuild: boolean;
 } & Pick<
   AllFlatEntityMaps,
   | 'flatObjectMetadataMaps'
@@ -51,6 +52,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   flatViewGroupMaps,
   flatViewMaps,
   flatViewFieldMaps,
+  isSystemBuild,
 }: FromUpdateFieldInputToFlatFieldMetadataArgs): FieldInputTranspilationResult<FlatFieldMetadataAndIndexToUpdate> => {
   const updateFieldInputInformalProperties =
     extractAndSanitizeObjectStringFields(rawUpdateFieldInput, [
@@ -92,6 +94,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       flatObjectMetadata,
       fromFlatFieldMetadata: existingFlatFieldMetadataToUpdate,
       rawUpdateFieldInput,
+      isSystemBuild,
     });
 
   const { flatFieldMetadatasToCreate, flatIndexMetadatasToCreate } =
