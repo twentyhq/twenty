@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+
 import {
   AllMetadataName,
   WorkspaceMigrationV2ExceptionCode,
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { writeFileSync } from 'fs';
 import { ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-required-metadata-for-validation.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -185,11 +185,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
             error.message,
           );
         });
-
-    writeFileSync(
-      `${Date.now()}-builder.json`,
-      JSON.stringify(validateAndBuildResult, null, 2),
-    );
 
     if (validateAndBuildResult.status === 'fail') {
       return validateAndBuildResult;
