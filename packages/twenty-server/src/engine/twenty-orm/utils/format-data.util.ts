@@ -48,6 +48,9 @@ export function formatData<T>(
     const fieldMetadata = flatFieldMetadataMaps.byId[fieldMetadataId];
 
     if (!fieldMetadata) {
+      this.logger.warn(
+        `Field metadata for field "${key}" is missing in object metadata ${flatObjectMetadata.nameSingular} for data: ${JSON.stringify(data)}`,
+      );
       throw new Error(
         `Field metadata for field "${key}" is missing in object metadata ${flatObjectMetadata.nameSingular}`,
       );
