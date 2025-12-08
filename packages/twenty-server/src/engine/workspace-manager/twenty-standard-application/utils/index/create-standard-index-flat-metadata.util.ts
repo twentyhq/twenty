@@ -23,14 +23,18 @@ export type CreateStandardIndexOptions<O extends AllStandardObjectName> = {
   Pick<FlatIndexMetadata, 'indexType' | 'indexWhereClause' | 'isUnique'>
 >;
 
-export type CreateStandardIndexArgs<O extends AllStandardObjectName> = {
+export type CreateStandardIndexArgs<O extends AllStandardObjectName = AllStandardObjectName> = {
   objectName: O;
   workspaceId: string;
   options: CreateStandardIndexOptions<O>;
   standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
   now: Date;
   workspaceTwentyStandardApplicationId: string;
-} & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'>;
+  dependencyFlatEntityMaps: Pick<
+    AllFlatEntityMaps,
+    'flatFieldMetadataMaps' | 'flatObjectMetadataMaps'
+  >;
+};
 
 export const createStandardIndexFlatMetadata = <
   O extends AllStandardObjectName,
@@ -45,8 +49,7 @@ export const createStandardIndexFlatMetadata = <
     isUnique = false,
   },
   standardFieldMetadataIdByObjectAndFieldName,
-  flatFieldMetadataMaps,
-  flatObjectMetadataMaps,
+  dependencyFlatEntityMaps: { flatFieldMetadataMaps, flatObjectMetadataMaps },
   workspaceTwentyStandardApplicationId,
   now,
 }: CreateStandardIndexArgs<O>): FlatIndexMetadata => {
