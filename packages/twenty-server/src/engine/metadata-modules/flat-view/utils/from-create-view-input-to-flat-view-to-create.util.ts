@@ -52,6 +52,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     calendarLayout: createViewInput.calendarLayout ?? null,
     icon: createViewInput.icon,
     isCompact: createViewInput.isCompact ?? false,
+    shouldHideEmptyGroups: createViewInput.shouldHideEmptyGroups ?? false,
     kanbanAggregateOperation: createViewInput.kanbanAggregateOperation ?? null,
     kanbanAggregateOperationFieldMetadataId:
       createViewInput.kanbanAggregateOperationFieldMetadataId ?? null,
