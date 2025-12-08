@@ -12,6 +12,7 @@ import { type MessageWithParticipants } from 'src/modules/messaging/message-impo
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 import { safeParseEmailAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse.util';
 
+import { MessageParticipantRole } from 'twenty-shared/types';
 import { MicrosoftFetchByBatchService } from './microsoft-fetch-by-batch.service';
 import { MicrosoftMessagesImportErrorHandler } from './microsoft-messages-import-error-handler.service';
 
@@ -109,16 +110,16 @@ export class MicrosoftGetMessagesService {
 
       const participants = [
         ...(safeParseFrom
-          ? formatAddressObjectAsParticipants(safeParseFrom, 'from')
+          ? formatAddressObjectAsParticipants(safeParseFrom, MessageParticipantRole.FROM)
           : []),
         ...(safeParseTo
-          ? formatAddressObjectAsParticipants(safeParseTo, 'to')
+          ? formatAddressObjectAsParticipants(safeParseTo, MessageParticipantRole.TO)
           : []),
         ...(safeParseCc
-          ? formatAddressObjectAsParticipants(safeParseCc, 'cc')
+          ? formatAddressObjectAsParticipants(safeParseCc, MessageParticipantRole.CC)
           : []),
         ...(safeParseBcc
-          ? formatAddressObjectAsParticipants(safeParseBcc, 'bcc')
+          ? formatAddressObjectAsParticipants(safeParseBcc, MessageParticipantRole.BCC)
           : []),
       ];
 

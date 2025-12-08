@@ -13,6 +13,7 @@ import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-ob
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
+import { MessageParticipantRole } from 'twenty-shared/types';
 
 export type BlocklistItemDeleteMessagesJobData = WorkspaceEventBatch<
   ObjectRecordCreateEvent<BlocklistWorkspaceEntity>
@@ -87,7 +88,10 @@ export class BlocklistItemDeleteMessagesJob {
         continue;
       }
 
-      const rolesToDelete: ('from' | 'to')[] = ['from', 'to'];
+      const rolesToDelete = [
+        MessageParticipantRole.FROM,
+        MessageParticipantRole.TO,
+      ] as const;
 
       const messageChannels = await messageChannelRepository.find({
         select: {

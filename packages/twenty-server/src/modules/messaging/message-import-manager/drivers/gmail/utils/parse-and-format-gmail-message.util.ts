@@ -7,6 +7,7 @@ import { parseGmailMessage } from 'src/modules/messaging/message-import-manager/
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
+import { MessageParticipantRole } from 'twenty-shared/types';
 
 export const parseAndFormatGmailMessage = (
   message: gmailV1.Schema$Message,
@@ -43,17 +44,28 @@ export const parseAndFormatGmailMessage = (
 
   const participants = [
     ...(from
-      ? formatAddressObjectAsParticipants([{ address: from }], 'from')
+      ? formatAddressObjectAsParticipants(
+          [{ address: from }],
+          MessageParticipantRole.FROM,
+        )
       : []),
     ...(toParticipants
       ? formatAddressObjectAsParticipants(
           [{ address: toParticipants, name: '' }],
-          'to',
+          MessageParticipantRole.TO,
         )
       : []),
-    ...(cc ? formatAddressObjectAsParticipants([{ address: cc }], 'cc') : []),
+    ...(cc
+      ? formatAddressObjectAsParticipants(
+          [{ address: cc }],
+          MessageParticipantRole.CC,
+        )
+      : []),
     ...(bcc
-      ? formatAddressObjectAsParticipants([{ address: bcc }], 'bcc')
+      ? formatAddressObjectAsParticipants(
+          [{ address: bcc }],
+          MessageParticipantRole.BCC,
+        )
       : []),
   ];
 

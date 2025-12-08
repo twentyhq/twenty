@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type Participant } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
 import { type EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
+import { MessageParticipantRole } from 'twenty-shared/types';
 
 const removeSpacesAndLowerCase = (email: string): string => {
   return email.replace(/\s/g, '').toLowerCase();
@@ -9,7 +10,7 @@ const removeSpacesAndLowerCase = (email: string): string => {
 
 export const formatAddressObjectAsParticipants = (
   addressObjects: EmailAddress[],
-  role: 'from' | 'to' | 'cc' | 'bcc',
+  role: MessageParticipantRole,
 ): Participant[] => {
   const participants = addressObjects.map((addressObject) => {
     const address = addressObject.address;

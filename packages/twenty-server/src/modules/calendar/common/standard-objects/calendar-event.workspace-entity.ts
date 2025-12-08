@@ -1,9 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
-    FieldMetadataType,
-    LinksMetadata,
-    RelationOnDeleteAction,
+  FieldMetadataType,
+  LinksMetadata,
+  RelationOnDeleteAction,
 } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
