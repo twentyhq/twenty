@@ -18,6 +18,7 @@ import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-s
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { getSearchVectorExpressionFromMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-search-fields-from-metadata.util';
+import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 @Injectable()
@@ -61,13 +62,21 @@ export class SearchFieldMetadataService {
     }
 
     const fieldMetadata = await this.fieldMetadataRepository.findOne({
-      where: { id: fieldMetadataId, workspaceId },
+      where: {
+        id: fieldMetadataId,
+        objectMetadataId,
+        workspaceId,
+      },
     });
 
     if (!fieldMetadata) {
       throw new Error(
-        `Field metadata with id ${fieldMetadataId} not found in workspace ${workspaceId}`,
+        `Field metadata with id ${fieldMetadataId} not found for object ${objectMetadataId} in workspace ${workspaceId}`,
       );
+    }
+
+    if (!isSearchableFieldType(fieldMetadata.type)) {
+      throw new Error(`Field type ${fieldMetadata.type} is not searchable.`);
     }
 
     const existingEntry = await this.searchFieldMetadataRepository.findOne({
