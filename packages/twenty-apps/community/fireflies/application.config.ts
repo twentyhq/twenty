@@ -19,7 +19,7 @@ const config: ApplicationConfig = {
       value: '',
     },
     FIREFLIES_PLAN: {
-      universalIdentifier: '12345678-1234-1234-1234-123456789012',
+      universalIdentifier: '57dbb73c-aac5-4247-9fcc-a070bb669f16',
       description: 'Fireflies plan: free, pro, business, enterprise',
       value: 'free',
     },
