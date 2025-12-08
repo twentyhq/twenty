@@ -34,15 +34,18 @@ export class MeetingFormatter {
   }
 
   static formatNoteBody(meetingData: FirefliesMeetingData): string {
-    const meetingDate = new Date(meetingData.date);
-    const formattedDate = meetingDate.toLocaleString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    const meetingDate = meetingData.date ? new Date(meetingData.date) : null;
+    const hasValidDate = meetingDate instanceof Date && !Number.isNaN(meetingDate.getTime());
+    const formattedDate = hasValidDate
+      ? meetingDate.toLocaleString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      : 'Unknown date';
     const durationMinutes = Math.round(meetingData.duration);
 
     let noteBody = `**Date:** ${formattedDate}\n`;

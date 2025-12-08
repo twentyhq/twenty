@@ -34,12 +34,20 @@ const main = async (): Promise<void> => {
     }),
   });
 
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`❌ Delete failed (status ${response.status})`);
+    console.error(errorText);
+    process.exit(1);
+  }
+
   const result = await response.json();
   if (result.errors) {
     console.error('❌ Error:', result.errors[0]?.message);
-  } else {
-    console.log('✅ Deleted meeting:', meetingId);
+    process.exit(1);
   }
+
+  console.log('✅ Deleted meeting:', meetingId);
 };
 
 main().catch((error) => {

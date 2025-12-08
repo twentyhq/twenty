@@ -208,7 +208,14 @@ const main = async (): Promise<void> => {
 
 main().catch((error) => {
   console.error('❌ Failed to import historical meetings');
-  console.error(error instanceof Error ? error.message : String(error));
+  if (error instanceof Error) {
+    console.error(error.message);
+    if (error.stack) {
+      console.error(error.stack);
+    }
+  } else {
+    console.error(String(error));
+  }
   process.exit(1);
 });
 

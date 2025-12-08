@@ -14,7 +14,7 @@ const LOG_LEVELS: Record<LogLevel, number> = {
   silent: 4,
 };
 
-const loggerRegistry: AppLogger[] = [];
+const loggerRegistry = new Set<AppLogger>();
 
 export class AppLogger {
   private config: LoggerConfig;
@@ -28,6 +28,11 @@ export class AppLogger {
       isTestEnvironment: process.env.NODE_ENV === 'test' || process.env.JEST_WORKER_ID !== undefined,
       captureForResponse: process.env.CAPTURE_LOGS === 'true',
     };
+
+    // Silence logs in test environment unless explicitly overridden
+    if (this.config.isTestEnvironment && process.env.LOG_LEVEL === undefined) {
+      this.config.logLevel = 'silent';
+    }
   }
 
   private parseLogLevel(level: string): LogLevel {
@@ -107,8 +112,12 @@ export class AppLogger {
 
 export const createLogger = (context: string): AppLogger => {
   const logger = new AppLogger(context);
-  loggerRegistry.push(logger);
+  loggerRegistry.add(logger);
   return logger;
+};
+
+export const removeLogger = (logger: AppLogger): void => {
+  loggerRegistry.delete(logger);
 };
 
 export const getAllCapturedLogs = (): string[] => {

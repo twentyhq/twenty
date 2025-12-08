@@ -49,6 +49,13 @@ const main = async (): Promise<void> => {
     body: JSON.stringify({ query, variables: { transcriptId: meetingId } }),
   });
 
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`❌ API request failed with status ${response.status}`);
+    console.error(errorText);
+    process.exit(1);
+  }
+
   const json = await response.json();
   console.log('=== Fireflies API Response ===\n');
   console.log(JSON.stringify(json, null, 2));
