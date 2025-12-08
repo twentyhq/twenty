@@ -1,7 +1,7 @@
 import { type HTTPMethod } from '@/types';
+import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
-export type ServerlessFunctionManifest = {
-  universalIdentifier: string;
+export type ServerlessFunctionManifest = SyncableEntityOptions & {
   name?: string;
   description?: string;
   timeoutSeconds?: number;
@@ -27,6 +27,5 @@ export type RouteTrigger = {
   isAuthRequired: boolean;
 };
 
-export type ServerlessFunctionTriggerManifest = {
-  universalIdentifier: string;
-} & (CronTrigger | DatabaseEventTrigger | RouteTrigger);
+export type ServerlessFunctionTriggerManifest = SyncableEntityOptions &
+  (CronTrigger | DatabaseEventTrigger | RouteTrigger);

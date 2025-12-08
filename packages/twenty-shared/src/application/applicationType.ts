@@ -1,5 +1,6 @@
 import { type ApplicationVariables } from '@/application';
 import { type PermissionFlagType } from '@/constants';
+import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
 type ObjectPermission = {
   objectMetadataId: string;
@@ -36,8 +37,7 @@ type Role = {
   permissionFlags?: PermissionFlagType[];
 };
 
-export type Application = {
-  universalIdentifier: string;
+export type Application = SyncableEntityOptions & {
   displayName?: string;
   description?: string;
   icon?: string;
