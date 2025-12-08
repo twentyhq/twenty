@@ -12,10 +12,12 @@ import { useLingui } from '@lingui/react/macro';
 
 type UseUpdateMultipleRecordsActionsProps = {
   objectNameSingular: string;
+  contextStoreInstanceId: string;
 };
 
 export const useUpdateMultipleRecordsActions = ({
   objectNameSingular,
+  contextStoreInstanceId,
 }: UseUpdateMultipleRecordsActionsProps) => {
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
@@ -24,18 +26,22 @@ export const useUpdateMultipleRecordsActions = ({
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
+    contextStoreInstanceId,
   );
 
   const contextStoreFilters = useRecoilComponentValue(
     contextStoreFiltersComponentState,
+    contextStoreInstanceId,
   );
 
   const contextStoreFilterGroups = useRecoilComponentValue(
     contextStoreFilterGroupsComponentState,
+    contextStoreInstanceId,
   );
 
   const contextStoreAnyFieldFilterValue = useRecoilComponentValue(
     contextStoreAnyFieldFilterValueComponentState,
+    contextStoreInstanceId,
   );
 
   const { filterValueDependencies } = useFilterValueDependencies();

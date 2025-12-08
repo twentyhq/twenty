@@ -1,13 +1,16 @@
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { useOpenUpdateMultipleRecordsPageInCommandMenu } from '@/command-menu/hooks/useOpenUpdateMultipleRecordsPageInCommandMenu';
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 
 export const UpdateMultipleRecordsAction = () => {
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const contextStoreInstanceId = useAvailableComponentInstanceIdOrThrow(
+    ContextStoreComponentInstanceContext,
+  );
 
   const { openUpdateMultipleRecordsPageInCommandMenu } =
     useOpenUpdateMultipleRecordsPageInCommandMenu({
-      objectNameSingular: objectMetadataItem.nameSingular,
+      contextStoreInstanceId,
     });
 
   const handleClick = () => {

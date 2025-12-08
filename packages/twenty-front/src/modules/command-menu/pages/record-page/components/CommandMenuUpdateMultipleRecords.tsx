@@ -35,6 +35,7 @@ export const CommandMenuUpdateMultipleRecords = () => {
     <StyledRightDrawerRecord isMobile={isMobile}>
       <UpdateMultipleRecordsContainer
         objectNameSingular={objectMetadataItem.nameSingular}
+        contextStoreInstanceId={commandMenuPageInstanceId}
       />
     </StyledRightDrawerRecord>
   );

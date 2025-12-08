@@ -2,8 +2,8 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
-import { UpdateMultipleRecordsChooseFieldsStep } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsChooseFieldsStep';
 import { UpdateMultipleRecordsFooter } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter';
+import { UpdateMultipleRecordsForm } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsForm';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { useUpdateMultipleRecordsActions } from '../hooks/useUpdateMultipleRecordsActions';
@@ -27,13 +27,17 @@ export type UpdateMultipleRecordsState = Record<string, any>;
 
 export const UpdateMultipleRecordsContainer = ({
   objectNameSingular,
+  contextStoreInstanceId,
 }: {
   objectNameSingular: string;
+  contextStoreInstanceId: string;
 }) => {
-  const { updateRecords, isUpdating, progress, cancel } =
-    useUpdateMultipleRecordsActions({
+  const { updateRecords, isUpdating, cancel } = useUpdateMultipleRecordsActions(
+    {
       objectNameSingular,
-    });
+      contextStoreInstanceId,
+    },
+  );
 
   const { closeCommandMenu } = useCommandMenu();
 
@@ -41,8 +45,9 @@ export const UpdateMultipleRecordsContainer = ({
     {},
   );
 
-  const handleUpdate = () => {
-    updateRecords(fieldUpdates);
+  const handleUpdate = async () => {
+    await updateRecords(fieldUpdates);
+    closeCommandMenu();
   };
 
   const handleCancel = () => {
@@ -66,7 +71,7 @@ export const UpdateMultipleRecordsContainer = ({
       <ShowPageContainer>
         <StyledShowPageRightContainer>
           <StyledContentContainer>
-            <UpdateMultipleRecordsChooseFieldsStep
+            <UpdateMultipleRecordsForm
               disabled={isUpdating}
               values={fieldUpdates}
               onChange={handleFieldChange}
@@ -77,7 +82,6 @@ export const UpdateMultipleRecordsContainer = ({
             onUpdate={handleUpdate}
             onCancel={handleCancel}
             isUpdateDisabled={!hasChanges}
-            progress={progress}
           />
         </StyledShowPageRightContainer>
       </ShowPageContainer>

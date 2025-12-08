@@ -3,10 +3,8 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
-import { computeProgressText } from '@/action-menu/utils/computeProgressText';
-import { type ObjectRecordQueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
 import { Key } from 'ts-key-enum';
-import { IconEdit } from 'twenty-ui/display';
+import { IconBoxMultiple } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
 const StyledFooterContainer = styled.div`
@@ -16,7 +14,7 @@ const StyledFooterContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   justify-content: flex-end;
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledFooterActions = styled.div`
@@ -30,7 +28,6 @@ type UpdateMultipleRecordsFooterProps = {
   onUpdate: () => void;
   onCancel: () => void;
   isUpdateDisabled?: boolean;
-  progress?: ObjectRecordQueryProgress;
 };
 
 export const UpdateMultipleRecordsFooter = ({
@@ -38,10 +35,8 @@ export const UpdateMultipleRecordsFooter = ({
   onUpdate,
   onCancel,
   isUpdateDisabled,
-  progress,
 }: UpdateMultipleRecordsFooterProps) => {
   const { t } = useLingui();
-  const progressText = computeProgressText(progress);
 
   useHotkeysOnFocusedElement({
     keys: [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
@@ -60,16 +55,17 @@ export const UpdateMultipleRecordsFooter = ({
         <Button
           title={t`Cancel`}
           variant="secondary"
-          size="medium"
+          size="small"
           onClick={onCancel}
         />
         <Button
-          title={t`Update${progressText}`}
+          title={isUpdating ? undefined : t`Apply`}
           variant="primary"
           accent="blue"
-          size="medium"
-          Icon={IconEdit}
-          hotkeys={isUpdating || isUpdateDisabled ? undefined : ['⌘', '⏎']}
+          size="small"
+          Icon={IconBoxMultiple}
+          isLoading={isUpdating}
+          hotkeys={isUpdating ? undefined : ['⌘', '⏎']}
           onClick={onUpdate}
           disabled={isUpdating || isUpdateDisabled}
         />

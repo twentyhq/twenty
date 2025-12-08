@@ -35,11 +35,11 @@ import { MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import {
   IconArrowMerge,
+  IconBoxMultiple,
   IconBuildingSkyscraper,
   IconCheckbox,
   IconChevronDown,
   IconChevronUp,
-  IconEdit,
   IconEyeOff,
   IconFileExport,
   IconFileImport,
@@ -368,7 +368,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     label: msg`Update records`,
     shortLabel: msg`Update`,
     position: 14,
-    Icon: IconEdit,
+    Icon: IconBoxMultiple,
     accent: 'default',
     isPinned: false,
     shouldBeRegistered: ({ objectPermissions }) =>

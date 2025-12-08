@@ -4,18 +4,16 @@ import { FormFieldInput } from '@/object-record/record-field/ui/components/FormF
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import { RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
 const StyledSection = styled(Section)`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
-  margin: ${({ theme }) => theme.spacing(4)};
+  gap: ${({ theme }) => theme.spacing(6)};
+  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
   width: auto;
 `;
 
@@ -25,23 +23,17 @@ const StyledFieldRow = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
-  display: block;
-`;
-
-type UpdateMultipleRecordsChooseFieldsStepProps = {
+type UpdateMultipleRecordsFormProps = {
   disabled?: boolean;
   values: Record<string, any>;
   onChange: (fieldName: string, value: any) => void;
 };
 
-export const UpdateMultipleRecordsChooseFieldsStep = ({
+export const UpdateMultipleRecordsForm = ({
   disabled = false,
   values,
   onChange,
-}: UpdateMultipleRecordsChooseFieldsStepProps) => {
-  const { t } = useLingui();
+}: UpdateMultipleRecordsFormProps) => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const handleCheckboxChange = (fieldName: string, checked: boolean) => {
@@ -80,12 +72,6 @@ export const UpdateMultipleRecordsChooseFieldsStep = ({
 
   return (
     <StyledSection>
-      <StyledLabel>
-        {t`Select the fields you want to update for the selected records.`}
-      </StyledLabel>
-
-      <HorizontalSeparator noMargin />
-
       {inlineFieldMetadataItems.map((field) => {
         const isSelected = values[field.name] !== undefined;
 
