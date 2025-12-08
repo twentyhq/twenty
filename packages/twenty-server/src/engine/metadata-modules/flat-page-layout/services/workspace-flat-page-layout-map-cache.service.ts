@@ -26,6 +26,8 @@ export class WorkspaceFlatPageLayoutMapCacheService extends WorkspaceCacheProvid
     const pageLayouts = await this.pageLayoutRepository.find({
       where: { workspaceId },
       withDeleted: true,
+      relationLoadStrategy: 'join',
+      relations: ['tabs', 'tabs.widgets'],
     });
 
     const flatPageLayoutMaps = createEmptyFlatEntityMaps();
