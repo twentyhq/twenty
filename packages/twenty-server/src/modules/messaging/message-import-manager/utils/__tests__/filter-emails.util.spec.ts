@@ -1,3 +1,5 @@
+import { MessageParticipantRole } from 'twenty-shared/types';
+
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { messagingGetMessagesServiceGetMessages } from 'src/modules/messaging/message-import-manager/utils/__mocks__/messages';
@@ -64,7 +66,7 @@ describe('filterEmails', () => {
         direction: MessageDirection.INCOMING,
         participants: [
           {
-            role: 'from',
+            role: MessageParticipantRole.FROM,
             handle: 'noreply@example.com',
             displayName: 'No Reply',
           },
@@ -81,7 +83,7 @@ describe('filterEmails', () => {
         direction: MessageDirection.INCOMING,
         participants: [
           {
-            role: 'from',
+            role: MessageParticipantRole.FROM,
             handle: 'support@company.com',
             displayName: 'Support Team',
           },
@@ -98,7 +100,7 @@ describe('filterEmails', () => {
         direction: MessageDirection.INCOMING,
         participants: [
           {
-            role: 'from',
+            role: MessageParticipantRole.FROM,
             handle: 'john@example.com',
             displayName: 'John Doe',
           },
@@ -126,7 +128,7 @@ describe('filterEmails', () => {
         direction: MessageDirection.INCOMING,
         participants: [
           {
-            role: 'from',
+            role: MessageParticipantRole.FROM,
             handle: 'noreply@example.com',
             displayName: 'No Reply',
           },
@@ -174,7 +176,7 @@ describe('filterEmails', () => {
         direction: MessageDirection.INCOMING,
         participants: [
           {
-            role: 'from',
+            role: MessageParticipantRole.FROM,
             handle: 'john.doe@example.com',
             displayName: 'John Doe',
           },

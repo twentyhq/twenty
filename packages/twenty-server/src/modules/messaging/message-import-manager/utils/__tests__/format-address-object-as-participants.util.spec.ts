@@ -1,3 +1,5 @@
+import { MessageParticipantRole } from 'twenty-shared/types';
+
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 
 describe('formatAddressObjectAsParticipants', () => {
@@ -7,16 +9,19 @@ describe('formatAddressObjectAsParticipants', () => {
       { name: 'Jane Smith', address: 'jane.smith@example.com ' },
     ];
 
-    const result = formatAddressObjectAsParticipants(addresses, 'from');
+    const result = formatAddressObjectAsParticipants(
+      addresses,
+      MessageParticipantRole.FROM,
+    );
 
     expect(result).toEqual([
       {
-        role: 'from',
+        role: MessageParticipantRole.FROM,
         handle: 'john.doe@example.com',
         displayName: 'John Doe',
       },
       {
-        role: 'from',
+        role: MessageParticipantRole.FROM,
         handle: 'jane.smith@example.com',
         displayName: 'Jane Smith',
       },
@@ -29,7 +34,10 @@ describe('formatAddressObjectAsParticipants', () => {
       address: 'john.doe',
     };
 
-    const result = formatAddressObjectAsParticipants([addressObject], 'to');
+    const result = formatAddressObjectAsParticipants(
+      [addressObject],
+      MessageParticipantRole.TO,
+    );
 
     expect(result).toEqual([]);
   });
@@ -40,7 +48,10 @@ describe('formatAddressObjectAsParticipants', () => {
       address: '',
     };
 
-    const result = formatAddressObjectAsParticipants([addressObject], 'to');
+    const result = formatAddressObjectAsParticipants(
+      [addressObject],
+      MessageParticipantRole.TO,
+    );
 
     expect(result).toEqual([]);
   });
@@ -51,11 +62,14 @@ describe('formatAddressObjectAsParticipants', () => {
       address: 'John.Doe@example.com',
     };
 
-    const result = formatAddressObjectAsParticipants([addressObject], 'to');
+    const result = formatAddressObjectAsParticipants(
+      [addressObject],
+      MessageParticipantRole.TO,
+    );
 
     expect(result).toEqual([
       {
-        role: 'to',
+        role: MessageParticipantRole.TO,
         handle: 'john.doe@example.com',
         displayName: 'John Doe',
       },
