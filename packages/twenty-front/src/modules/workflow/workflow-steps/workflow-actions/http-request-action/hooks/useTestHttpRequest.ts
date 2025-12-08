@@ -9,7 +9,7 @@ import { useMutation } from '@apollo/client';
 import { isObject, isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { isDefined, resolveInput } from 'twenty-shared/utils';
+import { isDefined, parseJson, resolveInput } from 'twenty-shared/utils';
 import {
   type TestHttpRequestInput,
   type TestHttpRequestMutation,
@@ -125,8 +125,15 @@ export const useTestHttpRequest = (actionId: string) => {
       }
     } catch (error) {
       const duration = Date.now() - startTime;
-      const errorMessage =
+      let errorMessage =
         error instanceof Error ? error.message : 'HTTP request failed';
+      let language: 'json' | 'plaintext' = 'plaintext';
+
+      const jsonMessage = parseJson(errorMessage);
+      if (jsonMessage != null) {
+        errorMessage = JSON.stringify(jsonMessage, null, 2);
+        language = 'json';
+      }
 
       setHttpRequestTestData((prev) => ({
         ...prev,
@@ -138,7 +145,7 @@ export const useTestHttpRequest = (actionId: string) => {
           duration,
           error: errorMessage,
         },
-        language: 'plaintext',
+        language,
       }));
     } finally {
       setIsTesting(false);
