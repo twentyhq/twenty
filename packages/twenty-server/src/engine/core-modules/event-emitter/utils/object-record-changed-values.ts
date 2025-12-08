@@ -7,24 +7,25 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-const isWorkflowVersionStepsOrTrigger = (
-  objectMetadataItem: FlatObjectMetadata,
-  key: string,
-) => {
-  return (
-    objectMetadataItem.standardId === STANDARD_OBJECT_IDS.workflowVersion &&
-    (key === 'steps' || key === 'trigger')
-  );
+import { hasJsonChanged } from './has-json-changed.util';
+
+const LARGE_JSON_FIELDS: Record<string, Set<string>> = {
+  [STANDARD_OBJECT_IDS.workflowVersion]: new Set(['steps', 'trigger']),
+  [STANDARD_OBJECT_IDS.workflowAutomatedTrigger]: new Set(['settings']),
+  [STANDARD_OBJECT_IDS.workflowRun]: new Set(['state']),
 };
 
-const isWorkflowAutomatedTriggerSettings = (
+const isLargeJsonField = (
   objectMetadataItem: Pick<FlatObjectMetadata, 'standardId'>,
   key: string,
-) => {
-  return (
-    objectMetadataItem.standardId ===
-      STANDARD_OBJECT_IDS.workflowAutomatedTrigger && key === 'settings'
-  );
+): boolean => {
+  const standardId = objectMetadataItem.standardId;
+
+  if (!standardId) {
+    return false;
+  }
+
+  return LARGE_JSON_FIELDS[standardId]?.has(key) ?? false;
 };
 
 export const objectRecordChangedValues = (
@@ -46,20 +47,20 @@ export const objectRecordChangedValues = (
       const oldRecordValue = oldRecord[key];
       const newRecordValue = newRecord[key];
 
-      // Temporary ignore workflow json fields changes
       if (
-        isWorkflowAutomatedTriggerSettings(objectMetadataItem, key) ||
-        isWorkflowVersionStepsOrTrigger(objectMetadataItem, key)
+        key === 'updatedAt' ||
+        key === 'searchVector' ||
+        field?.type === FieldMetadataType.RELATION
       ) {
         return acc;
       }
 
-      if (
-        key === 'updatedAt' ||
-        key === 'searchVector' ||
-        field?.type === FieldMetadataType.RELATION ||
-        deepEqual(oldRecordValue, newRecordValue)
-      ) {
+      if (isLargeJsonField(objectMetadataItem, key)) {
+        console.log('------------ isLargeJsonField', key);
+        if (!hasJsonChanged(oldRecordValue, newRecordValue)) {
+          return acc;
+        }
+      } else if (deepEqual(oldRecordValue, newRecordValue)) {
         return acc;
       }
 
