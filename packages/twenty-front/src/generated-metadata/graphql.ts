@@ -25,6 +25,11 @@ export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']>;
 };
 
+export type AddSearchFieldInput = {
+  fieldMetadataId: Scalars['UUID'];
+  objectMetadataId: Scalars['UUID'];
+};
+
 export type AdminPanelHealthServiceData = {
   __typename?: 'AdminPanelHealthServiceData';
   description: Scalars['String'];
@@ -1757,6 +1762,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean'];
   activateWorkspace: Workspace;
+  addSearchField: SearchFieldMetadata;
   assignRoleToAgent: Scalars['Boolean'];
   assignRoleToApiKey: Scalars['Boolean'];
   authorizeApp: AuthorizeAppOutput;
@@ -1867,6 +1873,7 @@ export type Mutation = {
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
   publishServerlessFunction: ServerlessFunction;
   removeRoleFromAgent: Scalars['Boolean'];
+  removeSearchField: SearchFieldMetadata;
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
@@ -1954,6 +1961,11 @@ export type MutationActivateWorkflowVersionArgs = {
 
 export type MutationActivateWorkspaceArgs = {
   data: ActivateWorkspaceInput;
+};
+
+
+export type MutationAddSearchFieldArgs = {
+  input: AddSearchFieldInput;
 };
 
 
@@ -2471,6 +2483,11 @@ export type MutationPublishServerlessFunctionArgs = {
 
 export type MutationRemoveRoleFromAgentArgs = {
   agentId: Scalars['UUID'];
+};
+
+
+export type MutationRemoveSearchFieldArgs = {
+  input: RemoveSearchFieldInput;
 };
 
 
@@ -3751,6 +3768,11 @@ export enum RemoteTableStatus {
   SYNCED = 'SYNCED'
 }
 
+export type RemoveSearchFieldInput = {
+  fieldMetadataId: Scalars['UUID'];
+  objectMetadataId: Scalars['UUID'];
+};
+
 export type ResendEmailVerificationTokenOutput = {
   __typename?: 'ResendEmailVerificationTokenOutput';
   success: Scalars['Boolean'];
@@ -3848,6 +3870,16 @@ export enum SsoIdentityProviderStatus {
   Error = 'Error',
   Inactive = 'Inactive'
 }
+
+export type SearchFieldMetadata = {
+  __typename?: 'SearchFieldMetadata';
+  createdAt: Scalars['DateTime'];
+  fieldMetadataId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  objectMetadataId: Scalars['UUID'];
+  updatedAt: Scalars['DateTime'];
+  workspaceId: Scalars['UUID'];
+};
 
 export type SearchRecord = {
   __typename?: 'SearchRecord';
