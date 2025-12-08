@@ -173,7 +173,7 @@ export class ToolProviderService {
           description: tool.description,
           inputSchema: tool.inputSchema,
           execute: async (parameters: { input: ToolInput }) =>
-            tool.execute(parameters.input),
+            tool.execute(parameters.input, spec.workspaceId),
         };
       } else if (spec.rolePermissionConfig && spec.workspaceId) {
         const hasPermission = await this.permissionsService.hasToolPermission(
@@ -187,7 +187,7 @@ export class ToolProviderService {
             description: tool.description,
             inputSchema: tool.inputSchema,
             execute: async (parameters: { input: ToolInput }) =>
-              tool.execute(parameters.input),
+              tool.execute(parameters.input, spec.workspaceId),
           };
         }
       }

@@ -26,7 +26,8 @@ export class ToolRegistryService {
           return {
             description: httpTool.description,
             inputSchema: httpTool.inputSchema,
-            execute: (params) => httpTool.execute(params),
+            execute: (params, workspaceId) =>
+              httpTool.execute(params, workspaceId),
             flag: PermissionFlagType.HTTP_REQUEST_TOOL,
           };
         },
@@ -36,8 +37,8 @@ export class ToolRegistryService {
         () => ({
           description: this.sendEmailTool.description,
           inputSchema: this.sendEmailTool.inputSchema,
-          execute: (params) =>
-            this.sendEmailTool.execute(params as SendEmailInput),
+          execute: (params, workspaceId) =>
+            this.sendEmailTool.execute(params as SendEmailInput, workspaceId),
           flag: PermissionFlagType.SEND_EMAIL_TOOL,
         }),
       ],

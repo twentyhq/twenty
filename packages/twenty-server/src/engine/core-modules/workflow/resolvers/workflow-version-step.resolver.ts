@@ -150,14 +150,18 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => TestHttpRequestOutput)
   async testHttpRequest(
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('input')
     { url, method, headers, body }: TestHttpRequestInput,
   ): Promise<TestHttpRequestOutput> {
-    return this.httpTool.execute({
-      url,
-      method,
-      headers,
-      body,
-    });
+    return this.httpTool.execute(
+      {
+        url,
+        method,
+        headers,
+        body,
+      },
+      workspace.id,
+    );
   }
 }

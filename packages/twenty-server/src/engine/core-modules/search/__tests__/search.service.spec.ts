@@ -7,7 +7,7 @@ import {
 } from 'src/engine/core-modules/__mocks__/mockFlatObjectMetadatas';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { SearchService } from 'src/engine/core-modules/search/services/search.service';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 describe('SearchService', () => {
@@ -17,7 +17,7 @@ describe('SearchService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SearchService,
-        { provide: TwentyORMManager, useValue: {} },
+        { provide: TwentyORMGlobalManager, useValue: {} },
         { provide: WorkspaceCacheStorageService, useValue: {} },
         { provide: FileService, useValue: {} },
       ],
