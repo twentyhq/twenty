@@ -360,6 +360,24 @@ describe('Standard field isUnique update should succeed', () => {
   it('should set isUnique back to false on standard field', async () => {
     jestExpectToBeDefined(nameFieldMetadata);
 
+    await updateOneFieldMetadata({
+      input: {
+        idToUpdate: nameFieldMetadata.id,
+        updatePayload: {
+          isUnique: true,
+        },
+      },
+      expectToFail: false,
+      gqlFields: `
+        id
+        name
+        label
+        isUnique
+        isActive
+        isCustom
+      `,
+    });
+
     const { data } = await updateOneFieldMetadata({
       input: {
         idToUpdate: nameFieldMetadata.id,
