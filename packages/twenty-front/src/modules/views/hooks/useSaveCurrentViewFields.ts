@@ -24,7 +24,7 @@ export const useSaveCurrentViewFields = () => {
   );
 
   const saveViewFields = useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ snapshot }) =>
       async (viewFieldsToSave: Omit<ViewField, 'definition'>[]) => {
         if (!canPersistChanges) {
           return;
@@ -37,8 +37,6 @@ export const useSaveCurrentViewFields = () => {
         if (!currentViewId) {
           return;
         }
-
-        // set(isPersistingViewFieldsState, true);
 
         const view = getViewFromPrefetchState(currentViewId);
 
@@ -126,8 +124,6 @@ export const useSaveCurrentViewFields = () => {
           createViewFields({ inputs: viewFieldsToCreate }),
           updateViewFields(viewFieldsToUpdate),
         ]);
-
-        // set(isPersistingViewFieldsState, false);
       },
     [
       canPersistChanges,

@@ -102,15 +102,11 @@ const useViewsSideEffectsOnViewGroups = () => {
     }
 
     let viewGroupsToCreate: ViewGroup[] = [];
-    let viewGroupsToDelete: ViewGroup[] = [];
 
     if (
-      newMainGroupByFieldMetadataId !== undefined &&
       newMainGroupByFieldMetadataId !== existingView.mainGroupByFieldMetadataId
     ) {
-      // TODO delete existing view groups
-
-      if (isDefined(newMainGroupByFieldMetadataId)) {
+      if (newMainGroupByFieldMetadataId !== null) {
         viewGroupsToCreate =
           objectMetadataItem.fields
             ?.find((field) => field.id === newMainGroupByFieldMetadataId)

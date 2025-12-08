@@ -62,13 +62,6 @@ export const usePersistView = () => {
           };
         }
 
-        if (newView.type === ViewType.KANBAN) {
-          triggerViewGroupSideEffectAtViewCreation({
-            newViewId: newView.id,
-            objectMetadataItemId: objectMetadataItemId,
-          });
-        }
-
         return {
           status: 'successful',
           response: result,
