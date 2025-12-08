@@ -1,0 +1,355 @@
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
+
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
+import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
+import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
+
+export const buildOpportunityStandardFlatFieldMetadatas = ({
+  createdAt,
+  workspaceId,
+  standardFieldMetadataIdByObjectAndFieldName,
+}: {
+  createdAt: Date;
+  workspaceId: string;
+  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
+}): Record<AllStandardObjectFieldName<'opportunity'>, FlatFieldMetadata> => ({
+  // Base fields from BaseWorkspaceEntity
+  id: createStandardFieldFlatMetadata({
+    objectName: 'opportunity',
+    workspaceId,
+    options: {
+      fieldName: 'id',
+      type: FieldMetadataType.UUID,
+      label: 'Id',
+      description: 'Id',
+      icon: 'Icon123',
+      isSystem: true,
+      isNullable: false,
+      isUIReadOnly: true,
+      defaultValue: 'uuid',
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  createdAt: createStandardFieldFlatMetadata({
+    objectName: 'opportunity',
+    workspaceId,
+    options: {
+      fieldName: 'createdAt',
+      type: FieldMetadataType.DATE_TIME,
+      label: 'Creation date',
+      description: 'Creation date',
+      icon: 'IconCalendar',
+      isNullable: false,
+      isUIReadOnly: true,
+      defaultValue: 'now',
+      settings: {
+        displayFormat: 'RELATIVE',
+      },
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  updatedAt: createStandardFieldFlatMetadata({
+    objectName: 'opportunity',
+    workspaceId,
+    options: {
+      fieldName: 'updatedAt',
+      type: FieldMetadataType.DATE_TIME,
+      label: 'Last update',
+      description: 'Last time the record was changed',
+      icon: 'IconCalendarClock',
+      isNullable: false,
+      isUIReadOnly: true,
+      defaultValue: 'now',
+      settings: {
+        displayFormat: 'RELATIVE',
+      },
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  deletedAt: createStandardFieldFlatMetadata({
+    objectName: 'opportunity',
+    workspaceId,
+    options: {
+      fieldName: 'deletedAt',
+      type: FieldMetadataType.DATE_TIME,
+      label: 'Deleted at',
+      description: 'Date when the record was deleted',
+      icon: 'IconCalendarMinus',
+      isNullable: true,
+      isUIReadOnly: true,
+      settings: {
+        displayFormat: 'RELATIVE',
+      },
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+
+  // Opportunity-specific fields
+  name: createStandardFieldFlatMetadata({
+    objectName: 'opportunity',
+    workspaceId,
+    options: {
+      fieldName: 'name',
+      type: FieldMetadataType.TEXT,
+      label: 'Name',
+      description: 'The opportunity name',
+      icon: 'IconTargetArrow',
+      isNullable: true,
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  amount: createStandardFieldFlatMetadata({
+    objectName: 'opportunity',
+    workspaceId,
+    options: {
+      fieldName: 'amount',
+      type: FieldMetadataType.CURRENCY,
+      label: 'Amount',
+      description: 'Opportunity amount',
+      icon: 'IconCurrencyDollar',
+      isNullable: true,
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  closeDate: createStandardFieldFlatMetadata({
+    objectName: 'opportunity',
+    workspaceId,
+    options: {
+      fieldName: 'closeDate',
+      type: FieldMetadataType.DATE_TIME,
+      label: 'Close date',
+      description: 'Opportunity close date',
+      icon: 'IconCalendarEvent',
+      isNullable: true,
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  stage: createStandardFieldFlatMetadata({
+    objectName: 'opportunity',
+    workspaceId,
+    options: {
+      fieldName: 'stage',
+      type: FieldMetadataType.SELECT,
+      label: 'Stage',
+      description: 'Opportunity stage',
+      icon: 'IconProgressCheck',
+      isNullable: false,
+      defaultValue: "'NEW'",
+      options: [
+        { value: 'NEW', label: 'New', position: 0, color: 'red' },
+        {
+          value: 'SCREENING',
+          label: 'Screening',
+          position: 1,
+          color: 'purple',
+        },
+        { value: 'MEETING', label: 'Meeting', position: 2, color: 'sky' },
+        {
+          value: 'PROPOSAL',
+          label: 'Proposal',
+          position: 3,
+          color: 'turquoise',
+        },
+        { value: 'CUSTOMER', label: 'Customer', position: 4, color: 'yellow' },
+      ],
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  position: createStandardFieldFlatMetadata({
+    objectName: 'opportunity',
+    workspaceId,
+    options: {
+      fieldName: 'position',
+      type: FieldMetadataType.POSITION,
+      label: 'Position',
+      description: 'Opportunity record position',
+      icon: 'IconHierarchy2',
+      isSystem: true,
+      isNullable: false,
+      defaultValue: 0,
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  createdBy: createStandardFieldFlatMetadata({
+    objectName: 'opportunity',
+    workspaceId,
+    options: {
+      fieldName: 'createdBy',
+      type: FieldMetadataType.ACTOR,
+      label: 'Created by',
+      description: 'The creator of the record',
+      icon: 'IconCreativeCommonsSa',
+      isUIReadOnly: true,
+      isNullable: false,
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  searchVector: createStandardFieldFlatMetadata({
+    objectName: 'opportunity',
+    workspaceId,
+    options: {
+      fieldName: 'searchVector',
+      type: FieldMetadataType.TS_VECTOR,
+      label: 'Search vector',
+      description: 'Field used for full-text search',
+      icon: 'IconUser',
+      isSystem: true,
+      isNullable: true,
+      createdAt,
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+
+  // Relation fields
+  pointOfContact: createStandardRelationFieldFlatMetadata({
+    objectName: 'opportunity',
+    workspaceId,
+    options: {
+      fieldName: 'pointOfContact',
+      label: 'Point of Contact',
+      description: 'Opportunity point of contact',
+      icon: 'IconUser',
+      isNullable: true,
+      createdAt,
+      targetObjectName: 'person',
+      targetFieldName: 'pointOfContactForOpportunities',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'pointOfContactId',
+      },
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  company: createStandardRelationFieldFlatMetadata({
+    objectName: 'opportunity',
+    workspaceId,
+    options: {
+      fieldName: 'company',
+      label: 'Company',
+      description: 'Opportunity company',
+      icon: 'IconBuildingSkyscraper',
+      isNullable: true,
+      createdAt,
+      targetObjectName: 'company',
+      targetFieldName: 'opportunities',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'companyId',
+      },
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  favorites: createStandardRelationFieldFlatMetadata({
+    objectName: 'opportunity',
+    workspaceId,
+    options: {
+      fieldName: 'favorites',
+      label: 'Favorites',
+      description: 'Favorites linked to the opportunity',
+      icon: 'IconHeart',
+      isSystem: true,
+      isNullable: true,
+      createdAt,
+      targetObjectName: 'favorite',
+      targetFieldName: 'opportunity',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  taskTargets: createStandardRelationFieldFlatMetadata({
+    objectName: 'opportunity',
+    workspaceId,
+    options: {
+      fieldName: 'taskTargets',
+      label: 'Tasks',
+      description: 'Tasks tied to the opportunity',
+      icon: 'IconCheckbox',
+      isUIReadOnly: true,
+      isNullable: true,
+      createdAt,
+      targetObjectName: 'taskTarget',
+      targetFieldName: 'opportunity',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  noteTargets: createStandardRelationFieldFlatMetadata({
+    objectName: 'opportunity',
+    workspaceId,
+    options: {
+      fieldName: 'noteTargets',
+      label: 'Notes',
+      description: 'Notes tied to the opportunity',
+      icon: 'IconNotes',
+      isUIReadOnly: true,
+      isNullable: true,
+      createdAt,
+      targetObjectName: 'noteTarget',
+      targetFieldName: 'opportunity',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  attachments: createStandardRelationFieldFlatMetadata({
+    objectName: 'opportunity',
+    workspaceId,
+    options: {
+      fieldName: 'attachments',
+      label: 'Attachments',
+      description: 'Attachments linked to the opportunity',
+      icon: 'IconFileImport',
+      isSystem: true,
+      isNullable: true,
+      createdAt,
+      targetObjectName: 'attachment',
+      targetFieldName: 'opportunity',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+  timelineActivities: createStandardRelationFieldFlatMetadata({
+    objectName: 'opportunity',
+    workspaceId,
+    options: {
+      fieldName: 'timelineActivities',
+      label: 'Timeline Activities',
+      description: 'Timeline Activities linked to the opportunity.',
+      icon: 'IconTimelineEvent',
+      isSystem: true,
+      isNullable: true,
+      createdAt,
+      targetObjectName: 'timelineActivity',
+      targetFieldName: 'opportunity',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardFieldMetadataIdByObjectAndFieldName,
+  }),
+});
