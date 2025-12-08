@@ -37,8 +37,18 @@ export const getHoursDescription = (
     if (range.includes('-')) {
       const [start, end] = range.split('-');
       const stepNumStr = stepNum.toString();
-      const startTime = formatCronTime(start, '0', use24Hour, true);
-      const endTime = formatCronTime(end, '0', use24Hour, true);
+      const startTime = formatCronTime({
+        hour: start,
+        minute: '0',
+        use24HourFormat: use24Hour,
+        appendUTC: true,
+      });
+      const endTime = formatCronTime({
+        hour: end,
+        minute: '0',
+        use24HourFormat: use24Hour,
+        appendUTC: true,
+      });
       return t`every ${stepNumStr} hours, between ${startTime} and ${endTime}`;
     }
 
@@ -48,15 +58,30 @@ export const getHoursDescription = (
 
   if (isNumericRange(hours) && hours.includes('-')) {
     const [start, end] = hours.split('-');
-    const startTime = formatCronTime(start, '0', use24Hour, true);
-    const endTime = formatCronTime(end, '0', use24Hour, true);
+    const startTime = formatCronTime({
+      hour: start,
+      minute: '0',
+      use24HourFormat: use24Hour,
+      appendUTC: true,
+    });
+    const endTime = formatCronTime({
+      hour: end,
+      minute: '0',
+      use24HourFormat: use24Hour,
+      appendUTC: true,
+    });
     return t`between ${startTime} and ${endTime}`;
   }
 
   if (isListValue(hours)) {
     const values = hours.split(',').map((v) => v.trim());
     const formattedTimes = values.map((hour) =>
-      formatCronTime(hour, minutes || '0', use24Hour, true),
+      formatCronTime({
+        hour,
+        minute: minutes || '0',
+        use24HourFormat: use24Hour,
+        appendUTC: true,
+      }),
     );
 
     if (formattedTimes.length === 2) {
@@ -71,12 +96,12 @@ export const getHoursDescription = (
 
   const hourNum = parseInt(hours, 10);
   if (!isNaN(hourNum)) {
-    const formattedTime = formatCronTime(
-      hours,
-      minutes || '0',
-      use24Hour,
-      true,
-    );
+    const formattedTime = formatCronTime({
+      hour: hours,
+      minute: minutes || '0',
+      use24HourFormat: use24Hour,
+      appendUTC: true,
+    });
     return t`at ${formattedTime}`;
   }
 

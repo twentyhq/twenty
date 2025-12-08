@@ -1,11 +1,18 @@
 import { isDefined } from 'twenty-shared/utils';
 
-export const formatTime = (
-  hour: string,
-  minute: string,
-  use24HourFormat: boolean,
+type FormatTimeParams = {
+  hour: string;
+  minute: string;
+  use24HourFormat: boolean;
+  appendUTC?: boolean;
+};
+
+export const formatTime = ({
+  hour,
+  minute,
+  use24HourFormat,
   appendUTC = false,
-): string => {
+}: FormatTimeParams): string => {
   if (!isDefined(hour) || !isDefined(minute)) {
     return '';
   }
