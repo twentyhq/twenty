@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
 import { ObjectRecord } from 'twenty-shared/types';
+import { capitalize } from 'twenty-shared/utils';
 
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
@@ -300,11 +301,21 @@ export class TimelineActivitySeederService {
       happensAt: creationDate,
     };
 
-    // Set the appropriate entity ID
-    const entityIdKey = `${entityType}Id`;
+    // Set the appropriate target entity ID for entities that have target columns
+    const entitiesWithTargetColumns = new Set([
+      'note',
+      'task',
+      'person',
+      'company',
+      'opportunity',
+    ]);
 
-    // @ts-expect-error - This is okay for morph
-    timelineActivity[entityIdKey] = recordId;
+    if (entitiesWithTargetColumns.has(entityType)) {
+      const targetIdKey = `target${capitalize(entityType)}Id`;
+
+      // @ts-expect-error - This is okay for morph
+      timelineActivity[targetIdKey] = recordId;
+    }
 
     return timelineActivity;
   }
@@ -587,19 +598,19 @@ export class TimelineActivitySeederService {
     };
 
     // Set target ID (person, company, or opportunity)
-    const targetIdKey = `${targetInfo.targetType}Id`;
+    const targetIdKey = `target${capitalize(targetInfo.targetType)}Id`;
 
     // @ts-expect-error - This is okay for morph
     linkedActivity[targetIdKey] = targetInfo.targetId;
 
-    // Only set activity ID for entities that have corresponding columns
-    const entitiesWithColumns = new Set(['note', 'task']);
+    // Only set target activity ID for entities that have corresponding columns
+    const entitiesWithTargetColumns = new Set(['note', 'task']);
 
-    if (entitiesWithColumns.has(activityType)) {
-      const activityIdKey = `${activityType}Id`;
+    if (entitiesWithTargetColumns.has(activityType)) {
+      const targetActivityIdKey = `target${capitalize(activityType)}Id`;
 
       // @ts-expect-error - This is okay for morph
-      linkedActivity[activityIdKey] = recordSeed.id;
+      linkedActivity[targetActivityIdKey] = recordSeed.id;
     }
 
     return linkedActivity;
