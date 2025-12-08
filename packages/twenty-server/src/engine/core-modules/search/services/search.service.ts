@@ -32,6 +32,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
 
@@ -59,10 +60,12 @@ export class SearchService {
     filter,
     after,
     workspaceId,
+    rolePermissionConfig,
   }: {
     flatObjectMetadatas: FlatObjectMetadata[];
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     workspaceId: string;
+    rolePermissionConfig?: RolePermissionConfig;
   } & SearchArgs) {
     const filteredObjectMetadataItems = this.filterObjectMetadataItems({
       flatObjectMetadatas,
@@ -85,6 +88,7 @@ export class SearchService {
             await this.twentyORMGlobalManager.getRepositoryForWorkspace<ObjectRecord>(
               workspaceId,
               flatObjectMetadata.nameSingular,
+              rolePermissionConfig,
             );
 
           return {
