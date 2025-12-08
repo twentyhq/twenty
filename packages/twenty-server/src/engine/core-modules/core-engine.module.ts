@@ -56,7 +56,6 @@ import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-inv
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
-import { AiToolsModule } from 'src/engine/metadata-modules/ai/ai-tools/ai-tools.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { TrashCleanupModule } from 'src/engine/trash-cleanup/trash-cleanup.module';
@@ -130,7 +129,6 @@ import { FileModule } from './file/file.module';
     }),
     CacheStorageModule,
     AiModelsModule,
-    AiToolsModule,
     AiBillingModule,
     ServerlessModule.forRootAsync({
       useFactory: serverlessModuleFactory,
