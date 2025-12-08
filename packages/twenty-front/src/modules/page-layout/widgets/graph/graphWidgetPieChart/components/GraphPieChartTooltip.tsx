@@ -1,4 +1,5 @@
 import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
+import { PIE_CHART_TOOLTIP_OFFSET_PX } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartTooltipOffsetPx';
 import { graphWidgetPieTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetPieChart/states/graphWidgetPieTooltipComponentState';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type PieChartEnrichedData } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartEnrichedData';
@@ -6,10 +7,11 @@ import { getPieChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetP
 import { createVirtualElementFromContainerOffset } from '@/page-layout/widgets/graph/utils/createVirtualElementFromContainerOffset';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type RefObject } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphPieChartTooltipProps = {
-  containerId: string;
+  containerRef: RefObject<HTMLDivElement>;
   enrichedData: PieChartEnrichedData[];
   formatOptions: GraphValueFormatOptions;
   displayType?: string;
@@ -17,7 +19,7 @@ type GraphPieChartTooltipProps = {
 };
 
 export const GraphPieChartTooltip = ({
-  containerId,
+  containerRef,
   enrichedData,
   formatOptions,
   displayType,
@@ -27,41 +29,42 @@ export const GraphPieChartTooltip = ({
     graphWidgetPieTooltipComponentState,
   );
 
-  if (!isDefined(tooltipState)) {
-    return null;
-  }
-
-  const containerElement = document.getElementById(containerId);
+  const containerElement = containerRef.current;
   if (!isDefined(containerElement)) {
     return null;
   }
 
-  const tooltipData = getPieChartTooltipData({
-    datum: tooltipState.datum,
-    enrichedData,
-    formatOptions,
-    displayType,
-  });
+  const tooltipData = !isDefined(tooltipState)
+    ? null
+    : getPieChartTooltipData({
+        datum: tooltipState.datum,
+        enrichedData,
+        formatOptions,
+        displayType,
+      });
 
   const handleTooltipClick: (() => void) | undefined = isDefined(onSliceClick)
-    ? () => onSliceClick(tooltipState.datum.data)
+    ? () => {
+        if (isDefined(tooltipState)) {
+          onSliceClick(tooltipState.datum.data);
+        }
+      }
     : undefined;
 
-  if (!isDefined(tooltipData)) {
-    return null;
-  }
-
-  const reference = createVirtualElementFromContainerOffset(
-    containerElement,
-    tooltipState.offsetLeft,
-    tooltipState.offsetTop,
-  );
+  const reference = !isDefined(tooltipState)
+    ? null
+    : createVirtualElementFromContainerOffset(
+        containerElement,
+        tooltipState.offsetLeft,
+        tooltipState.offsetTop,
+      );
 
   return (
     <GraphWidgetFloatingTooltip
       reference={reference}
       boundary={containerElement}
-      items={[tooltipData.tooltipItem]}
+      tooltipOffsetFromAnchorInPx={PIE_CHART_TOOLTIP_OFFSET_PX}
+      items={tooltipData?.tooltipItem ? [tooltipData.tooltipItem] : []}
       disablePointerEvents
       onGraphWidgetTooltipClick={handleTooltipClick}
     />

@@ -16,7 +16,9 @@ export class GmailFoldersErrorHandlerService {
   constructor() {}
 
   public handleError(error: unknown): void {
-    this.logger.error(`Gmail: Error fetching folders: ${error}`);
+    this.logger.error(
+      `Gmail: Error fetching folders: ${JSON.stringify(error)}`,
+    );
     if (isGmailNetworkError(error)) {
       throw parseGmailNetworkError(error);
     }

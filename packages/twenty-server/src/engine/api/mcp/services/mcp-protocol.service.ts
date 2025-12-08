@@ -8,8 +8,9 @@ import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-exe
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ToolService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
@@ -18,7 +19,7 @@ import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata
 export class McpProtocolService {
   constructor(
     private readonly featureFlagService: FeatureFlagService,
-    private readonly toolService: ToolService,
+    private readonly toolProvider: ToolProviderService,
     private readonly userRoleService: UserRoleService,
     private readonly mcpToolExecutorService: McpToolExecutorService,
     @InjectRepository(RoleEntity)
@@ -128,10 +129,12 @@ export class McpProtocolService {
         apiKey,
       );
 
-      const toolSet = await this.toolService.listTools(
-        { unionOf: [roleId] },
-        workspace.id,
-      );
+      const toolSet = await this.toolProvider.getTools({
+        workspaceId: workspace.id,
+        categories: [ToolCategory.DATABASE_CRUD, ToolCategory.ACTION],
+        rolePermissionConfig: { unionOf: [roleId] },
+        wrapWithErrorContext: false,
+      });
 
       if (method === 'tools/call' && params) {
         return await this.mcpToolExecutorService.handleToolCall(

@@ -11,6 +11,8 @@ import {
 import { type ActorMetadata } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
+import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import {
   AgentException,
@@ -21,13 +23,10 @@ import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/co
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
+import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { ToolAdapterService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool-adapter.service';
-import { ToolService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-
-import { AgentModelConfigService } from './agent-model-config.service';
 
 // Agent execution within workflows uses database and action tools only.
 // Workflow tools are intentionally excluded to avoid circular dependencies
@@ -39,8 +38,7 @@ export class AgentAsyncExecutorService {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly agentModelConfigService: AgentModelConfigService,
-    private readonly toolAdapterService: ToolAdapterService,
-    private readonly toolService: ToolService,
+    private readonly toolProvider: ToolProviderService,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
   ) {}
@@ -63,12 +61,11 @@ export class AgentAsyncExecutorService {
     return [];
   }
 
-  private async getToolsForWorkflowExecution(
+  private async getEffectiveRolePermissionConfig(
     agentId: string,
     workspaceId: string,
-    actorContext?: ActorMetadata,
     rolePermissionConfig?: RolePermissionConfig,
-  ): Promise<ToolSet> {
+  ): Promise<RolePermissionConfig | undefined> {
     const roleTarget = await this.roleTargetRepository.findOne({
       where: {
         agentId,
@@ -80,37 +77,15 @@ export class AgentAsyncExecutorService {
     const agentRoleId = roleTarget?.roleId;
     const configRoleIds = this.extractRoleIds(rolePermissionConfig);
 
-    // Combine role IDs from config and agent
     const allRoleIds = agentRoleId
       ? [...new Set([...configRoleIds, agentRoleId])]
       : configRoleIds;
 
     if (allRoleIds.length === 0) {
-      // No role context - return basic action tools only
-      return this.toolAdapterService.getTools(workspaceId);
+      return undefined;
     }
 
-    const effectiveRoleContext: RolePermissionConfig = {
-      intersectionOf: allRoleIds,
-    };
-
-    // Get database CRUD tools
-    const databaseTools = await this.toolService.listTools(
-      effectiveRoleContext,
-      workspaceId,
-      actorContext,
-    );
-
-    // Get action tools (send email, http request, etc.)
-    const actionTools = await this.toolAdapterService.getTools(
-      workspaceId,
-      effectiveRoleContext,
-    );
-
-    return {
-      ...databaseTools,
-      ...actionTools,
-    };
+    return { intersectionOf: allRoleIds };
   }
 
   async executeAgent({
@@ -132,23 +107,28 @@ export class AgentAsyncExecutorService {
       let providerOptions = {};
 
       if (agent) {
-        tools = await this.getToolsForWorkflowExecution(
+        const effectiveRoleConfig = await this.getEffectiveRolePermissionConfig(
           agent.id,
           agent.workspaceId,
-          actorContext,
           rolePermissionConfig,
         );
 
-        // Add native model tools (web search, etc.) if configured
-        const nativeModelTools =
-          this.agentModelConfigService.getNativeModelTools(
-            registeredModel,
-            agent as unknown as Parameters<
-              typeof this.agentModelConfigService.getNativeModelTools
-            >[1],
-          );
-
-        tools = { ...tools, ...nativeModelTools };
+        // Workflow context: DATABASE_CRUD, ACTION, and NATIVE_MODEL tools only
+        // Workflow tools are excluded to prevent circular dependencies
+        tools = await this.toolProvider.getTools({
+          workspaceId: agent.workspaceId,
+          categories: [
+            ToolCategory.DATABASE_CRUD,
+            ToolCategory.ACTION,
+            ToolCategory.NATIVE_MODEL,
+          ],
+          rolePermissionConfig: effectiveRoleConfig,
+          actorContext,
+          agent: agent as unknown as Parameters<
+            typeof this.toolProvider.getTools
+          >[0]['agent'],
+          wrapWithErrorContext: false,
+        });
 
         providerOptions = this.agentModelConfigService.getProviderOptions(
           registeredModel,

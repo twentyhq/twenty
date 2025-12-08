@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { HTTPMethod } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
+import { HTTPMethod } from 'twenty-shared/types';
 
 registerEnumType(HTTPMethod, { name: 'HTTPMethod' });
 

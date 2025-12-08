@@ -1,30 +1,22 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ToolSet } from 'ai';
-import { Repository } from 'typeorm';
 
 import type { ActorMetadata } from 'twenty-shared/types';
 
-import { SearchArticlesTool } from 'src/engine/core-modules/tool/tools/search-articles-tool/search-articles-tool';
-import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
 import type { ToolHints } from 'src/engine/metadata-modules/ai/ai-chat-router/types/tool-hints.interface';
-import { ToolAdapterService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool-adapter.service';
-import { ToolService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool.service';
-import { HELPER_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/helper-agent';
 
 @Injectable()
 export class AgentToolGeneratorService {
   private readonly logger = new Logger(AgentToolGeneratorService.name);
 
-  constructor(
-    @InjectRepository(AgentEntity)
-    private readonly agentRepository: Repository<AgentEntity>,
-    private readonly toolAdapterService: ToolAdapterService,
-    private readonly toolService: ToolService,
-    private readonly searchArticlesTool: SearchArticlesTool,
-  ) {}
+  constructor(private readonly toolProvider: ToolProviderService) {}
 
+  // Generates base tools for chat context (DATABASE_CRUD and ACTION)
+  // Additional tools (WORKFLOW, METADATA) are provided via additionalTools
+  // from ChatToolsProviderService to avoid circular dependencies
   async generateToolsForAgent(
     agentId: string,
     workspaceId: string,
@@ -32,142 +24,24 @@ export class AgentToolGeneratorService {
     roleIds?: string[],
     toolHints?: ToolHints,
   ): Promise<ToolSet> {
-    let tools: ToolSet = {};
-
     try {
-      const agent = await this.agentRepository.findOne({
-        where: { id: agentId },
-      });
-
-      if (agent?.standardId === HELPER_AGENT.standardId) {
-        return this.wrapToolsWithErrorContext(this.getHelperAgentTools());
-      }
-
-      const actionTools = await this.toolAdapterService.getTools(workspaceId);
-
-      tools = { ...actionTools };
-
-      if (!roleIds) {
-        return this.wrapToolsWithErrorContext(tools);
-      }
-
-      // Workflow tools are NOT generated here to avoid circular dependencies
-      // They are provided via additionalTools from ChatToolsProviderService in the chat context
-
-      const databaseTools = await this.toolService.listTools(
-        { intersectionOf: roleIds },
+      return await this.toolProvider.getTools({
         workspaceId,
+        categories: [ToolCategory.DATABASE_CRUD, ToolCategory.ACTION],
+        rolePermissionConfig: roleIds ? { intersectionOf: roleIds } : undefined,
         actorContext,
         toolHints,
-      );
-
-      tools = { ...tools, ...databaseTools };
-
-      const roleActionTools = await this.toolAdapterService.getTools(
-        workspaceId,
-        { intersectionOf: roleIds },
-      );
-
-      tools = { ...tools, ...roleActionTools };
+        wrapWithErrorContext: true,
+      });
     } catch (toolError) {
+      const errorMessage =
+        toolError instanceof Error ? toolError.message : 'Unknown error';
+
       this.logger.warn(
-        `Failed to generate tools for agent ${agentId}: ${toolError.message}. Proceeding without tools.`,
+        `Failed to generate tools for agent ${agentId}: ${errorMessage}. Proceeding without tools.`,
       );
+
+      return {};
     }
-
-    return this.wrapToolsWithErrorContext(tools);
-  }
-
-  private getHelperAgentTools(): ToolSet {
-    const tools: ToolSet = {
-      search_articles: {
-        description: this.searchArticlesTool.description,
-        inputSchema: this.searchArticlesTool.inputSchema,
-        execute: async (params) =>
-          this.searchArticlesTool.execute(params.input),
-      },
-    };
-
-    this.logger.log('Generated search_articles tool for Helper agent');
-
-    return tools;
-  }
-
-  private wrapToolsWithErrorContext(tools: ToolSet): ToolSet {
-    const wrappedTools: ToolSet = {};
-
-    for (const [toolName, tool] of Object.entries(tools)) {
-      if (!tool.execute) {
-        wrappedTools[toolName] = tool;
-        continue;
-      }
-
-      const originalExecute = tool.execute;
-
-      wrappedTools[toolName] = {
-        ...tool,
-        execute: async (...args: Parameters<typeof originalExecute>) => {
-          try {
-            return await originalExecute(...args);
-          } catch (error) {
-            const errorMessage =
-              error instanceof Error ? error.message : String(error);
-
-            return {
-              success: false,
-              error: {
-                message: errorMessage,
-                tool: toolName,
-                suggestion: this.generateErrorSuggestion(
-                  toolName,
-                  errorMessage,
-                ),
-              },
-            };
-          }
-        },
-      };
-    }
-
-    return wrappedTools;
-  }
-
-  private generateErrorSuggestion(
-    toolName: string,
-    errorMessage: string,
-  ): string {
-    const lowerError = errorMessage.toLowerCase();
-
-    if (
-      lowerError.includes('not found') ||
-      lowerError.includes('does not exist')
-    ) {
-      return 'Verify the ID or name exists with a search query first';
-    }
-
-    if (
-      lowerError.includes('permission') ||
-      lowerError.includes('forbidden') ||
-      lowerError.includes('unauthorized')
-    ) {
-      return 'This operation requires elevated permissions or a different role';
-    }
-
-    if (lowerError.includes('invalid') || lowerError.includes('validation')) {
-      return 'Check the tool schema for valid parameter formats and types';
-    }
-
-    if (
-      lowerError.includes('duplicate') ||
-      lowerError.includes('already exists')
-    ) {
-      return 'A record with this identifier already exists. Try updating instead of creating';
-    }
-
-    if (lowerError.includes('required') || lowerError.includes('missing')) {
-      return 'Required fields are missing. Check which fields are mandatory for this operation';
-    }
-
-    return 'Try adjusting the parameters or using a different approach';
   }
 }
