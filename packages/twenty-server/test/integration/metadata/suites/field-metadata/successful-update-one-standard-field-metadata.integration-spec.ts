@@ -1,3 +1,4 @@
+import { sleep } from 'cloudflare/core';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -377,7 +378,6 @@ describe('Standard field isUnique update should succeed', () => {
     jestExpectToBeDefined(nameFieldIndex);
     expect(nameFieldIndex.isUnique).toBe(true);
     expect(nameFieldIndex.isCustom).toBe(true);
-    //here - Suggestion: We could use findManyObjectWithIndexes and expect the index to be created and as custom
   });
 
   it('should set isUnique back to false on standard field', async () => {
@@ -400,6 +400,8 @@ describe('Standard field isUnique update should succeed', () => {
         isCustom
       `,
     });
+
+    await sleep(2000);
 
     const { data } = await updateOneFieldMetadata({
       input: {
