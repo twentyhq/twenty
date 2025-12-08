@@ -10,8 +10,7 @@ import {
   Min,
 } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
-
-import { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
+import { Sources } from 'twenty-shared/types';
 
 @InputType()
 export class CreateServerlessFunctionInput {

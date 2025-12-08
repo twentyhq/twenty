@@ -15,7 +15,6 @@ import { IconButton } from 'twenty-ui/input';
 import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
@@ -38,6 +37,7 @@ import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPag
 import { pageLayoutTabListCurrentDragDroppableIdComponentState } from '@/page-layout/states/pageLayoutTabListCurrentDragDroppableIdComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -74,12 +74,13 @@ type PageLayoutTabListProps = Omit<TabListProps, 'tabs'> & {
   isReorderEnabled: boolean;
   onAddTab?: () => void;
   onReorder?: (result: DropResult, provided: ResponderProvided) => boolean;
+  behaveAsLinks: boolean;
 };
 
 export const PageLayoutTabList = ({
   tabs,
   loading,
-  behaveAsLinks = true,
+  behaveAsLinks,
   isInRightDrawer,
   className,
   componentInstanceId,

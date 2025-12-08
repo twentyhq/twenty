@@ -178,7 +178,7 @@ export const GraphWidgetPieChart = ({
         </StyledPieChartWrapper>
       </GraphWidgetChartContainer>
       <GraphPieChartTooltip
-        containerId={id}
+        containerRef={containerRef}
         enrichedData={enrichedData}
         formatOptions={formatOptions}
         displayType={displayType}
