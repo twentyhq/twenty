@@ -129,12 +129,13 @@ export const useTestHttpRequest = (actionId: string) => {
       const rawErrorMessage =
         error instanceof Error ? error.message : 'HTTP request failed';
 
-      const JSONParsedErrorMessage = parseJson(rawErrorMessage);
+      const jsonParsedErrorMessage = parseJson(rawErrorMessage);
 
-      const errorMessage = isDefined(JSONParsedErrorMessage)
-        ? JSON.stringify(JSONParsedErrorMessage, null, 2)
+      const errorMessage = isDefined(jsonParsedErrorMessage)
+        ? JSON.stringify(jsonParsedErrorMessage, null, 2)
         : rawErrorMessage;
-      const language = isDefined(JSONParsedErrorMessage) ? 'json' : 'plaintext';
+
+      const language = isDefined(jsonParsedErrorMessage) ? 'json' : 'plaintext';
 
       setHttpRequestTestData((prev) => ({
         ...prev,
