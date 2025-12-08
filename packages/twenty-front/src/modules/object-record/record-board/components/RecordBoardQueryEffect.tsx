@@ -2,9 +2,11 @@ import { useTriggerRecordBoardFetchMore } from '@/object-record/record-board/hoo
 import { useTriggerRecordBoardInitialQuery } from '@/object-record/record-board/hooks/useTriggerRecordBoardInitialQuery';
 import { isSwitchingToKanbanViewTypeComponentState } from '@/object-record/record-board/states/isSwitchingToKanbanViewTypeComponentState';
 import { lastRecordBoardQueryIdentifierComponentState } from '@/object-record/record-board/states/lastRecordBoardQueryIdentifierComponentState';
+import { lastRecordGroupIdsComponentState } from '@/object-record/record-board/states/lastRecordGroupIdsComponentState';
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
 import { recordBoardIsFetchingMoreComponentState } from '@/object-record/record-board/states/recordBoardIsFetchingMoreComponentState';
 import { recordBoardShouldFetchMoreComponentState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreComponentState';
+import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
 
@@ -22,6 +24,10 @@ export const RecordBoardQueryEffect = () => {
 
   const [lastRecordBoardQueryIdentifier, setLastRecordBoardQueryIdentifier] =
     useRecoilComponentState(lastRecordBoardQueryIdentifierComponentState);
+
+  const [lastRecordGroupIds, setLastRecordGroupIds] = useRecoilComponentState(
+    lastRecordGroupIdsComponentState,
+  );
 
   const [
     isSwitchingToKanbanViewTypeCallbackState,
@@ -63,13 +69,19 @@ export const RecordBoardQueryEffect = () => {
   const { triggerRecordBoardInitialQuery } =
     useTriggerRecordBoardInitialQuery();
 
+  const recordGroupdIds = useRecoilComponentValue(recordGroupIdsComponentState);
+  const recordGroupIdsHaveChanged = recordGroupdIds !== lastRecordGroupIds;
+
   useEffect(() => {
     if (
       !recordIndexRecordGroupsAreInInitialLoading &&
-      (queryIdentifierHasChanged || isSwitchingToKanbanViewTypeCallbackState)
+      (queryIdentifierHasChanged ||
+        isSwitchingToKanbanViewTypeCallbackState ||
+        recordGroupIdsHaveChanged)
     ) {
       triggerRecordBoardInitialQuery();
       setIsSwitchingToKanbanViewTypeComponentState(false);
+      setLastRecordGroupIds(recordGroupdIds);
     } else if (
       !recordIndexRecordGroupsAreInInitialLoading &&
       shouldFetchMore &&
@@ -91,6 +103,9 @@ export const RecordBoardQueryEffect = () => {
     triggerRecordBoardFetchMore,
     isSwitchingToKanbanViewTypeCallbackState,
     setIsSwitchingToKanbanViewTypeComponentState,
+    setLastRecordGroupIds,
+    recordGroupdIds,
+    recordGroupIdsHaveChanged,
   ]);
 
   return null;

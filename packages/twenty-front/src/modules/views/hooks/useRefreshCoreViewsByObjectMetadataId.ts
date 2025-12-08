@@ -1,9 +1,11 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { coreViewsByObjectMetadataIdFamilySelector } from '@/views/states/selectors/coreViewsByObjectMetadataIdFamilySelector';
+import { convertCoreViewGroupToViewGroup } from '@/views/utils/convertCoreViewGroupToViewGroup';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { getFilterableFieldsWithVectorSearch } from '@/views/utils/getFilterableFieldsWithVectorSearch';
 
@@ -16,6 +18,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useRefreshCoreViewsByObjectMetadataId = () => {
   const [findManyCoreViewsLazy] = useFindManyCoreViewsLazyQuery();
+  const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
   const refreshCoreViewsByObjectMetadataId = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -133,9 +136,26 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
               view.viewSorts,
             );
           }
+
+          if (
+            !isDeeplyEqual(
+              [...coreView.viewGroups].map((cv) => cv.id).sort(),
+              [...existingView.viewGroups].map((cv) => cv.id).sort(),
+            )
+          ) {
+            setRecordGroupsFromViewGroups({
+              viewId: coreView.id,
+              mainGroupByFieldMetadataId:
+                coreView.mainGroupByFieldMetadataId ?? '',
+              viewGroups: coreView.viewGroups.map((viewGroup) =>
+                convertCoreViewGroupToViewGroup(viewGroup),
+              ),
+              objectMetadataItem,
+            });
+          }
         }
       },
-    [findManyCoreViewsLazy],
+    [findManyCoreViewsLazy, setRecordGroupsFromViewGroups],
   );
 
   return {
