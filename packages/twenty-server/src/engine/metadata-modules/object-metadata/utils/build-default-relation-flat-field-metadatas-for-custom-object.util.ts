@@ -1,7 +1,6 @@
 import { type STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -17,7 +16,10 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import {
+  CUSTOM_OBJECT_STANDARD_FIELD_IDS,
+  TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 
 const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
@@ -73,15 +75,22 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
   }, {});
 
   const morphIdByRelationObjectNameSingular =
-    DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.reduce<Record<string, string>>(
-      (acc, objectNameSingular) => {
+    DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.filter(
+      (objectNameSingular) => objectNameSingular === 'timelineActivity',
+    ).reduce<Record<string, string>>((acc, objectNameSingular) => {
+      if (objectNameSingular === 'timelineActivity') {
         return {
           ...acc,
-          [objectNameSingular]: v4(),
+          [objectNameSingular]:
+            TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
         };
-      },
-      {},
-    );
+      }
+
+      return {
+        ...acc,
+        [objectNameSingular]: null,
+      };
+    }, {});
 
   const result =
     DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.reduce<SourceAndTargetFlatFieldMetadatasRecord>(
@@ -91,9 +100,11 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             objectMetadataNameSingular,
           );
         const isFeatureFlagEnabled =
-          existingFeatureFlagsMap[
-            FeatureFlagKey.IS_TIMELINE_ACTIVITY_MIGRATED
-          ] ?? false;
+          (objectMetadataNameSingular === 'timelineActivity' &&
+            existingFeatureFlagsMap[
+              FeatureFlagKey.IS_TIMELINE_ACTIVITY_MIGRATED
+            ]) ??
+          false;
         const isObjectMigratedToMorphRelations =
           isObjectMigratedFromOlderReleases || isFeatureFlagEnabled;
 
