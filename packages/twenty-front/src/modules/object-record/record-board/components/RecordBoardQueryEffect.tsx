@@ -1,5 +1,6 @@
 import { useTriggerRecordBoardFetchMore } from '@/object-record/record-board/hooks/useTriggerRecordBoardFetchMore';
 import { useTriggerRecordBoardInitialQuery } from '@/object-record/record-board/hooks/useTriggerRecordBoardInitialQuery';
+import { isSwitchingToKanbanViewTypeComponentState } from '@/object-record/record-board/states/isSwitchingToKanbanViewTypeComponentState';
 import { lastRecordBoardQueryIdentifierComponentState } from '@/object-record/record-board/states/lastRecordBoardQueryIdentifierComponentState';
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
 import { recordBoardIsFetchingMoreComponentState } from '@/object-record/record-board/states/recordBoardIsFetchingMoreComponentState';
@@ -21,6 +22,11 @@ export const RecordBoardQueryEffect = () => {
 
   const [lastRecordBoardQueryIdentifier, setLastRecordBoardQueryIdentifier] =
     useRecoilComponentState(lastRecordBoardQueryIdentifierComponentState);
+
+  const [
+    isSwitchingToKanbanViewTypeCallbackState,
+    setIsSwitchingToKanbanViewTypeComponentState,
+  ] = useRecoilComponentState(isSwitchingToKanbanViewTypeComponentState);
 
   const [recordIndexRecordGroupsAreInInitialLoading] = useRecoilComponentState(
     recordIndexRecordGroupsAreInInitialLoadingComponentState,
@@ -60,9 +66,10 @@ export const RecordBoardQueryEffect = () => {
   useEffect(() => {
     if (
       !recordIndexRecordGroupsAreInInitialLoading &&
-      queryIdentifierHasChanged
+      (queryIdentifierHasChanged || isSwitchingToKanbanViewTypeCallbackState)
     ) {
       triggerRecordBoardInitialQuery();
+      setIsSwitchingToKanbanViewTypeComponentState(false);
     } else if (
       !recordIndexRecordGroupsAreInInitialLoading &&
       shouldFetchMore &&
@@ -82,6 +89,8 @@ export const RecordBoardQueryEffect = () => {
     shouldFetchMore,
     recordBoardIsFetchingMore,
     triggerRecordBoardFetchMore,
+    isSwitchingToKanbanViewTypeCallbackState,
+    setIsSwitchingToKanbanViewTypeComponentState,
   ]);
 
   return null;

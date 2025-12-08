@@ -18,7 +18,9 @@ export class GmailMessagesImportErrorHandler {
   constructor() {}
 
   public handleError(error: unknown, messageExternalId: string): void {
-    this.logger.error(`Gmail: Error importing messages: ${error}`);
+    this.logger.error(
+      `Gmail: Error importing messages: ${JSON.stringify(error)}`,
+    );
 
     if (isGmailNetworkError(error)) {
       throw parseGmailNetworkError(error);
