@@ -23,7 +23,7 @@ export const workflowCronTriggerSchema = baseTriggerSchema.extend({
     }),
     z.object({
       type: z.literal('MINUTES'),
-      schedule: z.object({ minute: z.number().min(1) }),
+      schedule: z.object({ minute: z.number().min(1).max(60) }),
       outputSchema: z.looseObject({}),
     }),
     z.object({
