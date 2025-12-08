@@ -2,17 +2,8 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
-import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
-
-export type BuildStandardFlatIndexMetadataMapsArgs = {
-  createdAt: Date;
-  workspaceId: string;
-  standardFieldMetadataIdByObjectAndFieldName: StandardFieldMetadataIdByObjectAndFieldName;
-};
-
-type StandardFlatIndexMetadataBuilder = (
-  args: BuildStandardFlatIndexMetadataMapsArgs,
-) => Record<string, FlatIndexMetadata>;
+import { buildCompanyStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-company-standard-flat-index-metadata.util';
+import { CreateStandardIndexArgs } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
 
 const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   // attachment: buildAttachmentStandardFlatIndexMetadatas,
@@ -21,7 +12,7 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   // calendarChannel: buildCalendarChannelStandardFlatIndexMetadatas,
   // calendarEventParticipant: buildCalendarEventParticipantStandardFlatIndexMetadatas,
   // calendarEvent: buildCalendarEventStandardFlatIndexMetadatas,
-  // company: buildCompanyStandardFlatIndexMetadatas,
+  company: buildCompanyStandardFlatIndexMetadatas,
   // connectedAccount: buildConnectedAccountStandardFlatIndexMetadatas,
   // dashboard: buildDashboardStandardFlatIndexMetadatas,
   // favorite: buildFavoriteStandardFlatIndexMetadatas,
@@ -44,9 +35,11 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   // workflowRun: buildWorkflowRunStandardFlatIndexMetadatas,
   // workflowVersion: buildWorkflowVersionStandardFlatIndexMetadatas,
   // workspaceMember: buildWorkspaceMemberStandardFlatIndexMetadatas,
-} satisfies Partial<
-  Record<AllStandardObjectName, StandardFlatIndexMetadataBuilder>
->;
+} satisfies {
+  [P in AllStandardObjectName]?: (
+    args: CreateStandardIndexArgs<P>,
+  ) => Record<string, FlatIndexMetadata>;
+};
 
 const createEmptyFlatIndexMetadataMaps =
   (): FlatEntityMaps<FlatIndexMetadata> => ({
@@ -55,20 +48,24 @@ const createEmptyFlatIndexMetadataMaps =
     universalIdentifiersByApplicationId: {},
   });
 
-export const buildStandardFlatIndexMetadataMaps = ({
-  createdAt,
-  workspaceId,
-  standardFieldMetadataIdByObjectAndFieldName,
-}: BuildStandardFlatIndexMetadataMapsArgs): FlatEntityMaps<FlatIndexMetadata> => {
-  const builderArgs = {
-    createdAt,
-    workspaceId,
-    standardFieldMetadataIdByObjectAndFieldName,
-  };
+export const buildStandardFlatIndexMetadataMaps = (
+  args: Omit<CreateStandardIndexArgs, 'options'>,
+): FlatEntityMaps<FlatIndexMetadata> => {
+  const allIndexMetadatas: FlatIndexMetadata[] = (
+    Object.keys(
+      STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME,
+    ) as (keyof typeof STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME)[]
+  ).flatMap((objectName) => {
+    const builder =
+      STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME[objectName];
 
-  const allIndexMetadatas: FlatIndexMetadata[] = Object.values(
-    STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME,
-  ).flatMap((builder) => Object.values(builder(builderArgs)));
+    const result = builder({
+      ...args,
+      objectName,
+    });
+
+    return Object.values(result);
+  });
 
   let flatIndexMetadataMaps = createEmptyFlatIndexMetadataMaps();
 
@@ -81,4 +78,3 @@ export const buildStandardFlatIndexMetadataMaps = ({
 
   return flatIndexMetadataMaps;
 };
-
