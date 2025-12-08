@@ -325,10 +325,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      flatViewMaps: existingFlatViewMaps,
-      flatViewFieldMaps: existingFlatViewFieldMaps,
-      flatIndexMaps: existingFlatIndexMaps,
-      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       featureFlagsMap: existingFeatureFlagsMap,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
