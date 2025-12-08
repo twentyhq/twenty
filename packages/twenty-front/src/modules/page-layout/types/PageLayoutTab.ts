@@ -1,9 +1,11 @@
+import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguration';
 import { type PageLayoutTabLayoutMode } from '@/page-layout/types/PageLayoutTabLayoutMode';
 import { type RulesLogic } from 'json-logic-js';
 import { type ModifiedProperties, type Nullable } from 'twenty-shared/types';
 import {
   type PageLayoutTab as PageLayoutTabGenerated,
   type PageLayoutWidget,
+  type WidgetConfiguration,
 } from '~/generated/graphql';
 
 export type PageLayoutTab = Omit<PageLayoutTabGenerated, 'widgets'> & {
@@ -12,6 +14,7 @@ export type PageLayoutTab = Omit<PageLayoutTabGenerated, 'widgets'> & {
     {
       objectMetadataId?: Nullable<string>;
       conditionalDisplay?: RulesLogic;
+      configuration?: WidgetConfiguration | FieldsConfiguration | null;
     }
   >[];
   /**
