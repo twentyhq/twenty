@@ -39,11 +39,10 @@ import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-f
 import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
-import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -63,9 +62,7 @@ export class ApplicationSyncService {
     private readonly routeTriggerV2Service: RouteTriggerV2Service,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly roleService: RoleService,
-    private readonly roleTargetService: RoleTargetService,
     private readonly objectPermissionService: ObjectPermissionService,
-    private readonly fieldPermissionService: FieldPermissionService,
     private readonly permissionService: PermissionFlagService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
@@ -108,11 +105,13 @@ export class ApplicationSyncService {
       });
     }
 
-    await this.syncApplicationRole({
-      applicationId: application.id,
-      manifest,
-      workspaceId,
-    });
+    if (isDefined(application.defaultRoleId)) {
+      await this.syncApplicationRolePermissions({
+        manifest,
+        workspaceId,
+        roleId: application.defaultRoleId,
+      });
+    }
 
     this.logger.log('✅ Application sync from manifest completed');
   }
@@ -165,37 +164,15 @@ export class ApplicationSyncService {
       );
     }
 
-    await this.applicationVariableService.upsertManyApplicationVariableEntities(
-      {
-        applicationVariables: manifest.application.applicationVariables,
-        applicationId: application.id,
-      },
-    );
-
-    return await this.applicationService.update(application.id, {
-      name,
-      description: manifest.application.description,
-      version: packageJson.version,
-      serverlessFunctionLayerId,
-    });
-  }
-
-  private async syncApplicationRole({
-    manifest,
-    applicationId,
-    workspaceId,
-  }: {
-    manifest: ApplicationManifest;
-    applicationId: string;
-    workspaceId: string;
-  }) {
     const applicationRole = manifest.application.applicationRole;
+
+    let role: RoleDTO | null = null;
 
     if (
       isDefined(applicationRole) &&
       isDefined(applicationRole.universalIdentifier)
     ) {
-      let role = await this.roleService.getRoleByUniversalIdentifier({
+      role = await this.roleService.getRoleByUniversalIdentifier({
         universalIdentifier: applicationRole.universalIdentifier,
         workspaceId,
       });
@@ -232,67 +209,82 @@ export class ApplicationSyncService {
             canBeAssignedToApplications: true,
           },
           workspaceId,
-          applicationId: applicationId,
-        });
-
-        await this.roleTargetService.create({
-          createRoleTargetInput: {
-            roleId: role.id,
-            applicationId: applicationId,
-            universalIdentifier: role.universalIdentifier,
-            targetMetadataForeignKey: 'targetApplicationId',
-            targetId: applicationId,
-          },
-          workspaceId,
+          applicationId: application.id,
         });
       }
+    }
 
-      if (
-        isDefined(applicationRole.objectPermissions) &&
-        applicationRole.objectPermissions.length > 0
-      ) {
-        const { flatObjectMetadataMaps, objectIdByNameSingular } =
-          await this.workflowCommonWorkspaceService.getFlatEntityMaps(
-            workspaceId,
-          );
+    await this.applicationVariableService.upsertManyApplicationVariableEntities(
+      {
+        applicationVariables: manifest.application.applicationVariables,
+        applicationId: application.id,
+      },
+    );
 
-        const formattedObjectPermissions = applicationRole.objectPermissions
-          .map((perm) => ({
-            ...perm,
-            objectMetadataId: isDefined(perm.objectNameSingular)
-              ? objectIdByNameSingular[perm.objectNameSingular]
-              : isDefined(perm.objectUniversalIdentifier)
-                ? flatObjectMetadataMaps.idByUniversalIdentifier[
-                    perm.objectUniversalIdentifier
-                  ]
-                : undefined,
-          }))
-          .filter((perm): perm is typeof perm & { objectMetadataId: string } =>
-            isDefined(perm.objectMetadataId),
-          );
+    return await this.applicationService.update(application.id, {
+      name,
+      description: manifest.application.description,
+      version: packageJson.version,
+      serverlessFunctionLayerId,
+      defaultRoleId: role?.id,
+    });
+  }
 
-        console.log('formattedObjectPermissions', formattedObjectPermissions);
-        await this.objectPermissionService.upsertObjectPermissions({
+  private async syncApplicationRolePermissions({
+    manifest,
+    workspaceId,
+    roleId,
+  }: {
+    manifest: ApplicationManifest;
+    workspaceId: string;
+    roleId: string;
+  }) {
+    const applicationRole = manifest.application.applicationRole;
+
+    if (
+      isDefined(applicationRole?.objectPermissions) &&
+      applicationRole.objectPermissions.length > 0
+    ) {
+      const { flatObjectMetadataMaps, objectIdByNameSingular } =
+        await this.workflowCommonWorkspaceService.getFlatEntityMaps(
           workspaceId,
-          input: {
-            roleId: role.id,
-            objectPermissions: formattedObjectPermissions,
-          },
-        });
-      }
+        );
 
-      if (
-        isDefined(applicationRole.permissionFlags) &&
-        applicationRole.permissionFlags.length > 0
-      ) {
-        await this.permissionService.upsertPermissionFlags({
-          workspaceId,
-          input: {
-            roleId: role.id,
-            permissionFlagKeys: applicationRole.permissionFlags,
-          },
-        });
-      }
+      const formattedObjectPermissions = applicationRole.objectPermissions
+        .map((perm) => ({
+          ...perm,
+          objectMetadataId: isDefined(perm.objectNameSingular)
+            ? objectIdByNameSingular[perm.objectNameSingular]
+            : isDefined(perm.objectUniversalIdentifier)
+              ? flatObjectMetadataMaps.idByUniversalIdentifier[
+                  perm.objectUniversalIdentifier
+                ]
+              : undefined,
+        }))
+        .filter((perm): perm is typeof perm & { objectMetadataId: string } =>
+          isDefined(perm.objectMetadataId),
+        );
+
+      await this.objectPermissionService.upsertObjectPermissions({
+        workspaceId,
+        input: {
+          roleId,
+          objectPermissions: formattedObjectPermissions,
+        },
+      });
+    }
+
+    if (
+      isDefined(applicationRole?.permissionFlags) &&
+      applicationRole.permissionFlags.length > 0
+    ) {
+      await this.permissionService.upsertPermissionFlags({
+        workspaceId,
+        input: {
+          roleId,
+          permissionFlagKeys: applicationRole.permissionFlags,
+        },
+      });
     }
   }
 

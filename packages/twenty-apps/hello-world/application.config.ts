@@ -27,7 +27,7 @@ const config: ApplicationConfig = {
     canDestroyAllObjectRecords: false,
     objectPermissions: [
       {
-        objectUniversalIdentifier: 'postCard',
+        objectNameSingular: 'postCard',
         canReadObjectRecords: true,
         canUpdateObjectRecords: true,
         canSoftDeleteObjectRecords: false,
