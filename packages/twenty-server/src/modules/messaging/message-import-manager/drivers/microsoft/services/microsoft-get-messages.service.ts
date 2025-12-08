@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type EmailAddress } from 'addressparser';
 import { isDefined } from 'twenty-shared/utils';
+import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
@@ -12,7 +13,6 @@ import { type MessageWithParticipants } from 'src/modules/messaging/message-impo
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 import { safeParseEmailAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse.util';
 
-import { MessageParticipantRole } from 'twenty-shared/types';
 import { MicrosoftFetchByBatchService } from './microsoft-fetch-by-batch.service';
 import { MicrosoftMessagesImportErrorHandler } from './microsoft-messages-import-error-handler.service';
 
@@ -110,16 +110,28 @@ export class MicrosoftGetMessagesService {
 
       const participants = [
         ...(safeParseFrom
-          ? formatAddressObjectAsParticipants(safeParseFrom, MessageParticipantRole.FROM)
+          ? formatAddressObjectAsParticipants(
+              safeParseFrom,
+              MessageParticipantRole.FROM,
+            )
           : []),
         ...(safeParseTo
-          ? formatAddressObjectAsParticipants(safeParseTo, MessageParticipantRole.TO)
+          ? formatAddressObjectAsParticipants(
+              safeParseTo,
+              MessageParticipantRole.TO,
+            )
           : []),
         ...(safeParseCc
-          ? formatAddressObjectAsParticipants(safeParseCc, MessageParticipantRole.CC)
+          ? formatAddressObjectAsParticipants(
+              safeParseCc,
+              MessageParticipantRole.CC,
+            )
           : []),
         ...(safeParseBcc
-          ? formatAddressObjectAsParticipants(safeParseBcc, MessageParticipantRole.BCC)
+          ? formatAddressObjectAsParticipants(
+              safeParseBcc,
+              MessageParticipantRole.BCC,
+            )
           : []),
       ];
 

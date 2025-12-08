@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type ImapFlow } from 'imapflow';
 import { Address, type Email as ParsedMail } from 'postal-mime';
+import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
@@ -14,7 +15,6 @@ import { type EmailAddress } from 'src/modules/messaging/message-import-manager/
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
-import { MessageParticipantRole } from 'twenty-shared/types';
 
 type ConnectedAccount = Pick<
   ConnectedAccountWorkspaceEntity,

@@ -2,12 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
+import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
-import { MessageParticipantRole } from 'twenty-shared/types';
 
 const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE = 500;
 
