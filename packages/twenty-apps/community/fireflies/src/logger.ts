@@ -44,6 +44,15 @@ export class AppLogger {
     return LOG_LEVELS[level] >= LOG_LEVELS[this.config.logLevel];
   }
 
+  private safeStringify(value: unknown): string {
+    try {
+      if (typeof value === 'string') return value;
+      return JSON.stringify(value);
+    } catch {
+      return '[unserializable]';
+    }
+  }
+
   private captureLog(level: LogLevel, message: string, ...args: unknown[]): void {
     if (!this.config.captureForResponse) {
       return;
@@ -52,9 +61,7 @@ export class AppLogger {
     const timestamp = new Date().toISOString();
     const formattedMessage =
       args.length > 0
-        ? `${message} ${args
-            .map((arg) => (typeof arg === 'object' ? JSON.stringify(arg) : String(arg)))
-            .join(' ')}`
+        ? `${message} ${args.map((arg) => this.safeStringify(arg)).join(' ')}`
         : message;
 
     this.capturedLogs.push(

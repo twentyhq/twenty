@@ -42,12 +42,14 @@ const main = async (): Promise<void> => {
   }
 
   const result = await response.json();
-  if (result.errors) {
-    console.error('❌ Error:', result.errors[0]?.message);
+  const deletedId = result.data?.deleteMeeting?.id;
+  if (result.errors || !deletedId) {
+    const message = result.errors?.[0]?.message || 'deleteMeeting returned null';
+    console.error('❌ Error:', message);
     process.exit(1);
   }
 
-  console.log('✅ Deleted meeting:', meetingId);
+  console.log('✅ Deleted meeting:', deletedId);
 };
 
 main().catch((error) => {

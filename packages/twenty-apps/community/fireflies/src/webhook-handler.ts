@@ -263,10 +263,7 @@ export class WebhookHandler {
     if (headerKeys.length > 0) {
       this.logger.debug(`header keys: ${headerKeys.join(',')}`);
     }
-    this.debug.push(
-      `headerKeys=${headerKeys.join(',') || 'none'}`,
-      `rawHeaders=${JSON.stringify(normalizedHeaders)}`
-    );
+    this.debug.push(`headerKeys=${headerKeys.join(',') || 'none'}`);
 
     const headerSignature = Object.entries(normalizedHeaders).find(
       ([key]) => key.toLowerCase() === 'x-hub-signature',
@@ -302,8 +299,8 @@ export class WebhookHandler {
     const signatureCheck = verifyWebhookSignature(body, signature, webhookSecret);
     if (!signatureCheck.isValid) {
       this.debug.push(
-        `providedSignature=${signature ?? 'undefined'}`,
-        `computedSignature=${signatureCheck.computedSignature ?? 'undefined'}`,
+        `signatureProvided=${Boolean(signature)}`,
+        `signatureMatched=${signatureCheck.isValid}`,
         `webhookSecretFingerprint=${getWebhookSecretFingerprint(webhookSecret)}`
       );
       this.logger.debug(
@@ -311,14 +308,7 @@ export class WebhookHandler {
           headerSignature,
         )} payloadSignaturePresent=${Boolean(payloadSignature)}`,
       );
-      if (signature) {
-        this.logger.debug(`provided signature=${signature}`);
-      } else {
-        this.logger.debug('provided signature=undefined');
-      }
-      this.logger.debug(
-        `computed signature=${signatureCheck.computedSignature ?? 'unavailable'}`,
-      );
+      this.logger.debug(`provided signature present=${Boolean(signature)}`);
       this.logger.critical('Invalid webhook signature - potential security threat detected in production');
       throw new Error('Invalid webhook signature');
     }
