@@ -29,7 +29,7 @@ export const useActivities = <T extends Task | Note>({
 }) => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const { activityTargets, loadingActivityTargets } =
+  const { activityTargets, loadingActivityTargets, totalCountActivityTargets } =
     useActivityTargetsForTargetableObjects({
       objectNameSingular,
       targetableObjects,
@@ -88,5 +88,6 @@ export const useActivities = <T extends Task | Note>({
   return {
     activities: activities as T[],
     loading: loadingActivities || loadingActivityTargets,
+    totalCountActivities: totalCountActivityTargets,
   };
 };

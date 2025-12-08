@@ -29,7 +29,7 @@ const StyledNotesContainer = styled.div`
 
 export const NotesCard = () => {
   const targetRecord = useTargetRecord();
-  const { notes, loading } = useNotes(targetRecord);
+  const { notes, loading, totalCountNotes } = useNotes(targetRecord);
 
   const openCreateActivity = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Note,
@@ -87,6 +87,7 @@ export const NotesCard = () => {
       <NoteList
         title={t`All`}
         notes={notes}
+        totalCount={totalCountNotes}
         button={
           hasObjectUpdatePermissions && (
             <Button

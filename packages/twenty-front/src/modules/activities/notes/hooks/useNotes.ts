@@ -21,7 +21,7 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
     [],
   );
 
-  const { activities, loading } = useActivities<Note>({
+  const { activities, loading, totalCountActivities } = useActivities<Note>({
     objectNameSingular: CoreObjectNameSingular.Note,
     activitiesFilters: notesQueryVariables.filter ?? {},
     activitiesOrderByVariables: notesQueryVariables.orderBy ?? [{}],
@@ -45,5 +45,6 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
   return {
     notes: activities as Note[],
     loading,
+    totalCountNotes: totalCountActivities,
   };
 };
