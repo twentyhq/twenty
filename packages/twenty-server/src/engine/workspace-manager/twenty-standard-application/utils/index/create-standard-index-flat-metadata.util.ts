@@ -1,20 +1,20 @@
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
-import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import {
-  FlatIndexFieldMetadata,
+  type FlatIndexFieldMetadata,
   type FlatIndexMetadata,
 } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
-import { AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
+import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectIndexName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-index-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
-import { isDefined } from 'twenty-shared/utils';
 
 export type CreateStandardIndexOptions<O extends AllStandardObjectName> = {
   indexName: AllStandardObjectIndexName<O>;
@@ -23,7 +23,9 @@ export type CreateStandardIndexOptions<O extends AllStandardObjectName> = {
   Pick<FlatIndexMetadata, 'indexType' | 'indexWhereClause' | 'isUnique'>
 >;
 
-export type CreateStandardIndexArgs<O extends AllStandardObjectName = AllStandardObjectName> = {
+export type CreateStandardIndexArgs<
+  O extends AllStandardObjectName = AllStandardObjectName,
+> = {
   objectName: O;
   workspaceId: string;
   options: CreateStandardIndexOptions<O>;
@@ -54,6 +56,7 @@ export const createStandardIndexFlatMetadata = <
   now,
 }: CreateStandardIndexArgs<O>): FlatIndexMetadata => {
   const objectIndexes = STANDARD_OBJECTS[objectName].indexes;
+
   if (!isDefined(objectIndexes)) {
     throw new Error(
       `Invalid index configuration ${objectName} ${indexName.toString()}`,
@@ -81,6 +84,7 @@ export const createStandardIndexFlatMetadata = <
   });
 
   const indexId = v4();
+
   return generateFlatIndexMetadataWithNameOrThrow({
     flatIndex: {
       createdAt: now,
