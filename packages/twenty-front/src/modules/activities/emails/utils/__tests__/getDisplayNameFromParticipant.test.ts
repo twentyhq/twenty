@@ -52,23 +52,23 @@ describe('getDisplayNameFromParticipant', () => {
     },
   };
 
-  const participantWithHandle: any = {
+  const participantWithHandle = {
     displayName: '',
     handle: 'user_handle',
-    role: 'from',
-  };
+    role: MessageParticipantRole.FROM,
+  } as EmailThreadMessageParticipant;
 
-  const participantWithDisplayName: any = {
+  const participantWithDisplayName = {
     displayName: 'User123',
     handle: '',
-    role: 'from',
-  };
+    role: MessageParticipantRole.FROM,
+  } as EmailThreadMessageParticipant;
 
-  const participantWithoutInfo: any = {
+  const participantWithoutInfo = {
     displayName: '',
     handle: '',
-    role: 'from',
-  };
+    role: MessageParticipantRole.FROM,
+  } as EmailThreadMessageParticipant;
 
   it('should return full name when shouldUseFullName is true', () => {
     expect(
