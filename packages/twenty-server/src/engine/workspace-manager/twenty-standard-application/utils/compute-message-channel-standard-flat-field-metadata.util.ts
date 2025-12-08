@@ -9,6 +9,7 @@ import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/tw
 import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-relation-field-flat-metadata.util';
 import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
+import { MessageChannelType } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 export const buildMessageChannelStandardFlatFieldMetadatas = ({
   createdAt,
@@ -138,10 +139,20 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
       description: 'Channel Type',
       icon: 'IconMessage',
       isNullable: false,
-      defaultValue: "'EMAIL'",
+      defaultValue: `'${MessageChannelType.EMAIL}'`,
       options: [
-        { value: 'EMAIL', label: 'Email', position: 0, color: 'green' },
-        { value: 'SMS', label: 'SMS', position: 1, color: 'blue' },
+        {
+          value: MessageChannelType.EMAIL,
+          label: 'Email',
+          position: 0,
+          color: 'green',
+        },
+        {
+          value: MessageChannelType.SMS,
+          label: 'SMS',
+          position: 1,
+          color: 'blue',
+        },
       ],
       createdAt,
     },

@@ -10,6 +10,13 @@ import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/tw
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-relation-field-flat-metadata.util';
 import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
+export enum MessageParticipantRole {
+  'FROM' = 'FROM',
+  'TO' = 'TO',
+  'CC' = 'CC',
+  'BCC' = 'BCC',
+}
+
 export const buildMessageParticipantStandardFlatFieldMetadatas = ({
   createdAt,
   workspaceId,
@@ -99,12 +106,32 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       description: 'Role',
       icon: 'IconAt',
       isNullable: false,
-      defaultValue: "'FROM'",
+      defaultValue: `'${MessageParticipantRole.FROM}'`,
       options: [
-        { value: 'FROM', label: 'From', position: 0, color: 'green' },
-        { value: 'TO', label: 'To', position: 1, color: 'blue' },
-        { value: 'CC', label: 'Cc', position: 2, color: 'orange' },
-        { value: 'BCC', label: 'Bcc', position: 3, color: 'red' },
+        {
+          value: MessageParticipantRole.FROM,
+          label: 'From',
+          position: 0,
+          color: 'green',
+        },
+        {
+          value: MessageParticipantRole.TO,
+          label: 'To',
+          position: 1,
+          color: 'blue',
+        },
+        {
+          value: MessageParticipantRole.CC,
+          label: 'Cc',
+          position: 2,
+          color: 'orange',
+        },
+        {
+          value: MessageParticipantRole.BCC,
+          label: 'Bcc',
+          position: 3,
+          color: 'red',
+        },
       ],
       createdAt,
     },

@@ -9,6 +9,7 @@ import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/tw
 import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-relation-field-flat-metadata.util';
 import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
+import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 
 export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
   ({
@@ -128,10 +129,10 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         description: 'Message Direction',
         icon: 'IconDirection',
         isNullable: false,
-        defaultValue: "'INCOMING'",
+        defaultValue: `'${MessageDirection.INCOMING}'`,
         options: [
-          { value: 'INCOMING', label: 'Incoming', position: 0, color: 'green' },
-          { value: 'OUTGOING', label: 'Outgoing', position: 1, color: 'blue' },
+          { value: MessageDirection.INCOMING, label: 'Incoming', position: 0, color: 'green' },
+          { value: MessageDirection.OUTGOING, label: 'Outgoing', position: 1, color: 'blue' },
         ],
         createdAt,
       },
