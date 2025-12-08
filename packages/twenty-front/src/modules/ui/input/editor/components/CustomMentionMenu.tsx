@@ -20,6 +20,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 export type { MentionItem };
 
+const MenuPixelWidth = 240;
+
 const StyledContainer = styled.div`
   height: 1px;
   width: 1px;
@@ -73,7 +75,7 @@ export const CustomMentionMenu = ({
               style={floatingStyles}
               data-click-outside-id={MENTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
             >
-              <DropdownContent>
+              <DropdownContent widthInPixels={MenuPixelWidth}>
                 <DropdownMenuItemsContainer hasMaxHeight>
                   <SelectableList
                     focusId={MENTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
