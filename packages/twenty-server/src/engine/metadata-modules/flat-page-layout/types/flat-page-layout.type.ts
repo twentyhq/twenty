@@ -14,4 +14,6 @@ export type PageLayoutEntityRelationProperties =
 export type FlatPageLayout = FlatEntityFrom<
   PageLayoutEntity,
   PageLayoutEntityRelationProperties
->;
+> & {
+  tabIds: string[];
+};
