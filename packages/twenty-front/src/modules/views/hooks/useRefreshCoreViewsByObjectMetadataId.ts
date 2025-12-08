@@ -5,7 +5,6 @@ import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRec
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { coreViewsByObjectMetadataIdFamilySelector } from '@/views/states/selectors/coreViewsByObjectMetadataIdFamilySelector';
-import { convertCoreViewGroupToViewGroup } from '@/views/utils/convertCoreViewGroupToViewGroup';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { getFilterableFieldsWithVectorSearch } from '@/views/utils/getFilterableFieldsWithVectorSearch';
 
@@ -136,26 +135,9 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
               view.viewSorts,
             );
           }
-
-          if (
-            !isDeeplyEqual(
-              [...coreView.viewGroups].map((cv) => cv.id).sort(),
-              [...existingView.viewGroups].map((cv) => cv.id).sort(),
-            )
-          ) {
-            setRecordGroupsFromViewGroups({
-              viewId: coreView.id,
-              mainGroupByFieldMetadataId:
-                coreView.mainGroupByFieldMetadataId ?? '',
-              viewGroups: coreView.viewGroups.map((viewGroup) =>
-                convertCoreViewGroupToViewGroup(viewGroup),
-              ),
-              objectMetadataItem,
-            });
-          }
         }
       },
-    [findManyCoreViewsLazy, setRecordGroupsFromViewGroups],
+    [findManyCoreViewsLazy],
   );
 
   return {
