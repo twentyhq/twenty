@@ -1,9 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
-  FieldMetadataType,
-  LinksMetadata,
-  RelationOnDeleteAction,
+    FieldMetadataType,
+    LinksMetadata,
+    RelationOnDeleteAction,
 } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -127,7 +127,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   location: string | null;
 
   @WorkspaceField({
-    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUID,
+    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUid,
     type: FieldMetadataType.TEXT,
     label: msg`iCal UID`,
     description: msg`iCal UID`,

@@ -294,7 +294,7 @@ export class MigrateStandardInvalidEntitiesCommand extends ActiveOrSuspendedWork
     const iCalUidFieldId = findStandardFlatFieldMetadatawOrThrow({
       flatFieldMetadataMaps,
       flatObjectMetadata: flatCalendarEventObject,
-      standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUID,
+      standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUid,
     }).id;
 
     const allAffectedObjectNames = Object.keys(

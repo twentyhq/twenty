@@ -8594,7 +8594,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "__typename": "Field",
               "id": "21f219f9-c531-4ab5-9640-69230baa83d0",
               "type": "TEXT",
-              "name": "iCalUID",
+              "name": "iCalUid",
               "isCustom": false,
               "isActive": true,
               "isSystem": false,

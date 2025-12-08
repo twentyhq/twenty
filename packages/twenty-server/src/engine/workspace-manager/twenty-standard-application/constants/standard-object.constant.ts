@@ -272,7 +272,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.location,
       },
       iCalUid: {
-        universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUID,
+        universalIdentifier: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUid,
       },
       conferenceSolution: {
         universalIdentifier:
