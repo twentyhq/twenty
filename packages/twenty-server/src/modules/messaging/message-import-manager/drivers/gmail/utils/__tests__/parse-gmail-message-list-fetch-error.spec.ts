@@ -2,12 +2,12 @@ import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import gmailApiErrorMocks from 'src/modules/messaging/message-import-manager/drivers/gmail/mocks/gmail-api-error-mocks';
+import { getGmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/mocks/gmail-api-error-mocks';
 import { parseGmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-api-error.util';
 
 describe('parseGmailApiError', () => {
   it('should handle 400 Bad Request', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 400,
       errorCodeAsString: false,
     });
@@ -18,7 +18,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 400 Invalid Grant', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 400,
       type: 'invalid_grant',
       errorCodeAsString: false,
@@ -32,7 +32,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 400 Failed Precondition', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 400,
       type: 'failedPrecondition',
       errorCodeAsString: false,
@@ -46,7 +46,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 401 Invalid Credentials', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 401,
       errorCodeAsString: false,
     });
@@ -59,7 +59,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 403 Daily Limit Exceeded', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 403,
       type: 'dailyLimit',
       errorCodeAsString: false,
@@ -73,7 +73,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 403 User Rate Limit Exceeded', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 403,
       type: 'userRateLimit',
       errorCodeAsString: false,
@@ -87,7 +87,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 403 Rate Limit Exceeded', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 403,
       type: 'rateLimit',
       errorCodeAsString: false,
@@ -101,7 +101,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 403 Domain Policy Error', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 403,
       type: 'domainPolicy',
       errorCodeAsString: false,
@@ -115,7 +115,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 404 as sync cursor error', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 404,
       errorCodeAsString: false,
     });
@@ -128,7 +128,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 410 Gone', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 410,
       errorCodeAsString: false,
     });
@@ -139,7 +139,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 429 Too Many Requests', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 429,
       type: 'concurrent',
       errorCodeAsString: false,
@@ -153,7 +153,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 500 Backend Error', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 500,
       errorCodeAsString: false,
     });
@@ -166,7 +166,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 400 Bad Request with errorCodeAsString', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 400,
       errorCodeAsString: true,
     });
@@ -177,7 +177,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 400 Invalid Grant with errorCodeAsString', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 400,
       type: 'invalid_grant',
       errorCodeAsString: true,
@@ -191,7 +191,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 400 Failed Precondition with errorCodeAsString', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 400,
       type: 'failedPrecondition',
       errorCodeAsString: true,
@@ -205,7 +205,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 401 Invalid Credentials with errorCodeAsString', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 401,
       errorCodeAsString: true,
     });
@@ -218,7 +218,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 403 Daily Limit Exceeded with errorCodeAsString', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 403,
       type: 'dailyLimit',
       errorCodeAsString: true,
@@ -232,7 +232,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 403 User Rate Limit Exceeded with errorCodeAsString', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 403,
       type: 'userRateLimit',
       errorCodeAsString: true,
@@ -246,7 +246,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 403 Rate Limit Exceeded with errorCodeAsString', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 403,
       type: 'rateLimit',
       errorCodeAsString: true,
@@ -260,7 +260,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 403 Domain Policy Error with errorCodeAsString', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 403,
       type: 'domainPolicy',
       errorCodeAsString: true,
@@ -274,7 +274,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 404 as sync cursor error with errorCodeAsString', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 404,
       errorCodeAsString: true,
     });
@@ -287,7 +287,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 410 Gone with errorCodeAsString', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 410,
       errorCodeAsString: true,
     });
@@ -298,7 +298,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 429 Too Many Requests with errorCodeAsString', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 429,
       type: 'concurrent',
       errorCodeAsString: true,
@@ -312,7 +312,7 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 500 Backend Error with errorCodeAsString', () => {
-    const error = gmailApiErrorMocks.getError({
+    const error = getGmailApiError({
       code: 500,
       errorCodeAsString: true,
     });
