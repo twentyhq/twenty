@@ -138,7 +138,6 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   favorites: '20202020-4d1d-41ac-b13b-621631298d55',
   attachments: '20202020-c1b5-4120-b0f0-987ca401ed53',
   timelineActivities: '20202020-0414-4daf-9c0d-64fe7b27f89f',
-  timelineActivities2: '20202020-f625-4ebe-908d-8ed97bd95844',
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2c74d',
 } as const;
 
@@ -164,25 +163,16 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   name: '20202020-7207-46e8-9dab-849505ae8497',
   properties: '20202020-f142-4b04-b91b-6a2b4af3bf11',
   workspaceMember: '20202020-af23-4479-9a30-868edc474b36',
-  person: '20202020-c414-45b9-a60a-ac27aa96229f',
-  targetPerson: '20202020-1bd8-4c31-b7ac-576485fdae93',
-  company: '20202020-04ad-4221-a744-7a8278a5ce21',
-  targetCompany: '20202020-4ae5-46aa-8b65-2c69aab28854',
-  opportunity: '20202020-7664-4a35-a3df-580d389fd527',
-  targetOpportunity: '20202020-b30d-47ee-925f-274f2584d757',
-  task: '20202020-b2f5-415c-9135-a31dfe49501b',
-  targetTask: '20202020-2e52-47e3-bf15-94f727267536',
-  note: '20202020-ec55-4135-8da5-3a20badc0156',
-  targetNote: '20202020-c019-4550-8161-11642dc97d1a',
-  workflow: '20202020-616c-4ad3-a2e9-c477c341e295',
-  targetWorkflow: '20202020-6abf-4fb7-9725-205bd6558372',
-  workflowVersion: '20202020-74f1-4711-a129-e14ca0ecd744',
-  targetWorkflowVersion: '20202020-8e43-40ad-b608-3ea5c6f81691',
-  workflowRun: '20202020-96f0-401b-9186-a3a0759225ac',
-  targetWorkflowRun: '20202020-763d-4af2-ba63-02042fbb37b3',
-  dashboard: '20202020-7864-48f5-af7c-9e4b60140948',
-  targetDashboard: '20202020-0409-422d-9e7a-0d3a942b1d95',
-  custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
+  targetPerson: '20202020-c414-45b9-a60a-ac27aa96229f',
+  targetCompany: '20202020-04ad-4221-a744-7a8278a5ce21',
+  targetOpportunity: '20202020-7664-4a35-a3df-580d389fd527',
+  targetTask: '20202020-b2f5-415c-9135-a31dfe49501b',
+  targetNote: '20202020-ec55-4135-8da5-3a20badc0156',
+  targetWorkflow: '20202020-616c-4ad3-a2e9-c477c341e295',
+  targetWorkflowVersion: '20202020-74f1-4711-a129-e14ca0ecd744',
+  targetWorkflowRun: '20202020-96f0-401b-9186-a3a0759225ac',
+  targetDashboard: '20202020-7864-48f5-af7c-9e4b60140948',
+  targetCustom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
   linkedRecordCachedName: '20202020-cfdb-4bef-bbce-a29f41230934',
   linkedRecordId: '20202020-2e0e-48c0-b445-ee6c1e61687d',
   linkedObjectMetadataId: '20202020-c595-449d-9f89-562758c9ee69',
@@ -293,7 +283,6 @@ export const NOTE_STANDARD_FIELD_IDS = {
   noteTargets: '20202020-1f25-43fe-8b00-af212fdde823',
   attachments: '20202020-4986-4c92-bf19-39934b149b16',
   timelineActivities: '20202020-7030-42f8-929c-1a57b25d6bce',
-  timelineActivities2: '20202020-19f4-4325-bf2e-5adcc0c75ea6',
   favorites: '20202020-4d1d-41ac-b13b-621631298d67',
   searchVector: '20202020-7ea8-44d4-9d4c-51dd2a757950',
 } as const;
@@ -323,7 +312,6 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   noteTargets: '20202020-dd3f-42d5-a382-db58aabf43d3',
   attachments: '20202020-87c7-4118-83d6-2f4031005209',
   timelineActivities: '20202020-30e2-421f-96c7-19c69d1cf631',
-  timelineActivities2: '20202020-c515-4e14-b6a9-92164601029f',
   searchVector: '428a0da5-4b2e-4ce3-b695-89a8b384e6e3',
 } as const;
 
@@ -351,7 +339,6 @@ export const PERSON_STANDARD_FIELD_IDS = {
   messageParticipants: '20202020-498e-4c61-8158-fa04f0638334',
   calendarEventParticipants: '20202020-52ee-45e9-a702-b64b3753e3a9',
   timelineActivities: '20202020-a43e-4873-9c23-e522de906ce5',
-  timelineActivities2: '20202020-f0d7-4891-aeb6-e0e748d5c8c0',
   searchVector: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
 } as const;
 
@@ -367,7 +354,6 @@ export const TASK_STANDARD_FIELD_IDS = {
   attachments: '20202020-794d-4783-a8ff-cecdb15be139',
   assignee: '20202020-065a-4f42-a906-e20422c1753f',
   timelineActivities: '20202020-c778-4278-99ee-23a2837aee64',
-  timelineActivities2: '20202020-6ad0-40ef-a4c3-082c929ac0fc',
   favorites: '20202020-4d1d-41ac-b13b-621631298d65',
   searchVector: '20202020-4746-4e2f-870c-52b02c67c90d',
 } as const;
@@ -461,7 +447,6 @@ export const WORKFLOW_STANDARD_FIELD_IDS = {
   automatedTriggers: '20202020-3319-4234-a34c-117ecad2b8a9',
   favorites: '20202020-c554-4c41-be7a-cf9cd4b0d512',
   timelineActivities: '20202020-906e-486a-a798-131a5f081faf',
-  timelineActivities2: '20202020-80f2-4180-92f1-45549465d507',
   attachments: '20202020-4a8c-4e2d-9b1c-7e5f3a2b4c6d',
   createdBy: '20202020-6007-401a-8aa5-e6f48581a6f3',
   searchVector: '20202020-535d-4ffa-b7f3-4fa0d5da1b7a',
@@ -482,7 +467,6 @@ export const WORKFLOW_RUN_STANDARD_FIELD_IDS = {
   state: '20202020-611f-45f3-9cde-d64927e8ec57',
   favorites: '20202020-4baf-4604-b899-2f7fcfbbf90d',
   timelineActivities: '20202020-af4d-4eb0-babc-eb960a45b356',
-  timelineActivities2: '20202020-c719-4734-af09-6aba7f6e1d8a',
   searchVector: '20202020-0b91-4ded-b1ac-cbd5efa58cb9',
 } as const;
 
@@ -496,7 +480,6 @@ export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
   steps: '20202020-5988-4a64-b94a-1f9b7b989039',
   favorites: '20202020-b8e0-4e57-928d-b51671cc71f2',
   timelineActivities: '20202020-fcb0-4695-b17e-3b43a421c633',
-  timelineActivities2: '20202020-48b6-4c3e-ba87-c60fb5baf157',
   searchVector: '20202020-3f17-44ef-b8c1-b282ae8469b2',
 } as const;
 
@@ -540,7 +523,6 @@ export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
   favorites: '20202020-a4a7-4686-b296-1c6c3482ee21',
   attachments: '20202020-8d59-46ca-b7b2-73d167712134',
   timelineActivities: '20202020-f1ef-4ba4-8f33-1a4577afa477',
-  timelineActivities2: '20202020-3449-4d9e-9dd7-c08aacb4ac42',
   searchVector: '70e56537-18ef-4811-b1c7-0a444006b815',
 } as const;
 
@@ -550,7 +532,6 @@ export const DASHBOARD_STANDARD_FIELD_IDS = {
   pageLayoutId: '20202020-bb53-4648-aa36-1d9d54e6f7f2',
   createdBy: '20202020-ff32-4fa1-b7ad-407cc6aa0734',
   timelineActivities: '20202020-9b0c-5d6e-7f8a-9b0c1d2e3f4a',
-  timelineActivities2: '20202020-d029-4753-9666-dd8a93d310ae',
   favorites: '20202020-f032-478f-88fa-6426ff6f1e4c',
   attachments: '20202020-bf6f-4220-8c55-2764f1175870',
   searchVector: '20202020-0bcc-47a4-8360-2e35a7133f7a',

@@ -182,25 +182,12 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Timeline Activities linked to the task.`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: TASK_STANDARD_FIELD_IDS.timelineActivities2,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Timeline Activities`,
-    description: msg`Timeline Activities linked to the task.`,
-    icon: 'IconTimelineEvent',
-    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     inverseSideFieldKey: 'targetTask',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  timelineActivities2: Relation<TimelineActivityWorkspaceEntity[]>;
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: TASK_STANDARD_FIELD_IDS.favorites,

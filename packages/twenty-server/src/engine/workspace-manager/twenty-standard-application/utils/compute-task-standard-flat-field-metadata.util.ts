@@ -294,7 +294,7 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       isNullable: true,
       createdAt,
       targetObjectName: 'timelineActivity',
-      targetFieldName: 'task',
+      targetFieldName: 'targetTask',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

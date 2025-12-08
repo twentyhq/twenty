@@ -171,8 +171,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       beforeSyncMetadata: [
         this.deduplicateRoleTargetsCommand,
         this.updateRoleTargetsUniqueConstraintMigrationCommand,
+        this.migrateTimelineActivityToMorphRelationsCommand,
       ],
-      afterSyncMetadata: [this.migrateTimelineActivityToMorphRelationsCommand],
+      afterSyncMetadata: [],
     };
 
     this.allCommands = {

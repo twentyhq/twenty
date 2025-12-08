@@ -441,7 +441,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       isNullable: true,
       createdAt,
       targetObjectName: 'timelineActivity',
-      targetFieldName: 'person',
+      targetFieldName: 'targetPerson',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

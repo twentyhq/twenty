@@ -146,29 +146,12 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
     },
     icon: 'IconIconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
-  timelineActivities: TimelineActivityWorkspaceEntity[];
-
-  @WorkspaceRelation({
-    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.timelineActivities2,
-    label: msg`Timeline Activities`,
-    type: RelationType.ONE_TO_MANY,
-    description: (objectMetadata) => {
-      const label = objectMetadata.labelSingular;
-
-      return msg`Timeline Activities tied to the ${label}`;
-    },
-    icon: 'IconIconTimelineEvent',
-    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     inverseSideFieldKey: 'targetCustom',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  timelineActivities2: TimelineActivityWorkspaceEntity[];
+  timelineActivities: TimelineActivityWorkspaceEntity[];
 
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,

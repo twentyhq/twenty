@@ -345,7 +345,7 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       isNullable: true,
       createdAt,
       targetObjectName: 'timelineActivity',
-      targetFieldName: 'opportunity',
+      targetFieldName: 'targetOpportunity',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

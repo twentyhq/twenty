@@ -81,60 +81,41 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
       (objectMetadata) => objectMetadata.nameSingular,
     );
 
-    const fieldMigrations = [
-      { old: 'companyId', new: 'targetCompanyId' },
-      { old: 'personId', new: 'targetPersonId' },
-      { old: 'opportunityId', new: 'targetOpportunityId' },
-      { old: 'noteId', new: 'targetNoteId' },
-      { old: 'taskId', new: 'targetTaskId' },
-      { old: 'workflowId', new: 'targetWorkflowId' },
-      { old: 'workflowVersionId', new: 'targetWorkflowVersionId' },
-      { old: 'workflowRunId', new: 'targetWorkflowRunId' },
-      { old: 'dashboardId', new: 'targetDashboardId' },
+    const fieldNameMigrations = [
+      { old: 'company', new: 'targetCompany' },
+      { old: 'person', new: 'targetPerson' },
+      { old: 'opportunity', new: 'targetOpportunity' },
+      { old: 'note', new: 'targetNote' },
+      { old: 'task', new: 'targetTask' },
+      { old: 'workflow', new: 'targetWorkflow' },
+      { old: 'workflowVersion', new: 'targetWorkflowVersion' },
+      { old: 'workflowRun', new: 'targetWorkflowRun' },
+      { old: 'dashboard', new: 'targetDashboard' },
       ...customObjectMetadataNames.map((customObjectName) => ({
-        old: `${customObjectName}Id`,
-        new: `target${capitalize(customObjectName)}Id`,
+        old: `${customObjectName}`,
+        new: `target${capitalize(customObjectName)}`,
       })),
     ];
 
-    for (const { new: newField } of fieldMigrations) {
+    const fieldMigrations = fieldNameMigrations.map(
+      ({ old: oldFieldName, new: newFieldName }) => ({
+        old: `${oldFieldName}Id`,
+        new: `${newFieldName}Id`,
+      }),
+    );
+
+    for (const { new: newField, old: oldField } of fieldMigrations) {
       try {
         await this.coreDataSource.query(
           `ALTER TABLE "${schemaName}"."${tableName}"
-           ADD COLUMN IF NOT EXISTS "${newField}" uuid NULL`,
+           RENAME COLUMN "${oldField}" TO "${newField}"`,
         );
         this.logger.log(
-          `Created column "${newField}" for custom object "${tableName}"`,
+          `Renamed column "${oldField}" to "${newField}" for "${tableName}"`,
         );
       } catch (error) {
         this.logger.error(
-          `Error creating column "${newField}" for custom object "${tableName}" in workspace ${workspaceId}`,
-          error,
-        );
-
-        return;
-      }
-    }
-
-    for (const { old: oldField, new: newField } of fieldMigrations) {
-      try {
-        const result = await this.coreDataSource.query(
-          `UPDATE "${schemaName}"."${tableName}"
-           SET "${newField}" = "${oldField}"
-           WHERE "${oldField}" IS NOT NULL
-             AND "${newField}" IS NULL`,
-        );
-
-        const rowsUpdated = result[1] || 0;
-
-        if (rowsUpdated > 0) {
-          this.logger.log(
-            `Migrated ${rowsUpdated} records for ${oldField} → ${newField}`,
-          );
-        }
-      } catch (error) {
-        this.logger.error(
-          `Error migrating ${oldField} → ${newField} for workspace ${workspaceId}`,
+          `Error renaming column "${oldField}" to "${newField}" for "${tableName}" in workspace ${workspaceId}`,
           error,
         );
 
@@ -161,8 +142,8 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
       return;
     }
 
-    const objectNamesToMigrate = fieldMigrations.map(({ old }) =>
-      old.replace(/Id$/, ''),
+    const objectNamesToMigrate = fieldNameMigrations.map(
+      ({ old: oldFieldName }) => oldFieldName,
     );
 
     const relatedObjectMetadata = await this.objectMetadataRepository.find({
@@ -175,6 +156,7 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
       relatedObjectMetadata.map((obj) => [obj.nameSingular, obj]),
     );
 
+    // todo
     const morphId = TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId;
 
     for (const objectName of objectNamesToMigrate) {
@@ -239,15 +221,12 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
       workspaceId,
     );
 
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      // 'ORMEntityMetadatas',
-      // 'flatFieldMetadataMaps',
-      // 'flatObjectMetadataMaps',
-    ]);
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, []);
 
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
       workspaceId,
     );
+    this.logger.log(`Cache flushed`);
 
     this.logger.log(
       `Set IS_TIMELINE_ACTIVITY_MIGRATED feature flag for workspace ${workspaceId}`,

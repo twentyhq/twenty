@@ -25,7 +25,6 @@ const baseNote = {
   noteTargets: [],
   attachments: [],
   timelineActivities: [],
-  timelineActivities2: [],
   favorites: [],
   searchVector: '',
   deletedAt: null,

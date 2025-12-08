@@ -4,11 +4,13 @@ import {
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
-import { CustomError } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import {
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -74,9 +76,9 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   targetFieldName,
 }: GenerateMorphOrRelationFlatFieldMetadataPairArgs): SourceTargetMorphOrRelationFlatFieldAndFlatIndex => {
   if (createFieldInput.type !== sourceFlatFieldMetadataType) {
-    throw new CustomError(
-      'Create field input type does not match source flat field metadata type',
-      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+    throw new FieldMetadataException(
+      `Create field input type ${createFieldInput.type} does not match source flat field metadata type ${sourceFlatFieldMetadataType}`,
+      FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
     );
   }
 
@@ -84,9 +86,9 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     sourceFlatFieldMetadataType === FieldMetadataType.MORPH_RELATION &&
     targetFlatFieldMetadataType === FieldMetadataType.MORPH_RELATION
   ) {
-    throw new CustomError(
+    throw new FieldMetadataException(
       'Morph relation field cannot target a morph relation field',
-      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
     );
   }
 
@@ -96,9 +98,9 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     ) &&
     morphId === null
   ) {
-    throw new CustomError(
+    throw new FieldMetadataException(
       'Morph relation field must have a morph id',
-      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
     );
   }
 
@@ -150,9 +152,6 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
 
   const targetCreateFieldInput: CreateFieldInput = {
     icon: relationCreationPayload.targetFieldIcon ?? 'Icon123',
-    isCustom: createFieldInput.isCustom,
-    isSystem: createFieldInput.isSystem,
-    isUnique: createFieldInput.isUnique,
     description:
       createFieldInput.description ?? defaultDescriptionToField.description,
     label: relationCreationPayload.targetFieldLabel,
@@ -163,7 +162,6 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     type: FieldMetadataType.RELATION,
     workspaceId,
   };
-
   const targetFlatFieldMetadataSettings =
     computeFieldMetadataRelationSettingsForRelationType({
       joinColumnName: computeMorphOrRelationFieldJoinColumnName({

@@ -329,7 +329,7 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       isNullable: false,
       createdAt,
       targetObjectName: 'timelineActivity',
-      targetFieldName: 'workflowRun',
+      targetFieldName: 'targetWorkflowRun',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

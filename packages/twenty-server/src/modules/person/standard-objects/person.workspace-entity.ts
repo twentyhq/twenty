@@ -306,25 +306,12 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Events linked to the person`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.timelineActivities2,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Events`,
-    description: msg`Events linked to the person`,
-    icon: 'IconTimelineEvent',
-    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     inverseSideFieldKey: 'targetPerson',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  timelineActivities2: Relation<TimelineActivityWorkspaceEntity[]>;
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.searchVector,

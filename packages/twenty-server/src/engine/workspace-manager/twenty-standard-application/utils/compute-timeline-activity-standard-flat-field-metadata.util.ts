@@ -7,6 +7,7 @@ import {
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { createStandardFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-field-flat-metadata.util';
+import { createStandardMorphRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-morph-relation-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/create-standard-relation-field-flat-metadata.util';
 import { type StandardFieldMetadataIdByObjectAndFieldName } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-field-metadata-id-by-object-and-field-name.util';
 
@@ -199,11 +200,11 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  person: createStandardRelationFieldFlatMetadata({
+  targetPerson: createStandardMorphRelationFieldFlatMetadata({
     objectName: 'timelineActivity',
     workspaceId,
     options: {
-      fieldName: 'person',
+      fieldName: 'targetPerson',
       label: 'Person',
       description: 'Event person',
       icon: 'IconUser',
@@ -214,16 +215,16 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'personId',
+        joinColumnName: 'targetPersonId',
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  company: createStandardRelationFieldFlatMetadata({
+  targetCompany: createStandardMorphRelationFieldFlatMetadata({
     objectName: 'timelineActivity',
     workspaceId,
     options: {
-      fieldName: 'company',
+      fieldName: 'targetCompany',
       label: 'Company',
       description: 'Event company',
       icon: 'IconBuildingSkyscraper',
@@ -234,16 +235,16 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'companyId',
+        joinColumnName: 'targetCompanyId',
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  opportunity: createStandardRelationFieldFlatMetadata({
+  targetOpportunity: createStandardMorphRelationFieldFlatMetadata({
     objectName: 'timelineActivity',
     workspaceId,
     options: {
-      fieldName: 'opportunity',
+      fieldName: 'targetOpportunity',
       label: 'Opportunity',
       description: 'Event opportunity',
       icon: 'IconTargetArrow',
@@ -254,16 +255,16 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'opportunityId',
+        joinColumnName: 'targetOpportunityId',
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  note: createStandardRelationFieldFlatMetadata({
+  targetNote: createStandardMorphRelationFieldFlatMetadata({
     objectName: 'timelineActivity',
     workspaceId,
     options: {
-      fieldName: 'note',
+      fieldName: 'targetNote',
       label: 'Note',
       description: 'Event note',
       icon: 'IconTargetArrow',
@@ -274,16 +275,16 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'noteId',
+        joinColumnName: 'targetNoteId',
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  task: createStandardRelationFieldFlatMetadata({
+  targetTask: createStandardMorphRelationFieldFlatMetadata({
     objectName: 'timelineActivity',
     workspaceId,
     options: {
-      fieldName: 'task',
+      fieldName: 'targetTask',
       label: 'Task',
       description: 'Event task',
       icon: 'IconTargetArrow',
@@ -294,16 +295,16 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'taskId',
+        joinColumnName: 'targetTaskId',
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  workflow: createStandardRelationFieldFlatMetadata({
+  targetWorkflow: createStandardMorphRelationFieldFlatMetadata({
     objectName: 'timelineActivity',
     workspaceId,
     options: {
-      fieldName: 'workflow',
+      fieldName: 'targetWorkflow',
       label: 'Workflow',
       description: 'Event workflow',
       icon: 'IconTargetArrow',
@@ -314,16 +315,16 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'workflowId',
+        joinColumnName: 'targetWorkflowId',
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  workflowVersion: createStandardRelationFieldFlatMetadata({
+  targetWorkflowVersion: createStandardMorphRelationFieldFlatMetadata({
     objectName: 'timelineActivity',
     workspaceId,
     options: {
-      fieldName: 'workflowVersion',
+      fieldName: 'targetWorkflowVersion',
       label: 'WorkflowVersion',
       description: 'Event workflow version',
       icon: 'IconTargetArrow',
@@ -334,16 +335,16 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'workflowVersionId',
+        joinColumnName: 'targetWorkflowVersionId',
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  workflowRun: createStandardRelationFieldFlatMetadata({
+  targetWorkflowRun: createStandardMorphRelationFieldFlatMetadata({
     objectName: 'timelineActivity',
     workspaceId,
     options: {
-      fieldName: 'workflowRun',
+      fieldName: 'targetWorkflowRun',
       label: 'Workflow Run',
       description: 'Event workflow run',
       icon: 'IconTargetArrow',
@@ -354,16 +355,16 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'workflowRunId',
+        joinColumnName: 'targetWorkflowRunId',
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  dashboard: createStandardRelationFieldFlatMetadata({
+  targetDashboard: createStandardMorphRelationFieldFlatMetadata({
     objectName: 'timelineActivity',
     workspaceId,
     options: {
-      fieldName: 'dashboard',
+      fieldName: 'targetDashboard',
       label: 'Dashboard',
       description: 'Event dashboard',
       icon: 'IconTargetArrow',
@@ -374,16 +375,16 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'dashboardId',
+        joinColumnName: 'targetDashboardId',
       },
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),
-  custom: createStandardRelationFieldFlatMetadata({
+  targetCustom: createStandardMorphRelationFieldFlatMetadata({
     objectName: 'timelineActivity',
     workspaceId,
     options: {
-      fieldName: 'custom',
+      fieldName: 'targetCustom',
       label: 'Custom',
       description: 'Timeline Activity custom object',
       icon: 'IconTimeline',
@@ -394,21 +395,8 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'customId',
+        joinColumnName: 'targetCustomId',
       },
-    },
-    standardFieldMetadataIdByObjectAndFieldName,
-  }),
-  targetMorphId: createStandardFieldFlatMetadata({
-    objectName: 'timelineActivity',
-    workspaceId,
-    options: {
-      fieldName: 'targetMorphId',
-      type: FieldMetadataType.TEXT,
-      label: 'Target Morph Id',
-      description: 'Target Morph Id to be used for morph relations',
-      icon: 'Icon123',
-      createdAt,
     },
     standardFieldMetadataIdByObjectAndFieldName,
   }),

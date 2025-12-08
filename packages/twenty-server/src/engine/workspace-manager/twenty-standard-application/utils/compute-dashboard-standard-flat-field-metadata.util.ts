@@ -174,7 +174,7 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
       isNullable: true,
       createdAt,
       targetObjectName: 'timelineActivity',
-      targetFieldName: 'dashboard',
+      targetFieldName: 'targetDashboard',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

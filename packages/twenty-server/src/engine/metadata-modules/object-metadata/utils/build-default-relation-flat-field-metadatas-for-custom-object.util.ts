@@ -1,12 +1,12 @@
 import { type STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { capitalize, CustomError, isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -17,7 +17,6 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 
@@ -75,6 +74,17 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
       [flatObject.nameSingular]: flatObject.id,
     };
   }, {});
+
+  const morphIdByRelationObjectNameSingular =
+    DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.reduce<Record<string, string>>(
+      (acc, objectNameSingular) => {
+        return {
+          ...acc,
+          [objectNameSingular]: v4(),
+        };
+      },
+      {},
+    );
 
   const result =
     DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.reduce<SourceAndTargetFlatFieldMetadatasRecord>(
@@ -140,9 +150,6 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             sourceFlatObjectMetadataJoinColumnName: joinColumnName,
             targetFieldName: sourceFlatObjectMetadata.nameSingular,
             createFieldInput: {
-              isCustom: false,
-              isSystem: true,
-              isUnique: false,
               icon: 'IconBuildingSkyscraper',
               type: FieldMetadataType.RELATION,
               name: targetFlatObjectMetadata.nameSingular,
@@ -228,7 +235,8 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
           name: morphFieldName,
         });
 
-        const morphId = getMorphIdForObjectStandard(objectMetadataNameSingular);
+        const morphId =
+          morphIdByRelationObjectNameSingular[objectMetadataNameSingular];
 
         const { flatFieldMetadatas } =
           generateMorphOrRelationFlatFieldMetadataPair({
@@ -242,9 +250,6 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             morphId,
             targetFieldName: morphFieldName,
             createFieldInput: {
-              isCustom: false,
-              isSystem: true,
-              isUnique: false,
               icon: 'IconBuildingSkyscraper',
               type: FieldMetadataType.RELATION,
               name: targetFlatObjectMetadata.nameSingular,
@@ -286,35 +291,4 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
       ...resultForMigratedToMorphRelations.standardTargetFlatFieldMetadatas,
     ],
   };
-};
-
-const getMorphIdForObjectStandard = (targetFlatObjectMetadata: string) => {
-  if (
-    !DEFAULT_MORPH_RELATIONS_OBJECTS_STANDARD_IDS.map((name) =>
-      name.toString(),
-    ).includes(targetFlatObjectMetadata)
-  ) {
-    throw new CustomError(
-      'Target morph id not found for object',
-      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-    );
-  }
-
-  const fields =
-    STANDARD_OBJECTS[targetFlatObjectMetadata as keyof typeof STANDARD_OBJECTS]
-      .fields;
-
-  if (
-    typeof fields === 'object' &&
-    fields !== null &&
-    'targetMorphId' in fields &&
-    isDefined((fields as Record<string, unknown>).targetMorphId)
-  ) {
-    return fields.targetMorphId.universalIdentifier;
-  }
-
-  throw new CustomError(
-    'Target morph id not found for object',
-    FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-  );
 };

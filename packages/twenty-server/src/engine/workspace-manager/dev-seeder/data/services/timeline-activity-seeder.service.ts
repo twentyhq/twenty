@@ -38,11 +38,6 @@ type TimelineActivitySeedData = Pick<
   | 'linkedRecordId'
   | 'linkedObjectMetadataId'
   | 'workspaceMemberId'
-  | 'companyId'
-  | 'personId'
-  | 'noteId'
-  | 'taskId'
-  | 'opportunityId'
   | 'targetNoteId'
   | 'targetTaskId'
   | 'targetPersonId'
@@ -258,11 +253,6 @@ export class TimelineActivitySeederService {
           'linkedRecordId',
           'linkedObjectMetadataId',
           'workspaceMemberId',
-          'companyId',
-          'personId',
-          'noteId',
-          'taskId',
-          'opportunityId',
           'targetNoteId',
           'targetTaskId',
           'targetPersonId',
@@ -300,11 +290,6 @@ export class TimelineActivitySeederService {
       linkedRecordId: recordId,
       linkedObjectMetadataId: null,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-      companyId: null,
-      personId: null,
-      noteId: null,
-      taskId: null,
-      opportunityId: null,
       targetNoteId: null,
       targetTaskId: null,
       targetPersonId: null,
@@ -591,11 +576,6 @@ export class TimelineActivitySeederService {
       linkedRecordId: recordSeed.id,
       linkedObjectMetadataId,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-      companyId: null,
-      personId: null,
-      noteId: null,
-      taskId: null,
-      opportunityId: null,
       targetNoteId: null,
       targetTaskId: null,
       targetPersonId: null,

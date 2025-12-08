@@ -1,17 +1,17 @@
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
   ActorMetadata,
   type CurrencyMetadata,
   FieldMetadataType,
   RelationOnDeleteAction,
 } from 'twenty-shared/types';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
@@ -219,25 +219,12 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Timeline Activities linked to the opportunity.`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.timelineActivities2,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Timeline Activities`,
-    description: msg`Timeline Activities linked to the opportunity.`,
-    icon: 'IconTimelineEvent',
-    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     inverseSideFieldKey: 'targetOpportunity',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  timelineActivities2: Relation<TimelineActivityWorkspaceEntity[]>;
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.probabilityDeprecated,

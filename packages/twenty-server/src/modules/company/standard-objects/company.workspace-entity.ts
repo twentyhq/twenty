@@ -267,25 +267,12 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Timeline Activities linked to the company`,
     icon: 'IconIconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: COMPANY_STANDARD_FIELD_IDS.timelineActivities2,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Timeline Activities`,
-    description: msg`Timeline Activities linked to the company`,
-    icon: 'IconIconTimelineEvent',
-    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     inverseSideFieldKey: 'targetCompany',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  timelineActivities2: Relation<TimelineActivityWorkspaceEntity[]>;
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.address_deprecated,
