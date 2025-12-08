@@ -4,7 +4,6 @@ import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/mess
 import { type TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { TimelineMessagingService } from 'src/engine/core-modules/messaging/services/timeline-messaging.service';
 import { formatThreads } from 'src/engine/core-modules/messaging/utils/format-threads.util';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -14,12 +13,12 @@ export class GetMessagesService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly timelineMessagingService: TimelineMessagingService,
-    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   async getMessagesFromPersonIds(
     workspaceMemberId: string,
     personIds: string[],
+    workspaceId: string,
     page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineThreadsWithTotalDTO> {
@@ -28,6 +27,7 @@ export class GetMessagesService {
     const { messageThreads, totalNumberOfThreads } =
       await this.timelineMessagingService.getAndCountMessageThreads(
         personIds,
+        workspaceId,
         offset,
         pageSize,
       );
@@ -46,12 +46,14 @@ export class GetMessagesService {
     const threadParticipantsByThreadId =
       await this.timelineMessagingService.getThreadParticipantsByThreadId(
         messageThreadIds,
+        workspaceId,
       );
 
     const threadVisibilityByThreadId =
       await this.timelineMessagingService.getThreadVisibilityByThreadId(
         messageThreadIds,
         workspaceMemberId,
+        workspaceId,
       );
 
     return {
@@ -67,15 +69,10 @@ export class GetMessagesService {
   async getMessagesFromCompanyId(
     workspaceMemberId: string,
     companyId: string,
+    workspaceId: string,
     page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineThreadsWithTotalDTO> {
-    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
-
-    if (!workspaceId) {
-      throw new Error('Workspace not found');
-    }
-
     const personRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
         workspaceId,
@@ -102,6 +99,7 @@ export class GetMessagesService {
     const messageThreads = await this.getMessagesFromPersonIds(
       workspaceMemberId,
       personIds,
+      workspaceId,
       page,
       pageSize,
     );
@@ -112,15 +110,10 @@ export class GetMessagesService {
   async getMessagesFromOpportunityId(
     workspaceMemberId: string,
     opportunityId: string,
+    workspaceId: string,
     page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineThreadsWithTotalDTO> {
-    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
-
-    if (!workspaceId) {
-      throw new Error('Workspace not found');
-    }
-
     const opportunityRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<OpportunityWorkspaceEntity>(
         workspaceId,
@@ -146,6 +139,7 @@ export class GetMessagesService {
     const messageThreads = await this.getMessagesFromCompanyId(
       workspaceMemberId,
       opportunity.companyId,
+      workspaceId,
       page,
       pageSize,
     );

@@ -2,7 +2,6 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
@@ -57,10 +56,6 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
     }),
   };
 
-  const mockScopedWorkspaceContextFactory = {
-    create: jest.fn().mockReturnValue({ workspaceId: 'test-workspace-id' }),
-  };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -68,10 +63,6 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
         {
           provide: TwentyORMGlobalManager,
           useValue: mockTwentyORMGlobalManager,
-        },
-        {
-          provide: ScopedWorkspaceContextFactory,
-          useValue: mockScopedWorkspaceContextFactory,
         },
       ],
     }).compile();
@@ -100,6 +91,7 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
 
     const result = await service.applyMessagesVisibilityRestrictions(
       messages,
+      'test-workspace-id',
       'user-id',
     );
 
@@ -136,6 +128,7 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
 
     const result = await service.applyMessagesVisibilityRestrictions(
       messages,
+      'test-workspace-id',
       'user-id',
     );
 
@@ -170,6 +163,7 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
 
     const result = await service.applyMessagesVisibilityRestrictions(
       messages,
+      'test-workspace-id',
       'user-id',
     );
 
@@ -205,6 +199,7 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
 
     const result = await service.applyMessagesVisibilityRestrictions(
       messages,
+      'test-workspace-id',
       'user-id',
     );
 
@@ -239,6 +234,7 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
 
     const result = await service.applyMessagesVisibilityRestrictions(
       messages,
+      'test-workspace-id',
       'user-id',
     );
 
@@ -286,6 +282,7 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
 
     const result = await service.applyMessagesVisibilityRestrictions(
       messages,
+      'test-workspace-id',
       'user-id',
     );
 
@@ -344,6 +341,7 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
 
     const result = await service.applyMessagesVisibilityRestrictions(
       messages,
+      'test-workspace-id',
       undefined,
     );
 

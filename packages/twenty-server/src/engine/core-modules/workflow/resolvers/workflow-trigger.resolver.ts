@@ -42,21 +42,25 @@ export class WorkflowTriggerResolver {
 
   @Mutation(() => Boolean)
   async activateWorkflowVersion(
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowVersionId', { type: () => UUIDScalarType })
     workflowVersionId: string,
   ) {
     return this.workflowTriggerWorkspaceService.activateWorkflowVersion(
       workflowVersionId,
+      workspace.id,
     );
   }
 
   @Mutation(() => Boolean)
   async deactivateWorkflowVersion(
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowVersionId', { type: () => UUIDScalarType })
     workflowVersionId: string,
   ) {
     return this.workflowTriggerWorkspaceService.deactivateWorkflowVersion(
       workflowVersionId,
+      workspace.id,
     );
   }
 
@@ -91,14 +95,19 @@ export class WorkflowTriggerResolver {
         },
         workspaceMemberId: workspaceMember.id,
       }),
+      workspaceId: workspace.id,
     });
   }
 
   @Mutation(() => WorkflowRunDTO)
   async stopWorkflowRun(
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowRunId', { type: () => UUIDScalarType })
     workflowRunId: string,
   ) {
-    return this.workflowTriggerWorkspaceService.stopWorkflowRun(workflowRunId);
+    return this.workflowTriggerWorkspaceService.stopWorkflowRun(
+      workflowRunId,
+      workspace.id,
+    );
   }
 }

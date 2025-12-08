@@ -155,6 +155,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
       if (parameters.activate) {
         await deps.workflowTriggerService.activateWorkflowVersion(
           workflowVersionId,
+          context.workspaceId,
         );
 
         await updateWorkflowStatus({

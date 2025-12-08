@@ -5,7 +5,6 @@ import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
@@ -17,19 +16,13 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 export class ApplyCalendarEventsVisibilityRestrictionsService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   public async applyCalendarEventsVisibilityRestrictions(
     calendarEvents: CalendarEventWorkspaceEntity[],
+    workspaceId: string,
     userId?: string, // undefined when request is made with api key
   ) {
-    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
-
-    if (!workspaceId) {
-      throw new Error('Workspace not found');
-    }
-
     const calendarChannelEventAssociationRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarChannelEventAssociationWorkspaceEntity>(
         workspaceId,

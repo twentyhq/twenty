@@ -2,7 +2,6 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
@@ -67,10 +66,6 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
     }),
   };
 
-  const mockScopedWorkspaceContextFactory = {
-    create: jest.fn().mockReturnValue({ workspaceId: 'test-workspace-id' }),
-  };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -78,10 +73,6 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
         {
           provide: TwentyORMGlobalManager,
           useValue: mockTwentyORMGlobalManager,
-        },
-        {
-          provide: ScopedWorkspaceContextFactory,
-          useValue: mockScopedWorkspaceContextFactory,
         },
       ],
     }).compile();
@@ -115,6 +106,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
       calendarEvents,
+      'test-workspace-id',
       'user-id',
     );
 
@@ -152,6 +144,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
       calendarEvents,
+      'test-workspace-id',
       'user-id',
     );
 
@@ -187,6 +180,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
       calendarEvents,
+      'test-workspace-id',
       'user-id',
     );
 
@@ -222,6 +216,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
       calendarEvents,
+      'test-workspace-id',
       'user-id',
     );
 
@@ -269,6 +264,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
       calendarEvents,
+      'test-workspace-id',
       'user-id',
     );
 
@@ -324,6 +320,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(
       calendarEvents,
+      'test-workspace-id',
       undefined,
     );
 

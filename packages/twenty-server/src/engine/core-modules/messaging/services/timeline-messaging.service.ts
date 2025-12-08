@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
 
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -13,11 +12,11 @@ import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/
 export class TimelineMessagingService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   public async getAndCountMessageThreads(
     personIds: string[],
+    workspaceId: string,
     offset: number,
     pageSize: number,
   ): Promise<{
@@ -31,12 +30,6 @@ export class TimelineMessagingService {
     >[];
     totalNumberOfThreads: number;
   }> {
-    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
-
-    if (!workspaceId) {
-      throw new Error('Workspace not found');
-    }
-
     const messageThreadRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageThreadWorkspaceEntity>(
         workspaceId,
@@ -98,15 +91,10 @@ export class TimelineMessagingService {
 
   public async getThreadParticipantsByThreadId(
     messageThreadIds: string[],
+    workspaceId: string,
   ): Promise<{
     [key: string]: MessageParticipantWorkspaceEntity[];
   }> {
-    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
-
-    if (!workspaceId) {
-      throw new Error('Workspace not found');
-    }
-
     const messageParticipantRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageParticipantWorkspaceEntity>(
         workspaceId,
@@ -194,15 +182,10 @@ export class TimelineMessagingService {
   public async getThreadVisibilityByThreadId(
     messageThreadIds: string[],
     workspaceMemberId: string,
+    workspaceId: string,
   ): Promise<{
     [key: string]: MessageChannelVisibility;
   }> {
-    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
-
-    if (!workspaceId) {
-      throw new Error('Workspace not found');
-    }
-
     const messageThreadRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageThreadWorkspaceEntity>(
         workspaceId,

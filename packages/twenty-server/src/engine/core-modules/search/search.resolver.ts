@@ -67,6 +67,7 @@ export class SearchResolver {
         includedObjectNameSingulars,
         excludedObjectNameSingulars,
         after,
+        workspaceId: workspace.id,
       });
 
     return this.searchService.computeSearchObjectResults({

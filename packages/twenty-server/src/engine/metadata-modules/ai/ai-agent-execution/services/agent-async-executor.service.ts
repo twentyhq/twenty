@@ -87,7 +87,7 @@ export class AgentAsyncExecutorService {
 
     if (allRoleIds.length === 0) {
       // No role context - return basic action tools only
-      return this.toolAdapterService.getTools();
+      return this.toolAdapterService.getTools(workspaceId);
     }
 
     const effectiveRoleContext: RolePermissionConfig = {
@@ -103,8 +103,8 @@ export class AgentAsyncExecutorService {
 
     // Get action tools (send email, http request, etc.)
     const actionTools = await this.toolAdapterService.getTools(
-      effectiveRoleContext,
       workspaceId,
+      effectiveRoleContext,
     );
 
     return {

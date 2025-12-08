@@ -233,6 +233,7 @@ export class MessagingMessageListFetchService {
         await this.messagingCursorService.updateCursor(
           messageChannelWithFreshTokens,
           nextSyncCursor,
+          workspaceId,
           folderId,
         );
       }
@@ -241,6 +242,7 @@ export class MessagingMessageListFetchService {
         ? await this.computeFullSyncMessageChannelMessageAssociationsToDelete(
             freshMessageChannel,
             messageExternalIds,
+            workspaceId,
           )
         : [];
 
@@ -379,6 +381,7 @@ export class MessagingMessageListFetchService {
   private async computeFullSyncMessageChannelMessageAssociationsToDelete(
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     messageExternalIds: string[],
+    workspaceId: string,
   ) {
     const messageChannelMessageAssociationRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelMessageAssociationWorkspaceEntity>(

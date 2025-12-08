@@ -19,6 +19,7 @@ export class ToolExecutorWorkflowAction implements WorkflowAction {
     currentStepId,
     steps,
     context,
+    runInfo,
   }: WorkflowActionInput): Promise<WorkflowActionOutput> {
     const step = steps.find((step) => step.id === currentStepId);
 
@@ -44,7 +45,7 @@ export class ToolExecutorWorkflowAction implements WorkflowAction {
 
     const toolInput = resolveInput(step.settings.input, context) as ToolInput;
 
-    const toolOutput = await tool.execute(toolInput);
+    const toolOutput = await tool.execute(toolInput, runInfo.workspaceId);
 
     return {
       result: toolOutput.result as object,

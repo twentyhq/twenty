@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { GoogleEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/google/services/google-email-alias-manager.service';
 import { MicrosoftEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/microsoft/services/microsoft-email-alias-manager.service';
@@ -15,11 +14,11 @@ export class EmailAliasManagerService {
     private readonly googleEmailAliasManagerService: GoogleEmailAliasManagerService,
     private readonly microsoftEmailAliasManagerService: MicrosoftEmailAliasManagerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   public async refreshHandleAliases(
     connectedAccount: ConnectedAccountWorkspaceEntity,
+    workspaceId: string,
   ) {
     let handleAliases: string[];
 
@@ -45,11 +44,6 @@ export class EmailAliasManagerService {
           connectedAccount.provider,
           `Email alias manager for provider ${connectedAccount.provider} is not implemented`,
         );
-    }
-
-    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
-    if (!workspaceId) {
-      throw new Error('Workspace not found');
     }
 
     const connectedAccountRepository =

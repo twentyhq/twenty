@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   type AutomatedTriggerType,
@@ -12,22 +11,19 @@ import { type AutomatedTriggerSettings } from 'src/modules/workflow/workflow-tri
 export class AutomatedTriggerWorkspaceService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   async addAutomatedTrigger({
     workflowId,
     type,
     settings,
+    workspaceId,
   }: {
     workflowId: string;
     type: AutomatedTriggerType;
     settings: AutomatedTriggerSettings;
+    workspaceId: string;
   }) {
-    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
-    if (!workspaceId) {
-      throw new Error('Workspace not found');
-    }
 
     const workflowAutomatedTriggerRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowAutomatedTriggerWorkspaceEntity>(
@@ -42,11 +38,13 @@ export class AutomatedTriggerWorkspaceService {
     });
   }
 
-  async deleteAutomatedTrigger({ workflowId }: { workflowId: string }) {
-    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
-    if (!workspaceId) {
-      throw new Error('Workspace not found');
-    }
+  async deleteAutomatedTrigger({
+    workflowId,
+    workspaceId,
+  }: {
+    workflowId: string;
+    workspaceId: string;
+  }) {
 
     const workflowAutomatedTriggerRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowAutomatedTriggerWorkspaceEntity>(

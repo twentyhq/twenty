@@ -31,8 +31,14 @@ export class MessageFindManyPostQueryHook
       throw new ForbiddenError('User is required');
     }
 
+    const workspace = authContext.workspace;
+    if (!workspace) {
+      throw new ForbiddenError('Workspace is required');
+    }
+
     await this.applyMessagesVisibilityRestrictionsService.applyMessagesVisibilityRestrictions(
       payload,
+      workspace.id,
       user?.id,
     );
   }

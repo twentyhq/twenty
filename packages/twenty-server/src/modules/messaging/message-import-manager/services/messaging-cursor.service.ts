@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
@@ -9,18 +8,14 @@ import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/
 export class MessagingCursorService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   public async updateCursor(
     messageChannel: MessageChannelWorkspaceEntity,
     nextSyncCursor: string,
+    workspaceId: string,
     folderId?: string,
   ) {
-    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
-    if (!workspaceId) {
-      throw new Error('Workspace not found');
-    }
 
     const messageChannelRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(

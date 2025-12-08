@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
 
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { MatchParticipantService } from 'src/modules/match-participant/match-participant.service';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -14,17 +13,13 @@ export class MessagingMessageParticipantService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly matchParticipantService: MatchParticipantService<MessageParticipantWorkspaceEntity>,
-    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   public async saveMessageParticipants(
     participants: ParticipantWithMessageId[],
+    workspaceId: string,
     transactionManager?: WorkspaceEntityManager,
   ): Promise<void> {
-    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
-    if (!workspaceId) {
-      throw new Error('Workspace not found');
-    }
 
     const messageParticipantRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageParticipantWorkspaceEntity>(
@@ -74,6 +69,7 @@ export class MessagingMessageParticipantService {
       objectMetadataName: 'messageParticipant',
       transactionManager,
       matchWith: 'workspaceMemberAndPerson',
+      workspaceId,
     });
   }
 }

@@ -24,7 +24,6 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
@@ -168,12 +167,6 @@ export const createAgentToolTestModule =
             description: 'Search for articles and documentation',
             inputSchema: {},
             execute: jest.fn(),
-          },
-        },
-        {
-          provide: ScopedWorkspaceContextFactory,
-          useValue: {
-            create: jest.fn(() => ({ workspaceId: 'test-workspace-id' })),
           },
         },
         {

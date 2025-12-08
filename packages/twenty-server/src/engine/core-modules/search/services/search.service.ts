@@ -31,7 +31,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
@@ -48,7 +47,6 @@ export class SearchService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly fileService: FileService,
-    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   async getAllRecordsWithObjectMetadataItems({
@@ -60,9 +58,11 @@ export class SearchService {
     limit,
     filter,
     after,
+    workspaceId,
   }: {
     flatObjectMetadatas: FlatObjectMetadata[];
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    workspaceId: string;
   } & SearchArgs) {
     const filteredObjectMetadataItems = this.filterObjectMetadataItems({
       flatObjectMetadatas,
@@ -79,11 +79,6 @@ export class SearchService {
     );
 
     for (const objectMetadataItemChunk of filteredObjectMetadataItemsChunks) {
-      const { workspaceId } = this.scopedWorkspaceContextFactory.create();
-      if (!workspaceId) {
-        throw new Error('Workspace not found');
-      }
-
       const recordsWithObjectMetadataItems = await Promise.all(
         objectMetadataItemChunk.map(async (flatObjectMetadata) => {
           const repository =

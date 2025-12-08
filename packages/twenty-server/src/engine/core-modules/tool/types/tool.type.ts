@@ -7,6 +7,6 @@ import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions
 export type Tool = {
   description: string;
   inputSchema: FlexibleSchema<unknown>;
-  execute(input: ToolInput): Promise<ToolOutput>;
+  execute(input: ToolInput, workspaceId: string): Promise<ToolOutput>;
   flag?: PermissionFlagType;
 };

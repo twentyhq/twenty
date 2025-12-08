@@ -101,6 +101,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
         await this.messageParticipantService.saveMessageParticipants(
           participantsWithMessageId,
+          workspaceId,
           transactionManager,
         );
 

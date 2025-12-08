@@ -43,7 +43,7 @@ export class AgentToolGeneratorService {
         return this.wrapToolsWithErrorContext(this.getHelperAgentTools());
       }
 
-      const actionTools = await this.toolAdapterService.getTools();
+      const actionTools = await this.toolAdapterService.getTools(workspaceId);
 
       tools = { ...actionTools };
 
@@ -64,8 +64,8 @@ export class AgentToolGeneratorService {
       tools = { ...tools, ...databaseTools };
 
       const roleActionTools = await this.toolAdapterService.getTools(
-        { intersectionOf: roleIds },
         workspaceId,
+        { intersectionOf: roleIds },
       );
 
       tools = { ...tools, ...roleActionTools };
