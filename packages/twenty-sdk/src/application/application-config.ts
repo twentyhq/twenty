@@ -1,1 +1,1 @@
-export { type Application as ApplicationConfig } from 'twenty-shared/application';
+export type { Application as ApplicationConfig } from 'twenty-shared/application';

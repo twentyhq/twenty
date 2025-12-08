@@ -17,7 +17,7 @@ type FieldPermission = {
   canUpdateFieldValue?: boolean;
 };
 
-type Role = {
+type Role = SyncableEntityOptions & {
   label: string;
   description?: string;
   icon?: string;
@@ -31,7 +31,6 @@ type Role = {
   canBeAssignedToAgents?: boolean;
   canBeAssignedToApiKeys?: boolean;
   canBeAssignedToApplications?: boolean;
-  universalIdentifier: string;
   objectPermissions?: ObjectPermission[];
   fieldPermissions?: FieldPermission[];
   permissionFlags?: PermissionFlagType[];
