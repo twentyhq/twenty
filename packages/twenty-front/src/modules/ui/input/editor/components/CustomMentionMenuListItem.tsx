@@ -1,5 +1,6 @@
 import { type MouseEvent } from 'react';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { MENTION_MENU_LIST_ID } from '@/ui/input/constants/MentionMenuListId';
@@ -33,6 +34,8 @@ export const CustomMentionMenuListItem = ({
   // Get the search record from the store (same pattern as SingleRecordPickerMenuItem)
   const searchRecord = useRecoilValue(searchRecordStoreFamilyState(recordId));
 
+  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
+
   const handleClick = (event?: MouseEvent) => {
     event?.preventDefault();
     event?.stopPropagation();
@@ -49,7 +52,9 @@ export const CustomMentionMenuListItem = ({
       <MenuItemSuggestion
         selected={isSelectedItem}
         onClick={handleClick}
-        text={searchRecord.label}
+        text={`${searchRecord.label}`}
+        contextualText={objectMetadataItem.labelSingular}
+        contextualTextPosition="left"
         LeftIcon={() => (
           <Avatar
             placeholder={searchRecord.label}
