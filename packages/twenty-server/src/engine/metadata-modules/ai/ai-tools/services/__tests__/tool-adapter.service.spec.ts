@@ -1,13 +1,13 @@
 import { Test } from '@nestjs/testing';
 
 import { jsonSchema } from 'ai';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { ToolAdapterService } from 'src/engine/metadata-modules/ai/ai-tools/services/tool-adapter.service';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
+import { type PermissionFlagType } from 'twenty-shared/constants';
 
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 

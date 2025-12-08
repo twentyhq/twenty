@@ -284,7 +284,7 @@ export const GraphWidgetBarChart = ({
       </GraphWidgetChartContainer>
 
       <GraphBarChartTooltip
-        containerId={id}
+        containerRef={containerRef}
         enrichedKeys={enrichedKeys}
         formatOptions={formatOptions}
         enableGroupTooltip={groupMode === 'stacked'}
