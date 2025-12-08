@@ -1,6 +1,6 @@
 import { type Person } from '@/people/types/Person';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { MessageParticipantRole } from 'twenty-shared/types';
+import { type MessageParticipantRole } from 'twenty-shared/types';
 
 export type EmailThreadMessageParticipant = {
   id: string;

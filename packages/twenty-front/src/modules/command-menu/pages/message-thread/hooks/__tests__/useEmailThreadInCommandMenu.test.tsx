@@ -314,7 +314,10 @@ const mocks = [
         }
       `,
       variables: {
-        filter: { messageId: { in: ['1', '2'] }, role: { eq: MessageParticipantRole.FROM } },
+        filter: {
+          messageId: { in: ['1', '2'] },
+          role: { eq: MessageParticipantRole.FROM },
+        },
         orderBy: undefined,
         lastCursor: undefined,
         limit: QUERY_DEFAULT_LIMIT_RECORDS,

@@ -2,6 +2,7 @@ import { Scope } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { And, Any, ILike, In, Not, Or } from 'typeorm';
+import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { type ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -13,7 +14,6 @@ import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-ob
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
-import { MessageParticipantRole } from 'twenty-shared/types';
 
 export type BlocklistItemDeleteMessagesJobData = WorkspaceEventBatch<
   ObjectRecordCreateEvent<BlocklistWorkspaceEntity>

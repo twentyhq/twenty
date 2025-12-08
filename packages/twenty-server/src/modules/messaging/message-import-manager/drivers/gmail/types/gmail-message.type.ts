@@ -1,4 +1,4 @@
-import { MessageParticipantRole } from "twenty-shared/types";
+import { type MessageParticipantRole } from 'twenty-shared/types';
 
 export type GmailMessage = {
   historyId: string;

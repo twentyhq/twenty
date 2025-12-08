@@ -66,8 +66,9 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
           return messageId
             ? message.participants.map((participant: Participant) => {
                 const fromHandle =
-                  message.participants.find((p) => p.role === MessageParticipantRole.FROM)?.handle ||
-                  '';
+                  message.participants.find(
+                    (p) => p.role === MessageParticipantRole.FROM,
+                  )?.handle || '';
 
                 const isMessageSentByConnectedAccount =
                   handleAliases.includes(fromHandle) ||
