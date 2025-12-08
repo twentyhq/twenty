@@ -7,12 +7,15 @@ import { recordIndexViewTypeState } from '@/object-record/record-index/states/re
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
-import useViewsSideEffectsOnViewGroups from '@/views/hooks/useViewsSideEffectsOnViewGroups';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
+import { type View } from '@/views/types/View';
+import { type ViewGroup } from '@/views/types/ViewGroup';
 import { type ViewType } from '@/views/types/ViewType';
 import { convertUpdateViewInputToCore } from '@/views/utils/convertUpdateViewInputToCore';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 import { useUpdateCoreViewMutation } from '~/generated-metadata/graphql';
 
 export const useUpdateCurrentView = () => {
@@ -27,8 +30,59 @@ export const useUpdateCurrentView = () => {
   const [updateOneCoreView] = useUpdateCoreViewMutation();
   const { refreshCoreViewsByObjectMetadataId } =
     useRefreshCoreViewsByObjectMetadataId();
-  const { getViewGroupsToCreateAtViewUpdate } =
-    useViewsSideEffectsOnViewGroups();
+
+  const getViewGroupsToCreateAtViewUpdate = useMemo(() => {
+    return ({
+      existingView,
+      newMainGroupByFieldMetadataId,
+    }: {
+      existingView: View;
+      newMainGroupByFieldMetadataId?: string | null;
+    }) => {
+      if (newMainGroupByFieldMetadataId === undefined) {
+        return {};
+      }
+
+      let viewGroupsToCreate: ViewGroup[] = [];
+
+      if (
+        newMainGroupByFieldMetadataId !==
+        existingView.mainGroupByFieldMetadataId
+      ) {
+        if (newMainGroupByFieldMetadataId !== null) {
+          viewGroupsToCreate =
+            objectMetadataItem.fields
+              ?.find((field) => field.id === newMainGroupByFieldMetadataId)
+              ?.options?.map(
+                (option, index) =>
+                  ({
+                    id: v4(),
+                    __typename: 'ViewGroup',
+                    fieldValue: option.value,
+                    isVisible: true,
+                    position: index,
+                  }) satisfies ViewGroup,
+              ) ?? [];
+
+          if (
+            objectMetadataItem.fields.find(
+              (field) => field.id === newMainGroupByFieldMetadataId,
+            )?.isNullable === true
+          ) {
+            viewGroupsToCreate.push({
+              __typename: 'ViewGroup',
+              id: v4(),
+              fieldValue: '',
+              position: viewGroupsToCreate.length,
+              isVisible: true,
+            } satisfies ViewGroup);
+          }
+        }
+      }
+
+      return { viewGroupsToCreate };
+    };
+  }, [objectMetadataItem.fields]);
 
   const updateCurrentView = useRecoilCallback(
     ({ snapshot }) =>
@@ -70,7 +124,6 @@ export const useUpdateCurrentView = () => {
           ) {
             const { viewGroupsToCreate } = getViewGroupsToCreateAtViewUpdate({
               existingView: currentView,
-              objectMetadataItemId: currentView.objectMetadataId,
               newMainGroupByFieldMetadataId: input.mainGroupByFieldMetadataId,
             });
 

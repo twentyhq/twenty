@@ -1,6 +1,6 @@
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { switchesToKanbanViewTypeComponentState } from '@/object-record/record-board/states/switchesToKanbanViewTypeComponentState';
+import { isSwitchingToKanbanViewTypeComponentState } from '@/object-record/record-board/states/isSwitchingToKanbanViewTypeComponentState';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
@@ -21,9 +21,8 @@ import { ViewCalendarLayout } from '~/generated/graphql';
 export const useSetViewTypeFromLayoutOptionsMenu = () => {
   const { updateCurrentView } = useUpdateCurrentView();
   const setRecordIndexViewType = useSetRecoilState(recordIndexViewTypeState);
-  const switchesToKanbanViewTypeCallbackState = useRecoilComponentCallbackState(
-    switchesToKanbanViewTypeComponentState,
-  );
+  const isSwitchingToKanbanViewTypeCallbackState =
+    useRecoilComponentCallbackState(isSwitchingToKanbanViewTypeComponentState);
   const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
@@ -65,7 +64,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
         switch (viewType) {
           case ViewType.Kanban: {
-            set(switchesToKanbanViewTypeCallbackState, true);
+            set(isSwitchingToKanbanViewTypeCallbackState, true);
             if (availableFieldsForKanban.length === 0) {
               throw new Error('No fields for kanban - should not happen');
             }
@@ -160,12 +159,13 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
         }
       },
     [
+      isSwitchingToKanbanViewTypeCallbackState,
       availableFieldsForKanban,
       setRecordIndexViewType,
       updateCurrentView,
-      objectMetadataItem,
       availableFieldsForCalendar,
       loadRecordIndexStates,
+      objectMetadataItem,
     ],
   );
 

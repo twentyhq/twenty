@@ -1,6 +1,5 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useTriggerViewGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewGroupOptimisticEffect';
-import { type View } from '@/views/types/View';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,7 +12,7 @@ const useViewsSideEffectsOnViewGroups = () => {
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const triggerViewGroupSideEffectAtViewCreation = ({
+  const triggerViewGroupOptimisticEffectAtViewCreation = ({
     newViewId,
     mainGroupByFieldMetadataId,
     objectMetadataItemId,
@@ -80,70 +79,9 @@ const useViewsSideEffectsOnViewGroups = () => {
     return { viewGroupsToCreate };
   };
 
-  const getViewGroupsToCreateAtViewUpdate = ({
-    existingView,
-    newMainGroupByFieldMetadataId,
-    objectMetadataItemId,
-  }: {
-    existingView: View;
-    newMainGroupByFieldMetadataId?: string | null;
-    objectMetadataItemId: string;
-  }) => {
-    if (newMainGroupByFieldMetadataId === undefined) {
-      return {};
-    }
-
-    const objectMetadataItem = objectMetadataItems.find(
-      (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,
-    );
-
-    if (!isDefined(objectMetadataItem)) {
-      throw new Error('Object metadata item not found');
-    }
-
-    let viewGroupsToCreate: ViewGroup[] = [];
-
-    if (
-      newMainGroupByFieldMetadataId !== existingView.mainGroupByFieldMetadataId
-    ) {
-      if (newMainGroupByFieldMetadataId !== null) {
-        viewGroupsToCreate =
-          objectMetadataItem.fields
-            ?.find((field) => field.id === newMainGroupByFieldMetadataId)
-            ?.options?.map(
-              (option, index) =>
-                ({
-                  id: v4(),
-                  __typename: 'ViewGroup',
-                  fieldValue: option.value,
-                  isVisible: true,
-                  position: index,
-                }) satisfies ViewGroup,
-            ) ?? [];
-
-        if (
-          objectMetadataItem.fields.find(
-            (field) => field.id === newMainGroupByFieldMetadataId,
-          )?.isNullable === true
-        ) {
-          viewGroupsToCreate.push({
-            __typename: 'ViewGroup',
-            id: v4(),
-            fieldValue: '',
-            position: viewGroupsToCreate.length,
-            isVisible: true,
-          } satisfies ViewGroup);
-        }
-      }
-    }
-
-    return { viewGroupsToCreate };
-  };
-
   return {
-    triggerViewGroupSideEffectAtViewCreation,
-    getViewGroupsToCreateAtViewUpdate,
+    triggerViewGroupOptimisticEffectAtViewCreation,
   };
 };
 
-export default useViewsSideEffectsOnViewGroups;
+export { useViewsSideEffectsOnViewGroups };

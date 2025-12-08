@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import useViewsSideEffectsOnViewGroups from '@/views/hooks/useViewsSideEffectsOnViewGroups';
+import { useViewsSideEffectsOnViewGroups } from '@/views/hooks/useViewsSideEffectsOnViewGroups';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,7 +22,7 @@ export const usePersistView = () => {
   const [createCoreViewMutation] = useCreateCoreViewMutation();
   const [updateCoreViewMutation] = useUpdateCoreViewMutation();
   const [deleteCoreViewMutation] = useDeleteCoreViewMutation();
-  const { triggerViewGroupSideEffectAtViewCreation } =
+  const { triggerViewGroupOptimisticEffectAtViewCreation } =
     useViewsSideEffectsOnViewGroups();
 
   const { handleMetadataError } = useMetadataErrorHandler();
@@ -38,7 +38,7 @@ export const usePersistView = () => {
       try {
         const newViewId = variables.input.id ?? v4();
         if (variables.input.type === ViewType.KANBAN) {
-          triggerViewGroupSideEffectAtViewCreation({
+          triggerViewGroupOptimisticEffectAtViewCreation({
             newViewId,
             objectMetadataItemId: objectMetadataItemId,
             mainGroupByFieldMetadataId:
@@ -85,7 +85,7 @@ export const usePersistView = () => {
     },
     [
       createCoreViewMutation,
-      triggerViewGroupSideEffectAtViewCreation,
+      triggerViewGroupOptimisticEffectAtViewCreation,
       handleMetadataError,
       enqueueErrorSnackBar,
     ],
