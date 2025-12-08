@@ -3,8 +3,6 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
-import { RecordFieldListCellEditModePortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellEditModePortal';
-import { RecordFieldListCellHoveredPortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellHoveredPortal';
 import { RecordDetailSectionContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailSectionContainer';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
@@ -16,18 +14,16 @@ import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/pr
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { useTemporaryFieldsConfiguration } from '@/page-layout/hooks/__temporary__/useTemporaryFieldsConfiguration';
-import { useFieldsWidgetFieldMetadataItems } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetFieldMetadataItems';
-import { filterAndOrderFieldsFromConfiguration } from '@/page-layout/widgets/fields/utils/filterAndOrderFieldsFromConfiguration';
+import { FieldsWidgetCellEditModePortal } from '@/page-layout/widgets/fields/components/FieldsWidgetCellEditModePortal';
+import { FieldsWidgetCellHoveredPortal } from '@/page-layout/widgets/fields/components/FieldsWidgetCellHoveredPortal';
+import { useFieldsWidgetSectionsWithIndices } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetSectionsWithIndices';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -48,10 +44,9 @@ type FieldsWidgetProps = {
   widget: PageLayoutWidget;
 };
 
-export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
+export const FieldsWidget = ({ widget: _widget }: FieldsWidgetProps) => {
   const targetRecord = useTargetRecord();
   const { isInRightDrawer } = useLayoutRenderingContext();
-  const isMobile = useIsMobile();
 
   const instanceId = `fields-widget-${targetRecord.id}-${isInRightDrawer ? 'right-drawer' : ''}`;
 
@@ -80,21 +75,11 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
     instanceId,
   );
 
-  const fieldMetadataItems = useFieldsWidgetFieldMetadataItems({
-    objectNameSingular: targetRecord.targetObjectNameSingular,
-  });
-
-  const temporaryConfiguration = useTemporaryFieldsConfiguration(
+  const { sectionsWithFieldIndices } = useFieldsWidgetSectionsWithIndices(
     targetRecord.targetObjectNameSingular,
   );
 
-  let configuration = temporaryConfiguration;
-
-  if (
-    !isDefined(configuration) ||
-    !isDefined(configuration.sections) ||
-    configuration.sections.length === 0
-  ) {
+  if (sectionsWithFieldIndices.length === 0) {
     return (
       <RightDrawerProvider value={{ isInRightDrawer }}>
         <StyledContainer>
@@ -116,33 +101,6 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
       </RightDrawerProvider>
     );
   }
-
-  // Get visible sections with filtered and ordered fields
-  const context = {
-    device: isMobile ? ('MOBILE' as const) : ('DESKTOP' as const),
-  };
-
-  const sectionsWithFields = filterAndOrderFieldsFromConfiguration({
-    configuration,
-    availableFieldMetadataItems: fieldMetadataItems,
-    context,
-  });
-
-  const sectionsWithFieldIndices = sectionsWithFields.map(
-    (section, sectionIndex) => {
-      const startIndex = sectionsWithFields
-        .slice(0, sectionIndex)
-        .reduce((sum, s) => sum + s.fields.length, 0);
-
-      return {
-        ...section,
-        fields: section.fields.map((field, fieldIndex) => ({
-          field,
-          globalIndex: startIndex + fieldIndex,
-        })),
-      };
-    },
-  );
 
   return (
     <StyledContainer>
@@ -223,11 +181,11 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
           </RecordDetailSectionContainer>
         ))}
 
-        <RecordFieldListCellHoveredPortal
+        <FieldsWidgetCellHoveredPortal
           objectMetadataItem={objectMetadataItem}
           recordId={targetRecord.id}
         />
-        <RecordFieldListCellEditModePortal
+        <FieldsWidgetCellEditModePortal
           objectMetadataItem={objectMetadataItem}
           recordId={targetRecord.id}
         />
