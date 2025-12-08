@@ -107,7 +107,7 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
       >((relatedFlatFieldMetadataFrom) => {
         const relatedMorphPropertiesToUpdateTo =
           FLAT_FIELD_METADATA_MORPH_RELATION_EDITABLE_PROPERTIES_ON_SIBLING_MORPH_RELATION_UPDATE_CONSTANT[
-            isStandardField ? 'standard' : 'custom'
+            isStandardField && !isSystemBuild ? 'standard' : 'custom'
           ];
         const relatedFlatFieldMetadataTo = {
           ...mergeUpdateInExistingRecord({
