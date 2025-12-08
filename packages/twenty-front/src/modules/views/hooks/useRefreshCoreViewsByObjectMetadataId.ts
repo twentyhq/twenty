@@ -1,6 +1,7 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { coreViewsByObjectMetadataIdFamilySelector } from '@/views/states/selectors/coreViewsByObjectMetadataIdFamilySelector';
@@ -131,6 +132,22 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
                 ),
               }),
               view.viewSorts,
+            );
+          }
+
+          if (
+            (coreView.shouldHideEmptyGroups ?? false) !==
+            (existingView.shouldHideEmptyGroups ?? false)
+          ) {
+            const view = convertCoreViewToView(coreView);
+            set(
+              recordIndexShouldHideEmptyRecordGroupsComponentState.atomFamily({
+                instanceId: getRecordIndexIdFromObjectNamePluralAndViewId(
+                  objectMetadataItem.namePlural,
+                  view.id,
+                ),
+              }),
+              view.shouldHideEmptyGroups ?? false,
             );
           }
         }
