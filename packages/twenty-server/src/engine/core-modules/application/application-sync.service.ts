@@ -5,6 +5,7 @@ import { parse } from 'path';
 import { isDefined } from 'twenty-shared/utils';
 import { Sources } from 'twenty-shared/types';
 import {
+  ApplicationManifest,
   FieldManifest,
   ObjectManifest,
   ServerlessFunctionManifest,
@@ -134,6 +135,58 @@ export class ApplicationSyncService {
 
     let serverlessFunctionLayerId = application.serverlessFunctionLayerId;
 
+    await this.syncApplicationRole({
+      applicationId: application.id,
+      manifest,
+      workspaceId,
+    });
+
+    if (manifest.serverlessFunctions.length > 0) {
+      if (!isDefined(serverlessFunctionLayerId)) {
+        serverlessFunctionLayerId = (
+          await this.serverlessFunctionLayerService.create(
+            {
+              packageJson,
+              yarnLock,
+            },
+            workspaceId,
+          )
+        ).id;
+      }
+
+      await this.serverlessFunctionLayerService.update(
+        serverlessFunctionLayerId,
+        {
+          packageJson,
+          yarnLock,
+        },
+      );
+    }
+
+    await this.applicationVariableService.upsertManyApplicationVariableEntities(
+      {
+        applicationVariables: manifest.application.applicationVariables,
+        applicationId: application.id,
+      },
+    );
+
+    return await this.applicationService.update(application.id, {
+      name,
+      description: manifest.application.description,
+      version: packageJson.version,
+      serverlessFunctionLayerId,
+    });
+  }
+
+  private async syncApplicationRole({
+    manifest,
+    applicationId,
+    workspaceId,
+  }: {
+    manifest: ApplicationManifest;
+    applicationId: string;
+    workspaceId: string;
+  }) {
     const applicationRole = manifest.application.applicationRole;
 
     if (
@@ -177,16 +230,16 @@ export class ApplicationSyncService {
             canBeAssignedToApplications: true,
           },
           workspaceId,
-          applicationId: application.id,
+          applicationId: applicationId,
         });
 
         await this.roleTargetService.create({
           createRoleTargetInput: {
             roleId: role.id,
-            applicationId: application.id,
+            applicationId: applicationId,
             universalIdentifier: role.universalIdentifier,
             targetMetadataForeignKey: 'targetApplicationId',
-            targetId: application.id,
+            targetId: applicationId,
           },
           workspaceId,
         });
@@ -231,42 +284,6 @@ export class ApplicationSyncService {
         });
       }
     }
-
-    if (manifest.serverlessFunctions.length > 0) {
-      if (!isDefined(serverlessFunctionLayerId)) {
-        serverlessFunctionLayerId = (
-          await this.serverlessFunctionLayerService.create(
-            {
-              packageJson,
-              yarnLock,
-            },
-            workspaceId,
-          )
-        ).id;
-      }
-
-      await this.serverlessFunctionLayerService.update(
-        serverlessFunctionLayerId,
-        {
-          packageJson,
-          yarnLock,
-        },
-      );
-    }
-
-    await this.applicationVariableService.upsertManyApplicationVariableEntities(
-      {
-        applicationVariables: manifest.application.applicationVariables,
-        applicationId: application.id,
-      },
-    );
-
-    return await this.applicationService.update(application.id, {
-      name,
-      description: manifest.application.description,
-      version: packageJson.version,
-      serverlessFunctionLayerId,
-    });
   }
 
   private async syncFields({
