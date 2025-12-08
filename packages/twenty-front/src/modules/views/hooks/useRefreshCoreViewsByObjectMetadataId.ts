@@ -1,7 +1,6 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { coreViewsByObjectMetadataIdFamilySelector } from '@/views/states/selectors/coreViewsByObjectMetadataIdFamilySelector';
@@ -17,7 +16,6 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useRefreshCoreViewsByObjectMetadataId = () => {
   const [findManyCoreViewsLazy] = useFindManyCoreViewsLazyQuery();
-  const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
   const refreshCoreViewsByObjectMetadataId = useRecoilCallback(
     ({ snapshot, set }) =>
