@@ -7,7 +7,7 @@ import { recordIndexViewTypeState } from '@/object-record/record-index/states/re
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
-import useViewGroupsSideEffect from '@/views/hooks/useViewGroupsSideEffect';
+import useViewsSideEffectsOnViewGroups from '@/views/hooks/useViewsSideEffectsOnViewGroups';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type ViewType } from '@/views/types/ViewType';
@@ -17,7 +17,6 @@ import { useUpdateCoreViewMutation } from '~/generated-metadata/graphql';
 
 export const useUpdateCurrentView = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
-  const { triggerViewGroupSideEffectAtViewUpdate } = useViewGroupsSideEffect();
   const currentViewIdCallbackState = useRecoilComponentCallbackState(
     contextStoreCurrentViewIdComponentState,
   );
@@ -28,6 +27,8 @@ export const useUpdateCurrentView = () => {
   const [updateOneCoreView] = useUpdateCoreViewMutation();
   const { refreshCoreViewsByObjectMetadataId } =
     useRefreshCoreViewsByObjectMetadataId();
+  const { getViewGroupsToCreateAtViewUpdate } =
+    useViewsSideEffectsOnViewGroups();
 
   const updateCurrentView = useRecoilCallback(
     ({ snapshot }) =>
@@ -67,12 +68,11 @@ export const useUpdateCurrentView = () => {
             currentView.mainGroupByFieldMetadataId !==
               input.mainGroupByFieldMetadataId
           ) {
-            const { viewGroupsToCreate } =
-              triggerViewGroupSideEffectAtViewUpdate({
-                existingView: currentView,
-                objectMetadataItemId: currentView.objectMetadataId,
-                newMainGroupByFieldMetadataId: input.mainGroupByFieldMetadataId,
-              });
+            const { viewGroupsToCreate } = getViewGroupsToCreateAtViewUpdate({
+              existingView: currentView,
+              objectMetadataItemId: currentView.objectMetadataId,
+              newMainGroupByFieldMetadataId: input.mainGroupByFieldMetadataId,
+            });
 
             loadRecordIndexStates(
               {
@@ -96,11 +96,11 @@ export const useUpdateCurrentView = () => {
     [
       canPersistChanges,
       currentViewIdCallbackState,
+      getViewGroupsToCreateAtViewUpdate,
       loadRecordIndexStates,
       objectMetadataItem,
       refreshCoreViewsByObjectMetadataId,
       setRecordIndexViewType,
-      triggerViewGroupSideEffectAtViewUpdate,
       updateOneCoreView,
     ],
   );

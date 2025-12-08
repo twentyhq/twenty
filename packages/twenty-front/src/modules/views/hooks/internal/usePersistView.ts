@@ -2,12 +2,12 @@ import { useCallback } from 'react';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import useViewGroupsSideEffect from '@/views/hooks/useViewGroupsSideEffect';
+import useViewsSideEffectsOnViewGroups from '@/views/hooks/useViewsSideEffectsOnViewGroups';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 import {
   type CreateCoreViewMutationVariables,
   type DeleteCoreViewMutationVariables,
@@ -23,7 +23,7 @@ export const usePersistView = () => {
   const [updateCoreViewMutation] = useUpdateCoreViewMutation();
   const [deleteCoreViewMutation] = useDeleteCoreViewMutation();
   const { triggerViewGroupSideEffectAtViewCreation } =
-    useViewGroupsSideEffect();
+    useViewsSideEffectsOnViewGroups();
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -31,13 +31,26 @@ export const usePersistView = () => {
   const createView = useCallback(
     async (
       variables: CreateCoreViewMutationVariables,
-      objectMetadataItem: ObjectMetadataItem,
+      objectMetadataItemId: string,
     ): Promise<
       MetadataRequestResult<Awaited<ReturnType<typeof createCoreViewMutation>>>
     > => {
       try {
+        const newViewId = variables.input.id ?? v4();
+        if (variables.input.type === ViewType.KANBAN) {
+          triggerViewGroupSideEffectAtViewCreation({
+            newViewId,
+            objectMetadataItemId: objectMetadataItemId,
+          });
+        }
+
         const result = await createCoreViewMutation({
-          variables,
+          variables: {
+            input: {
+              ...variables.input,
+              id: newViewId,
+            },
+          },
         });
 
         const newView = result.data?.createCoreView;
@@ -52,7 +65,7 @@ export const usePersistView = () => {
         if (newView.type === ViewType.KANBAN) {
           triggerViewGroupSideEffectAtViewCreation({
             newViewId: newView.id,
-            objectMetadataItemId: objectMetadataItem.id,
+            objectMetadataItemId: objectMetadataItemId,
           });
         }
 

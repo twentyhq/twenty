@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { type CoreViewGroup } from '~/generated/graphql';
 
-const useViewGroupsSideEffect = () => {
+const useViewsSideEffectsOnViewGroups = () => {
   const { triggerViewGroupOptimisticEffect } =
     useTriggerViewGroupOptimisticEffect();
 
@@ -80,7 +80,7 @@ const useViewGroupsSideEffect = () => {
     return { viewGroupsToCreate };
   };
 
-  const triggerViewGroupSideEffectAtViewUpdate = ({
+  const getViewGroupsToCreateAtViewUpdate = ({
     existingView,
     newMainGroupByFieldMetadataId,
     objectMetadataItemId,
@@ -104,71 +104,50 @@ const useViewGroupsSideEffect = () => {
     let viewGroupsToCreate: ViewGroup[] = [];
     let viewGroupsToDelete: ViewGroup[] = [];
 
-    if (newMainGroupByFieldMetadataId === null) {
+    if (
+      newMainGroupByFieldMetadataId !== undefined &&
+      newMainGroupByFieldMetadataId !== existingView.mainGroupByFieldMetadataId
+    ) {
       // TODO delete existing view groups
-      viewGroupsToDelete = existingView.viewGroups;
-    } else {
-      // else if mainGroupByFieldMetadataId has changed
-      // TODO delete existing view groups
-      viewGroupsToCreate =
-        objectMetadataItem.fields
-          ?.find((field) => field.id === newMainGroupByFieldMetadataId)
-          ?.options?.map(
-            (option, index) =>
-              ({
-                id: v4(),
-                __typename: 'ViewGroup',
-                fieldValue: option.value,
-                isVisible: true,
-                position: index,
-              }) satisfies ViewGroup,
-          ) ?? [];
 
-      if (
-        objectMetadataItem.fields.find(
-          (field) => field.id === newMainGroupByFieldMetadataId,
-        )?.isNullable === true
-      ) {
-        viewGroupsToCreate.push({
-          __typename: 'ViewGroup',
-          id: v4(),
-          fieldValue: '',
-          position: viewGroupsToCreate.length,
-          isVisible: true,
-        } satisfies ViewGroup);
+      if (isDefined(newMainGroupByFieldMetadataId)) {
+        viewGroupsToCreate =
+          objectMetadataItem.fields
+            ?.find((field) => field.id === newMainGroupByFieldMetadataId)
+            ?.options?.map(
+              (option, index) =>
+                ({
+                  id: v4(),
+                  __typename: 'ViewGroup',
+                  fieldValue: option.value,
+                  isVisible: true,
+                  position: index,
+                }) satisfies ViewGroup,
+            ) ?? [];
+
+        if (
+          objectMetadataItem.fields.find(
+            (field) => field.id === newMainGroupByFieldMetadataId,
+          )?.isNullable === true
+        ) {
+          viewGroupsToCreate.push({
+            __typename: 'ViewGroup',
+            id: v4(),
+            fieldValue: '',
+            position: viewGroupsToCreate.length,
+            isVisible: true,
+          } satisfies ViewGroup);
+        }
       }
     }
-
-    triggerViewGroupOptimisticEffect({
-      createdViewGroups: viewGroupsToCreate.map(
-        ({ __typename, ...viewGroup }) =>
-          ({
-            ...viewGroup,
-            viewId: existingView.id,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            deletedAt: null,
-          }) as Omit<CoreViewGroup, 'workspaceId'>,
-      ),
-      deletedViewGroups: viewGroupsToDelete.map(
-        ({ __typename, ...viewGroup }) =>
-          ({
-            ...viewGroup,
-            viewId: existingView.id,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            deletedAt: new Date().toISOString(),
-          }) as Omit<CoreViewGroup, 'workspaceId'>,
-      ),
-    });
 
     return { viewGroupsToCreate };
   };
 
   return {
     triggerViewGroupSideEffectAtViewCreation,
-    triggerViewGroupSideEffectAtViewUpdate,
+    getViewGroupsToCreateAtViewUpdate,
   };
 };
 
-export default useViewGroupsSideEffect;
+export default useViewsSideEffectsOnViewGroups;

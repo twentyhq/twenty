@@ -8,11 +8,7 @@ import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type DeleteCoreViewGroupMutationVariables,
-  type DestroyCoreViewGroupMutationVariables,
   type UpdateCoreViewGroupMutationVariables,
-  useDeleteCoreViewGroupMutation,
-  useDestroyCoreViewGroupMutation,
   useUpdateCoreViewGroupMutation,
 } from '~/generated/graphql';
 
@@ -21,8 +17,6 @@ export const usePersistViewGroupRecords = () => {
     useTriggerViewGroupOptimisticEffect();
 
   const [updateCoreViewGroupMutation] = useUpdateCoreViewGroupMutation();
-  const [deleteCoreViewGroupMutation] = useDeleteCoreViewGroupMutation();
-  const [destroyCoreViewGroupMutation] = useDestroyCoreViewGroupMutation();
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -88,116 +82,7 @@ export const usePersistViewGroupRecords = () => {
     ],
   );
 
-  const deleteViewGroups = useCallback(
-    async (
-      deleteCoreViewGroupInputs: DeleteCoreViewGroupMutationVariables[],
-    ): Promise<
-      MetadataRequestResult<
-        Awaited<ReturnType<typeof deleteCoreViewGroupMutation>>[]
-      >
-    > => {
-      if (deleteCoreViewGroupInputs.length === 0) {
-        return {
-          status: 'successful',
-          response: [],
-        };
-      }
-
-      try {
-        const results = await Promise.all(
-          deleteCoreViewGroupInputs.map((variables) =>
-            deleteCoreViewGroupMutation({
-              variables,
-              update: (_cache, { data }) => {
-                const deletedViewGroup = data?.deleteCoreViewGroup;
-                if (!isDefined(deletedViewGroup)) {
-                  return;
-                }
-
-                triggerViewGroupOptimisticEffect({
-                  deletedViewGroups: [deletedViewGroup],
-                });
-              },
-            }),
-          ),
-        );
-
-        return {
-          status: 'successful',
-          response: results,
-        };
-      } catch (error) {
-        if (error instanceof ApolloError) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'viewGroup',
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
-    },
-    [
-      triggerViewGroupOptimisticEffect,
-      deleteCoreViewGroupMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-    ],
-  );
-
-  const destroyViewGroups = useCallback(
-    async (
-      destroyCoreViewGroupInputs: DestroyCoreViewGroupMutationVariables[],
-    ): Promise<
-      MetadataRequestResult<
-        Awaited<ReturnType<typeof destroyCoreViewGroupMutation>>[]
-      >
-    > => {
-      if (destroyCoreViewGroupInputs.length === 0) {
-        return {
-          status: 'successful',
-          response: [],
-        };
-      }
-
-      try {
-        const results = await Promise.all(
-          destroyCoreViewGroupInputs.map((variables) =>
-            destroyCoreViewGroupMutation({
-              variables,
-            }),
-          ),
-        );
-
-        return {
-          status: 'successful',
-          response: results,
-        };
-      } catch (error) {
-        if (error instanceof ApolloError) {
-          handleMetadataError(error, {
-            primaryMetadataName: 'viewGroup',
-          });
-        } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
-        }
-
-        return {
-          status: 'failed',
-          error,
-        };
-      }
-    },
-    [destroyCoreViewGroupMutation, handleMetadataError, enqueueErrorSnackBar],
-  );
-
   return {
     updateViewGroups,
-    deleteViewGroups,
-    destroyViewGroups,
   };
 };

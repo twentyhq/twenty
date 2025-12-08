@@ -13,7 +13,6 @@ import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistVi
 import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePersistViewFilterGroup';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSort';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
-import { useTriggerViewGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewGroupOptimisticEffect';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { ViewType } from '@/views/types/ViewType';
@@ -45,9 +44,6 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
   const { createViewSorts } = usePersistViewSortRecords();
 
-  const { triggerViewGroupOptimisticEffect } =
-    useTriggerViewGroupOptimisticEffect();
-
   const { createViewFilters } = usePersistViewFilterRecords();
 
   const { createViewFilterGroups } = usePersistViewFilterGroupRecords();
@@ -70,7 +66,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   );
 
   const createViewFromCurrentView = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ snapshot }) =>
       async (
         {
           id,
@@ -151,7 +147,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               visibility,
             },
           },
-          objectMetadataItem,
+          objectMetadataItem.id,
         );
 
         if (result.status === 'failed') {
