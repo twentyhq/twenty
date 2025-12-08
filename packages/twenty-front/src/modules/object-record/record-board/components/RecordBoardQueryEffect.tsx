@@ -4,6 +4,7 @@ import { lastRecordBoardQueryIdentifierComponentState } from '@/object-record/re
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
 import { recordBoardIsFetchingMoreComponentState } from '@/object-record/record-board/states/recordBoardIsFetchingMoreComponentState';
 import { recordBoardShouldFetchMoreComponentState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreComponentState';
+import { switchesToKanbanViewTypeComponentState } from '@/object-record/record-board/states/switchesToKanbanViewTypeComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
 
@@ -21,6 +22,9 @@ export const RecordBoardQueryEffect = () => {
 
   const [lastRecordBoardQueryIdentifier, setLastRecordBoardQueryIdentifier] =
     useRecoilComponentState(lastRecordBoardQueryIdentifierComponentState);
+
+  const [switchesToKanbanViewType, setSwitchesToKanbanViewType] =
+    useRecoilComponentState(switchesToKanbanViewTypeComponentState);
 
   const [recordIndexRecordGroupsAreInInitialLoading] = useRecoilComponentState(
     recordIndexRecordGroupsAreInInitialLoadingComponentState,
@@ -60,9 +64,10 @@ export const RecordBoardQueryEffect = () => {
   useEffect(() => {
     if (
       !recordIndexRecordGroupsAreInInitialLoading &&
-      queryIdentifierHasChanged
+      (queryIdentifierHasChanged || switchesToKanbanViewType)
     ) {
       triggerRecordBoardInitialQuery();
+      setSwitchesToKanbanViewType(false);
     } else if (
       !recordIndexRecordGroupsAreInInitialLoading &&
       shouldFetchMore &&
@@ -82,6 +87,8 @@ export const RecordBoardQueryEffect = () => {
     shouldFetchMore,
     recordBoardIsFetchingMore,
     triggerRecordBoardFetchMore,
+    switchesToKanbanViewType,
+    setSwitchesToKanbanViewType,
   ]);
 
   return null;

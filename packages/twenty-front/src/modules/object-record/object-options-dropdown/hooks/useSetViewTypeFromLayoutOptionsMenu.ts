@@ -1,9 +1,11 @@
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { switchesToKanbanViewTypeComponentState } from '@/object-record/record-board/states/switchesToKanbanViewTypeComponentState';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type GraphQLView } from '@/views/types/GraphQLView';
@@ -19,6 +21,9 @@ import { ViewCalendarLayout } from '~/generated/graphql';
 export const useSetViewTypeFromLayoutOptionsMenu = () => {
   const { updateCurrentView } = useUpdateCurrentView();
   const setRecordIndexViewType = useSetRecoilState(recordIndexViewTypeState);
+  const switchesToKanbanViewTypeCallbackState = useRecoilComponentCallbackState(
+    switchesToKanbanViewTypeComponentState,
+  );
   const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
@@ -60,6 +65,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
         switch (viewType) {
           case ViewType.Kanban: {
+            set(switchesToKanbanViewTypeCallbackState, true);
             if (availableFieldsForKanban.length === 0) {
               throw new Error('No fields for kanban - should not happen');
             }
@@ -72,7 +78,6 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
               updateCurrentViewParams.icon =
                 viewTypeIconMapping(viewType).displayName;
             }
-            await updateCurrentView(updateCurrentViewParams);
 
             setRecordIndexViewType(viewType);
             set(coreViewsState, [
@@ -85,6 +90,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
                 mainGroupByFieldMetadataId,
               },
             ]);
+            await updateCurrentView(updateCurrentViewParams);
             return;
           }
           case ViewType.Table: {
